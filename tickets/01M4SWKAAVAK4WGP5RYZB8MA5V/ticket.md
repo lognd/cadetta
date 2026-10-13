@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:46:23Z"
+updated = "2026-10-13T05:46:31Z"
 persona = "design engineer"
 capability = "get stable codes for every compile failure"
 idempotency_key = "replan14:lint-e"
-labels = ["creates:crates/cadetta-lint/src/rules/e.rs", "creates:tests/lints/E*/**"]
-scope = ["crates/cadetta-lint/src/rules/e.rs", "tests/lints/E*/**"]
+labels = ["creates:crates/cadetta-lint/src/rules/e.rs", "creates:tests/conformance/lints/E*/**"]
+scope = ["crates/cadetta-lint/src/rules/e.rs", "tests/conformance/lints/E*/**"]
 
 [[links]]
 kind = "blocked-by"
