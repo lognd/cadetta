@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the adapter, when initialize is sent, then name, version, capabilities emit, read and drive, native units, precision and platforms (windows) are returned (adapters.md 5, 6)"]
+new = ["Given the adapter, when initialize is sent, then name, version, capabilities emit, read and drive, native units, precision and platforms (windows) are returned (adapters.md 5, 6)", "Given the adapter, when initialized, then it advertises open, save and close methods (adapters.md 5)"]
+moved = [1]
+at = "2026-10-13T05:44:13Z"
+actor = "lognd"
+rev = 1
