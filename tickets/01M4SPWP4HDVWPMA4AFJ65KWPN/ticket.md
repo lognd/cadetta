@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:01:22Z"
+updated = "2026-10-13T05:05:12Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
@@ -22,6 +22,10 @@ target = "01M4SPWPAJ4ZGEGGVF63ZY806Z"
 [[links]]
 kind = "blocks"
 target = "01M4SPWPCW1C0QC67GZG99EHTZ"
+
+[[links]]
+kind = "blocks"
+target = "01M4ST7A8ZG0BS11X26BB84S84"
 
 [[acceptance]]
 text = "Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition (language.md 5)"
