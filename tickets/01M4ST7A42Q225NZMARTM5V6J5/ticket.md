@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a role from an ISO class letter case, a fit side or `#[role(hole)]`, when `.mmc` and `.lmc` are read, then they follow the role; without a role they are an error (quantities.md 5.2, 5.6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a pure reference, when its role is queried, then it inherits its referent role (quantities.md 5.6)"
