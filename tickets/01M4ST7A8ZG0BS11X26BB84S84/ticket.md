@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `ots Vendor4471B: Caster @vendor { ... }` and an `: A, B` iface list, when parsed, then implements is recorded (language.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a table with `key`, `cols`, `=>` rows and key-only rows, when parsed, then rows are recorded; a row without `=>` is key-only (language.md 3, 3.6)"
