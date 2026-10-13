@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given paths such as Bracket.holes[1].x, Rover/wheel[2].hub_bore and Rover/feet[i].place.0.x, when parsed, then they round-trip (ir.md 2)", "Given [*], when it appears outside bindings, then it is rejected; in bindings it is accepted (ir.md 2)", "Given datum paths Type.<datum>.offset.x and .rotate.x and generator members holes.pitch_x, when parsed, then they resolve to Members (ir.md 2)", "Given a parameterized component, when a definition path is read, then the instance-only rule is enforced (ir.md 2; E011)"]
+new = ["Given paths such as Bracket.holes[1].x, Rover/wheel[2].hub_bore and Rover/feet[i].place.0.x, when parsed, then they round-trip (ir.md 2)", "Given [*], when it appears outside bindings, then it is rejected; in bindings it is accepted (ir.md 2)", "Given datum paths Type.<datum>.offset.x and .rotate.x and generator members holes.pitch_x, when parsed, then they resolve to Members (ir.md 2)", "Given a parameterized component, when a definition path is read, then the instance-only rule is enforced (ir.md 2; E011)", "Given paths such as acme.rover::drive::motor::Gm42A.rated_torque, when parsed, then the package.module::...::Item prefix and members round-trip; a package name is lower.dotted and modules are snake_case (ir.md 2; packages.md 2)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T06:04:57Z"
+actor = "lognd"
+rev = 1
