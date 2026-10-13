@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a canonical path package::module::Item.member, when resolved, then it matches ir.md 2 and packages.md 2"
-bound = false
+bound = true
 +++
