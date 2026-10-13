@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:44:39Z"
 persona = "design engineer"
 capability = "declare which sign-offs gate check and release"
 idempotency_key = "replan13:Roles, policy and release gating"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a `require`, when waived without an attestation, then it is refused: attestation is the only way (obligations.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given roles, when configured, then members and distinct_from_author are enforced (config-cli.md 2; obligations.md 4)"
 bound = false
 +++

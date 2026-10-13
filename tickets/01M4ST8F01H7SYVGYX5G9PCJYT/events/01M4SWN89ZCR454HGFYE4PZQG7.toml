@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ['Given `[obligations.roles.R] covers = ["fit:*", "check:*"]`, when matched, then selectors like fit:*, check:* and ots:* cover the right nodes (obligations.md 4)', 'Given stale or open obligations with required_for = "check", when gating, then the result fails; release roles fail only under `--release` (obligations.md 4)', "Given a `require`, when waived without an attestation, then it is refused: attestation is the only way (obligations.md 4)"]
+new = ['Given `[obligations.roles.R] covers = ["fit:*", "check:*"]`, when matched, then selectors like fit:*, check:* and ots:* cover the right nodes (obligations.md 4)', 'Given stale or open obligations with required_for = "check", when gating, then the result fails; release roles fail only under `--release` (obligations.md 4)', "Given a `require`, when waived without an attestation, then it is refused: attestation is the only way (obligations.md 4)", "Given roles, when configured, then members and distinct_from_author are enforced (config-cli.md 2; obligations.md 4)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
