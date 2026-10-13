@@ -2,7 +2,7 @@
 id = "01M4V5BBFAPDTTJCY6BEWSF8YR"
 title = "Spec: json emitter dimension and ref-mode locators undefined"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
