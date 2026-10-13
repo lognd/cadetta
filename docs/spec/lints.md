@@ -238,6 +238,14 @@ cannot be resolved or evaluated.
 | D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. Not in an `ots` for a cited literal: a vendor's stated value is its own source even when it matches a standard (T001 covers mismatches). |
 | D003 | reference-cycle | error | yes | Parameters depend on each other cyclically. |
 
+Implementation rules (decided with the D rules): a D001 group takes the largest
+significant-digit count among its members to choose between the configured severity and info; a
+group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
+D003 is computed on the member dependency graph, so a loop between components with no member-level
+loop is clean.
+
 ### M: magic numbers
 
 | Code | Name | Default | Fixed | Meaning |
