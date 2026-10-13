@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given doc comments, when emitted, then they become comment lines directly above the first line of the path (emitters/sw-equations.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given paths, when ordered, then dependency order with ties by canonical path, globals then dimensions in bindings-file order (emitters/sw-equations.md 2)"
