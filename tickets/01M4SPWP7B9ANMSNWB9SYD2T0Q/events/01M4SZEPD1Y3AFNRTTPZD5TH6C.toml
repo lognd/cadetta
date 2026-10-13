@@ -1,0 +1,37 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:33:28Z"
+digest = "7d9b9300aa4666ff5e7996536bc52d3b194c5a0a1c58cace0018e803cb5734d2"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.43s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9df79b7f-27ca-4686-8571-75bd092f1b8e with nextest profile: default
+    Starting 14 tests across 1 binary (9 tests skipped)
+        PASS [   0.025s] cadetta-syntax parser::tests::statements_end_at_newline_or_semicolon
+        PASS [   0.026s] cadetta-syntax parser::tests::file_is_uses_and_items_with_no_header
+        PASS [   0.019s] cadetta-syntax parser::tests::doc_comments_attach_to_items
+        PASS [   0.028s] cadetta-syntax parser::tests::spec_example_parses_with_expected_shape
+        PASS [   0.030s] cadetta-syntax parser::tests::errors_recover_and_parsing_continues
+        PASS [   0.036s] cadetta-syntax span::tests::every_node_has_a_location
+        PASS [   0.041s] cadetta-syntax parser::tests::expressions_tolerances_and_classes
+        PASS [   0.042s] cadetta-syntax span::tests::columns_count_characters
+        PASS [   0.036s] cadetta-syntax parser::tests::all_member_productions_accepted
+        PASS [   0.042s] cadetta-syntax parser::tests::use_trees_aliases_globs_and_roots
+        PASS [   0.020s] cadetta-syntax span::tests::two_errors_reported_with_spans
+        PASS [   0.040s] cadetta-syntax parser::tests::part_has_one_primary_and_alternates
+        PASS [   0.021s] cadetta-syntax span::tests::locations_are_one_based_and_display
+        PASS [   0.055s] cadetta-syntax parser::tests::reserved_keyword_as_identifier_is_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.063s] 14 tests run: 14 passed, 9 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E '(package(=cadetta-syntax) & (test(=parser::tests::all_member_productions_accepted) | test(=parser::tests::doc_comments_attach_to_items) | test(=parser::tests::errors_recover_and_parsing_continues) | test(=parser::tests::expressions_tolerances_and_classes) | test(=parser::tests::file_is_uses_and_items_with_no_header) | test(=parser::tests::part_has_one_primary_and_alternates) | test(=parser::tests::reserved_keyword_as_identifier_is_error) | test(=parser::tests::spec_example_parses_with_expected_shape) | test(=parser::tests::statements_end_at_newline_or_semicolon) | test(=parser::tests::use_trees_aliases_globs_and_roots) | test(=span::tests::columns_count_characters) | test(=span::tests::every_node_has_a_location) | test(=span::tests::locations_are_one_based_and_display) | test(=span::tests::two_errors_reported_with_spans)))'"
+size = 1776
+status = "measured"
+test_count = 14
+tests_digest = "194c8f06f281a57dcba6470030249fd330b00963e87e9f1dc5deec02bf5fa190"
+at = "2026-10-13T06:33:28Z"
+actor = "lognd"
+rev = 1
