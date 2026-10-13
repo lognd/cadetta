@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T19:19:05Z"
+updated = "2026-10-13T23:29:33Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
@@ -26,6 +26,10 @@ target = "01M4SWG6XQ2M0GR620Q6MJE3XF"
 [[links]]
 kind = "blocked-by"
 target = "01M4VB636BKBDGRW3NBMGK7CBZ"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VQXPDA4TEKE455FNYB5TXC"
 
 [[acceptance]]
 text = "Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)"
