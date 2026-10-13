@@ -13,6 +13,7 @@ pub mod lock_merge;
 pub mod lock_package;
 pub mod lock_tidy;
 pub mod lock_verify;
+pub mod pkg_closure;
 pub mod roles;
 pub mod selector;
 pub mod staleness;
