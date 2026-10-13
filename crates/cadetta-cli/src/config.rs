@@ -416,18 +416,22 @@ impl Config {
             source,
         })?;
         let mut config = Self::parse(&text)?;
-        if let Some(package) = config.package.as_mut()
-            && package.name.is_none()
-        {
-            let dir = path.parent().unwrap_or(Path::new("."));
-            let dir = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_owned());
-            if let Some(stem) = dir.file_name().and_then(|n| n.to_str()) {
-                let name = normalise_package_name(stem);
-                tracing::info!(%name, "package name defaults to the directory name");
-                package.name = Some(name);
-            }
-        }
+        config.default_package_name(path);
         Ok(config)
+    }
+
+    /// Fill an absent package `name` from the directory holding `path`.
+    fn default_package_name(&mut self, path: &Path) {
+        let Some(package) = self.package.as_mut().filter(|p| p.name.is_none()) else {
+            return;
+        };
+        let dir = path.parent().unwrap_or(Path::new("."));
+        let dir = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_owned());
+        if let Some(stem) = dir.file_name().and_then(|n| n.to_str()) {
+            let name = normalise_package_name(stem);
+            tracing::info!(%name, "package name defaults to the directory name");
+            package.name = Some(name);
+        }
     }
 
     /// Check every cross-field and value rule not expressible in types.
@@ -692,7 +696,7 @@ native_unit = "mm"
             .to_string()
     }
 
-    // frob:tests crates/cadetta-cli/src/config.rs::Config::parse
+    // frob:tests crates/cadetta-cli/src/config.rs::Config
     #[test]
     fn sample_parses_in_every_section() {
         let c = Config::parse(SAMPLE).expect("sample parses");
@@ -707,7 +711,7 @@ native_unit = "mm"
         assert_eq!(c.adapters.len(), 2);
     }
 
-    // frob:tests crates/cadetta-cli/src/config.rs::Config::parse
+    // frob:tests crates/cadetta-cli/src/config.rs::Config
     #[test]
     fn unknown_keys_are_named() {
         assert!(err_text(&pkg("bogus = 1\n")).contains("bogus"));
@@ -872,7 +876,7 @@ native_unit = "mm"
         )));
     }
 
-    // frob:tests crates/cadetta-cli/src/config.rs::Config::load
+    // frob:tests crates/cadetta-cli/src/config.rs::Config
     #[test]
     fn load_reports_io_and_defaults_the_name() {
         let missing = Path::new("/nonexistent-cadetta-dir/cadetta.toml");
@@ -880,11 +884,8 @@ native_unit = "mm"
             Config::load(missing),
             Err(ConfigError::Read { .. })
         ));
-        let dir = std::env::temp_dir().join("Cadetta Cfg Test");
-        std::fs::create_dir_all(&dir).unwrap();
-        let file = dir.join("cadetta.toml");
-        std::fs::write(&file, "[package]\n").unwrap();
-        let c = Config::load(&file).unwrap();
-        assert_eq!(c.package.unwrap().name.as_deref(), Some("cadetta_cfg_test"));
+        let mut c = Config::parse("[package]\n").unwrap();
+        c.default_package_name(Path::new("/nonexistent-cadetta-dir/My Rover/cadetta.toml"));
+        assert_eq!(c.package.unwrap().name.as_deref(), Some("my_rover"));
     }
 }
