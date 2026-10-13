@@ -9,3 +9,4 @@ pub mod eval;
 pub mod kindcheck;
 pub mod modules;
 pub mod resolve;
+pub mod tables;

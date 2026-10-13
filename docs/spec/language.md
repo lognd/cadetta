@@ -324,7 +324,10 @@ stack).key` reads the matched length. A lookup that misses is E007 at
 evaluation. A literal in an `ots` that cites a table but matches none
 of its rows is T001. A row with no `=>` is key-only (`table
 Iso4762Len { key length: Length  3mm  4mm  5mm }`); such a table is
-read for its keys (`.at_least(x).key`). The tables the standard library
+read for its keys (`.at_least(x).key`); reading a column of a
+key-only table, or using `at_least`, `at_most` or `nearest` on a table
+whose keys are not quantities of the argument's dimension, is E008.
+The tables the standard library
 ships, and their column names, are in stdlib.md.
 
 ### 3.7 Fits
