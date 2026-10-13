@@ -8,11 +8,15 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:07Z"
+updated = "2026-10-13T05:17:08Z"
 persona = "design engineer"
 capability = "connect to SOLIDWORKS through the adapter protocol"
 labels = ["creates:adapters/solidworks/src/**", "creates:adapters/solidworks/pyproject.toml"]
 scope = ["adapters/solidworks/src/**", "adapters/solidworks/pyproject.toml"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2NZT32CAT33D13T86646"
 
 [[acceptance]]
 text = "Given the adapter, when initialize is sent, then name, version, capabilities emit, read and drive, native units, precision and platforms (windows) are returned (adapters.md 5, 6)"
