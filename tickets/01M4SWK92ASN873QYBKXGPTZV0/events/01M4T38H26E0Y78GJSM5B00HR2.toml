@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:40:02Z"
+digest = "d500a20cd9f21e2b60d310ed2f1cf21e3698652aecb72792b348b99153fac440"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a6f6f039-c459-4c4f-b33e-7fdc84745e77 with nextest profile: default
+    Starting 1 test across 1 binary (15 tests skipped)
+        PASS [   0.009s] cadetta-ir dim::tests::ir_dim_converts_without_unit_table
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 15 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E 'test(=dim::tests::ir_dim_converts_without_unit_table)'"
+size = 600
+status = "measured"
+test_count = 1
+tests_digest = "d8600ba04ee773803dff791cf55b8c1d700c706a1e45d57863a47219885492c3"
+at = "2026-10-13T07:40:02Z"
+actor = "lognd"
+rev = 1
