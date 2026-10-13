@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:16:13Z"
+updated = "2026-10-13T06:16:20Z"
 persona = "design engineer"
 capability = "use every unit in the quantities.md table (m mm in ft deg N*m psi rpm ...)"
 outcome_text = "I can author values in the units my datasheets use"
@@ -33,7 +33,7 @@ target = "01M4ST7A6D0NTQ7XV9RDV6RBGM"
 
 [[acceptance]]
 text = "Given unit `in`, when looked up, then the factor is exactly 127/5000 (quantities.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given every unit in the quantities.md 3 table, when looked up, then it has an exact factor r*pi^k and a default kind"
