@@ -2,7 +2,8 @@
 id = "01M4SWFX4ZH1Q8BJPEEWYEKQJC"
 title = "Datum transforms: exact 90deg multiples, inexact otherwise, toleranced angles"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
