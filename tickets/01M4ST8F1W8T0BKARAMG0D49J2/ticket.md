@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:48:58Z"
+updated = "2026-10-13T08:51:11Z"
 persona = "design engineer"
 capability = "attest a selection at current digests"
 idempotency_key = "replan13:cadetta ack"
 labels = ["creates:crates/cadetta-cli/src/cmd/ack.rs"]
-scope = ["crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md"]
+scope = ["crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md", "crates/cadetta-cli/src/env.rs", "design/model.grmb"]
 
 [[acceptance]]
 text = 'Given `cadetta ack SELECTOR --role R --reason "..."`, when run, then the lock gains an attestation at current closure digests (obligations.md 5)'
