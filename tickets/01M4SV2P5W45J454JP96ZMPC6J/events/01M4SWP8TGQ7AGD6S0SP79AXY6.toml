@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given every fixture in tests/conformance, when replayed through the binding, then its results equal the CLI --format json output (bindings.md 1)", "Given the bindings CI job, when it runs, then the parity suite executes and gates the PR (bindings.md 2)"]
+new = ["Given every fixture in tests/conformance, when replayed through the binding, then its results equal the CLI --format json output (bindings.md 1)", "Given the bindings CI job, when it runs, then the parity suite executes and gates the PR (bindings.md 2)", "Given the conformance corpus, when replayed, then binding results equal the CLI JSON, including geometry, json and csv fixtures (bindings.md 1)"]
+moved = [1, 2]
+at = "2026-10-13T05:45:13Z"
+actor = "lognd"
+rev = 1
