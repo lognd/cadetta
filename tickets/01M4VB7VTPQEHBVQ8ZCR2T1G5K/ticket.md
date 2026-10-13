@@ -20,6 +20,10 @@ scope = ["design/model.grmb", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/
 kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4VB644Y6YPK6YTBP4T5YM3Y"
+
 [[acceptance]]
 text = "Given an open document, when the pane loads, then it finds the nearest cadetta.toml, runs cadetta names solidworks --format json and lists the document component's paths with value, tolerance, citation and doc (solidworks.md 3)"
 bound = false
