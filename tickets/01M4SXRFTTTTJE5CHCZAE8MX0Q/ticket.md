@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:22:20Z"
+updated = "2026-10-13T07:22:25Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
@@ -44,5 +44,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a path to a bindings, solver script or cited file, when resolved, then it is relative to the package directory, not src (packages.md 2)"
-bound = false
+bound = true
 +++
