@@ -2,7 +2,8 @@
 id = "01M4ST7AKENKKS96TTXY13YMZQ"
 title = "Part arrays, count and roll-ups"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
