@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/src/fits.cdt", "crates/cadetta-fits/tests/std_fits.rs", "crates/cadetta-fits/Cargo.toml", "docs/spec/stdlib.md"]
+new = ["std/src/fits.cdt", "crates/cadetta-fits/tests/std_fits.rs", "crates/cadetta-fits/Cargo.toml", "docs/spec/stdlib.md", "crates/cadetta-syntax/tests/std_fits.rs"]
+at = "2026-10-13T07:09:27Z"
+actor = "lognd"
+rev = 1
