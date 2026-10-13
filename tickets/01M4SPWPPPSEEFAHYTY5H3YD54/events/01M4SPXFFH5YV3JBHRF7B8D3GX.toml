@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact rational is 1.9m * ... equal to 338.1mm", "Given `round_to(x, step)` on exact input, when evaluated, then the result is exact"]
+new = ["Given `round_to(x, step)` on exact input, when evaluated, then the result is exact", "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact value equals 338.1mm"]
+moved = [0, 1]
+at = "2026-10-13T04:04:17Z"
+actor = "lognd"
+rev = 1
