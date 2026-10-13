@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:34:48Z"
+updated = "2026-10-13T07:34:54Z"
 persona = "design engineer"
 capability = "use solver outputs as checked values or as drivers"
 idempotency_key = "replan13:Bound versus driving outputs"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a driving output, when evaluated, then downstream values derive from it and cite the solver (solvers.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a stale output, when evaluated, then it still evaluates with the S003 fact (solvers.md 4.1, lints.md S)"
