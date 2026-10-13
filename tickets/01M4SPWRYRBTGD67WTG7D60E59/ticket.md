@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:50:02Z"
+updated = "2026-10-13T09:50:03Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a parameter with `was`, when renamed, then its binding carries forward (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given `#[native(adapter, "locator")]` in source, when loaded, then it overrides the file entry (adapters.md 3)'
