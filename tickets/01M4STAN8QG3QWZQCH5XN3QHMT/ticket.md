@@ -8,7 +8,7 @@ points = 3
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T08:01:32Z"
+updated = "2026-10-13T08:01:44Z"
 persona = "design engineer"
 capability = "run stale solvers on demand"
 idempotency_key = "replan13:cadetta solve"
@@ -21,5 +21,5 @@ bound = true
 
 [[acceptance]]
 text = "Given nothing stale, when run, then nothing runs and exit is 0 (solvers.md 4)"
-bound = false
+bound = true
 +++
