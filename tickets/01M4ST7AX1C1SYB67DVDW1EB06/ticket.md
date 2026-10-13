@@ -2,18 +2,18 @@
 id = "01M4ST7AX1C1SYB67DVDW1EB06"
 title = "Attributes, citations and cite declarations"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T05:02:06Z"
+updated = "2026-10-13T07:50:28Z"
 persona = "design engineer"
 capability = "attach provenance and policy to values once"
 idempotency_key = "replan13:Attributes, citations and cite declarations"
 labels = ["creates:crates/cadetta-sema/src/{attrs,cite}.rs"]
-scope = ["crates/cadetta-sema/src/{attrs,cite}.rs"]
+scope = ["crates/cadetta-sema/src/{attrs,cite}.rs", "crates/cadetta-sema/src/lib.rs"]
 
 [[acceptance]]
 text = "Given `#[emit(mid)]`, `#![display(mm)]` and trailing `#[...]`, when resolved, then scope defaults apply and the member attribute wins (language.md 3.11)"
