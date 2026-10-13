@@ -2,7 +2,8 @@
 id = "01M4SPWPAJ4ZGEGGVF63ZY806Z"
 title = "Canonical formatter"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
