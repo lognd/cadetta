@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:59Z"
-updated = "2026-10-13T16:47:50Z"
+updated = "2026-10-13T16:48:04Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for lints"
@@ -25,7 +25,7 @@ bound = false
 
 [[acceptance]]
 text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the full catalog in lints.md, when fixtures are written, then every code in the catalog is covered (lints.md 3)"
