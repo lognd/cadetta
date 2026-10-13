@@ -186,6 +186,8 @@ pub fn use_sites(file: &ast::File) -> Vec<&ast::Citation> {
                     match &m.kind {
                         MemberKind::Param(p) => out.extend(p.citation.as_ref()),
                         MemberKind::Require(r) => out.extend(r.citation.as_ref()),
+                        // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+                        MemberKind::Solver(sv) => out.extend(sv.citation.as_ref()),
                         MemberKind::Part(p) => {
                             args(&p.args, &mut out);
                             for ct in p.primary.iter().chain(p.alts.iter()) {
@@ -199,6 +201,7 @@ pub fn use_sites(file: &ast::File) -> Vec<&ast::Citation> {
             ItemKind::Require(r) => out.extend(r.citation.as_ref()),
             ItemKind::Process(p) => out.extend(p.citation.as_ref()),
             ItemKind::Table(t) => out.extend(t.citation.as_ref()),
+            ItemKind::Solver(sv) => out.extend(sv.citation.as_ref()),
             _ => {}
         }
     }

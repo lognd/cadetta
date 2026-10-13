@@ -729,12 +729,18 @@ impl Printer<'_> {
     }
 
     fn solver(&mut self, sv: &Solver, span: Span, prefix: &str, suffix: &str) {
-        let head = format!(
-            "{prefix}solver {} {}",
-            sv.name.name,
-            self.citation(&sv.citation)
-        );
+        // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+        let mut head = format!("{prefix}solver {}", sv.name.name);
+        if let Some(c) = &sv.citation {
+            head.push(' ');
+            head.push_str(&self.citation(c));
+        }
         let outer = self.open_block(&head);
+        self.leaf(
+            Line::plain(format!("script {}", quote(&sv.script))),
+            sv.script_span,
+            &[],
+        );
         for m in &sv.members {
             self.preamble(m.span.start, m.span.end, &[], &[]);
             let text = match &m.kind {
@@ -1343,7 +1349,7 @@ mod tests {
         assert_eq!(fmt(&out), out);
     }
 
-    const DECLS: &str = "// decls\nenum Grade { A,B,\n  C }\nkind Flow=Volume/Time\nkind Press = Pressure / VolumeFlow^2\nunit kip=1000lbf\nunit Stress   MPa\npub fn half(x: Length, y: Length = 2mm) -> Length { let t = x + y; t / 2 }\nwaive L001 on pkg::Bracket.*  for alt a.slot=Vendor::B {because \"fine\"   expires 2027-06-30}\nwaive L002 on **{ because \"x\" }\ntable Bolts @\"ISO 4762\" {\n  key dia: Length\n  cols  len: Length, mass: Mass = 1g\n  3mm => 10mm,1g\n  /// four\n  4mm   =>   12mm, 2g\n  5mm\n}\nprocess Print @\"cal\" {\n  hole_comp=0.2mm [+-0.05mm]\n  rule drill(d: Length) -> Length = d + 0.1mm\n}\nsolver Beam @\"beam.py\" {\n  in load = 1kN, span=2m\n  // out\n  out defl: Length / Force\n  deps \"a.csv\"\n}\nmodel M {\n  #[x] solver S @\"s.py\" {\n   in a = 1mm\n  } #[t]\n  priv solver T @\"t.py\" {\n  }\n  q: Volume / Time = 1m\n}\n";
+    const DECLS: &str = "// decls\nenum Grade { A,B,\n  C }\nkind Flow=Volume/Time\nkind Press = Pressure / VolumeFlow^2\nunit kip=1000lbf\nunit Stress   MPa\npub fn half(x: Length, y: Length = 2mm) -> Length { let t = x + y; t / 2 }\nwaive L001 on pkg::Bracket.*  for alt a.slot=Vendor::B {because \"fine\"   expires 2027-06-30}\nwaive L002 on **{ because \"x\" }\ntable Bolts @\"ISO 4762\" {\n  key dia: Length\n  cols  len: Length, mass: Mass = 1g\n  3mm => 10mm,1g\n  /// four\n  4mm   =>   12mm, 2g\n  5mm\n}\nprocess Print @\"cal\" {\n  hole_comp=0.2mm [+-0.05mm]\n  rule drill(d: Length) -> Length = d + 0.1mm\n}\nsolver Beam {\n  script \"beam.py\"\n  in load = 1kN, span=2m\n  // out\n  out defl: Length / Force\n  deps \"a.csv\"\n}\nmodel M {\n  #[x] solver S {\n  script \"s.py\"\n   in a = 1mm\n  } #[t]\n  priv solver T {\n  script \"t.py\"\n  }\n  q: Volume / Time = 1m\n}\n";
 
     #[test]
     fn new_item_kinds_are_idempotent_and_shape_preserving() {

@@ -96,6 +96,6 @@ fn leading_operator_continues_the_statement() {
 fn solver_binds_continue_after_a_comma_and_allow_checks() {
     // frob:tests crates/cadetta-syntax/src/parser_items.rs::solver kind=unit
     assert_stable(
-        "solver s @\"s.py\" {\n  in a = 1mm,\n      b = 2mm\n  out o: Length\n  deps \"x.csv\"\n  check pos: o > 0mm\n}\n",
+        "solver s {\n  script \"s.py\"\n  in a = 1mm,\n      b = 2mm\n  out o: Length\n  deps \"x.csv\"\n  check pos: o > 0mm\n}\n",
     );
 }

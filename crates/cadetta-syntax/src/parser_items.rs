@@ -313,16 +313,50 @@ impl Parser<'_> {
 
     // ---- solver ----
 
-    /// `solver NAME citation { { in binds | out NAME: kind | deps STRING } }`.
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    /// `solver NAME [citation] { script STRING { in binds | out NAME: kind | deps STRING } }`.
     pub(super) fn solver(&mut self) -> PResult<Solver> {
         self.expect_kw("solver")?;
         let name = self.expect_ident()?;
-        if !self.is_p(Punct::At) {
-            return self.err("a solver needs a citation naming its script, such as `@\"run.py\"`");
-        }
-        let citation = self.citation()?;
+        let citation = if self.is_p(Punct::At) {
+            Some(self.citation()?)
+        } else {
+            None
+        };
         self.expect_p(Punct::LBrace)?;
-        tracing::debug!(name = %name.name, "parsing solver");
+        tracing::debug!(name = %name.name, cited = citation.is_some(), "parsing solver");
+        self.skip_blank();
+        let start = self.start();
+        let (script, script_span) = if matches!(self.tok(), Tok::Ident(s) if s == "script") {
+            self.bump();
+            let script = self.expect_str()?;
+            let script_span = self.span_from(start);
+            self.end_stmt()?;
+            (script, script_span)
+        } else {
+            let hint = match &citation {
+                Some(Citation {
+                    name: CiteName::Literal(t),
+                    ..
+                }) => format!(
+                    "; the draft 1.4 form `solver NAME @\"{t}\"` is gone, write `script \"{t}\"` in the body"
+                ),
+                _ => String::new(),
+            };
+            let message = format!(
+                "a solver body must start with `script \"path\"`, found {}{hint}",
+                describe(&self.tok().clone())
+            );
+            tracing::debug!(name = %name.name, "solver without a script statement");
+            // Report and keep parsing the body so one error is one diagnostic.
+            self.diags.push(Diagnostic {
+                code: DiagCode::E001,
+                span: self.span(),
+                message,
+                fix: None,
+            });
+            (String::new(), self.span())
+        };
         let members = self.body(Self::solver_member, |span| SolverMember {
             kind: SolverMemberKind::Error,
             span,
@@ -330,6 +364,8 @@ impl Parser<'_> {
         Ok(Solver {
             name,
             citation,
+            script,
+            script_span,
             members,
         })
     }
@@ -623,7 +659,7 @@ mod tests {
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn solver_item_and_member() {
-        let src = "solver wall @\"analysis/w.py\" {\n  in load = Frame.max_load, span = Frame.span\n  out min_wall: Length\n  out q: Volume / Time\n  deps \"db.csv\"\n}\n";
+        let src = "solver wall {\n  script \"analysis/w.py\"\n  in load = Frame.max_load, span = Frame.span\n  out min_wall: Length\n  out q: Volume / Time\n  deps \"db.csv\"\n}\n";
         let ItemKind::Solver(s) = only_item(src).kind else {
             panic!()
         };
@@ -644,8 +680,37 @@ mod tests {
         ));
         let c = p.file.components().next().expect("component");
         assert!(matches!(c.members[0].kind, MemberKind::Solver(_)));
+        assert_eq!(s.script, "analysis/w.py");
+        assert!(s.citation.is_none());
         let p = parse("solver s {\n}\n");
         assert_eq!(p.diags.len(), 1);
+    }
+
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
+    #[test]
+    fn solver_cited_script() {
+        let src = "solver w @roark {\n  script \"a.py\"\n  out x: Length\n}\n";
+        let ItemKind::Solver(s) = only_item(src).kind else {
+            panic!()
+        };
+        assert_eq!(s.script, "a.py");
+        assert!(s.citation.is_some());
+    }
+
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
+    #[test]
+    fn solver_without_script_or_draft_1_4_form_is_e001() {
+        for src in [
+            "solver s {\n  out x: Length\n}\n",
+            "solver s @\"a.py\" {\n  out x: Length\n}\n",
+        ] {
+            let p = parse(src);
+            assert_eq!(p.diags.len(), 1, "{:?}", p.diags);
+            assert_eq!(p.diags[0].code, crate::lexer::DiagCode::E001);
+            assert!(p.diags[0].message.contains("script"), "{:?}", p.diags);
+        }
     }
 
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit

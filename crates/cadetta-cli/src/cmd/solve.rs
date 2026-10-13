@@ -585,7 +585,7 @@ mod tests {
         std::fs::write(
             dir.join("src/lib.cdt"),
             format!(
-                "model Box {{\n  m: Mass = {mass}\n  solver size @\"size.sh\" {{\n    in m = m\n    out w: Length\n  }}\n}}\n"
+                "model Box {{\n  m: Mass = {mass}\n  solver size {{\n  script \"size.sh\"\n    in m = m\n    out w: Length\n  }}\n}}\n"
             ),
         )
         .unwrap();
