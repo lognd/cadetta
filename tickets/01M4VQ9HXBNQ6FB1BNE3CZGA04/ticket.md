@@ -2,7 +2,8 @@
 id = "01M4VQ9HXBNQ6FB1BNE3CZGA04"
 title = "editors README test still expects the LSP deferral note (main red)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 1
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
