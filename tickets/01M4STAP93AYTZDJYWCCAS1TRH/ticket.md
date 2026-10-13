@@ -2,7 +2,8 @@
 id = "01M4STAP93AYTZDJYWCCAS1TRH"
 title = "FastenerPolicy, IsoDefault and the default attribute"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
