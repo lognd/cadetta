@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a component with parameters `(wheel: Caster, span: Length = 1mm)`, when parsed, then defaults are recorded (language.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given kind expressions such as `out q: Volume / Time`, when parsed, then they are accepted wherever a kind is (language.md 3.10)"
