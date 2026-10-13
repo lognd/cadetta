@@ -13,6 +13,10 @@ scope = ["crates/cadetta-adapter/**"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWHC2VWRX6V0G4NZKYPB9"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 +++
 
 Outcome: the adapter contract, JSON-RPC stdio protocol and built-in json, csv and sw-equations adapters.
