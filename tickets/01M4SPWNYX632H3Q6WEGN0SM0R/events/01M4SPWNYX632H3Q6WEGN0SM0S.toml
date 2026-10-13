@@ -1,0 +1,16 @@
+kind = "create"
+title = "Lexer with single-token quantity literals"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
+persona = "design engineer"
+capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
+outcome_text = "units are unambiguous in source"
+labels = ["creates:crates/cadetta-syntax/src/lexer.rs"]
+scope = ["crates/cadetta-syntax/src/lexer.rs"]
+acceptance = ["Given `5 mm`, when lexed, then Q007 quantity-literal-split is reported with a fix-it", "Given `.5mm`, when lexed, then a lex error is reported", 'Given `5"abc"`, when lexed, then a lex error is reported', "Given `// c` and `/// d`, when lexed, then line and doc comments are distinguished"]
+at = "2026-10-13T04:03:51Z"
+actor = "lognd"
+rev = 1
