@@ -53,7 +53,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the same inputs twice, when emitted, then the bytes are identical (golden file) (adapters.md 4 rule 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the equations emitter, when run, then comments, ordering and SOLIDWORKS naming follow emitters/sw-equations.md 4 (component<2> forms, prefix)"
