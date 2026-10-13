@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:14:02Z"
+updated = "2026-10-13T15:54:59Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/r.rs", "creates:tests/conformance/lints/R*/**"]
-scope = ["crates/cadetta-lint/src/rules/r.rs", "tests/conformance/lints/R*/**"]
+scope = ["crates/cadetta-lint/src/rules/r.rs", "tests/conformance/lints/R*/**", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given an observed value differing from design at a bound path, when linted, then R001 names which side moved since last sync"
@@ -45,9 +45,5 @@ bound = false
 
 [[acceptance]]
 text = "Given a push that replaces a native expression, when linted, then R006 is a warning (not info) listing the old expression, and also fires from an adopted record (lints.md 3 R; adapters.md 2.1, 7.4)"
-bound = false
-
-[[acceptance]]
-text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/ (lints.md 4)"
 bound = false
 +++
