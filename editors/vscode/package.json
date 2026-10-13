@@ -1,0 +1,65 @@
+{
+  "name": "cadetta",
+  "displayName": "Cadetta",
+  "description": "Syntax highlighting and a check task for Cadetta (.cdt) design-parameter files.",
+  "version": "0.1.0",
+  "publisher": "cadetta",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lognd/cadetta"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "cadetta",
+        "aliases": ["Cadetta", "cadetta"],
+        "extensions": [".cdt"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cadetta",
+        "scopeName": "source.cadetta",
+        "path": "./syntaxes/cadetta.tmLanguage.json"
+      }
+    ],
+    "problemMatchers": [
+      {
+        "name": "cadetta",
+        "owner": "cadetta",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "source": "cadetta",
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):(\\d+): (error|warning|info)\\[([A-Za-z0-9]+)\\]: (.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "cadetta",
+        "required": ["command"],
+        "properties": {
+          "command": {
+            "type": "string",
+            "enum": ["check"],
+            "description": "The cadetta command to run."
+          }
+        }
+      }
+    ]
+  }
+}

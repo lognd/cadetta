@@ -1,0 +1,97 @@
+# Single source for every editor grammar under editors/ (see editors/generate.py).
+# Regexes are written in the portable subset: literals, \[ escapes, [...] classes,
+# + * ? and (...)? only where the token tables below carry per-engine forms.
+
+[meta]
+language = "cadetta"
+extension = "cdt"
+line_comment = "//"
+
+# The reserved words of language.md 2. The union of these groups must equal
+# cadetta_syntax::lexer::KEYWORDS (crates/cadetta-cli/tests/editors_keywords.rs).
+[keywords]
+declaration = ["pub", "priv", "package", "use", "as", "cite", "interface", "ots", "model", "assembly", "process", "table", "enum", "fn", "let", "part", "alt", "fit", "solver", "datum", "place", "rule", "unit", "kind", "key", "cols"]
+control = ["if", "else", "match", "on", "in", "out", "deps", "require", "check", "for", "satisfies", "waive", "because", "expires", "was", "super"]
+operator = ["and", "or", "not"]
+constant = ["true", "false"]
+special = ["self", "origin"]
+
+# Built-in names (language.md 3.8, 4; quantities.md 4).
+[names]
+types = ["Bool", "Text", "Count", "Ratio", "Point2", "Point3", "Vec2", "Vec3", "Datum", "Table"]
+kinds = ["Length", "Angle", "Area", "Volume", "Mass", "Force", "Torque", "Energy", "Power", "Pressure", "Time", "Money", "Frequency", "Velocity", "VolumeFlow", "Acceleration", "AngularVelocity", "Lead", "Current", "Voltage", "Resistance", "Inertia", "Density", "Temperature", "TemperatureDelta"]
+functions = ["min", "max", "abs", "sqrt", "cbrt", "sin", "cos", "tan", "atan2", "round_to", "ceil_to", "floor_to", "floor", "ceil", "round", "count", "sum", "mass", "fmt", "rect_pattern", "circle_pattern", "distance", "radial", "coaxial", "parallel", "angle_between", "aligned"]
+cite_types = ["standard", "datasheet", "drawing", "catalog", "book", "article", "web", "quote", "document"]
+pseudo_citations = ["measured", "assumed", "estimate"]
+
+# Contextual words: highlighted only after `lead` + `between` and before `follow`.
+# role names map to editor scopes in editors/generate.py.
+[[contextual]]
+name = "place-at"
+lead = "place"
+between = '[ \t]+[A-Za-z0-9_:.]+[ \t]+'
+words = ["at"]
+role = "keyword"
+
+[[contextual]]
+name = "solver-script"
+words = ["script"]
+follow = '[ \t]*"'
+role = "keyword"
+
+[[contextual]]
+name = "tolerance-position"
+between = '\[[ \t]*'
+words = ["position"]
+role = "keyword"
+
+[[contextual]]
+name = "cite-type"
+lead = "cite"
+between = '[ \t]+[A-Za-z0-9_]+[ \t]*:[ \t]*'
+words = ["standard", "datasheet", "drawing", "catalog", "book", "article", "web", "quote", "document"]
+role = "type"
+
+# The ISO 286 class after `fit NAME =` (the class after a quantity is handled
+# by the quantity rule): H7, p6, js6, H7/p6.
+[[contextual]]
+name = "fit-class"
+lead = "fit"
+between = '[ \t]+[A-Za-z0-9_]+[ \t]*=[ \t]*'
+word_regex = true
+words = ['[A-Za-z]{1,2}[0-9]{1,2}(/[A-Za-z]{1,2}[0-9]{1,2})?']
+role = "class"
+
+# Token patterns, one form per regex engine: pcre (Oniguruma: TextMate, Sublime),
+# vim (very magic), emacs (elisp regexp, before string escaping).
+[tokens.quantity]
+# number plus unit (quantities.md 2): 12mm, 3/4in, 1-1/2in, 60m^3/h, 5", 2'
+pcre = '''\b[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?(?:-[0-9]+/[0-9]+|/[0-9]+)?(?:["']|(?![eE][-+]?[0-9])[A-Za-z%][A-Za-z0-9%_]*(?:\^-?[0-9]+)?(?:[*/][A-Za-z][A-Za-z0-9_]*(?:\^-?[0-9]+)?)*)'''
+vim = '''<[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?(-[0-9]+/[0-9]+|/[0-9]+)?(["']|([eE][-+]?[0-9])@![A-Za-z%][A-Za-z0-9%_]*(\^-?[0-9]+)?([*/][A-Za-z][A-Za-z0-9_]*(\^-?[0-9]+)?)*)'''
+emacs = '''\_<[0-9]+\(?:\.[0-9]+\)?\(?:[eE][-+]?[0-9]+\)?\(?:-[0-9]+/[0-9]+\|/[0-9]+\)?\(?:["']\|[A-Za-z%][A-Za-z0-9%_]*\(?:\^-?[0-9]+\)?\(?:[*/][A-Za-z][A-Za-z0-9_]*\(?:\^-?[0-9]+\)?\)*\)'''
+
+[tokens.number]
+pcre = '''\b[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?\b'''
+vim = '''<[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?>'''
+emacs = '''\_<[0-9]+\(?:\.[0-9]+\)?\(?:[eE][-+]?[0-9]+\)?\_>'''
+
+# An ISO 286 class after a quantity: `20mm h11`.
+[tokens.class]
+pcre = '''[A-Za-z]{1,2}[0-9]{1,2}(?:/[A-Za-z]{1,2}[0-9]{1,2})?\b'''
+vim = '''[A-Za-z]{1,2}[0-9]{1,2}(/[A-Za-z]{1,2}[0-9]{1,2})?>'''
+emacs = '''[A-Za-z]\{1,2\}[0-9]\{1,2\}\(?:/[A-Za-z]\{1,2\}[0-9]\{1,2\}\)?\_>'''
+
+[tokens.string]
+pcre = '''"(?:\\.|[^"\\])*"'''
+vim = '''"(\\.|[^"\\])*"'''
+
+# `@name`, `@a::b`, `@"note"`, optional `:"locator"`.
+[tokens.citation]
+pcre = '''@(?:"(?:\\.|[^"\\])*"|[A-Za-z_][A-Za-z0-9_]*(?:::[A-Za-z_][A-Za-z0-9_]*)*)(?::"(?:\\.|[^"\\])*")?'''
+vim = '''@("(\\.|[^"\\])*"|[A-Za-z_][A-Za-z0-9_]*(::[A-Za-z_][A-Za-z0-9_]*)*)(:"(\\.|[^"\\])*")?'''
+emacs = '''@\(?:"\(?:\\.\|[^"\\]\)*"\|[A-Za-z_][A-Za-z0-9_]*\(?:::[A-Za-z_][A-Za-z0-9_]*\)*\)\(?::"\(?:\\.\|[^"\\]\)*"\)?'''
+
+[tokens.attribute]
+pcre = '''#!?\[[^\]]*\]'''
+vim = '''#!?\[[^\]]*\]'''
+emacs = '''#!?\[[^]]*\]'''

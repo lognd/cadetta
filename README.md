@@ -308,6 +308,10 @@ cadetta sync                               # push, rebuild, read back
 cadetta why acme.rover::Rover/axle[0].end_diameter
 ```
 
+## Editor support
+
+Syntax highlighting and `cadetta check` integration for VS Code, Sublime Text, Vim/Neovim, Emacs and JetBrains: see [editors/README.md](editors/README.md).
+
 ## Documentation
 
 | Document | Contents |
