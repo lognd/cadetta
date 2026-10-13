@@ -1,0 +1,16 @@
+kind = "create"
+title = "Fixed as-of date for expiry"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "reproduce a historic result"
+idempotency_key = "replan14:ob-asof"
+labels = ["creates:crates/cadetta-obligations/src/as_of.rs"]
+scope = ["crates/cadetta-obligations/src/as_of.rs"]
+acceptance = ["Given --as-of or [project] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"]
+at = "2026-10-13T05:44:49Z"
+actor = "lognd"
+rev = 1
