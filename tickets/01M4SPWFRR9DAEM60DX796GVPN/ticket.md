@@ -13,6 +13,10 @@ scope = ["Cargo.toml"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWFZP4041AN6YQE08X2AN"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 +++
 
 Outcome: a Cargo workspace with every crate, CI and frob check gates so all other epics can land code.
