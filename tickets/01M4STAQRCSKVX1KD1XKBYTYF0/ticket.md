@@ -2,7 +2,8 @@
 id = "01M4STAQRCSKVX1KD1XKBYTYF0"
 title = "Conformance fixtures for solvers"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
