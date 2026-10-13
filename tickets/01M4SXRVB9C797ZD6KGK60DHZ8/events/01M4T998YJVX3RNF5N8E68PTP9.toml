@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:25:18Z"
+digest = "9cc35e9d261aac1025878bab077bf7011d85805fe2f56d77d1ca8b1addfa2ee6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1ee83b7c-3c06-4108-90cb-66909368b3f9 with nextest profile: default
+    Starting 3 tests across 1 binary (35 tests skipped)
+        PASS [   0.010s] cadetta-lint rules::u002::tests::i004_fires_for_public_parameterized_root
+        PASS [   0.011s] cadetta-lint rules::u002::tests::i004_only_for_roots_of_the_checked_package
+        PASS [   0.010s] cadetta-lint rules::u002::tests::private_parameterized_without_instances_is_u002_not_i004
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 3 tests run: 3 passed, 35 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::u002::tests::private_parameterized_without_instances_is_u002_not_i004) | test(=rules::u002::tests::i004_fires_for_public_parameterized_root) | test(=rules::u002::tests::i004_only_for_roots_of_the_checked_package)'"
+size = 780
+status = "measured"
+test_count = 3
+tests_digest = "3081b1d5143fb40c3593b33cf927f625a6df4bf71ece2c8f3f8a13e26442306a"
+at = "2026-10-13T09:25:18Z"
+actor = "lognd"
+rev = 1

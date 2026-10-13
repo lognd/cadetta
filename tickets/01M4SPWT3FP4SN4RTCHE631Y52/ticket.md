@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T09:24:51Z"
+updated = "2026-10-13T09:26:35Z"
 persona = "design engineer"
 capability = "run `cadetta check`"
 outcome_text = "I get lint diagnostics and CI gating in one command"
 labels = ["creates:crates/cadetta-cli/src/cmd/check.rs"]
-scope = ["crates/cadetta-cli/src/cmd/check.rs"]
+scope = ["crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
