@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "never leave CAD half-pushed"
 idempotency_key = "replan14:ad-atomic"
 labels = ["creates:crates/cadetta-adapter/src/atomic.rs"]
 scope = ["crates/cadetta-adapter/src/atomic.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMC5P00K0B1SZ9JPTJW8W"
 
 [[acceptance]]
 text = "Given a push whose regen fails (R004), when sync finishes, then the host restores the pre-push snapshot so no CAD file stays half-written (adapters.md 2.3)"
