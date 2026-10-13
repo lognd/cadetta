@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T07:18:59Z"
+updated = "2026-10-13T07:20:25Z"
 persona = "design engineer"
 capability = "address any node by path"
 idempotency_key = "replan14:ir-paths"
 labels = ["creates:crates/cadetta-ir/src/path.rs"]
-scope = ["crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/lib.rs", "crates/cadetta-ir/Cargo.toml"]
+scope = ["crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/lib.rs", "crates/cadetta-ir/Cargo.toml", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocked-by"
