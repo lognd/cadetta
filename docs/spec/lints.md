@@ -230,6 +230,15 @@ cannot be resolved or evaluated.
 | N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
 | N006 | type-read-beside-instance | warning | | `Type.member` in an assembly that has a `part` of that type; suggests the instance (language.md 3.1). |
 
+N002 matches the component name in `snake_case` or flattened lowercase
+followed by `_` (`Axle.axle_length`, `FrontAxle.front_axle_x`). N003 fires
+when the last `_` token of a member name is a unit symbol (`mm`, `in`,
+`kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
+N005 only, never also N001. N004 findings come from the resolver, since
+only it sees the `was` text; the lint turns them into diagnostics.
+N006 carries its suggestion in the message (`rear.length`); no edit is
+attached because the read has no single source range in the IR.
+
 ### D: duplication and single source of truth
 
 | Code | Name | Default | Fixed | Meaning |
