@@ -2,7 +2,8 @@
 id = "01M4SWK99ZRAYB4EQ355S4E2HA"
 title = "IR entities Interface, Table, Waiver, Process, Part, Fit and Solver"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
