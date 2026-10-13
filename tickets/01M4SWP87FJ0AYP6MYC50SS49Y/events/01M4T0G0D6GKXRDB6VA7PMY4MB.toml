@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:51:41Z"
+digest = "0c9353a4202cbccee1b4f9c82711c4f758a22c5b82413706f94d2bf3d8e0ddea"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 1 item
+
+bindings/python/tests/test_errors.py .                                   [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3542152-0.xml --------------
+============================== 1 passed in 0.11s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_errors.py::test_operator_violations_raise_quantity_error_with_q_code"
+size = 466
+status = "measured"
+test_count = 1
+tests_digest = "599bc7a70db83883725f295e1537a93a25c1221e6509e713066af667c12a82e8"
+at = "2026-10-13T06:51:41Z"
+actor = "lognd"
+rev = 1

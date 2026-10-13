@@ -1,0 +1,1 @@
+Text renderer, rustc-style.
