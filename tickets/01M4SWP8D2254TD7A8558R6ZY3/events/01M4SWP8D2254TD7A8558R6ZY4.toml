@@ -1,0 +1,16 @@
+kind = "create"
+title = "Result contract"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SV2NDDVYW3WN79XN9C707C"
+persona = "design engineer"
+capability = "separate failures from findings"
+idempotency_key = "replan14:py-result"
+labels = ["creates:bindings/python/python/cadetta/result.py"]
+scope = ["bindings/python/python/cadetta/result.py"]
+acceptance = ["Given a design with error diagnostics, when check runs, then Ok(report) is returned; Err is only I/O, configuration or usage (exit 2) (bindings.md 3)"]
+at = "2026-10-13T05:45:12Z"
+actor = "lognd"
+rev = 1
