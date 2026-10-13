@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `Type.member` in an assembly that has a `part` of that type, when linted, then N006 suggests the instance (language.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `Iso4762M5` and `M2_5`, when linted, then N001 does not fire (language.md 4)"
