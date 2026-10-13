@@ -2,7 +2,8 @@
 id = "01M4SWMCMY3QH9282ZJ07XBBB7"
 title = "Import proposal in proposal.toml and proposal.cdt"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
