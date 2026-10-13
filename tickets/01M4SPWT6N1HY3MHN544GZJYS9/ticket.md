@@ -2,7 +2,8 @@
 id = "01M4SPWT6N1HY3MHN544GZJYS9"
 title = "cadetta ir, explain and units"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
