@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T09:20:13Z"
+updated = "2026-10-13T09:20:23Z"
 persona = "design engineer"
 capability = "place every instance of a part array"
 idempotency_key = "replan14:geo-for"
@@ -25,7 +25,7 @@ target = "01M4SWFXC2K6D3S93F3ER0GZZA"
 
 [[acceptance]]
 text = "Given 'place feet[i].top on base.underside.at(base.foot_sites[i]) for i in 0..count(feet)', when evaluated, then every instance is placed (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given D.at(point), when evaluated, then D is offset to the point's x and y (and z for a Point3) (geometry.md 4)"
