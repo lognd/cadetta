@@ -2,12 +2,12 @@
 id = "01M4V4G8YTDKDK5AB60EB99AA4"
 title = "Conformance runner does not discover nested doc directories (emitters/*)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:20:59Z"
-updated = "2026-10-13T17:28:54Z"
+updated = "2026-10-13T17:28:58Z"
 scope = ["crates/cadetta-cli/tests/conformance/**"]
 
 [[acceptance]]
