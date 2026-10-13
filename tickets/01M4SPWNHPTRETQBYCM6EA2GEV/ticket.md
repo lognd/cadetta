@@ -19,6 +19,10 @@ scope = ["crates/cadetta-units/src/kind.rs"]
 kind = "blocks"
 target = "01M4SPWNNDNT60Z38K24AEKVAE"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWNVX14PTZ4B19436P66Q"
+
 [[acceptance]]
 text = "Given Length*Length, when multiplied, then the kind is Area"
 bound = false
