@@ -5,8 +5,10 @@
 pub mod digest;
 pub mod dim;
 pub mod entities;
+pub mod geometry;
 pub mod json;
 pub mod model;
 pub mod observed;
 pub mod path;
+pub mod schema;
 pub mod variant_name;

@@ -1,6 +1,7 @@
 //! frob:ticket 01M4SWN8DY2SQYR5GCTQQM16Z9
 //! Command implementations (config-cli.md 3), one module per verb family.
 
+pub mod ack;
 pub mod cite;
 pub mod fmt;
 pub mod init;
@@ -12,6 +13,7 @@ use std::io::Write;
 use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
+pub use ack::run_ack;
 pub use fmt::run_fmt;
 pub use init::run_init;
 pub use obligations::run_obligations;

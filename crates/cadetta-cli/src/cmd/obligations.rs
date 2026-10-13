@@ -11,7 +11,7 @@ use cadetta_obligations::lock::{Attest, Lock};
 use cadetta_obligations::roles::Policy;
 use cadetta_obligations::staleness::{Judgement, classify_attested};
 
-use crate::config::{Config, Gate};
+use super::ack::policy_of;
 use crate::output::Format;
 use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
@@ -250,33 +250,6 @@ pub fn render(report: &Report, as_of: &AsOf, format: Format, out: &mut dyn Write
         }
         let _ = writeln!(out, "{line}");
     }
-}
-
-/// Build the role policy from `[obligations]`; the error is a config message.
-fn policy_of(config: &Config) -> Result<Policy, String> {
-    let gate_word = |g: Gate| if g == Gate::Check { "check" } else { "release" };
-    let mut policy = Policy::new();
-    for (name, role) in &config.obligations.roles {
-        let covers: Vec<&str> = role.covers.iter().map(String::as_str).collect();
-        policy
-            .add_role(
-                name,
-                &covers,
-                role.required_for.map(gate_word),
-                role.members.clone(),
-                role.distinct_from_author,
-            )
-            .map_err(|e| e.to_string())?;
-    }
-    for (kind, k) in &config.obligations.kinds {
-        if let Some(g) = k.required_for {
-            policy
-                .kinds
-                .set(kind, gate_word(g))
-                .map_err(|e| e.to_string())?;
-        }
-    }
-    Ok(policy)
 }
 
 /// The obligations the current design offers.

@@ -51,6 +51,7 @@ node cli : trusted {
   may fs.read at "crates/cadetta-cli/**";
   may fs.write at "crates/cadetta-cli/src/project.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
@@ -163,6 +164,11 @@ flow f_cli_modules : cli -> sema {
 }
 
 flow f_cli_units : cli -> units {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_obligations : cli -> obligations {
   label Internal;
   transport in_process;
 }

@@ -149,6 +149,12 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   derived, not stored: a 3x4 matrix of `Exact` (entries from exact
   multiples of 90deg), else `Inexact` with a root; exactness is derived
   from the ops.
+- Wire form of `Op` (`cadetta-ir` `geometry.rs`): a one-key object,
+  `{"offset": {"x"?: path, "y"?: path, "z"?: path}}`,
+  `{"rotate": {"axis": "x|y|z", "angle": path}}`, `{"flip": "x|y"}` or
+  `{"at": path}`; arguments are the paths of their Members. In
+  `Datum.variants` and `Placement.variants` a value is the whole op
+  chain for that alternate (`{"<slot>=<alternate>": [Op]}`).
 - `nominal` is always the designed value (the part as made, what fits,
   checks and reads see). `drawn?` exists only when a process rule
   applied and holds the compensated value that is emitted (language.md
@@ -199,6 +205,28 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
 - `variants` holds, per part slot and alternate, only the values that
   differ from the primary evaluation (variant evaluation, language.md
   3.2). Keys are `"Rover/wheel=Colson2Series"`.
+- Lowering (`cadetta-sema` `lower.rs`, `lower::lower`): the lowerer lives
+  in sema, not `cadetta-ir`, because sema depends on ir (ir <- sema).
+  Rules it fixes:
+  - A component path has an empty member tail (`pkg::Axle`).
+  - `provenance` is `derived` when the member's `deps` are non-empty,
+    else `authored`. A `let` has `kind = let` and `analysis = true`.
+  - `nominal` is the designed value; for a process-compensated member
+    `drawn` is the compensated nominal (Exact) and there is no separate
+    `designed` field.
+  - `tol` has one term per source variable the evaluated form depends
+    on, with radius `|c|`; the centre-minus-nominal offset is carried by
+    the first term (`lo = offset - r`, `hi = offset + r`). A variable
+    owned by a member is named by that member's path; an anonymous one is
+    named `<member path>.tol<N>`, N being its order within the member.
+    A derived parameter keeps its nominal only (no `tol`); a `let` keeps
+    the analysis form.
+  - `variants` keys are caller-supplied variant names; only values that
+    differ from the primary are stored.
+  - Not lowered yet: waivers, interfaces, tables, `require` obligations,
+    solvers and bindings; datums, points and placements (pending the
+    geometry entities ticket); parameterized components lower with
+    valueless members.
 
 ## 4. Digests
 
@@ -243,5 +271,20 @@ part's own digest. Part arguments are nodes keyed `<slot>.<arg>`.
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
-else bumps the schema. JSON Schemas are generated from the Rust types
-and committed under `docs/schemas/`.
+else bumps the schema. JSON Schemas are generated and committed under
+`docs/schemas/` (`cadetta.ir.1.json`, `diag.json`).
+
+Decisions (`cadetta-ir` `schema.rs`): the IR types serialize by hand, so
+the schema is one definition table (`schema_value`) beside them rather
+than a derive; `cadetta.ir.1.json` has `Project` at the root and every
+entity of section 3 under `$defs` (including `Dim` and the item entities
+`Interface`, `Table`, `Waiver`, `Process`). Objects are closed
+(`additionalProperties: false`). A test regenerates the schema and
+compares it to the committed file, and validates a fully populated
+`Project` and each item entity against it, so a serializer change
+without a schema change fails CI. `classify(old, new)` is the rule:
+a new optional property or a new `$defs` entry is minor; a removed or
+retyped property, a new required property, a changed enum or a removed
+definition is breaking and bumps `cadetta.ir/N`. The committed file is
+exactly `schema_json()`; the test does no file or environment access
+(CAP001), so a stale file is replaced by that output.

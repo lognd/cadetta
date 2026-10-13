@@ -225,6 +225,40 @@ citation declared once in the scoped packages. It stores the bytes as
 bytes, same path) and rewrites the `cite` string to that path. A path,
 a standard or an unknown or ambiguous NAME is a usage error (exit 2).
 
+### 3.4 `ack` details
+
+Decided (0.1.0), frob:ticket 01M4ST8F1W8T0BKARAMG0D49J2:
+
+- Usage errors (exit 2): no `--role`, a role not declared under
+  `[obligations.roles]`, a selector matching no obligation, no `--reason`
+  (unless `--baseline` or the selector matches only `waiver:` ids), no
+  attester identity (`--as EMAIL`, else `git config user.email`), or a
+  role refused by the role policy (obligations.md 5). A refusal writes
+  nothing: `ack` is atomic.
+- `--baseline` skips obligations the role already attested and records
+  reason `baseline` on the rest.
+- `--release` restricts the ack to roles that gate `check --release`
+  (`required_for` of `check` or `release`); others are skipped.
+- An ack at an unchanged digest changes nothing, not even `by` or `at`.
+- An unknown author fails closed for `distinct_from_author` roles
+  (obligations.md 5).
+- `ots:` acks also record the file citations under role `source`.
+
+### 3.5 `obligations` details
+
+Decided (0.1.0). Rows are open and stale obligations only; `--stale`
+keeps stale rows. A row's state is judged against the attestation of the
+role named by `--role`, else of the first role (by name) whose `covers`
+matches; an obligation no role covers is open. `--role R` drops
+obligations R does not cover (unknown R is exit 2). Each row prints id,
+role, last attester, age in days as of the report date, nearest changed
+upstream node and, when the stale verdict still holds, "verdict
+unchanged, margin A -> B". Exit 1 when any listed row is required for the
+gate (role or kind `required_for`; `--release` adds the `release` ones),
+so with `--stale` only stale rows count. `--format json` prints one
+`cadetta.obligations/1` document: `as_of`, `as_of_source`, `gated` and an
+`obligations` array of the row fields.
+
 ## 4. Global flags
 
 | Flag | Meaning |

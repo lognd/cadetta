@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T08:51:40Z"
+digest = "f8f3de8014cad031bddb5feca5b57ac0455ccafa331c128d69e9396579e1a54e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 80b0235b-6d49-40c4-abd9-eb57b77fe859 with nextest profile: default
+    Starting 1 test across 21 binaries (543 tests skipped)
+        PASS [   0.010s] cadetta cmd::ack::tests::waiver_records_target_digest_without_a_reason
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 543 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::ack::tests::waiver_records_target_digest_without_a_reason)"
+size = 564
+status = "measured"
+test_count = 1
+tests_digest = "fca3fd680295f7f744dd7768d197fc303f98ac8018a0db1a1877673a17434e0f"
+at = "2026-10-13T08:51:40Z"
+actor = "lognd"
+rev = 1
