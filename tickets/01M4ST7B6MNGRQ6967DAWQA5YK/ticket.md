@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a value the adapter cannot extract faithfully, when read, then exact:false with a reason, not a guess (adapters.md 4 rule 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given any adapter, when run, then it never writes into .cdt source (adapters.md 4 rule 5)"
