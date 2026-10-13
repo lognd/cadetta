@@ -1,0 +1,10 @@
+kind = "create"
+title = "Evaluate optional params: given(x), absent members, E002 on absent reads"
+type = "story"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~XCK8EGP: ScrewJoint now declares name?: Type params, given(), and #[when(cond)] members/checks (std/src/fasteners/screwjoint.cdt); sema binds ArgSource::Absent but nothing evaluates given(), #[when] presence or E002 on absent members yet."
+at = "2026-10-13T23:32:59Z"
+actor = "lognd"
+rev = 1
