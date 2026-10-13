@@ -37,6 +37,10 @@ target = "01M4SPWH74K9QQS72Z9YMTPD72"
 [[links]]
 kind = "blocks"
 target = "01M4SPWHC2VWRX6V0G4NZKYPB9"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 +++
 
 Outcome: a Cargo workspace with every crate, CI and frob check gates so all other epics can land code.
