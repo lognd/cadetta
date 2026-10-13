@@ -152,6 +152,11 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   path of the package, sorted (packages.md 2); `dependencies[]` holds
   `{name, version, source, digest}` per resolved dependency, sorted by
   name (packages.md 1). Items in `src/lib.cdt` sit at the package root.
+- Rust model (`cadetta-ir` `model.rs`): `Exact` wraps the units
+  `Magnitude`, `Value.dim` is the units `Dim`, digests are `Option`
+  until computed, `Project.modules` and `dependencies` are kept sorted
+  by their setters, and a member's `Locator.for` is the field
+  `for_alternate` in Rust.
 - Obligation and attestation state is not IR: it lives in the
   `cadetta.obligations/1` schema (obligations.md).
 - `deps` are canonical paths; the graph is acyclic (D003).

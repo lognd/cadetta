@@ -2,18 +2,19 @@
 id = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
 title = "IR data model types"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:36:32Z"
+updated = "2026-10-13T07:37:05Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
 labels = ["creates:crates/cadetta-ir/src/model.rs"]
-scope = ["crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/lib.rs", "crates/cadetta-ir/Cargo.toml"]
+scope = ["crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/lib.rs", "crates/cadetta-ir/Cargo.toml", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocks"
