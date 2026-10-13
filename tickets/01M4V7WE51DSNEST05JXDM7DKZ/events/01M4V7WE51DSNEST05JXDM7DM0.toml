@@ -1,0 +1,10 @@
+kind = "create"
+title = "sw-equations: property/frame locator kinds are undefined in the spec"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/emitters/**"]
+body = "found while working ~EWSF8YR. Decide error or support; owner rule is error."
+at = "2026-10-13T18:20:04Z"
+actor = "lognd"
+rev = 1
