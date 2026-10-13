@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:02:07Z"
-updated = "2026-10-13T09:30:48Z"
+updated = "2026-10-13T09:30:49Z"
 persona = "adapter author"
 capability = "prove an adapter meets the five contract rules"
 idempotency_key = "replan13:Adapter contract test harness"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given any adapter, when run, then it never writes into .cdt source (adapters.md 4 rule 5)"
-bound = false
+bound = true
 +++
