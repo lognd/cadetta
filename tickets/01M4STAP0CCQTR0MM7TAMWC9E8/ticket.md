@@ -2,18 +2,18 @@
 id = "01M4STAP0CCQTR0MM7TAMWC9E8"
 title = "std.materials (14 variants and Materials table)"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T06:05:15Z"
+updated = "2026-10-13T07:35:12Z"
 persona = "design engineer"
 capability = "pick a material and read cited properties"
 idempotency_key = "replan13:std.materials (14 variants and Materials table)"
 labels = ["creates:std/src/materials.cdt"]
-scope = ["std/src/materials.cdt"]
+scope = ["std/src/materials.cdt", "crates/cadetta-syntax/tests/std_materials.rs", "docs/spec/stdlib.md"]
 
 [[links]]
 kind = "blocks"
