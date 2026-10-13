@@ -8,12 +8,12 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:45Z"
-updated = "2026-10-13T20:38:46Z"
+updated = "2026-10-13T21:14:46Z"
 persona = "design engineer"
 capability = "cite sources as typed records that someone else can look up"
 outcome_text = "every value says where it came from precisely"
 idempotency_key = "d15:cite-core"
-scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**", "crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/graph.rs", "crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/cmd/why.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-solve/src/outputs.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/**", "crates/cadetta-lint/src/**", "crates/cadetta-adapter/src/builtin/**"]
+scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**", "crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/graph.rs", "crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/cmd/why.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-solve/src/outputs.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/**", "crates/cadetta-lint/src/**", "crates/cadetta-adapter/src/builtin/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-solve/src/decl.rs", "tests/conformance/**"]
 
 [[acceptance]]
 text = "Given cite NAME: TYPE { fields } with the language.md 3.9 types and fields, when compiled, then Project.citations holds {path, type, fields, file_digest?, digest} sorted by path and citing nodes carry a CiteRef (language.md 3.9; ir.md 3)"

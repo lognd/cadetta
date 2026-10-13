@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**", "crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/graph.rs", "crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/cmd/why.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-solve/src/outputs.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/**", "crates/cadetta-lint/src/**", "crates/cadetta-adapter/src/builtin/**"]
+new = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**", "crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/graph.rs", "crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/cmd/why.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-solve/src/outputs.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/**", "crates/cadetta-lint/src/**", "crates/cadetta-adapter/src/builtin/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-solve/src/decl.rs", "tests/conformance/**"]
+at = "2026-10-13T21:14:46Z"
+actor = "lognd"
+rev = 1
