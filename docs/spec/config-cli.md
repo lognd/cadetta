@@ -25,7 +25,9 @@
    to the nearest `cadetta.toml` with a `[package]` or `[workspace]`
    table; `--config FILE` names one explicitly. If none is found, exit
    2. In a workspace, a command run inside a member scopes to that
-   member unless run at the workspace root. The Python `Project.open`
+   member unless run at the workspace root. `--config FILE` also
+   starts the walk at FILE's directory, so FILE need not itself carry a
+   project table (the nearest one at or above it wins). The Python `Project.open`
    follows the same rule.
 
 ## 2. `cadetta.toml`
