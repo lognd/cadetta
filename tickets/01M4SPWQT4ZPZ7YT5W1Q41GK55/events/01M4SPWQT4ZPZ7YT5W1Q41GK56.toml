@@ -1,0 +1,16 @@
+kind = "create"
+title = "Lint family Naming rules N001-N004"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+persona = "design engineer"
+capability = "get lints for the N family of the catalog"
+outcome_text = "I see actionable diagnostics with stable codes"
+labels = ["creates:crates/cadetta-lint/src/rules/n.rs", "creates:tests/lints/N*/**"]
+scope = ["crates/cadetta-lint/src/rules/n.rs", "tests/lints/N*/**"]
+acceptance = ["Given parameter `Axle.axle_length`, when linted, then N002 is reported", "Given `diameter_mm`, when linted, then N003 is reported", "Given component `my_axle`, when linted, then N001 is reported", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+at = "2026-10-13T04:03:53Z"
+actor = "lognd"
+rev = 1
