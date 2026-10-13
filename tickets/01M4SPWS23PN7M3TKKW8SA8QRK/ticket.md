@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:03:55Z"
+updated = "2026-10-13T04:04:02Z"
 persona = "design engineer"
 capability = "choose nominal, mid, mmc or lmc and see Q004 for unrepresentable values"
 outcome_text = "emitters decide nothing and never round silently"
 labels = ["creates:crates/cadetta-adapter/src/policy.rs"]
 scope = ["crates/cadetta-adapter/src/policy.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWS56AF9GE891GAM5QSWX"
 
 [[acceptance]]
 text = 'Given `point = "mid"`, when resolved, then the midpoint of the limits is selected'
