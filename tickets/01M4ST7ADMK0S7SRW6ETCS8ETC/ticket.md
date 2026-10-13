@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:01:01Z"
+updated = "2026-10-13T08:01:08Z"
 persona = "design engineer"
 capability = "look values up in cited tables by key, nearest or at-least"
 idempotency_key = "replan13:Tables, lookups and Table<K> parameters"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a quantity-keyed table, when `T.at_least(x)`, `T.at_most(x)` and `T.nearest(x)` are read, then they return the smallest key >= x, largest <= x and closest with ties to the larger (language.md 3.6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given any row, when `.key` is read, then the matched key is returned (language.md 3.6)"
