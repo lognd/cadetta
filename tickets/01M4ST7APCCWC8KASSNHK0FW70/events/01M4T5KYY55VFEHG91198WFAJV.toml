@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:20:42Z"
+digest = "7e2c7e9431d8120efbcb57c5def9f55e223b0020728645f70ecab021809bdc99"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.61s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 96fe930c-5ac7-495f-a374-3abb8dbe7cf6 with nextest profile: default
+    Starting 1 test across 1 binary (90 tests skipped)
+        PASS [   0.012s] cadetta-sema process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 90 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made)'"
+size = 1035
+status = "measured"
+test_count = 1
+tests_digest = "735458f37ae1b9e042b8fead70e7db7f232500e5b246a24b7e0beab76acb110a"
+at = "2026-10-13T08:20:42Z"
+actor = "lognd"
+rev = 1
