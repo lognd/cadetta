@@ -248,11 +248,11 @@ Wizard, FreeCAD PartDesign Hole, Onshape hole) from a joint is OQ-14.
 
 ```
 interface Sourced {
-  unit_cost: Money
-  lead_time: Time
-  moq: Count
-  supplier: Text
-  mass: Mass
+  unit_cost?: Money
+  lead_time?: Time
+  moq?: Count
+  supplier?: Text
+  mass?: Mass
 }
 ```
 
