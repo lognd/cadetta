@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a toleranced angle, when a coordinate is carried through it, then the coordinate is conservative (geometry.md 2; quantities.md 5.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given offsets with tolerances, when composed, then they remain source variables of the affine form (geometry.md 2; quantities.md 5.4)"
