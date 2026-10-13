@@ -19,6 +19,10 @@ scope = ["adapters/solidworks/src/guard.py"]
 kind = "blocked-by"
 target = "01M4SV2TR8ENTA87J1DDKCF816"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMDFARQR4Q9HCBERB21PP"
+
 [[acceptance]]
 text = "Given a read-only file, when pushing, then R010 is reported; given an existing equation, then R006 lists it before replacing (adapters.md 4)"
 bound = false
