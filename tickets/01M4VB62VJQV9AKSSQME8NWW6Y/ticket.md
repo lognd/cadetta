@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:45Z"
-updated = "2026-10-13T21:14:46Z"
+updated = "2026-10-13T21:19:31Z"
 persona = "design engineer"
 capability = "cite sources as typed records that someone else can look up"
 outcome_text = "every value says where it came from precisely"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crat
 
 [[acceptance]]
 text = "Given cite NAME: TYPE { fields } with the language.md 3.9 types and fields, when compiled, then Project.citations holds {path, type, fields, file_digest?, digest} sorted by path and citing nodes carry a CiteRef (language.md 3.9; ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given an unknown type or field, a malformed date or URL or a wrongly shaped value, when compiled, then E006; a repeated field is E003; the draft 1.4 forms cite x = "..." and cite x = std::... are E001 with the typed-form message (language.md 3.9)'
