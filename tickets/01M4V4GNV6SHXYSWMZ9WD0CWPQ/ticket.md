@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:21:13Z"
-updated = "2026-10-13T17:58:23Z"
+updated = "2026-10-13T17:59:15Z"
 scope = ["docs/spec/emitters/sw-equations.md", "docs/spec/adapters.md", "tests/conformance/emitters/sw-equations/**"]
 
 [[acceptance]]
 text = "Given a ref-mode dimension with no ref_to, no bound global and no alias referent, when the spec is read, then adapters.md 3 and emitters/sw-equations.md 1 state that the emitter creates the path's mangled global, that its unit is the dimension locator native_unit (else the adapter declared native unit), and that it is written before the path's dimension lines"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the conformance corpus, when run, then a pair covers the created-global unit (must-fire: native_unit in gives 1in; must-not-fire: no native_unit gives the adapter default)"
