@@ -1,0 +1,6 @@
+kind = "triage"
+action = "decline"
+reason = "closed in spec draft 1.4 (docs/spec/README.md Open questions)"
+at = "2026-10-13T05:45:34Z"
+actor = "lognd"
+rev = 1

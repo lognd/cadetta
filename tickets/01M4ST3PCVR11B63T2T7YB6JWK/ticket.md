@@ -2,11 +2,12 @@
 id = "01M4ST3PCVR11B63T2T7YB6JWK"
 title = "OQ-12: Record part swaps as lock-file events"
 type = "docs"
-category = "triage"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T05:00:07Z"
-updated = "2026-10-13T05:00:07Z"
+updated = "2026-10-13T05:45:34Z"
 labels = ["open-question"]
 +++
 
