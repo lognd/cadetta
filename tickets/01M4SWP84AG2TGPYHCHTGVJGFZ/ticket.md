@@ -1,0 +1,21 @@
++++
+id = "01M4SWP84AG2TGPYHCHTGVJGFZ"
+title = "[defaults] precedence"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+reporter = "lognd"
+created = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T05:45:12Z"
+persona = "design engineer"
+capability = "override policies per project"
+idempotency_key = "replan14:sd-defaults"
+labels = ["creates:crates/cadetta-sema/src/defaults.rs"]
+scope = ["crates/cadetta-sema/src/defaults.rs"]
+
+[[acceptance]]
+text = "Given #![default] on component and file, project [defaults] and std, when resolved, then precedence is that order, highest first (stdlib.md 4; config-cli.md 2)"
+bound = false
++++
