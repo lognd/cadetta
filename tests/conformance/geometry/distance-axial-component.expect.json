@@ -1,0 +1,20 @@
+{
+  "spec": "1.5",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "distance",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "distance includes the axial component: a 0.3mm z offset breaks 0.25mm, 0.2mm does not"
+}
