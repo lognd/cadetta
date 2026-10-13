@@ -2,12 +2,12 @@
 id = "01M4V5BBMBBBB79V852A4RA9PQ"
 title = "Spec: json read unit precedence and number formatting gaps"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:35:47Z"
-updated = "2026-10-13T18:07:52Z"
+updated = "2026-10-13T18:07:53Z"
 scope = ["docs/spec/emitters/json.md", "docs/spec/emitters/csv.md", "docs/spec/adapters.md", "tests/conformance/emitters/json/**", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
