@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `use std::fits`, when resolved, then std is found as an ordinary package (std/cadetta.toml with [package], root std/src/lib.cdt) with no special-casing, and no user package may be named std (stdlib.md 1; packages.md 1)"
-bound = false
+bound = true
 +++
