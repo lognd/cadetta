@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T06:51:16Z"
+updated = "2026-10-13T06:51:17Z"
 persona = "design engineer"
 capability = "read diagnostics like rustc output"
 idempotency_key = "replan14:lint-text"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given no terminal, when rendering, then text is still the default (lints.md 1.2; config-cli.md 5)"
-bound = false
+bound = true
 +++
