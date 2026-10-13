@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:14:42Z"
+digest = "ee23242472516a419f9ee53e2135106e88ec4b88aa0b869f447cda91bfb6dab1"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.55s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3b865176-8a91-4cc9-b107-c675177e477f with nextest profile: default
+    Starting 1 test across 16 binaries (285 tests skipped)
+        PASS [   0.010s] cadetta-geometry datum::tests::arguments_are_members_with_canonical_paths
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 1 test run: 1 passed, 285 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=datum::tests::arguments_are_members_with_canonical_paths)"
+size = 725
+status = "measured"
+test_count = 1
+tests_digest = "906670f68ec4cd38f5b52033d6ec6da503cec68e17a0cb8b96891a1f8cdb1121"
+at = "2026-10-13T07:14:42Z"
+actor = "lognd"
+rev = 1

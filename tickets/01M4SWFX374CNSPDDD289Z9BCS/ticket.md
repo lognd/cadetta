@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:14:20Z"
+updated = "2026-10-13T07:14:42Z"
 persona = "design engineer"
 capability = "declare datums on a component"
 idempotency_key = "replan14:geo-datum"
@@ -29,7 +29,7 @@ bound = false
 
 [[acceptance]]
 text = "Given an offset or rotation argument, when lowered, then it is a Member with a canonical path such as Rail.site.offset.x (geometry.md 2; ir.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given flip(x), when evaluated, then it equals rotate(x = 180deg) and reverses the normal (geometry.md 2)"
