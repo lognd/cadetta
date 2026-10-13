@@ -2,7 +2,8 @@
 id = "01M4V4G8YTDKDK5AB60EB99AA4"
 title = "Conformance runner does not discover nested doc directories (emitters/*)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
