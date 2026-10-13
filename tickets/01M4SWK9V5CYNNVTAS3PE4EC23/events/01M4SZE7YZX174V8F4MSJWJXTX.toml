@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:33:15Z"
+digest = "7c7e009e2fbdfe988d8cb92169db5e1e94264b82ac7cff66a7d6e9ed318141ba"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID df1bebaa-d4c0-4114-af85-fdb266ed126b with nextest profile: default
+    Starting 1 test across 1 binary (4 tests skipped)
+        PASS [   0.015s] cadetta-lint diag::tests::foreign_records_roundtrip_unchanged
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 1 test run: 1 passed, 4 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(foreign_records_roundtrip_unchanged)'"
+size = 548
+status = "measured"
+test_count = 1
+tests_digest = "12f14a4cbb49545d387661203cbe943907bf07eee6241fab607a68dac2c62ee3"
+at = "2026-10-13T06:33:15Z"
+actor = "lognd"
+rev = 1
