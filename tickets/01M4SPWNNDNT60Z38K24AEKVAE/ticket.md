@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:20:46Z"
+updated = "2026-10-13T06:20:48Z"
 persona = "design engineer"
 capability = "attach symmetric, asymmetric, limit and fit tolerances to quantities and add them"
 outcome_text = "stacked deviations are computed exactly"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given lower > upper, or a deviation of a different dimension, when constructed, then an error value is returned (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `1in [+-0.1mm]`, when constructed, then deviation units may differ from the nominal unit (quantities.md 5.1)"
