@@ -52,5 +52,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `std`, when used, then every item it exports is pub (packages.md 3; stdlib.md 1)"
-bound = false
+bound = true
 +++
