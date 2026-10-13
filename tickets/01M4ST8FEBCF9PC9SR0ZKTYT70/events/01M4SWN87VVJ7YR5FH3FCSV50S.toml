@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the Rust query types, when schemas are generated, then docs/schemas/impact.json and compare.json match the committed files (CI check) (obligations.md 5)", "Given any query with `--format json`, when run, then its output validates against the matching schema (obligations.md 5)"]
+new = ["Given the Rust query types, when schemas are generated, then docs/schemas/impact.json and compare.json match the committed files (CI check) (obligations.md 5)", "Given any query with `--format json`, when run, then its output validates against the matching schema (obligations.md 5)", "Given the verbs obligations, why, swap, lock and diag, when emitting JSON, then each has a generated schema in docs/schemas (bindings.md 1; obligations.md 5)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
