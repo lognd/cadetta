@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given undecided results under a variant, when evaluated, then the alternate stays viable with the I003 fact (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a violating variant, when evaluated, then the alternate stays listed as not viable (I002) naming the failure and is reported as `C001 for alt NAME` (language.md 3.2)"
