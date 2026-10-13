@@ -408,4 +408,14 @@ mod tests {
         );
         assert_eq!(p.dependencies[0].trust, vec!["source", "tolerance_review"]);
     }
+
+    // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::load
+    #[test]
+    fn load_reports_an_absent_manifest() {
+        let err = load(Path::new("/nonexistent/cadetta-dir")).unwrap_err();
+        assert!(matches!(
+            err,
+            ManifestError::Config(ConfigError::Read { .. })
+        ));
+    }
 }
