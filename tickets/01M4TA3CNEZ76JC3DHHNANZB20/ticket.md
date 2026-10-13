@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-13T09:56:15Z"
+updated = "2026-10-13T12:44:49Z"
 scope = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**", "design/model.grmb", "docs/spec/language.md"]
 
 [[acceptance]]
