@@ -1,0 +1,16 @@
+kind = "create"
+title = "cadetta solve"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
+persona = "design engineer"
+capability = "run stale solvers on demand"
+idempotency_key = "replan13:cadetta solve"
+labels = ["creates:crates/cadetta-cli/src/cmd/solve.rs"]
+scope = ["crates/cadetta-cli/src/cmd/solve.rs"]
+acceptance = ["Given stale or missing results, when `cadetta solve [NAME]` runs, then the solver runs and results are stored (solvers.md 5)", "Given nothing stale, when run, then nothing runs and exit is 0 (solvers.md 5)"]
+at = "2026-10-13T05:03:55Z"
+actor = "lognd"
+rev = 1
