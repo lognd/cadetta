@@ -1,0 +1,4 @@
+pub model Joint {
+  priv row = 3mm
+  pitch = row
+}

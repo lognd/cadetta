@@ -1,0 +1,3 @@
+model Hello {
+  size = 10mm
+}

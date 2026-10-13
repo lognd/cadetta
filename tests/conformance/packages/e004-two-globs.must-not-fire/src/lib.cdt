@@ -1,0 +1,5 @@
+use package::a::*
+use package::b::Thing
+model Part {
+  w = Thing.size
+}

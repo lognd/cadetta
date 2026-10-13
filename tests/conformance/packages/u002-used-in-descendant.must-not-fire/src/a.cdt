@@ -1,0 +1,4 @@
+use package::Helper
+assembly Rig {
+  part h: Helper(span = 3mm)
+}

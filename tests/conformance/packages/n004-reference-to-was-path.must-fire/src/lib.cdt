@@ -1,0 +1,3 @@
+model Part {
+  t = package::old::Bracket.thickness
+}

@@ -1,0 +1,6 @@
+interface Caster {
+  bore: Length
+}
+pub model Wheel: Caster {
+  bore = 5mm
+}

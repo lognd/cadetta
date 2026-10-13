@@ -1,0 +1,6 @@
+[package]
+name = "acme.shop"
+as_of = "2026-10-13"
+
+[lint]
+fail_on = "error"

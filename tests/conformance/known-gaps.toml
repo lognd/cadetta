@@ -976,3 +976,238 @@ reason = "geometry expression is not evaluated by this stage yet"
 fixture = "geometry/tolerance-on-generator-member"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "packages/e002-glob-imports-only-pub"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e002-prelude-has-no-std"
+ticket = "~6K58FR1"
+reason = "use std:: imports do not resolve yet"
+
+[[gap]]
+fixture = "packages/e005-dependency-without-manifest"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-empty-src"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-missing-src"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-registry-dependency-rejected"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-std-name-reserved"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-workspace-member-is-workspace"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-workspace-member-without-manifest"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e012-bare-version-is-caret"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-comparator-list"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-exact"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-first-requirement-fails"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-prerelease-never-matches"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-tilde"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-unversioned-dependency"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-version-unsatisfied"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e012-wildcard"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e013-single-version-per-project"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e013-version-conflict"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e014-dependency-changed"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e015-bad-module-directory"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/e015-bad-module-file"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/e015-hyphen-in-module-name"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/e015-non-cdt-files-ignored"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/e016-fully-qualified-path-checks-visibility"
+ticket = "~KRVD0V6"
+reason = "parser rejects package:: paths in expressions"
+
+[[gap]]
+fixture = "packages/e016-member-public-by-default"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-priv-member-read-from-dependency"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-priv-member-same-package"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-priv-member-through-part-chain"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-private-from-dependency"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-private-visible-in-descendants"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e016-pub-package-from-dependency"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/e016-pub-package-within-package"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e017-priv-member-implements-interface"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e017-private-function-signature"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e017-private-interface-member-type"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/e017-pub-package-in-pub-signature"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "packages/module-implicit-parent"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/module-path-is-file-tree"
+ticket = "~THJT2H7"
+reason = "E015 is reported as E001 and N001 fires on valid nested modules"
+
+[[gap]]
+fixture = "packages/n004-reference-to-was-path"
+ticket = "~KRVD0V6"
+reason = "parser rejects package:: paths in expressions"
+
+[[gap]]
+fixture = "packages/pub-use-private-item-not-reexported"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/pub-use-reexports"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
+
+[[gap]]
+fixture = "packages/u002-not-i004-for-private-component"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "packages/u002-private-unused"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "packages/u002-used-in-descendant"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "packages/use-brace-tree"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the privacy and use-target diagnostics yet"

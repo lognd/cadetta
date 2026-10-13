@@ -1,0 +1,7 @@
+pub model Wheel {
+  priv bore = 5mm
+  hub = bore
+}
+pub model Rover {
+  part w: Wheel
+}

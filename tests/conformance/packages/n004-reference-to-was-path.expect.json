@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 5",
+  "rule": "N004",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "N004",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

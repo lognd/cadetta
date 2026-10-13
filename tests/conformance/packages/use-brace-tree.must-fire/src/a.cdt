@@ -1,0 +1,6 @@
+pub model Thing {
+  size = 3mm
+}
+pub model Other {
+  size = 4mm
+}

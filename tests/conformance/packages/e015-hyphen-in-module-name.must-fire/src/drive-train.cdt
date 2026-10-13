@@ -1,0 +1,3 @@
+model Aux {
+  weight = 9mm
+}

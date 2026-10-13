@@ -1,0 +1,4 @@
+use acme.shop::Rover
+model Part {
+  b = Rover.w.hub
+}

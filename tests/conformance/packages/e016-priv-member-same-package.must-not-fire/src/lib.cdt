@@ -1,0 +1,7 @@
+model Part {
+  w = Joint.row
+}
+pub model Joint {
+  priv row = 3mm
+  pitch = row
+}
