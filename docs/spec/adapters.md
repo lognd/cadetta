@@ -12,7 +12,7 @@ Each adapter declares which of three capabilities it implements.
 |---|---|---|---|
 | `emit` | IR -> file | Writes a parameter file the CAD tool links to or imports. | retyping values |
 | `read` | file -> observed IR | Extracts parameters (global variables, equations, dimension values, custom properties) from native files. | transcribing existing designs |
-| `drive` | IR <-> live tool | Pushes values into an open or headless session, triggers regeneration, and reads results back. | open, import, rebuild, check |
+| `drive` | IR <-> live tool | Opens documents, pushes values, triggers regeneration, reads results back and saves. | open, import, rebuild, check |
 
 `drive` implies the adapter can report regeneration failures (rebuild
 errors, failed features) as diagnostics (R004).
@@ -20,26 +20,121 @@ errors, failed features) as diagnostics (R004).
 ## 2. The loop
 
 ```
-cadetta sync = compile -> lint -> push changed params -> regen -> read back -> drift lint
+cadetta sync = compile -> lint -> read -> classify -> push -> regen
+               -> read back -> record
 ```
 
-`sync` is idempotent: when no digest changed and read-back matches, it
-writes nothing and triggers no regen. Without `drive`, `sync` degrades to
-`emit` plus instructions for the user's one manual step (relinking or
-reloading), and `read` on the next run detects drift.
+`sync` is a three-way compare per locator:
+
+- **base**: the lock's `synced` record for the locator, the value
+  cadetta last pushed (or adopted) and read back. The records live in
+  the committed `cadetta.lock` (obligations.md 3), not in a gitignored
+  file: the base describes committed CAD files, and two branches that
+  sync one locator differently are a real conflict.
+- **ours**: the value freshly computed for the locator (the emit point,
+  quantities.md 5.6, in the locator's native unit at the declared
+  precision).
+- **theirs**: the value `read` finds in the native document before any
+  push.
+
+| ours vs base | theirs vs base | Class | Action |
+|---|---|---|---|
+| same | same | no-op | nothing |
+| differs | same | push | push `ours` |
+| same | differs | cad-moved | R001 "cad moved"; no push; exit 1 |
+| differs | differs, theirs = ours | converged | record only |
+| differs | differs, theirs != ours | both-moved | R001 "both moved"; no push |
+| no base | theirs = ours | adopt | record only |
+| no base | theirs != ours | first push | push `ours` (R006 if it replaces an expression) |
+
+R001 states which side moved and shows base, ours and theirs.
+`sync --force-design` pushes `ours` over any R001 class.
+
+`sync` is idempotent: when every locator classifies as no-op or
+converged it writes nothing, triggers no regen and does not touch any
+document. The no-op comparison is over emitted lines or values; the
+header line of an emitted file (which carries the IR digest and changes
+on any unrelated edit) is excluded.
+
+Without `drive`, `sync` degrades to `emit` plus instructions for the
+user's one manual step (relinking or reloading); there is no `theirs`,
+so no classification happens. `read` on a later run detects drift only
+if the adapter can read the live model.
+
+**CAD file reflects design.** Only a `drive` adapter (or a `read` of the
+native document itself) discharges this obligation (obligations.md 2).
+The `sw-equations` adapter never does: the file it reads is the file
+cadetta wrote, so the obligation stays open with the reason
+"unverifiable without drive", and `sync` reports it as O004 (info by
+default). The user may attest it with a role (`ack`).
+
+### 2.1 Cadetta owns the dependency structure
+
+`sync` replaces native expressions on bound locators with values or with
+links to cadetta-emitted globals. R006 (warning) fires whenever a push
+replaces a native expression or driving equation, listing the old
+expression. A push to an equation-driven dimension removes the equation
+and then sets the value; the removal is reported, and `--dry-run` shows
+it first. `import` keeps such expressions as `.cdt` references (7), so
+after `--accept` the structure lives in the source.
+
+### 2.2 Documents, sessions and saving
+
+- `drive` attaches to a running instance of the tool if one exists,
+  otherwise starts one hidden. It closes only what it opened.
+- A document that is dirty, locked by another process or read-only is
+  R009; it is refused before any push for that document.
+- After a successful regen and a matching read-back, the adapter saves
+  the documents it modified (`[[adapter]] save = "after-sync"`, the
+  default; `"never"` leaves them modified and the sync obligation open
+  with the reason "unsaved").
+- The lock records the digest of the saved file. `read` of a file whose
+  on-disk digest equals the lock's skips opening it in the tool and
+  reuses the recorded values.
+
+### 2.3 Failure handling and atomicity
+
+| Failure | Code | Behaviour |
+|---|---|---|
+| tool not installed, wrong platform, adapter version mismatch | R008 | `sync` fails, exit 2; `check` reports info and uses the lock base as observed |
+| document dirty, locked, read-only | R009 | refused before any push |
+| driven or suppressed dimension, equation or unit conflict | R010 | that locator is rejected, others proceed |
+| rebuild error after push | R004 | the document is restored (below) |
+| value not representable at declared precision | Q004 | value withheld, path not written, exit 1 |
+| two emitted paths create one native name | R013 | hard failure before any write |
+| bound path missing natively | R003 | locator skipped |
+
+Pushes are per document. Before pushing, an adapter MUST snapshot the
+current values of every locator it will change in that document and
+restore them on R004 (SOLIDWORKS: rebuild fails, set the old values,
+rebuild again). If the restore itself fails the adapter says so in the
+diagnostic. Lock `synced` records are updated only for locators whose
+read-back matched, so a partial sync reconverges on the next run.
+
+### 2.4 Resolving drift
+
+| Direction | Command |
+|---|---|
+| design to CAD | `cadetta sync --force-design` |
+| CAD to design | `cadetta import ADAPTER FILE... --update` (7.4) |
+
+After either, the next `sync` classifies the locator as no-op.
 
 ## 3. Bindings
 
 A binding maps a canonical path to an adapter's native locator, e.g.
-`acme.rover::Axle.end_diameter` to the SOLIDWORKS global variable
-`"Axle_end_diameter"` or to the dimension `"D1@Boss-Extrude1@Axle.SLDPRT"`.
+`acme.rover::Rover/axle[*].end_diameter` to the SOLIDWORKS global
+variable `"Axle_end_diameter"` or to the dimension
+`"D1@Boss-Extrude1@Axle.SLDPRT"`.
 
-- Bindings live in `bindings/<adapter>.toml`, committed, one table per
-  canonical path. A path may bind several native locators (a legacy
-  file often drives one value through a global and a dimension, or two
-  globals); each locator has a `kind` (`global`, `dimension`,
-  `property`). `#[native(adapter, "locator")]` in source pins one
-  inline. The file spelling:
+- Bindings live in `bindings/<id>.toml`, committed, one table per
+  canonical path; `<id>` is the adapter's `id` (3.2). `[[adapter]]
+  bindings = "..."` points an adapter at another file, so two adapters
+  for one tool (sw-equations and solidworks) share one. A path may bind
+  several native locators (a legacy file often drives one value through
+  a global and a dimension, or two globals); each locator has a `kind`
+  (`global`, `dimension`, `property`, `frame`). `#[native(adapter, "locator")]`
+  in source pins one inline. The file spelling:
 
   ```toml
   ["acme.gearbox::CoverPlate.thickness"]
@@ -49,44 +144,122 @@ A binding maps a canonical path to an adapter's native locator, e.g.
     { locator = "D1@Boss-Extrude1@CoverPlate.SLDPRT", kind = "dimension", ref_to = "Plate_Thk" },
   ]
   ```
+
+- Locator fields:
+
+  | Field | Meaning |
+  |---|---|
+  | `locator` | the native name or dimension spelling |
+  | `kind` | `global`, `dimension`, `property`, `frame` (a SOLIDWORKS coordinate system or plane feature) |
+  | `mode` | `ref` or `value` (below) |
+  | `native_unit` | unit of the native number |
+  | `ref_to` | for a `ref` dimension, the global it links to |
+  | `for` | an alternate of an interface-typed slot (3.3) |
+  | `config` | the configuration the locator belongs to; import records the active one (7.3) |
+  | `sign` | `-1` negates a coordinate on write and read (geometry.md 6) |
+  | `component` | in-assembly instance (`"wheel<2>"`, emitters/sw-equations.md 4) |
+
+- Parameterized components exist only as instances. A binding may name
+  one instance (`Rover/axle[1].end_diameter`) or all of them
+  (`Rover/axle[*].end_diameter`). A `[*]` binding is emitted once, at
+  instance 0. If any instance's emitted value differs from instance 0
+  the binding is R012 (error); the user then binds the instances
+  separately.
 - Only bound paths are emitted; an unbound parameter is not written.
   `let` values are never emitted (quantities.md 5.3).
-- Emitted values are values (the emit point, 5.6), never expressions:
-  the dependency structure lives in cadetta, and CAD tools receive
-  numbers or links to cadetta-emitted globals.
-- `cadetta import` proposes bindings and canonical names from observed
-  IR (including native expressions, which become `.cdt` references); the
-  user accepts them, which writes the bindings file and scaffolds `.cdt`
-  source. Nobody types the values.
+- Emitted values are values (the emit point, quantities.md 5.6), never
+  expressions: the dependency structure lives in cadetta, and CAD tools
+  receive numbers or links to cadetta-emitted globals (2.1).
 - Unbound native parameters are R002; bound paths missing natively are
   R003; bindings matching no path are R005. `was` paths carry bindings
   forward across renames and moves.
-- Name mangling is injective: `Axle.end_diameter` where the target allows
-  dots, otherwise `Axle__end_diameter` (`__` is reserved, N005). Array
-  instances mangle as `Rover__wheel_2__hub_bore`.
 - A locator's `mode` is `ref` (default where the target supports
   references: the native side keeps a live link to a cadetta-emitted
   global) or `value` (a flat number). A `ref` dimension points at its
   `ref_to` global if given, else the first global locator bound to the
   same path (bindings-file order); if the path has none, at the
   global of its referent when the path is a pure alias; otherwise the
-  emitter creates the path's own mangled global.
+  emitter creates the path's own mangled global (3.1).
 - Units at read: a native value without a unit takes the adapter's
   declared native unit (`initialize`), recorded in observed IR as
   `unit_assumed`. Formats with no unit information at all need
-  `--assume-unit`; without it the value is read with `exact: false` and
-  a reason. Read never raises Q001; Q001 is a source error.
+  `--assume-unit` (on `import` and `ir --observed`); without it the
+  value is read with `exact: false` and a reason. Read never raises
+  Q001; Q001 is a source error.
+
+### 3.1 Naming and mangling
+
+A name the adapter creates natively (a global with no bound locator, or
+a dimension's own global) is derived from the canonical path:
+
+1. drop the namespace;
+2. replace `.` and `/` with `__` (`__` is reserved, N005);
+3. replace `[i]` with `_i`; a `[*]` segment is dropped.
+
+`Rover/axle[1].end_diameter` becomes `Rover__axle_1__end_diameter`;
+`Rover/axle[*].end_diameter` becomes `Rover__axle__end_diameter`. The
+rule is the same for every adapter and every target, whether or not the
+target allows dots, so switching adapters never renames a global.
+`[[adapter]] prefix` optionally prepends a string to every created name.
+
+The rule is not injective on its own. If two emitted paths of one
+adapter would create the same name, both are namespace-qualified
+(`acme_rover__Rover__axle_1__end_diameter`: namespace dots become `_`).
+A collision that remains is R013. Read maps native names to paths only
+through bindings, never by demangling.
+
+### 3.2 Adapter identity and scope
+
+`[[adapter]] id` names an adapter instance; it is required when `name`
+repeats and defaults to `name`. The id keys the bindings file
+(`bindings/<id>.toml`) and the lock records. `namespaces = [...]` or
+`paths = [...]` (canonical-path globs) restrict what the adapter emits,
+reads and syncs, so two products can each link their own equations
+file. `sync`, `emit` and `check` accept `--namespace NS` and path globs
+with the same effect for one run.
+
+### 3.3 Interface-typed slots
+
+A binding for a path under an interface-typed slot carries
+`for = "<alternate>"` (a qualified component name, e.g.
+`for = "acme.company::Colson2Series"`). Only locators whose `for`
+matches the slot's primary (or locators with no `for`) are active; a
+swap changes which locator set is active. `read` of an assembly records
+the file each component instance uses; R011 (warning) fires when the
+file instantiated is not the file bound to the slot's primary.
+`impact --swap` lists the replace-component action (obligations.md 5.1).
+
+### 3.4 Geometry bindings
+
+Geometry is bound through members, not through derived coordinates
+(geometry.md 6):
+
+| Source form | Binds to |
+|---|---|
+| datum or point (frame) | a `frame` locator: a coordinate system or plane feature |
+| placement offset term (`place.x` ...) | the mate distance dimension |
+| placement `rotate` other than an exact 90 degrees | the angle mate dimension |
+| placement `flip`, exact 90 degree `rotate` | verified only: `read` reports a drift note, `push` never writes them |
+| `for`-placement over a pattern | the native component pattern's generator |
+| pattern generator members (`holes.pitch_x` ...) | the pattern's dimensions; these are what bind |
+
+Coordinates derived from a generator are analysis-only unless the user
+lists them in the bindings by hand. `sign = -1` (3) applies to
+coordinate locators. R007 covers a dimension not measured from the
+sketch origin.
 
 ## 3a. What every emitter spec states
 
 Each built-in emitter has a format document in `docs/spec/emitters/`
-(the first is [sw-equations.md](emitters/sw-equations.md)) fixing: a header line carrying the IR digest and adapter version; line
-order (dependency order, ties by canonical path); globals vs dimension
-lines and refs vs values per binding mode; the emitted point and unit;
-and tolerance and citation as a trailing native comment where the
-format has comments (`"Axle__end_diameter" = 12.029mm  ' 12mm p6, emit
-nominal`). Drift (R001) compares the read-back against the emitted
-point, never the nominal.
+([sw-equations.md](emitters/sw-equations.md), [json.md](emitters/json.md),
+[csv.md](emitters/csv.md)) fixing: a header carrying the IR digest and
+adapter version; line order (dependency order, ties by canonical path);
+globals vs dimension lines and refs vs values per binding mode; the
+emitted point and unit; the default output path; and tolerance and
+citation as a trailing native comment where the format has comments
+(`"Rover__axle__end_diameter" = 12.029mm  ' 12mm p6, emit nominal`). Drift
+(R001) compares the read-back against the emitted point, never the
+nominal.
 
 ## 4. Contract every adapter MUST meet
 
@@ -107,6 +280,9 @@ point, never the nominal.
    observed IR with `exact: false` and a reason, not as a guess.
 5. **No source of truth outside the IR.** An adapter never writes back
    into `.cdt` source; `import` produces a proposal the user accepts.
+6. **Failures are structured.** Every refusal or error is a
+   `cadetta.diag/1` record (lints.md 1.1) with the codes of 2.3; a
+   `push` returns a status per locator, never only a summary.
 
 ## 5. Protocol
 
@@ -119,25 +295,40 @@ speaking JSON-RPC 2.0 over stdio:
 |---|---|---|
 | `initialize` | protocol version, client info | name, version, capabilities, native units, precision (the emitter spec's default, overridable by `[[adapter]] precision`), platforms |
 | `emit` | IR (design), bindings, policy | files written (paths, digests), diagnostics |
-| `read` | file paths | observed IR, diagnostics |
-| `push` | changed params (path, value, locator) | diagnostics |
-| `regen` | targets | per-target status, rebuild diagnostics |
+| `open` | files | `session` (handle, per-file dirty/readonly state), diagnostics |
+| `read` | file paths, or a `session` | observed IR, diagnostics |
+| `push` | `session`, `file`, changed params (path, value, locator, `mode`) | per-locator status (`pushed`, `skipped`, `rejected`, `failed`; old and new value), diagnostics |
+| `regen` | `session`, targets | per-target status, rebuild diagnostics |
+| `save` | `session` | saved files (paths, digests), diagnostics |
+| `close` | `session` | - |
 | `shutdown` | - | - |
 
-Adapters are declared in `cadetta.toml` (`[[adapter]]`, config-cli.md);
-the protocol schema lives in `docs/schemas/` beside the IR schema.
+`open`, `save` and `close` are required of `drive` adapters only;
+`read` without a session opens and closes its own. `mode` tells the
+adapter how to write a dimension (`ref`: create or keep the link to
+`ref_to`; `value`: set the number). `initialize` reports the adapter
+version; if it does not match `[[adapter]] version`, the adapter is
+unavailable (R008, exit 2). Adapters are located by `command` in
+`cadetta.toml`; there is no PATH search. Diagnostics in every result use
+`cadetta.diag/1`.
+
+Adapters are declared in `cadetta.toml` (`[[adapter]]`, config-cli.md
+2); the protocol schema lives in `docs/schemas/` beside the IR schema.
 
 ## 6. Target matrix
 
 Planned support, not a 0.1.0 promise beyond the rows marked 0.1.0.
+`drive` includes pushing into live documents, so there is no separate
+SOLIDWORKS `emit`: writing a text file for a part to link is the
+built-in `sw-equations` row.
 
 | Target | Kind | emit | read | drive | Mechanism |
 |---|---|---|---|---|---|
-| JSON | built-in | 0.1.0 | 0.1.0 | - | the IR itself |
-| CSV | built-in | 0.1.0 | 0.1.0 | - | name, value, unit rows |
+| JSON | built-in | 0.1.0 | 0.1.0 | - | parameter list (emitters/json.md) |
+| CSV | built-in | 0.1.0 | 0.1.0 | - | name, value, unit rows (emitters/csv.md) |
 | SOLIDWORKS equations file | built-in | 0.1.0 | 0.1.0 | - | text file the part links via "Link to external file" |
 | FreeCAD | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | Spreadsheet aliases; headless `freecadcmd` for CI |
-| SOLIDWORKS | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | COM API through pywin32: global variables, dimensions, custom properties, rebuild; Windows only |
+| SOLIDWORKS | external, Python | - | 0.1.0 | 0.1.0 | COM API through pywin32: global variables, dimensions, custom properties, rebuild (push covers emit); Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
 | Fusion | external, Python | - | later | later | user parameters API |
 | Inventor | external | - | later | later | parameters API |
@@ -156,11 +347,78 @@ FreeCAD is the reference external adapter for CI: it is the only target
 that exercises `read` and `drive` without a license or Windows, so the
 protocol's conformance tests run against it.
 
-## Open questions
+## 7. Import
 
-- OQ-7: Adapter discovery and versioning (PATH lookup vs a lockfile of
-  adapter versions). Recommendation: `cadetta.toml` pins command and
-  version; `initialize` must match.
-- OQ-8: How `drive` handles a CAD session the user has open with unsaved
-  changes. Recommendation: refuse and report, never save on the user's
-  behalf.
+`import` is the adoption path for existing CAD files. It never writes
+`.cdt` or bindings without an explicit flag, and it never overwrites.
+
+### 7.1 Propose and accept
+
+```
+cadetta import ADAPTER FILE... [--assume-unit UNIT]    # propose
+cadetta import --accept                                # apply
+```
+
+The first form reads the files (`read`) and writes a proposal:
+`build/import/proposal.toml` (one row per native item: native name,
+proposed path, proposed `Type`, value, unit, `status = accept | rename |
+skip`) and `build/import/proposal.cdt` (the scaffold). The user edits
+`proposal.toml`. `--accept` writes `bindings/<id>.toml` and
+`cad/imported/<File>.cdt` from it. A re-run adds only locators not yet
+bound and reports the others as unchanged; existing files are never
+overwritten.
+
+### 7.2 Naming
+
+- Component: the file stem, UpperCamel (`cover_plate.SLDPRT` ->
+  `CoverPlate`); one component per native file.
+- Member: snake_case of the native name with a trailing unit suffix
+  stripped (`Plate_Thk` -> `plate_thk`; `Bore_mm` -> `bore`;
+  `plate thickness` -> `plate_thickness`), case per N001-N004.
+- A collision is suffixed `_2`, `_3` and flagged in the proposal.
+- A native expression `"A" = "B" * 2` becomes the `.cdt` expression
+  `a = b * 2`; the references are to the proposed members.
+- Assemblies: a `.SLDASM` becomes an `assembly` with one `part`
+  declaration per distinct component file; instance bindings carry
+  `component` (3).
+- Values are imported as nominal scalars. Native tolerances are not
+  recovered in 0.1.0. Driven (reference) dimensions are skipped with a
+  reason.
+- Imported positions and distances are scalars. Converting a set of them
+  to a `Point2` array is a manual refactor that keeps the existing
+  locators by re-keying the bindings (geometry.md 6).
+
+### 7.3 Configurations and properties
+
+- Configurations: only the active configuration is imported and
+  recorded as `config` on each locator; an info diagnostic lists other
+  configurations when they exist.
+- Custom properties bind as `Text`, `Count` or `Quantity`; a quantity
+  needs an explicit `native_unit` in the proposal. Properties that are
+  `$PRP`-linked or equation-linked are skipped with a reason.
+
+### 7.4 Adoption marker and updating from CAD
+
+`--accept` writes a lock record `adopted <adapter-id> <file>`; the first
+`sync` that touches the file clears it. While the record exists, R006
+fires for every native expression the push will replace.
+
+```
+cadetta import ADAPTER FILE... --update [--write]
+```
+
+For bound paths whose observed value differs from the lock base,
+`--update` prints a diff of `.cdt` literal edits; `--write` applies it.
+A literal with a tolerance or fit is skipped and reported with the
+observed value (edit by hand); a path with a citation is flagged ("value
+no longer matches its cite"); `let` and derived paths are never touched
+("derived; edit its sources"). After the edit, the next `sync`
+classifies the locator as no-op. Contract 4.5 holds: nothing is written
+without `--write`.
+
+## Resolved questions
+
+- OQ-7 (closed 2026-10-13, 5): adapters are pinned by `command` and
+  `version` in `cadetta.toml`; `initialize` must match, else R008.
+- OQ-8 (closed 2026-10-13, 2.2): attach or start hidden, refuse dirty
+  documents (R009), save modified documents after a matching read-back.

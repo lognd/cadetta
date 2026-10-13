@@ -10,13 +10,15 @@ through the obligation graph.
 
 ```
 solver wall_sizing @"analysis/wall_sizing.py" {
-  in  load = frame.max_load, span = frame.span
+  in  load = Frame.max_load, span = Frame.span
   out min_wall: Length                   // any kind or kind expression: `out q: Volume / Time`
   deps "analysis/material_db.csv"
 }
 
 model Frame {
   wall = 3mm
+  span = 300mm
+  max_load = 1200N
   check wall_ok: wall >= wall_sizing.min_wall          // bound use (default idiom)
 }
 ```
@@ -28,9 +30,15 @@ model Frame {
   member of an assembly resolves like any member, so instances and
   roll-ups are in scope (`motor.stall_torque`, `mass?(self)`).
 - The citation names the script; its digest is an input.
-- The command that runs it is configured, not written in source
-  (`[solvers.wall_sizing] command = ["python", "{script}"]`), so
-  source stays portable across machines and licenses.
+- All relative paths (the script, `deps`, result files) resolve against
+  the directory of `cadetta.toml`, never the declaring file or the
+  working directory.
+- A solver is identified by its qualified path
+  (`acme.rover::wall_sizing`). The command that runs it is
+  configured, not written in source, keyed by that path
+  (`[solvers."acme.rover::wall_sizing"] command = ["python",
+  "{script}"]`), so source stays portable across machines and licenses
+  and two namespaces may declare solvers of the same name.
 
 ## 2. Bound by default, driving when written
 
@@ -53,22 +61,33 @@ Request (`cadetta.solve/1`):
 
 ```json
 { "schema": "cadetta.solve/1",
-  "solver": "wall_sizing",
+  "solver": "acme.rover::wall_sizing",
   "inputs": { "load": {"lit": "1200N",  "si": 1200.0},
-              "span": {"lit": "300mm", "si": 0.3} } }
+              "span": {"lit": "300mm", "si": 0.3, "min": 0.2995, "max": 0.3005} } }
 ```
 
 Response:
 
 ```json
 { "schema": "cadetta.solve/1",
+  "version": "1.4.2",
   "outputs": { "min_wall": "3.2mm" },
   "diagnostics": [ {"severity": "info", "message": "converged in 14 iterations"} ] }
 ```
 
-- `lit` is exact; `si` is a convenience float in SI base units.
+- `lit` is exact; `si` is a convenience float in SI base units. A
+  toleranced input (`frame.span = 300mm [+-0.5mm]`) keeps `lit` as the
+  nominal literal and adds `min` and `max` in SI base units; an
+  untoleranced input has neither. `{lit, si, min, max}` is the whole
+  field set.
+- `version` is optional in the response; when present it enters the
+  result digest (section 4).
 - Outputs MUST be literals with units; a bare number is Q001 against the
   solver. A decimal literal is exact; there is no other float path.
+  The Python decorator writes decimal strings rounded to `significant`
+  digits (default 6, overridable per output), not `repr(float)`, which
+  would trip M001 and Q006 at the consumer (bindings.md 3.3). Other
+  languages must do the same.
 - Two transports: `stdio` (request on stdin, response on stdout) and
   `file` (the command template receives `{in}` and `{out}` paths; for
   MATLAB: `["matlab", "-batch", "wall_sizing('{in}','{out}')"]`).
@@ -77,10 +96,11 @@ Response:
 
 ## 4. Results and staleness
 
-`cadetta solve [NAME...]` runs solvers and writes
+`cadetta solve [PATH-GLOB...] [--namespace NS]` runs solvers and writes
 `<script>.out.json` beside the script: the response plus the digest of
-every input value, the script and each dep. The result file is
-committed. `check` reads it; if any recorded digest differs from the
+every input value, the script and each dep. One file may hold several
+solvers, keyed inside by solver path, so two solvers sharing a script
+never collide. The result file is committed. `check` reads it; if any recorded digest differs from the
 current one, S003 (`solver-stale`) fires and the stale outputs still
 evaluate, marked stale, so the rest of the design keeps checking.
 
@@ -94,6 +114,10 @@ variant's result is missing, its outputs are unknown, never borrowed
 from the primary: checks and requires reading them are `undecided`
 under that variant, with S006 (`solver-unsolved-variant`), and
 `impact --swap` says which solve to run.
+
+Solver result digests live only here: the lock file does not record
+them (obligations.md 3), so the committed `.out.json` is the single
+home of a solver's staleness evidence.
 
 ## 5. Trust
 

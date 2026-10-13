@@ -22,51 +22,119 @@ CAD files, lints them at once, and scaffolds `.cdt` source.
 
 ```
 path      = namespace "::" Type [ "/" part [ "[" index "]" ] ]* "." member
+member    = IDENT { "." IDENT | "[" index "]" }
+index     = INTEGER | "*"                    // "*" only in bindings (below)
 example     acme.rover::Axle.end_diameter
             acme.rover::Rover/wheel[2].hub_bore
             acme.rover::Axle.seat.shaft            (fit members)
+            acme.rover::Bracket.holes[1].x         (index on a member)
+            acme.rover::Bracket.top.offset.x       (datum offset)
+            acme.rover::Bracket.top.rotate.z       (datum rotation)
+            acme.rover::Rover/bracket.place.0.x    (placement, op 0, axis x)
+            acme.rover::Rover/feet[i].place.0.x    (placement over a range)
 ```
 
 A canonical path is the identity of a node across source, IR, bindings,
-waivers, the lock file and diagnostics. Paths survive formatting and
+waivers, the lock file and diagnostics. A variant is named `SLOT=ALT`:
+the slot's instance path and the alternate's component path
+(`acme.rover::Rover/wheel=acme.rover::Colson2Series`). Inside source,
+and in diagnostics about the current namespace, the namespace prefix and
+the assembly may be omitted wherever they are unambiguous
+(`wheel=Colson2Series`); IR keys and lock records always use the full
+form. Paths survive formatting and
 reordering; they change only by rename or move, which `was` records.
+
+- Datum offsets are `Type.<datum>.offset.x|y|z` and rotations
+  `.rotate.x|y|z`; placement op arguments are
+  `Assembly/part.place.<op index>.<axis>` (`Assembly/part[i].place...`
+  for a for-placement), one per op axis (geometry.md 2, 4). Each is a
+  Member with provenance `authored`, so bindings, R001, waivers and
+  `why` attach to it.
+- Pattern generators (`rect_pattern`, `circle_pattern`) are values with
+  named members (`holes.pitch_x`, `holes.pitch_y`, `holes.radius`,
+  `holes.start`, `holes.rotation`) that bind; the derived coordinates
+  are analysis-only unless the points are hand-listed.
+- Parameterized components exist only as instances (language.md 3.1):
+  their parameter-dependent members have instance paths only. A binding
+  may name one instance or all of them with
+  `Rover/axle[*].end_diameter`; the instances share arguments, so the
+  value is the same up to independent tolerance variables. A `[*]`
+  binding emits once, at the emit point of instance 0; if another
+  instance's emitted value differs, that is R012.
+- Instance vs definition level: an obligation targets a definition path
+  when its closure reads no component parameter or interface-typed slot,
+  and an instance path otherwise; instances with identical argument
+  closures form one obligation (obligations.md 1).
 
 ## 3. Entities
 
 ```
-Project    { schema, flavour, namespace, components[], interfaces[], tables[],
+Project    { schema, flavour, namespaces[], components[], interfaces[], tables[],
              solvers[], checks[], requires[], waivers[], citations[], digest }
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
-             citation?, attrs, members[], parts[], fits[], span?, digest }
+             citation?, attrs, members[], parts[], fits[], datums[], points[],
+             placements[], span?, digest }
 Member     { path, kind, analysis: bool, value?: Value, bound?: Bound, expr?,
              deps[], role?, citation?, was[], attrs, provenance, doc?, span?,
              variants?: { "<slot>=<alternate>": Value }, digest, closure }
-Value      { nominal: Exact | Inexact, angle: int, tol?: Affine, conservative: bool,
-             designed?: Exact, authored: string }
+Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,
+             conservative: bool, drawn?: Exact, exact: bool, reason?: string,
+             unit_assumed?: string, authored: string }
+Dim        { m, kg, s, A, K, mol, cd: int, angle: int, currency: { "<ISO>": int } }
 Exact      { r: "num/den", pi: int }                 // magnitude = r * pi^pi, SI base
 Inexact    { f64, root: path }                       // root inexact operation
 Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
+Interface  { path, members[], bounds[], datums[] }
+Table      { path, key, cols[], rows[], citation? }
+Waiver     { code, glob, because, expires?, for_alt?: "<slot>=<alternate>",
+             targets_closure }
+Process    { path, params[], rules: [ { role, expr } ] }
 Part       { path, type, count?, primary, alternates[], args }
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
-Datum      { path, parent: path, ops: [ offset{x,y,z: Value} | rotate{axis, angle: Value}
-             | flip{axis} ], exact: bool }               // geometry.md 2
+Op         = offset{x,y,z: member ref} | rotate{axis, angle: member ref}
+             | flip{axis} | at{point: path}              // shared by Datum and Placement
+Datum      { path, parent: path, ops: [Op], variants?, digest, closure }  // geometry.md 2
 Point      { path, datum: path, coords: [Value] }        // each coord also a Member
-Placement  { part: path, datum: path, on: path, ops[], digest, closure }
+Placement  { part: path, datum: path, on: path, ops: [Op], variants?, digest, closure }
 Check      { path, expr, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
              conservative, waived_for[] }
 Solver     { path, script, inputs{}, outputs{}, deps[], result_digest?, stale }
 Citation   { name, target, locator?, kind: url|file|standard|measured|assumed|estimate,
              file_digest? }
 Provenance = authored | derived | imported { adapter, file, native_name }
-Binding    { path, adapter, locators: [ { locator, kind: global|dimension|property,
-             mode: value|ref, native_unit } ] }
+Binding    { path, adapter, locators: [ Locator ] }
+Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, native_unit,
+             ref_to?: path, for?: "<alternate>", config?: string, sign?: 1|-1,
+             component?: string }
 ```
 
 - Magnitudes are never JSON floats: `Exact` is a reduced fraction string
   plus a pi exponent. `Inexact.f64` is the only float, and names its root.
-- `designed` holds the value before process compensation; `nominal` is
-  the drawn value (language.md 3.8).
+- `Datum.variants` and `Placement.variants` are keyed like
+  `Member.variants`. The composed transform of a datum or placement is
+  derived, not stored: a 3x4 matrix of `Exact` (entries from exact
+  multiples of 90deg), else `Inexact` with a root; exactness is derived
+  from the ops.
+- `nominal` is always the designed value (the part as made, what fits,
+  checks and reads see). `drawn?` exists only when a process rule
+  applied and holds the compensated value that is emitted (language.md
+  3.8, quantities.md 5.6). There is no `designed` field.
+- `dim` is the exponent vector over the SI base dimensions plus `angle`
+  and one exponent per currency; `kind` names the kind (`Length`,
+  `Volume/Time`), `dim` makes `.to(unit)` computable from the IR alone.
+- `exact: false` with a `reason` marks observed values that the native
+  format could not give exactly; `unit_assumed` records a unit supplied
+  by `--assume-unit` (adapters.md 3).
+- Locator fields: `ref_to` is the native name a `ref`-mode link points
+  at; `for` selects a slot binding's alternate (`for = "<alternate>"`,
+  R011); `config` is the native configuration; `sign = -1` negates a
+  coordinate (geometry.md 6, R007); `component` names the in-assembly
+  instance (`wheel<2>`) (emitters/sw-equations.md "SOLIDWORKS naming").
+- `Project.namespaces[]` lists every namespace in the project, sorted;
+  a file's namespace is its header (config-cli.md "Project model").
+- Obligation and attestation state is not IR: it lives in the
+  `cadetta.obligations/1` schema (obligations.md).
 - `deps` are canonical paths; the graph is acyclic (D003).
 - `analysis` marks a `let` (quantities.md 5.3): never emitted or bound.
 - `variants` holds, per part slot and alternate, only the values that
@@ -78,8 +146,8 @@ Binding    { path, adapter, locators: [ { locator, kind: global|dimension|proper
 Every node has two digests, both BLAKE3:
 
 - `digest` (own): over the node's canonical encoding (path, kind, value,
-  normalized expression text, citation, attrs, and for parts the
-  primary, alternates and arguments). It changes when the node's own
+  normalized expression text, citation, semantic attrs, and for parts
+  the primary, alternates and arguments). It changes when the node's own
   text does.
 - `closure` (Merkle): over the own digest plus the closure digests of
   its `deps`, sorted by path. It changes when anything the node reads,
@@ -93,7 +161,14 @@ For an interface-typed slot the instance closure also includes the
 part node's own digest (primary, alternates, arguments), so a swap
 makes every instance path of the slot stale, and nothing else: a check
 reading only another part's arguments keeps its closure. Spans and doc comments are excluded, so
-formatting never changes a digest. Obligations and waivers bind closure
+formatting never changes a digest.
+
+Attributes split in two. Semantic attributes are in the digest:
+`process`, `role`, rule roles (`hole`, `boss`, ...) and `default`.
+Presentational attributes are out of it: `display`, `emit`, `allow` and
+the date text of `lifecycle`; changing them never makes an obligation
+stale. `emit` is tracked in the sync record instead (adapters.md), so
+a changed emit point still re-pushes. Obligations and waivers bind closure
 digests (obligations.md 2, W002); drift attribution (R001) and
 incremental pushes use own digests of emitted values.
 

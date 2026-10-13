@@ -33,6 +33,14 @@ vmodel dec_draft1_3 {
   decides req_language;
 }
 
+/// ADR: draft-1.4 decisions (three-way sync, obligation identity, positions and datums, diagnostics).
+vmodel dec_draft1_4 {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-draft-1-4-decisions.md";
+  decides req_geometry;
+}
+
 /// ADR: IR between source and every CAD tool.
 vmodel dec_ir {
   kind decision;
@@ -76,6 +84,13 @@ vmodel req_cli {
   kind artifact;
   level requirements;
   ref "docs/spec/config-cli.md";
+}
+
+/// Positions and datums (geometry.md).
+vmodel req_geometry {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/geometry.md";
 }
 
 /// The tool-agnostic IR, `cadetta.ir/1` (ir.md).

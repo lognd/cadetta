@@ -7,29 +7,157 @@ carries a canonical path and, for design IR, a source span.
 ## 1. Severity and gating
 
 Severities: `error`, `warning`, `info`. `cadetta check` exits 1 when any
-diagnostic is at or above `[lint] fail_on` (default `error`). Severity is
-configurable per code in `cadetta.toml [lint]`, except codes marked
-"fixed" (they report a broken program, not a style).
+diagnostic is at or above `[lint] fail_on` (`error`, `warning`, `info`
+or `never`; default `error`). Severity is configurable per code in
+`cadetta.toml [lint]`, except codes marked "fixed" (they report a broken
+program, not a style).
 
-## 2. Waivers
+Severity precedence, highest first:
+
+1. A fixed code keeps its catalog severity.
+2. `required_for` (obligations.md 4) sets a floor for the obligation
+   codes O001, O002, O004 and S003: a role or kind required for the
+   current gate is at least `error`.
+3. `[lint] severity` overrides the catalog default, but for the codes in
+   2 it can only raise the floor, never lower it.
+4. `waive` and `allow` then suppress the result (section 2).
+
+Date-dependent rules (W001, W005, L001) read `--as-of` (obligations.md
+5), so a result is reproducible.
+
+### 1.1 Diagnostic record, `cadetta.diag/1`
+
+Every diagnostic, from the compiler, lints, solvers and adapters, is
+one record; solver and adapter responses reuse it unchanged. The schema
+is `docs/schemas/diag.json`, generated from the Rust type, and the
+Python models are generated from it.
+
+```json
+{ "schema": "cadetta.diag/1", "code": "C001", "severity": "error",
+  "path": "acme.rover::Rover.load_ok", "alt": "wheel=Colson2Series",
+  "message": "false for every value in tolerance",
+  "location": { "kind": "source", "file": "cad/rover.cdt",
+                "start": {"line": 41, "col": 3},
+                "end": {"line": 41, "col": 28} },
+  "notes": [ { "message": "wheel.mass = 1.2kg", "location": null } ],
+  "fixes": [ { "title": "use the instance",
+               "edits": [ { "file": "cad/rover.cdt",
+                            "range": {"start": {"line": 41, "col": 9},
+                                      "end": {"line": 41, "col": 14}},
+                            "text": "Rover/wheel" } ] } ],
+  "waived": null }
+```
+
+| Field | Meaning |
+|---|---|
+| `code`, `severity` | Catalog code; effective severity after precedence. |
+| `path` | Canonical path of the subject, or null. |
+| `alt` | `SLOT=ALTERNATE` when raised under variant evaluation, else null. |
+| `message` | One sentence, no trailing period. |
+| `location` | Where to look; null when there is none. One of `{kind:"source", file, start, end}` (design IR; required for every diagnostic on design IR), `{kind:"native", adapter, file, locator}` (R rules, adapters), `{kind:"lock", line}` (O, W and sync records). |
+| `notes` | Related locations and facts: `{message, location}`. |
+| `fixes` | Suggested edits (N006, C003, `impact --swap` suggested edit): `{title, edits[{file, range, text}]}`. Never applied without a flag. |
+| `waived` | Null, or `{waiver, because}` when suppressed. Suppressed diagnostics appear in JSON only. |
+
+Records are sorted by (file, line, code, path), so output is
+deterministic.
+
+### 1.2 Rendering
+
+Text is the default in every context; JSON only by `--format json` or
+`CADETTA_FORMAT=json`, never by terminal detection. Text is rustc-style:
 
 ```
-waive D001 on acme.parts::Bearing608.* {
+error[C001]: false for every value in tolerance
+  --> cad/rover.cdt:41:3
+   |
+41 |   check wheel.mass < 1kg
+   |   ^^^^^^^^^^^^^^^^^^^^^^ under wheel=Colson2Series
+   |
+   = note: wheel.mass = 1.2kg
+   = help: use the instance
+   = path: acme.rover::Rover.load_ok
+```
+
+| `--format` | Output |
+|---|---|
+| `text` | The rendering above (default). |
+| `short` | One line, `file:line:col: severity[CODE]: message`; grep and problem-matcher friendly. |
+| `github` | GitHub workflow annotations. |
+| `sarif` | SARIF 2.1.0 for code scanning. |
+| `json` | One `cadetta.diag/1` per diagnostic inside the command's report. |
+
+`cadetta check --format json --watch` emits one `cadetta.diag/1` per
+line as files change; that is the 0.1.0 editor integration (problem
+matchers). `cadetta lsp` (diagnostics, hover as `why`, code lens as
+`impact`) is deferred to a later release and tracked as a ticket.
+
+## 2. Suppression
+
+### 2.1 Waivers
+
+```
+waive D001 on acme.parts::Bearing608.* for alt wheel=Colson2Series {
   because "vendor dimensions coincide with ours by design"
   expires 2027-01-01
 }
 ```
 
-A waiver suppresses one code on the paths matched by a path glob. It
-binds the closure digests of its targets at waive time. `for alt NAME`
-scopes it to one alternate's variant (language.md 3.2). Fixed codes cannot be
-waived (W003). W001 expired, W002 a target changed (re-review), W004
-suppresses nothing. A `require` is never waived; it is attested
-(obligations.md 4). `#[allow(CODE)]` is a waiver without expiry for one
-member and still needs a `because` string: `#[allow(M001, "vendor
-drawing 1234")]`.
+Grammar: `waive CODE on GLOB [for alt SLOT=ALT] { because STRING
+[expires DATE] }` (production in language.md 3). GLOB is the path glob
+of obligations.md 2.2, shared with obligation selectors. A waiver
+suppresses one code on the paths matched. `for alt SLOT=ALT` scopes it
+to one alternate's variant in one slot (language.md 3.2).
+
+Digests: when reviewed (`cadetta ack waiver:GLOB`), the closure digests
+of the waiver's targets are stored in the lock as a `waiver` record
+(obligations.md 3). The suppressed diagnostic reappears, in addition to
+W002, whenever the record is missing or a target's digest differs: the
+waiver suppresses nothing until re-reviewed.
+
+| Code | Condition |
+|---|---|
+| W001 | The waiver's `expires` date has passed (`--as-of`); it stops suppressing. |
+| W002 | A target's closure digest differs from the lock record, or there is none: re-review. The suppressed diagnostic reappears. |
+| W003 | The waiver names a fixed code, or a diagnostic raised by a `require`. |
+| W004 | The waiver (or `allow`) matched no diagnostic: it suppresses nothing. |
+| W005 | A waiver or an `eol` date falls within `[lint] expiry_warn_days` (default 30) of `--as-of`. |
+
+### 2.2 `allow`
+
+`#[allow(CODE, "because")]` is a one-member waiver written on the
+member: `#[allow(M001, "vendor drawing 1234")]`. The reason string is
+required. It has no expiry and is excluded from W001, W002 and W005,
+and it needs no lock record; W004 does check it. Fixed codes cannot be
+allowed (W003).
+
+### 2.3 `require`
+
+The single `require` rule is stated in obligations.md 4 and applies
+here without exception: a `require` is never suppressed; an attestation
+is sign-off, never a waiver. C001 on a `require` stays an error, and
+naming it in `waive` or `allow` is W003.
 
 ## 3. Catalog
+
+### E: resolution and evaluation
+
+All E codes are fixed errors unless noted: they report a program that
+cannot be resolved or evaluated.
+
+| Code | Name | Default | Fixed | Meaning |
+|---|---|---|---|---|
+| E001 | syntax-error | error | yes | The source does not parse (language.md 2, 3). |
+| E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
+| E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
+| E004 | ambiguous-import | error | yes | A name resolves through two `use` imports (`use ns::*` or `use ns::{A as B, C}`). |
+| E005 | sources-glob-empty | warning | yes | A `[project] sources` glob matched no file. |
+| E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind). |
+| E007 | lookup-miss | error | yes | A table lookup key matched no row. |
+| E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
+| E009 | non-exhaustive-match | error | yes | A `match` leaves some case unhandled. |
+| E010 | role-required | error | yes | `mmc` or `lmc` read on a tolerance with no role (hole or boss) to say which side is material. |
+| E011 | parameter-dependent-type-read | error | yes | `Type.member` read where the member depends on component parameters; a parameterized component exists only as instances (language.md 3.1). |
 
 ### Q: quantities
 
@@ -38,7 +166,7 @@ drawing 1234")]`.
 | Q001 | unitless-quantity | error | yes | Bare number where a quantity is required (quantities.md 2). |
 | Q002 | dimension-mismatch | error | yes | `+ -` or comparison across dimensions. |
 | Q003 | kind-mismatch | error | yes | Implicit conversion between named kinds. |
-| Q004 | inexact-emit | warning | | Value not representable at the target's declared precision. |
+| Q004 | inexact-emit | error (emit), warning (check) | | Value not representable at the target's declared precision. At emit time it is an error: the value is withheld, that path is not written and `sync` exits 1. `check` has no target to write, so it reports a warning. |
 | Q005 | (retired) | | | Was unsupported-toleranced-arithmetic; now conservative evaluation. |
 | Q006 | inexact-value | info | | Reported once at the root inexact operation, with the count of dependents. |
 | Q007 | quantity-literal-split | error | yes | Whitespace between number and unit. |
@@ -101,9 +229,9 @@ drawing 1234")]`.
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. |
-| S002 | citation-unreachable | info | | A local-file citation path does not exist. Literal citations (`@"ASTM A276"`) are never checked. |
+| S002 | citation-unreachable | info | | A local-file citation path does not exist. Literal and URL citations are never checked (`cadetta cite pin` makes a URL checkable). |
 | S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
-| S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. |
+| S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only `file` citations are drift-detected; `cadetta cite pin` vendors a URL. |
 | S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
 | S006 | solver-unsolved-variant | warning | | A variant changes a solver's inputs and no result exists for them; dependent verdicts are undecided (solvers.md 4.1). |
 
@@ -118,11 +246,15 @@ drawing 1234")]`.
 
 ### O: obligations
 
+O001 and O002 cover role attestations only; staleness of a citation is
+S004 and of a solver S003 (no double firing; obligations.md 2.3).
+
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| O001 | obligation-stale | warning | | An attestation's digest set changed (error if its role is `required_for = "check"`). |
+| O001 | obligation-stale | warning | | An attestation's digest set changed (error if its role is `required_for = "check"`). Not raised for a node already reported as S004. |
 | O002 | obligation-open | warning | | A required attestation was never given. |
-| O003 | requirement-unattested | error | | A `require` lacks a required attestation for release. |
+| O003 | requirement-unattested | error | | A `require` that holds lacks the sign-off its role requires for release. |
+| O004 | sync-stale | info | | The "CAD file reflects design" obligation is stale. Info by default because CI cannot read CAD; gating by `[obligations.kinds.sync] required_for`. |
 
 ### G: positions and datums
 
@@ -130,35 +262,46 @@ Defined with their semantics in geometry.md 7.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| G001 | datum-mismatch | error | yes | Arithmetic or comparison between positions in different datums without `in`. |
+| G001 | datum-mismatch | error | yes | Arithmetic or comparison between positions in different datums without `in`; also array + point. |
 | G002 | placement-cycle | error | yes | A placement chain returns to a part already placed; the closing connection is a check. |
-| G003 | unplaced-part | error | | A position is converted out of a part that has no placement. |
+| G003 | unplaced-part | error | yes | A position is converted out of a part that has no placement, or re-typed where the model lacks the part or its placement. |
 | G004 | pattern-count-mismatch | error | | `aligned` or a joint's `at`/`onto` pair patterns of different counts. |
+| G005 | bolted-float-unlocated | warning | | A check tighter than a joint's float reads through a placement carrying that float (geometry.md 5.2). |
+| G006 | double-placement | error | yes | A part or instance is placed more than once. |
+| G007 | unplaced-instance | warning | | A placed array leaves an instance without a placement. |
 
 ### R: read-back and drift
 
-R rules run on observed IR after `read` or `sync`; R004 is reported by
-the adapter's `regen` result and passed through unchanged.
+R rules run on observed IR after `read` or `sync`; R004 and R008-R010
+come from the adapter's responses and are passed through unchanged
+(adapters.md).
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal). Says which side moved. |
+| R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal; the base is the lock `synced` record). Says which side moved: cad, design or both. `sync --force-design` pushes over it. |
 | R002 | unbound-native | warning | | Native parameter has no binding. |
 | R003 | missing-native | error | | Bound path not found in the native file. |
-| R004 | regen-failed | error | | The CAD tool failed to rebuild after a push. |
+| R004 | regen-failed | error | | The CAD tool failed to rebuild after a push; affected documents are restored from their snapshot. |
 | R005 | orphan-binding | warning | | A binding's path matches no IR path and no `was` path. |
-| R006 | adopt-value-change | info | | On first sync after import, the emitted value differs from the legacy native value. |
-| R007 | binding-datum-mismatch | warning | | A bound coordinate's native sketch is not on its datum's plane (adapters that can see it; geometry.md 6). |
+| R006 | native-structure-replaced | warning | | A push replaces a native expression or driving equation on a bound locator (cadetta owns the dependency structure); lists the old expression. For an equation-driven dimension the equation is removed, then the value set, reported and shown first by `--dry-run`. Also fires on the first sync after import when the emitted value differs from the legacy value (the `adopted` record). |
+| R007 | binding-datum-mismatch | warning | | A bound coordinate's native sketch is not on its datum's plane, or its dimension is not measured from the sketch origin (adapters that can see it; geometry.md 6). |
+| R008 | adapter-unavailable | error (sync), info (check) | | Adapter not installed, wrong platform, or version mismatch (exit 2 on sync). |
+| R009 | file-busy | error | | Document dirty, locked or read-only; refused before any push. |
+| R010 | push-rejected | error | | Push to a driven or suppressed dimension, an equation conflict or a unit conflict. |
+| R011 | component-mismatch | warning | | The file instantiated in an assembly is not the file bound to the slot's primary (for example after a manual swap). |
+| R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
+| R013 | name-collision | error | yes | Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md). |
 
 ### U, W
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | U001 | unused-parameter | info | | A `model` parameter is read by nothing and bound to nothing. |
-| W001 | waiver-expired | error | yes | |
-| W002 | waiver-stale | warning | yes | A target's digest changed since the waiver. |
-| W003 | waiver-not-allowed | error | yes | Waiver of a fixed code or a `require`. |
-| W004 | waiver-unused | warning | yes | |
+| W001 | waiver-expired | error | yes | A waiver's `expires` date has passed; it no longer suppresses (2.1). |
+| W002 | waiver-stale | warning | yes | A target's digest changed since the waiver was reviewed, or no lock record exists; the suppressed diagnostic reappears. |
+| W003 | waiver-not-allowed | error | yes | Waiver or `allow` of a fixed code or of a diagnostic raised by a `require`. |
+| W004 | waiver-unused | warning | yes | A waiver or `allow` suppresses nothing. |
+| W005 | waiver-expiring | info | | A waiver or an `eol` date falls within `[lint] expiry_warn_days` (default 30). |
 
 ## 4. Rule implementation contract
 

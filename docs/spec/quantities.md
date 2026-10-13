@@ -241,6 +241,9 @@ are counted once and linear chains are exact. Nonlinear operations
 bounds and mark the result conservative; a conservative `undecided`
 says so in its C002 message. `* /` of two toleranced quantities is
 legal and conservative (it was Q005 in draft 0; Q005 is retired).
+`x ^ 2` and `x * x` of the same affine form use a square-aware
+interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
+`radial`, language.md 3.8) stays defined when x straddles zero.
 
 ### 5.5 Rounding
 
@@ -257,9 +260,15 @@ the side a parameter plays in a `fit`, or from `#[role(hole)]`; pure
 references keep it. The point written to a CAD tool is chosen by policy:
 `nominal` (default), `mid`, `mmc`, `lmc`, set by `[emit] point` and
 overridden per parameter with `#[emit(mid)]` or for a scope with
-`#![emit(mid)]`. `mmc`/`lmc` without a role is an error. A pure
+`#![emit(mid)]`. `mmc`/`lmc` without a role is E010. A pure
 reference inherits its referent's emit point unless it sets its own, so
 an alias of a `#[emit(mid)]` fit side is emitted at mid too.
+
+The point is chosen on the designed value (`Value.nominal`), then the
+member's process rule, if any, is applied to that point (language.md
+3.8). The result is what is emitted, what `drawn?` holds in the IR
+(ir.md 3) and what R001 compares against. The drawn value carries no
+tolerance of its own.
 
 ### 5.7 Bounds
 
@@ -295,11 +304,11 @@ toleranced-equality, C004 derived-feature-in-check. Q005 is retired.
 
 ## Open questions
 
-- OQ-1 (closed 2026-10-13): `5.in` replaced by `5in`; README rewritten.
+- OQ-1 (closed 2026-10-13, README): `5.in` replaced by `5in`; README rewritten.
 - OQ-2: Statistical (RSS) tolerance arithmetic. Deferred; the affine form
   (5.4) is the right substrate for it later.
-- OQ-3 (closed 2026-10-13): packages may declare kinds of an existing
-  dimension (`kind Stress = Pressure`), language.md 3.10.
+- OQ-3 (closed 2026-10-13, language.md 3.10): packages may declare
+  kinds of an existing dimension (`kind Stress = Pressure`).
 - OQ-9: Per-instance source variables (5.4) treat two instances of one
   part as varying independently. Is a "matched set" (same lot) mode
   needed? Not in 0.1.0: pilot r2-02 needed it for a bearing pair and

@@ -58,6 +58,7 @@ model Axle(wheel: Caster, span: Length) {
 
 model Bracket {
   thickness = 4mm
+  holes: [Point2 on origin; 4] = rect_pattern(2, 2, 40mm, 20mm) [+-0.1mm]
 }
 
 model Frame {
@@ -76,7 +77,8 @@ assembly Rover {
   check load_ok for w in wheel: w.load_rating * count(wheel) >= mass?(self) * 1gn * 2
 
   // "Screw here": hole sizes on both parts, tap drill and screw length come from std (stdlib.md 3).
-  part bracket_screws[4]: ScrewJoint(thread = M5, clamp = bracket[0].thickness, into = frame.material)
+  part bracket_screws: ScrewJoint(thread = M5, clamp = bracket[0].thickness, into = frame.material,
+                                  at = bracket[0].holes)   // one joint per pattern; count(at) screws
 }
 ```
 
@@ -88,8 +90,9 @@ assembly Rover {
   carried into the IR and into emitted output where supported.
 - Identifiers `[A-Za-z_][A-Za-z0-9_]*`. Reserved keywords: `namespace
   use as cite interface ots model assembly process table enum fn let if
-  else match part alt fit on solver in out require check for satisfies
-  waive because expires was unit kind self true false`.
+  else match part alt fit on solver in out deps require check for
+  satisfies waive because expires was unit kind self true false datum
+  place rule key cols origin and or not`.
 - Quantity literals: quantities.md 2. Strings `"..."` with `\"`, `\\`.
 - `@` introduces a citation (3.9). `#[...]` and `#![...]` are attributes
   (3.11). A `:` directly after a citation starts its locator string.
@@ -98,7 +101,8 @@ assembly Rover {
 
 ```
 file      = [ "namespace" path ] { use | item }
-use       = "use" nspath "::" ( IDENT | "{" IDENT { "," IDENT } "}" ) [ "as" IDENT ]
+use       = "use" nspath "::" ( "*" | import | "{" import { "," import } "}" )
+import    = IDENT [ "as" IDENT ]                 // "as" binds per name, never after a brace list
 nspath    = IDENT { "." IDENT }                  // namespaces are dotted; "::" enters one
 item      = { doc } { attr } ( cite | interface | component | process | table
             | enum | fn | fit | solver | require | check | waive | unit | kind )
@@ -109,10 +113,13 @@ pdecl     = IDENT ":" type [ "=" expr ]              // a default makes the argu
 member    = { doc } { attr } ( param | let | bound | part | fit | check | require
             | solver | datum | place ) [ trailing_attr ]
 datum     = "datum" IDENT [ "=" expr ]               // geometry.md 2; no "=" in an interface
-place     = "place" path "on" expr [ "for" IDENT "in" path ]   // geometry.md 4
+place     = "place" path "on" expr [ "for" IDENT "in" "0" ".." "count" "(" path ")" ]
+                                                     // geometry.md 4; the range form indexes PART[i]
+type      = IDENT | "Datum" | ( "Point2" | "Point3" ) "on" path
+            | "[" type ";" expr "]" | "Table" "<" type ">"   // Vec2, Vec3, Point2, Point3: geometry.md 3
 let       = "let" IDENT [ ":" type ] "=" expr        // analysis value (quantities.md 5.3)
 param     = IDENT [ ":" type ] "=" expr [ citation ] { "was" path }
-bound     = IDENT ( "<=" | ">=" ) expr | IDENT "in" expr ".." expr
+bound     = IDENT ( "<=" | ">=" ) expr | IDENT "in" expr ".." expr | path "==" path
 part      = "part" IDENT [ "[" expr "]" ] ":" type [ "=" ctor [ "alt" "[" ctor { "," ctor } "]" ] ]
 ctor      = path [ "(" args ")" ]
 check     = "check" IDENT [ "for" IDENT "in" expr ] ":" expr [ STRING ]
@@ -120,7 +127,27 @@ process   = "process" IDENT [ citation ] "{" { param | rule } "}"
 rule      = "rule" IDENT "(" pdecl ")" "->" type "=" expr
 table     = "table" IDENT [ citation ] "{" "key" pdecl [ "cols" pdecl { "," pdecl } ]
             { expr [ "=>" expr { "," expr } ] } "}"   // no "=>": a key-only row
+cite      = "cite" IDENT "=" ( STRING | path )   // path: a standard, `std.iso273`
+interface = "interface" IDENT "{" { doc | bound | IDENT ":" type | datum } "}"
+enum      = "enum" IDENT "{" IDENT { "," IDENT } [ "," ] "}"
+fn        = "fn" IDENT "(" [ pdecl { "," pdecl } ] ")" "->" type
+            "{" { let } expr "}"
+fit       = "fit" IDENT "=" fitspec "on" path [ "[" expr ".." expr "]" ]
+fitspec   = CLASS [ "/" CLASS ] | path "/" path    // CLASS: H7, p6; 3.7
+require   = "require" IDENT ":" expr [ STRING ] [ citation ]
+solver    = "solver" IDENT citation "{" { "in" bind { "," bind }
+            | "out" IDENT ":" type | "deps" STRING } "}"
+bind      = IDENT "=" expr
+waive     = "waive" CODE "on" GLOB [ "for" "alt" SLOT "=" ALT ]
+            "{" "because" STRING [ "expires" DATE ] "}"
+unit      = "unit" IDENT "=" expr | "unit" IDENT IDENT   // definition | default unit of a kind
+kind      = "kind" IDENT "=" kindexpr             // kindexpr: quantities.md 2
+citation  = "@" ( IDENT | STRING ) [ ":" STRING ]
 ```
+
+`GLOB` is the path-glob grammar of obligations.md 4, `SLOT` a canonical
+slot path and `ALT` a qualified alternate (3.2); `CODE` is a diagnostic
+code (lints.md).
 
 ### 3.1 Component classes
 
@@ -128,19 +155,30 @@ table     = "table" IDENT [ citation ] "{" "key" pdecl [ "cols" pdecl { "," pdec
 |---|---|---|
 | `ots` | Off-the-shelf: facts about a part someone else makes. | Literals and expressions over its own parameters (a drawing states pitch and positions). Every value is cited (S001). Commercial data (`unit_cost`, `lead_time`, `moq`, `supplier`) is ordinary parameters. |
 | `model` | A part we design. | Anything. |
-| `assembly` | A composition of `part` instances. | Parameters, `let`s, parts, fits, checks, requires, solvers. |
+| `assembly` | A composition of `part` instances. | Parameters, `let`s, parts, `place`s, fits, checks, requires, solvers. |
+
+All three classes may declare `datum`s; in an `ots` a datum offset is a
+fact about the part and is cited (S001). `place` is for assemblies only.
+`origin` is predefined in every component; a member named `origin` is an
+error.
 
 Components may take parameters (`ots Iso4762(thread: MetricThread,
 length: Length)`, `model Axle(wheel: Caster)`), optionally with defaults.
 Arguments are given at the `part` site. A parameterized `ots` is a part
-family; its values are typically table lookups (3.6).
+family; its values are typically table lookups (3.6). A lookup that
+misses is E007.
 
 `Type.member` reads a member of a parameterized component without an
 instance when that member does not depend on any parameter
 (`TrScrew.cut_increment`), so an argument can be computed from the
 family itself: `part screw: TrScrew(length = ceil_to(min_len,
 TrScrew.cut_increment))`. Reading a member that does depend on a
-parameter this way is an error naming the parameter.
+parameter this way is E011 naming the parameter.
+
+Parameterized components exist only as instances: a parameter-dependent
+member has a path only under a `part` (`Rover/axle[0].end_diameter`),
+and reads, bindings and obligations name that path (ir.md 2). Reading
+such a member by the type name is E011.
 
 A component with no parameters read by type name (`Layout.ring_dia`,
 `CoverPlate.thickness`) is one implicit instance, shared by every such
@@ -157,8 +195,9 @@ is known (`Iso4762(M5, 25mm)`); elsewhere they are qualified
 
 An `interface` names what a design needs from a part: members with kinds,
 and bounds every implementer must meet. A component implements it with
-`: Caster`; a missing member is I001 (error); a violated bound is C001
-against that implementer.
+`: Caster`; a missing member is I001 (error) unless the interface
+marks it optional (`unit_cost?: Money`), in which case `?` roll-ups list
+it as missing; a violated bound is C001 against that implementer.
 
 A `part` typed by an interface names a primary implementer and,
 optionally, approved alternates: `part wheel[4]: Caster = Vendor4471B
@@ -174,15 +213,20 @@ interface only, so:
   and roll-ups. Slots vary one at a time, never as a cross product, so
   the cost is linear in the number of alternates. Values that differ
   from the primary's are kept per variant in the IR (ir.md 3); a failure
-  names the alternate (C001 `for alt Colson2Series`). An evaluation
-  error under a variant (a table lookup that misses, a failed `as`)
-  makes that alternate non-viable, with the error as the reason; it
-  never fails the run.
+  is reported once, as I002 on the alternate, naming each check, fit,
+  bound or require it violates (`for alt Rover/wheel=Colson2Series`);
+  C001 and C002 are the primary's verdicts. I002 is a warning by default,
+  so an approved alternate that stops working does not break the build
+  of a design that still works; a shop that wants it to raises I002 to
+  an error (lints.md 1). An evaluation error under a variant (E007
+  lookup miss, a failed `as`) also makes that alternate non-viable, with
+  the error as the reason; it never fails the run.
 - **Viable** means no check, fit, bound or require violates under the
   variant. Undecided results leave it viable with I003. A non-viable
   alternate stays listed (I002); a waiver may be scoped to one
-  alternate (`waive C002 on Rover.load_ok for alt Colson2Series`), but a
-  violated `require` makes an alternate non-viable whatever is waived.
+  alternate (`waive C002 on acme.rover::Rover.load_ok for alt
+  Rover/wheel=Colson2Series`), but a `require` is never suppressed (6),
+  so a violated one makes an alternate non-viable.
 - **Promoting** an alternate is still the one edit: it becomes the
   primary and leaves the `alt` list. The old primary stays approved only
   if the edit puts it in the list; `impact --swap` prints the suggested
@@ -209,13 +253,13 @@ interface only, so:
   References to the old path resolve with N004; bindings follow it.
 - Tolerance semantics on assignment: quantities.md 5.3.
 - Non-quantity kinds: `Text` (`designation = "1/4-20 UNC-2A"`), enums,
-  `Bool`, points typed by a datum (`Point2 on top`, `Point3 in origin`,
+  `Bool`, points typed by a datum (`Point2 on top`, `Point3 on origin`,
   and `Vec2`, `Vec3`; geometry.md 3), fixed arrays `[T; N]`, and `Table<K>`, a
   reference to any table keyed by `K` whose columns are read as usual
   (`policy.lengths.at_least(x).key`). Columns a reader uses must exist
   in the table passed, with the kinds the reader expects; both are
   checked at the use site, where a missing column or a kind mismatch is
-  an error naming the table.
+  E008 naming the table.
 
 ### 3.4 Bounds
 
@@ -243,7 +287,11 @@ use as an argument or in a `let`; checks over instances use `for`.
 `sum(self, mass)` (shorthand `mass(self)`) rolls a parameter up over all
 parts, recursively; `max(self, lead_time)` and `min(self, p)` do the
 same with maximum and minimum. Roll-ups count every instance: an array
-of four contributes four times. Any part lacking the parameter is an
+of four contributes four times. The roll-up
+names `unit_cost lead_time moq supplier mass` are exactly the members
+of `std.commercial::Sourced`; swap commercial deltas (obligations.md
+5.1) and `compare` columns use the same set. A wrong kind on one is an
+ordinary I001 or Q003. Any part lacking the parameter is an
 error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
@@ -264,8 +312,8 @@ Keys are enums or quantities. `T[k]` is an exact-match row; for
 quantity keys, `T.at_least(x)` is the row with the smallest key `>= x`,
 `T.at_most(x)` the largest key `<= x`, and `T.nearest(x)` the closest
 (ties to the larger). Every row has `.key`, so `Din7981Len.at_least(
-stack).key` reads the matched length. A lookup that misses is an error
-at evaluation. A literal in an `ots` that cites a table but matches none
+stack).key` reads the matched length. A lookup that misses is E007 at
+evaluation. A literal in an `ots` that cites a table but matches none
 of its rows is T001. A row with no `=>` is key-only (`table
 Iso4762Len { key length: Length  3mm  4mm  5mm }`); such a table is
 read for its keys (`.at_least(x).key`). The tables the standard library
@@ -301,18 +349,30 @@ only in part is C002 on the fit (undecided), like any check.
   quantities by their display rules), and geometry helpers
   `rect_pattern circle_pattern distance`.
 - Points: `Point2(x, y)` (and `Point3(x, y, z)`) with members `.x .y
-  (.z)`, typed by a datum (geometry.md 3): `p - q` is a vector, `p + v`
-  a point, `v * s` scales a vector by a dimensionless `s`, and `p in D`
-  re-expresses `p` in datum `D`.
-  `rect_pattern(nx: Count, ny: Count, dx: Length, dy: Length) ->
-  [Point2; nx * ny]` is centred on the origin, rows first;
-  `circle_pattern(n: Count, r: Length, start: Angle) -> [Point2; n]`;
-  `distance(p, q) -> Length`. `+ -` between an array of points and one
-  point applies to each element (`holes + Point2(5mm, 0mm)`). Array
+  (.z)`, typed by a datum (geometry.md 3). `Vec2(x, y)` and `Vec3`
+  construct vectors: `p - q` is a vector, `p + v` a point, `v * s`
+  scales a vector by a dimensionless `s`. `Point3(...) on D` is the
+  typing form of a literal (both point types); `p in D` applied to a
+  typed point is re-expression only, and `in` maps over arrays.
+  `D.at(point)` is datum `D` offset to the point's x and y (z).
+  `rect_pattern(nx: Count, ny: Count, dx: Length, dy: Length, rotation:
+  Angle = 0deg) -> [Point2; nx * ny]` is centred on the origin; dx and
+  dy are pitches (centre to centre); points are ordered row by row, x
+  fastest, from (-,-) to (+,+). `circle_pattern(n: Count, r: Length,
+  start: Angle) -> [Point2; n]`; `distance(p, q) -> Length`. Axis
+  builtins: `radial(p: Point3) -> Length` (distance from the z axis of
+  p's datum, square-aware interval, quantities.md 5.4), `coaxial(a:
+  Datum, b: Datum, allowance, over: Length)` (a radius zone; the
+  diameter form is `2 * radial`), `parallel(a, b, allowance, over)` and
+  `angle_between(a, b) -> Angle`. `+ -` between an array of points and
+  one vector shifts every element (`holes + Vec2(5mm, 0mm)`); array +
+  point is G001. Generators are values with members that bind
+  (`holes.pitch_x`, `.pitch_y`, `.radius`, `.start`, `.rotation`;
+  ir.md 2). Array
   literals are `[a, b, c]`. `aligned(a, b, allowance)` compares two
   patterns (geometry.md 5).
 - `enum Material { Al6061T6, Petg }`, `match m { Material::Petg => 2.4mm,
-  _ => 1.6mm }`. A `match` must be exhaustive.
+  _ => 1.6mm }`. A `match` must be exhaustive (E009).
 - `process` declares manufacturing compensation by role:
 
   ```
@@ -324,9 +384,11 @@ only in part is C002 on the fit (undecided), like any check.
   model Case { #![process(Fdm)]  insert_hole = 3.4mm  #[hole] }
   ```
 
-  The IR keeps the designed value and the drawn value; emit writes the
-  drawn value. Fits, checks and every read see the designed value (the
-  part as made); `x.drawn` reads the drawn value. The drawn value is
+  The IR's `nominal` is always the designed value, and `drawn?` holds
+  the drawn value when a rule applied; emit writes the drawn value of
+  the emit point (quantities.md 5.6). Fits, checks and every read see
+  the designed value (the part as made); `x.drawn` reads the drawn
+  value. The drawn value is
   exact (rule applied to nominals); a toleranced process parameter
   (`hole_comp [+-0.05mm]`) is one source variable added to the designed
   value of every parameter its rules touch, since the process's own
@@ -339,7 +401,8 @@ only in part is C002 on the fit (undecided), like any check.
 ### 3.9 Citations
 
 `@name`, `@"literal"`, and an optional locator `@name:"p.2, table 1"`.
-`cite name = "url-or-path"` names one; `cite name = std.iso273` cites a
+`cite name = "url-or-path"` names one (only `file` citations are
+drift-detected, S004); `cite name = std.iso273` cites a
 standard. Built-in pseudo-citations: `@measured`, `@assumed`,
 `@estimate`, each taking a locator for who and when. A component's
 citation is inherited by its members unless they carry their own. Local
@@ -358,17 +421,36 @@ expressions are also legal wherever a kind is (`out q: Volume / Time`).
 
 `#[name(args), name(args)]` applies to the next item or member;
 `#![...]` at the top of a file or component applies to everything inside
-as a default (rule roles excepted, 3.8); a trailing `#[...]` after a member applies to that member.
-Attributes: `emit`, `display`, `role`, `process`, `hole`/`boss`/... (rule
-roles), `lifecycle`, `allow(CODE)`, and `default(Iface = Impl)`, which
-sets the default for every component parameter of that interface type
-in its scope (stdlib.md 4). `cadetta fmt` aligns trailing
-attributes and comments into columns.
+as a default (rule roles excepted, 3.8); a trailing `#[...]` after a
+member applies to that member.
+
+| Attribute | Meaning |
+|---|---|
+| `emit(point)`, `display(unit)` | Presentational: emitted point (quantities.md 5.6) and display unit. |
+| `role(hole\|shaft)`, `process(P)`, `hole`/`boss`/... | Semantic: tolerance role, process, rule roles. |
+| `lifecycle(status, "date")` | Feeds L001/L002 (3.2). |
+| `native(adapter, "locator")` | Binds the member to a CAD locator inline, instead of in `bindings/<id>.toml` (adapters.md 3). |
+| `allow(CODE, "because")` | A waiver for one member: the reason is required, it has no expiry, W004 checks it suppresses something, and W002 does not apply to it (lints.md 2). |
+| `default(Iface = Impl)` | Sets the default implementer for every component parameter of that interface type in scope. |
+
+Default precedence, highest first: the enclosing component's
+`#![default]`, the file's `#![default]`, the project's `[defaults]`
+(config-cli.md), then the standard library's (stdlib.md 4).
+`cadetta fmt` aligns trailing attributes and comments into columns.
 
 ## 4. Names and resolution
 
-- Canonical paths: ir.md 2. Several files may share a namespace.
-- `use` brings names from other namespaces or packages into scope.
+- Canonical paths: ir.md 2. Several files may share a namespace; the
+  project model (files, namespaces, roots, sources) is in config-cli.md
+  "Project model".
+- `use` brings names from other namespaces or packages into scope:
+  `use ns::Name`, `use ns::*` or `use ns::{A as B, C}`. Everything is
+  public in 0.1.0; there is no visibility modifier.
+- Resolution errors are fixed-severity E codes: E002 unresolved name,
+  E003 duplicate definition of one Type in a namespace (both spans
+  shown), E004 two `use`s bringing the same local name (ambiguous
+  import), E006 argument mismatch at a `part` site. A declaration cycle
+  is D003, not an import cycle: files may import each other.
 - Inside a component, a bare name is its own member or parameter; a
   component's arguments are in scope; `Other.member` resolves a
   component; in an assembly, `part.member` resolves an instance.
@@ -379,7 +461,9 @@ attributes and comments into columns.
   irrelevant.
 - A root (a component no `part` instantiates) is evaluated only if all
   of its parameters have defaults; otherwise it is checked only through
-  its instances, and if it has none that is I004.
+  its instances, and if it has none that is I004, which applies only to
+  components in files under `[project] roots` (default: all sources),
+  so a shared library module is not noisy.
 - Case canon (N001): namespaces `lower.dotted`, types and enum variants
   `PascalCase` (digits allowed: `Iso4762M5`; an underscore between two
   digits is a decimal mark: `M2_5`), everything else
@@ -388,20 +472,29 @@ attributes and comments into columns.
 ## 5. Expressions
 
 Precedence, high to low: postfix (`.member`, `[index]`, call, tolerance
-`[+-..]`, ISO class), unary `-`, `^`, `* /`, `+ -`, `..`, `as`,
-comparisons. Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
+`[+-..]`, ISO class), unary `-`, `^`, `* /`, `+ -`, `..`, `in`,
+`as`, comparisons, `satisfies`, `not`, `and`, `or`. A member beginning
+`IDENT in` is a bound (3.4) only when the right side is a range.
+Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
 `match` are expressions; `{ let a = ...; expr }` is a block expression.
 
 ## 6. Checks and requirements
 
 `check NAME: expr` where expr is a comparison or `x satisfies P`, with
 an optional message string. `check NAME for x in parts: expr`
-quantifies (grammar in 3). The name is required: it is the check's canonical path, and
-attestations and waivers bind to it.
+quantifies (grammar in 3). The name is required: it is the check's
+canonical path, and attestations and waivers bind to it.
 Results are three-valued (quantities.md 5.8): C001 `violates` (error),
 C002 `undecided` (warning). `require` is a check that carries a citation
 to an external requirement and is tracked as an obligation
-(obligations.md); it cannot be waived without an attestation.
+(obligations.md).
+
+A `require` is never suppressed. Its verdict is evaluated like any
+check. An attestation is sign-off on a verdict, never a waiver: it
+discharges the sign-off obligation of a `holds` require (O003) and
+cannot change a `violated` one, which stays C001. The state `waived`
+applies only to diagnostics suppressed by `waive` or `allow`. The single
+rule is in obligations.md 4.
 
 ## 7. Formatting
 
@@ -411,13 +504,15 @@ Formatting never changes the IR digest.
 
 ## Open questions
 
-- OQ-4: Configurations (SOLIDWORKS configurations, design tables).
-  Parameterized components (3.1) cover part families; whole-assembly
-  variants are still open.
-- OQ-5 (closed 2026-10-13): the file extension is `.cdt`.
+- OQ-4 (deferred past 0.1.0): Configurations (SOLIDWORKS
+  configurations, design tables). Parameterized components (3.1) cover
+  part families; whole-assembly variants wait. A locator binds the
+  active configuration only (adapters.md "Import").
+- OQ-5 (closed 2026-10-13, language.md 2): the file extension is `.cdt`.
 - OQ-6: Function-named features (`bore`, `seat`, `datum`) above raw
   parameters. Fits and process roles cover the 0.1.0 needs.
-- OQ-10 (resolved in geometry.md): positions are typed by datums, and
-  parts are placed in a tree, which avoids constraint solving.
+- OQ-10 (closed 2026-10-13, geometry.md): positions are typed by
+  datums, and parts are placed in a tree, which avoids constraint
+  solving.
 - OQ-11: Packages for shared parts libraries (versioning, fetching).
   `std` ships with the compiler (stdlib.md); third-party packages wait.

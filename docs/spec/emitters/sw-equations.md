@@ -1,6 +1,7 @@
 # Emitter: SOLIDWORKS linked equations file
 
-Adapter name `sw-equations`, built in, capabilities `emit` and `read`.
+Adapter name `sw-equations`, built in, capabilities `emit` and `read`
+(no `drive`). Default `out`: `build/solidworks/<id>.txt`.
 The output is a text file a part or assembly links through Equations >
 "Link to external file"; SOLIDWORKS re-reads it on rebuild. Derived from
 pilot r2-05.
@@ -16,18 +17,19 @@ pilot r2-05.
 "NumBolts" = 4
 ```
 
-- Line 1 is the header: adapter version, IR digest, bindings digest.
+- Line 1 is the header: adapter version, IR digest, bindings digest. It
+  is excluded from the `sync` no-op comparison (adapters.md 2).
 - **Global lines**, `"NAME" = VALUE`, for each `global` locator. NAME is
   the bound locator, or for an unbound-name global created by the
-  emitter, the mangled path with `__` (`"Gasket__width"`); the emitter
-  never writes dots in names it creates.
+  emitter, the mangled path (`"Gasket__width"`, adapters.md 3.1); the
+  emitter never writes dots in names it creates.
 - **Dimension lines**, `"Dn@Feature@File" = REF-OR-VALUE`, for each
   `dimension` locator: `"GLOBAL"` in `ref` mode (which global:
   adapters.md 3), a value in `value` mode.
 - **Values** are the emit point (quantities.md 5.6) in the locator's
   `native_unit`, written with the unit suffix (`6.35mm`, `0.25in`), at
-  the declared precision (default 6 decimals, adapters.md 5), trailing zeros trimmed. A value
-  not representable at that precision is Q004. Counts and Ratios are
+  the declared precision (default 6 decimals, adapters.md 5), trailing
+  zeros trimmed. A value not representable at that precision is Q004. Counts and Ratios are
   written bare. Text is not emitted to equations (it has no place there).
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
@@ -54,3 +56,40 @@ become observed-IR expressions; values without units take the document
 unit given by `--assume-unit` or `[[adapter]] native_unit`
 (adapters.md 3). Lines it cannot parse are kept with `exact: false` and
 the raw text.
+
+`read` exists chiefly to import an equations list exported from
+SOLIDWORKS (Equations dialog > Export), which is how a user without COM
+gets observed IR for `import` (adapters.md 7). Because a linked equations
+file is not editable in SOLIDWORKS, reading the file cadetta wrote
+reports only what cadetta wrote.
+
+## 4. SOLIDWORKS naming
+
+Both SOLIDWORKS adapters (`sw-equations` and the COM `solidworks`
+adapter) MUST follow these rules, so switching adapters never renames
+anything in a part, and may share one bindings file
+(`[[adapter]] bindings = "bindings/solidworks.toml"`, adapters.md 3).
+
+- **Created names** follow adapters.md 3.1: `__` always, never a dot.
+- **Dimension locators**, by context:
+
+  | Context | Spelling | Extra field |
+  |---|---|---|
+  | part | `Dn@Feature@File.SLDPRT` (`Dn@Sketch1@File.SLDPRT` for a sketch dimension) | - |
+  | assembly (a mate distance, an assembly-level feature) | `Dn@Feature@File.SLDASM` | - |
+  | component inside an assembly | `Dn@Feature@File.SLDPRT` | `component = "wheel<2>"` |
+
+  `component` is the instance name as the feature tree shows it. The
+  COM adapter derives the assembly-context spelling from it. A binding on
+  one instance path (`Rover/wheel[2].hub_bore`) addresses the component
+  named by `component`; a `[*]` binding without `component` addresses
+  the part file itself (all instances share its dimensions).
+- Coordinates bound with `sign = -1` are negated at write and read
+  (geometry.md 6).
+
+## 5. Obligations
+
+This adapter never discharges "CAD file reflects design": it has no
+`drive`, so cadetta cannot see what the part holds. The obligation stays
+open with the reason "unverifiable without drive" (adapters.md 2),
+unless a `drive` adapter covers the same file or the user attests it.

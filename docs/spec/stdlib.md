@@ -19,6 +19,7 @@ disagree. Data can be cited, overridden and diffed; syntax cannot.
 | `std.materials` | `Material` enum and the `Materials` table: density, yield, tap class, engagement factor | yes, a short list |
 | `std.fasteners` | Metric threads, ISO 4762 socket head cap screws, ISO 4032 nuts, ISO 273 clearance holes, tap drills, preferred lengths, `ScrewJoint` | yes, metric coarse |
 | `std.retaining` | DIN 471/472 retaining rings and grooves | yes |
+| `std.commercial` | The `Sourced` interface: unit cost, lead time, MOQ, supplier, mass (section 6) | yes |
 | `std.bearings` | Deep-groove ball bearing envelopes (ISO 15) | later |
 | `std.fasteners.inch` | UNC/UNF, ASME B18.3, inch clearance and tap drills | 0.2.0 |
 | `std.inserts` | Heat-set and wire-thread inserts | 0.2.0 |
@@ -71,11 +72,12 @@ use std.fasteners::ScrewJoint
 assembly Box {
   part lid: Lid
   part base: Base
-  part lid_screws[4]: ScrewJoint(thread = M4, clamp = lid.wall, into = base.material)
+  part lid_screws: ScrewJoint(thread = M4, clamp = lid.wall, into = base.material,
+                              at = lid.holes, onto = base.tapped)
 }
 ```
 
-One line, and every derived dimension is a member of the joint with a
+One line per hole pattern, and every derived dimension is a member of the joint with a
 canonical path (`acme.box::Box/lid_screws.clearance_hole`), bindable
 straight to the hole features in each part's CAD file:
 
@@ -86,7 +88,8 @@ straight to the hole features in each part's CAD file:
 | `min_engagement` | `Materials[into].engagement_factor * thread.major` (steel 1.0, brass and cast iron 1.5, aluminium 2.0, ...) |
 | `grip` | `clamp` minus `counterbore_depth` when counterbored: the material actually under the head |
 | `screw_length` | `Iso4762Len.at_least(grip + min_engagement).key` |
-| `part screw` | `Iso4762(thread, screw_length)`, so it is in the BOM and mass roll-ups (cost: section 4) |
+| `part screw[count(at)]` | `Iso4762(thread, screw_length)`, one per hole, so the BOM and mass roll-ups count one screw per hole (cost: section 4); `count` instead of `count(at)` when there is no pattern |
+| `float` | `Length`: the allowance the joint's `aligned` check uses (geometry.md 5.2); a non-locating joint carries it into the placement it implies |
 | `tap_drill` | `TapDrill[thread]` column chosen by `Materials[into].tap_class` and `tap` (`Cut` or `Form`): hard materials get the larger 65% drill |
 | `thread_depth` | tip penetration `screw_length - grip` plus the policy's bottom clearance |
 | `drill_depth` | `thread_depth` plus `tap_lead_in * thread.pitch` and `drill_point * tap_drill` |
@@ -116,6 +119,19 @@ screw does not bottom out (`thread_depth > screw_length - grip`);
   the joint also checks that the holes line up, using the fixed-fastener
   allowance, or the floating one with `nut = true` (then `onto` is the
   second part's clearance holes).
+- `count: Count` (default 1): the number of screws when there is no
+  pattern. A joint with `at` and `onto` takes its count from `count(at)`
+  (G004 when `count(onto)` differs); `count` is then not allowed.
+- `locating: Bool` (default false): true when a pilot, dowel or fit
+  locates the clamped part. Otherwise a part placed on its host's
+  pattern datum gets an implicit `[+-float]` on x and y (one source
+  variable pair per joint), and G005 warns when a check tighter than
+  the float reads through it (geometry.md 5.2).
+
+A joint is one part per hole pattern, never one per hole: `part
+screws[4]: ScrewJoint(..., at = holes)` is E006 (argument mismatch),
+because each instance would check the whole pattern. The joint owns its screws
+internally.
 
 A heat-set insert in 0.1.0 is `tap = Vendor` with `into = Brass360` and
 `depth_available` the insert's length; the insert's own hole is a `fit`
@@ -132,7 +148,7 @@ The numbers a shop disagrees about live in a `FastenerPolicy`:
 
 ```
 interface FastenerPolicy {
-  engagement: Table<Material>        // column `factor: Ratio`, replaces Materials.engagement_factor
+  engagement: Table<Material>        // column `factor: Ratio`; read as policy.engagement[into].factor, replaces Materials.engagement_factor
   tap_columns: Table<TapClass>       // columns `cut, form: TapColumn`: which TapDrill column
   lengths: Table<Length>             // preferred screw lengths (key-only table)
   drills: Table<Length>              // drills on the shelf; tap drills round at_least into it
@@ -156,7 +172,17 @@ ots AcmeShop: FastenerPolicy @"shop standard SS-104 rev C" { ... }
 ```
 
 `#![default(Iface = Impl)]` sets the default for every component
-parameter of that interface type in its scope (language.md 3.11).
+parameter of that interface type in its scope (language.md 3.11). A
+project sets it once for all files in `cadetta.toml`:
+
+```
+[defaults]
+FastenerPolicy = "acme.company::AcmeShop"       # qualified path
+```
+
+Precedence, highest first: the component's `#![default]`, the file's
+`#![default]`, the project `[defaults]`, then the `std` default
+(`IsoDefault`). No lint fires on a fallback to `IsoDefault`.
 
 ## 5. CAD hole features
 
@@ -165,11 +191,33 @@ them like any other value, and the callout travels as Text and as a
 trailing emitted comment. Driving native hole features (SOLIDWORKS Hole
 Wizard, FreeCAD PartDesign Hole, Onshape hole) from a joint is OQ-14.
 
+## 6. Commercial data: `std.commercial::Sourced`
+
+```
+interface Sourced {
+  unit_cost: Money
+  lead_time: Time
+  moq: Count
+  supplier: Text
+  mass: Mass
+}
+```
+
+The commercial names are a declared contract, not magic spellings. The
+roll-ups (`sum?(self, unit_cost)`, `mass`; language.md 3.5), the
+commercial deltas of `impact --swap` and the `compare` columns are
+exactly these members. A part family implements `Sourced` (or a
+component declares the members); a misspelling such as `leadtime` is
+simply not a commercial member, and a wrong kind on one of these names
+is an ordinary Q003. Every member is declared optional
+(`unit_cost?: Money`, language.md 3.2), so a component lacking one is
+not I001; the `?` roll-up forms list it as missing, never defaulted.
+
 ## Open questions
 
 - OQ-14: Should adapters map a whole joint onto a native hole feature
   (size, standard, depth, thread) rather than numeric parameters?
   Recommendation: yes, after 0.1.0, as an optional adapter capability.
-- OQ-15 (resolved in draft 1.3): inch fasteners and inserts ship in
+- OQ-15 (closed 2026-10-13, draft 1.3 decisions): inch fasteners and inserts ship in
   `std` in 0.2.0, not as packages; until then an inch joint is
   hand-modelled (pilot r3-06).

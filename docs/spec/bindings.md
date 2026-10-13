@@ -8,7 +8,11 @@ and every capability is reachable the first way.
 1. **JSON, the catch-all.** Any language that can run a process and
    read JSON uses cadetta today:
    - the CLI with `--format json` (config-cli.md), whose outputs have
-     schemas in `docs/schemas/`;
+     schemas in `docs/schemas/`: `check.json`, `obligations.json`,
+     `ack.json`, `why.json`, `impact.json`, `swap.json`, `compare.json`,
+     `solve-report.json`, `sync.json`, `import.json`, `explain.json`,
+     `units.json`, plus the diagnostic record `cadetta.diag/1`
+     (lints.md 1.1) that several of them embed;
    - the IR itself, `cadetta.ir/1` (ir.md);
    - the solver protocol `cadetta.solve/1` (solvers.md), for computing
      values;
@@ -42,7 +46,15 @@ to its language's registry at the workspace version (lockstep).
 `pip install cadetta` installs the `cadetta` command (the Rust CLI,
 through a console script) and the importable package. The package is a
 PyO3 extension (`cadetta._core`) and a Python layer of pydantic models.
-Fallible calls return typani `Result`; `.unwrap()` suits scripts.
+
+Error contract. Operators on `Quantity` raise `cadetta.QuantityError`
+(it carries `code`, the Q-code the compiler would report): a dimension
+or kind violation is a programmer bug, as in any Python numeric
+library. Fallible calls at an I/O, parse or query boundary return typani
+`Result`; `.unwrap()` suits scripts. `Err` means I/O, configuration or
+usage only (the CLI's exit code 2); a design with error diagnostics is
+`Ok(report)` (the CLI's exit code 1), and the caller reads
+`report.diagnostics`.
 
 ### 3.1 Reading a design
 
@@ -52,56 +64,115 @@ import cadetta
 project = cadetta.Project.open("path/to/project").unwrap()
 design = project.evaluate().unwrap()        # the design IR (ir.md)
 
-d = design["acme.rover::Axle.end_diameter"]
-d.nominal.to("mm")       # Fraction(12, 1): exact, never a float by surprise
-d.max.to("mm")           # upper limit after tolerance
-float(d.mid.to("in"))    # a float only when asked for
-d.kind, d.citation       # "Length", the source
+m = design.get("acme.rover::Rover/axle[0].end_diameter").unwrap()   # Member
+d = m.value                                  # Quantity
+d.nominal.to_exact("mm")   # Fraction(12, 1): exact, or None when inexact
+d.max.to_float("mm")       # upper limit after tolerance, as a float
+d.mid.to_float("in")       # a float only when asked for
+m.kind, m.citation         # "Length", the source
+m.variant("acme.rover::Rover/wheel", "acme.company::Colson2Series")
 ```
 
-- `Quantity` mirrors quantities.md: an exact magnitude (`Fraction`
-  times a power of pi), dimension, kind, angle exponent and optional
-  tolerance. `.to(unit)` is exact; inexact values say so
-  (`.exact == False`). Arithmetic between Quantities follows the
-  language's kind rules; a violation is a `Result` error carrying the
-  same Q-code the compiler would report.
-- `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax.
+- `design.get(path) -> Result[Member, PathNotFound]`; `design[path]` is
+  not offered. Paths are instance paths: a parameterized component such
+  as `Axle(wheel, span)` exists only as `part axle[2]`, so its members
+  are `Rover/axle[0].end_diameter` and `[1]`, never `Axle.end_diameter`
+  (ir.md 2, language.md 3.1).
+- `Member` is the pydantic model of the JSON member, field for field.
+  `Value` carries `dim`, the exponent vector over the SI base
+  dimensions plus angle and currency, so a `Quantity` is built from the
+  IR alone; `kind` names the kind (`"Length"`).
+- `Quantity` mirrors quantities.md: an exact magnitude, dimension, kind
+  and optional tolerance. `.nominal .min .max .mid .mmc .lmc` are
+  computed in the Rust core, never re-implemented in Python, and return
+  untoleranced Quantities. `to_exact(unit) -> Fraction | None` is
+  `None` when the value is inexact; `to_float(unit) -> float` always
+  works. There is no `.to`, so the return type is never a union.
+- `member.variant(slot, alternate) -> Member | None` reads the value
+  under a variant (language.md 3.2); `slot` is the canonical
+  `Type/part` path and `alternate` the qualified component name, the
+  same strings as `impact --swap SLOT ALT`.
+- Arithmetic follows the language's kind rules and carries tolerance
+  (affine forms, quantities.md 5.4), so Python results agree with
+  checks. A violation raises `QuantityError`. `q.as_kind("Length")`
+  mirrors `as` (quantities.md) and raises `QuantityError` (Q003) when
+  the dimension differs.
+- `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax and
+  returns a `Result`.
 - Interop: `.to_pint(registry)` with the optional `cadetta[pint]`
-  extra; floats for numpy via `.to(unit)` then `float()`.
+  extra; floats for numpy via `to_float(unit)`.
 
-### 3.2 Queries
+### 3.2 Surface
 
-`project.check()`, `project.impact(...)`, `project.impact_swap(slot,
-alternate)`, `project.compare(interface)` and `project.why(path)`
-return pydantic models generated from the same JSON schemas as the CLI
-(`impact.json`, `compare.json`, `why.json`, the diagnostic schema). Diagnostics
-carry their code, severity, path, span and message.
+Every query and mutation verb has a method; `init`, `cite pin` and the
+`lock` maintenance verbs stay CLI-only (they edit repository files
+around the project, not the design). Each returns `Result[Model, CadettaError]`
+where the model is generated from the verb's JSON schema (section 1),
+so a binding returns exactly what the CLI's JSON returns.
+
+| Python | CLI | Model (schema) |
+|---|---|---|
+| `Project.open(path=None, config=None)` | root discovery, `--config` (config-cli.md) | `Project` |
+| `project.sources` | the resolved `sources` list | `list[Path]` |
+| `project.evaluate()` | `ir` (design) | design IR (`cadetta.ir/1`) |
+| `project.ir(observed=None)` | `ir [--observed]` | IR (`cadetta.ir/1`) |
+| `project.check(release=False, as_of=None, namespace=None)` | `check` | `check.json` |
+| `project.why(path)` | `why` | `why.json` |
+| `project.impact(path)` | `impact PATH` | `impact.json` |
+| `project.impact_since(rev="HEAD", worktree=False)` | `impact --since` / `--worktree` | `impact.json` |
+| `project.why_stale(obligation)` | `why --stale` | `why.json` |
+| `project.impact_swap(slot, alternate)` | `impact --swap SLOT ALT` | `swap.json` |
+| `project.swap(slot, alternate, reason)` | `swap` | `swap.json` |
+| `project.compare(interface)` | `compare` | `compare.json` |
+| `project.obligations(stale=False, role=None, release=False, as_of=None)` | `obligations` | `obligations.json` |
+| `project.solve(names=None, variants=False)` | `solve` | `solve-report.json` |
+| `project.emit(adapters=None)` | `emit` | `emit.json` |
+| `project.sync(...)` | `sync` | `sync.json` |
+| `project.import_(adapter, files, accept=False, update=False, write=False)` | `import` | `import.json` |
+| `project.ack(selector, role, reason, baseline=False, release=False, dry_run=False, as_=None)` | `ack` | `ack.json` |
+| `project.explain(code)` | `explain` | `explain.json` |
+| `cadetta.units(kind=None)` | `units` | `units.json` |
+| `cadetta.format_source(text)` | `fmt` | `str` |
+
+`slot` is a canonical `Type/part` path (`acme.rover::Rover/wheel`) and
+`alternate` a component name, qualified when it lives in another
+namespace (`acme.company::Colson2Series`), exactly as on the command
+line. `Project` is a snapshot: it reads sources at `open`, and
+`project.reload()` re-reads them. `evaluate()` returns the primary
+evaluation; variants are read through `member.variant`.
 
 ### 3.3 Writing solvers
 
 ```python
 from cadetta.solve import solver
 
-@solver(inputs={"load": "Force", "span": "Length"}, outputs={"wall": "Length"})
-def wall_sizing(load, span):
-    return {"wall": (load * span / allowable).to_kind("Length")}
+@solver(inputs={"load": "Force", "span": "Length", "width": "Length",
+                "allowable": "Pressure"},
+        outputs={"wall": "Length"}, significant=6)
+def wall_sizing(load, span, width, allowable):
+    # t = sqrt(6 M / (sigma b)), M = load * span / 4: Length after sqrt
+    return {"wall": ((6 * load * span / 4) / (allowable * width)) ** 0.5}
 
 if __name__ == "__main__":
     wall_sizing.serve()       # speaks cadetta.solve/1 on stdin/stdout
 ```
 
-The decorator reads the request, converts inputs to Quantities, checks
-the declared kinds both ways, and writes the response with the
-solver's version. A wrong kind is a protocol error naming the output,
-not a silently wrong number.
+The decorator reads the request, converts inputs to Quantities (a
+toleranced input arrives as a Quantity with its tolerance), checks the
+declared kinds both ways, and writes the response with the solver's
+version. Outputs are written as decimal strings rounded to `significant`
+digits (default 6, overridable per output), never `repr(float)`, so
+the consumer sees no M001 or Q006 noise (solvers.md 3). A wrong kind is
+a protocol error naming the output, not a silently wrong number.
 
 ### 3.4 Writing adapters
 
 `cadetta.adapter.Adapter` implements the JSON-RPC loop of adapters.md 5:
-`initialize`, `emit`, `read`, `push`, `regen`, `shutdown` are methods
-to override. Observed IR is built with the same models. Logs go to
-stderr only, because stdout carries the protocol. The FreeCAD and
-SOLIDWORKS adapters are built on it.
+`initialize`, `emit`, `read`, `push`, `regen`, `shutdown` (and
+`open`, `save`, `close` for drive adapters) are methods to override.
+Observed IR is built with the same models. Logs go to stderr only,
+because stdout carries the protocol. The FreeCAD and SOLIDWORKS
+adapters are built on it.
 
 ### 3.5 What Python does not do
 
@@ -112,7 +183,6 @@ truth. Programs may generate `.cdt` text and format it with
 
 ## Open questions
 
-- OQ-16: Should `Quantity` arithmetic in Python carry tolerance (affine
-  forms, quantities.md 5.4) or nominal values only? Recommendation:
-  carry it; the core already computes it, so dropping it would make
-  Python results disagree with checks.
+- OQ-16 (closed 2026-10-13, bindings.md 3.1): Python `Quantity`
+  arithmetic carries tolerance (affine forms, quantities.md 5.4), so
+  Python results agree with checks.
