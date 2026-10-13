@@ -155,7 +155,7 @@ solver path with `*` (any run) and `?` (one character); `--module PATH`
 keeps only solvers declared in that module file. A solver with no
 `[solvers."PATH"]` table, or a bad command template, is a usage error
 (exit 2). `timeout` in that table is passed to the transport. `--variants`
-is not implemented yet and is rejected as a usage error. Script and `deps`
+also solves the approved alternates (4.1). Script and `deps`
 paths resolve against the package directory.
 
 ### 4.1 Solvers under variant evaluation
@@ -168,6 +168,13 @@ variant's result is missing, its outputs are unknown, never borrowed
 from the primary: checks and requires reading them are `undecided`
 under that variant, with S006 (`solver-unsolved-variant`), and
 `impact --swap` says which solve to run.
+
+`solve --variants` plans one run per distinct input digest that differs
+from the primary's and lacks a fresh result. Variants whose changed inputs
+are equal share one run and each gets its own entry keyed (solver,
+variant); a variant whose input digest equals the primary's has no entry of
+its own and reads the primary's result, because nothing changed. A variant
+with changed inputs and no entry reads unknown, never the primary's outputs.
 
 Digests are `blake3:<hex>`; the input digest is taken over the canonical
 request JSON (sorted keys, no whitespace). A stored result is fresh only
