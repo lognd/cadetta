@@ -2,7 +2,8 @@
 id = "01M4V5MP4NRZTDS8Q2NKZVVBCA"
 title = "csv.md: note separator and emit-point token are inconsistent"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
