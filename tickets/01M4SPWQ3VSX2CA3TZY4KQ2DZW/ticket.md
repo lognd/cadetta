@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:36:30Z"
+updated = "2026-10-13T07:36:31Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a Binding, when built, then it holds a list of locators each with kind (global|dimension|property), mode (value|ref) and native_unit (ir.md 3, adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Check, when built, then it holds verdicts for the primary and per alternate and waived_for (ir.md 3)"
