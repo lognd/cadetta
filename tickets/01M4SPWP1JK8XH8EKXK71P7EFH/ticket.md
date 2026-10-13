@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the grammar in language.md 3, when parsed, then file, use, component, params, member, let, bound, part and check productions are accepted"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a statement ending at newline or `;`, when parsed, then both terminate it, and a newline inside `( )` or `[ ]` does not (language.md 2)"
