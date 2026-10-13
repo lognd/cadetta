@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T16:39:46Z"
+updated = "2026-10-13T16:46:03Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for stdlib"
 labels = ["creates:tests/conformance/stdlib/**"]
-scope = ["tests/conformance/stdlib/**"]
+scope = ["tests/conformance/stdlib/**", "tests/conformance/known-gaps.toml", "docs/spec/stdlib.md"]
 
 [[links]]
 kind = "blocks"
