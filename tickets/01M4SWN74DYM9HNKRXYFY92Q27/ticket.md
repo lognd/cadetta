@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:38Z"
-updated = "2026-10-13T08:22:34Z"
+updated = "2026-10-13T08:23:23Z"
 persona = "design engineer"
 capability = "attest once for identical instances"
 idempotency_key = "replan14:ob-level"
@@ -25,5 +25,5 @@ target = "01M4SWK9D2DYTDN1TW3013FBDV"
 
 [[acceptance]]
 text = "Given a closure reading no component parameter or interface slot, when targeted, then the obligation is at definition path; otherwise instance paths with identical argument closures form one obligation (obligations.md 2; ir.md 2)"
-bound = false
+bound = true
 +++
