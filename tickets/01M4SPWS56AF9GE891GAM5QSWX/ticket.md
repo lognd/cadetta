@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:04:04Z"
+updated = "2026-10-13T05:44:12Z"
 persona = "design engineer"
 capability = "emit and read cadetta.ir/1 JSON"
 outcome_text = "I can diff and consume the IR from scripts"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given emitted JSON, when read, then the observed IR equals the design IR values"
+bound = false
+
+[[acceptance]]
+text = "Given the JSON emitter, when run, then the output is cadetta.params/1 with decimal-string values, unit and note, the header excluded from change detection, and no ref mode (emitters/json.md)"
 bound = false
 +++

@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the same IR twice, when emitted, then the bytes are identical (golden file)", "Given emitted JSON, when read, then the observed IR equals the design IR values"]
+new = ["Given the same IR twice, when emitted, then the bytes are identical (golden file)", "Given emitted JSON, when read, then the observed IR equals the design IR values", "Given the JSON emitter, when run, then the output is cadetta.params/1 with decimal-string values, unit and note, the header excluded from change detection, and no ref mode (emitters/json.md)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:12Z"
+actor = "lognd"
+rev = 1
