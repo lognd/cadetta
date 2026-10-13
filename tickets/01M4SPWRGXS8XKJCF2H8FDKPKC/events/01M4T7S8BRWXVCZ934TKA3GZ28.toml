@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:59:05Z"
+digest = "08ca323d2931295b843893a1bc1ba5466660822196fb9fabadc9176ce2d02b9c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d057ba38-d938-41ed-a04d-c28101cd3908 with nextest profile: default
+    Starting 1 test across 1 binary (2 tests skipped)
+        PASS [   0.007s] cadetta-adapter tests::drive_rebuild_error_is_r004
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 2 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=tests::drive_rebuild_error_is_r004)' -p cadetta-adapter"
+size = 537
+status = "measured"
+test_count = 1
+tests_digest = "dfa884206c606dda3ff3e372d2a57e1c1a92b2edb2ddd667cd861246d70534f0"
+at = "2026-10-13T08:59:05Z"
+actor = "lognd"
+rev = 1
