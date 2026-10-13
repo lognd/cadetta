@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:34:36Z"
+updated = "2026-10-13T08:34:37Z"
 persona = "design engineer"
 capability = "see worst-case checks over the tolerance of every source variable they reach"
 idempotency_key = "replan13:Affine tolerance evaluation with source variables"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a `let` stack-up, when a check reads it, then it sees every tolerance upstream and repeated terms count once (quantities.md 5.3, 5.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check reading an arithmetic parameter with no tolerance of its own whose inputs are toleranced, when analysed, then the C004 fact is recorded (quantities.md 5.3)"
