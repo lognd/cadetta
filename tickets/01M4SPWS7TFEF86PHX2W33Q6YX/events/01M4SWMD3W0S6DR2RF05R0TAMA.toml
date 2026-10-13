@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a design IR, when emitted, then each parameter is one name,value,unit row, golden-file stable", "Given the CSV, when read, then values round-trip exactly"]
+new = ["Given a design IR, when emitted, then each parameter is one name,value,unit row, golden-file stable", "Given the CSV, when read, then values round-trip exactly", "Given the CSV emitter, when run, then output is RFC 4180 with a header comment and columns name,value,unit,note (emitters/csv.md)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:12Z"
+actor = "lognd"
+rev = 1

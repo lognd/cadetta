@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:04:04Z"
+updated = "2026-10-13T05:44:12Z"
 persona = "design engineer"
 capability = "emit and read name,value,unit rows"
 outcome_text = "spreadsheets can consume parameters"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given the CSV, when read, then values round-trip exactly"
+bound = false
+
+[[acceptance]]
+text = "Given the CSV emitter, when run, then output is RFC 4180 with a header comment and columns name,value,unit,note (emitters/csv.md)"
 bound = false
 +++
