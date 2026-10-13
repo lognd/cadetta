@@ -2,12 +2,12 @@
 id = "01M4TA3CEMSKPPZTY1CM2AFDDQ"
 title = "Switch why/impact/ir/ack/obligations verbs to pipeline::analyze"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-13T09:47:04Z"
+updated = "2026-10-13T09:52:56Z"
 scope = ["crates/cadetta-cli"]
 
 [[acceptance]]

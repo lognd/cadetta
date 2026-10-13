@@ -182,6 +182,7 @@ dependencies = [
  "cadetta-adapter",
  "cadetta-ir",
  "cadetta-obligations",
+ "cadetta-units",
  "schemars",
  "serde",
  "serde_json",

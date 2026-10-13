@@ -2,13 +2,14 @@
 id = "01M4SXRFQ0RENW7YM154W0EWP9"
 title = "cadetta update"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T09:48:13Z"
+updated = "2026-10-13T09:50:06Z"
 persona = "product engineer"
 capability = "re-resolve dependencies on demand"
 labels = ["creates:crates/cadetta-cli/src/cmd/update.rs"]
