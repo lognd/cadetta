@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:21:12Z"
-updated = "2026-10-13T17:57:06Z"
+updated = "2026-10-13T17:57:16Z"
 scope = ["docs/spec/emitters/sw-equations.md", "docs/spec/lints.md", "docs/spec/adapters.md", "docs/spec/config-cli.md", "docs/spec/README.md", "crates/cadetta-lint/src/engine.rs", "tests/conformance/emitters/sw-equations/**"]
 
 [[acceptance]]
