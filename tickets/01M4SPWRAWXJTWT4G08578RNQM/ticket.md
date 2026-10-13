@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:01:25Z"
+updated = "2026-10-13T05:43:37Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -45,5 +45,13 @@ bound = false
 
 [[acceptance]]
 text = "Given drift, when R001 is reported, then it compares against the emitted point, not the nominal (adapters.md 3a)"
+bound = false
+
+[[acceptance]]
+text = "Given the three-way compare, when R001 fires, then it states cad moved, design moved or both moved and shows base, ours and theirs (adapters.md 2; lints.md 3 R)"
+bound = false
+
+[[acceptance]]
+text = "Given a push that replaces a native expression, when linted, then R006 is a warning (not info) listing the old expression, and also fires from an adopted record (lints.md 3 R; adapters.md 2.1, 7.4)"
 bound = false
 +++
