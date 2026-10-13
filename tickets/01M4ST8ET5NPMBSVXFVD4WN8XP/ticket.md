@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:32:31Z"
+updated = "2026-10-13T08:33:22Z"
 persona = "design engineer"
 capability = "know when a datasheet changed under a value"
 idempotency_key = "replan13:Citation digests and source acknowledgement"
 labels = ["creates:crates/cadetta-obligations/src/citation.rs"]
-scope = ["crates/cadetta-obligations/src/citation.rs"]
+scope = ["crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[acceptance]]
 text = "Given a local-file citation, when acknowledged with `--role source`, then its digest is recorded in the lock (obligations.md 2, 3)"
