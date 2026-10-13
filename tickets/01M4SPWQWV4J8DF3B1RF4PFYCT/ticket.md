@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:05:47Z"
+updated = "2026-10-13T13:05:53Z"
 persona = "design engineer"
 capability = "get lints for the D family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/d.rs", "tests/conformance/lints/D*/**", 
 
 [[acceptance]]
 text = "Given the literal 12.012mm repeated in a model with at least d001_min_digits significant digits, when linted, then one D001 is reported listing every location (lints.md D)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `100mm` repeated (1 significant digit), when linted, then D001 is info; given a value in common_values then no D001 unless either side is imported (lints.md D)"
