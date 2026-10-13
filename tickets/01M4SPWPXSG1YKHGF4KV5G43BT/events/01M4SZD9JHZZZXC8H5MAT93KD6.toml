@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:32:35Z"
+digest = "f65d2f76911b9d4513b8ade005426d00d888b087e6640a3f6750d2efad8ecc2f"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e25856b6-0d2b-4199-b900-1b6023b615de with nextest profile: default
+    Starting 1 test across 1 binary (6 tests skipped)
+        PASS [   0.020s] cadetta-fits tests::h7_20mm
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 1 test run: 1 passed, 6 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-fits -E 'test(=tests::h7_20mm)'"
+size = 634
+status = "measured"
+test_count = 1
+tests_digest = "3c482b4a06b21e447fd0e87965984769b8ab7956807b84ca7efe46b62164c197"
+at = "2026-10-13T06:32:35Z"
+actor = "lognd"
+rev = 1

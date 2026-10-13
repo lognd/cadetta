@@ -290,6 +290,13 @@ domain error.
 interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
 `radial`, language.md 3.8) stays defined when x straddles zero.
 
+Decided in implementation: "the same affine form" means structurally
+equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`
+with differing slack are not detected and use the ordinary product. The
+square of an exact form is exact; of a toleranced one it is the interval
+hull of `{a^2, b^2}` (with lower bound 0 when `[a, b]` contains zero),
+marked conservative.
+
 ### 5.5 Rounding
 
 `round_to(x, step)`, `ceil_to(x, step)`, `floor_to(x, step)`; `step`
@@ -360,6 +367,24 @@ the parameter, `#![display(...)]` on an enclosing scope, `[units]
 display` in `cadetta.toml`, then the authored unit. Fractional displays:
 `#[display(in/32)]` prints `45-15/16in`; `#[display(ft_in)]` prints
 `3'9-15/16"`. The formatter preserves authored literals.
+
+Display rules (decided 2026-10-13, cadetta-units `display`):
+
+- A trailing `/<integer>` makes a fraction spec (`in/32`); anything else
+  is a unit expression (`mm/rev` is a quotient). The denominator is at
+  least 1. `ft_in` alone means `ft_in/16`; `ft_in/N` is accepted.
+- The value is rounded once to the nearest `1/N` of the unit, ties away
+  from zero, and the fraction prints in lowest terms: `45.9375in` at
+  `in/32` is `45-15/16in`. A zero fraction is dropped (`2in`), a zero
+  whole before a fraction is dropped (`1/2in`), and `ft_in` carries
+  into feet (`11.99in` is `1'0"`).
+- `[units] display` supplies one spec to a value (the caller looks it up
+  by kind); the display unit must have the value's dimension.
+- Plain units print the exact decimal when it terminates, otherwise six
+  places, half away from zero, trailing zeros trimmed. Money prints at
+  the currency minor unit (ISO 4217 digits: 2, but 0 for JPY and 3 for
+  KWD, for example) and `%` prints one decimal, both half away from
+  zero (obligations.md 5.1). Fractional specs need a length unit.
 
 ## 7. Diagnostics owned by this document
 

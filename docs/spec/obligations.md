@@ -109,6 +109,12 @@ Diagnostic rules:
   can. Whole-file granularity is the 0.1.0 behaviour.
 - The `sw-equations` adapter never discharges `sync`: the state stays
   `open` with reason "unverifiable without drive" (adapters.md).
+- Decided (0.1.0): only `sync` and `solver` accept a kind-level
+  `required_for`; any other kind is a configuration error. Only `stale`
+  or `open` obligations gate (a `required_for = "release"` kind gates
+  under `--release` only), and emission by `sw-equations` is never a
+  discharge, so a gated `sync` obligation on an equations-only project
+  fails `check --release` until a driving adapter syncs it.
 
 The as-built obligation (inspection data read as observed IR, within
 tolerance) is 0.2.0 and is not part of this table; see OQ-13.
