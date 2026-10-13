@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-13T12:53:39Z"
+digest = "303666c555aecd28adbbbe29070db53adedab54ab6fe0f10036afb0cb06d758f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0c52ca9e-e1aa-401d-8849-10f5ec47eac6 with nextest profile: default
+    Starting 5 tests across 1 binary (41 tests skipped)
+        PASS [   0.018s] cadetta-adapter builtin::json::tests::ref_mode_and_bad_schema_rejected
+        PASS [   0.018s] cadetta-adapter builtin::json::tests::emit_is_byte_identical_golden
+        PASS [   0.020s] cadetta-adapter builtin::json::tests::header_is_excluded_from_comparison
+        PASS [   0.022s] cadetta-adapter builtin::json::tests::read_returns_emitted_values
+        PASS [   0.028s] cadetta-adapter builtin::json::tests::inexact_is_q004_and_values_are_strings
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.030s] 5 tests run: 5 passed, 41 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E test(builtin::json)"
+size = 945
+status = "measured"
+test_count = 5
+tests_digest = "af3ca2aa853d8e3ec79b14644ca5e6763791ef317eba5609d1eb79411d2cf3e1"
+at = "2026-10-13T12:53:39Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["ack takes candidates from the analyzed IR closure digests and records a real attestation"]
+moved = []
+at = "2026-10-13T12:53:54Z"
+actor = "lognd"
+rev = 1
