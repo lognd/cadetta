@@ -1,0 +1,16 @@
+kind = "create"
+title = "Bindings files and default name mangling"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWH74K9QQS72Z9YMTPD72"
+persona = "design engineer"
+capability = "get bindings/<adapter>.toml and deterministic default names"
+outcome_text = "most bindings never need to be written"
+labels = ["creates:crates/cadetta-adapter/src/bindings.rs"]
+scope = ["crates/cadetta-adapter/src/bindings.rs"]
+acceptance = ["Given `Axle.end_diameter` and a flat-namespace tool, when mangled, then the name is `Axle_end_diameter`", "Given a parameter with `was`, when renamed, then its binding carries forward", 'Given @native(adapter, "locator"), when loaded, then it overrides the file']
+at = "2026-10-13T04:03:54Z"
+actor = "lognd"
+rev = 1
