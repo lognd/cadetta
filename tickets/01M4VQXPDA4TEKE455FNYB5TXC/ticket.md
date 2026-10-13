@@ -8,8 +8,8 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-13T23:46:50Z"
-scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**"]
+updated = "2026-10-13T23:56:45Z"
+scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**", "crates/cadetta-ir/**", "crates/cadetta-geometry/Cargo.toml", "Cargo.lock", "docs/spec/ir.md", "docs/spec/geometry.md", "docs/schemas/**", "bindings/python/**"]
 
 [[acceptance]]
 text = "Given a .cdt package with datums, points, patterns and placements, when cadetta check and cadetta ir run, then sema evaluates them by calling cadetta-geometry (no second implementation in sema) and the IR holds Datum, Point and Placement entities with their op Members and values (geometry.md 2-4, 6; ir.md 3)"
