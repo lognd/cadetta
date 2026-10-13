@@ -2,7 +2,8 @@
 id = "01M4ST8ERHSJXGDXNH75ZCX6H7"
 title = "Attestations and staleness from closure digests"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
