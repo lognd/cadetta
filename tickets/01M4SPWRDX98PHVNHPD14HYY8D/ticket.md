@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver with a lock waiver record whose target closure digest has since changed, when linted, then W002 fires and the suppressed diagnostic reappears until re-reviewed with `cadetta ack waiver:GLOB` (lints.md 2.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver never reviewed (no lock record), when linted, then it still suppresses, its review is an open waiver obligation O002, and W002 does not fire; W002 fires only when a recorded review is stale (lints.md 2.1)"
