@@ -17,6 +17,10 @@ scope = ["adapters/solidworks/src/restore.py"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SWMC85Q2YCHQ3GS4MREKBP"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWMDFARQR4Q9HCBERB21PP"
 
 [[acceptance]]
