@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T23:11:59Z"
+updated = "2026-10-13T23:21:00Z"
 persona = "design engineer"
 capability = "prove that holes line up"
 idempotency_key = "replan14:geo-aligned"
 labels = ["creates:crates/cadetta-geometry/src/aligned.rs"]
-scope = ["crates/cadetta-geometry/src/aligned.rs", "crates/cadetta-geometry/src/lib.rs", "tests/conformance/geometry/**"]
+scope = ["crates/cadetta-geometry/src/aligned.rs", "crates/cadetta-geometry/src/lib.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
