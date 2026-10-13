@@ -2,12 +2,13 @@
 id = "01M4T98AKX20MHH275G0N285R5"
 title = "Conformance fixtures for U002, I004 and E012-E017"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T09:24:47Z"
-updated = "2026-10-13T09:24:47Z"
+updated = "2026-10-13T17:58:52Z"
 labels = ["creates:tests/conformance/lints/**"]
 scope = ["tests/conformance/lints/**"]
 

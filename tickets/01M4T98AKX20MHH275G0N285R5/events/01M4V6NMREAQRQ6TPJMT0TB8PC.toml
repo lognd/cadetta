@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "wont-fix"
+reason = "Superseded: I004 fixture landed in tests/conformance/language (~7MEVQAH); U002 and E012-E017 landed in tests/conformance/packages (~JKTB9TF)."
+at = "2026-10-13T17:58:52Z"
+actor = "lognd"
+rev = 1
