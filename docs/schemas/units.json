@@ -1,0 +1,46 @@
+{
+  "$defs": {
+    "Kind": {
+      "additionalProperties": false,
+      "properties": {
+        "angle": { "type": "integer" },
+        "compounds": { "items": { "type": "string" }, "type": "array" },
+        "dim": { "type": "string" },
+        "kind": { "type": "string" },
+        "units": { "items": { "$ref": "#/$defs/Unit" }, "type": "array" }
+      },
+      "required": ["kind", "dim", "angle", "units", "compounds"],
+      "type": "object"
+    },
+    "Unit": {
+      "additionalProperties": false,
+      "properties": {
+        "affine": { "type": "boolean" },
+        "factor": { "$ref": "#/$defs/Exact" },
+        "name": { "type": "string" }
+      },
+      "required": ["name", "factor", "affine"],
+      "type": "object"
+    },
+    "Exact": {
+      "additionalProperties": false,
+      "properties": {
+        "pi": { "type": "integer" },
+        "r": { "pattern": "^-?[0-9]+/[0-9]+$", "type": "string" }
+      },
+      "required": ["r", "pi"],
+      "type": "object"
+    }
+  },
+  "$id": "cadetta.units/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta units [KIND] --format json`: built-in kinds with their units (factor to SI, exact).",
+  "properties": {
+    "kinds": { "items": { "$ref": "#/$defs/Kind" }, "type": "array" },
+    "schema": { "const": "cadetta.units/1" }
+  },
+  "required": ["schema", "kinds"],
+  "title": "UnitsOutput",
+  "type": "object"
+}
