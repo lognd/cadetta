@@ -1,0 +1,8 @@
+kind = "create"
+object = "milestone"
+version = "0.1.0"
+goal = "Ship the .cdt language, exact quantity system, cadetta.ir/1 IR and JSON schema, lint catalog, built-in emitters (JSON, CSV, SOLIDWORKS equations), adapter protocol, and a FreeCAD reference adapter that reads and drives headless in CI"
+criteria = ["cadetta check lints a .cdt project and gates on fail_on", "json, csv and sw-equations emitters produce deterministic golden output", "FreeCAD adapter round-trips emit, read and drive headless in CI", "cadetta.ir/1 JSON schema committed under docs/schemas/"]
+at = "2026-10-13T04:02:19Z"
+actor = "lognd"
+rev = 1
