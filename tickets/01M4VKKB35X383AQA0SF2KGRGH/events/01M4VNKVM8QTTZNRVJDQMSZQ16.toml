@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "SYS006 outcome: under frob 0.532.0 frob check reports no SYS006/SYS007 rows at all (grimble drift rules are not surfaced there), so f_py_ir is documentation for that CI job; gen_models.py --check is the hard gate. Under the local grimble both ends of f_py_ir resolve (Rust model.rs::Project, Python ir.py::Project) but SYS006 compares the normalized-signature Contract facet, which differs for a Rust struct vs a pydantic class (producer df40841011d4 vs consumer c0ba1563deb0), so acking the flow or adding a contract makes SYS006 an Error permanently (with or without a contract, with compat=backward still Error). The flow is therefore bound (producer/consumer) but NOT flow-acked; the two Project symbols are acked individually in grimble.lock, so SYS007 flags either end changing after ack. Also granted py_binding exec/fs.read/fs.write on scripts/gen_models.py to avoid CAP001."
+at = "2026-10-13T22:20:03Z"
+actor = "lognd"
+rev = 1

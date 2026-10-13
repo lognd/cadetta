@@ -1,0 +1,143 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T22:23:02Z"
+digest = "0799daa90c94132d46f3d19ba0fe6832c70f2955322df6e506ac21c80efdf239"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+error[E0432]: unresolved import `cadetta_ir::model::TolerancePolicy`
+  --> crates/cadetta-cli/src/config.rs:13:5
+   |
+13 | use cadetta_ir::model::TolerancePolicy;
+   |     ^^^^^^^^^^^^^^^^^^^---------------
+   |                        |
+   |                        no `TolerancePolicy` in `model`
+
+error[E0432]: unresolved import `cadetta_ir::model::TolerancePolicy`
+  --> crates/cadetta-adapter/src/bindings.rs:14:5
+   |
+14 |     TolerancePolicy,
+   |     ^^^^^^^^^^^^^^^ no `TolerancePolicy` in `model`
+
+error[E0432]: unresolved import `cadetta_ir::model::TolerancePolicy`
+ --> crates/cadetta-adapter/src/locator.rs:9:69
+  |
+9 | use cadetta_ir::model::{Binding, Locator, LocatorKind, LocatorMode, TolerancePolicy};
+  |                                                                     ^^^^^^^^^^^^^^^ no `TolerancePolicy` in `model`
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/bindings.rs:342:17
+    |
+342 |                 tolerance: None,
+    |                 ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/bindings.rs:494:9
+    |
+494 |         tolerance: l.tolerance.map(|t| match t {
+    |         ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/bindings.rs:622:9
+    |
+622 |         tolerance: None,
+    |         ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+    --> crates/cadetta-adapter/src/bindings.rs:1099:17
+     |
+1099 |                 tolerance: None,
+     |                 ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+     |
+     = note: all struct fields are already assigned
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/import/propose.rs:258:17
+    |
+258 |                 tolerance: None,
+    |                 ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0609]: no field `tolerance` on type `&cadetta_ir::model::Locator`
+  --> crates/cadetta-adapter/src/locator.rs:77:10
+   |
+77 |     if l.tolerance.is_some() && l.kind != LocatorKind::Dimension {
+   |          ^^^^^^^^^ unknown field
+   |
+   = note: available fields are: `locator`, `kind`, `mode`, `native_unit`, `ref_to` ... and 5 others
+
+error[E0609]: no field `tolerance` on type `&cadetta_ir::model::Locator`
+   --> crates/cadetta-adapter/src/locator.rs:162:10
+    |
+162 |     if l.tolerance.unwrap_or(plan.adapter_default) == TolerancePolicy::Ignore {
+    |          ^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `locator`, `kind`, `mode`, `native_unit`, `ref_to` ... and 5 others
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/locator.rs:288:13
+    |
+288 |             tolerance: None,
+    |             ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `cadetta_ir::model::Locator` has no field named `tolerance`
+   --> crates/cadetta-adapter/src/locator.rs:327:13
+    |
+327 |             tolerance: tol,
+    |             ^^^^^^^^^ `cadetta_ir::model::Locator` does not have this field
+    |
+    = note: available fields are: `locator`, `kind`, `mode`, `native_unit`, `ref_to` ... and 5 others
+
+error[E0609]: no field `tolerance` on type `cadetta_ir::model::Locator`
+   --> crates/cadetta-adapter/src/locator.rs:434:46
+    |
+434 |             set(ok).entries()[0].locators[0].tolerance,
+    |                                              ^^^^^^^^^ unknown field
+    |
+    = note: available fields are: `locator`, `kind`, `mode`, `native_unit`, `ref_to` ... and 5 others
+
+error[E0560]: struct `Locator` has no field named `tolerance`
+   --> crates/cadetta-cli/src/cmd/import.rs:167:9
+    |
+167 |         tolerance: None,
+    |         ^^^^^^^^^ `Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `Locator` has no field named `tolerance`
+   --> crates/cadetta-cli/src/cmd/impact_swap_report.rs:669:13
+    |
+669 |             tolerance: None,
+    |             ^^^^^^^^^ `Locator` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+Some errors have detailed explanations: E0432, E0560, E0609.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `cadetta-adapter` (lib test) due to 12 previous errors
+warning: build failed, waiting for other jobs to finish...
+Some errors have detailed explanations: E0432, E0560.
+error: could not compile `cadetta` (lib) due to 2 previous errors
+error: could not compile `cadetta` (lib test) due to 3 previous errors
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-E test(initialize_features_accepted_and_validated) | test(schema_file_matches_types)"
+size = 5659
+status = "measured"
+at = "2026-10-13T22:23:02Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,6 @@
+cite spec: standard {
+  title = "Pin standard"
+}
+pub ots Pin @spec {
+  dia = 5mm
+}

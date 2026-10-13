@@ -186,7 +186,8 @@ model FanBracket(fan: AxialFan80, grommet: CableGrommet) {
 
 // ---------------------------------------------------------------- thermal solver
 /// Hand calculation (or script) from heat load to required airflow and system curve. Fan-independent.
-solver airflow_req @"analysis/airflow_req.py" {
+solver airflow_req {
+  script "analysis/airflow_req.py"
   in  heat_load = CoolingModule.heat_load,
       dt_max    = CoolingModule.dt_max,
       margin    = CoolingModule.flow_margin

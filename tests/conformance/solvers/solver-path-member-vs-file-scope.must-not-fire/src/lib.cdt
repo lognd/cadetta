@@ -2,7 +2,8 @@ model Frame {
   span = 300mm
   wall = 3mm
 }
-solver wall_sizing @"analysis/wall_sizing.sh" {
+solver wall_sizing {
+  script "analysis/wall_sizing.sh"
   in span = Frame.span
   out min_wall: Length
 }

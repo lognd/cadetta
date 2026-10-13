@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:24:51Z"
+digest = "01c089ff81b8c9492166aaf76e6eee45793158901ebcfb3796bc0d8878b26891"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID addd8c33-30c3-4821-8b66-feb65fbd0782 with nextest profile: default
+    Starting 4 tests across 1 binary (110 tests skipped)
+        PASS [   0.010s] cadetta-adapter locator::tests::tolerance_gated_by_feature_policy_and_kind
+        PASS [   0.011s] cadetta-adapter locator::tests::tolerance_forms_map_per_spec
+        PASS [   0.012s] cadetta-adapter rpc::client::tests::tolerance_sent_only_with_feature
+        PASS [   0.013s] cadetta-adapter locator::tests::tolerance_on_non_dimension_rejected
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 4 tests run: 4 passed, 110 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(tolerance_forms_map_per_spec) | test(tolerance_gated_by_feature_policy_and_kind) | test(tolerance_sent_only_with_feature) | test(tolerance_on_non_dimension_rejected)'"
+size = 840
+status = "measured"
+test_count = 4
+tests_digest = "5b0d736c417513d766183c7724c736d75653f0c6372ef58b84b1a35e893e8d50"
+at = "2026-10-13T22:24:51Z"
+actor = "lognd"
+rev = 1

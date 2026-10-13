@@ -185,6 +185,8 @@ enum Command {
     Swap(Vec<String>),
     Emit(Vec<String>),
     Import(Vec<String>),
+    /// `lsp`: the language server on stdio.
+    Lsp(Vec<String>),
     Unknown(String),
 }
 
@@ -209,6 +211,7 @@ fn parse(args: &[String]) -> Command {
         Some("swap") => Command::Swap(args[1..].to_vec()),
         Some("emit") => Command::Emit(args[1..].to_vec()),
         Some("import") => Command::Import(args[1..].to_vec()),
+        Some("lsp") => Command::Lsp(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -262,6 +265,7 @@ pub fn run_with_env(
         Command::Swap(rest) => cmd::run_swap(&rest, &globals, out, err),
         Command::Emit(rest) => cmd::run_emit(&rest, &globals, out, err),
         Command::Import(rest) => cmd::run_import(&rest, &globals, out, err),
+        Command::Lsp(rest) => cmd::run_lsp(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE

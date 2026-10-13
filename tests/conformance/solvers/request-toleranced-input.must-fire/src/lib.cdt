@@ -2,7 +2,8 @@ model Frame {
   wall = 3mm
   span = 300mm [+-0.5mm]
   max_load = 1200N
-  solver wall_sizing @"analysis/wall_sizing.sh" {
+  solver wall_sizing {
+    script "analysis/wall_sizing.sh"
     in  load = max_load, span = span
     out min_wall: Length
   }

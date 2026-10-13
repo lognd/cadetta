@@ -1,0 +1,3 @@
+pub ots Pin {
+  dia = 5mm @"vendor catalog"
+}

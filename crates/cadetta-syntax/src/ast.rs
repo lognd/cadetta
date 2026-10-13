@@ -866,13 +866,18 @@ pub enum SolverMemberKind {
     Error,
 }
 
-/// `solver NAME @script { ... }`.
+// frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+/// `solver NAME [@cite] { script "path" ... }` (solvers.md 1).
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Solver {
     /// The solver name.
     pub name: Ident,
-    /// The citation naming the script.
-    pub citation: Citation,
+    /// The optional citation of the method (not the script, never an input).
+    pub citation: Option<Citation>,
+    /// The script path from the `script` statement.
+    pub script: String,
+    /// Where the `script` statement is.
+    pub script_span: Span,
     /// The body statements.
     pub members: Vec<SolverMember>,
 }

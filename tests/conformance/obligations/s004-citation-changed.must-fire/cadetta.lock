@@ -1,1 +1,1 @@
-attest citation:docs/spec.txt role=source by=a@x.org at=2026-10-13 digest=0000000000000000000000000000000000000000000000000000000000000000 verdict=holds margin=- deps= reason="ok"
+attest citation:acme.demo::spec role=source by=a@x.org at=2026-10-13 digest=0000000000000000000000000000000000000000000000000000000000000000 verdict=holds margin=- deps= reason="ok"

@@ -1,4 +1,8 @@
-cite spec: document { file = "docs/spec.txt" }
+cite spec: document {
+  file = "docs/spec.txt"
+  title = "Spec"
+  date = "2026-01-01"
+}
 ots Tube @spec {
   od = 20mm @spec:"p.1"
 }

@@ -2,18 +2,18 @@
 id = "01M4VB636BKBDGRW3NBMGK7CBZ"
 title = "Placement: place A at B, point offsets, elementwise arrays, unified op paths"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T19:19:04Z"
+updated = "2026-10-13T22:19:29Z"
 persona = "design engineer"
 capability = "place parts with a verb that does not suggest contact and place arrays without index plumbing"
 outcome_text = "placements read the way parts sit"
 idempotency_key = "d15:place-at"
-scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/point.rs", "crates/cadetta-geometry/src/**", "crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/geometry.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/golden/**", "tests/conformance/geometry/**"]
+scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/point.rs", "crates/cadetta-geometry/src/**", "crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/geometry.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/golden/**", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/**", "crates/cadetta-syntax/tests/**"]
 
 [[links]]
 kind = "blocked-by"
