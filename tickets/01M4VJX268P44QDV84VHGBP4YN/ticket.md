@@ -2,7 +2,8 @@
 id = "01M4VJX268P44QDV84VHGBP4YN"
 title = "Spec: cadetta lsp (diagnostics and formatting) in 0.1.0"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
