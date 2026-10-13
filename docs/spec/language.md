@@ -588,6 +588,30 @@ rule is in obligations.md 4.
 trailing attributes and comments, units and literal forms preserved.
 Formatting never changes the IR digest.
 
+Formatter decisions (cadetta-syntax `format`):
+
+- A file with any syntax error is refused, never formatted away. Items
+  the parser skips with E001 (`process`, `table`, `enum`, `fn`, `solver`,
+  `waive`, `unit`, `kind` items; `datum`, `place`, `solver` members) are
+  therefore not formattable yet, and neither is the golden corpus.
+- LF newlines, one final newline, no line wrapping: multi-line
+  expressions collapse to one line (`{ let a = 1; a + b }`,
+  `match s { A => 1, _ => 2 }`). Blank lines survive, at most one in a row,
+  none after `{`.
+- Consecutive single-line statements form an alignment group (broken by a
+  blank line, own-line comment, doc, leading attribute or a block). In a
+  group `=` is aligned, then trailing attributes (`#[a, b]`, merged) and
+  trailing `//` comments are aligned into columns, two spaces apart.
+- Own-line comments stay before the statement they precede. A comment
+  inside a statement is hoisted above it. A same-line trailing comment
+  stays trailing.
+- Numbers, quantity literals and citations are copied from the source
+  text; strings are re-quoted with the two escapes.
+- The output is re-parsed and its tree (spans aside) must equal the
+  input's, otherwise the formatter returns an error and emits nothing.
+  This is the guarantee behind "never changes the IR digest".
+- `is_formatted` backs `cadetta fmt --check`: it reports and changes nothing.
+
 ## Open questions
 
 - OQ-4 (deferred past 0.1.0): Configurations (SOLIDWORKS

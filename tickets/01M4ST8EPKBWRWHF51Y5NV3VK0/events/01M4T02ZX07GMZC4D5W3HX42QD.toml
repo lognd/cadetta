@@ -1,0 +1,117 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:44:32Z"
+digest = "e6d9f32979076c748faca207a4cde70ff4b5abbddc3b663a97a32edaf0528af9"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.18s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a4d012ff-e2aa-4d29-bb0d-bb1caed9871c with nextest profile: default
+    Starting 92 tests across 7 binaries (97 tests skipped)
+        PASS [   0.015s] cadetta config::tests::lint_keys_are_typed_and_validated
+        PASS [   0.015s] cadetta config::tests::emit_point_and_display_units
+        PASS [   0.013s] cadetta config::tests::sample_parses_in_every_section
+        PASS [   0.016s] cadetta config::tests::load_reports_io_and_defaults_the_name
+        PASS [   0.016s] cadetta config::tests::old_project_namespace_is_rejected
+        PASS [   0.016s] cadetta config::tests::defaults_match_the_spec
+        PASS [   0.014s] cadetta output::tests::diagnostics_sort_by_file_line_code
+        PASS [   0.009s] cadetta config::tests::roles_are_modelled
+        PASS [   0.019s] cadetta config::tests::solvers_and_adapters_parse
+        PASS [   0.021s] cadetta config::tests::directory_names_normalise
+        PASS [   0.010s] cadetta config::tests::package_dependencies_and_workspace
+        PASS [   0.022s] cadetta config::tests::unknown_keys_are_named
+        PASS [   0.006s] cadetta pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005
+        PASS [   0.010s] cadetta pkg::manifest::tests::std_is_reserved_and_implicit
+        PASS [   0.014s] cadetta pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected
+        PASS [   0.009s] cadetta project::tests::member_and_path_dependency_without_config_is_e005
+        PASS [   0.013s] cadetta project::tests::missing_or_empty_src_is_e005
+        PASS [   0.020s] cadetta pkg::manifest::tests::load_reports_an_absent_manifest
+        PASS [   0.020s] cadetta pkg::manifest::tests::package_fields_default_and_root_module
+        PASS [   0.019s] cadetta pkg::manifest::tests::trust_roles_are_parsed
+        PASS [   0.015s] cadetta project::tests::duplicate_component_is_e003_with_both_spans
+        PASS [   0.013s] cadetta tests::cwd_and_config_are_validated
+        PASS [   0.014s] cadetta project::tests::member_scope_unless_at_workspace_root
+        PASS [   0.012s] cadetta tests::format_flag_beats_env_and_both_validate
+        PASS [   0.017s] cadetta project::tests::modules_sorted_by_path
+        PASS [   0.023s] cadetta project::tests::discovery_walks_up_skips_tableless_and_fails_when_none
+        PASS [   0.010s] cadetta tests::text_is_the_default_format_regardless_of_terminal
+        PASS [   0.008s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.014s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.009s] cadetta-log init::tests::second_init_is_an_error_not_a_panic
+        PASS [   0.007s] cadetta-obligations kinds::tests::required_for_gates_sync_and_solver
+        PASS [   0.012s] cadetta-log init::tests::invalid_spec_is_an_error
+        PASS [   0.009s] cadetta-log init::tests::invalid_spec_never_installs_or_panics
+        PASS [   0.013s] cadetta-lint diag::tests::sorts_by_file_line_code_path
+        PASS [   0.011s] cadetta-obligations graph::tests::bad_edges_rejected_and_duplicates_ignored
+        PASS [   0.008s] cadetta-obligations kinds::tests::set_rejects_bad_input
+        PASS [   0.014s] cadetta-log init::tests::valid_spec_is_honoured
+        PASS [   0.015s] cadetta-log init::tests::empty_spec_uses_default
+        PASS [   0.017s] cadetta-lint diag::tests::serialize_has_all_fields
+        PASS [   0.012s] cadetta-obligations lock::tests::attest_holds_who_role_when_reason_and_digest_set
+        PASS [   0.008s] cadetta-obligations lock::tests::lock_has_no_solver_records_and_rejects_garbage
+        PASS [   0.007s] cadetta-obligations lock::tests::save_is_byte_exact_and_skips_unchanged
+        PASS [   0.017s] cadetta-obligations graph::tests::all_ten_edges_buildable
+        PASS [   0.011s] cadetta-obligations lock::tests::load_rebuilds_state_and_missing_file_is_empty
+        PASS [   0.011s] cadetta-obligations lock::tests::independent_attestations_merge_as_line_union
+        PASS [   0.009s] cadetta-obligations lock::tests::six_kinds_sorted_by_kind_then_key_line_oriented
+        PASS [   0.010s] cadetta-syntax expr::tests::member_and_scope_attributes_attach
+        PASS [   0.008s] cadetta-syntax lexer::tests::fractions_need_no_whitespace_and_a_unit
+        PASS [   0.011s] cadetta-obligations lock::tests::unsorted_or_duplicate_text_is_not_canonical
+        PASS [   0.016s] cadetta-obligations lock::tests::same_state_same_bytes_and_roundtrip
+        PASS [   0.008s] cadetta-syntax lexer::tests::line_and_doc_comments_are_distinguished
+        PASS [   0.009s] cadetta-syntax lexer::tests::compound_literals_are_one_token
+        PASS [   0.011s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.007s] cadetta-syntax parser::tests::doc_comments_attach_to_items
+        PASS [   0.012s] cadetta-syntax lexer::tests::split_literal_is_q007_with_fixit
+        PASS [   0.015s] cadetta-syntax lexer::tests::exponent_compound_unit_and_percent_are_single_quantities
+        PASS [   0.020s] cadetta-obligations lock::tests::tie_rule_newest_at_then_greater_line
+        PASS [   0.012s] cadetta-syntax parser::tests::all_member_productions_accepted
+        PASS [   0.008s] cadetta-syntax parser::tests::expressions_tolerances_and_classes
+        PASS [   0.007s] cadetta-syntax parser::tests::part_has_one_primary_and_alternates
+        PASS [   0.007s] cadetta-syntax parser::tests::statements_end_at_newline_or_semicolon
+        PASS [   0.012s] cadetta-syntax parser::tests::spec_example_parses_with_expected_shape
+        PASS [   0.014s] cadetta-syntax parser::tests::file_is_uses_and_items_with_no_header
+        PASS [   0.008s] cadetta-syntax span::tests::every_node_has_a_location
+        PASS [   0.009s] cadetta-units compare::tests::form_entirely_above_threshold_holds
+        PASS [   0.009s] cadetta-units compare::tests::straddling_form_is_undecided
+        PASS [   0.009s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.010s] cadetta-units compare::tests::conservative_undecided_says_so_in_c002
+        PASS [   0.020s] cadetta-units dimension::tests::currency_is_its_own_base_dimension
+        PASS [   0.029s] cadetta-syntax parser::tests::use_trees_aliases_globs_and_roots
+        PASS [   0.015s] cadetta-units display::tests::precedence_order
+        PASS [   0.014s] cadetta-units kind::tests::builtin_canonical_angles
+        PASS [   0.028s] cadetta-units compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact
+        PASS [   0.029s] cadetta-units display::tests::inch_fraction
+        PASS [   0.008s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.005s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.013s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.032s] cadetta-units display::tests::money_and_percent
+        PASS [   0.006s] cadetta-units tolerance::tests::roots_and_trig_are_conservative
+        PASS [   0.031s] cadetta-units kind::tests::anonymous_assigns_to_named
+        PASS [   0.013s] cadetta-units tolerance::tests::repeated_terms_count_once_and_cancel
+        PASS [   0.015s] cadetta-units tolerance::tests::product_of_toleranced_values_is_conservative
+        PASS [   0.013s] cadetta-units units::tests::inch_factor
+        PASS [   0.040s] cadetta-units display::tests::plain_units
+        PASS [   0.012s] cadetta-units units::tests::percent_is_ratio
+        PASS [   0.038s] cadetta-units kind::tests::count_and_rounding
+        PASS [   0.013s] cadetta-units units::tests::quote_aliases
+        PASS [   0.050s] cadetta-units display::tests::feet_inches
+        PASS [   0.011s] cadetta-units units::tests::user_unit_resolves_like_builtin
+        PASS [   0.031s] cadetta-units kind::tests::registered_kinds_are_distinct
+        PASS [   0.015s] cadetta-units units::tests::temperature_factors_agree_with_affine
+        PASS [   0.048s] cadetta-units kind::tests::angle_worked_cases
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.131s] 92 tests run: 92 passed, 97 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-lint -p cadetta-log -p cadetta-obligations -p cadetta-syntax -p cadetta-units -E '(package(=cadetta) & (test(=config::tests::defaults_match_the_spec) | test(=config::tests::directory_names_normalise) | test(=config::tests::emit_point_and_display_units) | test(=config::tests::lint_keys_are_typed_and_validated) | test(=config::tests::load_reports_io_and_defaults_the_name) | test(=config::tests::old_project_namespace_is_rejected) | test(=config::tests::package_dependencies_and_workspace) | test(=config::tests::roles_are_modelled) | test(=config::tests::sample_parses_in_every_section) | test(=config::tests::solvers_and_adapters_parse) | test(=config::tests::unknown_keys_are_named) | test(=output::tests::diagnostics_sort_by_file_line_code) | test(=pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected) | test(=pkg::manifest::tests::load_reports_an_absent_manifest) | test(=pkg::manifest::tests::package_fields_default_and_root_module) | test(=pkg::manifest::tests::std_is_reserved_and_implicit) | test(=pkg::manifest::tests::trust_roles_are_parsed) | test(=pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005) | test(=project::tests::discovery_walks_up_skips_tableless_and_fails_when_none) | test(=project::tests::duplicate_component_is_e003_with_both_spans) | test(=project::tests::member_and_path_dependency_without_config_is_e005) | test(=project::tests::member_scope_unless_at_workspace_root) | test(=project::tests::missing_or_empty_src_is_e005) | test(=project::tests::modules_sorted_by_path) | test(=tests::cwd_and_config_are_validated) | test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::text_is_the_default_format_regardless_of_terminal) | test(=tests::usage_errors_exit_two_with_message))) | (package(=cadetta-lint) & (test(=diag::tests::serialize_has_all_fields) | test(=diag::tests::sorts_by_file_line_code_path))) | (package(=cadetta-log) & (test(=init::tests::empty_spec_uses_default) | test(=init::tests::invalid_spec_is_an_error) | test(=init::tests::invalid_spec_never_installs_or_panics) | test(=init::tests::second_init_is_an_error_not_a_panic) | test(=init::tests::valid_spec_is_honoured))) | (package(=cadetta-obligations) & (test(=graph::tests::all_ten_edges_buildable) | test(=graph::tests::bad_edges_rejected_and_duplicates_ignored) | test(=kinds::tests::required_for_gates_sync_and_solver) | test(=kinds::tests::set_rejects_bad_input) | test(=lock::tests::attest_holds_who_role_when_reason_and_digest_set) | test(=lock::tests::independent_attestations_merge_as_line_union) | test(=lock::tests::load_rebuilds_state_and_missing_file_is_empty) | test(=lock::tests::lock_has_no_solver_records_and_rejects_garbage) | test(=lock::tests::same_state_same_bytes_and_roundtrip) | test(=lock::tests::save_is_byte_exact_and_skips_unchanged) | test(=lock::tests::six_kinds_sorted_by_kind_then_key_line_oriented) | test(=lock::tests::tie_rule_newest_at_then_greater_line) | test(=lock::tests::unsorted_or_duplicate_text_is_not_canonical))) | (package(=cadetta-syntax) & (test(=expr::tests::member_and_scope_attributes_attach) | test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::line_and_doc_comments_are_distinguished) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::split_literal_is_q007_with_fixit) | test(=parser::tests::all_member_productions_accepted) | test(=parser::tests::doc_comments_attach_to_items) | test(=parser::tests::expressions_tolerances_and_classes) | test(=parser::tests::file_is_uses_and_items_with_no_header) | test(=parser::tests::part_has_one_primary_and_alternates) | test(=parser::tests::spec_example_parses_with_expected_shape) | test(=parser::tests::statements_end_at_newline_or_semicolon) | test(=parser::tests::use_trees_aliases_globs_and_roots) | test(=span::tests::every_node_has_a_location))) | (package(=cadetta-units) & (test(=compare::tests::conservative_undecided_says_so_in_c002) | test(=compare::tests::form_entirely_above_threshold_holds) | test(=compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact) | test(=compare::tests::straddling_form_is_undecided) | test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=dimension::tests::currency_is_its_own_base_dimension) | test(=display::tests::feet_inches) | test(=display::tests::inch_fraction) | test(=display::tests::money_and_percent) | test(=display::tests::plain_units) | test(=display::tests::precedence_order) | test(=kind::tests::angle_worked_cases) | test(=kind::tests::anonymous_assigns_to_named) | test(=kind::tests::builtin_canonical_angles) | test(=kind::tests::count_and_rounding) | test(=kind::tests::registered_kinds_are_distinct) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=tolerance::tests::product_of_toleranced_values_is_conservative) | test(=tolerance::tests::repeated_terms_count_once_and_cancel) | test(=tolerance::tests::roots_and_trig_are_conservative) | test(=units::tests::inch_factor) | test(=units::tests::percent_is_ratio) | test(=units::tests::quote_aliases) | test(=units::tests::temperature_factors_agree_with_affine) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 8622
+status = "measured"
+test_count = 92
+tests_digest = "728f356a76833616b5d122b816c934b7daa11c16b23d01b830622e830ada833e"
+at = "2026-10-13T06:44:32Z"
+actor = "lognd"
+rev = 1
