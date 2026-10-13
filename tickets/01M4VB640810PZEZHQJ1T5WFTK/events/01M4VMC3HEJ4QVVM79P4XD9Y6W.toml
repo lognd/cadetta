@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T21:57:35Z"
+digest = "0c437a2517564a0a879e041f3fa6069e0776bbb5ad6877f8d8269782630954e4"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 27d8e7d2-8a26-4815-ba8c-d579be978265 with nextest profile: default
+    Starting 4 tests across 5 binaries (281 tests skipped)
+        PASS [   0.032s] cadetta-adapter bindings::tests::bind_scope_filters_candidates
+        PASS [   0.110s] cadetta-adapter bindings::tests::bind_scope_text_when_expressible
+        PASS [   0.121s] cadetta cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths
+        PASS [   0.153s] cadetta cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.178s] 4 tests run: 4 passed, 281 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E 'test(/bind_scope/)'"
+size = 1066
+status = "measured"
+test_count = 4
+tests_digest = "65021c98c5723e9f07b92a283789695abf56876c91182a97044845d7d28617b9"
+at = "2026-10-13T21:57:35Z"
+actor = "lognd"
+rev = 1

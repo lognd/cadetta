@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:02:32Z"
+digest = "1007b1ed24f727e4d167f040e68221f80aa3bacb54d58bcfb5fdfa6280eeba8a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 69841acc-b06d-4549-9ba0-831acca39648 with nextest profile: default
+    Starting 2 tests across 28 binaries (942 tests skipped)
+        PASS [   0.034s] cadetta-lint rules::s::tests::s002_quiet_for_existing_url_and_literal
+        PASS [   0.037s] cadetta-lint rules::s::tests::s002_fires_on_missing_local_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.048s] 2 tests run: 2 passed, 942 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "s002_"
+size = 653
+status = "measured"
+test_count = 2
+tests_digest = "6e3b3d9ece5e4f767be20b124b2bb293fbb5b9a153078c172851e6ba0eddb89b"
+at = "2026-10-13T22:02:32Z"
+actor = "lognd"
+rev = 1

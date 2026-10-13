@@ -1,0 +1,8 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py"]
+new = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py", "design/model.grmb", "grimble.lock"]
+reason = "frob-v2 advice: gen --check is the hard gate, the grimble flow documents the contract"
+at = "2026-10-13T22:03:34Z"
+actor = "lognd"
+rev = 1

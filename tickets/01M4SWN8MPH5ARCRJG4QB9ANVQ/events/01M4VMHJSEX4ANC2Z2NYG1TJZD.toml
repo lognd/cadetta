@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T22:01:18Z"
+digest = "9855c0d95103aa2287dc7af9110d3b764468d89540a9ddd1094ee8194b831b67"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3016fdef-2bb8-4b9f-937f-784b7a5750a5 with nextest profile: default
+    Starting 2 tests across 1 binary (2 tests skipped)
+        PASS [   0.056s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.062s] cadetta::lsp format_returns_one_whole_document_edit
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.064s] 2 tests run: 2 passed, 2 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test lsp format_returns_one_whole_document_edit syntax_error_then_format_refused"
+size = 611
+status = "measured"
+test_count = 2
+tests_digest = "c53a41c8cc7471dcfd4a2437b7fb486e7867880807035662e7ebb27a084a60f6"
+at = "2026-10-13T22:01:18Z"
+actor = "lognd"
+rev = 1
