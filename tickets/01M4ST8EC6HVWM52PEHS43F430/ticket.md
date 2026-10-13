@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:18Z"
+updated = "2026-10-13T05:05:20Z"
 persona = "design engineer"
 capability = "re-evaluate the design with each alternate in place of the primary"
 idempotency_key = "replan13:Variant evaluation engine (slot at a time)"
@@ -26,6 +26,10 @@ target = "01M4ST8F91FHYFC01TN6018BAM"
 [[links]]
 kind = "blocks"
 target = "01M4ST8FCNN3GZKZNRK2X3Q55S"
+
+[[links]]
+kind = "blocks"
+target = "01M4STANBCA3XCNHR3X1NJKGFE"
 
 [[acceptance]]
 text = "Given a slot with alternate A, when evaluated, then A replaces the primary in every instance of the slot, all other slots keep their primaries, and derived values, part arguments, fits, checks, requires and roll-ups are re-evaluated (language.md 3.2)"
