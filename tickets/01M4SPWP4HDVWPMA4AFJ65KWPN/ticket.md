@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:42:21Z"
+updated = "2026-10-13T06:42:22Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `a[0]` and `a [+-0.1mm]`, when parsed, then the first is indexing and the second a tolerance because the bracket starts with + or - (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `4mm <= x <= 6mm` and `x satisfies P`, when parsed, then chained comparison and satisfies nodes result (language.md 5, 6)"
