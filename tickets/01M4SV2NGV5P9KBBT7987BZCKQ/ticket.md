@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a Quantity, when used, then nominal, min, max, mid, mmc and lmc are computed in Rust, to_exact returns None for inexact and there is no .to (bindings.md 3.1)"
-bound = false
+bound = true
 +++
