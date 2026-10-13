@@ -17,7 +17,7 @@ Python interop. Five reviewers read the whole spec from five angles: the
 SOLIDWORKS adoption journey, obligations used over time, a geometry
 pilot, cross-document cohesion, and project scale with the Python
 binding. They found 16 blockers, 38 gaps and 6 polish items
-(`pilots/review/`).
+(`docs/history/review-round/`).
 The normative text is in `docs/spec/`.
 
 ## Decision
@@ -76,7 +76,7 @@ The normative text is in `docs/spec/`.
 12. **A last verification pass caught 2 blockers.** Interface bounds
     could not express `==`, and the `Sourced` members could not be
     optional. Both are fixed, along with 11 smaller seams between
-    documents (`pilots/review/`).
+    documents (`docs/history/review-round/`).
 
 ## Consequences
 

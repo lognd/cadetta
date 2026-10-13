@@ -10,7 +10,7 @@ Audience: contributors
 
 ## Context
 
-Six pilots (`pilots/SYNTHESIS.md`) exercised spec draft 0. The owner
+Six pilots (`docs/history/pilot-round-1.md`) exercised spec draft 0. The owner
 then decided several open points directly. This record closes them
 together; the normative text is in `docs/spec/`.
 

@@ -111,14 +111,15 @@ to one alternate's variant in one slot (language.md 3.2).
 
 Digests: when reviewed (`cadetta ack waiver:GLOB`), the closure digests
 of the waiver's targets are stored in the lock as a `waiver` record
-(obligations.md 3). The suppressed diagnostic reappears, in addition to
-W002, whenever the record is missing or a target's digest differs: the
-waiver suppresses nothing until re-reviewed.
+(obligations.md 3). A waiver with no record yet is open: it suppresses,
+and its review is an open `waiver` obligation (O002) until `ack`. Once
+recorded, if a target's digest differs, the waiver is stale: W002 fires
+and the suppressed diagnostic reappears until re-reviewed.
 
 | Code | Condition |
 |---|---|
 | W001 | The waiver's `expires` date has passed (`--as-of`); it stops suppressing. |
-| W002 | A target's closure digest differs from the lock record, or there is none: re-review. The suppressed diagnostic reappears. |
+| W002 | A target's closure digest differs from the lock record: re-review. The suppressed diagnostic reappears. A waiver with no record is open (O002), not stale. |
 | W003 | The waiver names a fixed code, or a diagnostic raised by a `require`. |
 | W004 | The waiver (or `allow`) matched no diagnostic: it suppresses nothing. |
 | W005 | A waiver or an `eol` date falls within `[lint] expiry_warn_days` (default 30) of `--as-of`. |
@@ -150,14 +151,20 @@ cannot be resolved or evaluated.
 | E001 | syntax-error | error | yes | The source does not parse (language.md 2, 3). |
 | E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
-| E004 | ambiguous-import | error | yes | A name resolves through two `use` imports (`use ns::*` or `use ns::{A as B, C}`). |
-| E005 | sources-glob-empty | warning | yes | A `[project] sources` glob matched no file. |
+| E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |
+| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml` (packages.md 1). |
 | E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind). |
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
 | E009 | non-exhaustive-match | error | yes | A `match` leaves some case unhandled. |
 | E010 | role-required | error | yes | `mmc` or `lmc` read on a tolerance with no role (hole or boss) to say which side is material. |
 | E011 | parameter-dependent-type-read | error | yes | `Type.member` read where the member depends on component parameters; a parameterized component exists only as instances (language.md 3.1). |
+| E012 | version-unsatisfied | error | yes | A resolved dependency does not meet the `version` requirement (packages.md 1). |
+| E013 | version-conflict | error | yes | Two requirements on one package cannot be met by a single version. |
+| E014 | dependency-changed | error | yes | A dependency's content differs from the digest pinned in the lock; run `cadetta update`. |
+| E015 | bad-module-name | error | yes | A file or directory under `src` is not a valid module name. |
+| E016 | private-item | error | yes | An item is used outside its visibility, or a `priv` member is read from another package (packages.md 3). |
+| E017 | private-in-public | error | yes | A `pub` item's signature names a less visible item, or a member implementing an interface member is `priv`. |
 
 ### Q: quantities
 
@@ -179,7 +186,7 @@ cannot be resolved or evaluated.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| N001 | non-canonical-case | warning | | Name breaks the case canon (language.md 4). |
+| N001 | non-canonical-case | warning | | Name breaks the case canon: package `lower.dotted`, module `snake_case`, type `PascalCase`, rest `snake_case` (language.md 4). |
 | N002 | redundant-prefix | warning | | Member repeats its component's name (`Axle.axle_length`). |
 | N003 | unit-in-name | warning | | Name encodes a unit (`diameter_mm`). |
 | N004 | renamed-reference | warning | | Reference uses a `was` path. |
@@ -218,7 +225,7 @@ cannot be resolved or evaluated.
 | I001 | missing-interface-member | error | yes | An implementer lacks an interface member. |
 | I002 | alternate-not-viable | warning | | An approved alternate violates a check, fit, bound or require under variant evaluation (names it). |
 | I003 | alternate-undecided | info | | An approved alternate is viable but leaves a check undecided that the primary decides. |
-| I004 | root-not-evaluated | info | | A root component has parameters without defaults and no instances, so its members are never evaluated. |
+| I004 | root-not-evaluated | info | | A root of the package being checked has parameters without defaults and no instances, so its members are never evaluated. Private unused parameterized components are U002. |
 | L001 | end-of-life-part | warning | | A primary is `eol` or `obsolete` and has no viable alternate. Error once its date has passed. |
 | L002 | not-recommended-part | info | | A primary is `nrnd`. |
 | T001 | not-in-table | warning | | An `ots` literal citing a table matches none of its rows. |
@@ -297,8 +304,9 @@ come from the adapter's responses and are passed through unchanged
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | U001 | unused-parameter | info | | A `model` parameter is read by nothing and bound to nothing. |
+| U002 | unused-private-item | warning | | A private item is used nowhere in its package. |
 | W001 | waiver-expired | error | yes | A waiver's `expires` date has passed; it no longer suppresses (2.1). |
-| W002 | waiver-stale | warning | yes | A target's digest changed since the waiver was reviewed, or no lock record exists; the suppressed diagnostic reappears. |
+| W002 | waiver-stale | warning | yes | A target's digest changed since the waiver was reviewed; the suppressed diagnostic reappears. A waiver never reviewed is O002, not W002. |
 | W003 | waiver-not-allowed | error | yes | Waiver or `allow` of a fixed code or of a diagnostic raised by a `require`. |
 | W004 | waiver-unused | warning | yes | A waiver or `allow` suppresses nothing. |
 | W005 | waiver-expiring | info | | A waiver or an `eol` date falls within `[lint] expiry_warn_days` (default 30). |

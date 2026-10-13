@@ -6,6 +6,11 @@ parameterized `ots`, every helper a `fn` or a parameterized `assembly`.
 Nothing in `std` needs a language feature user code cannot use; if it
 did, that feature would be missing from the language. Every value in
 `std` is cited to its standard or handbook (S001 applies to `std` too).
+`std` exports one `cite` per standard at its root (`std::iso273`,
+`std::iso286`, `std::din472`, ...), so user code cites a standard with
+`cite din472 = std::din472`. Library intermediates are `priv` members
+(packages.md 3): `ScrewJoint`'s public members are the ones listed in
+section 3, and its other values are `priv`.
 
 Why a library and not syntax: a screw is shop knowledge (clearance
 classes, tap drills, engagement rules, preferred lengths), and shops
@@ -15,17 +20,18 @@ disagree. Data can be cited, overridden and diffed; syntax cannot.
 
 | Module | Contents | 0.1.0 |
 |---|---|---|
-| `std.fits` | ISO 286 classes (`iso286`) and the fit machinery behind `fit` | yes |
-| `std.materials` | `Material` enum and the `Materials` table: density, yield, tap class, engagement factor | yes, a short list |
-| `std.fasteners` | Metric threads, ISO 4762 socket head cap screws, ISO 4032 nuts, ISO 273 clearance holes, tap drills, preferred lengths, `ScrewJoint` | yes, metric coarse |
-| `std.retaining` | DIN 471/472 retaining rings and grooves | yes |
-| `std.commercial` | The `Sourced` interface: unit cost, lead time, MOQ, supplier, mass (section 6) | yes |
-| `std.bearings` | Deep-groove ball bearing envelopes (ISO 15) | later |
-| `std.fasteners.inch` | UNC/UNF, ASME B18.3, inch clearance and tap drills | 0.2.0 |
-| `std.inserts` | Heat-set and wire-thread inserts | 0.2.0 |
-| `std.fasteners` thread-forming | ISO 7049/7085 thread-forming screws and pilot holes | later |
+| `std::fits` | ISO 286 classes (`iso286`) and the fit machinery behind `fit` | yes |
+| `std::materials` | `Material` enum and the `Materials` table: density, yield, tap class, engagement factor | yes, a short list |
+| `std::fasteners` | Metric threads, ISO 4762 socket head cap screws, ISO 4032 nuts, ISO 273 clearance holes, tap drills, preferred lengths, `ScrewJoint` | yes, metric coarse |
+| `std::retaining` | DIN 471/472 retaining rings and grooves | yes |
+| `std::commercial` | The `Sourced` interface: unit cost, lead time, MOQ, supplier, mass (section 6) | yes |
+| `std::bearings` | Deep-groove ball bearing envelopes (ISO 15) | later |
+| `std::fasteners::inch` | UNC/UNF, ASME B18.3, inch clearance and tap drills | 0.2.0 |
+| `std::inserts` | Heat-set and wire-thread inserts | 0.2.0 |
+| `std::fasteners` thread-forming | ISO 7049/7085 thread-forming screws and pilot holes | later |
 
-Paths are `std.module::Item` like any namespace (language.md 3).
+Paths are `std::module::Item`, and `std` is an implicit dependency
+(packages.md 1). Everything it exports is `pub` (packages.md 3).
 
 ## 2. Tables and their columns
 
@@ -34,14 +40,14 @@ change and is recorded with `was`.
 
 | Table | Key | Columns |
 |---|---|---|
-| `std.fasteners::Iso273` | `MetricThread` | `fine medium coarse` (clearance hole diameters) |
-| `std.fasteners::Thread` | `MetricThread` | `major pitch minor_ext minor_int` |
-| `std.fasteners::TapDrill` | `MetricThread` | `cut_75 cut_65 form` (cutting tap at about 75% and 65% thread, forming tap) |
-| `std.fasteners::Iso4762Head` | `MetricThread` | `head_dia head_height socket counterbore_dia counterbore_depth` |
-| `std.fasteners::Iso4762Len` | `Length` | (preferred lengths; key only) |
-| `std.fasteners::Iso4032` | `MetricThread` | `width_across_flats height` |
-| `std.materials::Materials` | `Material` | `density yield_strength tap_class engagement_factor` |
-| `std.retaining::Din471` / `Din472` | `Length` (shaft or bore) | `groove_dia groove_width ring_thickness edge_margin` |
+| `std::fasteners::Iso273` | `MetricThread` | `fine medium coarse` (clearance hole diameters) |
+| `std::fasteners::Thread` | `MetricThread` | `major pitch minor_ext minor_int` |
+| `std::fasteners::TapDrill` | `MetricThread` | `cut_75 cut_65 form` (cutting tap at about 75% and 65% thread, forming tap) |
+| `std::fasteners::Iso4762Head` | `MetricThread` | `head_dia head_height socket counterbore_dia counterbore_depth` |
+| `std::fasteners::Iso4762Len` | `Length` | (preferred lengths; key only) |
+| `std::fasteners::Iso4032` | `MetricThread` | `width_across_flats height` |
+| `std::materials::Materials` | `Material` | `density yield_strength tap_class engagement_factor` |
+| `std::retaining::Din471` / `Din472` | `Length` (shaft or bore) | `groove_dia groove_width ring_thickness edge_margin` (each with its published tolerance) |
 
 `Material` variants in 0.1.0: `Al6061T6 Al7075T6 Al5052H32 Ss304 Ss316
 Steel1018 Steel4140 CastIron Brass360 Petg Pla Abs Nylon6 Pom`. Each row
@@ -59,15 +65,15 @@ margins. Sizes we make (`Iso273` holes, `counterbore_dia`, tap drills)
 are nominal and untoleranced: the hole's tolerance is the user's (a
 class, or the CAD default), and M003 applies when it is a fit side.
 
-Part families read these: `std.fasteners::Iso4762(thread, length)` has
+Part families read these: `std::fasteners::Iso4762(thread, length)` has
 members `thread major pitch length head_dia head_height mass` and
-implements `std.fasteners::Screw`. It accepts any length; preferred
+implements `std::fasteners::Screw`. It accepts any length; preferred
 lengths only constrain what `ScrewJoint` picks.
 
 ## 3. Screw joints: "screw here"
 
 ```
-use std.fasteners::ScrewJoint
+use std::fasteners::ScrewJoint
 
 assembly Box {
   part lid: Lid
@@ -95,9 +101,11 @@ straight to the hole features in each part's CAD file:
 | `drill_depth` | `thread_depth` plus `tap_lead_in * thread.pitch` and `drill_point * tap_drill` |
 | `callout` | Text: `fmt("{} - 6H, {} DP; drill {} DP {}", thread, thread_depth, tap_drill, drill_depth)`, for drawings and emitted comments |
 
-Checks inside the joint: engagement is at least `min_engagement`; the
-screw does not bottom out (`thread_depth > screw_length - grip`);
-`grip` is positive. Optional arguments:
+Checks inside the joint, with the names their verdicts carry
+(`Mount/screws.engaged`): `engaged` (engagement is at least
+`min_engagement`), `not_bottomed` (`thread_depth > screw_length -
+grip`), `grip_positive`, `depth_ok` (only with `depth_available`) and
+`aligned` (only with `at` and `onto`, geometry.md 5). Optional arguments:
 
 - `head` (`SocketHead` default, `ButtonHead`, `FlatHead`), `clearance`
   (`fine medium coarse`), `counterbore`, `policy`.
@@ -161,27 +169,45 @@ interface FastenerPolicy {
 Table-typed members (language.md 3.3) are how `std` passes rules as
 data; user interfaces may use them too. Screw prices are not policy:
 `Iso4762` has no `unit_cost`, so screws are listed as missing by
-`sum?(self, unit_cost)` until the joint is given `screw_cost`. `std.fasteners::IsoDefault`
-is the cited default and the template to copy. A project overrides it
+`sum?(self, unit_cost)` until the joint is given `screw_cost`.
+`std::fasteners::IsoDefault` is the cited default and the template to
+copy: engagement factors and tap columns from `Materials`, lengths from
+`Iso4762Len`, drills from the ISO 2306 preferred series,
+`bottom_clearance = 1mm`, `tap_lead_in = 3` (pitches, a plug tap) and
+`drill_point = 0.3` (118deg), each cited to Machinery's Handbook. A project overrides it
 for a whole scope without touching call sites:
 
+A shop keeps its policy in a library package, `acme.shop`, so every
+product shares one definition by version (packages.md). Items other
+packages use are `pub`:
+
 ```
-ots AcmeShop: FastenerPolicy @"shop standard SS-104 rev C" { ... }
+// acme.shop, src/policy.cdt
+pub ots AcmeShop: FastenerPolicy @"shop standard SS-104 rev C" { ... }
+
+// acme.shop, src/lib.cdt: present a curated surface
+pub use self::policy::AcmeShop
+```
+
+A product that depends on `acme.shop` then says:
+
+```
+use acme.shop::AcmeShop
 
 #![default(FastenerPolicy = AcmeShop)]      // every ScrewJoint in this file
 ```
 
 `#![default(Iface = Impl)]` sets the default for every component
 parameter of that interface type in its scope (language.md 3.11). A
-project sets it once for all files in `cadetta.toml`:
+package sets it once for all its modules in `cadetta.toml`:
 
 ```
 [defaults]
-FastenerPolicy = "acme.company::AcmeShop"       # qualified path
+FastenerPolicy = "acme.shop::AcmeShop"       # dependency path
 ```
 
-Precedence, highest first: the component's `#![default]`, the file's
-`#![default]`, the project `[defaults]`, then the `std` default
+Precedence, highest first: the component's `#![default]`, the module's
+`#![default]`, the package `[defaults]`, then the `std` default
 (`IsoDefault`). No lint fires on a fallback to `IsoDefault`.
 
 ## 5. CAD hole features
@@ -191,7 +217,7 @@ them like any other value, and the callout travels as Text and as a
 trailing emitted comment. Driving native hole features (SOLIDWORKS Hole
 Wizard, FreeCAD PartDesign Hole, Onshape hole) from a joint is OQ-14.
 
-## 6. Commercial data: `std.commercial::Sourced`
+## 6. Commercial data: `std::commercial::Sourced`
 
 ```
 interface Sourced {

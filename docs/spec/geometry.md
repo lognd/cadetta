@@ -14,8 +14,8 @@ source variables, three-valued checks.
 ## 1. Example
 
 ```
-use std.fasteners::ScrewJoint
-use std.materials::Material
+use std::fasteners::ScrewJoint
+use std::materials::Material
 
 model Rail {
   height = 30mm

@@ -13,7 +13,7 @@ pilot r2-05.
 ' Stock thickness, 1/4 in nominal.
 "Plate_Thk" = 6.35mm  ' 1/4in @"ASTM B209"
 "D1@Boss-Extrude1@CoverPlate.SLDPRT" = "Plate_Thk"
-"PilotBore" = 12.009mm  ' 12mm H7, emit mid
+"PilotBore" = 12.009mm  ' 12mm H7 emit=mid
 "NumBolts" = 4
 ```
 
@@ -36,14 +36,17 @@ pilot r2-05.
   on a global line carries, in this order and separated by spaces: the
   authored literal with its tolerance or class when its source text
   differs from the written value's text (`1/4in` written as `6.35mm`,
-  `12mm H7` written as `12.009mm`; `5mm` written as `5mm` gets none), the emit point when not `nominal`, and the citation.
+  `12mm H7` written as `12.009mm`; `5mm` written as `5mm` gets none),
+  then `emit=POINT` when the emit point is not `nominal`, then the
+  citation as written in source.
   Nothing else is ever written in comments.
 
 ## 2. Order
 
-Paths in dependency order (a path after everything it reads,
-transitively through `let`s and unemitted paths), ties by canonical
-path; within one path, global lines in bindings-file order,
+Paths in dependency order, computed as a topological sort that always
+takes, among the paths whose dependencies are all placed, the smallest
+canonical path (byte order); dependencies count transitively through
+`let`s and unemitted paths; within one path, global lines in bindings-file order,
 then dimension lines in bindings-file order. Emitted values are flat, so
 the order only makes the file read top-down; SOLIDWORKS does not need
 it.

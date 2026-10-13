@@ -192,7 +192,7 @@ variable `"Axle_end_diameter"` or to the dimension
 A name the adapter creates natively (a global with no bound locator, or
 a dimension's own global) is derived from the canonical path:
 
-1. drop the namespace;
+1. drop the package and module path;
 2. replace `.` and `/` with `__` (`__` is reserved, N005);
 3. replace `[i]` with `_i`; a `[*]` segment is dropped.
 
@@ -203,26 +203,29 @@ target allows dots, so switching adapters never renames a global.
 `[[adapter]] prefix` optionally prepends a string to every created name.
 
 The rule is not injective on its own. If two emitted paths of one
-adapter would create the same name, both are namespace-qualified
-(`acme_rover__Rover__axle_1__end_diameter`: namespace dots become `_`).
-A collision that remains is R013. Read maps native names to paths only
+adapter would create the same name, both are qualified with the
+module path (`drive__motor__Gm42A__rated_torque`). If that still
+collides, both are further qualified with the package
+(`acme_rover__drive__motor__Gm42A__rated_torque`: package dots become
+`_`). A collision that remains is R013. Read maps native names to paths only
 through bindings, never by demangling.
 
 ### 3.2 Adapter identity and scope
 
 `[[adapter]] id` names an adapter instance; it is required when `name`
 repeats and defaults to `name`. The id keys the bindings file
-(`bindings/<id>.toml`) and the lock records. `namespaces = [...]` or
+(`bindings/<id>.toml`) and the lock records. `modules = [...]` (module
+path prefixes) or
 `paths = [...]` (canonical-path globs) restrict what the adapter emits,
 reads and syncs, so two products can each link their own equations
-file. `sync`, `emit` and `check` accept `--namespace NS` and path globs
+file. `sync`, `emit` and `check` accept `--module PATH` and path globs
 with the same effect for one run.
 
 ### 3.3 Interface-typed slots
 
 A binding for a path under an interface-typed slot carries
 `for = "<alternate>"` (a qualified component name, e.g.
-`for = "acme.company::Colson2Series"`). Only locators whose `for`
+`for = "acme.shop::Colson2Series"`). Only locators whose `for`
 matches the slot's primary (or locators with no `for`) are active; a
 swap changes which locator set is active. `read` of an assembly records
 the file each component instance uses; R011 (warning) fires when the
@@ -253,11 +256,12 @@ sketch origin.
 Each built-in emitter has a format document in `docs/spec/emitters/`
 ([sw-equations.md](emitters/sw-equations.md), [json.md](emitters/json.md),
 [csv.md](emitters/csv.md)) fixing: a header carrying the IR digest and
-adapter version; line order (dependency order, ties by canonical path);
+adapter version; line order (the topological order of
+emitters/sw-equations.md 2);
 globals vs dimension lines and refs vs values per binding mode; the
 emitted point and unit; the default output path; and tolerance and
 citation as a trailing native comment where the format has comments
-(`"Rover__axle__end_diameter" = 12.029mm  ' 12mm p6, emit nominal`). Drift
+(`"Rover__axle__end_diameter" = 12.029mm  ' 12mm p6`). Drift
 (R001) compares the read-back against the emitted point, never the
 nominal.
 
@@ -360,9 +364,13 @@ cadetta import --accept                                # apply
 ```
 
 The first form reads the files (`read`) and writes a proposal:
-`build/import/proposal.toml` (one row per native item: native name,
-proposed path, proposed `Type`, value, unit, `status = accept | rename |
-skip`) and `build/import/proposal.cdt` (the scaffold). The user edits
+`build/import/proposal.toml` and `build/import/proposal.cdt` (the
+scaffold). The proposal is one `[[item]]` table per native item, sorted
+by `file` then `locator`, with keys `file`, `locator`, `kind`
+(`global | dimension | property | frame`), `native_name`, `expression`
+(the native expression, when there is one), `value` (a source literal),
+`path` (the proposed canonical path), `type` (the proposed component),
+`status` (`accept | rename | skip`) and `reason` (for `skip`). The user edits
 `proposal.toml`. `--accept` writes `bindings/<id>.toml` and
 `cad/imported/<File>.cdt` from it. A re-run adds only locators not yet
 bound and reports the others as unchanged; existing files are never

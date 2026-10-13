@@ -193,7 +193,7 @@ Bearing.bore.nominal j5          // class on any untoleranced expression
 A bracket whose content begins with `+` or `-` is a tolerance; array
 indexing never does (indices are non-negative). Deviations must match the
 nominal's dimension; units may differ (`1in [+-0.1mm]`). ISO 286 classes
-resolve through `std.fits.iso286`; uppercase letters are holes, lowercase
+resolve through `std::fits::iso286`; uppercase letters are holes, lowercase
 shafts. F002 when the size is outside the table.
 
 ### 5.2 Accessors

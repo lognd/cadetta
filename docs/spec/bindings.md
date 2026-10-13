@@ -69,7 +69,7 @@ d.nominal.to_exact("mm")   # Fraction(12, 1): exact, or None when inexact
 d.max.to_float("mm")       # upper limit after tolerance, as a float
 d.mid.to_float("in")       # a float only when asked for
 m.kind, m.citation         # "Length", the source
-m.variant("acme.rover::Rover/wheel", "acme.company::Colson2Series")
+m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 ```
 
 - `design.get(path) -> Result[Member, PathNotFound]`; `design[path]` is
@@ -111,11 +111,13 @@ so a binding returns exactly what the CLI's JSON returns.
 
 | Python | CLI | Model (schema) |
 |---|---|---|
-| `Project.open(path=None, config=None)` | root discovery, `--config` (config-cli.md) | `Project` |
-| `project.sources` | the resolved `sources` list | `list[Path]` |
+| `Project.open(path=None, config=None)` | root discovery of a package or workspace, `--config` (config-cli.md) | `Project` |
+| `project.package` | the `[package]` name and version | `Package` |
+| `project.modules` | the module paths under `src`, per package | `list[str]` |
+| `project.update(name=None)` | `update [NAME]` | `update.json` |
 | `project.evaluate()` | `ir` (design) | design IR (`cadetta.ir/1`) |
 | `project.ir(observed=None)` | `ir [--observed]` | IR (`cadetta.ir/1`) |
-| `project.check(release=False, as_of=None, namespace=None)` | `check` | `check.json` |
+| `project.check(release=False, as_of=None, module=None)` | `check` | `check.json` |
 | `project.why(path)` | `why` | `why.json` |
 | `project.impact(path)` | `impact PATH` | `impact.json` |
 | `project.impact_since(rev="HEAD", worktree=False)` | `impact --since` / `--worktree` | `impact.json` |
@@ -135,7 +137,7 @@ so a binding returns exactly what the CLI's JSON returns.
 
 `slot` is a canonical `Type/part` path (`acme.rover::Rover/wheel`) and
 `alternate` a component name, qualified when it lives in another
-namespace (`acme.company::Colson2Series`), exactly as on the command
+module or package (`acme.shop::Colson2Series`), exactly as on the command
 line. `Project` is a snapshot: it reads sources at `open`, and
 `project.reload()` re-reads them. `evaluate()` returns the primary
 evaluation; variants are read through `member.variant`.

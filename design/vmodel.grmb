@@ -49,6 +49,14 @@ vmodel dec_ir {
   decides req_ir;
 }
 
+/// ADR: Rust-style packages, file-tree modules and visibility.
+vmodel dec_packages {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-packages-and-modules.md";
+  decides req_packages;
+}
+
 /// ADR: first-class exact kinded quantities.
 vmodel dec_quantities {
   kind decision;
@@ -119,6 +127,13 @@ vmodel req_obligations {
   kind artifact;
   level requirements;
   ref "docs/spec/obligations.md";
+}
+
+/// Packages, modules, visibility and dependencies (packages.md).
+vmodel req_packages {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/packages.md";
 }
 
 /// Quantities are exact, kinded and single-token (quantities.md).

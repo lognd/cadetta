@@ -9,11 +9,11 @@ recursion, traits or closures.
 ## 1. Example
 
 ```
-namespace acme.rover
+// src/lib.cdt of package acme.rover
 
-use std.fits::iso286
-use std.fasteners::{MetricThread, ScrewJoint}
-use std.materials::Material
+use std::fits::iso286
+use std::fasteners::{MetricThread, ScrewJoint}
+use std::materials::Material
 
 cite colson   = "https://colson.example/2-series.pdf"
 cite customer = "docs/requirements.md"
@@ -88,8 +88,8 @@ assembly Rover {
   `( ) [ ]` does not end one.
 - `//` line comments; `///` doc comments attach to the next item and are
   carried into the IR and into emitted output where supported.
-- Identifiers `[A-Za-z_][A-Za-z0-9_]*`. Reserved keywords: `namespace
-  use as cite interface ots model assembly process table enum fn let if
+- Identifiers `[A-Za-z_][A-Za-z0-9_]*`. Reserved keywords: `pub priv
+  package super use as cite interface ots model assembly process table enum fn let if
   else match part alt fit on solver in out deps require check for
   satisfies waive because expires was unit kind self true false datum
   place rule key cols origin and or not`.
@@ -100,18 +100,22 @@ assembly Rover {
 ## 3. Items
 
 ```
-file      = [ "namespace" path ] { use | item }
-use       = "use" nspath "::" ( "*" | import | "{" import { "," import } "}" )
-import    = IDENT [ "as" IDENT ]                 // "as" binds per name, never after a brace list
-nspath    = IDENT { "." IDENT }                  // namespaces are dotted; "::" enters one
-item      = { doc } { attr } ( cite | interface | component | process | table
+file      = { use | item }                       // the module is the file's path (packages.md 2)
+use       = [ "pub" [ "(" "package" ")" ] ] "use" usepath [ "as" IDENT ]
+          | [ "pub" ] "use" usepath "::" ( "*" | "{" usetree { "," usetree } "}" )
+usepath   = ( "package" | "self" | "super" { "::" "super" } | PKG ) { "::" IDENT }
+usetree   = IDENT [ "as" IDENT ] | IDENT "::" ( "*" | "{" usetree { "," usetree } "}" )
+PKG       = IDENT { "." IDENT }                  // a dependency's dotted name, or std (packages.md 4)
+vis       = [ "pub" [ "(" "package" ")" ] ]      // precedes any item; default private (packages.md 3)
+item      = { doc } { attr } vis ( cite | interface | component | process | table
             | enum | fn | fit | solver | require | check | waive | unit | kind )
 component = ( "ots" | "model" | "assembly" ) IDENT [ params ] [ ":" iface_list ]
             [ citation ] "{" { inner_attr } { member } "}"
 params    = "(" pdecl { "," pdecl } ")"
 pdecl     = IDENT ":" type [ "=" expr ]              // a default makes the argument optional
-member    = { doc } { attr } ( param | let | bound | part | fit | check | require
-            | solver | datum | place ) [ trailing_attr ]
+member    = { doc } { attr } [ "priv" ] ( param | let | bound | part | fit | check
+            | require | solver | datum | place ) [ trailing_attr ]
+                                                     // "priv": usable only in its package (packages.md 3)
 datum     = "datum" IDENT [ "=" expr ]               // geometry.md 2; no "=" in an interface
 place     = "place" path "on" expr [ "for" IDENT "in" "0" ".." "count" "(" path ")" ]
                                                      // geometry.md 4; the range form indexes PART[i]
@@ -127,8 +131,9 @@ process   = "process" IDENT [ citation ] "{" { param | rule } "}"
 rule      = "rule" IDENT "(" pdecl ")" "->" type "=" expr
 table     = "table" IDENT [ citation ] "{" "key" pdecl [ "cols" pdecl { "," pdecl } ]
             { expr [ "=>" expr { "," expr } ] } "}"   // no "=>": a key-only row
-cite      = "cite" IDENT "=" ( STRING | path )   // path: a standard, `std.iso273`
-interface = "interface" IDENT "{" { doc | bound | IDENT ":" type | datum } "}"
+cite      = "cite" IDENT "=" ( STRING | path )   // path: a standard, `std::iso273`
+interface = "interface" IDENT [ ":" iface_list ] "{" { doc | bound | IDENT [ "?" ] ":" type | datum } "}"
+                                                     // ":" extends; "?" marks an optional member
 enum      = "enum" IDENT "{" IDENT { "," IDENT } [ "," ] "}"
 fn        = "fn" IDENT "(" [ pdecl { "," pdecl } ] ")" "->" type
             "{" { let } expr "}"
@@ -275,9 +280,10 @@ datasheet bound, and the user's design checks against it.
 ### 3.5 Parts
 
 `part name: Type`, `part name[N]: Type`, `part name: Type(args)`. `N` is
-a Count expression over parameters and `count()` only, evaluated before
-any member, so the part graph is known without evaluating the design;
-D003 covers it. Instances are distinct: each toleranced parameter of
+a Count expression. It may read parameters, `count()` and members of
+other parts; it is evaluated first, together with exactly the members
+it reads, so the part graph is known before the rest of the design is
+evaluated. D003 covers a size that depends on the parts it sizes. Instances are distinct: each toleranced parameter of
 each instance is an independent source variable (quantities.md 5.4).
 `count(name)` is a Count; `name[i]` an instance; `for x in name`
 iterates in checks. Every instance of an array has the same arguments,
@@ -289,7 +295,7 @@ parts, recursively; `max(self, lead_time)` and `min(self, p)` do the
 same with maximum and minimum. Roll-ups count every instance: an array
 of four contributes four times. The roll-up
 names `unit_cost lead_time moq supplier mass` are exactly the members
-of `std.commercial::Sourced`; swap commercial deltas (obligations.md
+of `std::commercial::Sourced`; swap commercial deltas (obligations.md
 5.1) and `compare` columns use the same set. A wrong kind on one is an
 ordinary I001 or Q003. Any part lacking the parameter is an
 error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
@@ -402,7 +408,7 @@ only in part is C002 on the fit (undecided), like any check.
 
 `@name`, `@"literal"`, and an optional locator `@name:"p.2, table 1"`.
 `cite name = "url-or-path"` names one (only `file` citations are
-drift-detected, S004); `cite name = std.iso273` cites a
+drift-detected, S004); `cite name = std::iso273` cites a
 standard. Built-in pseudo-citations: `@measured`, `@assumed`,
 `@estimate`, each taking a locator for who and when. A component's
 citation is inherited by its members unless they carry their own. Local
@@ -440,16 +446,36 @@ Default precedence, highest first: the enclosing component's
 
 ## 4. Names and resolution
 
-- Canonical paths: ir.md 2. Several files may share a namespace; the
-  project model (files, namespaces, roots, sources) is in config-cli.md
-  "Project model".
-- `use` brings names from other namespaces or packages into scope:
-  `use ns::Name`, `use ns::*` or `use ns::{A as B, C}`. Everything is
-  public in 0.1.0; there is no visibility modifier.
+- Canonical paths: ir.md 2. A file's module is its path under the
+  package's `src`; packages, modules, visibility, `use` and `pub use`
+  are defined in packages.md, and its section 4 is the single
+  definition of `use` and name resolution. The project model is in
+  config-cli.md "Project model".
+- `use` brings names from other modules and packages into scope
+  (`use package::frame::Frame`, `use std::fits::*`, `use self::x as y`).
+  A fully qualified path (`std::fasteners::ScrewJoint`) is legal
+  anywhere without a `use`.
+- A `use` imports every kind of item (components, interfaces, tables,
+  enums, functions, processes, citations, units and kinds). Enum
+  variants come through their enum (`MetricThread::M5`, or bare where
+  the type is known, 3.1).
+- Resolution order for a bare name is packages.md 4: the component's
+  own members and arguments, items of the current module, explicit
+  `use` names, glob names, then the prelude. Two globs or uses that
+  bring the same name are E004 only where the name is used.
+- The prelude needs no `use`: the units and kinds of quantities.md, the
+  built-in types (`Bool Text Count Ratio Point2 Point3 Vec2 Vec3 Datum
+  Table`), the built-in functions (3.8), `origin` and `self`. Nothing
+  from `std` is in the prelude.
+- Items are private by default; `pub` and `pub(package)` widen them
+  and `pub use` re-exports (packages.md 3, 4). A move between modules
+  or packages is a rename: `was` takes the full canonical old path
+  (`was acme.old::Bracket.thickness`, `was acme.rover::frame::Bracket`).
 - Resolution errors are fixed-severity E codes: E002 unresolved name,
-  E003 duplicate definition of one Type in a namespace (both spans
-  shown), E004 two `use`s bringing the same local name (ambiguous
-  import), E006 argument mismatch at a `part` site. A declaration cycle
+  E003 duplicate definition of one Type in a module (both spans
+  shown), E004 two `use`s or globs bringing the same local name where it is
+  used (ambiguous import), E016 private item, E017 private-in-public
+  (packages.md 7), E006 argument mismatch at a `part` site. A declaration cycle
   is D003, not an import cycle: files may import each other.
 - Inside a component, a bare name is its own member or parameter; a
   component's arguments are in scope; `Other.member` resolves a
@@ -462,9 +488,10 @@ Default precedence, highest first: the enclosing component's
 - A root (a component no `part` instantiates) is evaluated only if all
   of its parameters have defaults; otherwise it is checked only through
   its instances, and if it has none that is I004, which applies only to
-  components in files under `[project] roots` (default: all sources),
-  so a shared library module is not noisy.
-- Case canon (N001): namespaces `lower.dotted`, types and enum variants
+  roots of the package being checked; a private unused parameterized
+  component in a library is U002 (packages.md 3), so a shared library
+  is not noisy.
+- Case canon (N001): package names `lower.dotted`, modules `snake_case`, types and enum variants
   `PascalCase` (digits allowed: `Iso4762M5`; an underscore between two
   digits is a decimal mark: `M2_5`), everything else
   `snake_case`. `__` is reserved for name mangling (N005).
@@ -514,5 +541,7 @@ Formatting never changes the IR digest.
 - OQ-10 (closed 2026-10-13, geometry.md): positions are typed by
   datums, and parts are placed in a tree, which avoids constraint
   solving.
-- OQ-11: Packages for shared parts libraries (versioning, fetching).
-  `std` ships with the compiler (stdlib.md); third-party packages wait.
+- OQ-11 (closed 2026-10-13, packages.md): packages, modules and
+  visibility follow Rust's model; `std` ships with the compiler
+  (stdlib.md). A registry is OQ-19; member privacy is `priv`
+  (OQ-20, closed).

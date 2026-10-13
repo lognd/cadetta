@@ -38,7 +38,7 @@ model Frame {
   configured, not written in source, keyed by that path
   (`[solvers."acme.rover::wall_sizing"] command = ["python",
   "{script}"]`), so source stays portable across machines and licenses
-  and two namespaces may declare solvers of the same name.
+  and two packages or modules may declare solvers of the same name.
 
 ## 2. Bound by default, driving when written
 
@@ -96,9 +96,18 @@ Response:
 
 ## 4. Results and staleness
 
-`cadetta solve [PATH-GLOB...] [--namespace NS]` runs solvers and writes
-`<script>.out.json` beside the script: the response plus the digest of
-every input value, the script and each dep. One file may hold several
+`cadetta solve [PATH-GLOB...] [--module PATH]` runs solvers and writes
+`<stem>.out.json` beside the script (`drive_torque.py` writes
+`drive_torque.out.json`): the response plus the digest of
+every input value, the script and each dep. Its schema is
+`cadetta.solve-result/1`: `{ "schema", "results": [ { "solver": path,
+"input_digest", "script_digest", "dep_digests": {path: digest},
+"version"?, "variant"?: "SLOT=ALT", "inputs": { name: { lit, si, min?, max? } },
+"outputs": { name: literal }, "diagnostics": [] } ] }`,
+sorted by solver path then variant. A solver's path is its declaration's
+canonical path: `acme.drive::DriveModule.drive_torque` for a solver
+declared as a member of `DriveModule`, `acme.drive::drive_torque` at file
+scope. One file may hold several
 solvers, keyed inside by solver path, so two solvers sharing a script
 never collide. The result file is committed. `check` reads it; if any recorded digest differs from the
 current one, S003 (`solver-stale`) fires and the stale outputs still

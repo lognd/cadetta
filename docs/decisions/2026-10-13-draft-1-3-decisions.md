@@ -10,7 +10,7 @@ Audience: contributors
 
 ## Context
 
-Round 3 (`pilots/SYNTHESIS-r3.md`) re-ran all eight pilots against
+Round 3 (`docs/history/pilot-round-3.md`) re-ran all eight pilots against
 draft 1.2, using `std` wherever it fit and asking for contradictions
 rather than wishes. Seven of eight reported no blocker; pilot r3-07
 found one (instance closures for swapped slots). The rest were gaps in

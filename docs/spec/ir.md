@@ -21,9 +21,10 @@ CAD files, lints them at once, and scaffolds `.cdt` source.
 ## 2. Canonical paths
 
 ```
-path      = namespace "::" Type [ "/" part [ "[" index "]" ] ]* "." member
+path      = PKG { "::" module } "::" Type [ "/" part [ "[" index "]" ] ]* "." member
 member    = IDENT { "." IDENT | "[" index "]" }
 index     = INTEGER | "*"                    // "*" only in bindings (below)
+PKG       = IDENT { "." IDENT }              // the dotted package name; module = snake_case IDENT
 example     acme.rover::Axle.end_diameter
             acme.rover::Rover/wheel[2].hub_bore
             acme.rover::Axle.seat.shaft            (fit members)
@@ -32,16 +33,26 @@ example     acme.rover::Axle.end_diameter
             acme.rover::Bracket.top.rotate.z       (datum rotation)
             acme.rover::Rover/bracket.place.0.x    (placement, op 0, axis x)
             acme.rover::Rover/feet[i].place.0.x    (placement over a range)
+            acme.rover::drive::motor::Gm42A.rated_torque   (item in module drive::motor)
 ```
 
 A canonical path is the identity of a node across source, IR, bindings,
 waivers, the lock file and diagnostics. A variant is named `SLOT=ALT`:
 the slot's instance path and the alternate's component path
 (`acme.rover::Rover/wheel=acme.rover::Colson2Series`). Inside source,
-and in diagnostics about the current namespace, the namespace prefix and
-the assembly may be omitted wherever they are unambiguous
+and in diagnostics about the current module, the package and module
+prefix and the assembly may be omitted wherever they are unambiguous
 (`wheel=Colson2Series`); IR keys and lock records always use the full
-form. Paths survive formatting and
+form.
+
+An evaluated value has the path of the instance it belongs to
+(`acme.rover::Rover/axle[0].end_diameter`); a definition path
+(`acme.rover::Axle.end_diameter`) names the declaration, which is what
+obligations of definition level (obligations.md 2.1) and waivers bind.
+A parameter-free component read by type name is its one implicit
+instance (language.md 3.1), so its definition path is also its value
+path. Under a process, `PATH.drawn` names the drawn value (language.md
+3.8). Paths survive formatting and
 reordering; they change only by rename or move, which `was` records.
 
 - Datum offsets are `Type.<datum>.offset.x|y|z` and rotations
@@ -69,12 +80,13 @@ reordering; they change only by rename or move, which `was` records.
 ## 3. Entities
 
 ```
-Project    { schema, flavour, namespaces[], components[], interfaces[], tables[],
-             solvers[], checks[], requires[], waivers[], citations[], digest }
+Project    { schema, flavour, package, modules[], dependencies[], components[],
+             interfaces[], tables[], solvers[], checks[], requires[], waivers[],
+             citations[], digest }
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
              citation?, attrs, members[], parts[], fits[], datums[], points[],
              placements[], span?, digest }
-Member     { path, kind, analysis: bool, value?: Value, bound?: Bound, expr?,
+Member     { path, kind, analysis: bool, priv: bool, value?: Value, bound?: Bound, expr?,
              deps[], role?, citation?, was[], attrs, provenance, doc?, span?,
              variants?: { "<slot>=<alternate>": Value }, digest, closure }
 Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,
@@ -131,8 +143,10 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   R011); `config` is the native configuration; `sign = -1` negates a
   coordinate (geometry.md 6, R007); `component` names the in-assembly
   instance (`wheel<2>`) (emitters/sw-equations.md "SOLIDWORKS naming").
-- `Project.namespaces[]` lists every namespace in the project, sorted;
-  a file's namespace is its header (config-cli.md "Project model").
+- `Project.package` is `{name, version}`; `modules[]` lists every module
+  path of the package, sorted (packages.md 2); `dependencies[]` holds
+  `{name, version, source, digest}` per resolved dependency, sorted by
+  name (packages.md 1). Items in `src/lib.cdt` sit at the package root.
 - Obligation and attestation state is not IR: it lives in the
   `cadetta.obligations/1` schema (obligations.md).
 - `deps` are canonical paths; the graph is acyclic (D003).

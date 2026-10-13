@@ -2,28 +2,31 @@
 
 ## 1. Project model
 
-1. A project is the directory holding `cadetta.toml`. It has one
-   `cadetta.lock`, one `build/` and one set of adapters. Relative paths
-   in `cadetta.toml`, in citations (`@"file"`), in solver scripts and in
-   bindings resolve against that directory.
-2. `[project] namespace` is only the default for source files that carry
-   no `namespace` header. The IR holds `namespaces[]` (ir.md), one entry
-   per distinct namespace in the project.
-3. A file's namespace is its header: any dotted name, with no relation
-   to the directory path. Several files may share a namespace.
-4. `sources` are globs relative to the `cadetta.toml` directory; they may
-   contain `..` and reach outside it. Matches are sorted by path before
-   compile so digests are deterministic. A glob that matches nothing is
-   E005.
-5. A component name defined twice in one namespace is E003, with both
+1. A project is a **package** or a **workspace** (packages.md 1): the
+   directory holding a `cadetta.toml` with a `[package]` or a
+   `[workspace]` table. A package has one `cadetta.lock`, one `build/`
+   and one set of adapters; workspace members share one lock and one
+   `build/` (packages.md 1). Relative paths in `cadetta.toml`, in
+   citations (`@"file"`), in solver scripts and in bindings resolve
+   against the package directory.
+2. A file's module is its path under the package's `src` (packages.md
+   2). The IR holds the package, its
+   `modules[]` and its `dependencies[]` (ir.md).
+3. Matches under `src` are sorted by path before compile so digests are
+   deterministic. A package whose `src` directory is missing or holds no
+   `.cdt` file, or a workspace member or path dependency without a
+   `cadetta.toml`, is E005.
+4. A component name defined twice in one module is E003, with both
    spans.
-6. Reuse in 0.1.0: shared parts are shared by living in one project (a
-   monorepo); a company library is a directory in `sources`.
-   Cross-project reuse waits for OQ-11.
-7. Root discovery: from `--cwd` (default the current directory) walk up
-   to the first `cadetta.toml`; `--config FILE` names one explicitly. If
-   none is found, exit 2. The Python `Project.open` follows the same
-   rule.
+5. Reuse: shared parts live in a package that other packages list under
+   `[dependencies]` (packages.md 1, 4). Dependencies are pinned in
+   `cadetta.lock` and re-resolved by `cadetta update`.
+6. Root discovery: from `--cwd` (default the current directory) walk up
+   to the nearest `cadetta.toml` with a `[package]` or `[workspace]`
+   table; `--config FILE` names one explicitly. If none is found, exit
+   2. In a workspace, a command run inside a member scopes to that
+   member unless run at the workspace root. The Python `Project.open`
+   follows the same rule.
 
 ## 2. `cadetta.toml`
 
@@ -31,15 +34,22 @@
 a comment per key. Defaults are shown below.
 
 ```toml
-[project]
-namespace = "acme.rover"         # default: directory name, normalised
-sources = ["cad/**/*.cdt"]       # globs; default ["**/*.cdt"]
-roots = ["cad/rover/**/*.cdt"]   # I004 applies only here; default = sources
+[package]
+name = "acme.rover"              # lower.dotted (N001); default: directory name, normalised
+version = "0.1.0"                # semver
+src = "src"                      # module root; default "src"
 as_of = "2026-10-13"             # fixed date for expiry; default today
+
+[dependencies]
+"acme.shop" = { path = "../shop", version = "1" }   # packages.md 1
+
+# A workspace root has [workspace] instead of [package]:
+# [workspace]
+# members = ["rover", "shop"]
 
 [defaults]
 # Project-wide parameter defaults (qualified path); lowest precedence.
-FastenerPolicy = "acme.company::AcmeShop"
+FastenerPolicy = "acme.shop::AcmeShop"
 
 [units]
 # Display unit per kind; authored units win when unset.
@@ -80,7 +90,7 @@ name = "sw-equations"            # built-in
 id = "rover-sw"                  # default: name; required if name repeats
 out = "build/solidworks/rover-sw.txt"
 bindings = "bindings/rover-sw.toml"   # default bindings/<id>.toml
-namespaces = ["acme.rover"]      # default: all
+modules = ["drive"]              # module path prefixes; default all
 paths = []                       # canonical-path globs; default all
 prefix = ""                      # prepended to created native names
 native_unit = "mm"               # unit for unitless native values (adapters.md 3)
@@ -107,9 +117,12 @@ Key notes:
 - `command`, `version` and `files` are for external adapters; built-ins
   take `out`. `version` must match `initialize` (adapters.md 5).
 - Solvers are keyed by qualified path. Several solvers may share one
-  script; `<script>.out.json` then holds one entry per solver path
+  script; `<stem>.out.json` then holds one entry per solver path
   (solvers.md 4).
 - `as_of` is overridden by `--as-of`.
+- `[defaults]` applies per package. `[package]`, `[dependencies]` and
+  `[workspace]` are defined in packages.md 1; I004 applies only to the
+  roots of the package being checked (packages.md 3).
 
 ## 3. Commands
 
@@ -119,10 +132,11 @@ unavailable (R008 during `sync`), unknown path or selector.
 
 | Command | Does | Reads / writes | Exit 1 when | Output schema |
 |---|---|---|---|---|
-| `init [--adapter solidworks\|freecad\|sw-equations] [--bare]` | Write `cadetta.toml`, the adapter block and a hello-world `.cdt`. | writes missing files only | never | - |
-| `fmt [--check]` | Canonical formatting (language.md 7). | sources | `--check` finds a diff | - |
-| `check [--release] [--as-of DATE] [--watch] [--namespace NS] [GLOB...]` | Compile, evaluate, lint, obligations; with `read` adapters, drift lints. | reads all | diagnostics >= `fail_on` | `check.json` |
-| `solve [GLOB...] [--namespace NS] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<script>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` |
+| `init [--adapter solidworks\|freecad\|sw-equations] [--bare]` | Write `cadetta.toml` with `[package]`, `src/lib.cdt` and the adapter block. | writes missing files only | never | - |
+| `fmt [--check]` | Canonical formatting (language.md 7). | `src` files | `--check` finds a diff | - |
+| `check [--release] [--as-of DATE] [--watch] [--module PATH] [GLOB...]` | Compile, evaluate, lint, obligations; with `read` adapters, drift lints. | reads all | diagnostics >= `fail_on` | `check.json` |
+| `solve [GLOB...] [--module PATH] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<stem>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` |
+| `update [NAME]` | Re-resolve dependencies (all, or NAME) and write the `package` records of the lock (packages.md 1). | writes `cadetta.lock` | E012, E013 | `update.json` |
 | `why PATH` | Upstream derivation. | reads | never | `why.json` |
 | `why --stale OBLIGATION` | Nearest changed upstream node, old and new values. | reads, lock | never | `why.json` |
 | `impact PATH` | Downstream effects of changing PATH. | reads | never | `impact.json` |
@@ -135,16 +149,17 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
 | `cite pin NAME` | Download a URL citation into `cites/` and rewrite the `cite` to the local path. | writes `cites/`, source | never | - |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
-| `emit [ADAPTER...] [--namespace NS] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013 | `emit.json` |
+| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
 | `import --accept` | Write bindings and `.cdt` scaffold from the proposal. | writes `bindings/`, `cad/imported/`, lock | never | `import.json` |
 | `import ADAPTER FILE... --update [--write]` | Diff of `.cdt` literal edits from observed values; `--write` applies. | writes sources with `--write` | never | `import.json` |
-| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--namespace NS] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013 | `sync.json` |
+| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
 
-`check`, `emit`, `sync` and `solve` accept `--namespace NS` and
-canonical-path globs to scope a run. `cadetta lsp` is deferred (a
+`check`, `emit`, `sync` and `solve` accept `--module PATH` (a module
+path prefix, e.g. `--module drive`) and canonical-path globs to scope a
+run. `cadetta lsp` is deferred (a
 ticket); in 0.1.0 the editor integration is `check --format json
 --watch` (5).
 
@@ -166,7 +181,8 @@ one info line per skipped file and exits 0. `--adapter solidworks`
 writes the `[[adapter]]` block (command, `files` globs, `save`,
 `native_unit`) and prints the install line
 (`pip install "cadetta[solidworks]"`, run in the Windows interpreter).
-`--bare` omits the hello-world `.cdt`. The namespace defaults to the
+`--bare` omits the hello-world item in `src/lib.cdt`. `init` writes
+`[package]` and `src/lib.cdt`; the package name defaults to the
 directory name, normalised, and is echoed.
 
 ### 3.3 Selectors
@@ -184,7 +200,7 @@ nothing is exit 2.
 | `--cwd DIR` | Start root discovery here (1). |
 | `--config FILE` | Use this `cadetta.toml`. |
 
-`--as-of DATE` (`check`, `obligations`; default today or `[project]
+`--as-of DATE` (`check`, `obligations`; default today or `[package]
 as_of`) fixes the date for waiver and `eol` expiry (W001, W005, L001);
 the JSON report header records it so a historic result is reproducible.
 
@@ -212,10 +228,10 @@ Schemas are generated from the Rust types and committed in
 
 | Artifact | Location | Written by | Committed |
 |---|---|---|---|
-| `cadetta.toml` | project root | `init`, by hand | yes |
-| `cadetta.lock` | project root | `ack`, `sync`, `import --accept`, `lock` | yes; `.gitattributes`: `cadetta.lock merge=cadetta` |
+| `cadetta.toml` | package or workspace root | `init`, by hand | yes |
+| `cadetta.lock` | package or workspace root | `ack`, `sync`, `import --accept`, `lock` | yes; `.gitattributes`: `cadetta.lock merge=cadetta` |
 | bindings | `bindings/<id>.toml` (or `[[adapter]] bindings`) | `import --accept`, by hand | yes |
-| solver results | `<script>.out.json`, beside the script | `solve` | yes |
+| solver results | `<stem>.out.json`, beside the script | `solve` | yes |
 | imported scaffold | `cad/imported/<File>.cdt` | `import --accept` | yes |
 | pinned citations | `cites/` | `cite pin` | yes (or LFS) |
 | JSON schemas | `docs/schemas/` | generated from the Rust types | yes |

@@ -144,6 +144,7 @@ timestamps finer than a date, so merges are reviewable:
 | `synced` | `synced ADAPTER PATH locator=L value=V` | (ADAPTER, PATH, L) |
 | `synced` (file) | `synced ADAPTER file=FILE digest=HEX` | (ADAPTER, FILE) |
 | `adopted` | `adopted ADAPTER FILE` | (ADAPTER, FILE) |
+| `package` | `package NAME version=V source=S digest=HEX` | NAME |
 | `swap` | `swap SLOT from=A to=B by=EMAIL at=DATE reason="..."` | whole line |
 
 - `attest` stores who, role, date, the closure digest of the covered
@@ -157,13 +158,18 @@ timestamps finer than a date, so merges are reviewable:
   file. It is committed, not ignored: it describes committed CAD files,
   and two branches syncing one locator differently are a real conflict.
 - `adopted` marks an imported file until its first sync (R006).
+- `package` pins one resolved dependency: version, source and the digest
+  of its content (packages.md 1). The digest enters the closure digest
+  of everything that reads the package, and `cadetta update` rewrites
+  the record. Obligations across packages (upstream attestations,
+  `trust`) are defined in packages.md 6.
 - `swap` records a part swap (who, why, which alternate) so "why is this
   wheel here" survives squash merges. `cadetta swap SLOT NEW --reason
   "..."` applies the suggested edit of `impact --swap` (5.1) and appends
   the record. Swap records are an audit trail: `lock tidy` keeps them.
 
 Solver results are not in the lock. Their digests live in the
-committed `<script>.out.json` (solvers.md 4), the only home of that
+committed `<stem>.out.json` (solvers.md 4), the only home of that
 state.
 
 Rules:
@@ -186,7 +192,7 @@ Rules:
   obligation no longer exists, and re-sorts. It never drops `swap`.
 
 Besides the lock, cadetta writes only declared artifacts, none of which
-carries obligation state of its own: `<script>.out.json` (solvers.md 4),
+carries obligation state of its own: `<stem>.out.json` (solvers.md 4),
 `bindings/<id>.toml` (adapters.md), `docs/schemas/` and `build/`
 (config-cli.md lists them all). Nothing else writes state.
 
@@ -257,7 +263,7 @@ W003.
 attester, age, nearest changed dep, and when the verdict is unchanged
 "verdict unchanged, margin 0.012mm -> 0.010mm", so re-review is cheap.
 
-`--as-of DATE` (check and obligations; default today; also `[project]
+`--as-of DATE` (check and obligations; default today; also `[package]
 as_of`) fixes the date read by every date-dependent rule (W001, W005,
 L001, attestation age). The JSON report header records the date used,
 so a historic result is reproducible.
@@ -300,19 +306,23 @@ canonical path:
    currency, `max?(self, lead_time)` and `mass?(self)`, the same roll-ups
    the language defines (language.md 3.5, every instance counted), at
    the assembly named by `PART`'s prefix; `moq` per changed part. The
-   names are the members of `std.commercial::Sourced` (stdlib.md); a
+   names are the members of `std::commercial::Sourced` (stdlib.md); a
    wrong kind there is an ordinary I001 or Q003. Parts lacking a value
    are listed. A design `let` over the same roll-up therefore always
    agrees with the preview.
 
-Numbers print by the display rules (quantities.md 6); money in the
-currency's minor unit; percentages to one decimal, half away from
-zero. The schemas (above) are generated with the implementation;
+In text output numbers print by the display rules (quantities.md 6),
+money in the currency's minor unit and percentages to one decimal, half
+away from zero. JSON carries exact values as source literals, never
+rounded. `swap.json` has a `swap` header (slot, alternate, approved or not) and
+one key per section, in order: `verdict`, `values_changed`,
+`verdicts_flipped`, `suggested_edit`, `cad_resync`,
+`attestations_invalidated`, `commercial_deltas`. The schemas (above) are generated with the implementation;
 until then this section is normative.
 
 `compare IFACE` is the same evaluation for every implementer of the
 interface in every slot typed by it, as a table. Its commercial columns
-are the members of `std.commercial::Sourced`.
+are the members of `std::commercial::Sourced`.
 
 ## 6. frob integration (optional)
 

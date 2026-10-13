@@ -10,7 +10,7 @@ Audience: contributors
 
 ## Context
 
-Round 2 (`pilots/SYNTHESIS-r2.md`) re-ran pilots 02, 04 and 05 against
+Round 2 (`docs/history/pilot-round-2.md`) re-ran pilots 02, 04 and 05 against
 draft 1 and added pilot 07 (part swap). Round 1's blockers are closed;
 pilot 07 found two new blockers in the swap queries. The owner asked
 whether screws and other basic components should be computed for the
