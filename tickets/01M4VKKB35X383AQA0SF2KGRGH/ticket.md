@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T21:44:48Z"
-updated = "2026-10-13T22:19:18Z"
+updated = "2026-10-13T22:19:23Z"
 idempotency_key = "d15:py-models-check"
 labels = ["creates:bindings/python/scripts/gen_models.py", "creates:grimble.lock"]
 scope = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py", "design/model.grmb", "grimble.lock", "bindings/python/tests/test_gen_models.py", "bindings/python/pyproject.toml", "bindings/python/uv.lock"]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "Given design/model.grmb flow f_py_ir, when bound with the Rust IR Project type (crates/cadetta-ir/src/model.rs) as producer and bindings/python/python/cadetta/models/ir.py as consumer and acked into a committed grimble.lock, then grimble check reports SYS006 when the producer changes without the consumer; if the 0.532.0 Python adapter leaves the consumer end Unresolved, the ticket records the reason code and keeps the flow as documentation while the gen --check stays the hard gate (checked with uvx --from frob==0.532.0)"
-bound = false
+bound = true
 +++
 
 Found by ~1KGXRMC: a schema change in a Rust ticket left the generated models stale and turned main red; the codegen options had to be reverse-engineered.
