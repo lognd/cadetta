@@ -19,6 +19,10 @@ scope = ["crates/cadetta-syntax/src/{parser,ast}.rs"]
 kind = "blocks"
 target = "01M4SPWP4HDVWPMA4AFJ65KWPN"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWP7B9ANMSNWB9SYD2T0Q"
+
 [[acceptance]]
 text = "Given the language.md section 1 example, when parsed, then the AST has 1 ots, 2 models, 1 assembly and 1 fit"
 bound = false
