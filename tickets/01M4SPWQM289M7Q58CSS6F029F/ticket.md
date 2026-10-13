@@ -85,7 +85,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `#[allow(M001, "vendor drawing 1234")]` on a member, when linted, then M001 is suppressed there without expiry, and the same without a because string is rejected (lints.md 2)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)"
