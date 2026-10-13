@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an implementer violating an interface bound, when checked, then C001 is raised against that implementer (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given code reading `wheel.hub_bore`, when resolved, then it depends on the interface only (language.md 3.2)"
