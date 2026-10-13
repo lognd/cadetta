@@ -2,13 +2,13 @@
 id = "01M4SXR2FQZ6DZDY01VF34J1C5"
 title = "Dependency resolution from path and git, one version per package"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:40Z"
-updated = "2026-10-13T06:03:40Z"
+updated = "2026-10-13T06:55:02Z"
 persona = "product engineer"
 capability = "depend on a shop library by path or git and get one resolved version"
 labels = ["creates:crates/cadetta-cli/src/pkg/resolve.rs"]
