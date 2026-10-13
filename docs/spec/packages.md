@@ -118,6 +118,12 @@ The module tree is the file tree under `src`:
   cannot be `priv` (E017). There is no `protected`: components do not
   inherit from components, so there is nothing for it to mean.
 - `std` exports exactly the items stdlib.md lists, all `pub`.
+- Checker decisions: a `pub(package)` item named in a `pub` signature is
+  also E017 (it is less visible). The `priv` check follows a member chain
+  through `part` slots by their declared type and checks each step; it
+  stops at the first non-part member, whose value type resolution does
+  not carry. A private item that is `pub use`d is not re-exported, so it
+  never needs the E016 check across packages.
 - A private item that nothing uses is U002 (warning), the analogue of
   Rust's dead-code lint. A private parameterized component with no
   instances is U002, not I004. I004 applies only to roots of the

@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T09:08:10Z"
+digest = "f46ce521c2e17d3c83e665a2585ca9d372baa8d18f089bac90a66cfb656b4d11"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3f2c1b9b-2b88-450d-aee8-9d365e2a56f5 with nextest profile: default
+    Starting 1 test across 1 binary (121 tests skipped)
+        PASS [   0.009s] cadetta-sema visibility::tests::private_in_public_signatures_are_e017
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 121 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=visibility::tests::private_in_public_signatures_are_e017)' -p cadetta-sema"
+size = 560
+status = "measured"
+test_count = 1
+tests_digest = "c4216f9fd0014d53dc18d80db185742348f1e7d875277ba2e0cbafabe8436383"
+at = "2026-10-13T09:08:10Z"
+actor = "lognd"
+rev = 1
