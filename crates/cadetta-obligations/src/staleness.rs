@@ -359,7 +359,7 @@ mod tests {
             Digest("bb".into()),
             Digest("cc".into()),
         );
-        assert_eq!(covered_digest(&[a.clone()]), a);
+        assert_eq!(covered_digest(std::slice::from_ref(&a)), a);
         assert_eq!(covered_digest(&[a.clone(), a.clone()]), a);
         assert_eq!(
             covered_digest(&[a.clone(), b.clone()]),
