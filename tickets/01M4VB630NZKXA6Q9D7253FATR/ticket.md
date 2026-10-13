@@ -2,7 +2,8 @@
 id = "01M4VB630NZKXA6Q9D7253FATR"
 title = "Solver script statement replaces the script citation"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
