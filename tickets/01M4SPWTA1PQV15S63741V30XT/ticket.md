@@ -2,7 +2,8 @@
 id = "01M4SPWTA1PQV15S63741V30XT"
 title = "cadetta emit and import"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
