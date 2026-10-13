@@ -2,7 +2,8 @@
 id = "01M4SWN7C44NFRF512T456X92X"
 title = "lock tidy"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
