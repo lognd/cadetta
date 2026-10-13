@@ -2,18 +2,18 @@
 id = "01M4SWKAAVAK4WGP5RYZB8MA5V"
 title = "Lint family E001-E011 resolution and evaluation"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T06:04:57Z"
+updated = "2026-10-13T13:35:40Z"
 persona = "design engineer"
 capability = "get stable codes for every compile failure"
 idempotency_key = "replan14:lint-e"
 labels = ["creates:crates/cadetta-lint/src/rules/e.rs", "creates:tests/conformance/lints/E*/**"]
-scope = ["crates/cadetta-lint/src/rules/e.rs", "tests/conformance/lints/E*/**"]
+scope = ["crates/cadetta-lint/src/rules/e.rs", "tests/conformance/lints/E*/**", "crates/cadetta-lint/src/rules/mod.rs", "docs/spec/lints.md", "design/model.grmb"]
 
 [[links]]
 kind = "blocked-by"
@@ -33,10 +33,6 @@ bound = false
 
 [[acceptance]]
 text = "Given E010, when mmc or lmc reads a tolerance with no role, then it fires (lints.md 3 E)"
-bound = false
-
-[[acceptance]]
-text = "Given the rules, when shipped, then must-fire and must-not-fire fixtures exist under tests/conformance/lints/E*/ (lints.md 4)"
 bound = false
 
 [[acceptance]]

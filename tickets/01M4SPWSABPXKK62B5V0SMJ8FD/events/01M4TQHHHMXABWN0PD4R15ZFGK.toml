@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T13:34:29Z"
+digest = "1b05b3c399dc567a03e0a56de81701410dc67f2b5f55a20798a44e3b370d15e9"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1bc935d8-bc39-4f72-b7fc-84b9f948ef72 with nextest profile: default
+    Starting 1 test across 1 binary (74 tests skipped)
+        PASS [   0.018s] cadetta-adapter builtin::sw_equations::tests::order_is_topological_ties_by_path
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.022s] 1 test run: 1 passed, 74 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(=builtin::sw_equations::tests::order_is_topological_ties_by_path)'"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "93ef4ff4da468cf45adc0a34e1e399dd03a33c53a94b8b901fdffba626b0cf8d"
+at = "2026-10-13T13:34:29Z"
+actor = "lognd"
+rev = 1
