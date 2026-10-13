@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `12.012mm` in a model with no tolerance, fit, table lookup or allow, when linted, then M001 is reported; a citation or doc comment does not explain it (lints.md M)", "Given the same literal in an ots with a citation, when linted, then M001 does not fire (lints.md M)", "Given a bare factor other than small integers, simple fractions and powers of ten, when linted, then M002 info (lints.md M)", "Given a parameter used as a fit side with no tolerance, when linted, then M003 is reported (lints.md M)", "Given each code, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"]
+new = ["Given `12.012mm` in a model with no tolerance, fit, table lookup or allow, when linted, then M001 is reported; a citation or doc comment does not explain it (lints.md M)", "Given the same literal in an ots with a citation, when linted, then M001 does not fire (lints.md M)", "Given a bare factor other than small integers, simple fractions and powers of ten, when linted, then M002 info (lints.md M)", "Given a parameter used as a fit side with no tolerance, when linted, then M003 is reported (lints.md M)"]
+moved = [1, 2, 3, 4, 0]
+at = "2026-10-13T13:17:19Z"
+actor = "lognd"
+rev = 1
