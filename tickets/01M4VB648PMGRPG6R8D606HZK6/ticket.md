@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T22:47:08Z"
+updated = "2026-10-13T22:47:46Z"
 persona = "design engineer"
 capability = "have drawing tolerances come from the design"
 outcome_text = "tolerances are not retyped on drawings"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given initialize, when parsed, then the features list is accepted and validated against docs/schemas/adapter-protocol.json (adapters.md 5)"
-bound = false
+bound = true
 +++
