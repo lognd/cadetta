@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Project model, root discovery and namespaces"
+new = "Project model, root discovery and packages"
+at = "2026-10-13T06:04:36Z"
+actor = "lognd"
+rev = 1
