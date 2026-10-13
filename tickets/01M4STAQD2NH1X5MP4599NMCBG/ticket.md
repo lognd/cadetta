@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:14:14Z"
+updated = "2026-10-13T16:19:41Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for ir"
 labels = ["creates:tests/conformance/ir/**"]
-scope = ["tests/conformance/ir/**"]
+scope = ["tests/conformance/ir/**", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocks"
