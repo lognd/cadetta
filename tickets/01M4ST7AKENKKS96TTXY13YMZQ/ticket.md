@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:30:39Z"
+updated = "2026-10-13T08:30:40Z"
 persona = "design engineer"
 capability = "sum mass, cost and lead time over every part instance"
 idempotency_key = "replan13:Part arrays, count and roll-ups"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `sum(name.member)`, `sum(self, mass)` and `max(self, lead_time)`, when evaluated, then every instance counts, recursively (language.md 3.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a part lacking the parameter, when rolled up without `?`, then an error; with `sum?(self, mass)` the missing parts are listed in the result note (language.md 3.5)"
