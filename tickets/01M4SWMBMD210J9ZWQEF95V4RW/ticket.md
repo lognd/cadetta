@@ -2,18 +2,19 @@
 id = "01M4SWMBMD210J9ZWQEF95V4RW"
 title = "Three-way sync classifier"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:10Z"
-updated = "2026-10-13T09:31:34Z"
+updated = "2026-10-13T09:33:34Z"
 persona = "design engineer"
 capability = "know what a sync will do"
 idempotency_key = "replan14:ad-classify"
 labels = ["creates:crates/cadetta-adapter/src/classify.rs"]
-scope = ["crates/cadetta-adapter/src/classify.rs"]
+scope = ["crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"

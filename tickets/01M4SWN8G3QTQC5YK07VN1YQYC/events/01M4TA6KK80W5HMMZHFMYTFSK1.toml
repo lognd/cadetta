@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Partial. Done: ack.json, obligations.json (+ validation tests; why/impact/explain/units/diag/ir existed). Gaps: check.json, compare.json, update.json (other branches); solve-report.json (solve has no JSON output yet); swap.json, lock.json, emit.json, import.json, sync.json (verbs/JSON output not in code). Ticket left open, not landed."
+at = "2026-10-13T09:41:20Z"
+actor = "lognd"
+rev = 1

@@ -9,6 +9,7 @@ pub mod cmd;
 pub mod config;
 mod env;
 pub mod output;
+pub mod pipeline;
 pub mod pkg;
 pub mod project;
 pub mod scope;
@@ -167,8 +168,11 @@ enum Command {
     Solve(Vec<String>),
     Obligations(Vec<String>),
     Ack(Vec<String>),
+    Check(Vec<String>),
     Why(Vec<String>),
     Impact(Vec<String>),
+    /// `compare IFACE`.
+    Compare(Vec<String>),
     Ir(Vec<String>),
     Explain(Vec<String>),
     Units(Vec<String>),
@@ -185,8 +189,10 @@ fn parse(args: &[String]) -> Command {
         Some("solve") => Command::Solve(args[1..].to_vec()),
         Some("obligations") => Command::Obligations(args[1..].to_vec()),
         Some("ack") => Command::Ack(args[1..].to_vec()),
+        Some("check") => Command::Check(args[1..].to_vec()),
         Some("why") => Command::Why(args[1..].to_vec()),
         Some("impact") => Command::Impact(args[1..].to_vec()),
+        Some("compare") => Command::Compare(args[1..].to_vec()),
         Some("ir") => Command::Ir(args[1..].to_vec()),
         Some("explain") => Command::Explain(args[1..].to_vec()),
         Some("units") => Command::Units(args[1..].to_vec()),
@@ -232,8 +238,10 @@ pub fn run_with_env(
         Command::Solve(rest) => cmd::run_solve(&rest, &globals, out, err),
         Command::Obligations(rest) => cmd::run_obligations(&rest, &globals, out, err),
         Command::Ack(rest) => cmd::run_ack(&rest, &globals, out, err),
+        Command::Check(rest) => cmd::run_check(&rest, &globals, out, err),
         Command::Why(rest) => cmd::run_why(&rest, &globals, out, err),
         Command::Impact(rest) => cmd::run_impact(&rest, &globals, out, err),
+        Command::Compare(rest) => cmd::run_compare(&rest, &globals, out, err),
         Command::Ir(rest) => cmd::run_ir(&rest, &globals, out, err),
         Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
         Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
