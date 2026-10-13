@@ -243,7 +243,7 @@ mod tests {
         }
     }
 
-    // frob:tests cadetta_variants::evaluate::evaluate_variants
+    // frob:tests crates/cadetta-variants/src/evaluate.rs::evaluate_variants kind=unit
     #[test]
     fn alternate_replaces_primary_and_others_keep_primaries() {
         let mut m = Model { calls: vec![] };
@@ -262,7 +262,7 @@ mod tests {
         assert_eq!(by["total"]["Rover/motor=Strong"], Reading::Value(27));
     }
 
-    // frob:tests cadetta_variants::evaluate::evaluate_variants
+    // frob:tests crates/cadetta-variants/src/evaluate.rs::evaluate_variants kind=unit
     #[test]
     fn work_is_linear_in_alternates() {
         let mut m = Model { calls: vec![] };
@@ -273,7 +273,7 @@ mod tests {
         assert_eq!(run.variants.len(), 5);
     }
 
-    // frob:tests cadetta_variants::evaluate::VariantRun::by_member
+    // frob:tests crates/cadetta-variants/src/evaluate.rs::VariantRun.by_member kind=unit
     #[test]
     fn only_differing_values_are_kept() {
         let mut m = Model { calls: vec![] };
@@ -284,7 +284,7 @@ mod tests {
         assert_eq!(by.len(), 2);
     }
 
-    // frob:tests cadetta_variants::evaluate::evaluate_variants
+    // frob:tests crates/cadetta-variants/src/evaluate.rs::evaluate_variants kind=unit
     #[test]
     fn evaluation_error_makes_alternate_non_viable() {
         let mut m = Model { calls: vec![] };
@@ -301,7 +301,7 @@ mod tests {
         ));
     }
 
-    // frob:tests cadetta_variants::evaluate::Evaluate
+    // frob:tests crates/cadetta-variants/src/evaluate.rs::Evaluate kind=unit
     #[test]
     fn solver_output_unknown_under_variant_not_borrowed() {
         let mut m = Model { calls: vec![] };
