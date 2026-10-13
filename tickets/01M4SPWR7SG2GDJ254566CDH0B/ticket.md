@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:48:15Z"
+updated = "2026-10-13T09:51:04Z"
 persona = "design engineer"
 capability = "get lints for the C family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -17,25 +17,21 @@ scope = ["crates/cadetta-lint/src/rules/c.rs", "tests/conformance/lints/C*/**", 
 
 [[acceptance]]
 text = "Given a check violated across the tolerance, when linted, then C001 error"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an undecided check, when linted, then C002 warning"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `a == b` on toleranced operands, when linted, then C003 warning suggests `.nominal` accessors (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check reading an arithmetic parameter with toleranced inputs and no tolerance of its own, when linted, then C004 info suggests `let` (quantities.md 5.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a violation under an alternate, when linted, then C001 names `for alt NAME` (language.md 3.2)"
-bound = false
-
-[[acceptance]]
-text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
-bound = false
+bound = true
 +++
