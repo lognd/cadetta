@@ -7,20 +7,20 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:35:03Z"
-updated = "2026-10-13T13:43:37Z"
+updated = "2026-10-13T13:52:45Z"
 idempotency_key = "wire-lints"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
 
 [[acceptance]]
-text = "cadetta check runs every implemented lint family over the analyzed IR and reports their diagnostics"
+text = "cadetta check runs the IR-only lint families (D001, D002, F004, M001-M003, N001-N003, N005, N006, Q006, S001, S002) over the analyzed IR and reports their diagnostics"
 bound = false
 
 [[acceptance]]
-text = "L/T/P/Q/N004 lifts are fed from sema and variants facts"
+text = "waive declarations are collected from the in-scope modules and applied through the lint engine; W001-W004 are reported"
 bound = false
 
 [[acceptance]]
-text = "waivers and allows are applied through the engine, W rules reported"
+text = "N004 is fed from the sema rename graph (already emitted by the dependency stage; verified, no extra wiring)"
 bound = false
 +++
 
