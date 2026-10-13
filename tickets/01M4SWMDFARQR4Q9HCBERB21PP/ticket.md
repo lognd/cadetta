@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-13T05:44:14Z"
+updated = "2026-10-13T19:18:42Z"
 persona = "design engineer"
 capability = "drive SOLIDWORKS unattended"
 idempotency_key = "replan14:sw-session"
-labels = ["creates:adapters/solidworks/src/session.py"]
-scope = ["adapters/solidworks/src/session.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Session/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Session/**"]
 
 [[links]]
 kind = "blocked-by"
