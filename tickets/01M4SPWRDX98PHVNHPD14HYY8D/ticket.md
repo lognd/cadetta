@@ -2,7 +2,8 @@
 id = "01M4SPWRDX98PHVNHPD14HYY8D"
 title = "Lint family Waiver rules W001-W004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
