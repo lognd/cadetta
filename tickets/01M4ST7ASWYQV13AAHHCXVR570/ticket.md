@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:05:10Z"
+updated = "2026-10-13T08:15:06Z"
 persona = "design engineer"
 capability = "write pure helper functions and exhaustive matches"
 idempotency_key = "replan13:Functions, enums, match and standard functions"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-sema/src/{func,enums}.rs", "crates/cadetta-sema/src/res
 
 [[acceptance]]
 text = "Given `fn name(a: Kind) -> Kind { let x = ...; expr }`, when evaluated, then it is pure and total; recursion is rejected (language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a non-exhaustive `match`, when checked, then an error names the missing variants (language.md 3.8)"

@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:15:06Z"
+digest = "e8beb1300b3df20e16e62d10983fd85b9135a40cb97a24a3b68805112982b554"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.63s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c53632dc-2c67-4561-9a57-129f41f702a7 with nextest profile: default
+    Starting 3 tests across 20 binaries (438 tests skipped)
+        PASS [   0.008s] cadetta-sema eval::tests::recursion_is_rejected
+        PASS [   0.008s] cadetta-sema eval::tests::user_function_with_lets_and_defaults
+        PASS [   0.008s] cadetta-sema eval::tests::user_function_argument_errors_are_e006
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 3 tests run: 3 passed, 438 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=eval::tests::user_function_with_lets_and_defaults) | test(=eval::tests::user_function_argument_errors_are_e006) | test(=eval::tests::recursion_is_rejected)'"
+size = 921
+status = "measured"
+test_count = 3
+tests_digest = "1cb3d1a854e01fd68cf4cf77af8667beb3120569384ad5e30b72a23b0e1d91fd"
+at = "2026-10-13T08:15:06Z"
+actor = "lognd"
+rev = 1
