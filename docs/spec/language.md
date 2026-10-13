@@ -536,6 +536,11 @@ Rules the grammar left open, fixed by the reference parser:
   not yet parsed (`process`, `table`, `enum`, `fn`, `solver`, `waive`,
   `unit`, `kind`, `datum`, `place`) produce an E001 diagnostic and are
   skipped to the next statement.
+- Source locations: lines and columns are 1-based; a column counts
+  Unicode characters, not bytes; the end position is exclusive and
+  prints as `file:line:col-line:col`. A byte offset inside a character
+  snaps to that character start; one past the end clamps to the end. An
+  item span includes its trailing newline.
 
 ## 6. Checks and requirements
 

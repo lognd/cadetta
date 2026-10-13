@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T06:36:44Z"
+digest = "81723df298e9bd0dec0744364070ab3bdbbccd29134390a3443b906d8bcbdf60"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 102c9e33-3f11-42cc-b063-6f14263af015 with nextest profile: default
+    Starting 1 test across 14 binaries (146 tests skipped)
+        PASS [   0.006s] cadetta pkg::manifest::tests::trust_roles_are_parsed
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 146 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "trust_roles_are_parsed"
+size = 546
+status = "measured"
+test_count = 1
+tests_digest = "f3c118514780f39f579dd206fc2a58d843d2ae5bd486f0c3abb77b259db5a662"
+at = "2026-10-13T06:36:44Z"
+actor = "lognd"
+rev = 1

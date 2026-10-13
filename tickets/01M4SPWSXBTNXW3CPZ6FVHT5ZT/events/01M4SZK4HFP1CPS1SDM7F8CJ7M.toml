@@ -1,0 +1,36 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:35:49Z"
+digest = "4ddab03b0d788f225866abb5af83b9c8a5e5cfbe045cbb0c9376c9dd1da8c4f1"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 288b69a8-45e0-4cb2-bfc8-a436fb1bab7b with nextest profile: default
+    Starting 14 tests across 2 binaries (11 tests skipped)
+        PASS [   0.008s] cadetta output::tests::short_github_sarif_and_json_shapes
+        PASS [   0.009s] cadetta tests::text_is_the_default_format_regardless_of_terminal
+        PASS [   0.009s] cadetta output::tests::format_parses_all_five_and_text_is_default
+        PASS [   0.009s] cadetta output::tests::exit_one_at_or_above_fail_on
+        PASS [   0.007s] cadetta output::tests::text_is_rustc_style
+        PASS [   0.009s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.009s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.007s] cadetta tests::cwd_and_config_are_validated
+        PASS [   0.009s] cadetta output::tests::waived_diagnostics_appear_in_json_only
+        PASS [   0.009s] cadetta output::tests::diagnostics_sort_by_file_line_code
+        PASS [   0.011s] cadetta tests::format_flag_beats_env_and_both_validate
+        PASS [   0.012s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.005s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.005s] cadetta tests::verbosity_flags_are_split_off
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 14 tests run: 14 passed, 11 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=output::tests::diagnostics_sort_by_file_line_code) | test(=output::tests::exit_one_at_or_above_fail_on) | test(=output::tests::format_parses_all_five_and_text_is_default) | test(=output::tests::short_github_sarif_and_json_shapes) | test(=output::tests::text_is_rustc_style) | test(=output::tests::waived_diagnostics_appear_in_json_only) | test(=tests::cwd_and_config_are_validated) | test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::text_is_the_default_format_regardless_of_terminal) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=tests::verbosity_flags_are_split_off)))'"
+size = 1576
+status = "measured"
+test_count = 14
+tests_digest = "22133ddb5f803eba0965537c89be011c25ba52787ba7229438101cc030252663"
+at = "2026-10-13T06:35:49Z"
+actor = "lognd"
+rev = 1
