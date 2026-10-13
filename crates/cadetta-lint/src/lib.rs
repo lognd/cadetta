@@ -5,3 +5,4 @@
 pub mod diag;
 pub mod engine;
 pub mod render;
+pub mod rules;
