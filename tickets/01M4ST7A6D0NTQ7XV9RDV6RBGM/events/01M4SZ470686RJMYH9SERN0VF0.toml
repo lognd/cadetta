@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:27:37Z"
+digest = "9ef36f1f0a3e61e6ec1c850bba11b6e57666d43fab5a2c12cef57b6ac406e4d6"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.28s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c5b81406-6cd3-45c5-be59-ed718ddd7d2e with nextest profile: default
+    Starting 1 test across 1 binary (51 tests skipped)
+        PASS [   0.038s] cadetta-units display::tests::feet_inches
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.039s] 1 test run: 1 passed, 51 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E 'test(=display::tests::feet_inches)'"
+size = 652
+status = "measured"
+test_count = 1
+tests_digest = "7f255714d4d400cdb87e68ee741d0445503a163b5d68a7dc1473ef699d374254"
+at = "2026-10-13T06:27:37Z"
+actor = "lognd"
+rev = 1

@@ -1,13 +1,13 @@
 // frob:ticket 01M4SPWNEF5D7VN10KTWKPM465
+// frob:ticket 01M4SYSRH148456F3BFPK4MA7Y
 //! Affine temperature units, absolute Temperature and TemperatureDelta.
 //!
 //! Specification: `docs/spec/quantities.md` section 3. Absolute units
 //! (`K`, `degC`, `degF`) carry an exact offset to kelvin; delta units
 //! (`dK`, `ddegC`, `ddegF`) carry none. Everything is exact rational.
 //!
-//! SEAM: the built-in unit table (ticket GNSP35P, `units.rs`) is not
-//! merged yet, so the six temperature units are defined locally in
-//! [`TemperatureUnit`]. When the table lands it should delegate here.
+//! [`TemperatureUnit`] is the single source of truth for the six
+//! temperature units' scale factors; `units.rs` builds its table from it.
 
 use thiserror::Error;
 use tracing::{debug, trace};
@@ -100,6 +100,16 @@ impl TemperatureUnit {
     pub fn is_affine(self) -> bool {
         matches!(self, Self::DegC | Self::DegF)
     }
+
+    /// All six temperature units, absolute first.
+    pub const ALL: [Self; 6] = [
+        Self::K,
+        Self::DegC,
+        Self::DegF,
+        Self::DK,
+        Self::DDegC,
+        Self::DDegF,
+    ];
 
     /// Exact kelvin per one unit step.
     pub fn factor(self) -> Rational {

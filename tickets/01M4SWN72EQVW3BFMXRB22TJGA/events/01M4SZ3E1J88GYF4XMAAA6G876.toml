@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:27:08Z"
+digest = "7d881c346ddcc1b45d2917f022b40c345d948924927e27f3b33c4479651c591e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.34s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5c6f9334-7b0d-4511-8d7c-f55934cd3186 with nextest profile: default
+    Starting 1 test across 14 binaries (98 tests skipped)
+        PASS [   0.010s] cadetta-obligations selector::tests::no_match_is_exit_2
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 98 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta-obligations selector::tests::no_match_is_exit_2"
+size = 899
+status = "measured"
+test_count = 1
+tests_digest = "a76f7c43ed478db0ff312bf5eb42f1c4b0135f399e88dcd16f0e6b4d93fc1340"
+at = "2026-10-13T06:27:08Z"
+actor = "lognd"
+rev = 1
