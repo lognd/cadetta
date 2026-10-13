@@ -8,11 +8,15 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:46:31Z"
-updated = "2026-10-13T23:46:31Z"
+updated = "2026-10-13T23:46:32Z"
 persona = "design engineer"
 capability = "have sync verify datums and placements against CAD"
 outcome_text = "a part that sits elsewhere in CAD is R001"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-adapter/src/geometry_bind.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VQXPDA4TEKE455FNYB5TXC"
 
 [[acceptance]]
 text = "Given a design with bound datums and placements and an adapter reporting frames and instances, when cadetta sync runs, then composed transforms from the evaluated IR are converted to Mat34 and compared through geometry_bind (R001 on mismatch), and datums = create pushes frames (adapters.md 3.4)"
