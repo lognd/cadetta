@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:08Z"
+updated = "2026-10-13T05:17:24Z"
 persona = "design engineer"
 capability = "write cadetta values into SOLIDWORKS and keep dimensions linked"
 labels = ["creates:adapters/solidworks/src/emit.py", "creates:adapters/solidworks/src/drive.py"]
@@ -25,6 +25,10 @@ target = "01M4SPWS23PN7M3TKKW8SA8QRK"
 [[links]]
 kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV3AAC44Q1DCE44GG3XB6W"
 
 [[acceptance]]
 text = "Given a path bound to several locators, when emitted, then each global, dimension and property is written (adapters.md 3)"
