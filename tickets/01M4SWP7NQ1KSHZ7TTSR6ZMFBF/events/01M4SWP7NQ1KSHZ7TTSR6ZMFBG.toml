@@ -1,0 +1,16 @@
+kind = "create"
+title = "Conformance run for emitters/csv"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH74K9QQS72Z9YMTPD72"
+persona = "maintainer"
+capability = "know the implementation matches the spec"
+idempotency_key = "replan14:cr-csv"
+labels = ["creates:tests/conformance_emitters_csv.rs"]
+scope = ["tests/conformance_emitters_csv.rs"]
+acceptance = ["Given tests/conformance/emitters/csv/ fixtures, when the harness runs, then every must-fire fixture produces its expected diagnostic and every must-not-fire fixture produces none (docs/spec/emitters/csv.md)"]
+at = "2026-10-13T05:45:12Z"
+actor = "lognd"
+rev = 1
