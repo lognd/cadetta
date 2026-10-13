@@ -775,8 +775,12 @@
             "items": {
               "$ref": "#/$defs/Value"
             },
+            "maxItems": 4,
+            "minItems": 4,
             "type": "array"
           },
+          "maxItems": 3,
+          "minItems": 3,
           "type": "array"
         }
       },
@@ -805,8 +809,12 @@
             "items": {
               "$ref": "#/$defs/Value"
             },
+            "maxItems": 4,
+            "minItems": 4,
             "type": "array"
           },
+          "maxItems": 3,
+          "minItems": 3,
           "type": "array"
         }
       },

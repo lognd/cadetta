@@ -6,9 +6,10 @@ specific to this directory.
 
 ## Entries
 
-Each `NAME.expect.json` names an `entry`. Only `check` entries run in
-the runner today; every other entry is written but skipped with a note
-(runner gap ticket ~6BCVN48).
+Each `NAME.expect.json` names an `entry`. The runner executes every
+entry it has an executor for (see `../README.md`, Runner contract); the
+rest fail and are listed in `../known-gaps.toml` against the ticket that
+adds the executor.
 
 | entry | exercises |
 |---|---|
@@ -29,9 +30,10 @@ or JSON files next to the expect file.
 ## Extra expect keys
 
 Beyond `diagnostics` and `exit`, the blocks may carry descriptive keys
-read by humans and by future runner support: `class`, `action`,
-`message_contains`, `writes`, `output` (`contains`, `excludes`),
-`config_error`, `names_path_or_key`, `why`. The runner ignores them.
+read by the runner: `message_contains`, `writes`, `output` (`contains`,
+`excludes`), `config_error`, `order`. `why` is ignored. A key the runner
+does not observe (for example `class`, `action`, `names_path_or_key`)
+fails the entry until support exists, so it is gapped, not dropped.
 
 ## Rule names
 

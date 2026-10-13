@@ -103,3 +103,8 @@ forbid_imports = [
   { from = 'crates/cadetta-variants/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
   { from = 'bindings/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
 ]
+
+[lease]
+# Append-shared files exempt from lease overlap: frob's default lockfiles plus the
+# conformance known-gaps list, which most tickets touch with line-local entries.
+shared_files = ["**/Cargo.lock", "**/uv.lock", "**/poetry.lock", "**/package-lock.json", "**/pnpm-lock.yaml", "**/yarn.lock", "**/go.sum", "**/Gemfile.lock", "**/composer.lock", "**/flake.lock", "tests/conformance/known-gaps.toml"]

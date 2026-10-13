@@ -1,0 +1,8 @@
+kind = "field"
+field = "title"
+old = "Geometry values (datum ops, placement, patterns, radial, sqrt) absent from evaluated IR"
+new = "Geometry in check: evaluate datums, points, patterns and placements through cadetta-geometry and lower them to the IR"
+reason = "the cycle goal: wire the standalone geometry crate into check"
+at = "2026-10-13T23:29:29Z"
+actor = "lognd"
+rev = 1

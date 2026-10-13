@@ -1,0 +1,18 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.4",
+  "rule": "geometry-datums-create",
+  "kind": "binding",
+  "entry": "classify",
+  "must_fire": {
+    "diagnostics": [],
+    "class": "first push",
+    "action": "push ours"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "class": "no-op",
+    "action": "none"
+  }
+}

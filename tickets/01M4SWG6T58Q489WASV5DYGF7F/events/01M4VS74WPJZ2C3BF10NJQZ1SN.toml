@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T23:23:00Z"
+digest = "29f86979b38ec83d69d7de8b2a43cbc1f291a8f2873b2f244974c7c6c1ed40d0"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b3d21656-220d-4c62-a5d7-2be2a26dd936 with nextest profile: default
+    Starting 1 test across 29 binaries (1034 tests skipped)
+        PASS [   0.005s] cadetta-geometry aligned::tests::distance_includes_the_axial_component
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1034 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "distance_includes_the_axial_component"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "4bdb4896c8383cda8bae10be5d1e39de5447349bea897bfdfde06be99d9aef66"
+at = "2026-10-13T23:23:00Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T23:38:19Z"
+digest = "97e587f5a24dd1e03f56334dce21542d841d3891b0b9c5c79b2849a04a001dc5"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7bd7efde-42d4-4957-9226-8cbd0ce45e6a with nextest profile: default
+    Starting 4 tests across 29 binaries (1031 tests skipped)
+        PASS [   0.006s] cadetta-adapter geometry_bind::tests::create_needs_the_create_frames_feature
+        PASS [   0.007s] cadetta-adapter geometry_bind::tests::frame_moved_in_cad_is_r001_under_create
+        PASS [   0.008s] cadetta-adapter geometry_bind::tests::create_requests_missing_frame_and_records_lock
+        PASS [   0.010s] cadetta config::tests::datums_key_defaults_verify_and_is_strict
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 4 tests run: 4 passed, 1031 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(create_requests_missing_frame_and_records_lock) | test(create_needs_the_create_frames_feature) | test(frame_moved_in_cad_is_r001_under_create) | test(datums_key_defaults_verify_and_is_strict)'"
+size = 876
+status = "measured"
+test_count = 4
+tests_digest = "4bb71e6c5bd94cb91ab7b26b37256576915575afa7111e1ab5dc365261de5944"
+at = "2026-10-13T23:38:19Z"
+actor = "lognd"
+rev = 1

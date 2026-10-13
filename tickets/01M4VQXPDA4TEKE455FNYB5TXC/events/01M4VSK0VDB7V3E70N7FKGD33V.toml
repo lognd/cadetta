@@ -1,0 +1,8 @@
+kind = "field"
+field = "priority"
+old = "medium"
+new = "high"
+reason = "the cycle goal: wire the standalone geometry crate into check"
+at = "2026-10-13T23:29:29Z"
+actor = "lognd"
+rev = 1

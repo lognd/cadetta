@@ -72,3 +72,4 @@ select = ["E", "F", "I", "B", "W"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["E501"]
+"python/cadetta/models/**" = ["E501"]  # generated; descriptions are long

@@ -1,0 +1,14 @@
+{
+  "source_form": "placement",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive",
+      "create_frames",
+      "frames",
+      "instances"
+    ]
+  },
+  "observed_differs": true
+}

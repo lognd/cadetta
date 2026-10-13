@@ -7,10 +7,14 @@
 mod compare;
 #[path = "conformance/corpus.rs"]
 mod corpus;
+#[path = "conformance/exec.rs"]
+mod exec;
 #[path = "conformance/expect.rs"]
 mod expect;
 #[path = "conformance/run.rs"]
 mod run;
+#[path = "conformance/verify.rs"]
+mod verify;
 
 use std::path::{Path, PathBuf};
 

@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T23:38:15Z"
+digest = "076cf3c21935f4775d191648f6cf48fb887631f80d34e4bfefa8c7db3c3ac26b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1da62554-6b2f-450c-9218-bf3086aa1814 with nextest profile: default
+    Starting 3 tests across 29 binaries (1032 tests skipped)
+        PASS [   0.004s] cadetta-adapter geometry_bind::tests::placement_is_instance_times_part_datum
+        PASS [   0.004s] cadetta-adapter geometry_bind::tests::half_unit_of_precision_boundary
+        PASS [   0.005s] cadetta-adapter geometry_bind::tests::mismatch_is_r001_showing_both_transforms
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 3 tests run: 3 passed, 1032 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(mismatch_is_r001_showing_both_transforms) | test(half_unit_of_precision_boundary) | test(placement_is_instance_times_part_datum)'"
+size = 773
+status = "measured"
+test_count = 3
+tests_digest = "956675173ee811c8acef76c71ad0622b3552520ebebb1d13ae2f775e6779286d"
+at = "2026-10-13T23:38:15Z"
+actor = "lognd"
+rev = 1

@@ -96,8 +96,24 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   copied as a whole package.
 - Doc directories may nest (`emitters/sw-equations`); the doc name is the
   path below `tests/conformance`, and `expect.json` `doc` must equal it.
-- Only `kind = "source"` with `entry` `check` runs today; other kinds and
-  entries are skipped with a logged note until their entry points exist.
+- Every `(kind, entry verb)` pair is dispatched through one table in
+  `crates/cadetta-cli/tests/conformance/exec.rs`. Executors today:
+  `source` with `check`, `config` (runs `check`), `ack`, `emit`, `solve`,
+  `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; and
+  `binding` with `classify` (sync dry-run). A pair with no executor is a
+  failure ("no executor for kind K entry V"), never a silent skip; the
+  fixture must then be listed in `known-gaps.toml` against the ticket that
+  adds the executor.
+- A block may carry `args`: extra CLI arguments appended after the entry
+  tokens. `emit TOKEN` names an adapter; the runner maps the name to the
+  `id` in `cadetta.toml` when one is set.
+- Beyond `diagnostics`, `exit` and `values`, the runner observes `output`
+  and `outputs` (`contains`/`excludes` per file), `writes`,
+  `file_written`, `order`, `stdout_contains`, `stderr_contains`,
+  `message_contains`, `message_excludes` and `config_error` (exit 2).
+  `note`, `why` and `args` are descriptive and ignored. Any other key is
+  a failure ("this entry does not observe K") so an expectation is never
+  dropped silently.
 - Failures name the fixture (`<doc>/<NAME>`), the doc and the missing or
   extra code.
 - `known-gaps.toml` lists fixtures whose implementation lags the spec

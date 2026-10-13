@@ -283,6 +283,10 @@ pub enum PushMode {
     Ref,
     /// Set the number.
     Value,
+    /// Set a frame's 3x4 transform (`value` is three rows of four numbers), creating the
+    /// coordinate system named by the locator when it is missing (adapters.md 3.4).
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    Frame,
 }
 
 /// One changed parameter in a `push`.

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 1876dc9953ef (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38484577736/job/115595623385): base red only from obligations fixtures missing --as, fixed by ~E23T9GP"
+at = "2026-10-13T23:42:01Z"
+actor = "lognd"
+rev = 1

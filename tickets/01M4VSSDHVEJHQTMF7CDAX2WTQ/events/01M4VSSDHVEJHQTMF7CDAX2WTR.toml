@@ -1,0 +1,10 @@
+kind = "create"
+title = "E006 for count with at/onto and one-joint-per-pattern part arrays"
+type = "story"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~XCK8EGP: stdlib.md 3 rules e006-count-with-pattern and e006-joint-per-pattern."
+at = "2026-10-13T23:32:59Z"
+actor = "lognd"
+rev = 1

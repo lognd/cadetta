@@ -10,13 +10,15 @@ import subprocess
 import sys
 import tomllib
 from pathlib import Path
+from typing import TypeVar
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 from typani import Err, Ok, Result
 
 from cadetta._core import Quantity
 from cadetta.logging import get_logger
-from cadetta.models import ir
+from cadetta.models import bind as bind_model
+from cadetta.models import cite_list, ir, names
 
 __all__ = [
     "CadettaError",
@@ -28,6 +30,16 @@ __all__ = [
 ]
 
 _log = get_logger(__name__)
+
+_M = TypeVar("_M", bound=BaseModel)
+
+# CLI exit codes whose stdout is a JSON document: 0 clean, 1 findings.
+_JSON_EXITS = (0, 1)
+# `bind` keyword fields to CLI flags where the name is not just `--<name with hyphens>`.
+_BIND_FLAGS = {"for_alternate": "--for"}
+_BIND_FIELDS = frozenset(
+    {"mode", "native_unit", "for_alternate", "config", "sign", "component", "tolerance"}
+)
 
 CONFIG_FILE = "cadetta.toml"
 DEFAULT_VERSION = "0.0.0"
@@ -105,7 +117,12 @@ class Design:
         self._members: dict[str, ir.Member] = {
             m.path.root: m for c in model.components for m in c.members
         }
-        _log.debug("design indexed: %d members", len(self._members))
+        self._citations: dict[str, ir.Citation] = {c.path: c for c in model.citations}
+        _log.debug(
+            "design indexed: %d members, %d citations",
+            len(self._members),
+            len(self._citations),
+        )
 
     def get(self, path: str) -> Result[Member, PathNotFound]:
         """Look up a member by instance path; Err(PathNotFound) when absent."""
@@ -114,6 +131,14 @@ class Design:
             _log.debug("path not found: %s", path)
             return Err(PathNotFound(message=f"no member at `{path}`", path=path))
         return Ok(Member(found, found.value))
+
+    def citation(self, path: str) -> Result[ir.Citation, PathNotFound]:
+        """Look up a citation by path (a member's `citation.cite`); Err when absent."""
+        found = self._citations.get(path)
+        if found is None:
+            _log.debug("citation not found: %s", path)
+            return Err(PathNotFound(message=f"no citation at `{path}`", path=path))
+        return Ok(found)
 
     def __getattr__(self, name: str):  # noqa: ANN204
         """Read-through to the generated IR model's fields."""
@@ -213,25 +238,100 @@ class Project:
         src = self._table["package"].get("src", DEFAULT_SRC)
         return _module_paths(self.root, package.name, src)
 
-    def evaluate(self) -> Result[Design, ProjectError]:
-        """Run `ir` and wrap the design IR as generated pydantic models."""
-        argv = [sys.executable, "-m", "cadetta", "--format", "json"]
+    def _run(
+        self, verb: list[str], *, global_format: bool = True
+    ) -> Result[str, ProjectError]:
+        """Run a CLI verb at this project and return its JSON stdout.
+
+        Exit 0 and 1 are results (1 means findings); anything else is `ProjectError`.
+        """
+        argv = [sys.executable, "-m", "cadetta"]
+        if global_format:
+            argv += ["--format", "json"]
         argv += ["--cwd", str(self.root)]
         if self.config is not None:
             argv += ["--config", str(self.config)]
-        argv.append("ir")
-        _log.debug("evaluate: %s", argv)
+        argv += verb
+        _log.debug("cli: %s", argv)
         done = subprocess.run(argv, capture_output=True, text=True, check=False)
         if done.stderr:
-            _log.debug("cadetta ir stderr: %s", done.stderr.strip()[:2000])
-        if done.returncode not in (0, 1):
+            _log.debug("cadetta %s stderr: %s", verb[0], done.stderr.strip()[:2000])
+        if done.returncode not in _JSON_EXITS:
+            _log.error("cadetta %s exited %d", verb[0], done.returncode)
             return Err(
                 ProjectError(
-                    message=done.stderr.strip() or f"ir exited {done.returncode}"
+                    message=done.stderr.strip() or f"{verb[0]} exited {done.returncode}"
                 )
             )
+        return Ok(done.stdout)
+
+    def _model(
+        self, model: type[_M], verb: list[str], *, global_format: bool = True
+    ) -> Result[_M, ProjectError]:
+        """Run a verb and validate its JSON stdout as the generated `model`."""
+        out = self._run(verb, global_format=global_format)
+        if isinstance(out, Err):
+            return out
         try:
-            model = ir.Project.model_validate(json.loads(done.stdout))
+            return Ok(model.model_validate(json.loads(out.unwrap())))
         except (json.JSONDecodeError, ValidationError) as exc:
-            return Err(ProjectError(message=f"unreadable IR: {exc}"))
-        return Ok(Design(model))
+            _log.error("unreadable %s output: %s", verb[0], exc)
+            return Err(ProjectError(message=f"unreadable {verb[0]} output: {exc}"))
+
+    def cite_list(
+        self, format: str = "json", module: str | None = None
+    ) -> Result[cite_list.CadettaCiteListFormatJson | str, ProjectError]:
+        """The numbered reference list (`cite list`); json is a model, else text."""
+        verb = ["cite", "list", "--format", format]
+        if module is not None:
+            verb += ["--module", module]
+        if format != "json":
+            return self._run(verb, global_format=False)
+        return self._model(
+            cite_list.CadettaCiteListFormatJson, verb, global_format=False
+        )
+
+    def names(
+        self, adapter: str | None = None, module: str | None = None
+    ) -> Result[names.NamesReport, ProjectError]:
+        """Every in-scope bindable path per adapter with its binding state (`names`)."""
+        verb = ["names"]
+        if adapter is not None:
+            verb.append(adapter)
+        if module is not None:
+            verb += ["--module", module]
+        return self._model(names.NamesReport, verb)
+
+    def bind(
+        self, path: str, adapter: str, locator: str, kind: str, **fields: str
+    ) -> Result[bind_model.BindReport, ProjectError]:
+        """Add one explicit locator to the adapter's bindings file (`bind`).
+
+        `fields` are the optional flags: mode, native_unit, for_alternate, config,
+        sign, component, tolerance.
+        """
+        unknown = sorted(set(fields) - _BIND_FIELDS)
+        if unknown:
+            return Err(
+                ProjectError(message=f"unknown bind fields: {', '.join(unknown)}")
+            )
+        verb = ["bind", path, "--adapter", adapter, "--locator", locator]
+        verb += ["--kind", kind]
+        for name, value in fields.items():
+            flag = _BIND_FLAGS.get(name, "--" + name.replace("_", "-"))
+            verb += [flag, str(value)]
+        return self._model(bind_model.BindReport, verb)
+
+    def unbind(
+        self, path: str, adapter: str, locator: str
+    ) -> Result[bind_model.BindReport, ProjectError]:
+        """Remove one explicit locator from the adapter's bindings file."""
+        verb = ["bind", "--remove", path, "--adapter", adapter, "--locator", locator]
+        return self._model(bind_model.BindReport, verb)
+
+    def evaluate(self) -> Result[Design, ProjectError]:
+        """Run `ir` and wrap the design IR as generated pydantic models."""
+        model = self._model(ir.Project, ["ir"])
+        if isinstance(model, Err):
+            return model
+        return Ok(Design(model.unwrap()))

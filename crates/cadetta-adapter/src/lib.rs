@@ -5,6 +5,7 @@
 pub mod bindings;
 pub mod builtin;
 pub mod classify;
+pub mod geometry_bind;
 pub mod import;
 pub mod locator;
 pub mod policy;

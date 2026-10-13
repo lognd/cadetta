@@ -1,0 +1,29 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.4",
+  "rule": "R001",
+  "kind": "binding",
+  "entry": "classify",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R001",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "class": "cad-moved",
+    "action": "none",
+    "message_contains": [
+      "acme.demo::Rail.site",
+      "10.000",
+      "10.250"
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "class": "no-op",
+    "action": "none"
+  }
+}

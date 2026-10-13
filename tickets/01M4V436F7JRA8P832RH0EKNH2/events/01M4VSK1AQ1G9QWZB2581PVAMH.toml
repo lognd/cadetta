@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the geometry fixtures for G001-G008, when cadetta check runs, then each diagnostic is emitted with its catalog code, path and location (geometry.md 7, lints.md G) and its known-gaps entries are removed"]
+moved = []
+at = "2026-10-13T23:29:30Z"
+actor = "lognd"
+rev = 1

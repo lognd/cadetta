@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-13T23:33:19Z"
+digest = "e5b7ad591ee5a67aea55ea41a74a66dd10061df4e162dddb9764dfc45cf506e6"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.31s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5839d593-1ddb-4dfa-baad-a1cd738bad03 with nextest profile: default
+    Starting 2 tests across 14 binaries (98 tests skipped)
+        PASS [   0.024s] cadetta-syntax::std_fasteners_screwjoint_checks vendor_drops_the_drill_members_and_needs_depth
+        PASS [   0.038s] cadetta-syntax::std_fasteners_screwjoint_checks arguments_match_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.074s] 2 tests run: 2 passed, 98 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E test(arguments_match_the_spec)|test(vendor_drops_the_drill_members_and_needs_depth)"
+size = 756
+status = "measured"
+test_count = 2
+tests_digest = "70c4df4029507f52cd3143c3ddf5e32e2f2dcbac83e9ad8580a2df1997659260"
+at = "2026-10-13T23:33:19Z"
+actor = "lognd"
+rev = 1

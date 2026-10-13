@@ -34,5 +34,6 @@ def test_check_names_stale_file(gen_models, tmp_path, monkeypatch):
     stale.write_text("# stale\n")
     monkeypatch.setattr(gen_models, "MODELS_DIR", tmp_path)
     monkeypatch.setattr(gen_models, "REPO_ROOT", tmp_path)
+    monkeypatch.setattr(gen_models, "MODELS", gen_models.MODELS[:1])
     assert gen_models.run(check=True).unwrap() == ["ir.py"]
     assert stale.read_text() == "# stale\n"
