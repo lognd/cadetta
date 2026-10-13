@@ -1,0 +1,42 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:26:42Z"
+digest = "2256f4f2c4acd805763385bc31ee703fe7b58b3e7d13d4e5907dffc55c8872f9"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.63s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9b486ce3-761f-4519-abc1-8b71ad439e20 with nextest profile: default
+    Starting 19 tests across 5 binaries (40 tests skipped)
+        PASS [   0.013s] cadetta-obligations selector::tests::matches_kind_and_canonical_path
+        PASS [   0.014s] cadetta-obligations selector::tests::any_index_matches_indices
+        PASS [   0.020s] cadetta config::tests::defaults_match_the_spec
+        PASS [   0.022s] cadetta-obligations selector::tests::parses_comma_separated_terms
+        PASS [   0.013s] cadetta-obligations selector::tests::rejects_bad_terms
+        PASS [   0.012s] cadetta-obligations selector::tests::star_stays_within_a_segment
+        PASS [   0.031s] cadetta-obligations selector::tests::no_match_is_exit_2
+        PASS [   0.012s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.016s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.024s] cadetta-obligations selector::tests::sync_paths_are_file_paths
+        PASS [   0.023s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.023s] cadetta-units units::tests::user_unit_resolves_like_builtin
+        PASS [   0.064s] cadetta-log redact::tests::bearer_token
+        PASS [   0.066s] cadetta-log redact::tests::aws_key
+        PASS [   0.068s] cadetta-log redact::tests::transcript_with_github_and_aws_masks_only_secrets
+        PASS [   0.070s] cadetta-log redact::tests::key_value_pairs
+        PASS [   0.070s] cadetta-log redact::tests::url_userinfo_keeps_scheme_and_host
+        PASS [   0.073s] cadetta-log redact::tests::ordinary_text_is_unchanged_and_borrowed
+        PASS [   0.097s] cadetta-log redact::tests::github_tokens
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.099s] 19 tests run: 19 passed, 40 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-log -p cadetta-obligations -p cadetta-units -E '(package(=cadetta) & (test(=config::tests::defaults_match_the_spec))) | (package(=cadetta-log) & (test(=redact::tests::aws_key) | test(=redact::tests::bearer_token) | test(=redact::tests::github_tokens) | test(=redact::tests::key_value_pairs) | test(=redact::tests::ordinary_text_is_unchanged_and_borrowed) | test(=redact::tests::transcript_with_github_and_aws_masks_only_secrets) | test(=redact::tests::url_userinfo_keeps_scheme_and_host))) | (package(=cadetta-obligations) & (test(=selector::tests::any_index_matches_indices) | test(=selector::tests::matches_kind_and_canonical_path) | test(=selector::tests::no_match_is_exit_2) | test(=selector::tests::parses_comma_separated_terms) | test(=selector::tests::rejects_bad_terms) | test(=selector::tests::star_stays_within_a_segment) | test(=selector::tests::sync_paths_are_file_paths))) | (package(=cadetta-units) & (test(=kind::tests::registered_kinds_are_distinct) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 2105
+status = "measured"
+test_count = 19
+tests_digest = "21d6b82b14a928f282e18a0d3157c30e06ed900f8c1e257baa653f7c5f51e870"
+at = "2026-10-13T06:26:42Z"
+actor = "lognd"
+rev = 1

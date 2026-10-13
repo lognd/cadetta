@@ -298,6 +298,17 @@ step. Ties round away from zero. The nominal is rounded; deviations are
 kept. If x is inexact and within 1e-9 (relative) of a tie or step
 boundary, the result is Q010 (error: ambiguous rounding).
 
+Decided in implementation: the boundary is a tie for `round_to` and an
+integer multiple of step for `ceil_to` and `floor_to`; "within 1e-9
+(relative)" means a distance, in step units, of at most `1e-9 *
+max(|boundary|, 1)`. A quotient `x / step` with differing `pi`
+exponents is irrational, so it is treated as inexact for this check.
+`sqrt` is exact for a perfect-square rational with an even `pi`
+exponent (`sqrt(4mm^2)` is exactly `2mm`) and inexact otherwise; an
+inexact operand keeps its own root operation, so Q006 names the first
+one. `tan` at an odd multiple of 90deg and `atan2(0, 0)` are domain
+errors.
+
 ### 5.6 Roles and the emitted point
 
 A role (`hole` or `shaft`) comes from an ISO class's letter case, from
