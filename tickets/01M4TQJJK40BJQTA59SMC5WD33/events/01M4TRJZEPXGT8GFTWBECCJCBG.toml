@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["cadetta check runs every implemented lint family over the analyzed IR and reports their diagnostics", "L/T/P/Q/N004 lifts are fed from sema and variants facts", "waivers and allows are applied through the engine, W rules reported"]
+new = ["cadetta check runs the IR-only lint families (D001, D002, F004, M001-M003, N001-N003, N005, N006, Q006, S001, S002) over the analyzed IR and reports their diagnostics", "waive declarations are collected from the in-scope modules and applied through the lint engine; W001-W004 are reported", "N004 is fed from the sema rename graph (already emitted by the dependency stage; verified, no extra wiring)"]
+moved = [0, 0, 0]
+at = "2026-10-13T13:52:45Z"
+actor = "lognd"
+rev = 1

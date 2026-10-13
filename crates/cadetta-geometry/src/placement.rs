@@ -476,12 +476,12 @@ pub fn check_assembly(a: &Assembly) -> Vec<PlacementDiag> {
 
 /// One evaluated operation of a frame.
 #[derive(Clone, Debug)]
-enum FrameOp {
+pub(crate) enum FrameOp {
     Offset(Box<[Option<Affine>; 3]>),
     Rotate(Axis, Box<Affine>),
 }
 
-fn length_dim() -> Dim {
+pub(crate) fn length_dim() -> Dim {
     Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0)
 }
 
@@ -500,7 +500,7 @@ fn axis_index(a: Axis) -> usize {
     }
 }
 
-type Eval<'a> = &'a dyn Fn(&Member) -> Result<Affine, GeometryError>;
+pub(crate) type Eval<'a> = &'a dyn Fn(&Member) -> Result<Affine, GeometryError>;
 
 fn eval_ops(ops: &[DatumOp], eval: Eval<'_>) -> Result<Vec<FrameOp>, GeometryError> {
     let mut out = Vec::new();
@@ -525,7 +525,7 @@ fn eval_ops(ops: &[DatumOp], eval: Eval<'_>) -> Result<Vec<FrameOp>, GeometryErr
     Ok(out)
 }
 
-fn invert(ops: &[FrameOp]) -> Vec<FrameOp> {
+pub(crate) fn invert(ops: &[FrameOp]) -> Vec<FrameOp> {
     ops.iter()
         .rev()
         .map(|op| match op {
@@ -538,7 +538,7 @@ fn invert(ops: &[FrameOp]) -> Vec<FrameOp> {
 }
 
 /// The operations from a component's `origin` to datum `name`, following alias bases.
-fn datum_ops(
+pub(crate) fn datum_ops(
     defs: &[DatumDef],
     name: &str,
     eval: Eval<'_>,
@@ -555,7 +555,7 @@ fn datum_ops(
     Ok(out)
 }
 
-fn fold(ops: &[FrameOp]) -> Result<Transform, GeometryError> {
+pub(crate) fn fold(ops: &[FrameOp]) -> Result<Transform, GeometryError> {
     let mut t = Transform::identity(length_dim());
     for op in ops {
         let next = match op {
@@ -635,6 +635,65 @@ pub fn place_assembly(a: &Assembly, eval: Eval<'_>) -> Result<Vec<PlacedPart>, G
     Ok(out)
 }
 
+/// Every datum frame of the placed nodes of an assembly, for re-expression (geometry.md 3).
+#[derive(Default)]
+pub(crate) struct DatumFrames {
+    /// Datum id (`origin`, `rail.top`, `sub/bracket.base`) and its operations from the root origin.
+    pub frames: Vec<(String, Vec<FrameOp>)>,
+    /// Instance paths (relative to the root assembly) of every placed node.
+    pub placed: BTreeSet<String>,
+}
+
+/// Collects the frame of `origin` and of every datum of every placed node, recursing into
+/// subassemblies; an array placed in ranges keeps the first frames for a repeated id.
+pub(crate) fn datum_frames(a: &Assembly, eval: Eval<'_>) -> Result<DatumFrames, GeometryError> {
+    let mut out = DatumFrames::default();
+    out.frames.push((ORIGIN.to_owned(), Vec::new()));
+    frames_into(a, eval, Vec::new(), "", &mut out)?;
+    debug!(assembly = %a.name, frames = out.frames.len(), "collected datum frames");
+    Ok(out)
+}
+
+fn frames_into(
+    a: &Assembly,
+    eval: Eval<'_>,
+    base: Vec<FrameOp>,
+    prefix: &str,
+    out: &mut DatumFrames,
+) -> Result<(), GeometryError> {
+    let mut ctx = Ctx {
+        a,
+        eval,
+        base,
+        memo: BTreeMap::new(),
+        depth: 0,
+    };
+    for p in &a.placements {
+        let frame = ctx.node_frame(&p.node, p.span)?;
+        ctx.depth = 0;
+        let node = ctx.node(&p.node, p.span)?;
+        let rel = if prefix.is_empty() {
+            node.name.clone()
+        } else {
+            format!("{prefix}/{}", node.name)
+        };
+        if !out.placed.insert(rel.clone()) {
+            trace!(node = %rel, "node already framed; keeping first");
+            continue;
+        }
+        out.frames.push((format!("{rel}.{ORIGIN}"), frame.clone()));
+        for d in &node.datums {
+            let mut ops = frame.clone();
+            ops.extend(datum_ops(&node.datums, &d.name, eval, p.span)?);
+            out.frames.push((format!("{rel}.{}", d.name), ops));
+        }
+        if let Some(sub) = &node.sub {
+            frames_into(sub, eval, frame, &rel, out)?;
+        }
+    }
+    Ok(())
+}
+
 fn place_into(
     a: &Assembly,
     eval: Eval<'_>,
@@ -667,7 +726,7 @@ fn place_into(
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use super::*;
     use cadetta_syntax::ast::{Component, FileEntry, ItemKind, MemberKind};
     use cadetta_syntax::parser::parse;
@@ -733,7 +792,7 @@ mod tests {
         }
     }
 
-    fn eval(m: &Member) -> Result<Affine, GeometryError> {
+    pub(crate) fn eval(m: &Member) -> Result<Affine, GeometryError> {
         num(&m.value).ok_or(GeometryError {
             span: m.value.span,
             message: "test eval".into(),
@@ -741,7 +800,7 @@ mod tests {
     }
 
     /// Builds an assembly named by its component from model sources.
-    fn build(src: &str, subs: &[(&str, Assembly)]) -> Assembly {
+    pub(crate) fn build(src: &str, subs: &[(&str, Assembly)]) -> Assembly {
         let comps = components(src);
         let asm = comps
             .iter()
@@ -787,7 +846,7 @@ mod tests {
 
     const MODELS: &str = "model Rail {\n  datum top = origin.offset(z = 30mm)\n  datum site = top.offset(x = 40mm [+-0.05mm])\n}\nmodel Bracket {\n  datum base = origin.offset(z = 5mm)\n  datum under = origin.flip(x)\n  datum holes = origin.offset(x = 2mm)\n}\n";
 
-    fn src(asm: &str) -> String {
+    pub(crate) fn src(asm: &str) -> String {
         format!("{MODELS}{asm}")
     }
 

@@ -347,6 +347,11 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
   handle}}`. `regen` per-target status is `ok` or `failed`.
 - The host refuses `open`, `save`, `close`, `push` and `regen` unless
   `drive` was declared, and `emit` unless `emit` was.
+- A drive sync runs `open`, `push` per file, `save` (per `[[adapter]]
+  save`; skipped when `never` or when any locator `failed`), `close`,
+  `shutdown`, in that order. `open` reporting a dirty or read-only file
+  is R009: the session is closed and nothing is pushed. Push status is
+  per locator.
 - Every result is parsed against the types in `docs/schemas/adapter-protocol.json`
   (unknown fields are refused); each diagnostic must be a `cadetta.diag/1`
   record.
