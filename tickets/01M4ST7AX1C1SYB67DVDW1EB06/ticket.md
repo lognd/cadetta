@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T07:53:19Z"
+updated = "2026-10-13T07:53:22Z"
 persona = "design engineer"
 capability = "attach provenance and policy to values once"
 idempotency_key = "replan13:Attributes, citations and cite declarations"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `cite name = "url-or-path"`, `@name:"locator"`, `@"literal"` and `@measured:"who, when"`, when resolved, then each citation has a kind url|file|standard|measured|assumed|estimate (language.md 3.9, ir.md 3)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a component citation, when members have none, then they inherit it; a member citation wins (language.md 3.9)"
