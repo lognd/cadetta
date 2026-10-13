@@ -18,9 +18,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    Arg, Block, Component, Expr, ExprKind, File, Ident, Interface, InterfaceMemberKind, Item,
-    ItemKind, Member, MemberKind, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath, UseRoot,
-    UseTree, UseTreeKind, Vis,
+    Arg, Block, Component, Expr, ExprKind, File, FnDecl, Ident, Interface, InterfaceMemberKind,
+    Item, ItemKind, Member, MemberKind, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath,
+    UseRoot, UseTree, UseTreeKind, Vis,
 };
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};
@@ -281,6 +281,8 @@ pub enum ItemClass {
     Interface,
     /// An enum.
     Enum,
+    /// A `fn`.
+    Fn,
     /// A `cite`.
     Cite,
 }
@@ -356,7 +358,8 @@ pub enum Resolved {
 enum EntryKind<'a> {
     Component(&'a Component),
     Interface(&'a Interface),
-    Enum(&'a EnumDecl),
+    Enum(Vec<String>),
+    Fn(&'a FnDecl),
     Cite,
 }
 
@@ -371,6 +374,7 @@ impl Entry<'_> {
             EntryKind::Component(_) => ItemClass::Component,
             EntryKind::Interface(_) => ItemClass::Interface,
             EntryKind::Enum(_) => ItemClass::Enum,
+            EntryKind::Fn(_) => ItemClass::Fn,
             EntryKind::Cite => ItemClass::Cite,
         }
     }
@@ -444,7 +448,7 @@ impl<'a> Resolver<'a> {
                     index_item(it, &mut add);
                 }
                 for e in m.enums {
-                    add(&e.name, EntryKind::Enum(e));
+                    add(&e.name, EntryKind::Enum(e.variants.clone()));
                 }
                 debug!(package = %p.name, module = ?m.path, items = items.len(), "indexed module");
                 modules.insert(
@@ -607,7 +611,7 @@ impl<'a> Resolver<'a> {
 
     fn enum_has(&self, path: &CanonPath, variant: &str) -> bool {
         matches!(self.entry(path), Some(Entry { kind: EntryKind::Enum(e), .. })
-            if e.variants.iter().any(|v| v == variant))
+            if e.iter().any(|v| v == variant))
     }
 
     fn entry(&self, id: &CanonPath) -> Option<&Entry<'a>> {
@@ -617,6 +621,24 @@ impl<'a> Resolver<'a> {
             .get(&id.modules)?
             .items
             .get(&id.item)
+    }
+
+    /// The variants of the enum at `path`, in declaration order.
+    // frob:ticket 01M4ST7ASWYQV13AAHHCXVR570
+    pub fn enum_variants(&self, path: &CanonPath) -> Option<&[String]> {
+        match &self.entry(path)?.kind {
+            EntryKind::Enum(v) => Some(v),
+            _ => None,
+        }
+    }
+
+    /// The `fn` declared at `path`.
+    // frob:ticket 01M4ST7ASWYQV13AAHHCXVR570
+    pub fn function(&self, path: &CanonPath) -> Option<&'a FnDecl> {
+        match self.entry(path)?.kind {
+            EntryKind::Fn(f) => Some(f),
+            _ => None,
+        }
     }
 
     fn component(&self, id: &CanonPath) -> Option<&'a Component> {
@@ -846,7 +868,7 @@ impl<'a> Resolver<'a> {
                 self.type_read(ctx, id.clone(), c, member, *mspan, rest)
             }
             Some(EntryKind::Enum(e)) => {
-                if e.variants.iter().any(|v| v == member) {
+                if e.iter().any(|v| v == member) {
                     Ok(Resolved::Variant {
                         enum_path: id,
                         variant: member.clone(),
@@ -1039,7 +1061,7 @@ impl<'a> Resolver<'a> {
                             format!("`{}` has no item `{name}`", id.item),
                         );
                     };
-                    if !is_last || !e.variants.iter().any(|v| v == name) {
+                    if !is_last || !e.iter().any(|v| v == name) {
                         return err(
                             "E002",
                             *nspan,
@@ -1210,6 +1232,11 @@ fn index_item<'a>(it: &'a Item, add: &mut impl FnMut(&Ident, EntryKind<'a>)) {
         ItemKind::Component(c) => add(&c.name, EntryKind::Component(c)),
         ItemKind::Interface(i) => add(&i.name, EntryKind::Interface(i)),
         ItemKind::Cite(c) => add(&c.name, EntryKind::Cite),
+        ItemKind::Enum(e) => add(
+            &e.name,
+            EntryKind::Enum(e.variants.iter().map(|v| v.name.clone()).collect()),
+        ),
+        ItemKind::Fn(f) => add(&f.name, EntryKind::Fn(f)),
         _ => {}
     }
 }

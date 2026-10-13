@@ -13,23 +13,25 @@
 //! a bracket with one `+v` or `-v` term has `0` on the other side; a tolerance
 //! written inside a larger expression or a `let` owns an anonymous source
 //! variable; failures with no spec code carry the internal code `EVAL`.
-//! Parameterized components are evaluated only as instances (a later ticket),
-//! and inexact functions (`sqrt`, trigonometry) are deferred to the standard
-//! functions ticket.
+//! Parameterized components are evaluated only as instances (a later ticket).
+//! Inexact results (`sqrt`, trigonometry) are carried as `func::Inex` values:
+//! a binary64 nominal with a conservative interval (quantities.md 5.3, 5.4).
 
 // frob:ticket 01M4SPWPPPSEEFAHYTY5H3YD54
+// frob:ticket 01M4ST7ASWYQV13AAHHCXVR570
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use cadetta_syntax::ast::{BinOp, Component, Expr, ExprKind, MemberKind, TolSign, TolTerm, UnOp};
+use cadetta_syntax::ast::{
+    BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm, UnOp,
+};
 use cadetta_syntax::lexer::Segment;
 use cadetta_syntax::span::Span;
-use cadetta_units::inexact::round_value;
 use cadetta_units::square::{mul_checked, square};
 use cadetta_units::{
-    Affine, Dim, InexactError, Magnitude, Rational, Rounding, Sum, Temperature, TemperatureUnit,
-    ToleranceError, Toleranced, UnitTable, Value, VarId,
+    Affine, Dim, InexactError, Magnitude, Rational, Sum, Temperature, TemperatureUnit,
+    ToleranceError, Toleranced, UnitTable, VarId,
 };
 use tracing::{debug, trace, warn};
 
@@ -38,6 +40,10 @@ use crate::resolve::{CanonPath, Ctx, Level, MemberSeg, PackageSrc, Resolved, Res
 
 #[path = "checks.rs"]
 pub mod checks;
+#[path = "enums.rs"]
+pub mod enums;
+#[path = "func.rs"]
+pub mod func;
 
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -64,6 +70,17 @@ pub enum Val {
     Bool(bool),
     /// A string.
     Text(String),
+    /// An enum variant.
+    Variant {
+        /// The enum.
+        enum_path: CanonPath,
+        /// The variant name.
+        variant: String,
+    },
+    /// An array of values.
+    Array(Vec<Val>),
+    /// An inexact number (`sqrt`, trigonometry): interval plus root operation.
+    Inexact(func::Inex),
 }
 
 /// A parameter or `let` after evaluation.
@@ -291,6 +308,11 @@ enum RefKind {
     },
     /// A block-local binding.
     Local(String),
+    /// An enum variant.
+    Variant {
+        enum_path: CanonPath,
+        variant: String,
+    },
 }
 
 /// A member definition indexed for evaluation.
@@ -330,6 +352,8 @@ pub struct Evaluator<'r, 'p> {
     next_var: u32,
     diagnostics: Vec<EvalDiagnostic>,
     index: checks::CheckIndex<'p>,
+    /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
+    recursive: BTreeSet<CanonPath>,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -341,8 +365,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     ) -> Self {
         let mut defs = BTreeMap::new();
         let mut index = checks::CheckIndex::default();
+        let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
         for p in packages {
             for m in &p.modules {
+                for item in m.file.items() {
+                    if let ItemKind::Fn(f) = &item.kind {
+                        fns.insert(CanonPath::item(&p.name, &m.path, &f.name.name), f);
+                    }
+                }
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
                     index.add_component(&p.name, &m.path, c);
@@ -350,6 +380,17 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
         }
         debug!(members = defs.len(), "evaluator: indexed members");
+        let mut diagnostics = Vec::new();
+        let mut recursive = BTreeSet::new();
+        for (path, span) in Self::find_recursive(resolver, &fns) {
+            diagnostics.push(EvalDiagnostic {
+                code: "EVAL",
+                severity: Severity::Error,
+                message: format!("function `{path}` is recursive; recursion is not allowed"),
+                span,
+            });
+            recursive.insert(path);
+        }
         Self {
             resolver,
             units,
@@ -357,8 +398,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             done: BTreeMap::new(),
             in_progress: BTreeSet::new(),
             next_var: 0,
-            diagnostics: Vec::new(),
+            diagnostics,
             index,
+            recursive,
         }
     }
 
@@ -530,6 +572,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 key.members.truncate(1);
                 Ok(RefKind::Member { key, accessor })
             }
+            Resolved::Variant { enum_path, variant } => Ok(RefKind::Variant { enum_path, variant }),
             other => Err(diag(
                 "EVAL",
                 e.span,
@@ -547,6 +590,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 .find(|(l, _)| *l == n)
                 .map(|(_, v)| v.clone())
                 .ok_or_else(|| diag("EVAL", e.span, format!("local `{n}` has no value"))),
+            RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
             RefKind::Member { key, accessor } => {
                 let ev = self.value_of(&key).ok_or(Fail::Silent)?;
                 match (ev.value, accessor) {
@@ -561,6 +605,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     fn quant(&mut self, sc: &mut Scope, e: &Expr) -> R<Quant> {
         match self.eval(sc, e)? {
             Val::Quantity(q) => Ok(q),
+            Val::Inexact(_) => Err(diag(
+                "EVAL",
+                e.span,
+                "an inexact value (sqrt, trigonometry) is not allowed here; round it first with `round_to`",
+            )),
             _ => Err(diag("EVAL", e.span, "a quantity is required here")),
         }
     }
@@ -583,7 +632,19 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Paren(inner) => self.eval(sc, inner),
             ExprKind::As(inner, _) => self.eval(sc, inner),
             ExprKind::Path(_) | ExprKind::Field(..) => self.eval_ref(sc, e),
-            ExprKind::Unary(UnOp::Neg, x) => Ok(Val::Quantity(self.quant(sc, x)?.neg())),
+            ExprKind::Unary(UnOp::Neg, x) => match self.eval(sc, x)? {
+                Val::Quantity(q) => Ok(Val::Quantity(q.neg())),
+                Val::Inexact(i) => Ok(Val::Inexact(func::inex_neg(&i))),
+                _ => Err(diag("EVAL", x.span, "a quantity is required here")),
+            },
+            ExprKind::Array(xs) => {
+                let mut out = Vec::with_capacity(xs.len());
+                for x in xs {
+                    out.push(self.eval(sc, x)?);
+                }
+                Ok(Val::Array(out))
+            }
+            ExprKind::Match { scrutinee, arms } => self.eval_match(sc, scrutinee, arms, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
             ExprKind::Tolerance(inner, terms) => {
                 let var = self.fresh_var();
@@ -594,25 +655,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 optional: false,
                 args,
             } => self.call(sc, callee, args, span),
-            ExprKind::Block(b) => {
-                let mark = sc.locals.len();
-                let mut result = Ok(());
-                for l in &b.lets {
-                    match self.eval(sc, &l.value) {
-                        Ok(v) => sc.push(&l.name.name, v),
-                        Err(f) => {
-                            result = Err(f);
-                            break;
-                        }
-                    }
-                }
-                let out = match result {
-                    Ok(()) => self.eval(sc, &b.tail),
-                    Err(f) => Err(f),
-                };
-                sc.truncate(mark);
-                out
-            }
+            ExprKind::Block(b) => self.eval_block(sc, b),
             _ => Err(diag(
                 "EVAL",
                 span,
@@ -621,16 +664,39 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Evaluates a block: its `let`s in order, then the tail.
+    fn eval_block(&mut self, sc: &mut Scope, b: &Block) -> R<Val> {
+        let mark = sc.locals.len();
+        let mut result = Ok(());
+        for l in &b.lets {
+            match self.eval(sc, &l.value) {
+                Ok(v) => sc.push(&l.name.name, v),
+                Err(f) => {
+                    result = Err(f);
+                    break;
+                }
+            }
+        }
+        let out = match result {
+            Ok(()) => self.eval(sc, &b.tail),
+            Err(f) => Err(f),
+        };
+        sc.truncate(mark);
+        out
+    }
+
     fn binary(&mut self, sc: &mut Scope, op: BinOp, l: &Expr, r: &Expr, span: Span) -> R<Val> {
         match op {
             BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
-                let a = self.quant(sc, l)?;
-                let b = self.quant(sc, r)?;
+                let (av, bv) = (self.eval(sc, l)?, self.eval(sc, r)?);
+                let (Val::Quantity(a), Val::Quantity(b)) = (&av, &bv) else {
+                    return func::inex_binary(op, &av, &bv, span);
+                };
                 let q = match op {
-                    BinOp::Add => a.add(&b, span)?,
-                    BinOp::Sub => a.sub(&b, span)?,
-                    BinOp::Mul => a.mul(&b, span)?,
-                    _ => a.div(&b, span)?,
+                    BinOp::Add => a.add(b, span)?,
+                    BinOp::Sub => a.sub(b, span)?,
+                    BinOp::Mul => a.mul(b, span)?,
+                    _ => a.div(b, span)?,
                 };
                 Ok(Val::Quantity(q))
             }
@@ -750,54 +816,6 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             nominal: t.nominal().clone(),
         })
     }
-
-    fn call(
-        &mut self,
-        sc: &mut Scope,
-        callee: &Expr,
-        args: &[cadetta_syntax::ast::Arg],
-        span: Span,
-    ) -> R<Val> {
-        let name = match &callee.kind {
-            ExprKind::Path(p) if p.segments.len() == 1 => p.segments[0].name.as_str(),
-            _ => "",
-        };
-        let mode = match name {
-            "round_to" => Rounding::Round,
-            "ceil_to" => Rounding::Ceil,
-            "floor_to" => Rounding::Floor,
-            _ => {
-                return Err(diag(
-                    "EVAL",
-                    span,
-                    "this function is not evaluated by this stage",
-                ));
-            }
-        };
-        let [x, step] = args else {
-            return Err(diag("EVAL", span, format!("`{name}` takes (x, step)")));
-        };
-        let x = self.quant(sc, &x.value)?;
-        let step = self.quant(sc, &step.value)?;
-        let rounded = round_value(
-            &Value::Exact(x.nominal.clone()),
-            x.dim(),
-            &step.nominal,
-            step.dim(),
-            mode,
-        )
-        .map_err(|e| round_diag(&e, span))?;
-        let delta = exact(rounded.sub(&x.nominal), span)?;
-        let form = x
-            .form
-            .add(&Affine::constant(x.dim().clone(), delta))
-            .map_err(|e| tol_diag(&e, span))?;
-        trace!(name, "evaluator: rounded the nominal, deviations kept");
-        Ok(Val::Quantity(Quant {
-            form,
-            nominal: rounded,
-        }))
-    }
 }
 
 fn round_diag(e: &InexactError, span: Span) -> Fail {
@@ -894,6 +912,7 @@ mod tests {
     use crate::resolve::ModuleSrc;
     use cadetta_syntax::ast::File;
     use cadetta_syntax::parser::parse;
+    use cadetta_units::RootOp;
 
     pub(super) fn file(src: &str) -> File {
         let p = parse(src);
@@ -1059,5 +1078,215 @@ mod tests {
         let codes: Vec<_> = ev.diagnostics.iter().map(|d| d.code).collect();
         assert_eq!(codes, vec!["Q002"]);
         assert!(ev.get(&at("M", "a")).is_none());
+    }
+
+    fn val(ev: &Evaluation, comp: &str, member: &str) -> Val {
+        ev.get(&at(comp, member)).expect("evaluated").value.clone()
+    }
+
+    fn has(ev: &Evaluation, code: &str, needle: &str) -> bool {
+        ev.diagnostics
+            .iter()
+            .any(|d| d.code == code && d.message.contains(needle))
+    }
+
+    // frob:tests user_function_with_lets_and_defaults
+    #[test]
+    fn user_function_with_lets_and_defaults() {
+        let f = file(
+            "fn area(w: Length, h: Length = 2mm) -> Area { let a = w * h; a }\n\
+             model M {\n  a = area(3mm)\n  b = area(3mm, h = 4mm)\n  c = area(h = 5mm, w = 2mm)\n}\n",
+        );
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let sq = |n: i64| m(n, 1_000_000);
+        assert_eq!(quant(&ev, "M", "a").nominal, sq(6));
+        assert_eq!(quant(&ev, "M", "b").nominal, sq(12));
+        assert_eq!(quant(&ev, "M", "c").nominal, sq(10));
+    }
+
+    // frob:tests user_function_argument_errors_are_e006
+    #[test]
+    fn user_function_argument_errors_are_e006() {
+        let f = file(
+            "fn id(w: Length) -> Length { w }\n\
+             model M {\n  a = id()\n  b = id(1mm, 2mm)\n  c = id(q = 1mm)\n}\n",
+        );
+        let ev = run(&f);
+        assert!(has(&ev, "E006", "missing argument"), "{:?}", ev.diagnostics);
+        assert!(has(&ev, "E006", "takes 1"), "{:?}", ev.diagnostics);
+        assert!(has(&ev, "E006", "no parameter"), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests recursion_is_rejected
+    #[test]
+    fn recursion_is_rejected() {
+        let f = file(
+            "fn f(n: Count) -> Count { f(n) }\n\
+             fn a(n: Count) -> Count { b(n) }\n\
+             fn b(n: Count) -> Count { a(n) }\n\
+             fn ok(n: Count) -> Count { n }\n\
+             model M {\n  x = f(1)\n  y = ok(2)\n}\n",
+        );
+        let ev = run(&f);
+        let rec: Vec<_> = ev
+            .diagnostics
+            .iter()
+            .filter(|d| d.message.contains("recursive"))
+            .collect();
+        assert_eq!(rec.len(), 3, "{:?}", ev.diagnostics);
+        assert!(ev.get(&at("M", "x")).is_none());
+        assert!(ev.get(&at("M", "y")).is_some());
+    }
+
+    // frob:tests match_non_exhaustive_names_missing_variants
+    #[test]
+    fn match_non_exhaustive_names_missing_variants() {
+        let f = file(
+            "enum Mat { Al, Petg, Steel }\n\
+             model M {\n  m = Mat::Al\n  t = match m { Mat::Petg => 2.4mm }\n}\n",
+        );
+        let ev = run(&f);
+        assert!(has(&ev, "E009", "`Mat::Al`"), "{:?}", ev.diagnostics);
+        assert!(has(&ev, "E009", "`Mat::Steel`"), "{:?}", ev.diagnostics);
+        assert!(!has(&ev, "E009", "`Mat::Petg`"));
+    }
+
+    // frob:tests match_exhaustive_and_wildcard_select_an_arm
+    #[test]
+    fn match_exhaustive_and_wildcard_select_an_arm() {
+        let f = file(
+            "enum Mat { Al, Petg }\n\
+             fn thick(m: Mat) -> Length { match m { Al => 1.6mm, Petg => 2.4mm } }\n\
+             model M {\n  m = Mat::Petg\n  a = match m { Mat::Al => 1mm, _ => 2mm }\n  \
+             b = thick(Petg)\n  c = thick(Mat::Al)\n}\n",
+        );
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(2, 1000));
+        assert_eq!(quant(&ev, "M", "b").nominal, m(24, 10_000));
+        assert_eq!(quant(&ev, "M", "c").nominal, m(16, 10_000));
+    }
+
+    // frob:tests min_max_abs_follow_intervals
+    #[test]
+    fn min_max_abs_follow_intervals() {
+        let f = file(
+            "model M {\n  a = min(3mm, 2mm, 5mm)\n  b = max(3mm, 2mm)\n  \
+             c = abs(-4mm)\n  t = 10mm [+-1mm]\n  let d = max(t, 10.5mm)\n  let e = min(t, 20mm)\n  \
+             z = 0mm [+-1mm]\n  let f = abs(z)\n  g = min(1mm, 1s)\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(2, 1000));
+        assert_eq!(quant(&ev, "M", "b").nominal, m(3, 1000));
+        assert_eq!(quant(&ev, "M", "c").nominal, m(4, 1000));
+        // t in [9, 11] mm vs 10.5mm: overlap, hull [10.5, 11].
+        let d = quant(&ev, "M", "d");
+        assert_eq!(d.form.bounds().unwrap(), (m(105, 10_000), m(11, 1000)));
+        // t is certainly below 20mm: returned unchanged, variable kept.
+        assert_eq!(quant(&ev, "M", "e").form, quant(&ev, "M", "t").form);
+        let f = quant(&ev, "M", "f");
+        assert_eq!(f.form.bounds().unwrap(), (m(0, 1), m(1, 1000)));
+        assert!(has(&ev, "Q002", ""), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests sqrt_exact_inexact_and_dimension
+    #[test]
+    fn sqrt_exact_inexact_and_dimension() {
+        let f = file(
+            "model M {\n  a = sqrt(16mm^2)\n  b = sqrt(2mm^2)\n  c = round_to(sqrt(2mm^2), 0.001mm)\n  \
+             d = sqrt(4mm)\n  e = sqrt(-1mm^2)\n  let g = sqrt(9mm^2 [+-1mm^2])\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(4, 1000));
+        assert!(a_is_exact(&ev));
+        match val(&ev, "M", "b") {
+            Val::Inexact(i) => {
+                assert_eq!(i.root, RootOp::Sqrt);
+                assert!(i.lo <= 2f64.sqrt() * 1e-3 && 2f64.sqrt() * 1e-3 <= i.hi);
+            }
+            other => panic!("{other:?}"),
+        }
+        assert_eq!(quant(&ev, "M", "c").nominal, m(1414, 1_000_000));
+        assert!(has(&ev, "Q011", ""), "{:?}", ev.diagnostics);
+        assert!(has(&ev, "EVAL", "negative") || has(&ev, "EVAL", "sqrt"));
+        assert!(matches!(val(&ev, "M", "g"), Val::Inexact(_)));
+    }
+
+    fn a_is_exact(ev: &Evaluation) -> bool {
+        quant(ev, "M", "a").form.is_exact()
+    }
+
+    // frob:tests trig_exact_special_angles_and_inexact
+    #[test]
+    fn trig_exact_special_angles_and_inexact() {
+        let f = file(
+            "model M {\n  a = sin(90deg)\n  b = cos(60deg)\n  c = tan(45deg)\n  \
+             d = sin(1rad)\n  e = tan(90deg)\n  g = sin(2mm)\n  h = atan2(1mm, 1mm)\n  \
+             i = atan2(1mm, 2mm)\n  j = atan2(1mm, 1s)\n  k = round_to(d, 0.01)\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(1, 1));
+        assert_eq!(quant(&ev, "M", "b").nominal, m(1, 2));
+        assert_eq!(quant(&ev, "M", "c").nominal, m(1, 1));
+        match val(&ev, "M", "d") {
+            Val::Inexact(i) => {
+                assert_eq!(i.root, RootOp::Sin);
+                assert!((i.nominal - 1f64.sin()).abs() < 1e-12);
+            }
+            other => panic!("{other:?}"),
+        }
+        assert!(ev.get(&at("M", "e")).is_none());
+        assert!(has(&ev, "Q002", "angle"), "{:?}", ev.diagnostics);
+        let h = quant(&ev, "M", "h");
+        assert_eq!(h.nominal.pi_exp(), 1);
+        assert!(matches!(val(&ev, "M", "i"), Val::Inexact(_)));
+        assert!(has(&ev, "Q002", ""), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "M", "k").nominal, m(84, 100));
+    }
+
+    // frob:tests rounding_to_count_and_count_of_array
+    #[test]
+    fn rounding_to_count_and_count_of_array() {
+        let f = file(
+            "model M {\n  a = floor(2.7)\n  b = ceil(2.1)\n  c = round(2.5)\n  d = round(-2.5)\n  \
+             e = count([1mm, 2mm, 3mm])\n  g = floor(2mm)\n  h = round(sqrt(2))\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(2, 1));
+        assert_eq!(quant(&ev, "M", "b").nominal, m(3, 1));
+        assert_eq!(quant(&ev, "M", "c").nominal, m(3, 1));
+        assert_eq!(quant(&ev, "M", "d").nominal, m(-3, 1));
+        assert_eq!(quant(&ev, "M", "e").nominal, m(3, 1));
+        assert!(has(&ev, "Q002", ""), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "M", "h").nominal, m(1, 1));
+    }
+
+    // frob:tests round_to_inexact_near_tie_is_q010
+    #[test]
+    fn round_to_inexact_near_tie_is_q010() {
+        let f = file(
+            "model M {\n  a = round_to(sqrt(0.25mm^2) * 1, 0.001mm)\n  b = round_to(sqrt(2) * 1, 1)\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "a").nominal, m(5, 10_000));
+        assert_eq!(quant(&ev, "M", "b").nominal, m(1, 1));
+    }
+
+    // frob:tests fmt_renders_by_display_rules
+    #[test]
+    fn fmt_renders_by_display_rules() {
+        let f = file(
+            "enum Thread { M5, M6 }\n\
+             model M {\n  thread = Thread::M6\n  length = 12.5mm [+-0.1mm]\n  \
+             a = fmt(\"{} x {}\", thread, length)\n  b = fmt(\"{{}} {}\", 2)\n  \
+             c = fmt(\"{}\", 3in)\n  d = fmt(\"{} {}\", 1)\n  e = fmt(\"{}\", 2s)\n}\n",
+        );
+        let ev = run(&f);
+        assert_eq!(val(&ev, "M", "a"), Val::Text("M6 x 12.5mm".to_owned()));
+        assert_eq!(val(&ev, "M", "b"), Val::Text("{} 2".to_owned()));
+        assert_eq!(val(&ev, "M", "c"), Val::Text("3in".to_owned()));
+        assert!(has(&ev, "E006", "placeholder"), "{:?}", ev.diagnostics);
+        assert_eq!(val(&ev, "M", "e"), Val::Text("2s".to_owned()));
     }
 }
