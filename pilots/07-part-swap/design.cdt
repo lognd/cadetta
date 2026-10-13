@@ -1,0 +1,225 @@
+// Pilot 07: 80mm axial fan module that must survive three swap pressures
+// (cost, EOL, performance). Draft-1 syntax. Lines marked PROPOSED use syntax
+// the spec does not yet define.
+//
+// NOTE: part numbers and datasheet figures are illustrative datasheet-style
+// placeholders (Sunon MF80251V1-1000U-A99 class, Sunon MF80201V1-1000U-A99
+// class, Noctua NF-A8 PWM class). The pinned PDFs under datasheets/ are the
+// source of truth; ack the `source` role once they are checked.
+
+namespace acme.cooling
+
+use std::fits::iso286
+
+cite sunon25   = "datasheets/sunon-mf80251v1-1000u-a99.pdf"
+cite sunon20   = "datasheets/sunon-mf80201v1-1000u-a99.pdf"
+cite noctua    = "datasheets/noctua-nf-a8-pwm.pdf"
+cite din7981   = "datasheets/din7981-st42-pan-head-tapping.pdf"
+cite grommetds = "datasheets/strain-relief-grommet-sb.pdf"
+cite airprops  = "analysis/air_properties.csv"
+
+// ---------------------------------------------------------------- kinds
+kind VolumeFlow = Volume / Time                    // PROPOSED: `kind X = <kind expr>` only aliases one existing kind
+kind FlowImpedance = Pressure / VolumeFlow^2       // PROPOSED: same; needed for the system curve k in dP = k Q^2
+unit cfm = 1ft^3/min                               // customer datasheets quote CFM and mmH2O
+unit mmh2o = 9.80665Pa
+
+// ---------------------------------------------------------------- interface
+/// What the cooling module needs from an 80mm axial fan, whoever makes it.
+interface AxialFan80 {
+  mpn: Text
+  supplier: Text
+  depth: Length
+  mount_hole: Length                    // through-hole diameter in the frame
+  inlet_dia: Length                     // free aperture of the frame
+  rated_voltage: Voltage
+  max_airflow: VolumeFlow               // free air, zero static pressure
+  max_static: Pressure                  // zero flow
+  lead_len: Length
+  connector_env: Length                 // circumscribed diameter of the lead connector
+  mass: Mass
+  unit_cost: Money
+  lead_time: Time
+  moq: Count
+  width in 79.5mm..80.5mm               // frame must be an 80mm fan
+  hole_pitch in 71.0mm..72.0mm          // 71.5mm square pattern
+}
+
+// ---------------------------------------------------------------- fans
+#[lifecycle(eol, "2027-09")]            // supplier notice: last-time-buy 2027-09
+ots SunonMf80251: AxialFan80 @sunon25 {
+  mpn           = "MF80251V1-1000U-A99"
+  supplier      = "Sunon"
+  width         = 80mm [+-0.5mm]        @sunon25:"p.2, outline drawing"
+  depth         = 25mm [+-0.5mm]        @sunon25:"p.2, outline drawing"
+  hole_pitch    = 71.5mm [+-0.2mm]      @sunon25:"p.2, outline drawing"
+  mount_hole    = 4.3mm [+0.1mm -0]     @sunon25:"p.2, outline drawing"
+  inlet_dia     = 76mm                  @sunon25:"p.2, outline drawing"
+  rated_voltage = 12V                   @sunon25:"p.1, specification table"
+  max_airflow   = 60m^3/h               @sunon25:"p.1, specification table (35.3 CFM)"
+  max_static    = 40Pa                  @sunon25:"p.1, specification table (4.1 mmH2O)"
+  lead_len      = 300mm [+-10mm]        @sunon25:"p.2, lead wire"
+  connector_env = 8mm [+-0.3mm]         @sunon25:"p.2, connector"
+  mass          = 85g                   @sunon25:"p.1, specification table"
+  unit_cost     = 6.85USD               @"quote Q-2026-0412, qty 500"
+  lead_time     = 6wk                   @"quote Q-2026-0412"
+  moq           = 50                    @"quote Q-2026-0412"
+}
+
+#[lifecycle(active, "2026-10")]         // PROPOSED: no way to state "active, verified on <date>" vs the date of a lifecycle event
+ots NoctuaNfA8Pwm: AxialFan80 @noctua {
+  mpn           = "NF-A8 PWM"
+  supplier      = "Noctua"
+  width         = 80mm [+-0.5mm]        @noctua:"p.1, technical specifications"
+  depth         = 25mm [+-0.5mm]        @noctua:"p.1, technical specifications"
+  hole_pitch    = 71.5mm [+-0.2mm]      @noctua:"p.2, mounting dimensions"
+  mount_hole    = 4.3mm [+0.1mm -0]     @noctua:"p.2, mounting dimensions"
+  inlet_dia     = 74mm                  @noctua:"p.2, mounting dimensions"
+  rated_voltage = 12V                   @noctua:"p.1, technical specifications"
+  max_airflow   = 90.9m^3/h             @noctua:"p.1, technical specifications"
+  max_static    = 23.2Pa                @noctua:"p.1, technical specifications (2.37 mmH2O)"
+  lead_len      = 200mm [+-10mm]        @noctua:"p.1, cable"
+  connector_env = 11.4mm [+-0.4mm]      @noctua:"p.1, 4-pin PWM connector"
+  mass          = 78g                   @noctua:"p.1, technical specifications"
+  unit_cost     = 16.90USD              @"distributor price list 2026-09"
+  lead_time     = 2wk                   @"distributor stock quote 2026-09"
+  moq           = 1                     @"distributor price list 2026-09"
+}
+
+#[lifecycle(active, "2026-10")]
+ots SunonMf80201: AxialFan80 @sunon20 {
+  mpn           = "MF80201V1-1000U-A99"
+  supplier      = "Sunon"
+  width         = 80mm [+-0.5mm]        @sunon20:"p.2, outline drawing"
+  depth         = 20mm [+-0.5mm]        @sunon20:"p.2, outline drawing"
+  hole_pitch    = 71.5mm [+-0.2mm]      @sunon20:"p.2, outline drawing"
+  mount_hole    = 4.5mm [+0.1mm -0]     @sunon20:"p.2, outline drawing"
+  inlet_dia     = 76mm                  @sunon20:"p.2, outline drawing"
+  rated_voltage = 12V                   @sunon20:"p.1, specification table"
+  max_airflow   = 38m^3/h               @sunon20:"p.1, specification table (22.4 CFM)"
+  max_static    = 22Pa                  @sunon20:"p.1, specification table (2.2 mmH2O)"
+  lead_len      = 300mm [+-10mm]        @sunon20:"p.2, lead wire"
+  connector_env = 8mm [+-0.3mm]         @sunon20:"p.2, connector"
+  mass          = 62g                   @sunon20:"p.1, specification table"
+  unit_cost     = 4.95USD               @"quote Q-2026-0413, qty 500"
+  lead_time     = 10wk                  @"quote Q-2026-0413"
+  moq           = 100                   @"quote Q-2026-0413"
+}
+
+// ---------------------------------------------------------------- fasteners, grommet
+table Din7981Len @din7981 {
+  key length: Length
+  cols mass: Mass, unit_cost: Money
+  9.5mm => 0.9g, 0.030USD
+  13mm  => 1.1g, 0.031USD
+  16mm  => 1.3g, 0.032USD
+  19mm  => 1.5g, 0.034USD
+  22mm  => 1.7g, 0.036USD
+  25mm  => 1.9g, 0.038USD
+  32mm  => 2.4g, 0.044USD
+  38mm  => 2.8g, 0.050USD
+}
+
+/// ST4.2 pan-head thread-forming screw, DIN 7981 style; a part family keyed by length.
+ots Din7981St42(length: Length) @din7981 {
+  major_dia   = 4.2mm [+0 -0.1mm]       @din7981:"table 1, d1"
+  head_height = 2.6mm                   @din7981:"table 1, k"
+  pilot_hole  = 3.3mm                   @din7981:"annex, pilot hole for 1.5mm steel sheet"
+  sheet_thk in 1mm..2mm                 // vendor-recommended sheet range for that pilot
+  mass        = Din7981Len[length].mass
+  unit_cost   = Din7981Len[length].unit_cost
+}
+
+/// Open strain-relief grommet for the cable exit.
+ots CableGrommet @grommetds {
+  panel_hole = 12.7mm [+0.1mm -0]       @grommetds:"p.1, panel cutout"
+  bore       = 11.5mm [+0 -0.2mm]       @grommetds:"p.1, free bore"
+  mass       = 1g                       @grommetds:"p.1"
+  unit_cost  = 0.12USD                  @"quote Q-2026-0420"
+}
+
+// ---------------------------------------------------------------- bracket
+/// Sheet-metal fan plate with a stamped finger guard; every dimension adapts to the fan via the interface.
+model FanBracket(fan: AxialFan80, grommet: CableGrommet) {
+  #![display(mm)]
+
+  sheet_thk    = 1.5mm [+-0.1mm]                  @"drawing FB-100 rev B"
+  plate_w      = fan.width.nominal + 20mm
+  cutout_dia   = ceil_to(fan.inlet_dia.nominal + 1mm, 0.5mm)
+  pitch        = fan.hole_pitch.nominal
+  pilot_dia    = 3.3mm [+0.05mm -0]               @din7981:"annex, pilot hole for 1.5mm steel sheet"
+  grommet_hole = grommet.panel_hole               // pure reference: keeps [+0.1 -0]
+  cable_run    = 120mm                            @"layout sketch L-7"
+  tip_standoff = 7mm                              @"drawing FB-100 rev B: guard plane to plate"
+
+  // Screw: through the fan frame, thread-forming into the plate, tip ends inside the guard gap.
+  screw_stack  = fan.depth.max + sheet_thk.max + 1.5mm            // 1.5mm = min thread run-out
+  screw_length = Din7981Len.at_least(screw_stack).length          // PROPOSED: `at_least`/`nearest` call syntax, and reading the matched key, are unspecified (3.6)
+
+  // Finger guard
+  guard_wire    = 1.6mm
+  guard_pitch   = 9.5mm
+  guard_opening = guard_pitch - guard_wire
+  guard_ring_id = cutout_dia
+
+  mass = 0.085kg                                  @estimate:"CAD mass properties, rev B, 105mm plate"
+  unit_cost = 1.90USD                             @"quote Q-2026-0431, qty 500"
+
+  check guard_ok:  guard_opening <= 8mm           @assumed:"internal rule, tighter than IEC 61032 test finger B (12mm)"
+}
+
+// ---------------------------------------------------------------- thermal solver
+/// Hand calculation (or script) from heat load to required airflow and system curve. Fan-independent.
+solver airflow_req @"analysis/airflow_req.py" {
+  in  heat_load = CoolingModule.heat_load,
+      dt_max    = CoolingModule.dt_max,
+      margin    = CoolingModule.flow_margin
+  out required_flow: VolumeFlow
+  out system_k: FlowImpedance           // PROPOSED: `out` kinds are only simple names in solvers.md 1; compound kinds need a declared kind
+  deps "analysis/air_properties.csv", "analysis/enclosure_impedance.csv"
+  check positive: required_flow > 0m^3/h        // solvers.md 5 writes this without a NAME; language.md 6 requires one
+}
+
+/// Operating point of a linear fan curve against a square-law system curve: dP = k Q^2, dP = p_max (1 - Q/q_max).
+fn operating_flow(q_max: VolumeFlow, p_max: Pressure, k: FlowImpedance) -> VolumeFlow {
+  let b = k * q_max / p_max                      // time per volume
+  (sqrt(1 + 4 * b * q_max) - 1) / (2 * b)        // PROPOSED: spec does not say a dimensionless anonymous kind may be added to bare 1 under sqrt
+}
+
+// ---------------------------------------------------------------- assembly
+assembly CoolingModule {
+  heat_load    = 60W                              @"thermal budget TB-3"
+  dt_max       = 10dK                             @"thermal budget TB-3: internal air rise over ambient"
+  flow_margin  = 1.3                              @assumed:"filter loading and fan curve spread"
+  fan_bay_depth = 30mm                            @"enclosure drawing EN-200: keepout behind the plate"
+  build_qty    = 200                              @"program plan 2027"
+  max_lead     = 8wk                              @"program plan 2027: PO to dock"
+
+  part fan: AxialFan80 = SunonMf80251 alt [NoctuaNfA8Pwm, SunonMf80201]
+  part grommet: CableGrommet
+  part bracket: FanBracket(fan = fan, grommet = grommet)
+  part screws[4]: Din7981St42(length = bracket.screw_length)
+
+  fit screw_pass = fan.mount_hole / screws[0].major_dia [0.05mm .. 0.45mm]   @assumed:"max play so the fan locates on the four screws"
+
+  /// Performance: delivered flow at the operating point must reach the solver bound. A require, so it is attested, never waived.
+  require airflow_ok:
+    operating_flow(fan.max_airflow, fan.max_static, airflow_req.system_k) >= airflow_req.required_flow
+    @"thermal spec TS-80, REQ-TH-4"
+  check supply_ok:    fan.rated_voltage.nominal == 12V
+  check keepout_ok:   fan.depth + bracket.sheet_thk + screws[0].head_height <= fan_bay_depth
+  check tip_ok:       screws[0].length - (fan.depth + bracket.sheet_thk) <= bracket.tip_standoff
+  check engage_ok:    screws[0].length >= fan.depth.max + bracket.sheet_thk.max + 1.5mm
+  check lead_reach_ok: fan.lead_len >= bracket.cable_run + 50mm
+  check grommet_pass: fan.connector_env <= grommet.bore
+  check moq_ok:       fan.moq <= build_qty
+  check lead_time_ok: fan.lead_time <= max_lead
+  check sheet_ok:     bracket.sheet_thk satisfies screws[0].sheet_thk
+  check pilot_ok:     bracket.pilot_dia.nominal == screws[0].pilot_hole
+}
+
+// ---------------------------------------------------------------- bindings (inline; files resolved by adapter `read`)
+// FanBracket.plate_w, cutout_dia, pitch, pilot_dia, grommet_hole, sheet_thk -> cad/freecad/fan_bracket.FCStd
+// FanBracket.guard_wire, guard_pitch, guard_ring_id                         -> cad/freecad/fan_guard.FCStd
+// CoolingModule/fan.depth, CoolingModule/screws[*].length                   -> cad/freecad/cooling_module.FCStd
+// BOM rows (mpn, unit_cost, screw length)                                   -> build/bom.csv (csv emitter)

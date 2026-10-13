@@ -1,0 +1,140 @@
+namespace acme.bracket
+
+import std.fits.iso286
+// PROPOSED: import std.clearance.iso273   // standard tables as importable data, not hand-copied ots
+
+// ---------------------------------------------------------------------
+// Off-the-shelf facts
+// ---------------------------------------------------------------------
+
+/// ISO 4762 socket head cap screw M5x25, property class 12.9 (steel).
+/// Head dimensions are maxima with the standard's minimum as the lower
+/// deviation, so the nominal IS the maximum (what the counterbore needs).
+ots Iso4762M5x25 {
+  source "ISO 4762:2004 Table 1, M5 row (verify against licensed copy)"
+
+  thread_dia  = 5mm
+  pitch       = 0.8mm   source "ISO 261 / ISO 262 coarse series, M5"
+  head_dia    = 8.5mm +0mm -0.22mm      // dk max 8.50, min 8.28
+  head_height = 5mm +0mm -0.18mm        // k  max 5.00, min 4.82
+  hex_key     = 4mm                     // s nominal
+  length      = 25mm                    // l, preferred length, ISO 4762 Table 1
+}
+
+/// ISO 4762 socket head cap screw M4x20, property class 12.9 (steel).
+ots Iso4762M4x20 {
+  source "ISO 4762:2004 Table 1, M4 row (verify against licensed copy)"
+
+  thread_dia  = 4mm
+  pitch       = 0.7mm   source "ISO 261 / ISO 262 coarse series, M4"
+  head_dia    = 7mm +0mm -0.22mm        // dk max 7.00, min 6.78
+  head_height = 4mm +0mm -0.18mm        // k  max 4.00, min 3.82
+  hex_key     = 3mm
+  length      = 20mm
+}
+
+/// ISO 273 through-hole diameters for bolts. The brief's "normal fit" is
+/// ISO 273's "medium" series. These are NOT ISO 286 fits: the standard
+/// gives one nominal diameter per thread size and series, so we record
+/// the nominal untoleranced.
+ots Iso273 {
+  source "ISO 273:1979 Table 1, 'medium' series"
+
+  medium_m4 = 4.5mm
+  medium_m5 = 5.5mm
+  medium_m6 = 6.6mm
+  // PROPOSED: clearance Iso273.medium for Iso4762M5x25.thread_dia  // keyed lookup instead of naming the row
+}
+
+/// 20 mm OD aluminium tube to be clamped.
+ots Tube {
+  source "supplier drawing TUBE-20x2 rev A (hypothetical vendor)"
+
+  od   = 20mm h11
+  wall = 2mm
+}
+
+/// Bracket material: aluminium alloy 6061-T6 plate.
+ots Alloy6061T6 {
+  source "ASTM B209M / ASM Handbook Vol. 2 datasheet"
+
+  density        = 2.70g/cm^3
+  yield_strength = 240MPa
+  // PROPOSED: designation = "6061-T6"   // non-quantity metadata (material name, finish)
+}
+
+// ---------------------------------------------------------------------
+// Fits
+// ---------------------------------------------------------------------
+
+/// Tube seat in the clamp bore (clearance; the slit closes the gap).
+fit tube_seat = H11/h11 on Tube.od
+
+// ---------------------------------------------------------------------
+// The machined bracket
+// ---------------------------------------------------------------------
+
+/// Machined (bend-free) L-bracket: wall leg with two counterbored M5
+/// holes, shelf leg carrying an integral split clamp for the tube.
+model Bracket {
+  // --- plate -------------------------------------------------------
+  thickness: Length = 10mm       // both legs; 4.6 mm of web remains under the M5 counterbore
+  width: Length = 56mm +- 0.1mm
+  wall_leg_height = 70mm
+  shelf_depth = 50mm
+  fillet_radius = thickness / 2  // internal corner between legs, machined with a corner-radius cutter
+
+  // --- wall mounting holes -----------------------------------------
+  mount_hole_dia = Iso273.medium_m5
+  mount_cb_slack = 1mm           // diametral slack over the screw head
+  mount_cb_dia = Iso4762M5x25.head_dia + mount_cb_slack
+  mount_cb_depth = Iso4762M5x25.head_height + 0.4mm
+  mount_spacing = 32mm +- 0.1mm  // matches the wall anchor pattern
+  edge_distance = (width - mount_spacing) / 2
+  top_edge_distance = 15mm
+  mount_hole_z = wall_leg_height - top_edge_distance
+  mount_hole_count: Count = 2
+
+  check mount_edge_distance: edge_distance >= 2 * mount_hole_dia "edge distance >= 2d"
+  check mount_hole_over_thread: mount_hole_dia > Iso4762M5x25.thread_dia "hole must clear the thread"
+  check mount_cb_edge: edge_distance > mount_cb_dia / 2 "counterbore must not break out of the side"
+  check mount_cb_overlap: mount_spacing > mount_cb_dia "counterbores must not overlap"
+  check mount_hole_clears_fillet: mount_hole_z - mount_cb_dia / 2 >= thickness + fillet_radius "counterbore clear of the fillet"
+
+  // --- tube clamp --------------------------------------------------
+  clamp_bore = tube_seat.hole
+  clamp_hole_dia = Iso273.medium_m4
+  clamp_cb_dia = Iso4762M4x20.head_dia + mount_cb_slack
+  clamp_cb_depth = Iso4762M4x20.head_height + 0.4mm
+  clamp_tap_drill = Iso4762M4x20.thread_dia - Iso4762M4x20.pitch   // exactly 3.3 mm
+  clamp_web = 4mm
+  clamp_bolt_offset = clamp_bore / 2 + clamp_hole_dia / 2 + clamp_web
+  clamp_block_width = 52mm
+  clamp_cap_depth = 8mm          // clamp-ear thickness above the slit
+  slit_width = 1.5mm
+  clamp_edge_distance = (clamp_block_width - 2 * clamp_bolt_offset) / 2
+
+  check clamp_edge: clamp_edge_distance >= 2 * clamp_hole_dia "edge distance >= 2d"
+  check clamp_cb_web: clamp_cap_depth > clamp_cb_depth "web under the M4 counterbore"
+}
+
+// ---------------------------------------------------------------------
+// Assembly
+// ---------------------------------------------------------------------
+
+/// Bracket on a wall, holding a tube.
+assembly WallTubeMount {
+  part bracket: Bracket
+  part screw_a: Iso4762M5x25
+  part screw_b: Iso4762M5x25
+  part clamp_screw_a: Iso4762M4x20
+  part clamp_screw_b: Iso4762M4x20
+  part tube: Tube
+
+  required_screws: Count = 2
+
+  check screws_match_holes: bracket.mount_hole_count == required_screws "one screw per hole"
+  check wall_engagement: screw_a.length - (bracket.thickness - bracket.mount_cb_depth) >= 1.5 * screw_a.thread_dia "thread engagement in wall"
+  check clamp_engagement: clamp_screw_a.length - bracket.clamp_cap_depth >= 1.5 * clamp_screw_a.thread_dia "thread engagement in clamp"
+  check bore_fits_tube: bracket.clamp_bore >= tube.od "bore passes the tube"
+}

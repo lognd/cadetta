@@ -1,0 +1,64 @@
+// Drive physics and the cut screw. Namespace is shared with structure.cdt and
+// assembly.cdt: one namespace per design, one file per concern.
+namespace acme.actuator
+
+import acme.parts.motion
+import acme.parts.bearings
+
+/// The lead screw as cut and ground for this actuator.
+model Screw {
+  /// Axial length consumed by the layout, before rounding to the vendor cut increment.
+  min_length = FlexCoupler.bore_depth + coupler_to_nut_gap + BrassNut.length
+             + Actuator.travel + nut_to_bearing_gap + nominal(Bearing608.width) + journal_overhang   // PROPOSED: line continuation without parens
+  coupler_to_nut_gap = 5mm
+  nut_to_bearing_gap = 5mm
+  journal_overhang = 3mm
+
+  /// Cut length: round UP to the cut increment (round_to is nearest, so add half a step).
+  length = round_to(min_length + T8LeadScrew.cut_increment / 2, T8LeadScrew.cut_increment)   // PROPOSED: ceil_to(min_length, step)
+
+  /// Overhang actually left past the bearing after rounding up.
+  overhang = length - min_length + journal_overhang
+
+  /// Ground floating-end journal for the 608 bore.
+  journal_diameter = 8mm g6
+}
+
+/// Screw, nut and motor as a system: thrust, speed, resolution.
+model Drivetrain {
+  starts: Count = T8LeadScrew.starts
+  lead: Length = T8LeadScrew.pitch * starts
+
+  /// Fraction of holding torque still available at the running speed (pull-out derate, assumption).
+  torque_ratio: Ratio = 50%
+  running_torque: Torque = Nema17Motor.holding_torque * torque_ratio
+
+  /// Dry brass-on-stainless sliding friction, assumption (Machinery's Handbook range 0.1 to 0.2).
+  friction_coefficient: Ratio = 0.15
+
+  /// Lead angle: tan = lead / (circumference at pitch diameter); circumference = 1 rev * radius.
+  @display(deg)
+  lead_angle: Angle = atan2(lead, 1rev * (T8LeadScrew.pitch_diameter / 2))
+  /// Friction angle on a trapezoidal flank: atan(mu / cos(half angle)).
+  @display(deg)
+  friction_angle: Angle = atan2(friction_coefficient, cos(T8LeadScrew.flank_half_angle))
+  @display(%)
+  efficiency: Ratio = tan(lead_angle) / tan(lead_angle + friction_angle)
+
+  /// Axial thrust F = 2*pi*T*eta/lead; 1rev supplies the 2*pi (there is no pi constant).
+  thrust: Force = 1rev * running_torque * efficiency / lead
+
+  /// Work per motor revolution, in and out; torque and energy stay different kinds.
+  work_in: Energy = running_torque * 1rev
+  work_out: Energy = thrust * lead
+  torque_as_energy_per_rad: Energy = (Nema17Motor.holding_torque as Energy)
+  // stored: Energy = Nema17Motor.holding_torque     // would be Q003 kind-mismatch
+
+  motor_speed: AngularVelocity = 600rpm
+  max_speed: Velocity = motor_speed * lead / 1rev   // PROPOSED: Velocity kind; also lead is per rev, not per rad
+
+  steps_per_rev: Count = 360deg / Nema17Motor.step_angle
+  microsteps: Count = 16
+  linear_resolution: Length = lead / (steps_per_rev * microsteps)
+  step_rate: Frequency = motor_speed * steps_per_rev * microsteps / 1rev
+}

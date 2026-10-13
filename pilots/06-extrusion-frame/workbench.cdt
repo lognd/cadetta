@@ -1,0 +1,165 @@
+// Workbench frame: 80/20 1010-series aluminum extrusion, 1/4-20 hardware.
+// US shop, imperial. Source of 80/20 numbers: 80/20 Inc. catalog, 1010
+// profile page (section 1.000 x 1.000 in, slot opening 0.256 in, 1/4-20
+// center bore). Values transcribed from memory of the catalog; VERIFY each
+// against the current catalog page before cutting metal.
+namespace shop.workbench
+
+/// 80/20 1010 profile, 6105-T5 aluminum.
+ots Extrusion1010 {
+  source "80/20 catalog, 1010 profile page (verify edition)"
+
+  section = 1in                    // 1.000 in square
+  slot_opening = 0.256in           // T-slot opening
+  center_bore = 0.205in            // tapped 1/4-20 from the end (tap drill #7 = 0.201in)
+  cut_tol = 0.010in                // standard saw-cut tolerance, +- (verify)
+  mass_per_length = 0.5lb/ft       // VERIFY; value from memory
+}
+
+/// 1/4-20 UNC button head cap screw, 5/8 in long.
+/// Thread callout "1/4-20 UNC-2A" cannot be stored; see FRICTION F7.
+ots ButtonHeadScrew {
+  source "ASME B18.3 / ASME B1.1 (1/4-20 UNC)"
+
+  major_diameter = 1in / 4         // PROPOSED: 1/4in literal; see F1 (an expression in an ots)
+  pitch = 1in / 20                 // PROPOSED: 20 TPI as a pitch; see F1
+  length = 5in / 8
+}
+
+/// Drop-in T-nut for 1010, 1/4-20 thread.
+ots TNut {
+  source "80/20 catalog, drop-in T-nut 1/4-20 (verify part number)"
+
+  major_diameter = 1in / 4         // PROPOSED: same as ButtonHeadScrew; D001 would fire on a copy
+}
+
+/// Plywood shelf stock. Nominal 3/4 in, actual 23/32 in (APA PS 1-09,
+/// Performance Category 23/32).
+ots Plywood {
+  source "APA PS 1-09, Table 3 (verify)"
+
+  nominal_thickness = 3in / 4      // PROPOSED: 3/4in; as written, `3in / 4` is exact but ugly
+  thickness = 23in / 32
+  sheet_width = 4ft
+  sheet_length = 8ft
+  density: Density = 0.55g/cm^3    // about 34 lb/ft^3; no lb/ft^3 unit exists (F8)
+}
+
+/// Overall envelope of the bench frame (outside dimensions).
+model Envelope {
+  width = 4ft
+  depth = 2ft + 6in                // 2'6" cannot be written as one literal (F2)
+  height = 3ft
+  lower_rail_bottom = 8in          // floor to underside of the lower rails
+  level_count: Count = 2
+  corner_count: Count = 4
+  clearance = 1in / 16             // shelf panel is cut this much under the inside dimension
+}
+
+/// Four vertical legs.
+model Leg {
+  length = Envelope.height
+  @emit(nominal)
+  cut_length = round_to(length, 1in / 32) +- 0.010in   // PROPOSED: tolerance on an expression, value by reference (F5)
+}
+
+/// Rails running along the width, between legs.
+model WidthRail {
+  length = round_to(Envelope.width - 2 * Extrusion1010.section, 1in / 32)
+  cut_length = round_to(length, 1in / 32) +- 0.010in   // PROPOSED: +- Extrusion1010.cut_tol (F5)
+}
+
+/// Rails running along the depth, between legs.
+model DepthRail {
+  length = round_to(Envelope.depth - 2 * Extrusion1010.section, 1in / 32)
+  cut_length = round_to(length, 1in / 32) +- 0.010in   // PROPOSED: +- Extrusion1010.cut_tol (F5)
+}
+
+/// Triangular corner gusset, 1/4 in aluminum plate, 45 degree isosceles.
+model Gusset {
+  leg = 3in
+  thickness = 1in / 4
+  apex_angle: Angle = atan2(leg, leg)            // exactly 45deg only in reals (F3)
+  hypotenuse = leg / cos(45deg)                  // inexact; compare leg * sqrt(2)
+  area = leg ^ 2 / 2
+  bolts: Count = 2
+  t_nuts: Count = 2
+  check forty_five: apex_angle == 45deg "gusset must be 45 degrees"
+}
+
+/// Corner clip holding a shelf panel to a rail.
+model PanelClip {
+  bolts: Count = 1
+  t_nuts: Count = 1
+}
+
+/// Diagonal brace across the back opening between the two rail levels.
+model Brace {
+  span_x = Envelope.width - 2 * Extrusion1010.section
+  span_y = Envelope.height - Envelope.lower_rail_bottom - 2 * Extrusion1010.section
+  raw_length = sqrt(span_x ^ 2 + span_y ^ 2)           // opening diagonal, inexact
+  cut_length = round_to(raw_length, 1in / 32) +- 0.010in // PROPOSED: tolerance expr (F5); long-point length
+  slope_angle: Angle = atan2(span_y, span_x)           // brace axis to horizontal
+  miter_angle: Angle = round_to(90deg - slope_angle, 0.5deg)   // saw setting off square
+  end_bolts: Count = 1
+  end_t_nuts: Count = 1
+}
+
+/// Shelf panel: inside frame dimension less clearance, to nearest 1/32.
+model ShelfPanel {
+  length = round_to(WidthRail.length - Envelope.clearance, 1in / 32)
+  width = round_to(DepthRail.length - Envelope.clearance, 1in / 32)
+  thickness = Plywood.thickness
+  area = length * width
+  mass_each: Mass = area * thickness * Plywood.density
+}
+
+assembly Workbench {
+  // Four legs. No part arrays, so one line each (F4).
+  part leg_front_left: Leg
+  part leg_front_right: Leg
+  part leg_back_left: Leg
+  part leg_back_right: Leg
+
+  part rail_upper_front: WidthRail
+  part rail_upper_back: WidthRail
+  part rail_lower_front: WidthRail
+  part rail_lower_back: WidthRail
+  part rail_upper_left: DepthRail
+  part rail_upper_right: DepthRail
+  part rail_lower_left: DepthRail
+  part rail_lower_right: DepthRail
+
+  part brace: Brace
+  part panel_upper: ShelfPanel
+  part panel_lower: ShelfPanel
+
+  // Counts restate the part lines above; nothing ties them together (F4).
+  leg_count: Count = 4
+  width_rail_count: Count = 4
+  depth_rail_count: Count = 4
+  panel_count: Count = 2
+  brace_count: Count = 1
+  panel_clips_per_panel: Count = 4
+
+  rail_count: Count = width_rail_count + depth_rail_count
+  gusset_count: Count = 2 * rail_count                      // one per rail end
+  clip_count: Count = panel_count * panel_clips_per_panel
+  brace_end_count: Count = 2 * brace_count
+
+  total_bolts: Count = gusset_count * Gusset.bolts + clip_count * PanelClip.bolts + brace_end_count * Brace.end_bolts
+  total_t_nuts: Count = gusset_count * Gusset.t_nuts + clip_count * PanelClip.t_nuts + brace_end_count * Brace.end_t_nuts
+  bolts_per_joint: Count = Gusset.bolts
+
+  total_extrusion_length = leg_count * Leg.cut_length + width_rail_count * WidthRail.cut_length + depth_rail_count * DepthRail.cut_length + brace_count * Brace.cut_length
+  extrusion_mass: Mass = total_extrusion_length * Extrusion1010.mass_per_length
+
+  sheet_utilization: Ratio = panel_count * ShelfPanel.area / (Plywood.sheet_width * Plywood.sheet_length)
+  sheet_waste: Ratio = 100% - sheet_utilization
+  slot_to_section: Ratio = Extrusion1010.slot_opening / Extrusion1010.section
+
+  check panel_fits_width: ShelfPanel.length < WidthRail.cut_length "panel must fit between legs"
+  check panel_fits_depth: ShelfPanel.width < DepthRail.cut_length "panel must fit between legs"
+  check bolts_match_tnuts: total_bolts == total_t_nuts
+  check bolt_reaches_bore: ButtonHeadScrew.major_diameter > Extrusion1010.center_bore "unused: just a sanity check"
+}

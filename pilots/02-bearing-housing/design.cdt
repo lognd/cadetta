@@ -1,0 +1,95 @@
+namespace acme.bearing_housing
+
+import acme.vendor
+import std.fits.iso286
+
+// Two 608-2RS1 bearings on a stepped shaft inside a through-bored housing.
+// Left end: bore shoulder (housing) and shaft shoulder. Right end: DIN 472
+// circlip. A spacer ring sets the bearing spacing. Axial retention of the
+// right-hand inner ring on the shaft is out of scope for this pilot.
+
+/// Design intent shared by the machined parts (no global parameters exist).
+model Layout {
+  bearing_spacing = 30mm          // centre to centre
+  end_wall = 3mm                  // housing shoulder thickness
+  end_margin = 3mm                // housing material beyond the groove
+  left_overhang = 22mm            // shaft end to shoulder face
+  right_overhang = 8mm            // beyond bearing B outer face
+  ring_support_dia = 19mm +- 0.1mm
+}
+
+/// Stationary outer ring, rotating inner ring: SKF guidance H7 for the housing.
+/// Bearing OD (0/-9um) is numerically ISO h5 for 18-30 mm, so F003 should pass.
+fit housing_seat = H7/h5 on Bearing.outer_dia
+
+// PROPOSED: one-sided fit, hole side is the vendor-toleranced bore (8 +0 -0.008),
+// which is not an ISO H class. Forcing H6/j5 here puts a fictional hole in the IR.
+// fit bearing_seat = j5 on Bearing.bore
+
+/// Machined housing.
+model Housing {
+  outer_dia = 36mm
+  @emit(mmc)
+  bore_dia = housing_seat.hole
+  shoulder_dia = Layout.ring_support_dia
+  @emit(mmc)
+  groove_dia = Circlip.groove_dia
+  groove_width = Circlip.groove_width
+  /// End-wall face to near groove edge; authored so the axial stack is a real check.
+  groove_pos = 40mm +- 0.05mm
+  end_margin = Layout.end_margin
+  length = groove_pos + groove_width + end_margin
+  wall_thickness = (outer_dia - bore_dia) / 2
+}
+
+/// Stepped shaft. SKF: j5 for inner ring rotating, normal load, d <= 17 mm.
+model Shaft {
+  // PROPOSED: Bearing.bore.nominal j5 -- take the nominal from the vendor part
+  // and apply a class, instead of restating 8mm.
+  @emit(mmc)
+  seat_dia = 8mm j5
+  @emit(mmc)
+  shoulder_dia = 11mm h11
+  left_overhang = Layout.left_overhang
+  right_overhang = Layout.right_overhang
+  length = left_overhang + Layout.bearing_spacing + Bearing.width + right_overhang
+}
+
+/// Spacer ring between the two outer rings.
+model Spacer {
+  @emit(mid)
+  length = Layout.bearing_spacing - Bearing.width
+  outer_dia = Layout.ring_support_dia
+  bore_dia = 16mm +0.2mm -0mm
+}
+
+assembly BearingUnit {
+  part housing: Housing
+  part shaft: Shaft
+  part spacer: Spacer
+  part bearing_a: Bearing
+  part bearing_b: Bearing
+  part ring: Circlip
+
+  /// Positive = interference (shaft larger than bearing bore).
+  seat_interference: Length = shaft.seat_dia - bearing_a.bore
+  /// Positive = clearance between housing bore and bearing OD.
+  housing_clearance: Length = housing.bore_dia - bearing_b.outer_dia
+  /// Gap between bearing B and the circlip seated on the outboard groove wall.
+  axial_play: Length = (housing.groove_pos + housing.groove_width - ring.thickness) - (Layout.end_wall + spacer.length + bearing_a.width + bearing_b.width)
+
+  check seat_creep: seat_interference > 0um "inner ring must not creep on shaft"
+  check seat_squeeze: 4 * seat_interference / 5 <= bearing_a.clearance_min "clearance lost to interference (about 80 percent)"
+  check housing_not_pinched: housing_clearance >= 0mm "outer ring must not be pressed"
+  check shoulder_supports_ring: shaft.shoulder_dia >= bearing_a.abutment_dia_min "shaft shoulder >= d_a min"
+  check shoulder_clears_seal: shaft.shoulder_dia < bearing_a.inner_ring_land_dia "shoulder below seal land"
+  check housing_shoulder_ok: housing.shoulder_dia <= bearing_a.abutment_dia_max "housing shoulder <= D_a max"
+  check ring_size_ok: ring.bore_nominal <= housing.bore_dia "DIN 472 size matches bore"
+  check groove_edge_ok: housing.end_margin >= ring.groove_edge_min "DIN 472 n min"
+  check axial_play_min: axial_play >= 0mm "bearings must not be squeezed axially"
+  check axial_play_max: axial_play <= 0.5mm "limit rattle"
+}
+
+waive D001 on acme.bearing_housing::Shaft.seat_dia {
+  because "8mm is the bearing bore nominal; selecting a class needs a nominal (see FRICTION F3)"
+}

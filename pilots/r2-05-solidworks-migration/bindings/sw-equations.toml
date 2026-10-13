@@ -1,0 +1,208 @@
+# Written by `cadetta import sw-equations ../05-solidworks-migration/legacy-equations.txt --assume-unit mm`; accepted by the user.
+# Keys are IMPORT-TIME canonical paths. cleaned.cdt renames/merges members with `was`,
+# which carries each binding forward (adapters.md 3), so no key is orphaned (R005 silent).
+# Importer rule for `mode`: a dimension whose native expression is a pure global reference
+# is proposed `ref`; a literal or a formula is `value`; a global-variable locator is `value`
+# (a global is already the thing a ref points at).
+# PROPOSED: several keys (Plate_Thk, "plate thickness", D1@Boss-Extrude1@CoverPlate) resolve to
+# ONE path after cleanup. adapters.md 3 says one table per path; I key by import path and let
+# `was` fan them in. A `ref` dimension points at the FIRST global locator of its path in file order.
+# native_unit is the unit the emitted number is written in (document unit mm unless stated).
+
+# ---- global variables
+
+["acme.gearbox::Globals.plate_thk"]
+locator = "Plate_Thk"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.plate_thickness"]
+locator = "plate thickness"
+native_unit = "in"
+mode = "value"
+
+["acme.gearbox::Globals.plate_l"]
+locator = "PlateL"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.plate_w"]
+locator = "PlateW"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.corner_r"]
+locator = "CornerR"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_spacing_x"]
+locator = "BoltSpacingX"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_spacing_y"]
+locator = "BoltSpacingY"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.dia"]
+locator = "Dia"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_dia_mm"]
+locator = "BoltDia_mm"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_head_dia"]
+locator = "BoltHeadDia"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_head_h"]
+locator = "BoltHeadH"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.bolt_len_in"]
+locator = "BoltLen_in"
+native_unit = "in"
+mode = "value"
+
+["acme.gearbox::Globals.pilot_bore"]
+locator = "PilotBore"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.gasket_thk"]
+locator = "GasketThk"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Globals.num_bolts"]
+locator = "NumBolts"
+mode = "value"
+
+# ---- CoverPlate dimensions
+
+["acme.gearbox::CoverPlate.d1_sketch1"]
+locator = "D1@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d2_sketch1"]
+locator = "D2@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d3_sketch1"]
+locator = "D3@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d4_sketch1"]
+locator = "D4@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d5_sketch1"]
+locator = "D5@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d6_sketch1"]
+locator = "D6@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d7_sketch1"]
+locator = "D7@Sketch1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d1_boss_extrude1"]
+locator = "D1@Boss-Extrude1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::CoverPlate.d1_sketch2"]
+locator = "D1@Sketch2@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::CoverPlate.d1_cut_extrude1"]
+locator = "D1@Cut-Extrude1@CoverPlate.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+# ---- Gasket dimensions
+
+["acme.gearbox::Gasket.d1_sketch1"]
+locator = "D1@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::Gasket.d2_sketch1"]
+locator = "D2@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::Gasket.d3_sketch1"]
+locator = "D3@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Gasket.d4_sketch1"]
+locator = "D4@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Gasket.d5_sketch1"]
+locator = "D5@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::Gasket.d6_sketch1"]
+locator = "D6@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Gasket.d7_sketch1"]
+locator = "D7@Sketch1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "value"
+
+["acme.gearbox::Gasket.d1_boss_extrude1"]
+locator = "D1@Boss-Extrude1@Gasket.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+# ---- Bolt dimensions
+
+["acme.gearbox::Bolt.d1_sketch1"]
+locator = "D1@Sketch1@Bolt.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::Bolt.d2_sketch1"]
+locator = "D2@Sketch1@Bolt.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+
+["acme.gearbox::Bolt.d1_boss_extrude1"]
+locator = "D1@Boss-Extrude1@Bolt.SLDPRT"
+native_unit = "mm"
+mode = "ref"
+# hand edit after import: show bolt length in inches, as the old BoltLen_in did
+
+["acme.gearbox::Bolt.d1_boss_extrude2"]
+locator = "D1@Boss-Extrude2@Bolt.SLDPRT"
+native_unit = "in"
+mode = "ref"
+
+["acme.gearbox::Bolt.d1_sketch3"]
+locator = "D1@Sketch3@Bolt.SLDPRT"
+native_unit = "mm"
+mode = "value"

@@ -1,0 +1,110 @@
+// Off-the-shelf motion hardware for the actuator. Values are transcribed from
+// vendor sheets as best known; every `source` must be re-verified against the
+// current revision before release.
+namespace acme.parts.motion
+
+/// 6061-T6 aluminium plate stock (ASM MatWeb).
+ots Al6061 {
+  source "https://asm.matweb.com/search/SpecificMaterial.asp?bassnum=MA6061T6"
+  density = 2.70g/cm^3
+}
+
+/// NEMA 17 stepper, StepperOnline 17HS16-2004S1 (1.8 deg, 2 A, 40 mm body).
+ots Nema17Motor {
+  source "StepperOnline 17HS16-2004S1 datasheet, page 1 drawing and electrical table"
+
+  face_width = 42.3mm +- 0.2mm         // NEMA ICS 16 frame 17, square flange
+  body_length = 40mm +- 1mm
+  hole_pitch = 31mm +- 0.1mm           // 4 x M3 on a 31 mm square
+  thread_depth = 4.5mm                 // usable M3 thread in the flange
+  pilot_diameter = 22mm h9             // drawing: 22 0/-0.05; closest ISO class h9 is 0/-0.052
+  pilot_height = 2mm
+  shaft_diameter = 5mm h7              // drawing: 5 0/-0.013; closest ISO class h7 is 0/-0.012
+  shaft_length = 24mm                  // from flange face, includes D-flat
+  holding_torque = 0.45N*m
+  step_angle = 1.8deg
+  rated_current = 2A                   // PROPOSED: ampere unit missing from the unit table
+  rotor_inertia = 82g*cm^2
+  mass = 0.28kg
+}
+
+/// Clamp-type flexible (helical) shaft coupler D19 L25, 5 mm to 8 mm.
+ots FlexCoupler {
+  source "Generic D19L25 helical aluminium coupler drawing, 5x8, e.g. Misumi MCKN19-5-8"
+
+  outer_diameter = 19mm
+  length = 25mm
+  bore_motor_side = 5mm H7
+  bore_screw_side = 8mm H7
+  bore_depth = 10mm                    // per side; 5 mm gap between shafts
+  rated_torque = 1.2N*m
+  max_speed = 6000rpm
+  max_angular_misalignment = 5deg
+}
+
+/// Tr8x8(P2) trapezoidal lead screw, stainless, 4 starts (ISO 2904).
+ots T8LeadScrew {
+  source "ISO 2901/2904 Tr8x8(P2); vendor datasheet generic T8 lead screw"
+
+  major_diameter = 8mm
+  pitch_diameter = 7mm                 // d2 = d - P/2
+  pitch = 2mm
+  starts: Count = 4
+  lead = 8mm                           // pitch * starts, as printed on the datasheet
+  flank_half_angle = 15deg             // 30 deg included angle
+  cut_increment = 5mm                  // vendor cuts to multiples of 5 mm
+
+  check lead_consistent: lead == pitch * starts "lead must be pitch times starts"
+}
+
+/// Anti-backlash brass flange nut for Tr8x8(P2).
+ots BrassNut {
+  source "Generic T8 anti-backlash flange nut drawing (two-piece, spring preload)"
+
+  length = 24mm
+  body_diameter = 10mm
+  flange_diameter = 22mm
+  flange_thickness = 3.5mm
+  bolt_circle_diameter = 16mm
+  mount_hole_diameter = 3.4mm
+  mount_hole_count: Count = 4
+  mass = 25g
+}
+
+/// HIWIN MGN12H linear guide: profile rail.
+ots Mgn12Rail {
+  source "HIWIN MG series catalog, MGN12 rail dimensions (verify rev.)"
+
+  width = 12mm
+  height = 8mm
+  hole_pitch = 25mm
+  end_distance = 10mm
+  stock_step = 50mm                    // standard length increment
+  mount_hole_diameter = 3.5mm
+  counterbore_diameter = 6mm
+  counterbore_depth = 4.5mm
+}
+
+/// HIWIN MGN12H long block carriage.
+ots Mgn12hCarriage {
+  source "HIWIN MG series catalog, MGN12H block (verify rev.)"
+
+  total_height = 13mm                  // rail base to block top
+  width = 27mm
+  length = 45.4mm
+  hole_spacing_across = 20mm
+  hole_spacing_along = 20mm
+  dynamic_load = 3.43kN
+  static_load = 5.15kN
+  mass = 90g
+}
+
+/// ISO 4762 M3x10 socket head cap screw.
+ots ShcsM3x10 {
+  source "ISO 4762:2004 table 1, M3"
+
+  thread_diameter = 3mm
+  length = 10mm
+  head_diameter = 5.5mm
+  head_height = 3mm
+}

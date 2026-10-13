@@ -1,0 +1,41 @@
+namespace acme.vendor
+
+// Off-the-shelf parts for the bearing housing pilot.
+// Values transcribed from memory of the catalogs; VERIFY against the
+// current SKF General Catalogue and DIN 472 before any release.
+
+/// SKF 608-2RS1 deep-groove ball bearing, 8 x 22 x 7 mm, contact seals.
+/// Tolerances are ISO 492 Normal class (individual ring deviations).
+ots Bearing {
+  source "SKF General Catalogue, product table for 608-2RS1; ISO 492 Normal tolerances"
+
+  bore = 8mm +0mm -0.008mm        // PROPOSED: needs a hole/shaft role so @emit(mmc) is defined
+  outer_dia = 22mm +0mm -0.009mm
+  width = 7mm +0mm -0.12mm
+
+  /// Abutment dimensions from the catalog dimension table.
+  abutment_dia_min = 10mm         // d_a min, shaft shoulder must be at least this
+  abutment_dia_max = 20mm         // D_a max, housing shoulder must be at most this
+  inner_ring_land_dia = 12.6mm    // d1 approx; shaft shoulder must stay below (seal)
+  corner_radius_min = 0.3mm       // r_s min
+
+  /// Radial internal clearance, Normal group, 6 < d <= 10 (ISO 5753).
+  clearance_min = 2um
+  clearance_max = 13um
+
+  dynamic_load_rating = 3.45kN
+  static_load_rating = 1.37kN
+  mass = 0.012kg
+}
+
+/// DIN 472 internal circlip for a 22 mm bore, ring and groove data.
+ots Circlip {
+  source "DIN 472:1981 table, nominal bore 22 mm"
+
+  bore_nominal = 22mm
+  thickness = 1mm +0mm -0.06mm
+  /// Recommended groove (a recommendation, not a ring property).
+  groove_dia = 23mm H11
+  groove_width = 1.1mm H13
+  groove_edge_min = 1.5mm         // n: min distance groove edge to housing face
+}
