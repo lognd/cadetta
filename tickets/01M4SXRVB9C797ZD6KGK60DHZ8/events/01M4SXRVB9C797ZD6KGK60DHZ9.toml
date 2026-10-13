@@ -1,0 +1,23 @@
+kind = "create"
+title = "Lint U002 unused private item and I004 scope"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SXQPADRSNTEY3J7PH899Y8"
+persona = "library author"
+capability = "find dead private items"
+labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
+scope = ["crates/cadetta-lint/src/rules/u002.rs"]
+acceptance = ["Given a private item used nowhere in its package, when linted, then U002 warning fires; used once it does not (packages.md 3, 7; lints.md U)", "Given a private parameterized component with no instances, when linted, then U002 fires and I004 does not; I004 fires only for roots of the package being checked (packages.md 3; lints.md I004)", "Given U002 and E012-E017, when shipped, then lints.md catalog entries, severities (fixed errors for E012-E017) and must-fire and must-not-fire fixtures exist under tests/conformance/lints/<code>/ (lints.md 3, 4)"]
+at = "2026-10-13T06:04:06Z"
+actor = "lognd"
+rev = 1
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQM289M7Q58CSS6F029F"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SXRFXB1JYNPNKSAY6WB3QC"
