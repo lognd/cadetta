@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `if`, `match` and `{ let a = 1mm; a }`, when parsed, then each is an expression (language.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `#[emit(mid)]` trailing a member and `#![emit(nominal), display(mm)]` in a component, when parsed, then they attach as member and scope attributes (language.md 3.11)"
