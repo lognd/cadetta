@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T19:18:44Z"
-updated = "2026-10-13T19:19:06Z"
+updated = "2026-10-13T21:03:05Z"
 persona = "design engineer"
 capability = "see a part's cadetta paths beside the model in SOLIDWORKS"
 outcome_text = "linking starts from what the engineer selects"
@@ -23,6 +23,10 @@ target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 [[links]]
 kind = "blocked-by"
 target = "01M4VB644Y6YPK6YTBP4T5YM3Y"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VH6XQF4GRQM20G0Z9SWC8W"
 
 [[acceptance]]
 text = "Given an open document, when the pane loads, then it finds the nearest cadetta.toml, runs cadetta names solidworks --format json and lists the document component's paths with value, tolerance, citation and doc (solidworks.md 3)"
