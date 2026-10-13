@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a bound path absent natively, when linted, then R003 error"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a binding matching no IR path and no `was` path, when linted, then R005 warning (adapters.md 3)"
