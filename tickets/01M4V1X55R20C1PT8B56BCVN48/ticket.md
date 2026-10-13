@@ -2,7 +2,8 @@
 id = "01M4V1X55R20C1PT8B56BCVN48"
 title = "conformance runner executes only check entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
