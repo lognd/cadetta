@@ -15,6 +15,10 @@ outcome_text = "no per-editor bridge configuration is needed"
 idempotency_key = "d15:editors-lsp"
 scope = ["editors/**"]
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWN8MPH5ARCRJG4QB9ANVQ"
+
 [[acceptance]]
 text = "Given editors/vscode, when installed, then a minimal language client (vscode-languageclient) starts cadetta lsp for .cdt files, with a setting for the cadetta path, and the task/problem matcher stays as a fallback"
 bound = false
