@@ -61,7 +61,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact value equals 338.1mm"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a member `let`, when evaluated, then it keeps its full analysis form, is readable as a part argument and from other components, and is flagged analysis (language.md 3.3, quantities.md 5.3)"
