@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ['Given `cadetta ack SELECTOR --role R --reason "..."`, when run, then the lock gains an attestation at current closure digests (obligations.md 5)', "Given a selector matching no node or a role not declared, when run, then exit 2 with a message (config-cli.md 2)", "Given a repeat with no digest change, when run, then no lock change is made (obligations.md 3)"]
+new = ['Given `cadetta ack SELECTOR --role R --reason "..."`, when run, then the lock gains an attestation at current closure digests (obligations.md 5)', "Given a selector matching no node or a role not declared, when run, then exit 2 with a message (config-cli.md 2)", "Given a repeat with no digest change, when run, then no lock change is made (obligations.md 3)", "Given ack waiver:GLOB, --as EMAIL or --baseline, when run, then records follow obligations.md 4 and the reason baseline is used (config-cli.md 3)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
