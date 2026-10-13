@@ -1,0 +1,16 @@
+kind = "create"
+title = "Three-valued comparison of toleranced quantities"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4SPWFZP4041AN6YQE08X2AN"
+persona = "design engineer"
+capability = "compare toleranced quantities as holds, violates or undecided"
+outcome_text = "an undecided check is never counted as holding"
+labels = ["creates:crates/cadetta-units/src/compare.rs"]
+scope = ["crates/cadetta-units/src/compare.rs"]
+acceptance = ["Given intervals that overlap the threshold, when compared, then the verdict is undecided", "Given an interval entirely above the threshold, when compared with >, then the verdict is holds"]
+at = "2026-10-13T04:03:51Z"
+actor = "lognd"
+rev = 1
