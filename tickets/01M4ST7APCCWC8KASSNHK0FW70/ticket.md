@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:21:14Z"
+updated = "2026-10-13T08:21:16Z"
 persona = "design engineer"
 capability = "compensate printed holes once, in a process, without hand-adjusting dimensions"
 idempotency_key = "replan13:Processes and drawn versus designed values"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a toleranced process parameter `hole_comp [+-0.05mm]`, when evaluated, then it is one source variable added to the designed value of every parameter its rules touch (language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a parameter without a role under `#![process(Fdm)]`, when evaluated, then it is not compensated; roles have no `#!` default (language.md 3.8)"
