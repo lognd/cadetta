@@ -23,6 +23,10 @@ target = "01M4SWFX4ZH1Q8BJPEEWYEKQJC"
 kind = "blocked-by"
 target = "01M4SWFX82NWXV79EQTA5QX081"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWFXC2K6D3S93F3ER0GZZA"
+
 [[acceptance]]
 text = "Given p in D inside a part, when evaluated, then p is carried through the component's own datums (geometry.md 3)"
 bound = false
