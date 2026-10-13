@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:35:03Z"
-updated = "2026-10-13T13:53:03Z"
+updated = "2026-10-13T13:53:07Z"
 idempotency_key = "wire-lints"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
 
