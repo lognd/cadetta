@@ -68,7 +68,7 @@ pub fn ir_path(p: &CanonPath, range_var: Option<&str>) -> Result<IrPath, String>
     })
 }
 
-fn lower_member(m: &Member, from: &OpSource<'_>) -> Result<IrMember, GeometryError> {
+pub(crate) fn lower_member(m: &Member, from: &OpSource<'_>) -> Result<IrMember, GeometryError> {
     let span = m.value.span;
     let path = ir_path(&m.path, from.range_var).map_err(|message| {
         warn!(%message, "placement member path");
