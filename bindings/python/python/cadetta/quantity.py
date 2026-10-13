@@ -4,7 +4,8 @@
 
 from typani import Err, Ok, Result
 
-from cadetta._core import Quantity, QuantityError
+from cadetta._core import Quantity
+from cadetta.errors import QuantityError
 from cadetta.logging import get_logger
 
 __all__ = ["Quantity", "QuantityError", "quantity"]
