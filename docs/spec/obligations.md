@@ -47,6 +47,8 @@ set of covered nodes. Its level is fixed by what its closure reads:
   carrying the list of instance paths: `wheel[0..3]` with equal
   arguments is one obligation, not four. Instances that differ are
   separate obligations.
+  The obligation id uses the first covered instance path; groups
+  keep first-seen instance order.
 
 ### 2.2 Ids and selectors
 

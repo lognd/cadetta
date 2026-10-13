@@ -6,6 +6,7 @@ pub mod as_of;
 pub mod digest_attrs;
 pub mod graph;
 pub mod kinds;
+pub mod level;
 pub mod lock;
 pub mod lock_merge;
 pub mod lock_package;

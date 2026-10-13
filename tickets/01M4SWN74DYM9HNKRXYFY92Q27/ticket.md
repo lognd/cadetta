@@ -2,7 +2,8 @@
 id = "01M4SWN74DYM9HNKRXYFY92Q27"
 title = "Definition versus instance level grouping"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
