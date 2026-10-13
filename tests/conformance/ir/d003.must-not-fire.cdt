@@ -1,0 +1,4 @@
+model Loop {
+  a = b + 1mm
+  b = 2mm
+}

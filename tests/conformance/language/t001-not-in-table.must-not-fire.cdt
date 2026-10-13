@@ -1,0 +1,11 @@
+cite iso273 = std::iso273
+table Iso273 @iso273 {
+  key d: Length
+  cols pitch: Length
+  5mm => 0.8mm
+  6mm => 1mm
+}
+pub ots Screw @iso273 {
+  major = 5mm
+  pitch = 0.8mm
+}

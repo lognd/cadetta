@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.6",
+  "rule": "T001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "T001",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

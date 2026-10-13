@@ -1,0 +1,4 @@
+use package::nowhere::Thing
+model Part {
+  width = 3mm
+}

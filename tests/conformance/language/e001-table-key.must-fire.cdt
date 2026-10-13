@@ -1,0 +1,4 @@
+table Pitch {
+  cols p: Length
+  M5 => 0.8mm
+}

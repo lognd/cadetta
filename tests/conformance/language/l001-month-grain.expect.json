@@ -1,0 +1,24 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.2",
+  "rule": "lifecycle-month-grain",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "L001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "L001",
+        "severity": "warning"
+      }
+    ]
+  }
+}

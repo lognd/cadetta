@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T16:18:13Z"
+digest = "9c9af0e78385d326f718d68a1f0d86a2a7420c34a669dd1d7b9b832fe8a72a4b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f0ddae47-6674-4211-983e-53ab34866ccb with nextest profile: default
+    Starting 1 test across 3 binaries (168 tests skipped)
+        PASS [   0.071s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.072s] 1 test run: 1 passed, 168 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=unmet_expectation_fails_naming_fixture_doc_and_code)'"
+size = 565
+status = "measured"
+test_count = 1
+tests_digest = "916ae1a9b2cdfe11fff863a1cb090d4584a73af85d673d8e997e6bccd8c387b5"
+at = "2026-10-13T16:18:13Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,3 @@
+model PartThing {
+  width = 3mm
+}

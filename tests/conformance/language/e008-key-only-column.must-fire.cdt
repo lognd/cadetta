@@ -1,0 +1,8 @@
+table Len {
+  key length: Length
+  3mm
+  4mm
+}
+model Part {
+  v = Len.at_least(3.5mm).foo
+}

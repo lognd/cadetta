@@ -1,0 +1,25 @@
+{
+  "spec": "1.4",
+  "doc": "config-cli",
+  "section": "config-cli.md 2 (key notes)",
+  "rule": "fail-on",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "M001",
+        "severity": "warning"
+      }
+    ],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "M001",
+        "severity": "warning"
+      }
+    ],
+    "exit": 0
+  }
+}

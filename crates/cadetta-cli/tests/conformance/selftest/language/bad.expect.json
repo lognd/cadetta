@@ -1,0 +1,6 @@
+{
+  "spec": "1.4", "doc": "language", "section": "selftest", "rule": "E999",
+  "kind": "source",
+  "must_fire": { "diagnostics": [ { "code": "E999", "severity": "error" } ] },
+  "must_not_fire": { "diagnostics": [] }
+}

@@ -317,6 +317,12 @@ error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
 
+The errors in this section and in 3.8 (a non-whole, dimensioned or
+negative count, an unindexed read of an empty array, an index out of
+range, a roll-up with no contributing part or over mixed dimensions, an
+array literal of mixed kinds) carry the internal evaluation code `EVAL`
+(quantities.md); a fractional count such as `part w[2.5]` is Q009.
+
 `N` must be an exact, dimensionless, non-negative whole number. An
 unindexed read of an array whose `N` is 0 is an error, as is an index
 outside `0..N`. `max` and `min` compare nominals and return the whole
@@ -341,7 +347,8 @@ quantity keys, `T.at_least(x)` is the row with the smallest key `>= x`,
 (ties to the larger). Every row has `.key`, so `Din7981Len.at_least(
 stack).key` reads the matched length. A lookup that misses is E007 at
 evaluation. A literal in an `ots` that cites a table but matches none
-of its rows is T001. A row with no `=>` is key-only (`table
+of its rows is T001: the literal equals no key and no column cell of
+any row of the table(s) carrying the same citation. A row with no `=>` is key-only (`table
 Iso4762Len { key length: Length  3mm  4mm  5mm }`); such a table is
 read for its keys (`.at_least(x).key`); reading a column of a
 key-only table, or using `at_least`, `at_most` or `nearest` on a table
@@ -421,7 +428,9 @@ nominal that is not a whole number of nanometres has no table row (F002).
   diameter form is `2 * radial`), `parallel(a, b, allowance, over)` and
   `angle_between(a, b) -> Angle`. `+ -` between an array of points and
   one vector shifts every element (`holes + Vec2(5mm, 0mm)`); array +
-  point is G001. Generators are values with members that bind
+  point is G001, where "point" means a typed point (declared `Point2 on
+D`); an untyped point (before datum typing) is applied per element,
+and an array plus a vector always shifts. Generators are values with members that bind
   (`holes.pitch_x`, `.pitch_y`, `.radius`, `.start`, `.rotation`;
   ir.md 2). Array
   literals are `[a, b, c]`. `aligned(a, b, allowance)` compares two
@@ -614,7 +623,8 @@ value is its arguments joined by `, `, string literals unquoted.
   its instances, and if it has none that is I004, which applies only to
   roots of the package being checked; a private unused parameterized
   component in a library is U002 (packages.md 3), so a shared library
-  is not noisy.
+  is not noisy. An unused private parameterless root is a root: it is
+  evaluated, and is neither U002 nor I004.
 - Case canon (N001): package names `lower.dotted`, modules `snake_case`, types and enum variants
   `PascalCase` (digits allowed: `Iso4762M5`; an underscore between two
   digits is a decimal mark: `M2_5`), everything else
@@ -717,7 +727,8 @@ rule is in obligations.md 4.
 Decisions (cadetta-sema `checks`): a check condition is a comparison
 chain, `x satisfies P`, or `and`, `or` and `not` over those, combined
 with Kleene logic over holds, violates and undecided; a third kind,
-`==` on toleranced values, is C003 (warning). A bound is looked up
+`==` on toleranced values, is C003 (warning), raised in addition to the check's own verdict (an
+undecided `a == 5mm` over a toleranced `a` gives C002 and C003). A bound is looked up
 syntactically, either bare (`P`, in the enclosing component) or as
 `Item.P`, because bounds are not value members; when a parameter and a
 bound share a name, `P.min`/`P.max` read the parameter and `satisfies

@@ -1,0 +1,14 @@
++++
+id = "01M4V1HE1BBZJAMC8BM0YYT3TP"
+title = "Quantities: 20degC - 5degC yields Temperature not TemperatureDelta; affine multiply not rejected"
+type = "bug"
+category = "todo"
+priority = "medium"
+reporter = "lognd"
+created = "2026-10-13T16:29:12Z"
+updated = "2026-10-13T16:29:12Z"
+idempotency_key = "Z48-affine"
+scope = ["crates/cadetta-sema/**"]
++++
+
+found while working ~Z48GXKX. quantities.md 3 (spec sentence added: affine multiply/divide is Q002). Fixture q002-affine-multiply fails; q003-temperature-delta fixture passes today only by accident of the Q003, see the gap.

@@ -1,0 +1,10 @@
+enum G { A, B }
+table Gt {
+  key g: G
+  cols v: Length
+  A => 1mm
+  B => 2mm
+}
+model Part {
+  v = Gt[G::A].v
+}

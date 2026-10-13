@@ -1,0 +1,3 @@
+model Part {
+  check c: true and false or false
+}

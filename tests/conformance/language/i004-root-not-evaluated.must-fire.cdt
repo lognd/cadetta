@@ -1,0 +1,3 @@
+pub model Axle(span: Length) {
+  length = span
+}
