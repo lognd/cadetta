@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T16:22:49Z"
+updated = "2026-10-13T16:31:13Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for obligations"
 labels = ["creates:tests/conformance/obligations/**"]
-scope = ["tests/conformance/obligations/**"]
+scope = ["tests/conformance/obligations/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocks"
