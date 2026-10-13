@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/src/fasteners/screwjoint.cdt", "crates/cadetta-sema/tests/**", "docs/spec/stdlib.md"]
+new = ["std/src/fasteners/screwjoint.cdt", "crates/cadetta-sema/tests/**", "docs/spec/stdlib.md", "crates/cadetta-syntax/tests/std_fasteners_screwjoint.rs"]
+at = "2026-10-13T13:43:57Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-geometry/src/reexpress.rs"]
+new = ["crates/cadetta-geometry/src/reexpress.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
+at = "2026-10-13T13:43:18Z"
+actor = "lognd"
+rev = 1
