@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an inexact value, when inspected, then .exact == False (bindings.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given arithmetic that violates a kind rule, when evaluated, then a Result error carries the same Q-code the compiler reports (bindings.md 3.1, quantities.md)"
