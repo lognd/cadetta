@@ -2,7 +2,8 @@
 id = "01M4SXRV606ZNADV511Z42YR0Q"
 title = "Use resolution order, globs, re-exports and prelude"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
