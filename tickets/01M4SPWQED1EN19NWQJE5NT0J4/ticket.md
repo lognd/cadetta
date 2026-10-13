@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:43:15Z"
+updated = "2026-10-13T07:43:16Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an interface-typed slot, when an instance closure is computed, then it includes the part node's own digest so a swap stales that slot only (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Datum and Placement nodes, when digested, then a moved datum changes the closure of everything that reads through it (ir.md 4; geometry.md 6)"
