@@ -8,10 +8,10 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T21:44:48Z"
-updated = "2026-10-13T22:06:09Z"
+updated = "2026-10-13T22:18:57Z"
 idempotency_key = "d15:py-models-check"
 labels = ["creates:bindings/python/scripts/gen_models.py", "creates:grimble.lock"]
-scope = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py", "design/model.grmb", "grimble.lock"]
+scope = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py", "design/model.grmb", "grimble.lock", "bindings/python/tests/test_gen_models.py", "bindings/python/pyproject.toml", "bindings/python/uv.lock"]
 
 [[acceptance]]
 text = "Given bindings/python/scripts/gen_models.py, when run, then it regenerates every cadetta.models module from docs/schemas with the recorded datamodel-codegen options, and --check exits non-zero when a committed model is stale; the binding CI job runs the check"
