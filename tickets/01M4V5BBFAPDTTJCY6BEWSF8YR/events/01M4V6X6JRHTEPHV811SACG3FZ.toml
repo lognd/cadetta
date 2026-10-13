@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a bindings file with a dimension locator or mode=ref for the json adapter, when the spec is read, then emitters/json.md states whether emit skips, emits or rejects it and with which code"]
+new = ["Given a bindings file with a dimension locator or mode=ref for the json adapter, when the spec is read, then emitters/json.md states whether emit skips, emits or rejects it and with which code", "Given a dimension, property or frame locator, or a mode=ref binding, bound to a path the json or csv adapter must emit, when emit runs, then it is the error R015 naming the path and locator, the file is withheld and exit is 1", "Given the conformance corpus, when run, then json and csv have R015 pairs including a not-fire where the same locator is filtered out or unbound"]
+moved = [1]
+at = "2026-10-13T18:03:00Z"
+actor = "lognd"
+rev = 1
