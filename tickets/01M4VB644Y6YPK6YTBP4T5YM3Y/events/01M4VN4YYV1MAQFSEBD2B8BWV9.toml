@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/names.rs", "crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/schemas/names.json", "docs/schemas/bind.json", "tests/conformance/config-cli/**", "crates/cadetta-cli/src/cmd/names.rs", "crates/cadetta-cli/src/cmd/bind.rs", "docs/schemas/names.json", "docs/schemas/bind.json"]
+new = ["crates/cadetta-cli/src/cmd/names.rs", "crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/schemas/names.json", "docs/schemas/bind.json", "tests/conformance/config-cli/**", "crates/cadetta-cli/src/cmd/names.rs", "crates/cadetta-cli/src/cmd/bind.rs", "docs/schemas/names.json", "docs/schemas/bind.json", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-adapter/src/bindings.rs", "docs/spec/config-cli.md"]
+at = "2026-10-13T22:11:46Z"
+actor = "lognd"
+rev = 1
