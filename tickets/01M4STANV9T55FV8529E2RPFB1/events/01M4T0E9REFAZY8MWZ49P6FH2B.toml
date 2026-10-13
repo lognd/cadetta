@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:50:46Z"
+digest = "8daacb8a418da1ca13b640cc1f0070192b078a0e2ec226394cc526ad68f7e893"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0a6b4f2e-a845-40c3-9fd6-5cc056e3e726 with nextest profile: default
+    Starting 1 test across 14 binaries (209 tests skipped)
+        PASS [   0.010s] cadetta pkg::manifest::tests::std_ships_as_an_ordinary_package_at_0_1_0
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 1 test run: 1 passed, 209 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=pkg::manifest::tests::std_ships_as_an_ordinary_package_at_0_1_0)'"
+size = 617
+status = "measured"
+test_count = 1
+tests_digest = "e911203deadeb12519243be4163d837e6c03b82f6ccb4c8e010368f55ef78d41"
+at = "2026-10-13T06:50:46Z"
+actor = "lognd"
+rev = 1
