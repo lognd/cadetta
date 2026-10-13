@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:18:44Z"
+updated = "2026-10-13T08:18:45Z"
 persona = "design engineer"
 capability = "see when a primary reaches end of life and which alternate can replace it"
 idempotency_key = "replan13:Lifecycle attribute and replacement candidates"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given status active, when recorded, then the date means last verified (language.md 3.2)"
-bound = false
+bound = true
 +++
