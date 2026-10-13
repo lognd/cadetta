@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T12:46:48Z"
+updated = "2026-10-13T12:47:38Z"
 persona = "design engineer"
 capability = "adopt an existing CAD model"
 idempotency_key = "replan14:ad-imp-prop"
 labels = ["creates:crates/cadetta-adapter/src/import/propose.rs"]
-scope = ["crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-adapter/src/import/mod.rs", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml"]
+scope = ["crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-adapter/src/import/mod.rs", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml", "design/model.grmb"]
 
 [[links]]
 kind = "blocked-by"
