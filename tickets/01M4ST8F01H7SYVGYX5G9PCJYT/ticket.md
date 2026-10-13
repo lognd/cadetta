@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:35:00Z"
+updated = "2026-10-13T08:39:22Z"
 persona = "design engineer"
 capability = "declare which sign-offs gate check and release"
 idempotency_key = "replan13:Roles, policy and release gating"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-obligations/src/roles.rs"]
 
 [[acceptance]]
 text = 'Given `[obligations.roles.R] covers = ["fit:*", "check:*"]`, when matched, then selectors like fit:*, check:* and ots:* cover the right nodes (obligations.md 4)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given stale or open obligations with required_for = "check", when gating, then the result fails; release roles fail only under `--release` (obligations.md 4)'
