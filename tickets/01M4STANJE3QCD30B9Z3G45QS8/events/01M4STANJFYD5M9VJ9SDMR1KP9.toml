@@ -1,0 +1,15 @@
+kind = "create"
+title = "Python solver helper package"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
+idempotency_key = "replan13:Python solver helper package"
+labels = ["creates:helpers/python/**"]
+scope = ["helpers/python/**"]
+acceptance = ["Given the helper is published, when used, then it speaks cadetta.solve/1 (solvers.md 3)"]
+body = "solvers.md says the helper is non-normative and may be published later."
+at = "2026-10-13T05:03:55Z"
+actor = "lognd"
+rev = 1
