@@ -6,7 +6,7 @@ category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T08:49:13Z"
-updated = "2026-10-13T08:51:26Z"
+updated = "2026-10-13T08:52:14Z"
 scope = ["crates/cadetta-geometry/src/placement.rs"]
 
 [[acceptance]]
