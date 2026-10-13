@@ -1,0 +1,10 @@
+kind = "create"
+title = "Evaluate #![requires(arg, when = cond)] as E006 missing argument"
+type = "story"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~XCK8EGP: tap = Vendor without depth_available must be E006; attribute is parsed only."
+at = "2026-10-13T23:32:59Z"
+actor = "lognd"
+rev = 1
