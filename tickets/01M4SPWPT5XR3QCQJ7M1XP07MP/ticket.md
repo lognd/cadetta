@@ -2,13 +2,14 @@
 id = "01M4SPWPT5XR3QCQJ7M1XP07MP"
 title = "Check statements with three-valued verdicts"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:03:12Z"
+updated = "2026-10-13T08:03:56Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"

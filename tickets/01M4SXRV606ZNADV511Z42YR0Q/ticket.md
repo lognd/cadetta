@@ -8,11 +8,11 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T08:03:43Z"
+updated = "2026-10-13T08:18:09Z"
 persona = "product engineer"
 capability = "import shop policy and parts by name"
 labels = ["creates:crates/cadetta-sema/src/imports.rs"]
-scope = ["crates/cadetta-sema/src/imports.rs"]
+scope = ["crates/cadetta-sema/src/imports.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/packages.md"]
 
 [[links]]
 kind = "blocked-by"

@@ -308,8 +308,27 @@ signed deviation. A tolerance written inside a larger expression or a
 `let` owns an anonymous source variable. Evaluation failures with no
 spec code (division by a divisor containing zero, mixed `pi` exponents,
 a construct evaluated by a later stage) carry the internal code `EVAL`.
-Parameterized components are evaluated only as instances, and inexact
-values (`sqrt`, trigonometry) are not yet represented by evaluation.
+Parameterized components are evaluated only as instances.
+
+Standard functions (language.md 3.8) follow these rules. An inexact value
+(`sqrt` of a non-square, `sin`, `cos`, `tan`, `atan2` off the special
+angles) is carried as an `f64` nominal with an outward-widened
+conservative interval and its root operation (Q006). It supports
+`+ - * /`, negation, `min`, `max`, `abs` and `round_to`, `ceil_to`,
+`floor_to`; any other use as a quantity is an `EVAL` error telling the
+author to round it first. `sqrt` needs a dimension whose exponents are
+all even (Q011) and is exact only for an exact form and exact value.
+Trigonometric arguments must be angles (Q002); `tan` at a pole and
+`atan2(0, 0)` are `EVAL`. `min` and `max` return a certain winner
+unchanged (keeping its source variables), otherwise the interval hull
+under a fresh variable. `floor`, `ceil`, `round` take dimensionless
+values; `round` is half away from zero. `count` returns the length of
+an array. `fmt` substitutes `{}` positionally (`{{` and `}}` escape);
+a placeholder/argument mismatch is E006. A quantity renders in its
+authored unit when one is syntactically visible, else in SI base units;
+attribute-driven display is applied by the output stages. Recursion,
+direct or mutual, is rejected with `EVAL` at the function's name. A
+non-exhaustive `match` is E009 naming each missing variant.
 
 ### 5.4 Evaluation is affine
 
