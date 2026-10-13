@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition", "Given `@emit(mid)`, when parsed, then the attribute attaches to the next parameter", "Given `was shaft_d`, when parsed, then the rename is recorded on the parameter"]
+new = ["Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition (language.md 5)", "Given the precedence list in language.md 5, when parsed, then postfix > unary - > ^ > * / > + - > .. > as > comparisons", "Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]`, `20mm H7` and `x j5`, when parsed, then tolerance and ISO class postfixes attach to the operand (quantities.md 5.1)", "Given `a[0]` and `a [+-0.1mm]`, when parsed, then the first is indexing and the second a tolerance because the bracket starts with + or - (quantities.md 5.1)", "Given `4mm <= x <= 6mm` and `x satisfies P`, when parsed, then chained comparison and satisfies nodes result (language.md 5, 6)", "Given `if`, `match` and `{ let a = 1mm; a }`, when parsed, then each is an expression (language.md 5)", "Given `#[emit(mid)]` trailing a member and `#![emit(nominal), display(mm)]` in a component, when parsed, then they attach as member and scope attributes (language.md 3.11)", 'Given `was Globals.plate_thk` and `@vendor:"p.2, table 1"`, when parsed, then the rename and the citation with locator are recorded (language.md 3.3, 3.9)', "Given `sum?(self, unit_cost)`, `Iso273[thread].medium` and `T.at_least(x).key`, when parsed, then the calls and lookups parse (language.md 3.5, 3.6)"]
+moved = [0, 0, 0]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
