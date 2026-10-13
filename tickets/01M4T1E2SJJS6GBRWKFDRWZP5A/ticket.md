@@ -6,7 +6,7 @@ category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T07:08:07Z"
-updated = "2026-10-13T07:11:05Z"
+updated = "2026-10-13T07:12:01Z"
 scope = ["crates/cadetta-fits/src/tables.rs"]
 +++
 
