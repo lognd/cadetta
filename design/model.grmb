@@ -51,6 +51,8 @@ node cli : trusted {
   may fs.read at "crates/cadetta-cli/**";
   may fs.write at "crates/cadetta-cli/src/project.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).

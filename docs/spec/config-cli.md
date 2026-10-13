@@ -203,6 +203,15 @@ writes the `[[adapter]]` block (command, `files` globs, `save`,
 `[package]` and `src/lib.cdt`; the package name defaults to the
 directory name, normalised, and is echoed.
 
+Decided (0.1.0): `fmt` rewrites every `.cdt` file of the scoped
+packages in place and prints `reformatted FILE`; `fmt --check` writes
+nothing, prints `would reformat FILE` per differing file and exits 1. A
+file with syntax errors cannot be formatted: it is reported on stderr and
+the run exits 2. `init --adapter freecad` writes an external
+`cadetta-freecad` block (`files = ["**/*.FCStd"]`); `sw-equations`
+writes the built-in block with `out = "build/solidworks/equations.txt"`.
+The hello-world item is `model Hello { size: Length = 10mm }`.
+
 ### 3.3 Selectors
 
 `SELECTOR` is `KIND:GLOB[,KIND:GLOB...]` over obligation ids

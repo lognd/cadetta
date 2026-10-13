@@ -162,6 +162,8 @@ pub fn parse_globals(
 enum Command {
     Version,
     Cite(Vec<String>),
+    Init(Vec<String>),
+    Fmt(Vec<String>),
     Unknown(String),
 }
 
@@ -170,6 +172,8 @@ fn parse(args: &[String]) -> Command {
     match args.first().map(String::as_str) {
         Some("--version" | "-V") | None => Command::Version,
         Some("cite") => Command::Cite(args[1..].to_vec()),
+        Some("init") => Command::Init(args[1..].to_vec()),
+        Some("fmt") => Command::Fmt(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -207,6 +211,8 @@ pub fn run_with_env(
             }
         },
         Command::Cite(rest) => cmd::run_cite(&rest, &globals, out, err),
+        Command::Init(rest) => cmd::run_init(&rest, &globals, out, err),
+        Command::Fmt(rest) => cmd::run_fmt(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE
