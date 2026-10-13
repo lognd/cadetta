@@ -1,0 +1,114 @@
+// std::fits: ISO 286 limits and fits, as data (stdlib.md 1, 2).
+//
+// Every value is cited to ISO 286-1:2010 (limits and fits, basis of
+// tolerances, deviations and fits) and ISO 286-2:2010 (tables of
+// standard tolerance grades and limit deviations of holes and shafts). Sizes are in
+// millimetres and micrometres as the standard prints them.
+//
+// Keys are the UPPER bound of a size range: a range is (lo, hi], so
+// `T.at_least(size).key` is the range holding `size` (language.md 3.6).
+// A size outside (0, 500] mm misses every table: F002 (language.md 3.7).
+//
+// Rules the compiler applies on top of these tables (ISO 286-1 section 4):
+//   - Tolerance width of class `<letter><n>` is `ItGrade` column `it<n>`.
+//   - Shaft h, g, f, e, d, c: upper deviation es from `ShaftUpper`
+//     (c from `ShaftUpperC`), lower deviation ei = es - IT.
+//   - Shaft j, k, m, n, p: lower deviation ei from `ShaftLower`,
+//     upper deviation es = ei + IT. j is tabulated for IT5 to IT7 only;
+//     k is `k_4_7` for IT4 to IT7 and 0 for every other grade.
+//   - Shaft js and hole JS: exactly +-IT/2 (no rounding of odd widths).
+//   - Hole letters (uppercase) mirror the shaft of the same letter:
+//     EI = -es for C to H, so H has EI = 0 and ES = IT.
+//
+// Column naming: `it7` is IT7; `j_5_6` covers grades 5 and 6.
+
+/// The citation every table here carries: ISO 286-1:2010 and 286-2:2010.
+pub cite iso286 = "ISO 286-1:2010, ISO 286-2:2010"
+
+/// Standard tolerance grades IT1 to IT18 by nominal size range, width in um (ISO 286-1 table 1).
+pub table ItGrade @iso286:"table 1" {
+  key hi: Length
+  cols it1: Length, it2: Length, it3: Length, it4: Length, it5: Length, it6: Length, it7: Length, it8: Length, it9: Length, it10: Length, it11: Length, it12: Length, it13: Length, it14: Length, it15: Length, it16: Length, it17: Length, it18: Length
+  3mm => 0.8um, 1.2um, 2um, 3um, 4um, 6um, 10um, 14um, 25um, 40um, 60um, 100um, 140um, 250um, 400um, 600um, 1000um, 1400um
+  6mm => 1um, 1.5um, 2.5um, 4um, 5um, 8um, 12um, 18um, 30um, 48um, 75um, 120um, 180um, 300um, 480um, 750um, 1200um, 1800um
+  10mm => 1um, 1.5um, 2.5um, 4um, 6um, 9um, 15um, 22um, 36um, 58um, 90um, 150um, 220um, 360um, 580um, 900um, 1500um, 2200um
+  18mm => 1.2um, 2um, 3um, 5um, 8um, 11um, 18um, 27um, 43um, 70um, 110um, 180um, 270um, 430um, 700um, 1100um, 1800um, 2700um
+  30mm => 1.5um, 2.5um, 4um, 6um, 9um, 13um, 21um, 33um, 52um, 84um, 130um, 210um, 330um, 520um, 840um, 1300um, 2100um, 3300um
+  50mm => 1.5um, 2.5um, 4um, 7um, 11um, 16um, 25um, 39um, 62um, 100um, 160um, 250um, 390um, 620um, 1000um, 1600um, 2500um, 3900um
+  80mm => 2um, 3um, 5um, 8um, 13um, 19um, 30um, 46um, 74um, 120um, 190um, 300um, 460um, 740um, 1200um, 1900um, 3000um, 4600um
+  120mm => 2.5um, 4um, 6um, 10um, 15um, 22um, 35um, 54um, 87um, 140um, 220um, 350um, 540um, 870um, 1400um, 2200um, 3500um, 5400um
+  180mm => 3.5um, 5um, 8um, 12um, 18um, 25um, 40um, 63um, 100um, 160um, 250um, 400um, 630um, 1000um, 1600um, 2500um, 4000um, 6300um
+  250mm => 4.5um, 7um, 10um, 14um, 20um, 29um, 46um, 72um, 115um, 185um, 290um, 460um, 720um, 1150um, 1850um, 2900um, 4600um, 7200um
+  315mm => 6um, 8um, 12um, 16um, 23um, 32um, 52um, 81um, 130um, 210um, 320um, 520um, 810um, 1300um, 2100um, 3200um, 5200um, 8100um
+  400mm => 7um, 9um, 13um, 18um, 25um, 36um, 57um, 89um, 140um, 230um, 360um, 570um, 890um, 1400um, 2300um, 3600um, 5700um, 8900um
+  500mm => 8um, 10um, 15um, 20um, 27um, 40um, 63um, 97um, 155um, 250um, 400um, 630um, 970um, 1550um, 2500um, 4000um, 6300um, 9700um
+}
+
+/// Shaft upper deviation es for d e f g h by size range, um (ISO 286-1 table 2; h is 0).
+pub table ShaftUpper @iso286:"table 2" {
+  key hi: Length
+  cols d: Length, e: Length, f: Length, g: Length, h: Length
+  3mm => -20um, -14um, -6um, -2um, 0um
+  6mm => -30um, -20um, -10um, -4um, 0um
+  10mm => -40um, -25um, -13um, -5um, 0um
+  18mm => -50um, -32um, -16um, -6um, 0um
+  30mm => -65um, -40um, -20um, -7um, 0um
+  50mm => -80um, -50um, -25um, -9um, 0um
+  80mm => -100um, -60um, -30um, -10um, 0um
+  120mm => -120um, -72um, -36um, -12um, 0um
+  180mm => -145um, -85um, -43um, -14um, 0um
+  250mm => -170um, -100um, -50um, -15um, 0um
+  315mm => -190um, -110um, -56um, -17um, 0um
+  400mm => -210um, -125um, -62um, -18um, 0um
+  500mm => -230um, -135um, -68um, -20um, 0um
+}
+
+/// Shaft upper deviation es for c, which uses the finer 25-range split, um (ISO 286-1 table 2).
+pub table ShaftUpperC @iso286:"table 2" {
+  key hi: Length
+  cols c: Length
+  3mm => -60um
+  6mm => -70um
+  10mm => -80um
+  14mm => -95um
+  18mm => -95um
+  24mm => -110um
+  30mm => -110um
+  40mm => -120um
+  50mm => -130um
+  65mm => -140um
+  80mm => -150um
+  100mm => -170um
+  120mm => -180um
+  140mm => -200um
+  160mm => -210um
+  180mm => -230um
+  200mm => -240um
+  225mm => -260um
+  250mm => -280um
+  280mm => -300um
+  315mm => -330um
+  355mm => -360um
+  400mm => -400um
+  450mm => -440um
+  500mm => -480um
+}
+
+/// Shaft lower deviation ei for j (IT5-6, IT7) and k (IT4-7), m, n, p, um (ISO 286-1 tables 2 and 3).
+pub table ShaftLower @iso286:"tables 2 and 3" {
+  key hi: Length
+  cols j_5_6: Length, j_7: Length, k_4_7: Length, m: Length, n: Length, p: Length
+  3mm => -2um, -4um, 0um, 2um, 4um, 6um
+  6mm => -2um, -4um, 1um, 4um, 8um, 12um
+  10mm => -2um, -5um, 1um, 6um, 10um, 15um
+  18mm => -3um, -6um, 1um, 7um, 12um, 18um
+  30mm => -4um, -8um, 2um, 8um, 15um, 22um
+  50mm => -5um, -10um, 2um, 9um, 17um, 26um
+  80mm => -7um, -12um, 2um, 11um, 20um, 32um
+  120mm => -9um, -15um, 3um, 13um, 23um, 37um
+  180mm => -11um, -18um, 3um, 15um, 27um, 43um
+  250mm => -13um, -21um, 4um, 17um, 31um, 50um
+  315mm => -16um, -26um, 4um, 20um, 34um, 56um
+  400mm => -18um, -28um, 4um, 21um, 37um, 62um
+  500mm => -20um, -32um, 5um, 23um, 40um, 68um
+}
