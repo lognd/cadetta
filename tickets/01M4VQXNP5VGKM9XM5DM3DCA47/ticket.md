@@ -8,8 +8,8 @@ points = 2
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-13T23:22:02Z"
-scope = ["docs/spec/**"]
+updated = "2026-10-13T23:22:08Z"
+scope = ["docs/spec/**", "tests/conformance/adapters/scope-*", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Spec and fixtures agree; adapters/scope-* fixtures pass."
