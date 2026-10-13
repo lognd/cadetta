@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:56:07Z"
+digest = "2e05dc025688e3c096ce32a99c032c26c57c6261ed6e671f09df45f6a5265610"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1f2ff004-7a99-4d80-bf31-0f7ed4bbfd7b with nextest profile: default
+    Starting 5 tests across 29 binaries (1004 tests skipped)
+        PASS [   0.017s] cadetta cmd::cite::tests::bibtex_maps_types_and_fields
+        PASS [   0.020s] cadetta cmd::cite::tests::list_format_parses
+        PASS [   0.029s] cadetta tests::cite_list_keeps_its_own_format_flag
+        PASS [   0.061s] cadetta cmd::cite::tests::list_bibtex_is_keyed_by_canonical_path
+        PASS [   0.072s] cadetta cmd::cite::tests::list_json_validates_against_the_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.078s] 5 tests run: 5 passed, 1004 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cmd::cite::tests::bibtex cmd::cite::tests::list_bibtex cmd::cite::tests::list_json cmd::cite::tests::list_format cite_list_keeps"
+size = 878
+status = "measured"
+test_count = 5
+tests_digest = "ee3d940d96b1109408816110c3e5b8e2882befa0fde3247fcd3c5f6f4aef5c84"
+at = "2026-10-13T22:56:07Z"
+actor = "lognd"
+rev = 1
