@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:54Z"
+updated = "2026-10-13T05:41:55Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
 labels = ["creates:std/fasteners/screwjoint_float.cdt", "creates:crates/cadetta-geometry/src/float.rs"]
 scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG6XQ2M0GR620Q6MJE3XF"
 
 [[acceptance]]
 text = "Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)"
