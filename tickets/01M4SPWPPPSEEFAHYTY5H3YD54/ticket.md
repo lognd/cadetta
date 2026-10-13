@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:28:13Z"
+updated = "2026-10-13T07:28:14Z"
 persona = "design engineer"
 capability = "evaluate every parameter to a quantity"
 outcome_text = "derived values are exact and usable by lints and emitters"
@@ -69,7 +69,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a parameter assigned from arithmetic, when evaluated, then it stores the nominal and only its own written tolerance (quantities.md 5.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a pure reference parameter, when evaluated, then it aliases the referent source variable (quantities.md 5.3)"
