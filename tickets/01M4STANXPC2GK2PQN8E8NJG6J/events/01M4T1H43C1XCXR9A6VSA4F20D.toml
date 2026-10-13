@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:09:31Z"
+digest = "6e52786efa659ecdd39b04473d267960bd3cfd19af0294f03abf91ddcaa30821"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.73s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9ab848f9-f3aa-444f-85ff-d14511e017bf with nextest profile: default
+    Starting 1 test across 16 binaries (265 tests skipped)
+        PASS [   0.016s] cadetta-syntax::std_fits deviations_match_published_iso286
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 1 test run: 1 passed, 265 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=deviations_match_published_iso286)'"
+size = 683
+status = "measured"
+test_count = 1
+tests_digest = "496a36180fcffd6c58f4e647629392d6b24a18f5f01dc5a1fcbe990792c6439a"
+at = "2026-10-13T07:09:31Z"
+actor = "lognd"
+rev = 1

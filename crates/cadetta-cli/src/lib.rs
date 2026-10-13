@@ -11,6 +11,7 @@ mod env;
 pub mod output;
 pub mod pkg;
 pub mod project;
+pub mod scope;
 
 use std::path::PathBuf;
 

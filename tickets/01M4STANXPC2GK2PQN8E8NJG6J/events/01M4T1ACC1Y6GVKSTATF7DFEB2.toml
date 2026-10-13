@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/E8NJG6J; scope: std/src/fits.cdt; ttl 7200s"
+at = "2026-10-13T07:06:06Z"
+actor = "lognd"
+rev = 1

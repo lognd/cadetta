@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T07:09:26Z"
+digest = "2cf50af89b0b813880535c3c8677c963d3528ff02e12fc2ed91aaba229a7f911"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6909b555-2ead-4d09-b40b-82bac1a33825 with nextest profile: default
+    Starting 3 tests across 15 binaries (267 tests skipped)
+        PASS [   0.013s] cadetta cmd::init::tests::creates_missing_files_only_and_echoes_name
+        PASS [   0.017s] cadetta cmd::init::tests::bare_omits_hello_world_and_both_forms_format_clean
+        PASS [   0.034s] cadetta cmd::init::tests::adapter_blocks_load_and_solidworks_prints_install_line
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.036s] 3 tests run: 3 passed, 267 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=cmd::init::tests::creates_missing_files_only_and_echoes_name) | test(=cmd::init::tests::adapter_blocks_load_and_solidworks_prints_install_line) | test(=cmd::init::tests::bare_omits_hello_world_and_both_forms_format_clean)'"
+size = 772
+status = "measured"
+test_count = 3
+tests_digest = "f12fe2b018ae070e25d8e90d52d3f4fdbbc338b4243029ae6993271b36ade0be"
+at = "2026-10-13T07:09:26Z"
+actor = "lognd"
+rev = 1
