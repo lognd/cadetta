@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Inexact values (sqrt, trig, non-integer powers)"
+new = "Inexact values and rounding (sqrt, trig, round_to)"
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
