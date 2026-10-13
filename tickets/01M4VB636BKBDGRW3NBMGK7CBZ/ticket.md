@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:36:07Z"
+updated = "2026-10-13T22:36:20Z"
 persona = "design engineer"
 capability = "place parts with a verb that does not suggest contact and place arrays without index plumbing"
 outcome_text = "placements read the way parts sit"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a part placed twice or an array partly placed instance by instance, when checked, then G006 and G007 fire as geometry.md 4 states"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the golden corpus and geometry fixtures, when run, then they use place at and pass"
