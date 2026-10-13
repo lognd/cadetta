@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:49:09Z"
+updated = "2026-10-13T06:49:10Z"
 persona = "design engineer"
 capability = "reference parameters as `Other.param` or `part.param`"
 outcome_text = "every value has one canonical path such as acme.rover::Axle.end_diameter"
@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `Other.param`, when resolved, then the same module is searched before imported names (packages.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a canonical path package::module::Item.member, when resolved, then it matches ir.md 2 and packages.md 2"
