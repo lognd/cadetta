@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:46:38Z"
+updated = "2026-10-13T08:46:42Z"
 persona = "design engineer"
 capability = "place parts in a tree"
 idempotency_key = "replan14:geo-place"
@@ -29,7 +29,7 @@ target = "01M4SWFX4ZH1Q8BJPEEWYEKQJC"
 
 [[acceptance]]
 text = "Given 'place bracket.base on rail.site', when evaluated, then datum frames coincide, z directions included (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a chain that returns to a placed part, when evaluated, then G002 is raised (geometry.md 4, 7)"
