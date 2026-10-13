@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T08:23:25Z"
+updated = "2026-10-13T08:24:53Z"
 persona = "design engineer"
 capability = "name a primary part and approved alternates for a slot"
 idempotency_key = "replan13:Interface-typed part slots with primary and alt list"
 labels = ["creates:crates/cadetta-variants/src/slot.rs"]
-scope = ["crates/cadetta-variants/src/slot.rs"]
+scope = ["crates/cadetta-variants/src/slot.rs", "crates/cadetta-variants/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
