@@ -1,0 +1,16 @@
+kind = "create"
+title = "Tolerances and worst-case interval arithmetic"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWFZP4041AN6YQE08X2AN"
+persona = "design engineer"
+capability = "attach symmetric, asymmetric, limit and fit tolerances to quantities and add them"
+outcome_text = "stacked deviations are computed exactly"
+labels = ["creates:crates/cadetta-units/src/tolerance.rs"]
+scope = ["crates/cadetta-units/src/tolerance.rs"]
+acceptance = ["Given `10mm +- 0.05mm` plus `5mm +0.1mm -0.02mm`, when added, then the deviations add (worst case)", "Given two toleranced quantities, when multiplied, then Q005 is signalled", "Given lower > upper, when constructed, then it is rejected"]
+at = "2026-10-13T04:03:51Z"
+actor = "lognd"
+rev = 1
