@@ -137,6 +137,7 @@ dependencies = [
  "cadetta-ir",
  "cadetta-units",
  "serde",
+ "serde_json",
  "toml",
  "tracing",
 ]
