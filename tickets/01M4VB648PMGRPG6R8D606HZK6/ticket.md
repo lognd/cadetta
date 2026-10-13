@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a read-back tolerance that differs, when synced, then it is classified in the same three-way record as the value and reported as R001 (adapters.md 3.6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given initialize, when parsed, then the features list is accepted and validated against docs/schemas/adapter-protocol.json (adapters.md 5)"
