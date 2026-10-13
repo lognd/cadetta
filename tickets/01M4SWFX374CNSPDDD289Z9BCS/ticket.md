@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:14:42Z"
+updated = "2026-10-13T07:14:48Z"
 persona = "design engineer"
 capability = "declare datums on a component"
 idempotency_key = "replan14:geo-datum"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given flip(x), when evaluated, then it equals rotate(x = 180deg) and reverses the normal (geometry.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a function parameter of type Datum, when called with a datum name, then it type-checks (geometry.md 2)"
