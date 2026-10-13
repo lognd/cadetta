@@ -1,0 +1,14 @@
+kind = "create"
+title = "Lint catalog (cadetta-lint)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:crates/cadetta-lint/**"]
+scope = ["crates/cadetta-lint/**"]
+body = """
+Outcome: every rule in docs/spec/lints.md implemented with fixtures and waiver handling.
+
+Success metric: each code Q001..W004 has positive and negative fixtures under tests/lints/<code>/."""
+at = "2026-10-13T04:03:46Z"
+actor = "lognd"
+rev = 1
