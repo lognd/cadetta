@@ -82,6 +82,7 @@ dependencies = [
 name = "cadetta-fits"
 version = "0.0.0"
 dependencies = [
+ "cadetta-syntax",
  "thiserror",
  "tracing",
 ]
