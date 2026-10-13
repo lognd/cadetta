@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given lengths and masses, when added, then a dimension mismatch is returned as an error value, not a panic (quantities.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a currency unit such as USD, when its dimension is built, then it is its own base dimension beyond the seven SI ones (quantities.md 1, 3)"
