@@ -1,0 +1,15 @@
+kind = "create"
+title = "OQ-8: drive with a session holding unsaved changes"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-8 from the spec. Closes with an ADR in docs/decisions/.
+
+Question: How `drive` handles a CAD session the user has open with unsaved changes.
+
+Recommendation: Refuse and report, never save on the user's behalf."""
+at = "2026-10-13T04:04:07Z"
+actor = "lognd"
+rev = 1
