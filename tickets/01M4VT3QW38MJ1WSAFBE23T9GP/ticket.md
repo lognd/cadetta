@@ -2,13 +2,13 @@
 id = "01M4VT3QW38MJ1WSAFBE23T9GP"
 title = "obligations ack fixtures depend on the developer's git email (CI red)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 1
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:38:37Z"
-updated = "2026-10-13T23:38:37Z"
+updated = "2026-10-13T23:38:38Z"
 scope = ["tests/conformance/obligations/**"]
 
 [[acceptance]]
