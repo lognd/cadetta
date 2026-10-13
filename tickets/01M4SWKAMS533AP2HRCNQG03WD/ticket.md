@@ -25,7 +25,7 @@ target = "01M4STCCZ58C875BTMQ9E54BMT"
 
 [[acceptance]]
 text = "Given a stale sync obligation, when linted, then O004 is info by default and gated by [obligations.kinds.sync] required_for (lints.md 3 O; obligations.md 2.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver or eol date within expiry_warn_days (default 30) of --as-of, when linted, then W005 info fires; allow is excluded (lints.md 2.1, 2.2)"
