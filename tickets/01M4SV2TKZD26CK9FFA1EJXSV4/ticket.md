@@ -16,6 +16,10 @@ scope = ["adapters/solidworks/src/read.py"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4ST7B09TGN6VSXJBZ8FDVCN"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 
 [[acceptance]]
