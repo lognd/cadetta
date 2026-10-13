@@ -2,18 +2,19 @@
 id = "01M4SPWNNDNT60Z38K24AEKVAE"
 title = "Tolerances as affine forms over source variables"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:20:49Z"
+updated = "2026-10-13T06:21:00Z"
 persona = "design engineer"
 capability = "attach symmetric, asymmetric, limit and fit tolerances to quantities and add them"
 outcome_text = "stacked deviations are computed exactly"
 labels = ["creates:crates/cadetta-units/src/tolerance.rs"]
-scope = ["crates/cadetta-units/src/tolerance.rs", "crates/cadetta-units/src/lib.rs"]
+scope = ["crates/cadetta-units/src/tolerance.rs", "crates/cadetta-units/src/lib.rs", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"
