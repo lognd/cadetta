@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Blocked: cadetta-syntax, cadetta-units and cadetta-ir/sema are empty scaffolds on main (3-line lib.rs), so interface member kinds, bounds and quantities have no types to build on. Not implemented to avoid parallel type definitions. Retry once syntax AST, units quantity kernel and IR entities land."
+at = "2026-10-13T06:09:07Z"
+actor = "lognd"
+rev = 1
