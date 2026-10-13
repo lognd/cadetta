@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T04:03:52Z"
+updated = "2026-10-13T04:03:58Z"
 persona = "design engineer"
 capability = "evaluate every parameter to a quantity"
 outcome_text = "derived values are exact and usable by lints and emitters"
 labels = ["creates:crates/cadetta-sema/src/eval.rs"]
 scope = ["crates/cadetta-sema/src/eval.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWPT5XR3QCQJ7M1XP07MP"
 
 [[acceptance]]
 text = "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact rational is 1.9m * ... equal to 338.1mm"
