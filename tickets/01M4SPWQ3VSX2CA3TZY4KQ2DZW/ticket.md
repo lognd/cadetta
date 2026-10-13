@@ -4,11 +4,11 @@ title = "IR data model types"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 5
+points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T04:03:59Z"
+updated = "2026-10-13T05:01:23Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -24,10 +24,26 @@ kind = "blocks"
 target = "01M4SPWQED1EN19NWQJE5NT0J4"
 
 [[acceptance]]
-text = "Given design and observed flavours, when constructed, then both use the same Project type with flavour set"
+text = "Given design and observed flavours, when constructed, then both use the same Project type with flavour set (ir.md 1)"
 bound = false
 
 [[acceptance]]
-text = "Given a Value, when built, then it holds nominal, optional lower/upper rationals, exact and authored_unit"
+text = "Given the entity list in ir.md 3, when modelled, then Project, Component, Member, Value, Exact, Inexact, Affine, Bound, Part, Fit, Check, Solver, Citation, Provenance and Binding exist with the listed fields"
+bound = false
+
+[[acceptance]]
+text = "Given a Value, when built, then it holds nominal (Exact or Inexact), angle, optional Affine tol, conservative, optional designed and authored (ir.md 3)"
+bound = false
+
+[[acceptance]]
+text = 'Given a Member, when built, then it carries the analysis flag, deps, optional variants keyed "slot=alternate", digest and closure (ir.md 3)'
+bound = false
+
+[[acceptance]]
+text = "Given a Binding, when built, then it holds a list of locators each with kind (global|dimension|property), mode (value|ref) and native_unit (ir.md 3, adapters.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given a Check, when built, then it holds verdicts for the primary and per alternate and waived_for (ir.md 3)"
 bound = false
 +++
