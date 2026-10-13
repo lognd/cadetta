@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:34:37Z"
+updated = "2026-10-13T08:34:38Z"
 persona = "design engineer"
 capability = "see worst-case checks over the tolerance of every source variable they reach"
 idempotency_key = "replan13:Affine tolerance evaluation with source variables"
@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a nonlinear operation, when evaluated, then the result falls back to interval bounds and is marked conservative (quantities.md 5.4)"
-bound = false
+bound = true
 +++

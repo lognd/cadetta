@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [7]
+captured_at = "2026-10-13T08:34:38Z"
+digest = "32dc774d65bdb3ca50436cbe996e02ee152dc5eb41e29489029645414dfcc184"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7c7193b9-ac25-4a2d-bb64-ec34221f4905 with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.009s] cadetta-sema affine::tests::nonlinear_operation_is_conservative
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::nonlinear_operation_is_conservative)'"
+size = 557
+status = "measured"
+test_count = 1
+tests_digest = "6fc8811bf269ad4609120b2fe7afccab247c128399ea92d1ef0c4d881cb8fbf5"
+at = "2026-10-13T08:34:38Z"
+actor = "lognd"
+rev = 1
