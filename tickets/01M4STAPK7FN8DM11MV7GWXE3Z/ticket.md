@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:04:20Z"
+updated = "2026-10-13T05:05:22Z"
 persona = "design engineer"
 capability = "use standard retaining rings"
 idempotency_key = "replan13:std.retaining (Din471, Din472)"
 labels = ["creates:std/retaining.cdt"]
 scope = ["std/retaining.cdt"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STAPPJR0478N5B1E751RZY"
 
 [[acceptance]]
 text = "Given Din471 and Din472 tables, when loaded, then every value is as published and cited (stdlib.md 2)"
