@@ -389,7 +389,7 @@ mod tests {
             })
         );
         assert_eq!(plan_tolerance(&d, &p, &design(DesignForm::None)), None);
-        // frob:tests emit_point_not_nominal_writes_limits
+        // non-nominal emit point writes limits
         assert_eq!(
             plan_tolerance(&d, &plan(true, false, true), &design(class)),
             lim
