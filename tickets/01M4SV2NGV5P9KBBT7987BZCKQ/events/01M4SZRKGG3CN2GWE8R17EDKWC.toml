@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:38:54Z"
+digest = "f539df6ded54a8e70c1bd831ad6f3e7da3de50eb34e877c867a8a4a0405c948c"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 17 items
+
+bindings/python/tests/test_quantity.py ..............                    [ 82%]
+bindings/python/tests/unit/test_core.py ...                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3455564-0.xml --------------
+============================== 17 passed in 0.17s ==============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_quantity.py::test_arithmetic_carries_tolerance_and_correlation bindings/python/tests/test_quantity.py::test_compound_and_fraction_literals_are_exact bindings/python/tests/test_quantity.py::test_division_by_interval_containing_zero_raises bindings/python/tests/test_quantity.py::test_inexact_value_reports_not_exact bindings/python/tests/test_quantity.py::test_kind_rule_violations_carry_q_codes bindings/python/tests/test_quantity.py::test_limits_are_computed_in_rust bindings/python/tests/test_quantity.py::test_mmc_lmc_need_a_role bindings/python/tests/test_quantity.py::test_named_kinds_do_not_mix_implicitly bindings/python/tests/test_quantity.py::test_no_dot_to_method bindings/python/tests/test_quantity.py::test_parse_error_is_err_with_code bindings/python/tests/test_quantity.py::test_parse_is_exact_and_converts_to_fraction bindings/python/tests/test_quantity.py::test_pi_factor_makes_to_exact_none bindings/python/tests/test_quantity.py::test_squaring_never_goes_negative bindings/python/tests/test_quantity.py::test_unit_dimension_mismatch_in_conversion bindings/python/tests/unit/test_core.py::test_console_script_prints_version bindings/python/tests/unit/test_core.py::test_core_version_names_cadetta bindings/python/tests/unit/test_core.py::test_unknown_command_is_usage_error"
+size = 548
+status = "measured"
+test_count = 17
+tests_digest = "148a3f7b8e98711499f03bc041a6379c2c19be270788d8364956024301dce7d1"
+at = "2026-10-13T06:38:54Z"
+actor = "lognd"
+rev = 1
