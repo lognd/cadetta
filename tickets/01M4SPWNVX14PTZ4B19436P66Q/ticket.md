@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:24:21Z"
+updated = "2026-10-13T06:24:35Z"
 persona = "design engineer"
 capability = "use sqrt, sin, cos, tan, atan2 and non-integer powers"
 outcome_text = "inexactness is flagged and propagates visibly"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-units/src/inexact.rs"]
 
 [[acceptance]]
 text = "Given sqrt(2mm^2), when evaluated, then the value is marked inexact and carried as a binary64 naming its root operation (quantities.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an inexact operand, when added to an exact one, then the result is inexact (quantities.md 1)"
