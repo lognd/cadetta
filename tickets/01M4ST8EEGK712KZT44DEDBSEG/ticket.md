@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `waive C002 on Rover.load_ok for alt Colson2Series`, when evaluated, then it applies to that variant only (language.md 3.2, lints.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a violated `require` under a variant, when waived, then the alternate is still non-viable (language.md 3.2)"
