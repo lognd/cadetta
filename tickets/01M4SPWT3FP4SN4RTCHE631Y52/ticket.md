@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T04:04:05Z"
+updated = "2026-10-13T05:01:25Z"
 persona = "design engineer"
 capability = "run `cadetta check`"
 outcome_text = "I get lint diagnostics and CI gating in one command"
@@ -25,5 +25,13 @@ bound = false
 
 [[acceptance]]
 text = "Given adapters with read, when checked, then drift lints also run"
+bound = false
+
+[[acceptance]]
+text = "Given `cadetta check --release`, when run, then stale or open obligations whose role is required_for release also fail (obligations.md 4)"
+bound = false
+
+[[acceptance]]
+text = 'Given stale obligations with required_for = "check", when `cadetta check` runs, then it exits 1 (obligations.md 4)'
 bound = false
 +++

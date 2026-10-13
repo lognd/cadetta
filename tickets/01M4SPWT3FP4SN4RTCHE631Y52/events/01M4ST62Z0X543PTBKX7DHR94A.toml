@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an Axle with Q001, when checked, then exit code is 1 and the diagnostic has code, path and span", "Given adapters with read, when checked, then drift lints also run"]
+new = ["Given an Axle with Q001, when checked, then exit code is 1 and the diagnostic has code, path and span", "Given adapters with read, when checked, then drift lints also run", "Given `cadetta check --release`, when run, then stale or open obligations whose role is required_for release also fail (obligations.md 4)", 'Given stale obligations with required_for = "check", when `cadetta check` runs, then it exits 1 (obligations.md 4)']
+moved = [1, 2]
+at = "2026-10-13T05:01:25Z"
+actor = "lognd"
+rev = 1
