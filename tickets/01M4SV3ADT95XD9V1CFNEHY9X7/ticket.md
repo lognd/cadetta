@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-13T05:44:13Z"
+updated = "2026-10-13T19:18:44Z"
 persona = "release manager"
 capability = "verify the real COM path before release"
 labels = ["creates:adapters/solidworks/SMOKE.md"]
@@ -32,5 +32,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a release smoke test, when run on Windows, then attach, sync, save and restore are exercised against a real SOLIDWORKS (adapters.md 2)"
+bound = false
+
+[[acceptance]]
+text = "Given the release smoke, when run, then the add-in links a dimension, a pattern count and a tolerance, creates datum frames and assigns parts, and the sync, cad-moved R001, import --update, no-op sequence of solidworks.md 6 passes and is recorded as transcripts"
 bound = false
 +++

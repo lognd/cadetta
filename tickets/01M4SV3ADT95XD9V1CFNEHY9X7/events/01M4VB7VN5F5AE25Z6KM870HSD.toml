@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a licensed Windows machine, when the cadetta sync loop runs on the pilot r3-05 part, then emit, read, push, regen round trip passes and the result is recorded in adapters/solidworks/SMOKE.md (adapters.md 6)", "Given a release smoke test, when run on Windows, then attach, sync, save and restore are exercised against a real SOLIDWORKS (adapters.md 2)"]
+new = ["Given a licensed Windows machine, when the cadetta sync loop runs on the pilot r3-05 part, then emit, read, push, regen round trip passes and the result is recorded in adapters/solidworks/SMOKE.md (adapters.md 6)", "Given a release smoke test, when run on Windows, then attach, sync, save and restore are exercised against a real SOLIDWORKS (adapters.md 2)", "Given the release smoke, when run, then the add-in links a dimension, a pattern count and a tolerance, creates datum frames and assigns parts, and the sync, cad-moved R001, import --update, no-op sequence of solidworks.md 6 passes and is recorded as transcripts"]
+moved = [1, 2]
+at = "2026-10-13T19:18:44Z"
+actor = "lognd"
+rev = 1
