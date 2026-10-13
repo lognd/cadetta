@@ -109,6 +109,12 @@ Diagnostic rules:
   `cadetta cite pin NAME` downloads a URL citation into `cites/`
   (content-addressed) and rewrites the `cite` to that local path so it
   can. Whole-file granularity is the 0.1.0 behaviour.
+- Decided (0.1.0): `cadetta ack ots:PATH --role source` records, per
+  file citation, an `attest citation:<cited path>` with role `source`
+  whose digest hashes the cited file's digest together with the
+  citation text (target and locator). Either changing makes the
+  obligation stale and records S004. Literal, URL and pseudo-citations
+  have no file digest and no check.
 - The `sw-equations` adapter never discharges `sync`: the state stays
   `open` with reason "unverifiable without drive" (adapters.md).
 - Decided (0.1.0): only `sync` and `solver` accept a kind-level

@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:31:51Z"
+updated = "2026-10-13T08:35:41Z"
 persona = "design engineer"
 capability = "compute hole patterns as points without trigonometry by hand"
 idempotency_key = "replan13:Arrays, Point2/Point3 and geometry patterns"
@@ -21,7 +21,7 @@ target = "01M4ST7AKENKKS96TTXY13YMZQ"
 
 [[acceptance]]
 text = "Given `[a, b, c]` and `[T; N]` parameters, when evaluated, then fixed arrays hold N elements of one kind (language.md 3.3, 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `Point2(x, y)`, `p + q`, `p - q` and `p * s`, when evaluated, then results are Point2 with Length members `.x .y` (language.md 3.8)"
