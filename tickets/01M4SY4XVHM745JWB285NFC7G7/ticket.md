@@ -1,15 +1,16 @@
 +++
 id = "01M4SY4XVHM745JWB285NFC7G7"
-title = "Shared logging init mirroring frob-v2 gob-log"
+title = "cadetta-log crate: the single tracing subscriber owner (mirrors gob-log)"
 type = "story"
 category = "in-progress"
 priority = "medium"
-points = 3
+points = 5
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T06:10:42Z"
-updated = "2026-10-13T06:11:11Z"
-scope = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml"]
+updated = "2026-10-13T06:13:53Z"
+labels = ["creates:crates/cadetta-log/**"]
+scope = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml", "Cargo.toml", "frob.toml", "design/model.grmb", "crates/cadetta-log/**"]
 
 [[acceptance]]
 text = "Given CADETTA_LOG is set to a valid or invalid env-filter, when the CLI starts, then a valid filter is honoured and an invalid one is a usage error, not a panic (config-cli.md; mirrors gob-log init)"
@@ -21,6 +22,10 @@ bound = false
 
 [[acceptance]]
 text = "Given a second init call, when it runs, then it returns an error and does not panic"
+bound = false
+
+[[acceptance]]
+text = "Given any crate outside cadetta-log, when frob check runs, then a policy rule fails any tracing_subscriber use or print/eprint macro there (one observability story)"
 bound = false
 +++
 
