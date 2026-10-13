@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:54Z"
+updated = "2026-10-13T05:41:55Z"
 persona = "design engineer"
 capability = "prove that holes line up"
 idempotency_key = "replan14:geo-aligned"
 labels = ["creates:crates/cadetta-geometry/src/aligned.rs"]
 scope = ["crates/cadetta-geometry/src/aligned.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG6N6DT76DRYYJHFB4656"
 
 [[acceptance]]
 text = "Given aligned(a, b, allowance) with equal counts, when evaluated, then every pair a[i], b[i] is measured in b's xy plane after conversion to b's datum, ignoring z (geometry.md 5)"
