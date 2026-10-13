@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:16:36Z"
+updated = "2026-10-13T07:16:37Z"
 persona = "design engineer"
 capability = "have expressions checked for units and kinds"
 outcome_text = "Q001, Q002, Q003 and Q005 stop wrong models"
@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given bare numbers as factors, exponents, dimensionless operands and Count/Ratio values, when checked, then no Q001 is reported (quantities.md 2)"
-bound = false
+bound = true
 +++
