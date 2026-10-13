@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:39:19Z"
+digest = "9e02e810f8cd1f2e3bcf64a2c46735334936d08348cae04cdd799da7f36c33c1"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.20s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID aadfe7e4-5af1-40d2-96ef-548fda737914 with nextest profile: default
+    Starting 1 test across 18 binaries (353 tests skipped)
+        PASS [   0.007s] cadetta-syntax::std_retaining groove_tolerance_classes_and_golden_row_lookup
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 353 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=groove_tolerance_classes_and_golden_row_lookup)"
+size = 831
+status = "measured"
+test_count = 1
+tests_digest = "b144a86b89974a5440d71b4fca1eba7e2688adc41ee5271dbb7d7c325399e590"
+at = "2026-10-13T07:39:19Z"
+actor = "lognd"
+rev = 1
