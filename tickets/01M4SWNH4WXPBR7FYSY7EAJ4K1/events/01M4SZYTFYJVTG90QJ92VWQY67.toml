@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:42:18Z"
+digest = "d10e5d41fc9897c7ff10e18be40dee187ac2ff913a64ce1ffa292de1d04be79c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID be4e8a12-0057-490c-ac5d-39a47fb2173d with nextest profile: default
+    Starting 5 tests across 1 binary (16 tests skipped)
+        PASS [   0.006s] cadetta-obligations as_of::tests::rejects_bad_dates
+        PASS [   0.005s] cadetta-obligations as_of::tests::config_then_today
+        PASS [   0.006s] cadetta-obligations as_of::tests::expiry_uses_fixed_date
+        PASS [   0.007s] cadetta-obligations as_of::tests::unix_epoch_conversion
+        PASS [   0.009s] cadetta-obligations as_of::tests::flag_wins_and_is_recorded
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 5 tests run: 5 passed, 16 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations as_of"
+size = 867
+status = "measured"
+test_count = 5
+tests_digest = "4475dc6be720121e0712be101cc52c0fe792313c803529cd915c8388743d0c33"
+at = "2026-10-13T06:42:18Z"
+actor = "lognd"
+rev = 1
