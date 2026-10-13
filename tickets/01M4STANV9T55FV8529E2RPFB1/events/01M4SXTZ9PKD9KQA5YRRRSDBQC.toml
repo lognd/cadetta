@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/cadetta.toml", "std/mod.cdt"]
+new = ["std/cadetta.toml", "std/src/lib.cdt"]
+at = "2026-10-13T06:05:15Z"
+actor = "lognd"
+rev = 1

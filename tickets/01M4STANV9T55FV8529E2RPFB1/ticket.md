@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:05:22Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "import std modules like any other package"
 idempotency_key = "replan13:std packaging as ordinary .cdt"
-labels = ["creates:std/cadetta.toml", "creates:std/mod.cdt"]
-scope = ["std/cadetta.toml", "std/mod.cdt"]
+labels = ["creates:std/cadetta.toml", "creates:std/src/lib.cdt"]
+scope = ["std/cadetta.toml", "std/src/lib.cdt"]
 
 [[links]]
 kind = "blocks"
@@ -32,10 +32,10 @@ kind = "blocks"
 target = "01M4STAPK7FN8DM11MV7GWXE3Z"
 
 [[acceptance]]
-text = "Given `use std.fits`, when resolved, then std is found as an ordinary package with no special-casing (stdlib.md 1)"
+text = "Given the version, when read, then it is 0.1.0 (stdlib.md 1)"
 bound = false
 
 [[acceptance]]
-text = "Given the version, when read, then it is 0.1.0 (stdlib.md 1)"
+text = "Given `use std::fits`, when resolved, then std is found as an ordinary package (std/cadetta.toml with [package], root std/src/lib.cdt) with no special-casing, and no user package may be named std (stdlib.md 1; packages.md 1)"
 bound = false
 +++

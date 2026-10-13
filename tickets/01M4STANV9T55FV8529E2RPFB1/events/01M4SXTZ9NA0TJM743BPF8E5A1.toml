@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `use std.fits`, when resolved, then std is found as an ordinary package with no special-casing (stdlib.md 1)", "Given the version, when read, then it is 0.1.0 (stdlib.md 1)"]
+new = ["Given the version, when read, then it is 0.1.0 (stdlib.md 1)", "Given `use std::fits`, when resolved, then std is found as an ordinary package (std/cadetta.toml with [package], root std/src/lib.cdt) with no special-casing, and no user package may be named std (stdlib.md 1; packages.md 1)"]
+moved = [0, 1]
+at = "2026-10-13T06:05:15Z"
+actor = "lognd"
+rev = 1
