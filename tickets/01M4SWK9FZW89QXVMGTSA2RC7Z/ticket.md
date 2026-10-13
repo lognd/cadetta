@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T08:18:51Z"
+updated = "2026-10-13T08:19:51Z"
 persona = "design engineer"
 capability = "name a variant once everywhere"
 idempotency_key = "replan14:ir-variant"
 labels = ["creates:crates/cadetta-ir/src/variant_name.rs"]
-scope = ["crates/cadetta-ir/src/variant_name.rs"]
+scope = ["crates/cadetta-ir/src/variant_name.rs", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocked-by"
