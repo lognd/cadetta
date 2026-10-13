@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:13:23Z"
+digest = "f2d0f9eed10294b5f6e11da3fc00ea28e2bf709547d8f606dd7fc9094468df1b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bb37708e-1a0f-43b6-904b-207e150d0ea1 with nextest profile: default
+    Starting 2 tests across 23 binaries (599 tests skipped)
+        PASS [   0.011s] cadetta-lint rules::unused::tests::quiet_when_read
+        PASS [   0.024s] cadetta-lint rules::unused::tests::quiet_when_bound
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.033s] 2 tests run: 2 passed, 599 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=rules::unused::tests::quiet_when_read) | test(=rules::unused::tests::quiet_when_bound)'"
+size = 623
+status = "measured"
+test_count = 2
+tests_digest = "9a11a7d67fa204347467ffbdcbb87919546850874c47fb62a70d548c7f7ccbde"
+at = "2026-10-13T09:13:23Z"
+actor = "lognd"
+rev = 1
