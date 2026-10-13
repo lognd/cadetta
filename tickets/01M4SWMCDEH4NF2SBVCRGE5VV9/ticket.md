@@ -2,7 +2,8 @@
 id = "01M4SWMCDEH4NF2SBVCRGE5VV9"
 title = "Locator fields, [*] bindings, collisions R012 and R013"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
