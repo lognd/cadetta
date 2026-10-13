@@ -23,6 +23,10 @@ target = "01M4SV2NMPSM42YZT9MXT4YVMW"
 kind = "blocked-by"
 target = "01M4SWN8G3QTQC5YK07VN1YQYC"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SXRFQ0RENW7YM154W0EWP9"
+
 [[acceptance]]
 text = "Given solve, emit, sync, import_ and ack, when called, then each returns Result[Model, CadettaError] with the verb's JSON schema model (bindings.md 3.2)"
 bound = false
