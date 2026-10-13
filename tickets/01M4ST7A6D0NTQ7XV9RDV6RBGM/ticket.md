@@ -2,7 +2,8 @@
 id = "01M4ST7A6D0NTQ7XV9RDV6RBGM"
 title = "Display unit selection and fractional formats"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
