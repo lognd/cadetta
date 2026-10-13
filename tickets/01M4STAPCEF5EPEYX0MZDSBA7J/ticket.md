@@ -19,6 +19,10 @@ scope = ["std/src/fasteners/screwjoint.cdt"]
 kind = "blocks"
 target = "01M4STAPFPQ9GV8XJB4XCK8EGP"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SXRV8HCNXHVFX87BTFJC7S"
+
 [[acceptance]]
 text = "Given a ScrewJoint, when evaluated, then each derived member in stdlib.md 4 matches its formula (stdlib.md 3)"
 bound = false
