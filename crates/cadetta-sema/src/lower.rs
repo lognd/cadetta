@@ -1,0 +1,847 @@
+// frob:ticket 01M4SPWQH44JWFXZDNTGEBMMNX
+//! Lowering of an evaluated program into the design IR (`docs/spec/ir.md` 3).
+//!
+//! The lowerer lives in `cadetta-sema`, not `cadetta-ir`, because sema already depends on the
+//! IR crate (dependency direction ir <- sema). It reads the evaluator's output and the source
+//! text and builds a `cadetta_ir::model::Project` of the design flavour.
+//!
+//! Decisions made here (written into ir.md 3):
+//! - `Value.nominal` is the designed value; `Value.drawn` is the process-compensated emitted
+//!   value and exists only under a process rule.
+//! - A tolerance becomes one [`AffineTerm`] per source variable. A term's bounds are deviations
+//!   from the nominal; the offset of the form's centre from the nominal is carried by the
+//!   first term, so the term bounds sum to the form's range. A variable owned by a parameter is
+//!   named by that parameter's path; an anonymous variable is named `<member path>.tol<N>`.
+//! - A member is `Derived` when its definition reads other members, else `Authored`.
+//! - Variant evaluations are supplied by the caller keyed `"<slot>=<alternate>"`; a member
+//!   stores only the values that differ from the primary.
+//! - Not lowered (the IR `Project` has no field for them yet): waivers, interfaces, tables,
+//!   `require` obligations, solvers and bindings; datums, points and placements wait for the
+//!   geometry entities; parameterized components lower with valueless members.
+
+use std::collections::{BTreeMap, BTreeSet};
+
+use cadetta_ir::model::{
+    self as ir, AffineTerm, Check, Citation, Component, ComponentClass, Exact, Fit, Flavour,
+    Inexact, Member, MemberKind, Nominal, PackageId, Part, Project, Provenance, SpanRef, Value,
+    VerdictState, Verdicts,
+};
+use cadetta_ir::path::{Path, PathContext, Seg};
+use cadetta_syntax::ast::{self, FileEntry, ItemKind};
+use cadetta_syntax::lexer::Span;
+use cadetta_units::compare::{Note, Verdict};
+use cadetta_units::{Magnitude, Toleranced, VarId};
+use tracing::{debug, trace, warn};
+
+use crate::cite::{CiteTable, effective};
+use crate::deps::DepGraph;
+use crate::eval::{Evaluated, Evaluation, Quant, Val};
+use crate::fits::FitResult;
+use crate::process::ProcessOutcome;
+use crate::resolve::{CanonPath, MemberSeg, PackageSrc};
+
+/// The text and name of one source file, for spans and expression text.
+#[derive(Clone, Copy, Debug)]
+pub struct SourceText<'a> {
+    /// The file name recorded in spans.
+    pub file: &'a str,
+    /// The file's text.
+    pub text: &'a str,
+}
+
+/// An analysed fit and where it lives, supplied by the caller (fits are not in `Evaluation`).
+#[derive(Clone, Debug)]
+pub struct FitInput {
+    /// The fit's canonical path (`PKG::Item.name`).
+    pub path: CanonPath,
+    /// The hole member.
+    pub hole: CanonPath,
+    /// The shaft member.
+    pub shaft: CanonPath,
+    /// The analysis result.
+    pub result: FitResult,
+    /// The declared required clearance bound, if any.
+    pub required: Option<ir::Bound>,
+}
+
+/// Everything the lowerer reads.
+pub struct LowerInput<'a> {
+    /// The package name to lower.
+    pub name: &'a str,
+    /// The package version.
+    pub version: &'a str,
+    /// All packages; only the one named `name` is lowered.
+    pub packages: &'a [PackageSrc<'a>],
+    /// Source text by module path.
+    pub sources: &'a BTreeMap<Vec<String>, SourceText<'a>>,
+    /// The package directory, for hashing cited files.
+    pub package_dir: Option<&'a std::path::Path>,
+    /// The primary evaluation.
+    pub evaluation: &'a Evaluation,
+    /// Process compensation, when the program has processes.
+    pub compensation: Option<&'a ProcessOutcome>,
+    /// The member dependency graph.
+    pub deps: &'a DepGraph,
+    /// Variant evaluations keyed `"<slot>=<alternate>"`.
+    pub variants: BTreeMap<String, &'a Evaluation>,
+    /// Analysed fits.
+    pub fits: &'a [FitInput],
+}
+
+/// Converts a canonical path to an IR path; `None` (logged) when it is not well formed.
+fn ir_path(p: &CanonPath) -> Option<Path> {
+    match Path::parse(&p.to_string(), PathContext::General) {
+        Ok(path) => Some(path),
+        Err(e) => {
+            warn!(path = %p, error = %e, "lower: path is not a valid IR path");
+            None
+        }
+    }
+}
+
+/// The member path `comp.name`.
+fn member_path(comp: &CanonPath, name: &str) -> CanonPath {
+    let mut p = comp.clone();
+    p.members.push(MemberSeg::Name(name.to_owned()));
+    p
+}
+
+/// The source slice of `span` with runs of whitespace collapsed to one space.
+fn text_of(src: Option<&SourceText<'_>>, span: Span) -> String {
+    let Some(s) = src else {
+        return String::new();
+    };
+    let raw = s.text.get(span.start..span.end).unwrap_or("");
+    raw.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+fn span_ref(src: Option<&SourceText<'_>>, span: Span) -> Option<SpanRef> {
+    let s = src?;
+    Some(SpanRef {
+        file: s.file.to_owned(),
+        start: u32::try_from(span.start).unwrap_or(u32::MAX),
+        end: u32::try_from(span.end).unwrap_or(u32::MAX),
+    })
+}
+
+/// True when `m` is below zero (sign test only; no float is stored).
+fn is_negative(m: &Magnitude) -> bool {
+    m.to_f64() < 0.0
+}
+
+/// Maps every source variable to the parameter that owns it.
+fn var_owners(ev: &Evaluation) -> BTreeMap<u32, CanonPath> {
+    let mut owners = BTreeMap::new();
+    for (path, e) in &ev.values {
+        if let (Some(v), None) = (e.var, &e.alias_of) {
+            owners.entry(v.0).or_insert_with(|| path.clone());
+        }
+    }
+    owners
+}
+
+/// Builds the IR [`Value`] of a quantity (ir.md 3 `Value`).
+fn quant_value(
+    ev: &Evaluation,
+    owners: &BTreeMap<u32, CanonPath>,
+    member: &CanonPath,
+    q: &Quant,
+    authored: &str,
+) -> Value {
+    let mut v = Value::new(
+        Nominal::Exact(Exact(q.nominal.clone())),
+        q.dim().clone(),
+        authored,
+    );
+    v.conservative = q.form.is_conservative();
+    let offset = match q.form.center().sub(&q.nominal) {
+        cadetta_units::Sum::Exact(m) => m,
+        cadetta_units::Sum::Inexact(_) => {
+            warn!(path = %member, "lower: centre offset mixes pi exponents; dropped");
+            Magnitude::new(cadetta_units::Rational::from_int(0), 0)
+        }
+    };
+    let mut terms = Vec::new();
+    for i in 0..ev.var_count {
+        let Some(c) = q.form.coefficient(VarId(i)) else {
+            continue;
+        };
+        if c.is_zero() {
+            continue;
+        }
+        let r = if is_negative(c) { c.neg() } else { c.clone() };
+        let (lo, hi) = if terms.is_empty() {
+            (offset.sub(&r), offset.add(&r))
+        } else {
+            (
+                cadetta_units::Sum::Exact(r.neg()),
+                cadetta_units::Sum::Exact(r.clone()),
+            )
+        };
+        let (cadetta_units::Sum::Exact(lo), cadetta_units::Sum::Exact(hi)) = (lo, hi) else {
+            warn!(path = %member, "lower: term bounds mix pi exponents; term dropped");
+            continue;
+        };
+        let var = match owners.get(&i) {
+            Some(o) => ir_path(o),
+            None => ir_path(member).map(|mut p| {
+                p.members.push(Seg::Name(format!("tol{}", terms.len())));
+                p
+            }),
+        };
+        let Some(var) = var else { continue };
+        trace!(path = %member, var = %i, "lower: tolerance term");
+        terms.push(AffineTerm {
+            var,
+            lo: Exact(lo),
+            hi: Exact(hi),
+        });
+    }
+    if !terms.is_empty() {
+        v.tol = Some(ir::Affine { terms });
+    }
+    v
+}
+
+/// The IR value of an evaluated member, if it is numeric.
+fn evaluated_value(
+    ev: &Evaluation,
+    owners: &BTreeMap<u32, CanonPath>,
+    path: &CanonPath,
+    e: &Evaluated,
+    authored: &str,
+) -> Option<Value> {
+    match &e.value {
+        Val::Quantity(q) => Some(quant_value(ev, owners, path, q, authored)),
+        Val::Inexact(i) => {
+            let root = ir_path(path)?;
+            let mut v = Value::new(
+                Nominal::Inexact(Inexact {
+                    f64: i.nominal,
+                    root,
+                }),
+                i.dim.clone(),
+                authored,
+            );
+            v.conservative = true;
+            Some(v)
+        }
+        other => {
+            trace!(path = %path, kind = ?std::mem::discriminant(other), "lower: non-numeric value");
+            None
+        }
+    }
+}
+
+/// Per-lowering shared state.
+struct Cx<'a> {
+    input: &'a LowerInput<'a>,
+    owners: BTreeMap<u32, CanonPath>,
+    variant_owners: BTreeMap<String, BTreeMap<u32, CanonPath>>,
+}
+
+impl Cx<'_> {
+    fn lower_member(
+        &self,
+        comp: &CanonPath,
+        src: Option<&SourceText<'_>>,
+        table: &CiteTable,
+        file: &ast::File,
+        c: &ast::Component,
+        m: &ast::Member,
+    ) -> Option<Member> {
+        let (name, kind, expr, citation, was) = match &m.kind {
+            ast::MemberKind::Param(p) => (
+                &p.name,
+                MemberKind::Param,
+                &p.value,
+                p.citation.as_ref(),
+                p.was.as_slice(),
+            ),
+            ast::MemberKind::Let(l) => (&l.name, MemberKind::Let, &l.value, None, &[][..]),
+            other => {
+                trace!(kind = ?std::mem::discriminant(other), "lower: member kind not lowered here");
+                return None;
+            }
+        };
+        let canon = member_path(comp, &name.name);
+        let mut out = Member::new(ir_path(&canon)?, kind);
+        out.private = m.private;
+        let text = text_of(src, expr.span);
+        out.expr = Some(text.clone());
+        out.doc = (!m.docs.is_empty()).then(|| {
+            m.docs
+                .iter()
+                .map(|d| d.text.trim())
+                .collect::<Vec<_>>()
+                .join("\n")
+        });
+        out.span = span_ref(src, m.span);
+        out.was = was
+            .iter()
+            .map(|p| {
+                p.segments
+                    .iter()
+                    .map(|s| s.name.as_str())
+                    .collect::<Vec<_>>()
+                    .join(".")
+            })
+            .collect();
+        out.attrs = crate::attrs::resolve_attrs(
+            src.map_or("", |s| s.text),
+            &file.inner_attrs,
+            &c.inner_attrs,
+            &m.attrs,
+            &m.trailing,
+        );
+        out.role = ["hole", "shaft"]
+            .iter()
+            .find(|r| out.attrs.contains_key(**r))
+            .map(|r| (*r).to_owned());
+        out.citation = effective(citation, c.citation.as_ref()).and_then(|cc| {
+            match table.resolve(self.input.package_dir, cc) {
+                Ok(c) => Some(c),
+                Err(e) => {
+                    debug!(path = %canon, error = %e, "lower: citation unresolved");
+                    None
+                }
+            }
+        });
+        let deps: Vec<Path> = self
+            .input
+            .deps
+            .deps_of(&canon)
+            .filter_map(ir_path)
+            .collect();
+        out.provenance = if deps.is_empty() {
+            Provenance::Authored
+        } else {
+            Provenance::Derived
+        };
+        out.deps = deps;
+
+        let ev = self.input.evaluation;
+        if let Some(e) = ev.get(&canon) {
+            out.analysis = e.analysis || kind == MemberKind::Let;
+            let comp_out = self
+                .input
+                .compensation
+                .and_then(|o| o.compensated.get(&canon));
+            out.value = match comp_out {
+                Some(co) => {
+                    let mut v = quant_value(ev, &self.owners, &canon, &co.designed, &text);
+                    v.drawn = Some(Exact(co.drawn.nominal.clone()));
+                    out.role = Some(co.role.clone());
+                    debug!(path = %canon, process = %co.process, "lower: compensated member");
+                    Some(v)
+                }
+                None => evaluated_value(ev, &self.owners, &canon, e, &text),
+            };
+        } else {
+            trace!(path = %canon, "lower: member has no evaluated value");
+        }
+
+        let mut variants = BTreeMap::new();
+        for (key, vev) in &self.input.variants {
+            let Some(e) = vev.get(&canon) else { continue };
+            let owners = self.variant_owners.get(key).unwrap_or(&self.owners);
+            let v = evaluated_value(vev, owners, &canon, e, &text);
+            if let Some(v) = v
+                && Some(&v) != out.value.as_ref()
+            {
+                debug!(path = %canon, variant = %key, "lower: variant value differs");
+                variants.insert(key.clone(), v);
+            }
+        }
+        out.variants = (!variants.is_empty()).then_some(variants);
+        Some(out)
+    }
+
+    fn lower_part(
+        &self,
+        comp: &CanonPath,
+        src: Option<&SourceText<'_>>,
+        p: &ast::Part,
+    ) -> Option<Part> {
+        let mut path = comp.clone();
+        path.members.push(MemberSeg::Name(p.name.name.clone()));
+        let ctor_text = |c: &ast::Ctor| {
+            c.path
+                .segments
+                .iter()
+                .map(|s| s.name.as_str())
+                .collect::<Vec<_>>()
+                .join("::")
+        };
+        let mut args = BTreeMap::new();
+        for (i, a) in p.args.iter().flatten().enumerate() {
+            let key = a
+                .name
+                .as_ref()
+                .map_or_else(|| i.to_string(), |n| n.name.clone());
+            args.insert(key, text_of(src, a.value.span));
+        }
+        Some(Part {
+            path: ir_path(&path)?,
+            type_name: text_of(src, p.ty.span),
+            count: p
+                .count
+                .as_ref()
+                .and_then(|c| text_of(src, c.span).parse().ok()),
+            primary: p.primary.as_ref().map(ctor_text).unwrap_or_default(),
+            alternates: p.alts.iter().map(ctor_text).collect(),
+            args,
+        })
+    }
+
+    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
+        let t: &Toleranced = &f.result.clearance;
+        let nominal = t.nominal().clone();
+        let mut v = Value::new(
+            Nominal::Exact(Exact(nominal)),
+            t.dim().clone(),
+            String::new(),
+        );
+        let mut var = ir_path(&f.path)?;
+        var.members.push(Seg::Name("clearance".to_owned()));
+        v.tol = Some(ir::Affine {
+            terms: vec![AffineTerm {
+                var,
+                lo: Exact(t.lower().clone()),
+                hi: Exact(t.upper().clone()),
+            }],
+        });
+        Some(Fit {
+            path: ir_path(&f.path)?,
+            hole: ir_path(&f.hole)?,
+            shaft: ir_path(&f.shaft)?,
+            clearance: v,
+            fit_type: f.result.fit_type.name().to_owned(),
+            required: f.required.clone(),
+        })
+    }
+}
+
+fn class_of(c: ast::ComponentClass) -> ComponentClass {
+    match c {
+        ast::ComponentClass::Ots => ComponentClass::Ots,
+        ast::ComponentClass::Model => ComponentClass::Model,
+        ast::ComponentClass::Assembly => ComponentClass::Assembly,
+    }
+}
+
+/// Folds the instance verdicts of one check into one state (any fail fails).
+fn fold_verdicts(results: &[&crate::eval::checks::CheckResult]) -> VerdictState {
+    let mut state = VerdictState::Pass;
+    for r in results {
+        match r.verdict {
+            Verdict::Violates => return VerdictState::Fail,
+            Verdict::Undecided => state = VerdictState::Unknown,
+            Verdict::Holds => {}
+        }
+    }
+    state
+}
+
+fn group_checks(ev: &Evaluation) -> BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> {
+    let mut m: BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> = BTreeMap::new();
+    for r in ev.checks.iter().filter(|r| !r.obligation) {
+        m.entry(r.path.clone()).or_default().push(r);
+    }
+    m
+}
+
+/// Lowers the evaluated program of one package into a design-flavour IR project.
+pub fn lower(input: &LowerInput<'_>) -> Project {
+    let mut project = Project::new(
+        Flavour::Design,
+        PackageId {
+            name: input.name.to_owned(),
+            version: input.version.to_owned(),
+        },
+    );
+    let cx = Cx {
+        input,
+        owners: var_owners(input.evaluation),
+        variant_owners: input
+            .variants
+            .iter()
+            .map(|(k, e)| (k.clone(), var_owners(e)))
+            .collect(),
+    };
+    let mut modules = BTreeSet::new();
+    let mut citations: BTreeMap<String, Citation> = BTreeMap::new();
+    for pkg in input.packages.iter().filter(|p| p.name == input.name) {
+        for module in &pkg.modules {
+            if !module.path.is_empty() {
+                modules.insert(module.path.join("::"));
+            }
+            let src = input.sources.get(&module.path);
+            let table = CiteTable::new(module.file.entries.iter().filter_map(|e| match e {
+                FileEntry::Item(i) => match &i.kind {
+                    ItemKind::Cite(c) => Some(c),
+                    _ => None,
+                },
+                FileEntry::Use(_) => None,
+            }));
+            for c in module.file.components() {
+                let canon = CanonPath::item(&pkg.name, &module.path, &c.name.name);
+                let Some(path) = ir_path_item(&canon) else {
+                    continue;
+                };
+                let mut comp = Component {
+                    path,
+                    class: class_of(c.class),
+                    params_sig: (!c.params.is_empty()).then(|| {
+                        c.params
+                            .iter()
+                            .map(|p| p.name.name.as_str())
+                            .collect::<Vec<_>>()
+                            .join(", ")
+                    }),
+                    implements: c
+                        .implements
+                        .iter()
+                        .map(|p| {
+                            p.segments
+                                .iter()
+                                .map(|s| s.name.as_str())
+                                .collect::<Vec<_>>()
+                                .join("::")
+                        })
+                        .collect(),
+                    citation: c
+                        .citation
+                        .as_ref()
+                        .and_then(|cc| table.resolve(input.package_dir, cc).ok()),
+                    attrs: BTreeMap::new(),
+                    members: Vec::new(),
+                    parts: Vec::new(),
+                    fits: Vec::new(),
+                    span: None,
+                    digest: None,
+                };
+                for m in &c.members {
+                    if let Some(mem) = cx.lower_member(&canon, src, &table, module.file, c, m) {
+                        if let Some(cit) = &mem.citation {
+                            citations
+                                .entry(cit.name.clone())
+                                .or_insert_with(|| cit.clone());
+                        }
+                        comp.members.push(mem);
+                    } else if let ast::MemberKind::Part(p) = &m.kind {
+                        comp.parts.extend(cx.lower_part(&canon, src, p));
+                    }
+                }
+                comp.fits = input
+                    .fits
+                    .iter()
+                    .filter(|f| f.path.item_only() == canon)
+                    .filter_map(|f| cx.lower_fit(f))
+                    .collect();
+                debug!(component = %canon, members = comp.members.len(), "lower: component");
+                project.components.push(comp);
+            }
+        }
+    }
+    let primary = group_checks(input.evaluation);
+    let variant_checks: BTreeMap<&String, _> = input
+        .variants
+        .iter()
+        .map(|(k, e)| (k, group_checks(e)))
+        .collect();
+    for (path, results) in &primary {
+        let Some(p) = ir_path(path) else { continue };
+        let src = input.sources.get(&path.modules);
+        let mut verdicts = Verdicts {
+            primary: Some(fold_verdicts(results)),
+            ..Verdicts::default()
+        };
+        for (k, vc) in &variant_checks {
+            if let Some(r) = vc.get(path) {
+                verdicts
+                    .per_alternate
+                    .insert((*k).clone(), fold_verdicts(r));
+            }
+        }
+        let conservative = results
+            .iter()
+            .any(|r| r.notes.contains(&Note::Conservative));
+        project.checks.push(Check {
+            path: p,
+            expr: text_of(src, results[0].span),
+            verdicts,
+            conservative,
+            waived_for: Vec::new(),
+        });
+    }
+    project.set_modules(modules.into_iter().collect());
+    project.citations = citations.into_values().collect();
+    debug!(
+        components = project.components.len(),
+        checks = project.checks.len(),
+        "lower: project built"
+    );
+    project
+}
+
+/// The IR path of a component (an item path has no member tail, so its tail is dropped).
+fn ir_path_item(p: &CanonPath) -> Option<Path> {
+    let mut s = format!("{}::", p.package);
+    for m in &p.modules {
+        s.push_str(m);
+        s.push_str("::");
+    }
+    s.push_str(&p.item);
+    s.push_str(".x");
+    match Path::parse(&s, PathContext::General) {
+        Ok(mut path) => {
+            path.members.clear();
+            Some(path)
+        }
+        Err(e) => {
+            warn!(path = %s, error = %e, "lower: component path is not a valid IR path");
+            None
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::deps::Renames;
+    use crate::eval::Evaluator;
+    use crate::fits::analyze;
+    use crate::process::Processes;
+    use crate::resolve::{ModuleSrc, Resolver};
+    use cadetta_syntax::ast::{FitSpec, Ident};
+    use cadetta_syntax::parser::parse;
+    use cadetta_units::{Rational, UnitTable};
+
+    const PROCESS_SRC: &str = "process Fdm @measured:\"cal\" {\n  \
+        hole_comp = 0.2mm [+-0.05mm]\n  \
+        rule hole(d: Length) -> Length = d + hole_comp\n}\n\
+        model Case {\n  #![process(Fdm)]\n  insert_hole = 3.4mm [+-0.1mm] #[hole]\n}\n";
+
+    const SRC: &str = "model Axle {\n  /// the seat\n  seat = 20mm [+0.021mm -0]\n  \
+        wall = 2.5mm [+-0.1mm]\n  od = seat + 2 * wall\n  let slack = od - seat\n  let stack = seat + 2 * wall\n  \
+        plain = 7mm\n  check wide: od > 24mm\n}\n";
+
+    struct Built {
+        project: Project,
+        ev: Evaluation,
+    }
+
+    fn evaluate(src: &str) -> (Evaluation, Option<ProcessOutcome>, DepGraph) {
+        let p = parse(src);
+        assert!(p.diags.is_empty(), "{:?}", p.diags);
+        let pkgs = vec![PackageSrc {
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &p.file,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty());
+        let units = UnitTable::builtin();
+        let mut ev = Evaluator::new(&resolver, &units, &pkgs);
+        let procs = Processes::compile(&mut ev, &pkgs);
+        let evaluation = ev.evaluate();
+        let outcome = procs.apply(&evaluation);
+        let renames = Renames::collect(&resolver, &pkgs);
+        let graph = DepGraph::build(&resolver, &renames, &pkgs);
+        (evaluation, Some(outcome), graph)
+    }
+
+    fn build(src: &str, variants: &[(&str, &str)], fits: &[FitInput]) -> Built {
+        let (evaluation, outcome, graph) = evaluate(src);
+        let vevals: Vec<(String, Evaluation)> = variants
+            .iter()
+            .map(|(k, s)| ((*k).to_owned(), evaluate(s).0))
+            .collect();
+        let p = parse(src);
+        let pkgs = vec![PackageSrc {
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &p.file,
+                enums: &[],
+            }],
+        }];
+        let mut sources = BTreeMap::new();
+        sources.insert(
+            Vec::new(),
+            SourceText {
+                file: "lib.cdt",
+                text: src,
+            },
+        );
+        let input = LowerInput {
+            name: "p",
+            version: "0.1.0",
+            packages: &pkgs,
+            sources: &sources,
+            package_dir: None,
+            evaluation: &evaluation,
+            compensation: outcome.as_ref(),
+            deps: &graph,
+            variants: vevals.iter().map(|(k, e)| (k.clone(), e)).collect(),
+            fits,
+        };
+        let project = lower(&input);
+        Built {
+            project,
+            ev: evaluation,
+        }
+    }
+
+    fn member<'a>(b: &'a Built, comp: &str, name: &str) -> &'a Member {
+        let c = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == comp)
+            .expect("component");
+        c.members
+            .iter()
+            .find(|m| m.path.members == vec![Seg::Name(name.to_owned())])
+            .expect("member")
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn derived_member_has_derived_provenance_and_deps() {
+        let b = build(SRC, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let od = member(&b, "Axle", "od");
+        assert_eq!(od.provenance, Provenance::Derived);
+        let deps: Vec<String> = od.deps.iter().map(|d| d.to_string()).collect();
+        assert!(deps.iter().any(|d| d.ends_with(".seat")), "{deps:?}");
+        assert!(deps.iter().any(|d| d.ends_with(".wall")), "{deps:?}");
+        assert_eq!(od.expr.as_deref(), Some("seat + 2 * wall"));
+        assert_eq!(member(&b, "Axle", "seat").provenance, Provenance::Authored);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn example_lowers_components_fits_and_checks() {
+        let f = |n: &str| {
+            let mut c = CanonPath::item("p", &[], "Axle");
+            c.members.push(MemberSeg::Name(n.to_owned()));
+            c
+        };
+        let first = Toleranced::symmetric(
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0),
+            Magnitude::new(Rational::new(20, 1000).unwrap(), 0),
+            (
+                cadetta_units::Dim::new(
+                    cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]),
+                    0,
+                ),
+                Magnitude::new(Rational::from_int(0), 0),
+            ),
+        )
+        .unwrap();
+        let spec = FitSpec::Pair(
+            Ident {
+                name: "H7".into(),
+                span: Span::default(),
+            },
+            Ident {
+                name: "p6".into(),
+                span: Span::default(),
+            },
+        );
+        let fit = FitInput {
+            path: f("seat_fit"),
+            hole: f("seat_fit.hole"),
+            shaft: f("seat_fit.shaft"),
+            result: analyze(&spec, &first, None, None).expect("fit"),
+            required: None,
+        };
+        let b = build(SRC, &[], &[fit]);
+        let comp = &b.project.components[0];
+        assert_eq!(comp.class, ComponentClass::Model);
+        assert_eq!(comp.fits.len(), 1);
+        assert_eq!(comp.fits[0].fit_type, "interference");
+        assert_eq!(b.project.checks.len(), 1);
+        assert_eq!(
+            b.project.checks[0].verdicts.primary,
+            Some(VerdictState::Pass)
+        );
+        assert!(b.project.checks[0].expr.contains("od > 24mm"));
+        assert_eq!(b.project.flavour, Flavour::Design);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn let_is_analysis() {
+        let b = build(SRC, &[], &[]);
+        let l = member(&b, "Axle", "slack");
+        assert!(l.analysis);
+        assert_eq!(l.kind, MemberKind::Let);
+        assert!(!member(&b, "Axle", "od").analysis);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn variants_store_only_differing_values() {
+        let alt = SRC.replace("wall = 2.5mm", "wall = 3mm");
+        let b = build(SRC, &[("Axle/wall=Thick", alt.as_str())], &[]);
+        let wall = member(&b, "Axle", "wall");
+        let v = wall.variants.as_ref().expect("wall differs");
+        assert!(v.contains_key("Axle/wall=Thick"));
+        assert!(member(&b, "Axle", "plain").variants.is_none());
+        assert!(member(&b, "Axle", "od").variants.is_some());
+        assert!(
+            b.project.checks[0]
+                .verdicts
+                .per_alternate
+                .contains_key("Axle/wall=Thick")
+        );
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn compensated_member_keeps_designed_nominal_and_drawn() {
+        let b = build(PROCESS_SRC, &[], &[]);
+        let m = member(&b, "Case", "insert_hole");
+        let v = m.value.as_ref().expect("value");
+        let mm = |n: i64, d: i64| Magnitude::new(Rational::new(n, d).unwrap(), 0);
+        assert_eq!(v.nominal, Nominal::Exact(Exact(mm(34, 10_000))));
+        assert_eq!(v.drawn, Some(Exact(mm(36, 10_000))));
+        assert_eq!(m.role.as_deref(), Some("hole"));
+        assert!(member(&b, "Case", "insert_hole").value.is_some());
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn derived_tolerance_is_an_affine_of_source_variables() {
+        let b = build(SRC, &[], &[]);
+        let seat = member(&b, "Axle", "seat").value.as_ref().expect("seat");
+        let st = seat.tol.as_ref().expect("seat tol");
+        assert_eq!(st.terms.len(), 1);
+        let mm = |n: i64, d: i64| Magnitude::new(Rational::new(n, d).unwrap(), 0);
+        // +0.021/-0: centre offset 0.0105mm, radius 0.0105mm.
+        assert_eq!(st.terms[0].lo, Exact(mm(0, 1)));
+        assert_eq!(st.terms[0].hi, Exact(mm(21, 1_000_000)));
+        // Derived parameters keep their nominal only; a `let` keeps the analysis form.
+        let od = member(&b, "Axle", "stack").value.as_ref().expect("stack");
+        let ot = od.tol.as_ref().expect("stack tol");
+        let vars: Vec<String> = ot.terms.iter().map(|t| t.var.to_string()).collect();
+        assert!(vars.iter().any(|d| d.ends_with(".seat")), "{vars:?}");
+        assert!(vars.iter().any(|d| d.ends_with(".wall")), "{vars:?}");
+        assert!(
+            member(&b, "Axle", "plain")
+                .value
+                .as_ref()
+                .unwrap()
+                .tol
+                .is_none()
+        );
+    }
+}
