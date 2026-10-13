@@ -36,6 +36,9 @@ use tracing::{debug, trace, warn};
 use crate::deps::Severity;
 use crate::resolve::{CanonPath, Ctx, Level, MemberSeg, PackageSrc, Resolved, Resolver};
 
+#[path = "checks.rs"]
+pub mod checks;
+
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
 
@@ -104,6 +107,8 @@ pub struct Evaluation {
     pub values: BTreeMap<CanonPath, Evaluated>,
     /// Everything that went wrong, in evaluation order.
     pub diagnostics: Vec<EvalDiagnostic>,
+    /// The verdict of every `check` and `require`, in source order.
+    pub checks: Vec<checks::CheckResult>,
 }
 
 impl Evaluation {
@@ -324,6 +329,7 @@ pub struct Evaluator<'r, 'p> {
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
     diagnostics: Vec<EvalDiagnostic>,
+    index: checks::CheckIndex<'p>,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -334,10 +340,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         packages: &[PackageSrc<'p>],
     ) -> Self {
         let mut defs = BTreeMap::new();
+        let mut index = checks::CheckIndex::default();
         for p in packages {
             for m in &p.modules {
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
+                    index.add_component(&p.name, &m.path, c);
                 }
             }
         }
@@ -350,6 +358,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             in_progress: BTreeSet::new(),
             next_var: 0,
             diagnostics: Vec::new(),
+            index,
         }
     }
 
@@ -359,6 +368,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         for k in &keys {
             self.value_of(k);
         }
+        let checks = self.run_checks();
         let values = self
             .done
             .into_iter()
@@ -371,6 +381,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         Evaluation {
             values,
             diagnostics: self.diagnostics,
+            checks,
         }
     }
 
@@ -537,6 +548,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     fn eval(&mut self, sc: &mut Scope, e: &Expr) -> R<Val> {
         let span = e.span;
+        if let ExprKind::Field(..) = &e.kind
+            && let Some(r) = self.bound_limit(sc, e)
+        {
+            return r;
+        }
         match &e.kind {
             ExprKind::Number(t) => {
                 let m = parse_number(t, span)?;
@@ -860,13 +876,13 @@ mod tests {
     use cadetta_syntax::ast::File;
     use cadetta_syntax::parser::parse;
 
-    fn file(src: &str) -> File {
+    pub(super) fn file(src: &str) -> File {
         let p = parse(src);
         assert!(p.diags.is_empty(), "{:?}", p.diags);
         p.file
     }
 
-    fn run(f: &File) -> Evaluation {
+    pub(super) fn run(f: &File) -> Evaluation {
         let pkgs = vec![PackageSrc {
             name: "p".to_owned(),
             deps: Vec::new(),
