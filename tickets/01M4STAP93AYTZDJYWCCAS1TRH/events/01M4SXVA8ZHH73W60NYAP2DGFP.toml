@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given FastenerPolicy and IsoDefault, when used with `#![default(FastenerPolicy = IsoDefault)]`, then ScrewJoint policy fills from it (stdlib.md 4, language.md 3.11)", "Given policy tables, when read, then factors and TapColumn cut/form are typed (stdlib.md 4)", "Given FastenerPolicy, when no default is set, then std supplies it and project [defaults] may override (stdlib.md 4; config-cli.md 2)"]
+new = ["Given FastenerPolicy and IsoDefault, when used with `#![default(FastenerPolicy = IsoDefault)]`, then ScrewJoint policy fills from it (stdlib.md 4, language.md 3.11)", "Given policy tables, when read, then factors and TapColumn cut/form are typed (stdlib.md 4)", "Given FastenerPolicy, when no default is set, then std supplies it and project [defaults] may override (stdlib.md 4; config-cli.md 2)", "Given std::fasteners::IsoDefault, when read, then engagement factors and tap columns come from Materials, lengths from Iso4762Len, drills from the ISO 2306 preferred series, bottom_clearance = 1mm, tap_lead_in = 3 (pitches, plug tap) and drill_point = 0.3 (118deg), each cited to Machinery Handbook (stdlib.md 4)", "Given precedence of a component #![default], module #![default], package [defaults], then the std default IsoDefault, when no override exists, then IsoDefault applies and no lint fires on the fallback (stdlib.md 4)"]
+moved = [1, 2, 3]
+at = "2026-10-13T06:05:27Z"
+actor = "lognd"
+rev = 1
