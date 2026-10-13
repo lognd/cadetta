@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T09:02:17Z"
+updated = "2026-10-13T09:02:18Z"
 persona = "design engineer"
 capability = "set project-wide fastener policy once"
 idempotency_key = "replan13:FastenerPolicy, IsoDefault and the default attribute"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given FastenerPolicy, when no default is set, then std supplies it and project [defaults] may override (stdlib.md 4; config-cli.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given std::fasteners::IsoDefault, when read, then engagement factors and tap columns come from Materials, lengths from Iso4762Len, drills from the ISO 2306 preferred series, bottom_clearance = 1mm, tap_lead_in = 3 (pitches, plug tap) and drill_point = 0.3 (118deg), each cited to Machinery Handbook (stdlib.md 4)"
