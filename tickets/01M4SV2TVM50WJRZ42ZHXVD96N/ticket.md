@@ -8,11 +8,15 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:07Z"
+updated = "2026-10-13T05:17:09Z"
 persona = "design engineer"
 capability = "regenerate headless and see rebuild failures as diagnostics"
 labels = ["creates:adapters/solidworks/src/regen.py"]
 scope = ["adapters/solidworks/src/regen.py"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2TR8ENTA87J1DDKCF816"
 
 [[acceptance]]
 text = "Given a rebuild error, when regen runs, then R004 regen-failed is returned naming the feature (adapters.md 5, lints.md R004)"
