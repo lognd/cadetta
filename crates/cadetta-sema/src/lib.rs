@@ -14,6 +14,7 @@ pub mod lower;
 pub mod modules;
 pub mod parts;
 pub mod process;
+pub mod renames;
 pub mod resolve;
 pub mod rollup;
 pub mod tables;

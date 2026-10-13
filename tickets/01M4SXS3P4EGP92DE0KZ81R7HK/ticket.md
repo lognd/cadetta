@@ -2,13 +2,14 @@
 id = "01M4SXS3P4EGP92DE0KZ81R7HK"
 title = "Renames and moves across modules with was"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:14Z"
-updated = "2026-10-13T09:14:15Z"
+updated = "2026-10-13T09:14:57Z"
 persona = "library author"
 capability = "move a file or item without breaking bindings, waivers or attestations"
 labels = ["creates:crates/cadetta-sema/src/renames.rs"]

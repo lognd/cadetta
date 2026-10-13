@@ -178,6 +178,14 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   enforces is the obligation graph: `cadetta update` followed by
   `cadetta check` on a dependent reports every verdict an update flips
   and every sign-off it makes stale, whatever the version number says.
+- Decisions (`cadetta-sema` `renames.rs`): a chain of renames is
+  followed to its end; a carried path keeps the suffix below the renamed
+  prefix; a waiver or attestation glob carries when its literal prefix
+  (up to the first wildcard) names an old path. For the semver rule, a
+  removed `pub` item or non-`priv` member counts as covered when a `was`
+  maps it onto a member that exists in the new version. The sema library
+  can list the changes it finds (removed, kind changed, value a
+  dependent reads changed); it still does not compare version numbers.
 
 ## 6. Obligations across packages
 

@@ -218,6 +218,12 @@ impl Renames {
         Some((redirected, old))
     }
 
+    /// Every recorded rename as (old path, current path), in path order.
+    // frob:ticket 01M4SXS3P4EGP92DE0KZ81R7HK
+    pub fn entries(&self) -> impl Iterator<Item = (&CanonPath, &CanonPath)> {
+        self.map.iter()
+    }
+
     /// Number of recorded renames.
     pub fn len(&self) -> usize {
         self.map.len()
