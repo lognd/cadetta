@@ -57,6 +57,9 @@ class ModelSpec(BaseModel):
 # Every generated module under cadetta.models. Add a row to model a new schema.
 MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="cadetta.ir.1.json", module="ir"),
+    ModelSpec(schema_file="cite-list.json", module="cite_list"),
+    ModelSpec(schema_file="names.json", module="names"),
+    ModelSpec(schema_file="bind.json", module="bind"),
 )
 
 
