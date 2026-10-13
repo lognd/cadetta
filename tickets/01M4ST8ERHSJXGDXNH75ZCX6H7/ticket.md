@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T07:56:32Z"
+updated = "2026-10-13T07:56:33Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
@@ -73,5 +73,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an attestation, when judged, then verdict and margin are recorded and dependency own digests are used (obligations.md 2)"
-bound = false
+bound = true
 +++
