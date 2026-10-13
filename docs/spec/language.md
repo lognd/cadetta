@@ -434,6 +434,17 @@ nominal that is not a whole number of nanometres has no table row (F002).
   have no `#!` default, so positions are never compensated by accident.
   Under a process, a parameter whose name suggests a feature but has no
   role is P001.
+  Decisions (cadetta-sema `process.rs`): a process is found by name in
+  the component's package, then in any package; a component's
+  `#![process(P)]` wins over the file's; a role is a bare attribute
+  naming a rule of the active process, on the member (leading or
+  trailing), never inherited from a scope. A rule body may read its
+  argument, the process's parameters and literals, and use `+ - * /`,
+  parentheses and negation; it must keep the argument's kind. The
+  designed value keeps the member's nominal and gains, for each process
+  parameter a rule reads, that parameter's deviation about its centre.
+  A name suggests a feature when a `_`-separated word is one of `hole
+  bore boss pin slot post pocket shaft stud standoff peg cutout rib`.
 
 Evaluation of these (decisions): function bodies and `let` values are
 analysis values, evaluated over the full tolerance of their operands;
