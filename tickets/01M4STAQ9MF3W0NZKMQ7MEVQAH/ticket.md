@@ -8,12 +8,16 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T05:03:57Z"
+updated = "2026-10-13T05:05:27Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for language"
 labels = ["creates:tests/conformance/language/**"]
 scope = ["tests/conformance/language/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STCDGQMN86JQJXKAQ2FX25"
 
 [[acceptance]]
 text = "Given docs/spec/language.md, when fixtures are written, then every normative rule and every diagnostic code in language has a must-fire and a must-not-fire fixture under tests/conformance/language/ (language.md)"
