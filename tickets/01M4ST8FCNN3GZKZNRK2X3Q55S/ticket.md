@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-13T09:44:30Z"
+updated = "2026-10-13T09:44:31Z"
 persona = "design engineer"
 capability = "compare every implementer of an interface side by side"
 idempotency_key = "replan13:cadetta compare"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an interface used by several slots, when run, then the table covers every slot typed by it (obligations.md 5.1)"
-bound = false
+bound = true
 +++
