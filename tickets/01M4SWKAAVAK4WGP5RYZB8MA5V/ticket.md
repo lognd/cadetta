@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T13:39:58Z"
+updated = "2026-10-13T13:39:59Z"
 persona = "design engineer"
 capability = "get stable codes for every compile failure"
 idempotency_key = "replan14:lint-e"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given each of E001-E011, when its trigger is present, then the code fires as a fixed error, including E005 missing-package (an error, packages.md 1; lints.md 3 E)"
-bound = false
+bound = true
 +++
