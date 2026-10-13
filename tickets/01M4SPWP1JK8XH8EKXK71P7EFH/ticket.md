@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:27:06Z"
+updated = "2026-10-13T06:28:47Z"
 persona = "design engineer"
 capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
@@ -29,7 +29,7 @@ target = "01M4ST7A8ZG0BS11X26BB84S84"
 
 [[acceptance]]
 text = "Given the language.md section 1 example, when parsed, then the AST has 1 interface, 2 ots, 3 models, 1 assembly and 1 fit member (language.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the grammar in language.md 3, when parsed, then file, use, component, params, member, let, bound, part and check productions are accepted"
