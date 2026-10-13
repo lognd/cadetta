@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:05:21Z"
+updated = "2026-10-13T05:45:12Z"
 persona = "design engineer"
 capability = "set project-wide fastener policy once"
 idempotency_key = "replan13:FastenerPolicy, IsoDefault and the default attribute"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given policy tables, when read, then factors and TapColumn cut/form are typed (stdlib.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given FastenerPolicy, when no default is set, then std supplies it and project [defaults] may override (stdlib.md 4; config-cli.md 2)"
 bound = false
 +++
