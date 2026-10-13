@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Update",
+  "description": "A `cadetta.update/1` report: the `package` lock records `cadetta update` wrote.",
+  "type": "object",
+  "required": ["schema", "packages", "removed", "wrote"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "cadetta.update/1" },
+    "packages": {
+      "description": "Records written, ordered by package name.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Package" }
+    },
+    "removed": {
+      "description": "Packages whose record was dropped because they left the dependency closure (full update only).",
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "wrote": { "description": "True when cadetta.lock changed on disk.", "type": "boolean" }
+  },
+  "$defs": {
+    "Package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "source", "digest", "change"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "source": { "description": "`path:RELATIVE` or `git:URL#KIND=REF`.", "type": "string" },
+        "digest": { "description": "BLAKE3 content digest, lowercase hex.", "type": "string", "pattern": "^[0-9a-f]+$" },
+        "change": { "enum": ["added", "changed", "unchanged"] }
+      }
+    }
+  }
+}

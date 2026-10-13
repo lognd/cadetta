@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T13:34:09Z"
+digest = "b37a1a09c4093fe2ec87e6da3f4db3f9a16a9f5e1c97eb46e6f7bb366140395f"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8928fa9d-8811-434c-8c26-b62e1121bc4d with nextest profile: default
+    Starting 1 test across 2 binaries (128 tests skipped)
+        PASS [   0.026s] cadetta cmd::impact_swap::tests::diffs_variant_against_primary_and_blocks_on_failure
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.028s] 1 test run: 1 passed, 128 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::impact_swap::tests::diffs_variant_against_primary_and_blocks_on_failure)'"
+size = 733
+status = "measured"
+test_count = 1
+tests_digest = "fe1e2504d562c9a1ab1395402a789d0fa5f112009cd506bd59a657ce9df40f22"
+at = "2026-10-13T13:34:09Z"
+actor = "lognd"
+rev = 1

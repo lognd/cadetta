@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T12:49:59Z"
+digest = "421180af941794a9026f7e90df45d9c868cb6362a1d1cc0b604fb1db1229a6f5"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f6caa87c-995a-40cf-9a84-7f64b2d986c3 with nextest profile: default
+    Starting 6 tests across 24 binaries (727 tests skipped)
+        PASS [   0.089s] cadetta universe::tests::impact_lists_dependents_of_a_lowered_member
+        PASS [   0.107s] cadetta universe::tests::why_traces_a_lowered_member
+        PASS [   0.108s] cadetta universe::tests::ir_prints_lowered_digested_members
+        PASS [   0.112s] cadetta universe::tests::ack_records_an_attestation_for_the_check
+        PASS [   0.154s] cadetta universe::tests::obligations_lists_the_open_check
+        PASS [   0.213s] cadetta universe::tests::why_stale_names_the_changed_node_after_an_edit
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.229s] 6 tests run: 6 passed, 727 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(/universe::tests/)"
+size = 998
+status = "measured"
+test_count = 6
+tests_digest = "b923622968ae41788240f48f064e72e75ae5793329ca909144d80d289d4f47bb"
+at = "2026-10-13T12:49:59Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [9]
+captured_at = "2026-10-13T13:34:31Z"
+digest = "76733c7191aa00863af0e7c106496e92059d27a63b5aab88455897e7ad17117b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0d55a8f9-3b98-46e5-bb12-77441d88ba1e with nextest profile: default
+    Starting 1 test across 1 binary (74 tests skipped)
+        PASS [   0.014s] cadetta-adapter builtin::sw_equations::tests::solidworks_naming
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 1 test run: 1 passed, 74 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(=builtin::sw_equations::tests::solidworks_naming)'"
+size = 552
+status = "measured"
+test_count = 1
+tests_digest = "c2cd14b55b2a8440c9a76d0a43e936621735e30e17dcdd86640d4d99bf3a09af"
+at = "2026-10-13T13:34:31Z"
+actor = "lognd"
+rev = 1

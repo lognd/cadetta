@@ -180,6 +180,13 @@ variable `"Axle_end_diameter"` or to the dimension
   same path (bindings-file order); if the path has none, at the
   global of its referent when the path is a pure alias; otherwise the
   emitter creates the path's own mangled global (3.1).
+- File defaults (`cadetta-adapter` `bindings.rs`): `mode` defaults to
+  `ref` for a `dimension` locator and `value` otherwise; an omitted
+  `native_unit` means the adapter's declared native unit. A
+  `#[native(adapter, "locator")]` pin replaces the file entry for its
+  path with one `global`, `value` locator (several pins for a path
+  accumulate). A `was` rename moves the binding unless the new path is
+  already bound. `[*]` matches any index when testing R005.
 - Units at read: a native value without a unit takes the adapter's
   declared native unit (`initialize`), recorded in observed IR as
   `unit_assumed`. Formats with no unit information at all need
@@ -325,6 +332,24 @@ unavailable (R008, exit 2). Adapters are located by `command` in
 
 Adapters are declared in `cadetta.toml` (`[[adapter]]`, config-cli.md
 2); the protocol schema lives in `docs/schemas/` beside the IR schema.
+
+Wire details fixed by the host (`cadetta-adapter`, `rpc`):
+
+- Framing is newline-delimited: one JSON-RPC message per line on the
+  adapter's stdin and stdout. Stdout carries protocol only; an adapter
+  logs to stderr, which the host passes through. A message without an
+  `id` from the adapter is a notification and is ignored.
+- `initialize` params are `{protocol: "cadetta.adapter/1", client:
+  {name, version}}`; `capabilities` is a list of `emit`, `read`,
+  `drive`; `precision` is the number of fractional decimal digits of
+  the native number format.
+- `read` takes `{source: {files: [...]}}` or `{source: {session:
+  handle}}`. `regen` per-target status is `ok` or `failed`.
+- The host refuses `open`, `save`, `close`, `push` and `regen` unless
+  `drive` was declared, and `emit` unless `emit` was.
+- Every result is parsed against the types in `docs/schemas/adapter-protocol.json`
+  (unknown fields are refused); each diagnostic must be a `cadetta.diag/1`
+  record.
 
 ## 6. Target matrix
 

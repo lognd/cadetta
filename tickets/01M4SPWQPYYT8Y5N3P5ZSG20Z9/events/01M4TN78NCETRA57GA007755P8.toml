@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T12:53:55Z"
+digest = "2a10916ff523f3299c1256925e0f8a274b8d57a724d137b9018b387b0a8f92fe"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e05ead8e-2f77-4eab-886b-3e748bd82da0 with nextest profile: default
+    Starting 1 test across 1 binary (57 tests skipped)
+        PASS [   0.018s] cadetta-lint rules::q::tests::fixed_codes_ignore_severity_override
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 1 test run: 1 passed, 57 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E test(=rules::q::tests::fixed_codes_ignore_severity_override)"
+size = 555
+status = "measured"
+test_count = 1
+tests_digest = "c78643ff081e2a4103dabecd6e5f50caa2f8f7cc7f44b0241f359c03417ef1d7"
+at = "2026-10-13T12:53:55Z"
+actor = "lognd"
+rev = 1

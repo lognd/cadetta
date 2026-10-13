@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a project with sources, when why, impact, ir, ack, obligations or why --stale run, then they lower sources through pipeline::analyze instead of stub project_candidates, and a test per verb shows a real (non-empty) result"]
+moved = []
+at = "2026-10-13T09:47:04Z"
+actor = "lognd"
+rev = 1

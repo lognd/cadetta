@@ -21,6 +21,8 @@ node adapter_host : trusted {
   may fs.write at "crates/cadetta-adapter/src/builtin/**";
   may fs.read at "crates/cadetta-adapter/src/testing.rs";
   may fs.write at "crates/cadetta-adapter/src/testing.rs";
+  may fs.read at "crates/cadetta-adapter/src/import/propose.rs";
+  may fs.write at "crates/cadetta-adapter/src/import/propose.rs";
 }
 
 /// External SOLIDWORKS adapter (Python, pywin32 COM), the primary drive target.
@@ -54,10 +56,13 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/project.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/check.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
+  may exec at "crates/cadetta-cli/src/cmd/update.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -140,6 +145,7 @@ node syntax : trusted {
   kind component;
   clearance Internal;
   owns "crates/cadetta-syntax/**";
+  may fs.read at "crates/cadetta-syntax/tests/**";
 }
 
 /// Exact rational quantities, units, kinds and tolerances (quantities.md).

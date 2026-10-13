@@ -298,7 +298,8 @@ pub fn lower_solver(s: &Solver, path: &str) -> Result<SolverDecl, Vec<SolverDecl
                 );
             }
             SolverMemberKind::Deps(f) => deps.push(f.clone()),
-            SolverMemberKind::Error => {}
+            // Checks on a solver's own outputs are evaluated like any other check (solvers.md 5).
+            SolverMemberKind::Check(_) | SolverMemberKind::Error => {}
         }
     }
     if !errs.is_empty() {

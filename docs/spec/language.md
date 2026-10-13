@@ -85,7 +85,9 @@ assembly Rover {
 ## 2. Lexical structure
 
 - UTF-8 source. Statements end at a newline or `;`; a newline inside
-  `( ) [ ]` does not end one.
+  `( ) [ ]` does not end one. A line whose first token is a binary
+  operator `+ * / ^` continues the previous statement (a single `/`;
+  `//` is a comment).
 - `//` line comments; `///` doc comments attach to the next item and are
   carried into the IR and into emitted output where supported.
 - Identifiers `[A-Za-z_][A-Za-z0-9_]*`. Reserved keywords: `pub priv
@@ -114,7 +116,7 @@ component = ( "ots" | "model" | "assembly" ) IDENT [ params ] [ ":" iface_list ]
 params    = "(" pdecl { "," pdecl } ")"
 pdecl     = IDENT ":" type [ "=" expr ]              // a default makes the argument optional
 member    = { doc } { attr } [ "priv" ] ( param | let | bound | part | fit | check
-            | require | solver | datum | place ) [ trailing_attr ]
+            | require | solver | datum | place ) [ citation ] [ trailing_attr ]
                                                      // "priv": usable only in its package (packages.md 3)
 datum     = "datum" IDENT [ "=" expr ]               // geometry.md 2; no "=" in an interface
 place     = "place" path "on" expr [ "for" IDENT "in" "0" ".." "count" "(" path ")" ]
@@ -126,6 +128,8 @@ param     = IDENT [ ":" type ] "=" expr [ citation ] { "was" path }
 bound     = IDENT ( "<=" | ">=" ) expr | IDENT "in" expr ".." expr | path "==" path
 part      = "part" IDENT [ "[" expr "]" ] ":" type [ "=" ctor [ "alt" "[" ctor { "," ctor } "]" ] ]
 ctor      = path [ "(" args ")" ]
+args      = arg { "," arg }
+arg       = [ IDENT "=" ] expr [ citation ]          // 5a
 check     = "check" IDENT [ "for" IDENT "in" expr ] ":" expr [ STRING ]
 process   = "process" IDENT [ citation ] "{" { param | rule } "}"
 rule      = "rule" IDENT "(" pdecl ")" "->" type "=" expr
@@ -137,11 +141,11 @@ interface = "interface" IDENT [ ":" iface_list ] "{" { doc | bound | IDENT [ "?"
 enum      = "enum" IDENT "{" IDENT { "," IDENT } [ "," ] "}"
 fn        = "fn" IDENT "(" [ pdecl { "," pdecl } ] ")" "->" type
             "{" { let } expr "}"
-fit       = "fit" IDENT "=" fitspec "on" path [ "[" expr ".." expr "]" ]
+fit       = "fit" IDENT "=" fitspec [ "on" path ] [ "[" expr ".." expr "]" ]
 fitspec   = CLASS [ "/" CLASS ] | path "/" path    // CLASS: H7, p6; 3.7
 require   = "require" IDENT ":" expr [ STRING ] [ citation ]
 solver    = "solver" IDENT citation "{" { "in" bind { "," bind }
-            | "out" IDENT ":" type | "deps" STRING } "}"
+            | "out" IDENT ":" type | "deps" STRING | check } "}"
 bind      = IDENT "=" expr
 waive     = "waive" CODE "on" GLOB [ "for" "alt" SLOT "=" ALT ]
             "{" "because" STRING [ "expires" DATE ] "}"
@@ -355,6 +359,10 @@ ships, and their column names, are in stdlib.md.
   side with its own tolerance. `p6 on wheel.hub_bore` sizes a shaft for
   a vendor bore; `H7 on motor.shaft` sizes a bore for a vendor shaft.
 - `a / b`: both sides are paths with tolerances (an insert in a hole).
+  `on` is optional here and defaults to the hole path (the left side).
+  Class forms still require `on`. Fit operands are plain paths: an
+  array part is read unindexed, `screws.major_dia` meaning
+  `screws[0].major_dia` (4).
 - An optional required range: `fit insert = hole / Insert.od [-0.4mm ..
   -0.1mm]` (negative clearance is interference).
 
@@ -624,6 +632,15 @@ Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
 ## 5a. Parser decisions
 
 Rules the grammar left open, fixed by the reference parser:
+
+- A citation may follow any member statement (bound, check, fit, let,
+  part, ...) and any constructor argument, named or positional, before
+  a trailing `#[...]`.
+- In attribute arguments `in` and a bare `%` read as unit words, as in
+  `#![display(in/32)]` and `#[display(%)]`.
+- In a solver body, `in` bindings may continue on the next line after a
+  trailing comma; `check NAME: expr` is allowed (solvers.md 5); several
+  files take several `deps` statements, one file each.
 
 - `part name: Type(args)` without `= ...` is allowed (a part whose type
   is constructed directly, as `part axle[2]: Axle(wheel = ...)`).

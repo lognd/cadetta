@@ -17,6 +17,7 @@ categories = ["science", "development-tools"]
 cadetta-ir.workspace = true
 cadetta-obligations.workspace = true
 cadetta-adapter.workspace = true
+cadetta-units.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 schemars.workspace = true

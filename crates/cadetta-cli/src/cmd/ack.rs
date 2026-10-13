@@ -17,7 +17,9 @@ use cadetta_obligations::staleness::{Judgement, Signer, record_attest};
 
 use crate::config::{Config, Gate};
 use crate::output::Format;
+use crate::pipeline::analyze;
 use crate::project::Project;
+use crate::universe::{ack_candidates, universes};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta ack SELECTOR --role R --reason \"...\" \
@@ -315,18 +317,6 @@ pub(crate) fn policy_of(config: &Config) -> Result<Policy, String> {
     Ok(policy)
 }
 
-/// The obligations the current design offers.
-///
-/// Closure digests come from the IR (ir.md 4); the source-to-IR lowering is not wired into
-/// the CLI yet, so a project offers none and every selector reports "matches no obligation".
-fn project_candidates(project: &Project) -> Vec<Candidate> {
-    tracing::warn!(
-        root = %project.root.display(),
-        "ack: no IR pipeline wired into the CLI yet; no obligations are offered"
-    );
-    Vec::new()
-}
-
 /// The `email` under `[user]` in git-config text, or `None`.
 fn email_in(text: &str) -> Option<String> {
     let mut in_user = false;
@@ -395,8 +385,9 @@ pub fn run_ack(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mu
         Ok(p) => p,
         Err(message) => return fail(err, &format!("{message}; {USAGE}")),
     };
-    let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
-        Ok((project, _scope)) => project,
+    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+    {
+        Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
     let policy = match policy_of(&project.config) {
@@ -418,7 +409,11 @@ pub fn run_ack(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mu
         Ok(d) => d,
         Err(message) => return fail(err, &message),
     };
-    let candidates = project_candidates(&project);
+    let analysis = analyze(&project, &members);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
+    }
+    let candidates = ack_candidates(&universes(&analysis));
     let author = |_: &ObligationId| None;
     let env = AckEnv {
         policy: &policy,

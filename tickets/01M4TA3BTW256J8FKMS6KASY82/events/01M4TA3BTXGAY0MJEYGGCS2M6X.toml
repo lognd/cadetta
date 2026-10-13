@@ -1,0 +1,10 @@
+kind = "create"
+title = "Sema resolve/eval/dep diagnostics lack module identity"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema"]
+body = "found while working ~E631Y52. Check attributes these heuristically to project files and drops std ones."
+at = "2026-10-13T09:39:33Z"
+actor = "lognd"
+rev = 1

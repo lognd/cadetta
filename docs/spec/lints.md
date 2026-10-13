@@ -230,6 +230,15 @@ cannot be resolved or evaluated.
 | N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
 | N006 | type-read-beside-instance | warning | | `Type.member` in an assembly that has a `part` of that type; suggests the instance (language.md 3.1). |
 
+N002 matches the component name in `snake_case` or flattened lowercase
+followed by `_` (`Axle.axle_length`, `FrontAxle.front_axle_x`). N003 fires
+when the last `_` token of a member name is a unit symbol (`mm`, `in`,
+`kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
+N005 only, never also N001. N004 findings come from the resolver, since
+only it sees the `was` text; the lint turns them into diagnostics.
+N006 carries its suggestion in the message (`rear.length`); no edit is
+attached because the read has no single source range in the IR.
+
 ### D: duplication and single source of truth
 
 | Code | Name | Default | Fixed | Meaning |
@@ -238,6 +247,14 @@ cannot be resolved or evaluated.
 | D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. Not in an `ots` for a cited literal: a vendor's stated value is its own source even when it matches a standard (T001 covers mismatches). |
 | D003 | reference-cycle | error | yes | Parameters depend on each other cyclically. |
 
+Implementation rules (decided with the D rules): a D001 group takes the largest
+significant-digit count among its members to choose between the configured severity and info; a
+group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
+D003 is computed on the member dependency graph, so a loop between components with no member-level
+loop is clean.
+
 ### M: magic numbers
 
 | Code | Name | Default | Fixed | Meaning |
@@ -245,6 +262,15 @@ cannot be resolved or evaluated.
 | M001 | unexplained-precision | warning | | In a `model`: a literal with more significant decimals than `[lint] precision` for its kind and no tolerance, fit, table lookup or allow. Provenance and doc comments do not explain a value. In an `ots`: the same, unless cited. |
 | M002 | magic-factor | info | | Bare factor other than small integers, simple fractions and powers of ten. |
 | M003 | untoleranced-fit-side | warning | | A parameter used as a side of a `fit` has no tolerance. |
+
+Implementation rules (decided with the M rules): the M rules look at authored parameter literals
+only (no expression, nothing read), so a table lookup never reaches them and `allow` is applied by
+the engine. M001 counts decimals in the authored number, ignoring trailing zeros (`12.50mm` has 1),
+against `[lint] precision` for the value's kind; a kind with no entry is never reported. A
+tolerance or use as a fit side explains a literal; a citation explains it only in an `ots`. M002
+applies to dimensionless literals that are uncited: plain means an integer of magnitude at most 10,
+a fraction with numerator and denominator at most 10, or a power of ten (`1000`, `0.01`). M003 is
+reported once per fit-side member without a tolerance.
 
 ### F: fits
 
@@ -277,6 +303,14 @@ alternate, and only when the primary does not itself fail that check
 skips private components (U002) and components some part names as its
 type, primary or alternate.
 
+L, T and P rule implementation notes (0.1.0): the facts are decided
+upstream (lifecycle analysis in cadetta-variants, the table evaluator and
+the process pass in cadetta-sema) and handed to `cadetta-lint`
+`rules::lifecycle`, which lifts them to diagnostics. L001 is a warning
+before its date and an error once the date has passed `--as-of`
+whatever the configured severity; L002 lists viable alternates in its
+message. T001 and P001 use the configured severity.
+
 ### S: sources and solvers
 
 | Code | Name | Default | Fixed | Meaning |
@@ -297,6 +331,18 @@ type, primary or alternate.
 | C002 | check-undecided | warning | | Holds for some values and not others; says if the evaluation was conservative. |
 | C003 | toleranced-equality | warning | | `==` on toleranced operands; suggests accessors. |
 | C004 | derived-feature-in-check | info | | A check reads an arithmetic parameter with toleranced inputs and no tolerance of its own, so it treats a computed value as exact (quantities.md 5.3); suggests `let`. |
+
+C rule implementation notes (0.1.0): `cadetta-lint` `rules/c.rs` reads
+the check verdicts. C001 and C002 are raised per verdict: once for the
+primary and once for each alternate that fails or is undecided, the
+latter with `alt` set and `for alt SLOT=ALT` in the message, so a waiver
+may be scoped to one alternate (language.md 3.2); I002 additionally
+warns when only an alternate fails. C003 inspects the operands of each
+`==`/`!=` in the check text and fires when one reads a toleranced member
+of the check's component other than through `.nominal`. C004 fires per
+derived parameter (a `param` with an expression and dependencies, no
+tolerance of its own) that the check reads while one of its dependencies
+is toleranced.
 
 ### O: obligations
 

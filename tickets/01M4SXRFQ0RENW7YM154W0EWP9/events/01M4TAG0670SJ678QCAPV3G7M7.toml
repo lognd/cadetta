@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:46:26Z"
+digest = "ecc1f8d24db8621afdb01543c101088b54ee12e2aafb7a2305570959682ef6d7"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 63feb78b-8c99-4c04-8fbb-456808fec5ab with nextest profile: default
+    Starting 2 tests across 2 binaries (115 tests skipped)
+        PASS [   0.016s] cadetta cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones
+        PASS [   0.017s] cadetta cmd::update::tests::update_name_touches_only_that_record
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 2 tests run: 2 passed, 115 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones) + test(=cmd::update::tests::update_name_touches_only_that_record)'"
+size = 662
+status = "measured"
+test_count = 2
+tests_digest = "b97cb51bb5c09bf51c9f3018c8fb8f7055ca81c630ae222a1c74cbfb2ee437f2"
+at = "2026-10-13T09:46:26Z"
+actor = "lognd"
+rev = 1

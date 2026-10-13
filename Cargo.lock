@@ -135,6 +135,11 @@ name = "cadetta-adapter"
 version = "0.0.0"
 dependencies = [
  "cadetta-ir",
+ "cadetta-units",
+ "schemars",
+ "serde",
+ "serde_json",
+ "toml",
  "tracing",
 ]
 
@@ -180,6 +185,7 @@ dependencies = [
  "cadetta-adapter",
  "cadetta-ir",
  "cadetta-obligations",
+ "cadetta-units",
  "schemars",
  "serde",
  "serde_json",
