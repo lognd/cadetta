@@ -1,0 +1,16 @@
+kind = "create"
+title = "Name resolution and canonical paths"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWGB2729B40CQE81MHM2Z"
+persona = "design engineer"
+capability = "reference parameters as `Other.param` or `part.param`"
+outcome_text = "every value has one canonical path such as acme.rover::Axle.end_diameter"
+labels = ["creates:crates/cadetta-sema/src/resolve.rs"]
+scope = ["crates/cadetta-sema/src/resolve.rs"]
+acceptance = ["Given a bare name in a component, when resolved, then it is the component's own parameter", "Given `Other.param`, when resolved, then the same namespace is searched before imported namespaces", "Given declaration order reversed, when resolved, then results are identical"]
+at = "2026-10-13T04:03:52Z"
+actor = "lognd"
+rev = 1
