@@ -8,12 +8,12 @@ points = 2
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:07:20Z"
+updated = "2026-10-13T13:24:31Z"
 persona = "design engineer"
 capability = "get lints for the S family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/s.rs", "creates:tests/conformance/lints/S*/**"]
-scope = ["crates/cadetta-lint/src/rules/s.rs", "tests/conformance/lints/S*/**"]
+scope = ["crates/cadetta-lint/src/rules/s.rs", "tests/conformance/lints/S*/**", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given an ots value with no source on it or its component, when linted, then S001 warning"
