@@ -1,0 +1,100 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T21:19:33Z"
+digest = "f54b5c41de21c47c784808ff29cc59e9c92b82d4b04fa7682826277073499dcd"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c9c12a33-2229-4c3a-b0e9-ba1415e204c6 with nextest profile: default
+    Starting 9 tests across 27 binaries (920 tests skipped)
+        PASS [   0.043s] cadetta-sema cite::tests::local_file_digest_recorded_literal_not_checked
+        PASS [   0.044s] cadetta cmd::cite::tests::non_url_missing_and_failed_downloads_are_errors
+        PASS [   0.043s] cadetta-sema cite::tests::member_citation_wins_and_others_inherit
+        PASS [   0.044s] cadetta cmd::cite::tests::same_name_in_two_modules_is_ambiguous
+        PASS [   0.041s] cadetta-sema cite::tests::unknown_name_is_an_error
+        PASS [   0.045s] cadetta cmd::cite::tests::url_cite_is_stored_in_cites_and_rewritten
+        PASS [   0.044s] cadetta-sema cite::tests::kinds_resolve
+        PASS [   0.052s] cadetta cmd::cite::tests::file_names_are_sanitised
+        FAIL [  17.921s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'conformance_corpus_matches_the_spec' (1034018) panicked at crates/cadetta-cli/tests/conformance.rs:38:5:
+    47 conformance failure(s):
+    language/e001-cite-std-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-std-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-string-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-not-fire: extra E001 (error)
+    language/e001-cite-string-form [language]: must-not-fire: exit status 1, expected 0
+    language/e002-cite-path-unknown [language]: must-fire: missing E002 (error)
+    language/e002-cite-path-unknown [language]: must-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: exit status 1, expected 0
+    language/e003-cite-repeated-field [language]: must-fire: missing E003 (error)
+    language/e003-cite-repeated-field [language]: must-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-date [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-date [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-url [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-url [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-field [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-field [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-type [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-type [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-wrong-shape [language]: must-fire: missing E006 (error)
+    language/e006-cite-wrong-shape [language]: must-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-fire: missing S001 (warning) at acme.demo::Pin.dia
+    language/s001-member-citation [language]: must-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-not-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-not-fire: exit status 1, expected 0
+    language/s001-uncited [language]: must-not-fire: extra E001 (error)
+    language/s001-uncited [language]: must-not-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-fire: missing S002 (info)
+    lints/s002-missing-citation-file [lints]: must-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-not-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-not-fire: exit status 1, expected 0
+    stdlib/s001-std-cite-export [stdlib]: must-not-fire: extra S001 (warning) at acme.demo::Ring.groove_width
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 17.90s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  17.940s] 9 tests run: 8 passed, 1 failed, 920 skipped
+        FAIL [  17.921s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-E 'test(/cite::tests/) | test(conformance_corpus_matches)'"
+size = 5778
+status = "measured"
+test_count = 9
+tests_digest = "09a27e974ab3b0c78fd6f05c832552703a96e8a4cce6c735e1e2caddf826775b"
+at = "2026-10-13T21:19:33Z"
+actor = "lognd"
+rev = 1
