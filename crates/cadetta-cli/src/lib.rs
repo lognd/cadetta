@@ -2,9 +2,15 @@
 //! The `cadetta` command line as a library, so the binary and the Python
 //! package (bindings/python) run the same code.
 //!
-//! Specification: `docs/spec/config-cli.md`. Only `--version` exists so far.
+//! Specification: `docs/spec/config-cli.md`. Global flags (`--format`, `--cwd`,
+//! `--config`, `-v`) are parsed here; only `--version` exists as a command so far.
 
 pub mod config;
+pub mod output;
+
+use std::path::PathBuf;
+
+use output::Format;
 
 /// Version string printed by `cadetta --version`.
 pub const VERSION: &str = concat!("cadetta ", env!("CARGO_PKG_VERSION"));
@@ -52,7 +58,98 @@ pub fn run_with_logging(
             return EXIT_USAGE;
         }
     }
-    run(&rest, out)
+    let env_format = std::env::var("CADETTA_FORMAT").ok();
+    run_with_env(&rest, env_format.as_deref(), out, err)
+}
+
+/// The global flags (config-cli.md 4) resolved against the environment.
+#[derive(Debug, PartialEq, Eq)]
+pub struct Globals {
+    /// Output format: `--format`, else `CADETTA_FORMAT`, else text. Never
+    /// chosen by terminal detection (config-cli.md 5).
+    pub format: Format,
+    /// `--cwd DIR`: where root discovery starts.
+    pub cwd: Option<PathBuf>,
+    /// `--config FILE`: an explicit `cadetta.toml`.
+    pub config: Option<PathBuf>,
+}
+
+/// A bad global flag; always exit code 2.
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
+pub enum UsageError {
+    /// A flag that needs a value had none.
+    #[error("`{0}` needs a value")]
+    MissingValue(String),
+    /// The `--format` / `CADETTA_FORMAT` value is not a format.
+    #[error(transparent)]
+    Format(#[from] output::UnknownFormat),
+    /// `--cwd` names something that is not a directory.
+    #[error("--cwd {0}: not a directory")]
+    BadCwd(String),
+    /// `--config` names something that is not a file.
+    #[error("--config {0}: not a file")]
+    BadConfig(String),
+}
+
+/// Take the value of flag `name` at `args[i]`, from `--name=VALUE` or the next argument.
+fn flag_value(args: &[String], i: &mut usize, name: &str) -> Result<Option<String>, UsageError> {
+    let arg = &args[*i];
+    if let Some(value) = arg.strip_prefix(&format!("{name}=")) {
+        return Ok(Some(value.to_owned()));
+    }
+    if arg != name {
+        return Ok(None);
+    }
+    *i += 1;
+    args.get(*i)
+        .cloned()
+        .map(Some)
+        .ok_or_else(|| UsageError::MissingValue(name.to_owned()))
+}
+
+/// Split the global flags off `args`; returns them and the remaining arguments.
+///
+/// `env_format` is the value of `CADETTA_FORMAT`; an explicit `--format` wins.
+pub fn parse_globals(
+    args: &[String],
+    env_format: Option<&str>,
+) -> Result<(Globals, Vec<String>), UsageError> {
+    let (mut format, mut cwd, mut config) = (None, None, None);
+    let mut rest = Vec::new();
+    let mut i = 0;
+    while i < args.len() {
+        if let Some(v) = flag_value(args, &mut i, "--format")? {
+            format = Some(v.parse::<Format>()?);
+        } else if let Some(v) = flag_value(args, &mut i, "--cwd")? {
+            if !std::path::Path::new(&v).is_dir() {
+                return Err(UsageError::BadCwd(v));
+            }
+            cwd = Some(PathBuf::from(v));
+        } else if let Some(v) = flag_value(args, &mut i, "--config")? {
+            let path = cwd.as_deref().unwrap_or(std::path::Path::new(".")).join(&v);
+            if !path.is_file() {
+                return Err(UsageError::BadConfig(v));
+            }
+            config = Some(path);
+        } else {
+            rest.push(args[i].clone());
+        }
+        i += 1;
+    }
+    let format = match (format, env_format) {
+        (Some(f), _) => f,
+        (None, Some(text)) => text.parse()?,
+        (None, None) => Format::Text,
+    };
+    tracing::debug!(?format, ?cwd, ?config, "resolved global flags");
+    Ok((
+        Globals {
+            format,
+            cwd,
+            config,
+        },
+        rest,
+    ))
 }
 
 /// What the command line asked for.
@@ -73,8 +170,27 @@ fn parse(args: &[String]) -> Command {
 /// Run one command line (arguments after the program name), writing
 /// command output to `out`; returns the process exit code.
 pub fn run(args: &[String], out: &mut dyn std::io::Write) -> u8 {
-    let command = parse(args);
-    tracing::debug!(?command, "parsed command line");
+    run_with_env(args, None, out, &mut std::io::sink())
+}
+
+/// [`run`] with the `CADETTA_FORMAT` value given explicitly; usage errors
+/// that precede logging are written to `err`.
+pub fn run_with_env(
+    args: &[String],
+    env_format: Option<&str>,
+    out: &mut dyn std::io::Write,
+    err: &mut dyn std::io::Write,
+) -> u8 {
+    let (globals, rest) = match parse_globals(args, env_format) {
+        Ok(parsed) => parsed,
+        Err(error) => {
+            tracing::error!(%error, "invalid global flags");
+            let _ = writeln!(err, "error: {error}");
+            return EXIT_USAGE;
+        }
+    };
+    let command = parse(&rest);
+    tracing::debug!(?command, ?globals, "parsed command line");
     match command {
         Command::Version => match writeln!(out, "{VERSION}") {
             Ok(()) => EXIT_OK,
@@ -132,5 +248,67 @@ mod tests {
     #[test]
     fn unknown_argument_is_a_usage_error() {
         assert_eq!(run_to_string(&["sync"]), (EXIT_USAGE, String::new()));
+    }
+
+    fn strings(args: &[&str]) -> Vec<String> {
+        args.iter().map(|a| (*a).to_owned()).collect()
+    }
+
+    // frob:tests crates/cadetta-cli/src/lib.rs::parse_globals
+    #[test]
+    fn text_is_the_default_format_regardless_of_terminal() {
+        // Tests run with stdout captured (not a terminal); the format is still text.
+        let (globals, rest) = parse_globals(&strings(&["--version"]), None).unwrap();
+        assert_eq!(globals.format, Format::Text);
+        assert_eq!(rest, strings(&["--version"]));
+    }
+
+    // frob:tests crates/cadetta-cli/src/lib.rs::parse_globals
+    #[test]
+    fn format_flag_beats_env_and_both_validate() {
+        let pf = |a: &[&str], e| parse_globals(&strings(a), e).map(|(g, _)| g.format);
+        assert_eq!(pf(&[], Some("json")), Ok(Format::Json));
+        assert_eq!(pf(&["--format", "short"], Some("json")), Ok(Format::Short));
+        assert_eq!(pf(&["--format=sarif"], None), Ok(Format::Sarif));
+        assert!(pf(&["--format", "yaml"], None).is_err());
+        assert!(pf(&[], Some("yaml")).is_err());
+        assert_eq!(
+            pf(&["--format"], None),
+            Err(UsageError::MissingValue("--format".into()))
+        );
+    }
+
+    // frob:tests crates/cadetta-cli/src/lib.rs::parse_globals
+    #[test]
+    fn cwd_and_config_are_validated() {
+        let dir = std::env::temp_dir().join(format!("cadetta-cli-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("cadetta.toml"), "").unwrap();
+        let d = dir.to_str().unwrap();
+        let (g, rest) = parse_globals(
+            &strings(&["--cwd", d, "--config", "cadetta.toml", "x"]),
+            None,
+        )
+        .unwrap();
+        assert_eq!(g.cwd.as_deref(), Some(dir.as_path()));
+        assert_eq!(g.config, Some(dir.join("cadetta.toml")));
+        assert_eq!(rest, strings(&["x"]));
+        assert!(parse_globals(&strings(&["--cwd", "/no/such/dir"]), None).is_err());
+        assert!(parse_globals(&strings(&["--config", "/no/such.toml"]), None).is_err());
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    // frob:tests crates/cadetta-cli/src/lib.rs::run_with_env
+    #[test]
+    fn usage_errors_exit_two_with_message() {
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = run_with_env(&strings(&["--format", "yaml"]), None, &mut out, &mut err);
+        assert_eq!(code, EXIT_USAGE);
+        assert!(
+            String::from_utf8(err)
+                .unwrap()
+                .contains("unknown output format")
+        );
+        assert!(out.is_empty());
     }
 }
