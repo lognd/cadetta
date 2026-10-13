@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:56:18Z"
+updated = "2026-10-13T15:56:20Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a binding matching no IR path and no `was` path, when linted, then R005 warning (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a drive adapter reporting a rebuild failure, when linted, then R004 error is surfaced (adapters.md 1)"
