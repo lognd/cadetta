@@ -6,9 +6,13 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:03:46Z"
-updated = "2026-10-13T04:03:46Z"
+updated = "2026-10-13T04:04:06Z"
 labels = ["creates:crates/cadetta-lint/**"]
 scope = ["crates/cadetta-lint/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 +++
 
 Outcome: every rule in docs/spec/lints.md implemented with fixtures and waiver handling.
