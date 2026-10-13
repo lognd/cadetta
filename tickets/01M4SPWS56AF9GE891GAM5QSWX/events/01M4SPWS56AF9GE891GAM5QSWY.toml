@@ -1,0 +1,16 @@
+kind = "create"
+title = "Built-in JSON adapter"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH74K9QQS72Z9YMTPD72"
+persona = "design engineer"
+capability = "emit and read cadetta.ir/1 JSON"
+outcome_text = "I can diff and consume the IR from scripts"
+labels = ["creates:crates/cadetta-adapter/src/builtin/json.rs"]
+scope = ["crates/cadetta-adapter/src/builtin/json.rs"]
+acceptance = ["Given the same IR twice, when emitted, then the bytes are identical (golden file)", "Given emitted JSON, when read, then the observed IR equals the design IR values"]
+at = "2026-10-13T04:03:55Z"
+actor = "lognd"
+rev = 1
