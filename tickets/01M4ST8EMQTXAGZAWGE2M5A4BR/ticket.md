@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T06:10:05Z"
+updated = "2026-10-13T06:10:13Z"
 persona = "design engineer"
 capability = "see every claim as a node with typed edges"
 idempotency_key = "replan13:Obligation graph nodes, edges and states"
 labels = ["creates:crates/cadetta-obligations/src/graph.rs"]
-scope = ["crates/cadetta-obligations/src/graph.rs"]
+scope = ["crates/cadetta-obligations/src/graph.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
