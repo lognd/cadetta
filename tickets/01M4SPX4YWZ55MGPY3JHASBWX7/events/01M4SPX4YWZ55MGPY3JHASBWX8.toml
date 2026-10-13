@@ -1,0 +1,15 @@
+kind = "create"
+title = "OQ-5: File extension (.cdt collision)"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-5 from the spec. Closes with an ADR in docs/decisions/.
+
+Question: File extension. `.cdt` is proposed; it collides with a few obscure formats.
+
+Recommendation: Keep `.cdt` unless a real collision with tooling is found; record an ADR."""
+at = "2026-10-13T04:04:07Z"
+actor = "lognd"
+rev = 1
