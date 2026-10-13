@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:54:34Z"
+digest = "0db77b54fccc8806fc7d4fec3180d3bef1abdcec44ab983bd31d4e45f9038c37"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.72s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cd747482-e0e3-4b93-858c-336b436b116a with nextest profile: default
+    Starting 1 test across 1 binary (42 tests skipped)
+        PASS [   0.007s] cadetta-sema attrs::tests::scope_defaults_apply_and_member_wins
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 42 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E test(=attrs::tests::scope_defaults_apply_and_member_wins)"
+size = 966
+status = "measured"
+test_count = 1
+tests_digest = "bc9378f9f2bba879dcb9cae1aa123f002ebe47dc976c6b121f307ecc6a4272ea"
+at = "2026-10-13T07:54:34Z"
+actor = "lognd"
+rev = 1

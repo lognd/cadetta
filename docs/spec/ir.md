@@ -15,6 +15,14 @@ Both serialize to `cadetta.ir/1` JSON. Value lints (D001, M001, N, Q)
 run on either flavour; structural lints (D002, F, C, I, L) on design IR;
 drift lints (R) compare the two through bindings.
 
+Observed IR places every read parameter as a `param` member of one
+synthetic component `<package>::Observed`, named by the native name made
+path-safe (non-alphanumerics become `_`, collisions get `_2`, `_3`); the
+member carries `provenance = imported` with the true native name, the
+native expression in `expr` when exposed (`deps` stays empty: native
+expression syntax is the adapter's), and one binding with the locator.
+Citations, parts, fits, checks and solvers are empty.
+
 Observed IR makes adoption incremental: `cadetta import` reads existing
 CAD files, lints them at once, and scaffolds `.cdt` source.
 
