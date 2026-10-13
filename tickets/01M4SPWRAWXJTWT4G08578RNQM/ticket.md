@@ -1,14 +1,14 @@
 +++
 id = "01M4SPWRAWXJTWT4G08578RNQM"
-title = "Lint family Drift rules R001-R004 (needs observed IR)"
+title = "Lint family Drift rules R001-R006 (needs observed IR)"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 5
+points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T04:03:54Z"
+updated = "2026-10-13T05:01:25Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -29,5 +29,21 @@ bound = false
 
 [[acceptance]]
 text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
+bound = false
+
+[[acceptance]]
+text = "Given a binding matching no IR path and no `was` path, when linted, then R005 warning (adapters.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given first sync after import where the emitted value differs from the legacy native value, when linted, then R006 info (lints.md R)"
+bound = false
+
+[[acceptance]]
+text = "Given a drive adapter reporting a rebuild failure, when linted, then R004 error is surfaced (adapters.md 1)"
+bound = false
+
+[[acceptance]]
+text = "Given drift, when R001 is reported, then it compares against the emitted point, not the nominal (adapters.md 3a)"
 bound = false
 +++

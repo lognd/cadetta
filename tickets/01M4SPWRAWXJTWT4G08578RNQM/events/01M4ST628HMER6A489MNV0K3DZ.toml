@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an observed value differing from design at a bound path, when linted, then R001 names which side moved since last sync", "Given a native parameter with no binding, when linted, then R002 warning", "Given a bound path absent natively, when linted, then R003 error", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+new = ["Given an observed value differing from design at a bound path, when linted, then R001 names which side moved since last sync", "Given a native parameter with no binding, when linted, then R002 warning", "Given a bound path absent natively, when linted, then R003 error", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/", "Given a binding matching no IR path and no `was` path, when linted, then R005 warning (adapters.md 3)", "Given first sync after import where the emitted value differs from the legacy native value, when linted, then R006 info (lints.md R)", "Given a drive adapter reporting a rebuild failure, when linted, then R004 error is surfaced (adapters.md 1)", "Given drift, when R001 is reported, then it compares against the emitted point, not the nominal (adapters.md 3a)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:01:25Z"
+actor = "lognd"
+rev = 1
