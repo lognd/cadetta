@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given recorded COM transcripts, when the fake replays them, then emit, read, push and regen tests pass on Linux CI (adapters.md 6)", "Given the adapter contract harness, when run against the fake, then all five contract rules pass (adapters.md 4)"]
+new = ["Given recorded COM transcripts, when the fake replays them, then emit, read, push and regen tests pass on Linux CI (adapters.md 6)", "Given the adapter contract harness, when run against the fake, then all five contract rules pass (adapters.md 4)", "Given a recording ISwSession wrapper, when a real session runs, then calls and results are captured as JSON lines that the fake replays byte-exactly (solidworks.md 6)"]
+moved = [1, 2]
+at = "2026-10-13T19:18:43Z"
+actor = "lognd"
+rev = 1

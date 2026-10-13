@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-13T05:17:23Z"
+updated = "2026-10-13T19:18:43Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
-labels = ["creates:adapters/solidworks/tests/**", "creates:.github/workflows/solidworks.yml"]
-scope = ["adapters/solidworks/tests/**", ".github/workflows/solidworks.yml"]
+labels = ["creates:.github/workflows/solidworks.yml", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
+scope = [".github/workflows/solidworks.yml", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
 
 [[links]]
 kind = "blocked-by"
@@ -28,5 +28,9 @@ bound = false
 
 [[acceptance]]
 text = "Given the adapter contract harness, when run against the fake, then all five contract rules pass (adapters.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given a recording ISwSession wrapper, when a real session runs, then calls and results are captured as JSON lines that the fake replays byte-exactly (solidworks.md 6)"
 bound = false
 +++
