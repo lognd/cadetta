@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T13:46:15Z"
+updated = "2026-10-13T13:46:17Z"
 persona = "design engineer"
 capability = "compare positions across parts"
 idempotency_key = "replan14:geo-in"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a conversion out of an unplaced part, or re-typing where the model lacks the part or its placement, when evaluated, then G003 is raised (geometry.md 3, 4, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an array, when mapped with in, then every element is converted; a Point2 on d becomes a Point3 at z = 0 of d (geometry.md 3)"
