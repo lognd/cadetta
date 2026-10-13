@@ -2,7 +2,8 @@
 id = "01M4SYSRH148456F3BFPK4MA7Y"
 title = "Unify temperature unit factors between units.rs and affine.rs"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
