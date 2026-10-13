@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T13:56:29Z"
+updated = "2026-10-13T13:56:33Z"
 persona = "design engineer"
 capability = "see expiries before they bite"
 idempotency_key = "replan14:lint-o4"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver or eol date within expiry_warn_days (default 30) of --as-of, when linted, then W005 info fires; allow is excluded (lints.md 2.1, 2.2)"
-bound = false
+bound = true
 +++
