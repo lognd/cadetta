@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Kinds and kind algebra"
+new = "Kinds, kind algebra table and Count/Ratio rules"
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
