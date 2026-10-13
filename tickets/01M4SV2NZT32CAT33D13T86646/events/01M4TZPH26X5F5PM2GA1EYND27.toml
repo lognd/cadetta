@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T15:57:01Z"
+digest = "f515dfd7d87247874918c1c03cfffd267257542e3d6a766e3aeb2f40948197b4"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_adapter.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1161332-0.xml --------------
+============================== 1 passed in 0.24s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_adapter.py::test_observed_ir_uses_the_ir_models"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "82672e2134a83fe56c137a7abd4e2e98571d126c42d5f5a988fb6e06aa260394"
+at = "2026-10-13T15:57:01Z"
+actor = "lognd"
+rev = 1
