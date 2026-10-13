@@ -2,7 +2,8 @@
 id = "01M4STAS70PCEHJ702R5GAW3SB"
 title = "Conformance fixtures for config-cli"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
