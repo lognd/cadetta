@@ -2,7 +2,8 @@
 id = "01M4SXR2FQZ6DZDY01VF34J1C5"
 title = "Dependency resolution from path and git, one version per package"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
