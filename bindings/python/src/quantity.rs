@@ -6,14 +6,15 @@
 //! stored as binary64: inexact results are a separate, marked body.
 
 // frob:ticket 01M4SV2NGV5P9KBBT7987BZCKQ
+// frob:ticket 01M4SV2NMPSM42YZT9MXT4YVMW
 
 use std::sync::LazyLock;
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use cadetta_syntax::ast::{BinOp, Expr, ExprKind, MemberKind, TolSign, UnOp};
 use cadetta_units::{
-    Affine, Dim, KindError, KindTable, KindedDim, Magnitude, Rational, RootOp, Sum, Toleranced,
-    UnitTable, Value, VarId,
+    Affine, Dim, Dimension, KindError, KindTable, KindedDim, Magnitude, Rational, RootOp, Sum,
+    Toleranced, UnitTable, Value, VarId,
 };
 use pyo3::create_exception;
 use pyo3::exceptions::PyException;
@@ -578,8 +579,123 @@ fn parse_source(text: &str) -> Result<Quantity, QErr> {
     eval(&p.value)
 }
 
+/// An IR `Exact` object (`{"r": "num/den", "pi": k}`) as a magnitude.
+fn ir_exact(v: &serde_json::Value) -> Result<Magnitude, QErr> {
+    let bad = || QErr::plain(format!("malformed IR exact magnitude: {v}"));
+    let r = v.get("r").and_then(|r| r.as_str()).ok_or_else(bad)?;
+    let pi = v.get("pi").and_then(|p| p.as_i64()).ok_or_else(bad)?;
+    let (num, den) = r.split_once('/').ok_or_else(bad)?;
+    let num = Rational::parse_decimal(num).map_err(|_| bad())?;
+    let den = Rational::parse_decimal(den).map_err(|_| bad())?;
+    let ratio = num.div(&den).map_err(|_| bad())?;
+    Ok(Magnitude::new(ratio, i32::try_from(pi).map_err(|_| bad())?))
+}
+
+/// The dimension of an IR `Dim` object.
+fn ir_dim(v: &serde_json::Value, angle: i32) -> Result<Dim, QErr> {
+    let bad = || QErr::plain(format!("malformed IR dim: {v}"));
+    let exp = |key: &str| -> Result<i32, QErr> {
+        let n = v.get(key).and_then(|n| n.as_i64()).ok_or_else(bad)?;
+        i32::try_from(n).map_err(|_| bad())
+    };
+    // Order of `Dimension::from_si`: L, M, T, I, Theta, N, J.
+    let mut dimension = Dimension::from_si([
+        exp("m")?,
+        exp("kg")?,
+        exp("s")?,
+        exp("A")?,
+        exp("K")?,
+        exp("mol")?,
+        exp("cd")?,
+    ]);
+    if let Some(cur) = v.get("currency").and_then(|c| c.as_object()) {
+        for (code, n) in cur {
+            let n = n
+                .as_i64()
+                .and_then(|n| i32::try_from(n).ok())
+                .ok_or_else(bad)?;
+            dimension = dimension.mul(&Dimension::currency(code).powi(n));
+        }
+    }
+    Ok(Dim::new(dimension, angle))
+}
+
+/// The unique built-in kind with this dimension, else anonymous.
+fn kind_of_dim(dim: &Dim) -> KindedDim {
+    let mut matches = KINDS.all().into_iter().filter(|(_, d)| *d == dim);
+    match (matches.next(), matches.next()) {
+        (Some((name, _)), None) => KINDS
+            .named(name)
+            .unwrap_or_else(|_| KindedDim::anonymous(dim.clone())),
+        _ => KindedDim::anonymous(dim.clone()),
+    }
+}
+
+/// Build a Quantity from an IR `Value` object (ir.md 3), tolerance included.
+fn from_ir_value(v: &serde_json::Value) -> Result<Quantity, QErr> {
+    let bad = |what: &str| QErr::plain(format!("malformed IR value: {what}"));
+    let angle = v
+        .get("angle")
+        .and_then(|a| a.as_i64())
+        .and_then(|a| i32::try_from(a).ok())
+        .ok_or_else(|| bad("angle"))?;
+    let dim = ir_dim(v.get("dim").ok_or_else(|| bad("dim"))?, angle)?;
+    let kd = kind_of_dim(&dim);
+    let nominal = v.get("nominal").ok_or_else(|| bad("nominal"))?;
+    let terms = v
+        .get("tol")
+        .and_then(|t| t.get("terms"))
+        .and_then(|t| t.as_array());
+    if let Some(f) = nominal.get("f64").and_then(|f| f.as_f64()) {
+        let root = RootOp::MixedPiSum;
+        let (mut lo, mut hi) = (f, f);
+        for t in terms.into_iter().flatten() {
+            lo += ir_exact(t.get("lo").ok_or_else(|| bad("tol lo"))?)?.to_f64();
+            hi += ir_exact(t.get("hi").ok_or_else(|| bad("tol hi"))?)?.to_f64();
+        }
+        debug!("quantity: from IR (inexact)");
+        return Ok(Quantity::new(
+            kd,
+            Body::Inexact {
+                nominal: f,
+                lo,
+                hi,
+                root,
+            },
+        ));
+    }
+    let nominal = ir_exact(nominal)?;
+    let mut aff = Affine::constant(dim.clone(), nominal.clone());
+    let mut vars: std::collections::HashMap<String, VarId> = std::collections::HashMap::new();
+    for t in terms.into_iter().flatten() {
+        let name = t
+            .get("var")
+            .and_then(|n| n.as_str())
+            .ok_or_else(|| bad("tol var"))?;
+        let lo = ir_exact(t.get("lo").ok_or_else(|| bad("tol lo"))?)?;
+        let hi = ir_exact(t.get("hi").ok_or_else(|| bad("tol hi"))?)?;
+        let var = *vars.entry(name.to_string()).or_insert_with(fresh_var);
+        let tol =
+            Toleranced::from_deviations(dim.clone(), zero(), (dim.clone(), lo), (dim.clone(), hi))
+                .map_err(tol_err)?;
+        aff = aff
+            .add(&tol.to_affine(var).map_err(tol_err)?)
+            .map_err(tol_err)?;
+    }
+    debug!(terms = vars.len(), "quantity: from IR (exact)");
+    Ok(Quantity::new(kd, Body::Exact { nominal, aff }))
+}
+
 #[pymethods]
 impl Quantity {
+    /// Build from an IR `Value` JSON object; raises `QuantityError` when malformed.
+    #[staticmethod]
+    fn _from_ir(text: &str) -> PyResult<Self> {
+        let v: serde_json::Value =
+            serde_json::from_str(text).map_err(|e| QErr::plain(format!("bad IR JSON: {e}")))?;
+        Ok(from_ir_value(&v)?)
+    }
+
     /// Parse source syntax such as `12mm [+-0.1mm]`; raises `QuantityError`.
     #[staticmethod]
     fn _parse(text: &str) -> PyResult<Self> {
