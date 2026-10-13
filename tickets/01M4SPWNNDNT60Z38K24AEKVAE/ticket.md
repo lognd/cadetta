@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `1in [+-0.1mm]`, when constructed, then deviation units may differ from the nominal unit (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `9.98mm..10.05mm`, when constructed, then the nominal is the midpoint (quantities.md 5.1)"
