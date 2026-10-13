@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T09:25:30Z"
+digest = "c27e78a9deb44f3c5f31814be92d1db8cd62196cf44b2f3542823eaf374b1de3"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 030edb15-a543-4251-a81b-69450fe598a5 with nextest profile: default
+    Starting 1 test across 23 binaries (627 tests skipped)
+        PASS [   0.007s] cadetta-adapter policy::tests::mmc_lmc_without_role_is_e010
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 627 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=policy::tests::mmc_lmc_without_role_is_e010)'"
+size = 553
+status = "measured"
+test_count = 1
+tests_digest = "a96f45f9c3c7becd18bcfa1bec006f5d33188af8b121450611f7911fa7fa47a4"
+at = "2026-10-13T09:25:30Z"
+actor = "lognd"
+rev = 1
