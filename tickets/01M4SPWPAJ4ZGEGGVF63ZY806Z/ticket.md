@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `=` signs in a block, when formatted, then they are aligned with two-space indent and authored units preserved"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given formatted source, when lowered, then the IR digest is unchanged"
