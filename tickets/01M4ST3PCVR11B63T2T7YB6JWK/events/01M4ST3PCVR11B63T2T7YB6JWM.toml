@@ -1,0 +1,13 @@
+kind = "create"
+title = "OQ-12: Record part swaps as lock-file events"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-12 from obligations.md. Closes with an ADR in docs/decisions/.
+
+Question: Should part swaps be first-class events (who, why, which alternate, cost delta) in cadetta.lock for audit, beyond the git history of the part line?"""
+at = "2026-10-13T05:00:07Z"
+actor = "lognd"
+rev = 1
