@@ -36,7 +36,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a fully qualified path with no use, when resolved, then it is legal anywhere (packages.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the prelude units and kinds, when no use is written, then they resolve and nothing else from std is in scope (language.md 4)"
