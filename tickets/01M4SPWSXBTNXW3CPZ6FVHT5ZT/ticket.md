@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:04:04Z"
+updated = "2026-10-13T05:44:40Z"
 persona = "design engineer"
 capability = "run cadetta with --format text|json, -v and --cwd"
 outcome_text = "scripts and humans both get usable output"
@@ -41,5 +41,9 @@ bound = false
 
 [[acceptance]]
 text = "Given stdout is not a terminal, when run, then json is the default format"
+bound = false
+
+[[acceptance]]
+text = "Given --format text|short|github|sarif|json or CADETTA_FORMAT, --cwd and --config, when run, then they behave as config-cli.md 4, 5; text is always the default"
 bound = false
 +++

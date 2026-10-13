@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given diagnostics at or above fail_on, when a command finishes, then exit code is 1", "Given a usage or I/O error, when a command finishes, then exit code is 2", "Given stdout is not a terminal, when run, then json is the default format"]
+new = ["Given diagnostics at or above fail_on, when a command finishes, then exit code is 1", "Given a usage or I/O error, when a command finishes, then exit code is 2", "Given stdout is not a terminal, when run, then json is the default format", "Given --format text|short|github|sarif|json or CADETTA_FORMAT, --cwd and --config, when run, then they behave as config-cli.md 4, 5; text is always the default"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
