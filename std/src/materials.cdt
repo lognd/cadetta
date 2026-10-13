@@ -1,0 +1,44 @@
+// std::materials: the Material enum and its property table (stdlib.md 1, 2).
+//
+// Density and yield strength are handbook nominal values for the common
+// stock temper named by the variant, in the units the handbook prints
+// (g/cm^3, MPa). They are design-stage figures, not procurement minima:
+// a supplier datasheet in an `ots` overrides them. Tap class and
+// engagement factor are shop policy derived from the material family
+// (stdlib.md 3), not published constants.
+//
+// Cast iron has no defined yield point; its row stores the minimum
+// tensile strength of ASTM A48 class 30 in `yield_strength` as the
+// design stand-in (stdlib.md 2).
+// The polymers' yield is for injection-moulded or printed stock at room
+// temperature, dry; printed parts are anisotropic, so treat it as an
+// upper bound along the filament.
+
+/// The citation every row here carries: the materials handbook.
+pub cite handbook = "Machinery's Handbook, 31st ed., materials properties tables; ASM Metals Handbook vol. 2; MMPDS-2022 for aluminium tempers"
+
+/// The 14 stock materials std knows (stdlib.md 3).
+pub enum Material { Al6061T6, Al7075T6, Al5052H32, Ss304, Ss316, Steel1018, Steel4140, CastIron, Brass360, Petg, Pla, Abs, Nylon6, Pom }
+
+/// Whether a material takes the 75% (Soft) or the larger 65% (Hard) tap drill.
+pub enum TapClass { Soft, Hard }
+
+/// Density, yield strength, tap class and thread engagement factor by material (stdlib.md 2).
+pub table Materials @handbook:"material property tables" {
+  key material: Material
+  cols density: Density, yield_strength: Pressure, tap_class: TapClass, engagement_factor: Ratio
+  Material::Al6061T6  => 2.70g/cm^3, 276MPa, TapClass::Soft, 2.0
+  Material::Al7075T6  => 2.81g/cm^3, 503MPa, TapClass::Soft, 2.0
+  Material::Al5052H32 => 2.68g/cm^3, 193MPa, TapClass::Soft, 2.0
+  Material::Ss304     => 8.00g/cm^3, 215MPa, TapClass::Hard, 1.0
+  Material::Ss316     => 8.00g/cm^3, 205MPa, TapClass::Hard, 1.0
+  Material::Steel1018 => 7.87g/cm^3, 370MPa, TapClass::Hard, 1.0
+  Material::Steel4140 => 7.85g/cm^3, 415MPa, TapClass::Hard, 1.0
+  Material::CastIron  => 7.20g/cm^3, 214MPa, TapClass::Soft, 1.5
+  Material::Brass360  => 8.50g/cm^3, 310MPa, TapClass::Soft, 1.5
+  Material::Petg      => 1.27g/cm^3, 50MPa, TapClass::Soft, 2.0
+  Material::Pla       => 1.24g/cm^3, 60MPa, TapClass::Soft, 2.0
+  Material::Abs       => 1.04g/cm^3, 40MPa, TapClass::Soft, 2.0
+  Material::Nylon6    => 1.14g/cm^3, 80MPa, TapClass::Soft, 2.0
+  Material::Pom       => 1.41g/cm^3, 65MPa, TapClass::Soft, 2.0
+}
