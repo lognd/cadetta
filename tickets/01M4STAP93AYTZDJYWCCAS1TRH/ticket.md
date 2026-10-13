@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "set project-wide fastener policy once"
 idempotency_key = "replan13:FastenerPolicy, IsoDefault and the default attribute"
-labels = ["creates:std/fasteners/policy.cdt"]
-scope = ["std/fasteners/policy.cdt"]
+labels = ["creates:std/src/fasteners/policy.cdt"]
+scope = ["std/src/fasteners/policy.cdt"]
 
 [[links]]
 kind = "blocks"
