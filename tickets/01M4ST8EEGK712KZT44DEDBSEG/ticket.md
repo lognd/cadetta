@@ -2,7 +2,8 @@
 id = "01M4ST8EEGK712KZT44DEDBSEG"
 title = "Viability, undecided results and alternate waivers"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
