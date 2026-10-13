@@ -1,0 +1,31 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:10:29Z"
+digest = "f626ca80a4b0e56b0c90f81073a36e8bc3367bf08da2cceda0a623ab421476c7"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d6776e50-00be-473c-a8b3-58c5017aa585 with nextest profile: default
+    Starting 8 tests across 1 binary
+        PASS [   0.010s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.011s] cadetta-units dimension::tests::length_plus_mass_is_an_error_value
+        PASS [   0.013s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.014s] cadetta-units rational::tests::division_by_zero_is_an_error_value
+        PASS [   0.012s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.018s] cadetta-units dimension::tests::currency_is_its_own_base_dimension
+        PASS [   0.020s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.021s] cadetta-units rational::tests::add_across_pi_exponents_is_inexact_unless_zero
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.023s] 8 tests run: 8 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E '(package(=cadetta-units) & (test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=dimension::tests::currency_is_its_own_base_dimension) | test(=dimension::tests::length_plus_mass_is_an_error_value) | test(=rational::tests::add_across_pi_exponents_is_inexact_unless_zero) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::division_by_zero_is_an_error_value) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact)))'"
+size = 1276
+status = "measured"
+test_count = 8
+tests_digest = "40c27537503df919d35411aa7d5c4f056af7baf9756523f05dba10b57a223a37"
+at = "2026-10-13T06:10:29Z"
+actor = "lognd"
+rev = 1
