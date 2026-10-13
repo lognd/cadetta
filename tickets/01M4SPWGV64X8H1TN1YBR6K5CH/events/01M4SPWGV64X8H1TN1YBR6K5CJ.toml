@@ -1,0 +1,14 @@
+kind = "create"
+title = "IR, JSON schema and digests (cadetta-ir)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:crates/cadetta-ir/**"]
+scope = ["crates/cadetta-ir/**"]
+body = """
+Outcome: the tool-agnostic cadetta.ir/1 data model, its committed JSON Schema and BLAKE3 digests.
+
+Success metric: design IR round-trips through JSON byte-identically and the schema validates all fixtures."""
+at = "2026-10-13T04:03:46Z"
+actor = "lognd"
+rev = 1
