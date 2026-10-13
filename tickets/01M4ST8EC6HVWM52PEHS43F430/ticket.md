@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:33:59Z"
+updated = "2026-10-13T08:34:02Z"
 persona = "design engineer"
 capability = "re-evaluate the design with each alternate in place of the primary"
 idempotency_key = "replan13:Variant evaluation engine (slot at a time)"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given N alternates across slots, when evaluated, then the work is linear (one variant evaluation per alternate), never a cross product (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given values that differ from the primary, when stored, then only the differing values are kept per variant keyed "slot=alternate" (ir.md 3, language.md 3.2)'
