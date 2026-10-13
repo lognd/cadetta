@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:40:51Z"
+updated = "2026-10-13T06:41:59Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
 labels = ["creates:crates/cadetta-syntax/src/expr.rs"]
-scope = ["crates/cadetta-syntax/src/expr.rs"]
+scope = ["crates/cadetta-syntax/src/expr.rs", "crates/cadetta-syntax/src/lib.rs", "crates/cadetta-syntax/src/parser.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
