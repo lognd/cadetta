@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:12:57Z"
+updated = "2026-10-13T13:13:00Z"
 persona = "design engineer"
 capability = "get lints for the F family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/f.rs", "creates:tests/conformance/lints/F*/**"]
-scope = ["crates/cadetta-lint/src/rules/f.rs", "tests/conformance/lints/F*/**"]
+scope = ["crates/cadetta-lint/src/rules/f.rs", "tests/conformance/lints/F*/**", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given class Z99, when linted, then F001 is reported and cannot be waived"
