@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:47Z"
-updated = "2026-10-13T06:10:31Z"
+updated = "2026-10-13T06:10:32Z"
 persona = "cadetta contributor"
 capability = "represent a magnitude as an arbitrary-precision rational over a 7-element SI dimension vector"
 outcome_text = "values are exact and comparable only across equal dimensions"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `360deg / 1.8deg`, when evaluated, then the result is exactly 200 because pi^k cancels (quantities.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given magnitudes with different pi exponents, when added, then the result is inexact unless one is zero (quantities.md 1)"
