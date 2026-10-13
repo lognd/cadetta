@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:40Z"
-updated = "2026-10-13T06:58:06Z"
+updated = "2026-10-13T06:58:13Z"
 persona = "product engineer"
 capability = "depend on a shop library by path or git and get one resolved version"
 labels = ["creates:crates/cadetta-cli/src/pkg/resolve.rs"]
@@ -20,7 +20,7 @@ target = "01M4SXQWGAYJDGMGKNBMHASNBA"
 
 [[acceptance]]
 text = "Given path and git (tag, rev, branch) dependencies, when resolved, then each yields a package directory with a cadetta.toml, and a missing one is E005 (packages.md 1; config-cli.md 1.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a resolved package whose version fails the `version` semver requirement, when resolved, then E012 fires (packages.md 1, 7)"
