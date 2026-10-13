@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:28Z"
+updated = "2026-10-13T05:44:39Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
@@ -69,5 +69,9 @@ bound = false
 
 [[acceptance]]
 text = "Given an as-built obligation, when classified, then it is stale if the design changed after the inspection (obligations.md 2, OQ-13)"
+bound = false
+
+[[acceptance]]
+text = "Given an attestation, when judged, then verdict and margin are recorded and dependency own digests are used (obligations.md 2)"
 bound = false
 +++
