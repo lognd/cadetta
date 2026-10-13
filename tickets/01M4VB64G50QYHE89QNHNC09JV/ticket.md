@@ -2,7 +2,8 @@
 id = "01M4VB64G50QYHE89QNHNC09JV"
 title = "Python binding: citation, cite_list, names, bind"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
