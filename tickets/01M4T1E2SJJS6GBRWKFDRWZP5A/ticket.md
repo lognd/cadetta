@@ -2,11 +2,11 @@
 id = "01M4T1E2SJJS6GBRWKFDRWZP5A"
 title = "cadetta-fits IT1..IT4 rows wrong for sizes over 30 mm"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T07:08:07Z"
-updated = "2026-10-13T07:08:07Z"
+updated = "2026-10-13T07:11:05Z"
 scope = ["crates/cadetta-fits/src/tables.rs"]
 +++
 
