@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T13:41:29Z"
+updated = "2026-10-13T13:41:34Z"
 persona = "design engineer"
 capability = "drive a live CAD session"
 idempotency_key = "replan14:ad-session"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a push response, when parsed, then each locator has its own status (adapters.md 5)"
-bound = false
+bound = true
 +++
