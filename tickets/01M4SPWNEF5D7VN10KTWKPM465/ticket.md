@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given degF and degC literals, when converted to K, then the exact offset is applied rationally (quantities.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given dK, ddegC and ddegF, when parsed, then they are TemperatureDelta units with no offset (quantities.md 3)"
