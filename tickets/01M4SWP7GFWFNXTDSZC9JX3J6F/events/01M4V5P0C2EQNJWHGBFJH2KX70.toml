@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T17:41:36Z"
+digest = "2e3ba097b86643b7f61b1de4a43fdcad2e418e6c4a5c15b36c5651c0bfeaf2f7"
+exit_code = 0
+inline = '''
+{"verb":"ticket.show","already":false,"ok":true,"data":{"children":[],"events":null,"evidence":[],"fields":{"acceptance":[],"aliases":[],"assignee":null,"body":"found while working ~9JX3J6F. csv.md 1 says note parts are joined with '; ' but its example row 1 joins literal and citation with a space (1/4in @\"ASTM B209\"), and row 2 writes 'emit mid' where json.md and sw-equations.md write 'emit=mid'. Decide the separator and token form; then tighten note-order, note-emit-point and note-fit-class fixtures under tests/conformance/emitters/csv/, which assert separator-agnostically today.","capability":null,"category":"todo","class":"standard","created":"2026-10-13T17:40:52Z","due":null,"flavour":null,"id":"01M4V5MP4NRZTDS8Q2NKZVVBCA","idempotency_key":null,"labels":[],"links":[],"outcome":null,"outcome_text":null,"parent":null,"persona":null,"points":null,"priority":"medium","reporter":"lognd","scope":["docs/spec/emitters/csv.md"],"title":"csv.md: note separator and emit-point token are inconsistent","type":"bug","updated":"2026-10-13T17:40:52Z"},"incoming":[],"outgoing":[],"summary":{"blocked":false,"category":"todo","class":"standard","created":"2026-10-13T17:40:52Z","due":null,"handle":"~KZVVBCA","id":"01M4V5MP4NRZTDS8Q2NKZVVBCA","outcome":null,"parent":null,"points":null,"priority":"medium","title":"csv.md: note separator and emit-point token are inconsistent","type":"bug","updated":"2026-10-13T17:40:52Z"},"ticket":{"body":"found while working ~9JX3J6F. csv.md 1 says note parts are joined with '; ' but its example row 1 joins literal and citation with a space (1/4in @\"ASTM B209\"), and row 2 writes 'emit mid' where json.md and sw-equations.md write 'emit=mid'. Decide the separator and token form; then tighten note-order, note-emit-point and note-fit-class fixtures under tests/conformance/emitters/csv/, which assert separator-agnostically today.","front":{"category":"todo","created":"2026-10-13T17:40:52Z","id":"01M4V5MP4NRZTDS8Q2NKZVVBCA","priority":"medium","reporter":"lognd","scope":["docs/spec/emitters/csv.md"],"title":"csv.md: note separator and emit-point token are inconsistent","type":"bug","updated":"2026-10-13T17:40:52Z"}}},"findings":[],"warnings":["ticket ledger: reading and committing to refs/heads/main (ref_mode = trunk) while `ticket/9JX3J6F` is checked out; the working tree is not the ledger, so tickets and edits on `ticket/9JX3J6F` are invisible here until they reach refs/heads/main"],"error":null,"schema_version":1}
+'''
+passed = true
+provider = "command"
+ref = "frob ticket show ~KZVVBCA"
+size = 2476
+status = "measured"
+at = "2026-10-13T17:41:36Z"
+actor = "lognd"
+rev = 1
