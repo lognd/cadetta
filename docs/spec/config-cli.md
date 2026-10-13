@@ -160,11 +160,11 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
 | `cite pin NAME` | Download a URL citation into `cites/` and rewrite the `cite` to the local path. | writes `cites/`, source | never (errors exit 2) | - |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
-| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013 | `emit.json` |
+| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013, R014 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
 | `import --accept` | Write bindings and `.cdt` scaffold from the proposal. | writes `bindings/`, `cad/imported/`, lock | never | `import.json` |
 | `import ADAPTER FILE... --update [--write]` | Diff of `.cdt` literal edits from observed values; `--write` applies. | writes sources with `--write` | never | `import.json` |
-| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013 | `sync.json` |
+| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
 
@@ -320,7 +320,7 @@ ids; `--module` repeats. For each configured adapter it writes the adapter's `ou
 non-`let` paths are emitted; a `[*]` binding is emitted once, at instance 0. The `sign = -1`
 negation is applied by `emit` to the written text of value and global lines (the adapter library
 leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
-to it. Q004 and R013 withhold that adapter's file and give exit 1; an unknown adapter id, a bad
+to it. Q004, R013 and R014 withhold that adapter's file and give exit 1; an unknown adapter id, a bad
 flag or a halted analysis give exit 2. Not yet run by `emit`: the `json` and `csv` built-ins and
 external adapters (those with a `command`); they are skipped with a log line.
 

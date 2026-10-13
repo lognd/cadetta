@@ -633,6 +633,13 @@ pub const CATALOG: &[CodeInfo] = &[
         meaning: "Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md)",
     },
     CodeInfo {
+        code: "R014",
+        name: "text-not-expressible",
+        default: Severity::Error,
+        fixed: true,
+        meaning: "An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1); a `Text` parameter that is not emitted is never reported",
+    },
+    CodeInfo {
         code: "U001",
         name: "unused-parameter",
         default: Severity::Info,

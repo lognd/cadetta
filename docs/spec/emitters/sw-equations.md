@@ -30,7 +30,16 @@ pilot r2-05.
   `native_unit`, written with the unit suffix (`6.35mm`, `0.25in`), at
   the declared precision (default 6 decimals, adapters.md 5), trailing
   zeros trimmed. A value not representable at that precision is Q004. Counts and Ratios are
-  written bare. Text is not emitted to equations (it has no place there).
+  written bare. An equations file cannot express `Text`, so a bound `Text`
+  parameter that this run must emit is the error R014 (naming the path and
+  the locator), the file is withheld and the exit status is 1; nothing is
+  skipped silently and no placeholder is written. "Must emit" means the
+  path is bound by a locator of this adapter, passes the adapter's
+  `modules`/`paths` filters and the run's `--module`/glob narrowing, is not
+  a `let` and (for an interface-typed slot) belongs to an active alternate
+  (adapters.md 3.3). A `Text` parameter that fails any of those, or that
+  has no binding, is not emitted and is not an error. This holds whatever
+  the locator kind (`global` or `dimension`).
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
   on a global line carries, in this order and separated by spaces: the

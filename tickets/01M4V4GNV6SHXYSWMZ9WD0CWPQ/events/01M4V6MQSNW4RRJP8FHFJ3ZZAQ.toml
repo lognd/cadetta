@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/spec/emitters/sw-equations.md"]
+new = ["docs/spec/emitters/sw-equations.md", "docs/spec/adapters.md", "tests/conformance/emitters/sw-equations/**"]
+at = "2026-10-13T17:58:23Z"
+actor = "lognd"
+rev = 1
