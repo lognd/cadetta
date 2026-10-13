@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T04:04:02Z"
+updated = "2026-10-13T04:04:04Z"
 persona = "cadetta contributor"
 capability = "generate the schema from the Rust types and commit it"
 outcome_text = "the IR is a public contract with a compatibility check"
@@ -18,6 +18,10 @@ scope = ["docs/schemas/cadetta.ir.1.json", "crates/cadetta-ir/src/schema.rs"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWS56AF9GE891GAM5QSWX"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWT6N1HY3MHN544GZJYS9"
 
 [[acceptance]]
 text = "Given the Rust types, when the schema is generated, then it matches the committed file (CI check)"
