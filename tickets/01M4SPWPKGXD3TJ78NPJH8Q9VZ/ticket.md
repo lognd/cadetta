@@ -2,7 +2,8 @@
 id = "01M4SPWPKGXD3TJ78NPJH8Q9VZ"
 title = "Kind and dimension checking"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
