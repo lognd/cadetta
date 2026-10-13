@@ -287,12 +287,11 @@ impl<'a> KindChecker<'a> {
                 if t.bare {
                     if !scalar(&named) {
                         self.q001(span, &format!("assigned to a {name}"));
-                    } else if name == "Count" {
-                        if let Some(v) = &t.value {
-                            if let Err(e) = self.kinds.count(v) {
-                                self.kind_error(&e, span);
-                            }
-                        }
+                    } else if name == "Count"
+                        && let Some(v) = &t.value
+                        && let Err(e) = self.kinds.count(v)
+                    {
+                        self.kind_error(&e, span);
                     }
                     return Ty::quantity(named);
                 }
@@ -466,10 +465,12 @@ impl<'a> KindChecker<'a> {
     /// accessor (`.max`) has the type of its receiver.
     fn reference(&mut self, e: &Expr) -> Option<Ty> {
         if let ExprKind::Index(base, idx) = &e.kind {
-            if let Some(i) = self.expr(idx) {
-                if !i.bare && !matches!(i.kd.name(), Some("Count")) && !i.is_scalar() {
-                    self.dim_mismatch(&i.kd, &KindedDim::anonymous(Dim::default()), idx.span);
-                }
+            if let Some(i) = self.expr(idx)
+                && !i.bare
+                && !matches!(i.kd.name(), Some("Count"))
+                && !i.is_scalar()
+            {
+                self.dim_mismatch(&i.kd, &KindedDim::anonymous(Dim::default()), idx.span);
             }
             return self.expr(base);
         }
@@ -489,10 +490,10 @@ impl<'a> KindChecker<'a> {
     }
 
     fn lookup(&self, segs: &[String]) -> Option<Ty> {
-        if let [one] = segs {
-            if let Some(t) = self.locals.get(one) {
-                return Some(t.clone());
-            }
+        if let [one] = segs
+            && let Some(t) = self.locals.get(one)
+        {
+            return Some(t.clone());
         }
         self.env.name_type(segs).map(Ty::quantity)
     }
@@ -703,11 +704,12 @@ impl<'a> KindChecker<'a> {
                 self.kinds.named("Angle").ok().map(Ty::quantity)
             }
             "floor" | "ceil" | "round" => {
-                if let Some(t) = tys.first().cloned().flatten() {
-                    if !t.bare && !t.is_scalar() {
-                        let none = KindedDim::anonymous(Dim::default());
-                        self.dim_mismatch(&t.kd, &none, arg_span(0));
-                    }
+                if let Some(t) = tys.first().cloned().flatten()
+                    && !t.bare
+                    && !t.is_scalar()
+                {
+                    let none = KindedDim::anonymous(Dim::default());
+                    self.dim_mismatch(&t.kd, &none, arg_span(0));
                 }
                 self.kinds.named("Count").ok().map(Ty::quantity)
             }
