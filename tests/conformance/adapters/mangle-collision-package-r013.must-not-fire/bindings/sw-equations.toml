@@ -1,9 +1,10 @@
-["acme.demo.a::Part.width"]
+["acme.demo::Part.width"]
 locators = [
+  { locator = "Plate_Width", kind = "global", mode = "value", native_unit = "mm" },
   { locator = "D@S@P.SLDPRT", kind = "dimension" },
 
 ]
-["acme.demo.b::Other.width"]
+["acme.other::Part.width"]
 locators = [
   { locator = "D2@S@P.SLDPRT", kind = "dimension" },
 
