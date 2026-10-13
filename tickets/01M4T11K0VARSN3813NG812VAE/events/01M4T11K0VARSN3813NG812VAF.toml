@@ -1,0 +1,10 @@
+kind = "create"
+title = "Wire short and github formats into the CLI output"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 2
+scope = ["crates/cadetta-cli/src/output.rs"]
+at = "2026-10-13T07:01:18Z"
+actor = "lognd"
+rev = 1
