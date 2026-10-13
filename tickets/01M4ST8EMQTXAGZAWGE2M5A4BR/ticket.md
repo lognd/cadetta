@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an obligation, when identified, then its id is <kind>:<canonical path> and kinds include waiver (obligations.md 2, 4)"
