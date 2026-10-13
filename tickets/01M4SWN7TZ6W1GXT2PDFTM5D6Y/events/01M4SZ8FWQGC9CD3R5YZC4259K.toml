@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:30:06Z"
+digest = "b0625c45a45822361bc1f5f16eb86fd97f8b0538e20c2c6a97b453e44d08e2e6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3a392705-ec79-423d-93fc-2e72b36d0117 with nextest profile: default
+    Starting 3 tests across 1 binary (13 tests skipped)
+        PASS [   0.013s] cadetta-obligations kinds::tests::required_for_gates_sync_and_solver
+        PASS [   0.028s] cadetta-obligations kinds::tests::equations_emission_never_discharges_sync
+        PASS [   0.030s] cadetta-obligations kinds::tests::set_rejects_bad_input
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.031s] 3 tests run: 3 passed, 13 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations kinds::"
+size = 740
+status = "measured"
+test_count = 3
+tests_digest = "e14b7f49c0b0ba043c56b25ffff4a6cdf08a56ed4e81407144217dc422523c24"
+at = "2026-10-13T06:30:06Z"
+actor = "lognd"
+rev = 1
