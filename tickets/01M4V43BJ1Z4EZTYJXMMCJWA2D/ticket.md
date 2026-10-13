@@ -4,9 +4,11 @@ title = "Geometry evaluation: axis builtins, point ops, Q006 and joint checks"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 5
+parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-13T17:13:56Z"
+updated = "2026-10-13T23:29:31Z"
 scope = ["crates/cadetta-ir/**"]
 +++
 
