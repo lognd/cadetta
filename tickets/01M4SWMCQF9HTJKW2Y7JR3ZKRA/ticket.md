@@ -2,13 +2,14 @@
 id = "01M4SWMCQF9HTJKW2Y7JR3ZKRA"
 title = "Import naming of members and files"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T13:19:27Z"
+updated = "2026-10-13T13:23:24Z"
 persona = "design engineer"
 capability = "get readable imported names"
 idempotency_key = "replan14:ad-imp-name"
@@ -21,5 +22,5 @@ target = "01M4SWMCMY3QH9282ZJ07XBBB7"
 
 [[acceptance]]
 text = "Given native names, when scaffolded, then Cadetta member names, components and cad/imported/<File>.cdt follow adapters.md 7.2 deterministically"
-bound = false
+bound = true
 +++
