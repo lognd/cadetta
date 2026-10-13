@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:28:48Z"
+updated = "2026-10-13T06:28:49Z"
 persona = "design engineer"
 capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `part wheel[4]: Caster = Vendor4471B alt [Colson2Series]`, when parsed, then the part has a primary and one alternate (language.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the file production, when parsed, then it is `{ use | item }` with no namespace header or mod declaration, and `use` follows packages.md 4 (language.md 3; packages.md 2)"
