@@ -31,6 +31,10 @@ target = "01M4ST8F1W8T0BKARAMG0D49J2"
 kind = "blocks"
 target = "01M4ST8F3SDF95MVP07VXXNX0X"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST8F5G8E0FMC3KZJG8A95T"
+
 [[acceptance]]
 text = "Given an attestation on a check, when anything the check reads changes however far upstream, then it becomes stale (obligations.md 2)"
 bound = false
