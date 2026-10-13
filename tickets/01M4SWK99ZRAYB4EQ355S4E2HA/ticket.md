@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T08:28:08Z"
+updated = "2026-10-13T08:28:36Z"
 persona = "design engineer"
 capability = "see every design entity in the IR"
 idempotency_key = "replan14:ir-entities"
@@ -33,13 +33,13 @@ target = "01M4ST8E8AQ98D0DFQ0DT50R91"
 
 [[acceptance]]
 text = "Given interfaces with bounds and datums, tables, waivers with targets_closure, and processes, when lowered, then each has its ir.md 3 entity (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Waiver with for_alt, when serialized, then it is keyed SLOT=ALT (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Check, when lowered, then verdicts hold primary and per_alternate keyed SLOT=ALT with conservative and waived_for (ir.md 3)"
-bound = false
+bound = true
 +++
