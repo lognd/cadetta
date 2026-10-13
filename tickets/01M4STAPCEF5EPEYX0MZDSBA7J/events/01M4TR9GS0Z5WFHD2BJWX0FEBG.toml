@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T13:47:34Z"
+digest = "031d6cca4beecf7e876119626246aec818eaddc9160cf852a3216ed46f588902"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID da9fc6f8-9673-4c57-88e8-dee77a071543 with nextest profile: default
+    Starting 1 test across 12 binaries (90 tests skipped)
+        PASS [   0.034s] cadetta-syntax::std_fasteners_screwjoint public_members_are_exactly_the_spec_list
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.037s] 1 test run: 1 passed, 90 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=public_members_are_exactly_the_spec_list)'"
+size = 573
+status = "measured"
+test_count = 1
+tests_digest = "cbcbe581f78bc1071c6583e4bd79cf6629e206f677cd94fba98f721523f97068"
+at = "2026-10-13T13:47:34Z"
+actor = "lognd"
+rev = 1
