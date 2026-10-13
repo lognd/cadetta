@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:14:13Z"
+updated = "2026-10-13T16:28:34Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for quantities"
 labels = ["creates:tests/conformance/quantities/**"]
-scope = ["tests/conformance/quantities/**"]
+scope = ["tests/conformance/quantities/**", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"
