@@ -8,7 +8,7 @@ points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:44:29Z"
+updated = "2026-10-13T21:44:45Z"
 persona = "design engineer"
 capability = "name a solver's script as an input rather than a citation"
 outcome_text = "citations only ever mean sources"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given golden cases 07 and 08 and the solvers fixtures, when run, then they use the script statement and pass"
-bound = false
+bound = true
 +++
