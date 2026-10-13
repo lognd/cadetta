@@ -32,5 +32,5 @@ bound = true
 
 [[acceptance]]
 text = "Given no `mod` declaration or namespace header in a file, when parsed, then none is expected and a `namespace` header is a parse error (packages.md 2)"
-bound = false
+bound = true
 +++
