@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T14:09:28Z"
+updated = "2026-10-13T14:10:56Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
@@ -33,7 +33,7 @@ target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
 [[acceptance]]
 text = "Given a project path, when Project.open then evaluate run, then a typani Result wraps the design IR as pydantic models generated from the IR JSON schema (bindings.md 3.1, 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given design["acme.rover::Axle.end_diameter"], when nominal, max, mid, kind and citation are read, then they match the CLI ir JSON (bindings.md 3.1)'
