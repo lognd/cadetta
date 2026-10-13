@@ -230,6 +230,15 @@ cannot be resolved or evaluated.
 | N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
 | N006 | type-read-beside-instance | warning | | `Type.member` in an assembly that has a `part` of that type; suggests the instance (language.md 3.1). |
 
+N002 matches the component name in `snake_case` or flattened lowercase
+followed by `_` (`Axle.axle_length`, `FrontAxle.front_axle_x`). N003 fires
+when the last `_` token of a member name is a unit symbol (`mm`, `in`,
+`kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
+N005 only, never also N001. N004 findings come from the resolver, since
+only it sees the `was` text; the lint turns them into diagnostics.
+N006 carries its suggestion in the message (`rear.length`); no edit is
+attached because the read has no single source range in the IR.
+
 ### D: duplication and single source of truth
 
 | Code | Name | Default | Fixed | Meaning |
@@ -237,6 +246,14 @@ cannot be resolved or evaluated.
 | D001 | restated-value | warning | | An authored literal in a `model` (or observed IR) equals another parameter's value of the same kind, in any component including its own. Scored by specificity: fires at the configured severity when the literal has at least `[lint] d001_min_digits` significant digits (default 3: `12.012mm`, `6.35mm`), at info below that, and never for `[lint] common_values` unless either side is imported (observed IR), where a coincidence of round numbers is still worth a look. Significant digits are counted in the authored form from the first to the last non-zero digit (`100mm` has 1, `6.35mm` 3). One diagnostic per group of equal values, listing every location. Never between two `ots` parameters. |
 | D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. Not in an `ots` for a cited literal: a vendor's stated value is its own source even when it matches a standard (T001 covers mismatches). |
 | D003 | reference-cycle | error | yes | Parameters depend on each other cyclically. |
+
+Implementation rules (decided with the D rules): a D001 group takes the largest
+significant-digit count among its members to choose between the configured severity and info; a
+group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
+D003 is computed on the member dependency graph, so a loop between components with no member-level
+loop is clean.
 
 ### M: magic numbers
 

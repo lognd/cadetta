@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T13:12:56Z"
+digest = "50c5a617a7dca0e91815467d70aa5fb1b4a8e11eb8685e2d9a935e29832f1b81"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2b41962b-2706-4722-bc7b-cad132e52a1d with nextest profile: default
+    Starting 1 test across 1 binary (72 tests skipped)
+        PASS [   0.014s] cadetta-lint rules::f::tests::f004_silent_on_partial_overlap_or_hold
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 72 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::f::tests::f004_silent_on_partial_overlap_or_hold)'"
+size = 557
+status = "measured"
+test_count = 1
+tests_digest = "85acf1295bcf3234ae79d1c5f7b48640420583f6a212e2a66533a2ac94af781a"
+at = "2026-10-13T13:12:56Z"
+actor = "lognd"
+rev = 1
