@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:43:36Z"
+updated = "2026-10-13T05:43:38Z"
 persona = "design engineer"
 capability = "get editor problems without an LSP"
 idempotency_key = "replan14:lint-watch"
 labels = ["creates:crates/cadetta-cli/src/cmd/check_watch.rs"]
 scope = ["crates/cadetta-cli/src/cmd/check_watch.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWT3FP4SN4RTCHE631Y52"
 
 [[acceptance]]
 text = "Given check --format json --watch, when a source file changes, then a re-run emits one cadetta.diag/1 per line sorted by (file, line, code) (lints.md 1.2; config-cli.md 5)"
