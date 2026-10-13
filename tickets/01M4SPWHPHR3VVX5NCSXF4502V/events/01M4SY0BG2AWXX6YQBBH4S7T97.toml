@@ -1,0 +1,168 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-13T06:08:11Z"
+digest = "144ae99714d957dfe7a772afd38db75d2b16ace6582b5abacff6da52be4d4439"
+exit_code = 0
+inline = """
+
+running 2 tests
+test tests::no_args_and_version_flag_print_version ... ok
+test tests::unknown_argument_is_a_usage_error ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+     Running unittests src/lib.rs (target/debug/deps/cadetta-9547636eb9eb57f6)
+     Running unittests src/main.rs (target/debug/deps/cadetta-af0aae160f77dd12)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_adapter-12e5cf060b392c54)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_fits-bc80ab45b6f820fa)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_geometry-4716db3abae5a6d5)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_ir-fc571f23d5e6890b)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_lint-81a7d2e9cc850b38)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_obligations-dfcba79ec396f0a3)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_sema-32c52c7158ceddd6)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_solve-a58114325b850eb1)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_syntax-95940d72b747ee74)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_units-5a2dab3e6adbb139)
+     Running unittests src/lib.rs (target/debug/deps/cadetta_variants-38f134128af0f016)
+   Doc-tests cadetta
+   Doc-tests cadetta_adapter
+   Doc-tests cadetta_fits
+   Doc-tests cadetta_geometry
+   Doc-tests cadetta_ir
+   Doc-tests cadetta_lint
+   Doc-tests cadetta_obligations
+   Doc-tests cadetta_sema
+   Doc-tests cadetta_solve
+   Doc-tests cadetta_syntax
+   Doc-tests cadetta_units
+   Doc-tests cadetta_variants
+"""
+passed = true
+provider = "command"
+ref = "cargo test --workspace --exclude cadetta-py"
+size = 4439
+status = "measured"
+at = "2026-10-13T06:08:11Z"
+actor = "lognd"
+rev = 1
