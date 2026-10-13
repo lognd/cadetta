@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:28:49Z"
+updated = "2026-10-13T06:28:50Z"
 persona = "design engineer"
 capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `use std::fasteners::{MetricThread, ScrewJoint}` and `as` renames, when parsed, then the imports are recorded (language.md 3; packages.md 4)"
-bound = false
+bound = true
 +++
