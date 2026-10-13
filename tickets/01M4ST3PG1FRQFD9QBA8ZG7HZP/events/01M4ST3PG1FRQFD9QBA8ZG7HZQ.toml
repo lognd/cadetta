@@ -1,0 +1,13 @@
+kind = "create"
+title = "OQ-13: Inspection data formats and measured-feature binding"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-13 from obligations.md. Closes with an ADR in docs/decisions/.
+
+Question: Which inspection data formats (CMM CSV, QIF) are read, and how do measured features bind to canonical paths?"""
+at = "2026-10-13T05:00:07Z"
+actor = "lognd"
+rev = 1
