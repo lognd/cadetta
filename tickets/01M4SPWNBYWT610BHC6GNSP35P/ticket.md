@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `%`, when resolved, then 5% is exactly 1/20 of kind Ratio (quantities.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a user declaration `unit kip = 1000lbf`, when registered, then it resolves like a built-in (language.md 3.10)"
