@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:45Z"
-updated = "2026-10-13T07:55:12Z"
+updated = "2026-10-13T07:57:26Z"
 persona = "library user"
 capability = "know when a pinned dependency changed"
 labels = ["creates:crates/cadetta-obligations/src/lock_package.rs"]
-scope = ["crates/cadetta-obligations/src/lock_package.rs"]
+scope = ["crates/cadetta-obligations/src/lock_package.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/packages.md"]
 
 [[links]]
 kind = "blocked-by"
