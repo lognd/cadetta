@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "main broken by formatter/parser merge; freeing WIP slot for fix"
+at = "2026-10-13T06:51:41Z"
+actor = "lognd"
+rev = 1
