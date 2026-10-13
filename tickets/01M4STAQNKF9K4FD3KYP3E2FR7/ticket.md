@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T16:31:18Z"
+updated = "2026-10-13T16:32:31Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for obligations"
@@ -29,5 +29,5 @@ bound = false
 
 [[acceptance]]
 text = "Given draft 1.4 revisions of the document, when fixtures are rewritten, then every rule added or changed in 1.4 has fixtures (docs/spec/README.md)"
-bound = false
+bound = true
 +++
