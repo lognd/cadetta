@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:01:15Z"
+digest = "b067f7b07d2386c05acf64d959bb353ee8a5f7f894d7b1e1e62c5ee18fd17175"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.96s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8faaa894-7280-45f0-bd70-4f002369772b with nextest profile: default
+    Starting 1 test across 1 binary (48 tests skipped)
+        PASS [   0.014s] cadetta-sema eval::checks::tests::quantified_check_yields_one_verdict_per_instance
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.022s] 1 test run: 1 passed, 48 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=eval::checks::tests::quantified_check_yields_one_verdict_per_instance)'"
+size = 692
+status = "measured"
+test_count = 1
+tests_digest = "46e8469d3c05c085f9c2d2add2b0a47dc2b7afd43469bb260ebd0eb277278643"
+at = "2026-10-13T08:01:15Z"
+actor = "lognd"
+rev = 1
