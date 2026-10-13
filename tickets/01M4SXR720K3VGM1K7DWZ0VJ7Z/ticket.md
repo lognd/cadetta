@@ -2,13 +2,13 @@
 id = "01M4SXR720K3VGM1K7DWZ0VJ7Z"
 title = "Lock package records with content digests and E014"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:45Z"
-updated = "2026-10-13T06:03:45Z"
+updated = "2026-10-13T07:55:12Z"
 persona = "library user"
 capability = "know when a pinned dependency changed"
 labels = ["creates:crates/cadetta-obligations/src/lock_package.rs"]

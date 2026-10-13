@@ -449,6 +449,33 @@ impl DigestGraph {
         self.closure_in(key, &mut memo, &mut visiting)
     }
 
+    // frob:ticket 01M4ST8ERHSJXGDXNH75ZCX6H7
+    /// Own digests of every transitive dep of `key` (not `key` itself), sorted and unique.
+    ///
+    /// This is the basis of `why --stale`: an attestation stores it (obligations.md 3).
+    pub fn dep_owns(&self, key: &str) -> Result<Vec<Digest>, DigestError> {
+        let root = self
+            .nodes
+            .get(key)
+            .ok_or_else(|| DigestError::Unknown(key.to_owned()))?;
+        let mut seen: BTreeSet<&str> = BTreeSet::new();
+        let mut stack: Vec<&str> = root.deps.iter().map(String::as_str).collect();
+        let mut owns: BTreeSet<String> = BTreeSet::new();
+        while let Some(k) = stack.pop() {
+            if k == key || !seen.insert(k) {
+                continue;
+            }
+            let n = self.nodes.get(k).ok_or_else(|| DigestError::MissingDep {
+                node: key.to_owned(),
+                dep: k.to_owned(),
+            })?;
+            owns.insert(n.own.0.clone());
+            stack.extend(n.deps.iter().map(String::as_str));
+        }
+        trace!(%key, deps = owns.len(), "digest: dep own digests");
+        Ok(owns.into_iter().map(Digest).collect())
+    }
+
     /// Closures of every node, computed once with shared memoization.
     pub fn closures(&self) -> Result<BTreeMap<String, Digest>, DigestError> {
         let mut memo = BTreeMap::new();

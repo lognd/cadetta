@@ -146,6 +146,27 @@ the deps it covered (3), so that a stale obligation can be explained
 (`why --stale`) and re-reviewed cheaply. A stale attestation is never
 auto-discharged, even when the verdict is unchanged.
 
+Decided (0.1.0), implemented in `cadetta-obligations` `staleness.rs`:
+
+- The state of an attestation is a pure function of the record and the
+  current graph: `open` without a record, `current` when the recorded
+  closure digest equals the current one, `stale` otherwise. The reason
+  for `why --stale` is the difference between the recorded and current
+  sorted sets of dep own digests (added and removed); an empty
+  difference means the covered node itself changed.
+- An obligation covering several instance paths of differing closures
+  has one covered digest: a single closure as is, otherwise the sorted,
+  de-duplicated closures hashed together, so any member changing stales
+  it.
+- A `require` that `holds` with a sign-off role configured is
+  `discharged` only with a `current` attestation, `open` without one and
+  `stale` with an old one; a `violated` or `undecided` require keeps its
+  verdict whatever attestations exist (4).
+- The as-built obligation (0.2.0, OQ-13) reuses the same machinery: an
+  inspection is a recorded verdict at a closure digest; it is `stale`
+  when the design changed after the inspection, otherwise it takes the
+  inspection verdict.
+
 ## 3. The lock file
 
 `cadetta.lock` is committed and holds everything that is not derivable

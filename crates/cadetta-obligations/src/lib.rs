@@ -12,3 +12,4 @@ pub mod lock_package;
 pub mod lock_tidy;
 pub mod lock_verify;
 pub mod selector;
+pub mod staleness;

@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T07:56:32Z"
+digest = "e889ff47a406e1520ff3fea29b9185ecb1681f9435bad716d2733fba15a85950"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f3717ca1-25f3-4399-aa05-23a61fc898e7 with nextest profile: default
+    Starting 1 test across 20 binaries (399 tests skipped)
+        PASS [   0.007s] cadetta-obligations staleness::tests::as_built_stale_when_design_changed_after_inspection
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 399 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=staleness::tests::as_built_stale_when_design_changed_after_inspection)'"
+size = 583
+status = "measured"
+test_count = 1
+tests_digest = "8bfb6e00859fb8edd2b4a8ee0f79d6ab171026c8b809af9f880819a71175ecba"
+at = "2026-10-13T07:56:32Z"
+actor = "lognd"
+rev = 1

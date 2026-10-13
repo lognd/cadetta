@@ -2,13 +2,14 @@
 id = "01M4ST8ERHSJXGDXNH75ZCX6H7"
 title = "Attestations and staleness from closure digests"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T07:54:10Z"
+updated = "2026-10-13T07:56:49Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
@@ -49,29 +50,29 @@ target = "01M4STCF8FJ9HGB7EZ37MC24EF"
 
 [[acceptance]]
 text = "Given an attestation on a check, when anything the check reads changes however far upstream, then it becomes stale (obligations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given nodes unrelated to the attested set, when they change, then the attestation stays discharged (obligations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given staleness, when computed, then it is derived by comparing recorded closure digests with the current graph and never stored (obligations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a swap of an interface-typed slot, when computed, then attestations covering instance paths of the slot become stale and attestations on other parts do not (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a require evaluating holds with an attestation configured, when classified, then it is discharged only with a current attestation (obligations.md 2, 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an as-built obligation, when classified, then it is stale if the design changed after the inspection (obligations.md 2, OQ-13)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an attestation, when judged, then verdict and margin are recorded and dependency own digests are used (obligations.md 2)"
-bound = false
+bound = true
 +++

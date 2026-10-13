@@ -427,6 +427,14 @@ file citations are digest-pinned (obligations.md 3). A literal citation
 (`@"ASTM A276"`) is text, not a path: it is never checked for
 reachability (S002).
 
+Citation kinds in the IR: a `cite` string starting `http://` or `https://`
+is `url`, any other string is `file` (a path relative to the package
+directory, digest recorded when the file exists), a `std::...` path or a
+literal is `standard`, and `@measured`, `@assumed`, `@estimate` are their
+own kinds with the locator carrying who and when. A member with no
+citation of its own inherits the component's; a member citation replaces
+it, it is never merged.
+
 ### 3.10 Units and kinds
 
 `unit kip = 1000lbf`, `kind Stress = Pressure` (a distinct kind of the
@@ -453,6 +461,12 @@ member applies to that member.
 Default precedence, highest first: the enclosing component's
 `#![default]`, the file's `#![default]`, the project's `[defaults]`
 (config-cli.md), then the standard library's (stdlib.md 4).
+Precedence among attributes of the same key, lowest first: file `#![]`,
+component `#![]`, the member's leading `#[]`, the member's trailing `#[]`.
+A bare attribute (a rule role such as `#![hole]`) and `role(...)` never
+inherit from a scope. `default(Iface = Impl)` and `allow(CODE, "why")` are
+keyed per interface or code, so several coexist. In the IR the attribute
+value is its arguments joined by `, `, string literals unquoted.
 `cadetta fmt` aligns trailing attributes and comments into columns.
 
 ## 4. Names and resolution
