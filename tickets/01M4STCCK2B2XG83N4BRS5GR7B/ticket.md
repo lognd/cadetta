@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T09:19:17Z"
+updated = "2026-10-13T09:19:18Z"
 persona = "design engineer"
 capability = "be warned about unsound alternates and unevaluated roots"
 idempotency_key = "replan13:Lints I001-I004 for interfaces and alternates"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given I004, when linted, then it fires only for roots of the package being checked, and an unused private parameterized component is U002 instead (lints.md I004; packages.md 3)"
-bound = false
+bound = true
 +++
