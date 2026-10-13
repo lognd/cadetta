@@ -1,0 +1,13 @@
+kind = "create"
+title = "Spec: cadetta lsp (diagnostics and formatting) in 0.1.0"
+type = "docs"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
+idempotency_key = "d15:lsp-spec"
+scope = ["docs/spec/config-cli.md", "docs/spec/lints.md", "docs/spec/README.md", "docs/decisions/2026-10-13-draft-1-5-decisions.md"]
+acceptance = ["Given config-cli.md and lints.md, when read, then cadetta lsp is a 0.1.0 command serving diagnostics (live syntax errors on change, full check on save) and formatting over LSP, with the cadetta.diag/1 mapping, position encoding and lifecycle specified, and hover/code lens deferred", "Given the draft 1.5 ADR, when read, then it records bringing the LSP into 0.1.0 and why"]
+at = "2026-10-13T21:32:38Z"
+actor = "lognd"
+rev = 1
