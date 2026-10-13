@@ -19,6 +19,10 @@ scope = ["crates/cadetta-obligations/src/waiver.rs"]
 kind = "blocked-by"
 target = "01M4ST8EMQTXAGZAWGE2M5A4BR"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4ST8EPKBWRWHF51Y5NV3VK0"
+
 [[acceptance]]
 text = "Given a waiver, when graphed, then a waiver:<glob> obligation exists and a lock waiver record binds digests; changed digests give W002 (obligations.md 2, 3; lints.md 2.1)"
 bound = false
