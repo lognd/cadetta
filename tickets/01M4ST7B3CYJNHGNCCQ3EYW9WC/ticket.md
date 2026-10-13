@@ -2,7 +2,8 @@
 id = "01M4ST7B3CYJNHGNCCQ3EYW9WC"
 title = "Unit assumption at read"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
