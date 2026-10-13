@@ -418,14 +418,14 @@ pub fn check_assembly(a: &Assembly) -> Vec<PlacementDiag> {
             }
         }
         first.entry(p.node.as_str()).or_insert(p);
-        if let Anchor::Datum { node, .. } = &p.on {
-            if !names.contains(node.as_str()) {
-                out.push(diag(
-                    PlacementCode::Unresolved,
-                    p.span,
-                    format!("`{node}` is not a part of `{}`", a.name),
-                ));
-            }
+        if let Anchor::Datum { node, .. } = &p.on
+            && !names.contains(node.as_str())
+        {
+            out.push(diag(
+                PlacementCode::Unresolved,
+                p.span,
+                format!("`{node}` is not a part of `{}`", a.name),
+            ));
         }
     }
     let mut in_cycle: BTreeSet<&str> = BTreeSet::new();
@@ -477,8 +477,8 @@ pub fn check_assembly(a: &Assembly) -> Vec<PlacementDiag> {
 /// One evaluated operation of a frame.
 #[derive(Clone, Debug)]
 enum FrameOp {
-    Offset([Option<Affine>; 3]),
-    Rotate(Axis, Affine),
+    Offset(Box<[Option<Affine>; 3]>),
+    Rotate(Axis, Box<Affine>),
 }
 
 fn length_dim() -> Dim {
@@ -511,14 +511,14 @@ fn eval_ops(ops: &[DatumOp], eval: Eval<'_>) -> Result<Vec<FrameOp>, GeometryErr
                 for (axis, m) in args {
                     d[axis_index(*axis)] = Some(eval(m)?);
                 }
-                out.push(FrameOp::Offset(d));
+                out.push(FrameOp::Offset(Box::new(d)));
             }
             DatumOp::Rotate { axis, angle } => {
                 let a = match angle {
                     Angle::HalfTurn => half_turn(),
                     Angle::Given(m) => eval(m)?,
                 };
-                out.push(FrameOp::Rotate(*axis, a));
+                out.push(FrameOp::Rotate(*axis, Box::new(a)));
             }
         }
     }
@@ -529,10 +529,10 @@ fn invert(ops: &[FrameOp]) -> Vec<FrameOp> {
     ops.iter()
         .rev()
         .map(|op| match op {
-            FrameOp::Offset(d) => {
-                FrameOp::Offset(std::array::from_fn(|i| d[i].as_ref().map(Affine::neg)))
-            }
-            FrameOp::Rotate(a, ang) => FrameOp::Rotate(*a, ang.neg()),
+            FrameOp::Offset(d) => FrameOp::Offset(Box::new(std::array::from_fn(|i| {
+                d[i].as_ref().map(Affine::neg)
+            }))),
+            FrameOp::Rotate(a, ang) => FrameOp::Rotate(*a, Box::new(ang.neg())),
         })
         .collect()
 }
@@ -559,8 +559,8 @@ fn fold(ops: &[FrameOp]) -> Result<Transform, GeometryError> {
     let mut t = Transform::identity(length_dim());
     for op in ops {
         let next = match op {
-            FrameOp::Offset(d) => t.offset(d),
-            FrameOp::Rotate(a, ang) => t.rotate(*a, ang),
+            FrameOp::Offset(d) => t.offset(d.as_ref()),
+            FrameOp::Rotate(a, ang) => t.rotate(*a, ang.as_ref()),
         };
         t = match next {
             Ok(t) => t,
