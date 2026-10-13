@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a step of a different dimension, when rounding, then an error value is returned (quantities.md 5.5)"
-bound = false
+bound = true
 +++
