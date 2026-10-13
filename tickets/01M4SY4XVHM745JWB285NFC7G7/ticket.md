@@ -2,7 +2,8 @@
 id = "01M4SY4XVHM745JWB285NFC7G7"
 title = "cadetta-log crate: the single tracing subscriber owner (mirrors gob-log)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
