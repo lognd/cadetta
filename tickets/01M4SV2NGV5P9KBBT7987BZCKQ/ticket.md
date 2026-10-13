@@ -2,7 +2,8 @@
 id = "01M4SV2NGV5P9KBBT7987BZCKQ"
 title = "Python Quantity type and cadetta.quantity parsing"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
