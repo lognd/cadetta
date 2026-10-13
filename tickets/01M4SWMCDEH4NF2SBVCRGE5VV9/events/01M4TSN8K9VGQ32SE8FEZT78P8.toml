@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T14:11:28Z"
+digest = "43c6052d34889d09925fbf911e553b0bd1a2998b83a93bbbb75a65807a924e87"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6a6421a5-9326-4f8e-86f6-f4cff4cc433d with nextest profile: default
+    Starting 1 test across 1 binary (82 tests skipped)
+        PASS [   0.008s] cadetta-adapter locator::tests::star_divergence_fires_r012
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 82 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(=locator::tests::star_divergence_fires_r012)'"
+size = 547
+status = "measured"
+test_count = 1
+tests_digest = "4b55d7b257a0f63dce4481e547bca7826b325c8e12ebfaa378b53bf2150bcf64"
+at = "2026-10-13T14:11:28Z"
+actor = "lognd"
+rev = 1
