@@ -24,6 +24,10 @@ A quantity is `(magnitude, dimension, angle, kind, tolerance?)`.
 - **Tolerance** is an affine form over source variables (5.4); for a
   literal it is a pair of signed deviations `lower <= upper`.
 
+A zero magnitude is normalised to `k = 0`, so equal magnitudes compare
+structurally. A currency's exponent is dropped from the vector when it
+reaches zero. Division by zero is an error value, never a panic.
+
 Inexact operations (trigonometry, roots, non-integer powers, addition
 across `pi^k`) yield a quantity marked inexact, carried as an IEEE-754
 binary64. Rounding (5.5) restores exactness.
