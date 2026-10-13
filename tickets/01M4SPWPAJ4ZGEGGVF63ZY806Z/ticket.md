@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T04:04:00Z"
+updated = "2026-10-13T04:04:03Z"
 persona = "design engineer"
 capability = "run a formatter that produces one canonical layout"
 outcome_text = "layout never causes review noise or IR changes"
@@ -18,6 +18,10 @@ scope = ["crates/cadetta-syntax/src/format.rs"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWQED1EN19NWQJE5NT0J4"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWT0RZH7FJYEZ8J7MBN3Z"
 
 [[acceptance]]
 text = "Given any valid file, when formatted twice, then output is identical (idempotent)"
