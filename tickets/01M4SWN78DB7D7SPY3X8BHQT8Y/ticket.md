@@ -2,18 +2,18 @@
 id = "01M4SWN78DB7D7SPY3X8BHQT8Y"
 title = "Lock merge driver"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:38Z"
-updated = "2026-10-13T05:44:44Z"
+updated = "2026-10-13T07:38:27Z"
 persona = "design engineer"
 capability = "merge lock files without conflict"
 idempotency_key = "replan14:ob-merge"
 labels = ["creates:crates/cadetta-obligations/src/lock_merge.rs"]
-scope = ["crates/cadetta-obligations/src/lock_merge.rs"]
+scope = ["crates/cadetta-obligations/src/lock_merge.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"

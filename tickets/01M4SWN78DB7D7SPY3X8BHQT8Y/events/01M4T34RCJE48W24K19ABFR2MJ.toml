@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/8BHQT8Y; scope: crates/cadetta-obligations/src/lock_merge.rs; ttl 7200s"
+at = "2026-10-13T07:37:58Z"
+actor = "lognd"
+rev = 1
