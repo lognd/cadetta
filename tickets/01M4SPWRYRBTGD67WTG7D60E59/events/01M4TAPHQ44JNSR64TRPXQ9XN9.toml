@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T09:50:01Z"
+digest = "9bdba39a2ee36b0b7f38b6b161b6ec5fbfb269cabb8c2b36d24cab10b8cf0c2b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a29ba338-5ed0-457c-88ce-338a1345f73b with nextest profile: default
+    Starting 1 test across 1 binary (38 tests skipped)
+        PASS [   0.010s] cadetta-adapter bindings::tests::bindings_mangle_rules
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 38 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(=bindings::tests::bindings_mangle_rules)'"
+size = 543
+status = "measured"
+test_count = 1
+tests_digest = "924b32f3ec42c1b5f538d9a738bd3a17e519c0851ebd11f70a7c786bd1766b8a"
+at = "2026-10-13T09:50:01Z"
+actor = "lognd"
+rev = 1
