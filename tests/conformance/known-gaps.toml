@@ -243,6 +243,31 @@ ticket = "~AN7BAC5"
 reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
+fixture = "obligations/o003-require-signoff-open"
+ticket = "~Y0NVZAF"
+reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
+
+[[gap]]
+fixture = "obligations/s004-citation-changed"
+ticket = "~Y0NVZAF"
+reason = "CLI obligation universe does not enumerate ots/citation obligations, so S004 never fires"
+
+[[gap]]
+fixture = "obligations/w003-waive-require"
+ticket = "~SN4G7QS"
+reason = "waive naming a require diagnostic suppresses it instead of raising W003"
+
+[[gap]]
+fixture = "obligations/w003-allow-require"
+ticket = "~SN4G7QS"
+reason = "allow on a require raises no W003, and allow does not suppress C001 on a check either"
+
+[[gap]]
+fixture = "obligations/s003-solver-stale"
+ticket = "~JET4TC0"
+reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
+
+[[gap]]
 fixture = "quantities/e001-compound-decimal"
 ticket = "~4QX9B1C"
 reason = "compound units and dimensional checks not implemented in the evaluator"
@@ -446,26 +471,3 @@ reason = "angle/count pi handling differs from spec"
 fixture = "quantities/c002-inexact-boundary"
 ticket = "~G5NT80Z"
 reason = "C002 not raised for inexact boundary"
-fixture = "obligations/o003-require-signoff-open"
-ticket = "~Y0NVZAF"
-reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
-
-[[gap]]
-fixture = "obligations/s004-citation-changed"
-ticket = "~Y0NVZAF"
-reason = "CLI obligation universe does not enumerate ots/citation obligations, so S004 never fires"
-
-[[gap]]
-fixture = "obligations/w003-waive-require"
-ticket = "~SN4G7QS"
-reason = "waive naming a require diagnostic suppresses it instead of raising W003"
-
-[[gap]]
-fixture = "obligations/w003-allow-require"
-ticket = "~SN4G7QS"
-reason = "allow on a require raises no W003, and allow does not suppress C001 on a check either"
-
-[[gap]]
-fixture = "obligations/s003-solver-stale"
-ticket = "~JET4TC0"
-reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
