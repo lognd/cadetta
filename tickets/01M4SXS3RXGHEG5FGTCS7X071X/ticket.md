@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:14Z"
-updated = "2026-10-13T09:07:54Z"
+updated = "2026-10-13T09:08:57Z"
 persona = "product engineer"
 capability = "see exactly which checks a library update makes stale"
 labels = ["creates:crates/cadetta-obligations/src/pkg_closure.rs"]
-scope = ["crates/cadetta-obligations/src/pkg_closure.rs"]
+scope = ["crates/cadetta-obligations/src/pkg_closure.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
