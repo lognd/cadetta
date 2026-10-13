@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T15:56:13Z"
+updated = "2026-10-13T15:56:24Z"
 persona = "design engineer"
 capability = "adopt without re-typing"
 idempotency_key = "replan14:ad-imp-acc"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an adopted binding with a native expression, when the next push would replace it, then R006 fires (adapters.md 7.4; lints.md 3 R)"
-bound = false
+bound = true
 +++
