@@ -1,0 +1,16 @@
+kind = "create"
+title = "Exact rational magnitudes and SI dimension vectors"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWFZP4041AN6YQE08X2AN"
+persona = "cadetta contributor"
+capability = "represent a magnitude as an arbitrary-precision rational over a 7-element SI dimension vector"
+outcome_text = "values are exact and comparable only across equal dimensions"
+labels = ["creates:crates/cadetta-units/src/{rational,dimension}.rs"]
+scope = ["crates/cadetta-units/src/{rational,dimension}.rs"]
+acceptance = ["Given `1in`, when stored, then its magnitude is exactly 127/5000 m", "Given lengths and masses, when added, then a dimension mismatch is returned as an error value"]
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
