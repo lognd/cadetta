@@ -2,7 +2,8 @@
 id = "01M4SPWNEF5D7VN10KTWKPM465"
 title = "Affine temperature units and TemperatureDelta"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
