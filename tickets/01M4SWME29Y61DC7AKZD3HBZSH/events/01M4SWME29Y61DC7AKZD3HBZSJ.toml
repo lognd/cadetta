@@ -1,0 +1,16 @@
+kind = "create"
+title = "Active configuration and custom properties read"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SV2TCZM23R46EM75RYSA3B"
+persona = "design engineer"
+capability = "adopt properties and configurations"
+idempotency_key = "replan14:sw-props"
+labels = ["creates:adapters/solidworks/src/props.py"]
+scope = ["adapters/solidworks/src/props.py"]
+acceptance = ["Given a file, when read, then the active configuration and custom properties become observed parameters (adapters.md 3)"]
+at = "2026-10-13T05:44:13Z"
+actor = "lognd"
+rev = 1
