@@ -97,10 +97,11 @@ work. An agent-authored PR still needs a named human author.
 
 ## Releases (maintainers)
 
-Pushing a tag `v*` runs `.github/workflows/release.yml`. Crates publish
-to crates.io from the protected `crates-io` environment in dependency
-order, and the `cadetta` and `cadetta-freecad` packages publish to PyPI
-from the protected `pypi` environment; both use trusted publishing.
+Pushing a tag `cadetta-v<version>` (matching the workspace version) runs
+`.github/workflows/release.yml`. Crates publish to crates.io from the
+protected `crates-io` environment in dependency order; `cadetta`
+publishes to PyPI from the protected `pypi` environment and
+`cadetta-freecad` from `pypi-freecad`. All use trusted publishing.
 
 ## Reporting bugs and proposing features
 
