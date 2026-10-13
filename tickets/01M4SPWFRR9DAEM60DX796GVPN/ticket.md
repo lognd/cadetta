@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:03:45Z"
-updated = "2026-10-13T04:04:05Z"
+updated = "2026-10-13T04:04:06Z"
 labels = ["creates:Cargo.toml"]
 scope = ["Cargo.toml"]
 
@@ -33,6 +33,10 @@ target = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 [[links]]
 kind = "blocks"
 target = "01M4SPWH74K9QQS72Z9YMTPD72"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 +++
 
 Outcome: a Cargo workspace with every crate, CI and frob check gates so all other epics can land code.
