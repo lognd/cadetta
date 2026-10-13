@@ -1,0 +1,4 @@
+model Part {
+  bore = 20mm
+  fit seat = H19/p6 on bore
+}

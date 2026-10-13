@@ -1,0 +1,5 @@
+model Part {
+  mass = 5kg
+  #[allow(C001, "accepted")]
+  require budget: mass <= 4kg "mass budget"
+}

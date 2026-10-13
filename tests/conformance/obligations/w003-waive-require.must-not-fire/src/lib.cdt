@@ -1,0 +1,8 @@
+model Part {
+  width: Length = 14mm
+  limit: Length = 12mm
+  check fits_limit: width <= limit "width within limit"
+}
+waive C001 on acme.demo::Part.fits_limit {
+  because "accepted"
+}

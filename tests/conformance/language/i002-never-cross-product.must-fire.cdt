@@ -1,0 +1,26 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  load_rating >= 400N
+}
+pub ots G1: Caster @src {
+  diameter = 5in
+  load_rating = 500N
+}
+pub ots B1: Caster @src {
+  diameter = 5in
+  load_rating = 450N
+}
+pub ots G2: Caster @src {
+  diameter = 4in
+  load_rating = 500N
+}
+pub ots B2: Caster @src {
+  diameter = 4in
+  load_rating = 420N
+}
+pub assembly Rover {
+  part front: Caster = G1 alt [B1]
+  part back: Caster = G2 alt [B2]
+  check ok: front.load_rating >= 440N and back.load_rating >= 440N
+}

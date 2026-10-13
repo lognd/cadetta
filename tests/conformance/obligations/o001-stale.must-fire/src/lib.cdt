@@ -1,0 +1,5 @@
+model Part {
+  width: Length = 11mm
+  limit: Length = 12mm
+  check fits_limit: width <= limit "width within limit"
+}

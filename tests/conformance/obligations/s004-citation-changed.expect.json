@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "obligations",
+  "section": "obligations.md 2.3",
+  "rule": "S004",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "S004",
+        "severity": "warning"
+      }
+    ],
+    "exit": 0
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

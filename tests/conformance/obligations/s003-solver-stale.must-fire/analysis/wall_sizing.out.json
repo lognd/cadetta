@@ -1,0 +1,16 @@
+{
+  "schema": "cadetta.solve-result/1",
+  "results": [
+    {
+      "solver": "acme.demo::Frame.wall_sizing",
+      "input_digest": "blake3:0000000000000000000000000000000000000000000000000000000000000000",
+      "script_digest": "blake3:0000000000000000000000000000000000000000000000000000000000000000",
+      "dep_digests": {},
+      "inputs": {},
+      "outputs": {
+        "min_wall": "2mm"
+      },
+      "diagnostics": []
+    }
+  ]
+}

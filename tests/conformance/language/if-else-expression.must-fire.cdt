@@ -1,0 +1,4 @@
+model Part {
+  x = if 1mm < 2mm { 5mm } else { 7mm }
+  check c: x == 7mm
+}

@@ -1,0 +1,12 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  load_rating >= 400N
+}
+pub ots A: Caster @src {
+  diameter = 5in
+  load_rating = 300N
+}
+waive C001 on acme.demo::A {
+  because "reviewed"
+}

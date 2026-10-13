@@ -1,0 +1,5 @@
+enum G { A, B }
+model Part {
+  g = G::A
+  t = match g { G::A => 1mm, _ => 2mm }
+}

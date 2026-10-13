@@ -1,0 +1,23 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.2",
+  "rule": "I001-unwaivable",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "I001",
+        "severity": "error"
+      },
+      {
+        "code": "W003",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

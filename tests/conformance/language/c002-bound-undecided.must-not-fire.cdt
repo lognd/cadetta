@@ -1,0 +1,9 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  load_rating >= 400N
+}
+pub ots A: Caster @src {
+  diameter = 5in
+  load_rating = 450N [+-10N]
+}

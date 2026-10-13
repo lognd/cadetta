@@ -1,0 +1,4 @@
+model Part {
+  a = 5mm [+-1mm]
+  check small: a <= 5.5mm
+}
