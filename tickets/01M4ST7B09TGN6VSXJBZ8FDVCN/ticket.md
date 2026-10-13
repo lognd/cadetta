@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given value lints Q, N, D001 and M001, when run on observed IR, then they work without design-only fields (ir.md 1)"
-bound = false
+bound = true
 +++
