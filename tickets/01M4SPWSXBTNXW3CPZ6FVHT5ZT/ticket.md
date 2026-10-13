@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given --format text|short|github|sarif|json or CADETTA_FORMAT, --cwd and --config, when run, then they behave as config-cli.md 4, 5; text is always the default"
-bound = false
+bound = true
 +++
