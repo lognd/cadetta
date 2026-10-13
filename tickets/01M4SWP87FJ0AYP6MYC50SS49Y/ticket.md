@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T06:50:04Z"
+updated = "2026-10-13T06:50:43Z"
 persona = "design engineer"
 capability = "get numeric-library errors"
 idempotency_key = "replan14:py-qerr"
 labels = ["creates:bindings/python/python/cadetta/errors.py"]
-scope = ["bindings/python/python/cadetta/errors.py"]
+scope = ["bindings/python/python/cadetta/errors.py", "bindings/python/tests/test_errors.py", "bindings/python/python/cadetta/quantity.py", "bindings/python/python/cadetta/__init__.py"]
 
 [[links]]
 kind = "blocked-by"
