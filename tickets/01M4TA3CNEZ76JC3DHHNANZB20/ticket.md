@@ -2,7 +2,7 @@
 id = "01M4TA3CNEZ76JC3DHHNANZB20"
 title = "Golden packages fail in parser/sema"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
