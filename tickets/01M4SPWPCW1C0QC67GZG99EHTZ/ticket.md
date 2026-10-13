@@ -19,6 +19,10 @@ scope = ["crates/cadetta-sema/src/resolve.rs"]
 kind = "blocks"
 target = "01M4SPWPG1WBAHFPZ19ZV3BAPJ"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWPKGXD3TJ78NPJH8Q9VZ"
+
 [[acceptance]]
 text = "Given a bare name in a component, when resolved, then it is the component's own parameter"
 bound = false
