@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:03:17Z"
+digest = "e18059c4615e5067fb37b23173c2b6faf6011add85eeadec96a93f5ea5636c64"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.49s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f899f0a9-e10d-4aed-bc74-dae4ae0fdb8a with nextest profile: default
+    Starting 1 test across 14 binaries (246 tests skipped)
+        PASS [   0.006s] cadetta output::tests::short_github_sarif_and_json_shapes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 246 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=output::tests::short_github_sarif_and_json_shapes)'"
+size = 617
+status = "measured"
+test_count = 1
+tests_digest = "e5d710e8cb0468a476eb838f21480e7876e74bcfd701e8375a912acc6b5a032b"
+at = "2026-10-13T07:03:17Z"
+actor = "lognd"
+rev = 1
