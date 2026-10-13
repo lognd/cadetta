@@ -40,5 +40,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a dependency digest, when the closure digest of a reader is computed, then the digest is an input to it (obligations.md 3; packages.md 6)"
-bound = false
+bound = true
 +++
