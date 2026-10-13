@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T09:00:42Z"
+updated = "2026-10-13T09:01:55Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
 labels = ["creates:crates/cadetta-lint/src/engine.rs"]
-scope = ["crates/cadetta-lint/src/engine.rs"]
+scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/lib.rs", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocks"
