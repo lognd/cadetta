@@ -105,6 +105,15 @@ Response:
 - Two transports: `stdio` (request on stdin, response on stdout) and
   `file` (the command template receives `{in}` and `{out}` paths; for
   MATLAB: `["matlab", "-batch", "wall_sizing('{in}','{out}')"]`).
+- Command template (decided in cadetta-solve): `command` is a list of
+  arguments. `{script}`, `{in}` and `{out}` are the only placeholders,
+  expanded inside each argument; `{in}` and `{out}` exist only under the
+  `file` transport, and an unknown or unavailable placeholder is a
+  configuration error (exit 2). The solver runs with the directory of
+  `cadetta.toml` as its working directory. An optional `timeout` (whole
+  seconds) kills the process and is a solver error (S005). Every solver
+  error names the solver. Running a solver with no `[solvers."PATH"]`
+  table is a usage error (exit 2).
 - Exit status non-zero, malformed JSON, a missing output or a wrong kind
   are solver errors (S005) and leave the previous result in place.
 
