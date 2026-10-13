@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T09:17:51Z"
+updated = "2026-10-13T09:18:19Z"
 persona = "design engineer"
 capability = "read native values that carry no unit"
 idempotency_key = "replan13:Unit assumption at read"
 labels = ["creates:crates/cadetta-adapter/src/read_units.rs"]
-scope = ["crates/cadetta-adapter/src/read_units.rs"]
+scope = ["crates/cadetta-adapter/src/read_units.rs", "crates/cadetta-adapter/src/lib.rs"]
 
 [[acceptance]]
 text = "Given a native value without a unit, when read, then it takes the adapter declared native unit and is recorded as unit_assumed (adapters.md 3)"
