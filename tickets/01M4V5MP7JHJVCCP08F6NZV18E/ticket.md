@@ -2,7 +2,8 @@
 id = "01M4V5MP7JHJVCCP08F6NZV18E"
 title = "csv.md: read behaviour for unknown names and quoted hash fields unspecified"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
