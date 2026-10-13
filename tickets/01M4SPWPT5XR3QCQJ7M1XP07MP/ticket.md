@@ -4,11 +4,11 @@ title = "Check statements with three-valued verdicts"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 3
+points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T04:04:01Z"
+updated = "2026-10-13T05:01:23Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -20,10 +20,26 @@ kind = "blocks"
 target = "01M4SPWQH44JWFXZDNTGEBMMNX"
 
 [[acceptance]]
-text = "Given a check false for every value in tolerance, when evaluated, then verdict is violates"
+text = "Given a check false for every value in tolerance, when evaluated, then verdict is violates (C001) (quantities.md 5.8)"
 bound = false
 
 [[acceptance]]
-text = "Given a check true for some values only, when evaluated, then verdict is undecided"
+text = "Given a check true for some values only, when evaluated, then verdict is undecided (C002) (quantities.md 5.8)"
+bound = false
+
+[[acceptance]]
+text = "Given `check load_ok for w in wheel: ...`, when evaluated, then one verdict per instance is produced (language.md 6)"
+bound = false
+
+[[acceptance]]
+text = "Given `x satisfies P` with P a bound, when evaluated, then x is tested against P and `P.min`/`P.max` read its limits (quantities.md 5.7)"
+bound = false
+
+[[acceptance]]
+text = 'Given `require mass_budget: ... @customer:"REQ-12"`, when evaluated, then it is a check carrying a citation and tracked as an obligation (language.md 6)'
+bound = false
+
+[[acceptance]]
+text = "Given a check name, when lowered, then it is the check canonical path (language.md 6)"
 bound = false
 +++

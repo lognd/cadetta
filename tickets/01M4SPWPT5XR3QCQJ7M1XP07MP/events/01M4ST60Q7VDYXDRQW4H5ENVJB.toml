@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a check false for every value in tolerance, when evaluated, then verdict is violates", "Given a check true for some values only, when evaluated, then verdict is undecided"]
+new = ["Given a check false for every value in tolerance, when evaluated, then verdict is violates (C001) (quantities.md 5.8)", "Given a check true for some values only, when evaluated, then verdict is undecided (C002) (quantities.md 5.8)", "Given `check load_ok for w in wheel: ...`, when evaluated, then one verdict per instance is produced (language.md 6)", "Given `x satisfies P` with P a bound, when evaluated, then x is tested against P and `P.min`/`P.max` read its limits (quantities.md 5.7)", 'Given `require mass_budget: ... @customer:"REQ-12"`, when evaluated, then it is a check carrying a citation and tracked as an obligation (language.md 6)', "Given a check name, when lowered, then it is the check canonical path (language.md 6)"]
+moved = [0, 0]
+at = "2026-10-13T05:01:23Z"
+actor = "lognd"
+rev = 1
