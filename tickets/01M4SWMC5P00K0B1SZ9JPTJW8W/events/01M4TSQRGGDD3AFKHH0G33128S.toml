@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T14:12:40Z"
+digest = "3453f81119ffe59efa2dcd054dd71c206a7d83d048d1fe430f92a82b16e91183"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.23s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6f5e095a-56e6-44ac-a409-dd3e6e25b914 with nextest profile: default
+    Starting 1 test across 1 binary (85 tests skipped)
+        PASS [   0.010s] cadetta-adapter sync::tests::second_run_pushes_nothing_and_lock_identical
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 1 test run: 1 passed, 85 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(=sync::tests::second_run_pushes_nothing_and_lock_identical)'"
+size = 634
+status = "measured"
+test_count = 1
+tests_digest = "5bb567cb81104fba9048f896c54df2b51a52dcdccfc95ce5819de9e26e2fa63a"
+at = "2026-10-13T14:12:40Z"
+actor = "lognd"
+rev = 1

@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T14:09:52Z"
+updated = "2026-10-13T14:12:40Z"
 persona = "design engineer"
 capability = "keep CAD and design in step"
 idempotency_key = "replan14:ad-sync"
@@ -25,7 +25,7 @@ target = "01M4SWMBMD210J9ZWQEF95V4RW"
 
 [[acceptance]]
 text = "Given an unchanged design and CAD, when sync runs twice, then the second run pushes nothing and writes an identical lock (adapters.md 2.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --dry-run, --only GLOB, --no-regen and ADAPTER-ID, when sync runs, then they scope or suppress as config-cli.md 3.1 states; --dry-run writes nothing and lists each replaced native expression (R006)"
