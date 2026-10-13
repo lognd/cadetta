@@ -3,7 +3,7 @@ A 3D-printed enclosure for a Raspberry Pi 4B (package acme.pienclosure, a single
 The Pi is a cited ots; Insert is an M2.5 heat-set insert; Fdm is a measured
 process with hole, slot, boss and lip compensation rules.
 Exercises: datum-typed Point2 arrays (rect_pattern on a pattern datum in the
-Pi and in the base), `place pi.holes_site on base.standoff_site`, one
+Pi and in the base), `place pi.holes_site at base.standoff_site`, one
 ScrewJoint for the whole pattern with `at`/`onto` and `tap = Vendor`
 (geometry.md 3, stdlib.md 3), process designed vs drawn values
 (language.md 3.8, quantities.md 5.6), and a fit on the insert hole.

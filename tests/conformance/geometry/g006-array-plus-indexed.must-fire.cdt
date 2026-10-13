@@ -1,0 +1,16 @@
+model Foot {
+  datum top = origin
+}
+
+model Base {
+  datum underside = origin
+  foot_sites: [Point2 on underside; 3] = rect_pattern(3, 1, 20mm, 0mm)
+}
+
+assembly Frame {
+  part base: Base
+  part feet[3]: Foot
+  place base.origin at origin
+  place feet.top at base.underside.offset(base.foot_sites)
+  place feet[1].top at base.underside
+}

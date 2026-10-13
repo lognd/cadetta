@@ -4,6 +4,6 @@ model Part {
 
 assembly Mount {
   part a: Part
-  place a.d on origin
+  place a.d at origin
   px = (a.d in origin).x
 }

@@ -141,7 +141,7 @@ assembly Workbench {
     Point2(inset, Envelope.depth - inset),
     Point2(Envelope.width - inset, Envelope.depth - inset)
   ]
-  place leg[i].foot on origin.at(corners[i]) for i in 0..count(leg)
+  place leg.foot at origin.offset(corners)
 
   total_bolts: Count = sum(gusset.bolts) + sum(panel_clip.bolts) + sum(brace.ends) * brace[0].end_bolts
   total_t_nuts: Count = sum(gusset.t_nuts) + sum(panel_clip.t_nuts) + sum(brace.ends) * brace[0].end_t_nuts

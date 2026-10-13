@@ -181,7 +181,7 @@ assembly PiCase {
   part lid: Lid(lip = base.lip_width)
   part pi: RaspberryPi4B
 
-  place pi.holes_site on base.standoff_site
+  place pi.holes_site at base.standoff_site
 
   // Pi onto the inserts: one joint for the whole pattern, holes proven to line up.
   part pi_screws: ScrewJoint(thread = M2_5, clamp = pi.thickness, into = Material::Brass360,

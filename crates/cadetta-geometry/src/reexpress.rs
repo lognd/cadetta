@@ -265,7 +265,7 @@ mod tests {
     fn mount() -> Assembly {
         build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  part loose: Bracket\n  place rail.origin on origin\n  place bracket.base on rail.site\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  part loose: Bracket\n  place rail.origin at origin\n  place bracket.base at rail.site\n}\n",
             ),
             &[],
         )

@@ -2,7 +2,7 @@
 //!
 //! `Datum` and `Placement` share one op chain (`Op`); the composed transform is derived from the
 //! ops and never stored. Wire shapes: `Op` is `{ "offset": { x?, y?, z? } }`,
-//! `{ "rotate": { axis, angle } }`, `{ "flip": axis }` or `{ "at": path }`; offset and rotate
+//! `{ "rotate": { axis, angle } }`, or `{ "flip": axis }`; a placement's point form `D.offset(p)` lowers to `offset`; offset and rotate
 //! arguments are member paths (each argument is also a Member with provenance `authored`).
 //! Variants are keyed `SLOT=ALT` like `Member.variants`; here a variant replaces the whole op
 //! chain for that alternate.
@@ -56,11 +56,6 @@ pub enum Op {
         /// The flip axis.
         axis: Axis,
     },
-    /// Move to a named point.
-    At {
-        /// Path of the point.
-        point: Path,
-    },
 }
 
 impl Serialize for Op {
@@ -73,7 +68,6 @@ impl Serialize for Op {
                 m.serialize_entry("rotate", &RotateArgs { axis, angle })?;
             }
             Op::Flip { axis } => m.serialize_entry("flip", axis)?,
-            Op::At { point } => m.serialize_entry("at", point)?,
         }
         m.end()
     }
@@ -193,15 +187,17 @@ impl Serialize for Point {
     }
 }
 
-/// A placement edge of the part tree: `place part.datum on target` (geometry.md 4).
+/// A placement edge of the part tree: `place part.datum at target` (geometry.md 4).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Placement {
+    /// The placement's own path, `Assembly/part.place` (`Assembly/feet[2].place` per instance).
+    pub path: Path,
     /// The placed part.
     pub part: Path,
     /// The part's datum that is brought onto the target.
     pub datum: Path,
-    /// The datum placed on.
-    pub on: Path,
+    /// The datum the part's datum is brought to.
+    pub at: Path,
     /// The op chain applied after the frames coincide.
     pub ops: Vec<Op>,
     /// Per-alternate op chains keyed `SLOT=ALT`.
@@ -213,12 +209,13 @@ pub struct Placement {
 }
 
 impl Serialize for Placement {
-    /// Serialize as `{ part, datum, on, ops, variants?, digest?, closure? }`.
+    /// Serialize as `{ path, part, datum, at, ops, variants?, digest?, closure? }`.
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut m = s.serialize_map(None)?;
+        m.serialize_entry("path", &self.path)?;
         m.serialize_entry("part", &self.part)?;
         m.serialize_entry("datum", &self.datum)?;
-        m.serialize_entry("on", &self.on)?;
+        m.serialize_entry("at", &self.at)?;
         m.serialize_entry("ops", &self.ops)?;
         if let Some(v) = &self.variants {
             m.serialize_entry("variants", v)?;
@@ -261,9 +258,10 @@ mod tests {
             ops.clone(),
         );
         let pl = Placement {
+            path: p("acme.r::Asm/bracket.place"),
             part: p("acme.r::Asm/bracket.x"),
             datum: p("acme.r::Bracket.base"),
-            on: p("acme.r::Rail.site"),
+            at: p("acme.r::Rail.site"),
             ops,
             variants: None,
             digest: None,
@@ -282,22 +280,20 @@ mod tests {
     #[test]
     fn placement_variants_keyed_like_members() {
         let mut v = BTreeMap::new();
-        v.insert(
-            "a/w=b::C".to_string(),
-            vec![Op::At {
-                point: p("acme.r::Rail.pt"),
-            }],
-        );
+        v.insert("a/w=b::C".to_string(), vec![Op::Flip { axis: Axis::Y }]);
         let pl = Placement {
+            path: p("acme.r::Asm/b.place"),
             part: p("acme.r::Asm/b.x"),
             datum: p("acme.r::B.base"),
-            on: p("acme.r::R.site"),
+            at: p("acme.r::R.site"),
             ops: vec![],
             variants: Some(v),
             digest: None,
             closure: None,
         };
         let j = serde_json::to_value(&pl).unwrap();
-        assert_eq!(j["variants"]["a/w=b::C"][0]["at"], "acme.r::Rail.pt");
+        assert_eq!(j["variants"]["a/w=b::C"][0]["flip"], "y");
+        assert_eq!(j["at"], "acme.r::R.site");
+        assert_eq!(j["path"], "acme.r::Asm/b.place");
     }
 }

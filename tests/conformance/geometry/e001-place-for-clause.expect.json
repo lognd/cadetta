@@ -1,0 +1,20 @@
+{
+  "spec": "1.5",
+  "doc": "geometry",
+  "section": "language.md 5a",
+  "rule": "E001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "a placement has no for clause"
+}

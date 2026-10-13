@@ -4,6 +4,6 @@ model P {
 
 assembly A {
   part a: P
-  place a.origin on origin
+  place a.origin at origin
   check c: (a.pt in a.nothing).z >= 0mm "unknown datum"
 }

@@ -456,7 +456,7 @@ pub enum MemberKind {
     Solver(Solver),
     /// `datum name = expr`
     Datum(Datum),
-    /// `place part on expr [for i in lo..hi]`
+    /// `place part at expr`
     Place(Place),
     /// A syntax error or a member not parsed yet.
     Error,
@@ -474,30 +474,16 @@ pub struct Datum {
     pub span: Span,
 }
 
-/// A placement `place target on expr [for i in lo..hi]` (geometry.md 4).
+/// A placement `place target at expr` (geometry.md 4).
 // frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Place {
-    /// The part datum being placed (`rail.origin`, `feet[i].top`).
+    /// The part datum being placed (`rail.origin`, `feet[2].top`, `feet.top`).
     pub target: Expr,
-    /// The datum it is made to coincide with.
-    pub on: Expr,
-    /// The Count-range form, when given.
-    pub each: Option<PlaceRange>,
+    /// The frame it is made to coincide with (`base.site.offset(base.sites)`).
+    pub at: Expr,
     /// Where it is.
     pub span: Span,
-}
-
-/// The `for i in lo..hi` clause of a placement.
-// frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct PlaceRange {
-    /// The index variable.
-    pub var: Ident,
-    /// The first index.
-    pub lo: Expr,
-    /// The end of the range (`count(PART)`).
-    pub hi: Expr,
 }
 
 /// A parameter `name [: Type] = expr [citation] { was path }`.

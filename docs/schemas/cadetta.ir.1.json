@@ -883,19 +883,6 @@
             "flip"
           ],
           "type": "object"
-        },
-        {
-          "additionalProperties": false,
-          "description": "Move to a point.",
-          "properties": {
-            "at": {
-              "$ref": "#/$defs/Path"
-            }
-          },
-          "required": [
-            "at"
-          ],
-          "type": "object"
         }
       ]
     },
@@ -962,6 +949,9 @@
       "additionalProperties": false,
       "description": "A placement edge of the part tree.",
       "properties": {
+        "at": {
+          "$ref": "#/$defs/Path"
+        },
         "closure": {
           "$ref": "#/$defs/Digest"
         },
@@ -971,9 +961,6 @@
         "digest": {
           "$ref": "#/$defs/Digest"
         },
-        "on": {
-          "$ref": "#/$defs/Path"
-        },
         "ops": {
           "items": {
             "$ref": "#/$defs/Op"
@@ -981,6 +968,9 @@
           "type": "array"
         },
         "part": {
+          "$ref": "#/$defs/Path"
+        },
+        "path": {
           "$ref": "#/$defs/Path"
         },
         "variants": {
@@ -994,10 +984,11 @@
         }
       },
       "required": [
+        "at",
         "datum",
-        "on",
         "ops",
-        "part"
+        "part",
+        "path"
       ],
       "type": "object"
     },

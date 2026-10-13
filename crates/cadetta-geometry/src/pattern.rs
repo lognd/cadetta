@@ -286,7 +286,7 @@ pub fn derived_coordinate_members(
             let mut path = base.clone();
             path.members.push(MemberSeg::Index(Index::At(i as u64)));
             path.members.push(MemberSeg::Name(axis.name().to_owned()));
-            let ir = ir_path(&path, None).map_err(|message| GeometryError {
+            let ir = ir_path(&path).map_err(|message| GeometryError {
                 span: Span::new(0, 0),
                 message,
             })?;
@@ -462,7 +462,6 @@ mod tests {
         let from = OpSource {
             file: "b.cdt",
             src: "",
-            range_var: None,
         };
         let ir = generator_ir_members(&ms, &from).unwrap();
         let names: Vec<_> = ir.iter().map(|m| m.path.to_string()).collect();

@@ -10,7 +10,7 @@ Exercises: fraction, feet-inch and mixed literals (quantities.md 2);
 (4.3, Q006 as the only diagnostics); Count, Ratio and Mass kind
 assignment (4.1); design tolerance on parameters, `total_extrusion_length`
 stores a nominal only (5.3); part arrays with `sum` and `count` (language.md
-3.5); the four legs are placed on corner points with a Count-range
+3.5); the four legs are placed on corner points with one elementwise
 `place`, and checks read positions back through the placements
 (geometry.md 3, 4).
 

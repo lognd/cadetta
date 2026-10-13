@@ -52,8 +52,8 @@ assembly Actuator {
   part end_block: EndBlock(bearing = bearing, axis_height = axis_height)
   part plate: CarriagePlate(nut = nut, rail_spacing = rail_spacing, carriage = carriage[0])
 
-  place motor.origin on origin
-  place motor_mount.motor_site on motor.face
+  place motor.origin at origin
+  place motor_mount.motor_site at motor.face
 
   /// Motor to mount: M3 through the 6 mm plate into the motor's tapped flange (a vendor
   /// thread of fixed depth). The motor pilot locates the plate, so the joint is locating.
