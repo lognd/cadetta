@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:05:23Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -54,6 +54,10 @@ target = "01M4SPWRDX98PHVNHPD14HYY8D"
 [[links]]
 kind = "blocks"
 target = "01M4SPWT3FP4SN4RTCHE631Y52"
+
+[[links]]
+kind = "blocks"
+target = "01M4STCCK2B2XG83N4BRS5GR7B"
 
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
