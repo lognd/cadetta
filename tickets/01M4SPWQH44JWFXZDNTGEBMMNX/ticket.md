@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:54:37Z"
+updated = "2026-10-13T08:54:40Z"
 persona = "cadetta contributor"
 capability = "lower sema output into design IR with provenance, deps and spans"
 outcome_text = "lints and emitters consume a single structure"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the language.md example, when lowered, then fits, checks and waivers appear in the Project"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a `let`, when lowered, then the member has analysis=true and is never bound or emitted (ir.md 3)"
