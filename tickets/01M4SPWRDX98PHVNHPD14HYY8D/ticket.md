@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:16:49Z"
+updated = "2026-10-13T13:16:55Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given waive ... for alt SLOT=ALT, when evaluated, then it scopes to that variant, with the same O002 and W002 states (lints.md 2.1)"
-bound = false
+bound = true
 +++
