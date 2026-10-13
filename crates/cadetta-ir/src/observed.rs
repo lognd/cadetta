@@ -11,8 +11,8 @@ use cadetta_units::Dim;
 use tracing::{debug, trace, warn};
 
 use crate::model::{
-    Binding, Component, ComponentClass, Flavour, Locator, Member, MemberKind, Nominal, PackageId,
-    Project, Provenance, Value,
+    Binding, Component, ComponentClass, Flavour, Locator, Member, MemberKind, Nominal,
+    ObservedFrame, ObservedInstance, PackageId, Project, Provenance, Value,
 };
 use crate::path::{Path, PathContext, PathError};
 
@@ -30,6 +30,40 @@ pub enum ObservedError {
         /// The path failure.
         source: PathError,
     },
+    /// A frame or instance transform is not 3 rows of 4 entries (ir.md 3).
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    #[error("observed {kind} `{name}`: transform must be 3 rows of 4 entries, got {shape}")]
+    Transform {
+        /// `frame` or `instance`.
+        kind: &'static str,
+        /// The native name.
+        name: String,
+        /// The offending shape, `RxC` of the first bad row or `N rows`.
+        shape: String,
+    },
+}
+
+/// Checks that `t` is a 3x4 transform (rotation columns then translation).
+// frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+fn check_transform(kind: &'static str, name: &str, t: &[Vec<Value>]) -> Result<(), ObservedError> {
+    let bad = if t.len() != 3 {
+        Some(format!("{} rows", t.len()))
+    } else {
+        t.iter()
+            .find(|r| r.len() != 4)
+            .map(|r| format!("a row of {}", r.len()))
+    };
+    match bad {
+        None => Ok(()),
+        Some(shape) => {
+            warn!(kind, name, %shape, "observed: malformed transform");
+            Err(ObservedError::Transform {
+                kind,
+                name: name.to_owned(),
+                shape,
+            })
+        }
+    }
 }
 
 /// One parameter as an adapter `read` reports it.
@@ -62,6 +96,8 @@ pub struct ObservedBuilder {
     comp_path: Path,
     members: Vec<Member>,
     names: BTreeSet<String>,
+    frames: Vec<ObservedFrame>,
+    instances: Vec<ObservedInstance>,
 }
 
 /// Map a native name to a path-safe identifier (non-alphanumerics become `_`).
@@ -104,6 +140,8 @@ impl ObservedBuilder {
             comp_path,
             members: Vec::new(),
             names: BTreeSet::new(),
+            frames: Vec::new(),
+            instances: Vec::new(),
         })
     }
 
@@ -146,9 +184,34 @@ impl ObservedBuilder {
         Ok(())
     }
 
+    /// Add one native frame with its 3x4 transform (adapters.md 3.4).
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    pub fn push_frame(&mut self, f: ObservedFrame) -> Result<(), ObservedError> {
+        check_transform("frame", &f.name, &f.transform)?;
+        trace!(frame = %f.name, document = %f.document, "observed: frame added");
+        self.frames.push(f);
+        Ok(())
+    }
+
+    /// Add one component instance with its 3x4 transform (adapters.md 3.4).
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    pub fn push_instance(&mut self, i: ObservedInstance) -> Result<(), ObservedError> {
+        check_transform("instance", &i.component, &i.transform)?;
+        trace!(instance = %i.component, document = %i.document, "observed: instance added");
+        self.instances.push(i);
+        Ok(())
+    }
+
     /// Finish: one synthetic component holds every member.
     pub fn build(mut self) -> Project {
-        debug!(members = self.members.len(), "observed: project built");
+        debug!(
+            members = self.members.len(),
+            frames = self.frames.len(),
+            instances = self.instances.len(),
+            "observed: project built"
+        );
+        self.project.frames = self.frames;
+        self.project.instances = self.instances;
         self.project.components.push(Component {
             path: self.comp_path,
             class: ComponentClass::Model,
@@ -259,5 +322,74 @@ mod tests {
         assert_ne!(vs[0].0, vs[1].0);
         assert!(pr.citations.is_empty() && pr.checks.is_empty() && pr.solvers.is_empty());
         assert!(pr.components[0].parts.is_empty() && pr.components[0].fits.is_empty());
+    }
+
+    fn rows(n: i64, cols: usize, nrows: usize) -> Vec<Vec<Value>> {
+        (0..nrows)
+            .map(|_| {
+                (0..cols)
+                    .map(|_| {
+                        Value::new(
+                            Nominal::Exact(Exact(Magnitude::new(Rational::new(n, 1).unwrap(), 0))),
+                            Dim::default(),
+                            n.to_string(),
+                        )
+                    })
+                    .collect()
+            })
+            .collect()
+    }
+
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    // frob:tests observed_frames_and_instances_round_trip
+    #[test]
+    fn observed_frames_and_instances_round_trip() {
+        let mut b = builder();
+        b.push_frame(ObservedFrame {
+            name: "Rail__site".into(),
+            document: "rail.sldprt".into(),
+            transform: rows(1, 4, 3),
+        })
+        .unwrap();
+        b.push_instance(ObservedInstance {
+            component: "bracket<1>".into(),
+            document: "mount.sldasm".into(),
+            reference: Some("bracket".into()),
+            transform: rows(0, 4, 3),
+        })
+        .unwrap();
+        let pr = b.build();
+        assert_eq!(pr.flavour, Flavour::Observed);
+        assert_eq!(pr.frames.len(), 1);
+        assert_eq!(pr.instances[0].reference.as_deref(), Some("bracket"));
+        let json = serde_json::to_value(&pr).unwrap();
+        assert!(json["frames"].is_array() && json["instances"].is_array());
+    }
+
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    // frob:tests observed_transform_must_be_three_by_four
+    #[test]
+    fn observed_transform_must_be_three_by_four() {
+        let mut b = builder();
+        let bad = |t| ObservedFrame {
+            name: "F".into(),
+            document: "d".into(),
+            transform: t,
+        };
+        assert!(matches!(
+            b.push_frame(bad(rows(1, 4, 2))),
+            Err(ObservedError::Transform { kind: "frame", .. })
+        ));
+        assert!(b.push_frame(bad(rows(1, 3, 3))).is_err());
+        assert!(
+            b.push_instance(ObservedInstance {
+                component: "c".into(),
+                document: "d".into(),
+                reference: None,
+                transform: rows(1, 4, 4),
+            })
+            .is_err()
+        );
+        assert!(b.build().frames.is_empty());
     }
 }

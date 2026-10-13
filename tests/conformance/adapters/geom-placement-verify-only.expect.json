@@ -1,0 +1,23 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.4",
+  "rule": "geometry-placement-verify-only",
+  "kind": "binding",
+  "entry": "push-plan",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R001",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "push_writes": false
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "push_writes": false
+  }
+}

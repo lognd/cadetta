@@ -3453,3 +3453,8 @@ reason = "lint on IR JSON has no CLI form or executor yet"
 fixture = "quantities/acc-mmc-hole-shaft"
 ticket = "~ZV526KN"
 reason = "emit point members not observable"
+
+[[gap]]
+fixture = "adapters/geom-placement-verify-only"
+ticket = "~BC7S5KT"
+reason = "binding push-plan entries have no executor yet"

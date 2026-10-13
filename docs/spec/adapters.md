@@ -464,7 +464,10 @@ over stdio:
 `open`, `save` and `close` are required of `drive` adapters only;
 `read` without a session opens and closes its own. `mode` tells the
 adapter how to write a dimension (`ref`: create or keep the link to
-`ref_to`; `value`: set the number). `initialize` reports the adapter
+`ref_to`; `value`: set the number; `frame`: set a coordinate system's
+3x4 transform, `value` being three rows of four numbers, creating the
+system named by the locator when missing, to `create_frames` adapters
+only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
 unavailable (R008, exit 2). Adapters are located by `command` in
 `cadetta.toml`; there is no PATH search. Diagnostics in every result use

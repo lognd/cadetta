@@ -363,6 +363,10 @@ pub struct Adapter {
     // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
     #[serde(default = "default_tolerances")]
     pub tolerances: TolerancePolicy,
+    /// `verify` (default) or `create`: create and drive datum coordinate systems (adapters.md 3.4).
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    #[serde(default)]
+    pub datums: cadetta_adapter::geometry_bind::DatumPolicy,
 }
 
 /// The `[[adapter]] tolerances` default, `drive` (adapters.md 3.6).
@@ -929,6 +933,20 @@ native_unit = "mm"
             Config::parse(&pkg("[[adapter]]\nname = \"x\"\ntolerances = \"ignore\"\n")).unwrap();
         assert_eq!(ign.adapters[0].tolerances, TolerancePolicy::Ignore);
         assert!(err_text(&pkg("[[adapter]]\nname = \"x\"\ntolerances = \"on\"\n")).contains("on"));
+    }
+
+    // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+    // frob:tests datums_key_defaults_verify_and_is_strict
+    #[test]
+    fn datums_key_defaults_verify_and_is_strict() {
+        use cadetta_adapter::geometry_bind::DatumPolicy;
+        let c = Config::parse(SAMPLE).unwrap();
+        assert_eq!(c.adapters[1].datums, DatumPolicy::Verify);
+        let cr = Config::parse(&pkg("[[adapter]]\nname = \"x\"\ndatums = \"create\"\n")).unwrap();
+        assert_eq!(cr.adapters[0].datums, DatumPolicy::Create);
+        assert!(
+            err_text(&pkg("[[adapter]]\nname = \"x\"\ndatums = \"drive\"\n")).contains("drive")
+        );
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::BindMode

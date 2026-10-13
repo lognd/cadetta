@@ -57,6 +57,18 @@ fn arr(item: J) -> J {
     json!({ "type": "array", "items": item })
 }
 
+/// A fixed-length array of exactly `n` items.
+// frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+fn arr_n(item: J, n: usize) -> J {
+    json!({ "type": "array", "items": item, "minItems": n, "maxItems": n })
+}
+
+/// A 3x4 transform: three rows of rotation columns then translation (ir.md 3).
+// frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
+fn transform34() -> J {
+    arr_n(arr_n(r("Value"), 4), 3)
+}
+
 /// A string-keyed map of `item`.
 fn map(item: J) -> J {
     json!({ "type": "object", "additionalProperties": item })
@@ -494,7 +506,7 @@ fn defs() -> Map<String, J> {
             &[
                 ("name", s()),
                 ("document", s()),
-                ("transform", arr(arr(r("Value")))),
+                ("transform", transform34()),
             ],
             &[],
         ),
@@ -506,7 +518,7 @@ fn defs() -> Map<String, J> {
             &[
                 ("component", s()),
                 ("document", s()),
-                ("transform", arr(arr(r("Value")))),
+                ("transform", transform34()),
             ],
             &[("reference", s())],
         ),

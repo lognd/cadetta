@@ -563,6 +563,11 @@
           "description": "Set the number.",
           "type": "string",
           "const": "value"
+        },
+        {
+          "description": "Set a frame's 3x4 transform (`value` is three rows of four numbers), creating the\ncoordinate system named by the locator when it is missing (adapters.md 3.4).",
+          "type": "string",
+          "const": "frame"
         }
       ]
     },

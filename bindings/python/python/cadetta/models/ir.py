@@ -517,13 +517,17 @@ class Member(BaseModel):
     was: list[str]
 
 
+class TransformItem(RootModel[list[Value]]):
+    root: Annotated[list[Value], Field(max_length=4, min_length=4)]
+
+
 class ObservedFrame(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     document: str
     name: str
-    transform: list[list[Value]]
+    transform: Annotated[list[TransformItem], Field(max_length=3, min_length=3)]
 
 
 class ObservedInstance(BaseModel):
@@ -533,7 +537,7 @@ class ObservedInstance(BaseModel):
     component: str
     document: str
     reference: str | None = None
-    transform: list[list[Value]]
+    transform: Annotated[list[TransformItem], Field(max_length=3, min_length=3)]
 
 
 class Point(BaseModel):
