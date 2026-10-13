@@ -31,6 +31,8 @@ dimension by hand.
 | [emitters/](emitters/sw-equations.md) | One format document per built-in emitter. |
 | [lints.md](lints.md) | The rule catalog: codes, severities, waivers. |
 | [config-cli.md](config-cli.md) | `cadetta.toml` and the `cadetta` command line. |
+| [geometry.md](geometry.md) | Positions and datums: datum-typed points, placement trees, alignment checks. |
+| [bindings.md](bindings.md) | Language bindings: the JSON catch-all, the per-language layout, and the Python package. |
 
 Decisions are recorded in `docs/decisions/`; architecture is modeled in
 `design/model.grmb` (grimble) and work is tracked as frob tickets.
@@ -50,17 +52,19 @@ Decisions are recorded in `docs/decisions/`; architecture is modeled in
 ## Scope of 0.1.0
 
 In: the `.cdt` language (including interfaces, alternates, tables,
-parameterized components and processes), the quantity system, the
-metric standard library (stdlib.md 1), the IR
-and its JSON schema, the obligation graph and lock file, the solver
-protocol, the lint catalog, built-in file emitters (JSON, CSV, SOLIDWORKS
-linked-equations file), the adapter protocol, and one reference external
-adapter that can read and drive (FreeCAD; headless, testable in CI).
+parameterized components and processes), the quantity system, positions
+and datums (geometry.md), the metric standard library (stdlib.md 1),
+the IR and its JSON schema, the obligation graph and lock file, the
+solver protocol, the lint catalog, built-in file emitters (JSON, CSV,
+SOLIDWORKS linked-equations file), the adapter protocol, the SOLIDWORKS
+adapter (read and drive, the primary target), the FreeCAD adapter (the
+CI reference), and the Python binding (bindings.md).
 
 Out (each recorded as a dropped or deferred ticket with its reason):
 tolerance stack analysis (RSS or statistical), constraint solving,
-geometry kernels, GD&T, CAD configurations / design-table variants,
-electrical CAD (KiCad), a GUI, coordinate frames and parts packages.
+geometry kernels and mate solving, GD&T tolerance zones (OQ-17), CAD
+configurations / design-table variants, electrical CAD (KiCad), a GUI,
+and parts packages.
 
 ## Conventions
 

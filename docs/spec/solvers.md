@@ -102,7 +102,8 @@ own outputs (`check positive: min_wall > 0mm`), and every check that reads an
 output is evaluated like any other. A solver never writes source, CAD
 files or the lock file.
 
-## Language helpers (non-normative)
+## Language helpers
 
-Thin helpers that hide the JSON may be published later, Python first.
-Nothing in cadetta depends on them.
+The Python package ships a solver decorator that hides the JSON and
+checks kinds both ways (bindings.md 3.3). Other languages speak the
+protocol directly; nothing in cadetta depends on a helper.

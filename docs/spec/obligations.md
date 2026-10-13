@@ -92,7 +92,7 @@ required_for = "check"
 
 All queries emit JSON (`--format json`) so other tools, including frob,
 can consume them. Their schemas live in `docs/schemas/` (`impact.json`,
-`compare.json`) and are generated from the Rust types.
+`compare.json`, `why.json`) and are generated from the Rust types.
 
 ### 5.1 `impact --swap` semantics
 

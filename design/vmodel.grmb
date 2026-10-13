@@ -1,6 +1,14 @@
 grimble = "2";
 part of cadetta;
 
+/// ADR: language bindings, Python interop, SOLIDWORKS as primary target.
+vmodel dec_bindings {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-bindings-and-solidworks.md";
+  decides req_bindings;
+}
+
 /// ADR: draft-1 language decisions (interfaces, alternates, obligations core, solvers).
 vmodel dec_draft1 {
   kind decision;
@@ -54,6 +62,13 @@ vmodel req_adapters {
   kind artifact;
   level requirements;
   ref "docs/spec/adapters.md";
+}
+
+/// Language bindings and the Python package (bindings.md).
+vmodel req_bindings {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/bindings.md";
 }
 
 /// Configuration and command line (config-cli.md).

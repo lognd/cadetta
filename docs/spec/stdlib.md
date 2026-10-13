@@ -111,6 +111,11 @@ screw does not bottom out (`thread_depth > screw_length - grip`);
   value.
 - `screw_cost` (Money, cited where written): becomes the screw part's
   `unit_cost`, so cost roll-ups include screws (section 4).
+- `at` and `onto`: the clearance-hole positions in the clamped part and
+  the threaded-hole positions in the host (geometry.md 5). With both,
+  the joint also checks that the holes line up, using the fixed-fastener
+  allowance, or the floating one with `nut = true` (then `onto` is the
+  second part's clearance holes).
 
 A heat-set insert in 0.1.0 is `tap = Vendor` with `into = Brass360` and
 `depth_available` the insert's length; the insert's own hole is a `fit`

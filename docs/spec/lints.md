@@ -63,7 +63,7 @@ drawing 1234")]`.
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | D001 | restated-value | warning | | An authored literal in a `model` (or observed IR) equals another parameter's value of the same kind, in any component including its own. Scored by specificity: fires at the configured severity when the literal has at least `[lint] d001_min_digits` significant digits (default 3: `12.012mm`, `6.35mm`), at info below that, and never for `[lint] common_values` unless either side is imported (observed IR), where a coincidence of round numbers is still worth a look. Significant digits are counted in the authored form from the first to the last non-zero digit (`100mm` has 1, `6.35mm` 3). One diagnostic per group of equal values, listing every location. Never between two `ots` parameters. |
-| D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. |
+| D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. Not in an `ots` for a cited literal: a vendor's stated value is its own source even when it matches a standard (T001 covers mismatches). |
 | D003 | reference-cycle | error | yes | Parameters depend on each other cyclically. |
 
 ### M: magic numbers
@@ -124,7 +124,21 @@ drawing 1234")]`.
 | O002 | obligation-open | warning | | A required attestation was never given. |
 | O003 | requirement-unattested | error | | A `require` lacks a required attestation for release. |
 
+### G: positions and datums
+
+Defined with their semantics in geometry.md 7.
+
+| Code | Name | Default | Fixed | Meaning |
+|---|---|---|---|---|
+| G001 | datum-mismatch | error | yes | Arithmetic or comparison between positions in different datums without `in`. |
+| G002 | placement-cycle | error | yes | A placement chain returns to a part already placed; the closing connection is a check. |
+| G003 | unplaced-part | error | | A position is converted out of a part that has no placement. |
+| G004 | pattern-count-mismatch | error | | `aligned` or a joint's `at`/`onto` pair patterns of different counts. |
+
 ### R: read-back and drift
+
+R rules run on observed IR after `read` or `sync`; R004 is reported by
+the adapter's `regen` result and passed through unchanged.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
@@ -134,6 +148,7 @@ drawing 1234")]`.
 | R004 | regen-failed | error | | The CAD tool failed to rebuild after a push. |
 | R005 | orphan-binding | warning | | A binding's path matches no IR path and no `was` path. |
 | R006 | adopt-value-change | info | | On first sync after import, the emitted value differs from the legacy native value. |
+| R007 | binding-datum-mismatch | warning | | A bound coordinate's native sketch is not on its datum's plane (adapters that can see it; geometry.md 6). |
 
 ### U, W
 
@@ -149,5 +164,7 @@ drawing 1234")]`.
 
 Each rule is a pure function from IR (plus, for R and O rules, bindings,
 observed IR and the lock file) to diagnostics, with positive and
-negative fixtures under `tests/lints/<code>/`. A rule is documented here
+negative fixtures (a must-fire and a must-not-fire) under
+`tests/conformance/lints/<code>/`, part of the conformance corpus
+(`tests/conformance/<doc>/` for every other spec document). A rule is documented here
 before it ships; its code links back with `frob:doc`.

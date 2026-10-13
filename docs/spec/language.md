@@ -107,7 +107,9 @@ component = ( "ots" | "model" | "assembly" ) IDENT [ params ] [ ":" iface_list ]
 params    = "(" pdecl { "," pdecl } ")"
 pdecl     = IDENT ":" type [ "=" expr ]              // a default makes the argument optional
 member    = { doc } { attr } ( param | let | bound | part | fit | check | require
-            | solver ) [ trailing_attr ]
+            | solver | datum | place ) [ trailing_attr ]
+datum     = "datum" IDENT [ "=" expr ]               // geometry.md 2; no "=" in an interface
+place     = "place" path "on" expr [ "for" IDENT "in" path ]   // geometry.md 4
 let       = "let" IDENT [ ":" type ] "=" expr        // analysis value (quantities.md 5.3)
 param     = IDENT [ ":" type ] "=" expr [ citation ] { "was" path }
 bound     = IDENT ( "<=" | ">=" ) expr | IDENT "in" expr ".." expr
@@ -207,10 +209,13 @@ interface only, so:
   References to the old path resolve with N004; bindings follow it.
 - Tolerance semantics on assignment: quantities.md 5.3.
 - Non-quantity kinds: `Text` (`designation = "1/4-20 UNC-2A"`), enums,
-  `Bool`, `Point2`, `Point3`, fixed arrays `[T; N]`, and `Table<K>`, a
+  `Bool`, points typed by a datum (`Point2 on top`, `Point3 in origin`,
+  and `Vec2`, `Vec3`; geometry.md 3), fixed arrays `[T; N]`, and `Table<K>`, a
   reference to any table keyed by `K` whose columns are read as usual
   (`policy.lengths.at_least(x).key`). Columns a reader uses must exist
-  in the table passed (checked at the use site).
+  in the table passed, with the kinds the reader expects; both are
+  checked at the use site, where a missing column or a kind mismatch is
+  an error naming the table.
 
 ### 3.4 Bounds
 
@@ -296,13 +301,16 @@ only in part is C002 on the fit (undecided), like any check.
   quantities by their display rules), and geometry helpers
   `rect_pattern circle_pattern distance`.
 - Points: `Point2(x, y)` (and `Point3(x, y, z)`) with members `.x .y
-  (.z)`; `p + q`, `p - q` and `p * s` for a dimensionless `s`.
+  (.z)`, typed by a datum (geometry.md 3): `p - q` is a vector, `p + v`
+  a point, `v * s` scales a vector by a dimensionless `s`, and `p in D`
+  re-expresses `p` in datum `D`.
   `rect_pattern(nx: Count, ny: Count, dx: Length, dy: Length) ->
   [Point2; nx * ny]` is centred on the origin, rows first;
   `circle_pattern(n: Count, r: Length, start: Angle) -> [Point2; n]`;
   `distance(p, q) -> Length`. `+ -` between an array of points and one
   point applies to each element (`holes + Point2(5mm, 0mm)`). Array
-  literals are `[a, b, c]`. Frames are OQ-10.
+  literals are `[a, b, c]`. `aligned(a, b, allowance)` compares two
+  patterns (geometry.md 5).
 - `enum Material { Al6061T6, Petg }`, `match m { Material::Petg => 2.4mm,
   _ => 1.6mm }`. A `match` must be exhaustive.
 - `process` declares manufacturing compensation by role:
@@ -409,7 +417,7 @@ Formatting never changes the IR digest.
 - OQ-5 (closed 2026-10-13): the file extension is `.cdt`.
 - OQ-6: Function-named features (`bore`, `seat`, `datum`) above raw
   parameters. Fits and process roles cover the 0.1.0 needs.
-- OQ-10: Coordinate frames for positions (`frame pi at (x, y)`).
-  `Point2` arithmetic covers 0.1.0; frames are deferred.
+- OQ-10 (resolved in geometry.md): positions are typed by datums, and
+  parts are placed in a tree, which avoids constraint solving.
 - OQ-11: Packages for shared parts libraries (versioning, fetching).
   `std` ships with the compiler (stdlib.md); third-party packages wait.

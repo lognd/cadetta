@@ -26,7 +26,7 @@ pilot r2-05.
   adapters.md 3), a value in `value` mode.
 - **Values** are the emit point (quantities.md 5.6) in the locator's
   `native_unit`, written with the unit suffix (`6.35mm`, `0.25in`), at
-  the declared precision of 6 decimals, trailing zeros trimmed. A value
+  the declared precision (default 6 decimals, adapters.md 5), trailing zeros trimmed. A value
   not representable at that precision is Q004. Counts and Ratios are
   written bare. Text is not emitted to equations (it has no place there).
 - **Comments** use `'`. A doc comment becomes the comment lines directly

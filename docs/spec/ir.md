@@ -49,6 +49,10 @@ Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
 Part       { path, type, count?, primary, alternates[], args }
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
+Datum      { path, parent: path, ops: [ offset{x,y,z: Value} | rotate{axis, angle: Value}
+             | flip{axis} ], exact: bool }               // geometry.md 2
+Point      { path, datum: path, coords: [Value] }        // each coord also a Member
+Placement  { part: path, datum: path, on: path, ops[], digest, closure }
 Check      { path, expr, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
              conservative, waived_for[] }
 Solver     { path, script, inputs{}, outputs{}, deps[], result_digest?, stale }

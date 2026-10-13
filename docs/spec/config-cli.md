@@ -41,6 +41,7 @@ transport = "stdio"              # stdio | file
 name = "sw-equations"            # built-in
 out = "build/solidworks/equations.txt"
 native_unit = "mm"               # document unit for unitless native values (adapters.md 3)
+precision = 6                    # decimals; default from the emitter spec (adapters.md 5)
 
 [[adapter]]
 name = "freecad"                 # external

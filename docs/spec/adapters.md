@@ -111,13 +111,13 @@ point, never the nominal.
 ## 5. Protocol
 
 Built-in adapters run in process (Rust). External adapters are separate
-executables, written in whatever language reaches the CAD API (C# for
-SOLIDWORKS COM, Python for FreeCAD and Fusion), speaking JSON-RPC 2.0
-over stdio:
+executables, written in whatever language reaches the CAD API (Python
+with pywin32 for SOLIDWORKS COM, Python for FreeCAD and Fusion),
+speaking JSON-RPC 2.0 over stdio:
 
 | Method | Params | Result |
 |---|---|---|
-| `initialize` | protocol version, client info | name, version, capabilities, native units, precision, platforms |
+| `initialize` | protocol version, client info | name, version, capabilities, native units, precision (the emitter spec's default, overridable by `[[adapter]] precision`), platforms |
 | `emit` | IR (design), bindings, policy | files written (paths, digests), diagnostics |
 | `read` | file paths | observed IR, diagnostics |
 | `push` | changed params (path, value, locator) | diagnostics |
@@ -137,15 +137,24 @@ Planned support, not a 0.1.0 promise beyond the rows marked 0.1.0.
 | CSV | built-in | 0.1.0 | 0.1.0 | - | name, value, unit rows |
 | SOLIDWORKS equations file | built-in | 0.1.0 | 0.1.0 | - | text file the part links via "Link to external file" |
 | FreeCAD | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | Spreadsheet aliases; headless `freecadcmd` for CI |
-| SOLIDWORKS | external, C# | - | later | later | COM API: global variables, dimensions, rebuild |
+| SOLIDWORKS | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | COM API through pywin32: global variables, dimensions, custom properties, rebuild; Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
 | Fusion | external, Python | - | later | later | user parameters API |
 | Inventor | external | - | later | later | parameters API |
 | OpenSCAD / CadQuery | built-in | later | - | - | `-D` defines / Python constants |
 | KiCad | - | out | out | out | electrical CAD is out of 0.1.0 |
 
-FreeCAD is the reference external adapter because it is the only target
-that can exercise `read` and `drive` in CI without a license or Windows.
+SOLIDWORKS is the primary target: it is what the first users design
+in. Its adapter is Python (pywin32 COM) on the `cadetta.adapter` base
+(bindings.md 3.4), so one adapter SDK serves every Python-reachable
+tool. CI cannot run SOLIDWORKS, so its tests replay recorded COM
+transcripts against a fake, and a release requires a manual smoke run
+on a licensed machine (the `sync` loop on the pilot r3-05 part). The
+built-in equations-file emitter remains the zero-install path.
+
+FreeCAD is the reference external adapter for CI: it is the only target
+that exercises `read` and `drive` without a license or Windows, so the
+protocol's conformance tests run against it.
 
 ## Open questions
 
