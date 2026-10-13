@@ -2,13 +2,13 @@
 id = "01M4SV2R23GPE64N4CZVNWRJHC"
 title = "Conformance fixtures for bindings"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:17:04Z"
-updated = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T17:44:17Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 labels = ["creates:tests/conformance/bindings/**"]
