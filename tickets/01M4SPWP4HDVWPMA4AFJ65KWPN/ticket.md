@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T04:03:52Z"
+updated = "2026-10-13T04:03:58Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
 labels = ["creates:crates/cadetta-syntax/src/expr.rs"]
 scope = ["crates/cadetta-syntax/src/expr.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWPAJ4ZGEGGVF63ZY806Z"
 
 [[acceptance]]
 text = "Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition"
