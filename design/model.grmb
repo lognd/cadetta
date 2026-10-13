@@ -53,6 +53,7 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -152,6 +153,21 @@ flow f_ast : syntax -> sema {
 }
 
 flow f_cli_parse : cli -> syntax {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_modules : cli -> sema {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_units : cli -> units {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_solve : cli -> solver_host {
   label Internal;
   transport in_process;
 }

@@ -294,6 +294,10 @@ pub struct Solver {
     /// Data exchange mode.
     #[serde(default)]
     pub transport: Transport,
+    /// Seconds before the solver is killed; unset means no limit (config-cli.md 2).
+    // frob:ticket 01M4STAN8QG3QWZQCH5XN3QHMT
+    #[serde(default)]
+    pub timeout: Option<u64>,
 }
 
 /// One `[[adapter]]` table (adapters.md 2, 3, 5).
