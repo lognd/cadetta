@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T05:43:35Z"
+updated = "2026-10-13T05:43:38Z"
 persona = "design engineer"
 capability = "get one diagnostic shape from every component"
 idempotency_key = "replan14:lint-diag"
 labels = ["creates:crates/cadetta-lint/src/diag.rs", "creates:docs/schemas/diag.json"]
 scope = ["crates/cadetta-lint/src/diag.rs", "docs/schemas/diag.json"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWHPHR3VVX5NCSXF4502V"
 
 [[acceptance]]
 text = "Given a diagnostic, when serialized, then it has schema, code, severity, path, alt, message, location, notes, fixes and waived (lints.md 1.1)"
