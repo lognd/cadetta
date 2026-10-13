@@ -2,7 +2,8 @@
 id = "01M4STAPFPQ9GV8XJB4XCK8EGP"
 title = "ScrewJoint arguments and checks"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
