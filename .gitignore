@@ -23,3 +23,6 @@ coverage.xml
 FROBLEMS.md
 .env
 .claude/scheduled_tasks.lock
+
+# Local coordinator brief (handover), not shared
+CLAUDE.md

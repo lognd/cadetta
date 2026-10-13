@@ -130,9 +130,11 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
 - A library changes its semver major version when it removes or renames
   a `pub` item or a non-`priv` member without `was`, changes the kind of
   either, or changes a value a dependent's verdict reads (for a library of parts, values are
-  the interface). `cadetta check` on a dependent reports an update that
-  flips a verdict, through the obligation graph, whatever the version
-  number says.
+  the interface). This rule is a convention for library authors:
+  cadetta does not compare version numbers with changes. What it
+  enforces is the obligation graph: `cadetta update` followed by
+  `cadetta check` on a dependent reports every verdict an update flips
+  and every sign-off it makes stale, whatever the version number says.
 
 ## 6. Obligations across packages
 
