@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T09:21:28Z"
+updated = "2026-10-13T09:21:29Z"
 persona = "design engineer"
 capability = "place every instance of a part array"
 idempotency_key = "replan14:geo-for"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a for range that leaves an instance unplaced, when evaluated, then G007 is raised (geometry.md 4, 7)"
-bound = false
+bound = true
 +++
