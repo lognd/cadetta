@@ -2,7 +2,8 @@
 id = "01M4SPWRS0CDJT4GYC92AB1HCD"
 title = "JSON-RPC 2.0 stdio protocol host"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
