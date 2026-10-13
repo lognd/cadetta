@@ -1,0 +1,7 @@
+# The standard library is an ordinary package (stdlib.md 1, packages.md 1):
+# same manifest, same src/lib.cdt root, no special-casing in resolution.
+# The name `std` is reserved for it; no user package may take it.
+[package]
+name = "std"
+version = "0.1.0"
+src = "src"
