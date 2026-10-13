@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T05:04:20Z"
+updated = "2026-10-13T05:05:19Z"
 persona = "design engineer"
 capability = "declare an external solver with typed inputs and outputs"
 idempotency_key = "replan13:Solver declaration sema and IR"
 labels = ["creates:crates/cadetta-solvers/src/decl.rs"]
 scope = ["crates/cadetta-solvers/src/decl.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STAMZCNT7MPR1PGZ5GVZZ5"
 
 [[acceptance]]
 text = "Given a `solver` declaration with typed inputs, outputs and a script path, when lowered, then the IR carries it with its closure (solvers.md 2, ir.md 2)"
