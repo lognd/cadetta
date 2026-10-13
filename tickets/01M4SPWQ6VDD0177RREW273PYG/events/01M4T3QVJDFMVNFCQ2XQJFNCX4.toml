@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T07:48:21Z"
+digest = "d0b976dc460f17498f272dc46a1f919ca363ea6b4358b6b80baf46bf98ae91e4"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c7e780f5-9616-4d67-8b89-779c579a3ec8 with nextest profile: default
+    Starting 1 test across 1 binary (29 tests skipped)
+        PASS [   0.012s] cadetta-ir json::tests::json_exact_shape
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 29 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E test(=json::tests::json_exact_shape)"
+size = 529
+status = "measured"
+test_count = 1
+tests_digest = "3ec2d4dd556ff1a5539c54b3495001e14a3caa6fb9b87f9fb5f92ac735ce8c23"
+at = "2026-10-13T07:48:21Z"
+actor = "lognd"
+rev = 1

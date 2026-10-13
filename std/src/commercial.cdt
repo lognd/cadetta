@@ -1,0 +1,16 @@
+// std::commercial: the Sourced interface (stdlib.md 6).
+//
+// The five names are a declared contract, not magic spellings: roll-ups
+// (sum?(self, unit_cost), mass), swap commercial deltas and compare columns
+// use exactly these members. Every member is optional, so a component that
+// lacks one is not I001; the `?` roll-up forms list it as missing and never
+// default it. Commercial data is analysis-side and is not emitted to CAD.
+
+/// Where a part comes from: cost, lead time, minimum order, supplier and mass.
+pub interface Sourced {
+  unit_cost?: Money
+  lead_time?: Time
+  moq?: Count
+  supplier?: Text
+  mass?: Mass
+}

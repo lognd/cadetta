@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:46:42Z"
+digest = "5f0c544fe09d26a460bea74b345ddadec0d612144b223d2624502d90369e4cd5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.41s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 496f449b-1bda-4914-ab27-3d5017f4707a with nextest profile: default
+    Starting 1 test across 1 binary (2 tests and 19 binaries skipped)
+        PASS [   0.018s] cadetta-syntax::std_fasteners_tables published_limits_are_kept_as_tolerances
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 1 test run: 1 passed, 2 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'binary(std_fasteners_tables) & test(=published_limits_are_kept_as_tolerances)'"
+size = 633
+status = "measured"
+test_count = 1
+tests_digest = "22bf9cb06fea7204905a1f2eb37dff080df31297861a5139d3959a20a0848bda"
+at = "2026-10-13T07:46:42Z"
+actor = "lognd"
+rev = 1
