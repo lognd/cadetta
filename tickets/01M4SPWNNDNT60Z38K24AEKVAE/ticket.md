@@ -57,5 +57,5 @@ bound = true
 
 [[acceptance]]
 text = "Given sqrt or trig of a toleranced value, when evaluated, then the result is conservative (quantities.md 5.4)"
-bound = false
+bound = true
 +++
