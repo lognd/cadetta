@@ -6,9 +6,13 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:03:47Z"
-updated = "2026-10-13T04:03:47Z"
+updated = "2026-10-13T04:04:06Z"
 labels = ["creates:crates/cadetta-adapter/**"]
 scope = ["crates/cadetta-adapter/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 +++
 
 Outcome: the adapter contract, JSON-RPC stdio protocol and built-in json, csv and sw-equations adapters.
