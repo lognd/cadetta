@@ -1,0 +1,16 @@
+kind = "create"
+title = "Check statements with three-valued verdicts"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWGB2729B40CQE81MHM2Z"
+persona = "design engineer"
+capability = 'write `check name: lhs > rhs "msg"`'
+outcome_text = "design rules are evaluated, not just commented"
+labels = ["creates:crates/cadetta-sema/src/checks.rs"]
+scope = ["crates/cadetta-sema/src/checks.rs"]
+acceptance = ["Given a check false for every value in tolerance, when evaluated, then verdict is violates", "Given a check true for some values only, when evaluated, then verdict is undecided"]
+at = "2026-10-13T04:03:52Z"
+actor = "lognd"
+rev = 1
