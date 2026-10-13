@@ -2,13 +2,13 @@
 id = "01M4SXQWGAYJDGMGKNBMHASNBA"
 title = "Package manifest and workspace model"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:34Z"
-updated = "2026-10-13T06:03:34Z"
+updated = "2026-10-13T06:35:13Z"
 persona = "library author"
 capability = "declare a package with dependencies, or group packages in a workspace"
 labels = ["creates:crates/cadetta-cli/src/pkg/manifest.rs"]
