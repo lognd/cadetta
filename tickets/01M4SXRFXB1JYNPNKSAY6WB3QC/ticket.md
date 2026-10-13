@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:22:13Z"
+updated = "2026-10-13T07:23:05Z"
 persona = "library author"
 capability = "write use trees, aliases, globs and pub use"
 labels = ["creates:crates/cadetta-syntax/src/parser_use.rs"]
-scope = ["crates/cadetta-syntax/src/parser_use.rs", "crates/cadetta-syntax/src/parser.rs"]
+scope = ["crates/cadetta-syntax/src/parser_use.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/format.rs", "crates/cadetta-sema/src/resolve.rs"]
 
 [[links]]
 kind = "blocked-by"
