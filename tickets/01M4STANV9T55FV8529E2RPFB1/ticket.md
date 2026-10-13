@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T06:49:29Z"
+updated = "2026-10-13T06:49:57Z"
 persona = "design engineer"
 capability = "import std modules like any other package"
 idempotency_key = "replan13:std packaging as ordinary .cdt"
 labels = ["creates:std/cadetta.toml", "creates:std/src/lib.cdt"]
-scope = ["std/cadetta.toml", "std/src/lib.cdt"]
+scope = ["std/cadetta.toml", "std/src/lib.cdt", "crates/cadetta-cli/src/pkg/manifest.rs"]
 
 [[links]]
 kind = "blocks"
