@@ -2,7 +2,8 @@
 id = "01M4ST7AB8627SAJ7MGB1GSRH6"
 title = "Affine tolerance evaluation with source variables"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
