@@ -2,11 +2,11 @@
 id = "01M4VPEE2SE4Y96XGGN17H42KT"
 title = "bind --tolerance drive|ignore writes the locator tolerance field"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T22:34:33Z"
-updated = "2026-10-13T22:34:33Z"
+updated = "2026-10-13T23:09:00Z"
 scope = ["crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-adapter/src/bindings.rs"]
 
 [[links]]
