@@ -7,13 +7,13 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:35:03Z"
-updated = "2026-10-13T13:52:50Z"
+updated = "2026-10-13T13:53:02Z"
 idempotency_key = "wire-lints"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "cadetta check runs the IR-only lint families (D001, D002, F004, M001-M003, N001-N003, N005, N006, Q006, S001, S002) over the analyzed IR and reports their diagnostics"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "waive declarations are collected from the in-scope modules and applied through the lint engine; W001-W004 are reported"
