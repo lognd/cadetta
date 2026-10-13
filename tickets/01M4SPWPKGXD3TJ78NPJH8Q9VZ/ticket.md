@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:11:55Z"
+updated = "2026-10-13T07:13:38Z"
 persona = "design engineer"
 capability = "have expressions checked for units and kinds"
 outcome_text = "Q001, Q002, Q003 and Q005 stop wrong models"
 labels = ["creates:crates/cadetta-sema/src/kindcheck.rs"]
-scope = ["crates/cadetta-sema/src/kindcheck.rs"]
+scope = ["crates/cadetta-sema/src/kindcheck.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"

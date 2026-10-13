@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/src/kindcheck.rs"]
+new = ["crates/cadetta-sema/src/kindcheck.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/quantities.md"]
+at = "2026-10-13T07:13:38Z"
+actor = "lognd"
+rev = 1
