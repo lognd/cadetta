@@ -2,7 +2,8 @@
 id = "01M4SXRFXB1JYNPNKSAY6WB3QC"
 title = "Use grammar and visibility modifiers in the parser"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
