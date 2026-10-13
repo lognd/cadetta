@@ -7,6 +7,7 @@ pub mod fmt;
 pub mod init;
 pub mod obligations;
 pub mod solve;
+pub mod why;
 
 use std::io::Write;
 
@@ -18,6 +19,7 @@ pub use fmt::run_fmt;
 pub use init::run_init;
 pub use obligations::run_obligations;
 pub use solve::run_solve;
+pub use why::run_why;
 
 /// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.
 pub fn run_cite(
