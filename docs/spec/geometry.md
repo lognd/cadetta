@@ -161,6 +161,16 @@ plane and z is its normal.
   `holes.start`, `holes.rotation`); those bind and emit, and the derived
   coordinates are analysis-only, never emitted, unless the points are
   hand-listed.
+- Re-expression evaluation (reexpress.rs): `p in D` carries `p` out of its
+  datum into the root frame and back into `D`, composing the placements
+  on the path. Inside a part the root is the part's `origin`; in an
+  assembly it is the assembly's, and a placed part's datum is named
+  `part.datum` (`sub/part.datum` through a subassembly). A `Point2`
+  always yields a `Point3`, lifted to z = 0 of its datum before the
+  carry. A datum naming a part the model lacks or never placed, or a
+  part-local datum met in an assembly, is G003; an unknown datum of a
+  placed part is an error without a code. Off-90deg rotations make
+  coordinates inexact (marked, Q006).
 - Evaluation decisions: a rotation of a pattern follows the datum rotation
   rules (exact for whole multiples of 90deg, inexact and marked
   otherwise); a toleranced generator member shares one source variable

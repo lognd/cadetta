@@ -9,4 +9,5 @@ pub mod pattern;
 pub mod placement;
 pub mod placement_for;
 pub mod point;
+pub mod reexpress;
 pub mod transform;
