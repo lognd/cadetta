@@ -17,6 +17,10 @@ scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/s
 
 [[links]]
 kind = "blocked-by"
+target = "01M4VB62VJQV9AKSSQME8NWW6Y"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4VB63WJ5XBJ360151Y6D9TH"
 
 [[acceptance]]
