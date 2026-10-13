@@ -2,12 +2,12 @@
 id = "01M4V1X55R20C1PT8B56BCVN48"
 title = "conformance runner executes only check entries"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-13T23:01:53Z"
+updated = "2026-10-13T23:07:38Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md", "tests/conformance/obligations/**", "tests/conformance/adapters/**", "tests/conformance/emitters/**"]
 
 [[acceptance]]
