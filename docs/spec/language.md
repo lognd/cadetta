@@ -359,6 +359,18 @@ with the class it is declared to play. Against a required range, a
 clearance entirely outside it is F004 (violates); one that overlaps it
 only in part is C002 on the fit (undecided), like any check.
 
+Decisions (cadetta-sema `fits`): the clearance is `hole - shaft`
+over independent variables, so its bounds are `hole.min - shaft.max`
+and `hole.max - shaft.min`; negative is interference. `NAME.type` is
+`clearance` when every clearance is >= 0, `interference` when every
+clearance is <= 0 (and not clearance), else `transition`. A required
+range is two comparisons, `clearance >= lo` and `clearance <= hi`; either
+violating is F004, both holding is fine, anything else is C002. In `a /
+b` the first path is the hole and the second the shaft. For `H7/p6 on
+x` the fitted parameter x may be untoleranced or carry exactly one of
+the two classes' deviations; any other tolerance on it is F003. A
+nominal that is not a whole number of nanometres has no table row (F002).
+
 ### 3.8 Functions, enums, processes
 
 - `fn name(a: Kind, ...) -> Kind { let x = ...; expr }`: pure, total, no
@@ -417,6 +429,12 @@ only in part is C002 on the fit (undecided), like any check.
   have no `#!` default, so positions are never compensated by accident.
   Under a process, a parameter whose name suggests a feature but has no
   role is P001.
+
+Evaluation of these (decisions): function bodies and `let` values are
+analysis values, evaluated over the full tolerance of their operands;
+only a parameter stores a design tolerance, and a pure reference is an
+alias (quantities.md 5.3). `match` arms are chosen on the scrutinee's
+variant and a missing variant without `_` is E009.
 
 ### 3.9 Citations
 
@@ -636,6 +654,19 @@ discharges the sign-off obligation of a `holds` require (O003) and
 cannot change a `violated` one, which stays C001. The state `waived`
 applies only to diagnostics suppressed by `waive` or `allow`. The single
 rule is in obligations.md 4.
+
+Decisions (cadetta-sema `checks`): a check condition is a comparison
+chain, `x satisfies P`, or `and`, `or` and `not` over those, combined
+with Kleene logic over holds, violates and undecided; a third kind,
+`==` on toleranced values, is C003 (warning). A bound is looked up
+syntactically, either bare (`P`, in the enclosing component) or as
+`Item.P`, because bounds are not value members; when a parameter and a
+bound share a name, `P.min`/`P.max` read the parameter and `satisfies
+P` reads the bound. A bound's limits are the nominals of its
+expressions. A quantifier ranges over an array literal, one result per
+instance; ranging over a `part` array waits for the parts work. A
+`require` carries its own citation, else its component's, and is
+marked as an obligation (obligations.md).
 
 ## 7. Formatting
 
