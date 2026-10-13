@@ -19,6 +19,10 @@ scope = ["crates/cadetta-cli/src/cmd/impact_swap.rs"]
 kind = "blocks"
 target = "01M4ST8FAX8HDAXH8NBC8VKPXW"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST8FEBCF9PC9SR0ZKTYT70"
+
 [[acceptance]]
 text = "Given `impact --swap PART NEW`, when run, then it is the variant evaluation of PART=NEW diffed against the primary evaluation (obligations.md 5.1)"
 bound = false
