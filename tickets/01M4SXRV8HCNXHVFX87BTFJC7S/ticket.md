@@ -2,13 +2,13 @@
 id = "01M4SXRV8HCNXHVFX87BTFJC7S"
 title = "Visibility checking: pub, pub(package), priv, E016 and E017"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T06:04:28Z"
+updated = "2026-10-13T09:03:10Z"
 persona = "library author"
 capability = "keep intermediates out of my semver promise"
 labels = ["creates:crates/cadetta-sema/src/visibility.rs"]
