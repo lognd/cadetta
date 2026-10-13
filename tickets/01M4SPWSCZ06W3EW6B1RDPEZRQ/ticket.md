@@ -26,4 +26,8 @@ target = "01M4SV2NZT32CAT33D13T86646"
 [[acceptance]]
 text = "Given `cadetta-freecad`, when initialize is sent, then capabilities emit, read and drive are returned"
 bound = false
+
+[[acceptance]]
+text = "Given the adapter, when JSON-RPC requests arrive, then they are served by a cadetta.adapter.Adapter subclass rather than a hand-written loop (bindings.md 3.4)"
+bound = false
 +++

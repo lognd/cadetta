@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `cadetta-freecad`, when initialize is sent, then capabilities emit, read and drive are returned"]
+new = ["Given `cadetta-freecad`, when initialize is sent, then capabilities emit, read and drive are returned", "Given the adapter, when JSON-RPC requests arrive, then they are served by a cadetta.adapter.Adapter subclass rather than a hand-written loop (bindings.md 3.4)"]
+moved = [1]
+at = "2026-10-13T05:17:09Z"
+actor = "lognd"
+rev = 1
