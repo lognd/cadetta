@@ -1,0 +1,11 @@
+kind = "create"
+title = "Unify temperature unit factors between units.rs and affine.rs"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 2
+labels = ["creates:crates/cadetta-units/src/units.rs", "creates:crates/cadetta-units/src/affine.rs"]
+scope = ["crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/affine.rs"]
+at = "2026-10-13T06:22:04Z"
+actor = "lognd"
+rev = 1
