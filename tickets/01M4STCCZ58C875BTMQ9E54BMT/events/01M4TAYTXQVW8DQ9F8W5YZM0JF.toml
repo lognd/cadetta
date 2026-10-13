@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:54:31Z"
+digest = "521f3d8db8de690d19c875054b9d4ecab3771c1af5cd3e7d3149fca94c2a2b39"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.86s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 13d3f00c-bbf2-4a81-b341-929700ab8a0a with nextest profile: default
+    Starting 5 tests across 1 binary (46 tests skipped)
+        PASS [   0.008s] cadetta-lint rules::obligation::tests::o001_warns_when_stale
+        PASS [   0.008s] cadetta-lint rules::obligation::tests::o002_fires_when_open_and_covers_waiver_review
+        PASS [   0.008s] cadetta-lint rules::obligation::tests::o001_errors_for_role_required_for_check
+        PASS [   0.008s] cadetta-lint rules::obligation::tests::s_kinds_are_not_double_reported
+        PASS [   0.009s] cadetta-lint rules::obligation::tests::o003_errors_on_unsigned_require_only
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 5 tests run: 5 passed, 46 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::obligation::tests::o001_warns_when_stale) + test(=rules::obligation::tests::o001_errors_for_role_required_for_check) + test(=rules::obligation::tests::o002_fires_when_open_and_covers_waiver_review) + test(=rules::obligation::tests::o003_errors_on_unsigned_require_only) + test(=rules::obligation::tests::s_kinds_are_not_double_reported)'"
+size = 1028
+status = "measured"
+test_count = 5
+tests_digest = "c2190142c2b778c0f3be2a8eaa9098d9a981a033ae3488b41fbb7e9bf43a34bc"
+at = "2026-10-13T09:54:31Z"
+actor = "lognd"
+rev = 1
