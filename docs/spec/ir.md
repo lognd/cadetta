@@ -181,6 +181,17 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   `fit_type` and `for_alternate`; `Provenance` is `"authored"`,
   `"derived"` or `{ "imported": { adapter, file, native_name } }`. A
   non-finite `Inexact.f64` is a serialization error.
+- Item entities (`cadetta-ir` `entities.rs`): `Interface`, `Table` and
+  `Process` paths are item paths (`acme.rover::Caster`, no member
+  tail). `Interface.members[]` are `{ name, type, optional }`,
+  `bounds[]` are `{ name, bound }`, `datums[]` are datum names.
+  `Table.key` and `cols[]` are `{ name, type }`; a row is `{ key, cells[] }`
+  (no cells for a key-only row) and a cell is a `Value` or
+  `{ "variant": name }` for an enum key or column. `Waiver.expires` is
+  the ISO date text, `for_alt` the full-form `SLOT=ALT` text, and
+  `targets_closure` maps each matched target path to its closure digest
+  (empty until reviewed, lints.md 2.1). `Process.params[]` are `Member`s,
+  `rules[]` are `{ role, expr }`.
 - Obligation and attestation state is not IR: it lives in the
   `cadetta.obligations/1` schema (obligations.md).
 - `deps` are canonical paths; the graph is acyclic (D003).
