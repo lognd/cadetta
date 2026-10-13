@@ -2,7 +2,8 @@
 id = "01M4STANV9T55FV8529E2RPFB1"
 title = "std packaging as ordinary .cdt"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
