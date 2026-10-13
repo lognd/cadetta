@@ -1,0 +1,25 @@
++++
+id = "01M4SWP814HCC088QRKJ7QGBNV"
+title = "ScrewJoint one joint per pattern"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+reporter = "lognd"
+created = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T05:45:12Z"
+persona = "design engineer"
+capability = "model a bolt pattern once"
+idempotency_key = "replan14:sd-screw"
+labels = ["creates:std/fasteners.cdt"]
+scope = ["std/fasteners.cdt"]
+
+[[acceptance]]
+text = "Given a ScrewJoint over a pattern, when instantiated, then exactly one joint covers the whole pattern; count versus count(at) is distinguished (stdlib.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given part screws[4] used as a joint, when compiled, then E006 fires (stdlib.md 3; lints.md 3 E)"
+bound = false
++++
