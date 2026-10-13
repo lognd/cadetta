@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:57:25Z"
+updated = "2026-10-13T08:58:30Z"
 persona = "design engineer"
 capability = "know which alternates are safe to swap in"
 idempotency_key = "replan13:Viability, undecided results and alternate waivers"
 labels = ["creates:crates/cadetta-variants/src/viability.rs"]
-scope = ["crates/cadetta-variants/src/viability.rs"]
+scope = ["crates/cadetta-variants/src/viability.rs", "crates/cadetta-variants/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
