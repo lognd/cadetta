@@ -386,7 +386,7 @@ mod tests {
         assert!(check_implementer(&caster(), &imp("Strong", Some(500), true)).is_empty());
     }
 
-    // frob:tests crates/cadetta-variants/src/interface.rs::ResolvedInterface::member_dependency kind=unit
+    // frob:tests crates/cadetta-variants/src/interface.rs::ResolvedInterface.member_dependency kind=unit
     #[test]
     fn reads_depend_on_the_interface_only() {
         let c = caster();
