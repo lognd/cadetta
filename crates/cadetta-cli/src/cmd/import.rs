@@ -645,7 +645,12 @@ for line in sys.stdin:
         })
     }
 
+    /// Serializes script writes against adapter spawns: a forked child that
+    /// inherits the still-open write handle makes exec fail with ETXTBSY.
+    static SPAWN_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
     fn project() -> Dir {
+        let _guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let dir = Dir::new();
         std::fs::write(
             dir.0.join("cadetta.toml"),
@@ -669,6 +674,7 @@ for line in sys.stdin:
             config: None,
         };
         let (mut out, mut err) = (Vec::new(), Vec::new());
+        let _guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let code = run_import(&args, &globals, &mut out, &mut err);
         (
             code,
@@ -773,6 +779,7 @@ for line in sys.stdin:
         ] {
             let args: Vec<String> = args.iter().map(|a| (*a).to_owned()).collect();
             let (mut out, mut err) = (Vec::new(), Vec::new());
+            let _guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
             assert_eq!(run_import(&args, &globals, &mut out, &mut err), EXIT_OK);
             let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
             assert!(validator.is_valid(&v), "{v}");
