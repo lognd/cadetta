@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T14:11:09Z"
+updated = "2026-10-13T14:11:10Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given Project.open(path=None, config=None), when called, then root discovery follows config-cli.md 1.6 (package or workspace)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given project.package and project.modules, when read, then they return the [package] name and version and the sorted module paths under src per package, matching the IR package and modules[] (bindings.md 3.2; ir.md 4)"
