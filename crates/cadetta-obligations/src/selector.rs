@@ -239,7 +239,7 @@ mod tests {
         v.iter().map(|s| ObligationId::parse(s).unwrap()).collect()
     }
 
-    // frob:tests selector::Selector::parse
+    // frob:tests crates/cadetta-obligations/src/selector.rs::Selector.parse
     #[test]
     fn parses_comma_separated_terms() {
         let s = Selector::parse("fit:acme.rover::Axle.*,check:acme.rover::**").unwrap();
@@ -272,7 +272,7 @@ mod tests {
         ));
     }
 
-    // frob:tests selector::Selector::resolve
+    // frob:tests crates/cadetta-obligations/src/selector.rs::Selector.resolve
     #[test]
     fn matches_kind_and_canonical_path() {
         let u = ids(&[
@@ -323,7 +323,7 @@ mod tests {
         assert_eq!(s.resolve(&u).unwrap().len(), 2);
     }
 
-    // frob:tests selector::SelectorError::exit_code
+    // frob:tests crates/cadetta-obligations/src/selector.rs::SelectorError.exit_code
     #[test]
     fn no_match_is_exit_2() {
         let u = ids(&["fit:a::X"]);
