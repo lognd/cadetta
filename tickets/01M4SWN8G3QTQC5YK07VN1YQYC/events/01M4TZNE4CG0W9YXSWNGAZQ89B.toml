@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T15:56:25Z"
+digest = "039b92d2c601dbac2ca24a5362fb6844caada10ac087db450e8a271d0a93ab90"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a62b4612-2a08-4bf4-8845-a40879332d17 with nextest profile: default
+    Starting 1 test across 2 binaries (162 tests skipped)
+        PASS [   0.048s] cadetta cmd::impact_swap::tests::json_validates_against_swap_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.050s] 1 test run: 1 passed, 162 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::impact_swap::tests::json_validates_against_swap_schema)'"
+size = 612
+status = "measured"
+test_count = 1
+tests_digest = "d9e74e357e210e66cad03a3a6c4e3f8d2f769f12a42134dbd5bf9a2a9a869535"
+at = "2026-10-13T15:56:25Z"
+actor = "lognd"
+rev = 1
