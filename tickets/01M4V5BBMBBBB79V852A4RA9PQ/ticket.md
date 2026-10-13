@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:35:47Z"
-updated = "2026-10-13T18:07:53Z"
+updated = "2026-10-13T18:10:40Z"
 scope = ["docs/spec/emitters/json.md", "docs/spec/emitters/csv.md", "docs/spec/adapters.md", "tests/conformance/emitters/json/**", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
 text = "Given json.md 1 and 3, when the spec is read, then precedence of --assume-unit over native_unit, whole-number rendering, note on Text and the O004 behaviour are stated"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a unitless value read by json or csv with both --assume-unit and a locator native_unit, when read runs, then the spec says --assume-unit wins, then native_unit, then the adapter default"
