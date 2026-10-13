@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:38Z"
-updated = "2026-10-13T06:25:14Z"
+updated = "2026-10-13T06:26:41Z"
 persona = "design engineer"
 capability = "pick obligations precisely"
 idempotency_key = "replan14:ob-selector"
 labels = ["creates:crates/cadetta-obligations/src/selector.rs"]
-scope = ["crates/cadetta-obligations/src/selector.rs"]
+scope = ["crates/cadetta-obligations/src/selector.rs", "crates/cadetta-obligations/Cargo.toml", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"
