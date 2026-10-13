@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "have drawing tolerances come from the design"
 outcome_text = "tolerances are not retyped on drawings"
 idempotency_key = "d15:dim-tolerances"
-scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/rpc/**", "crates/cadetta-adapter/src/locator.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/adapters/**", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/impact_swap_report.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/observed.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-adapter/src/import/accept.rs"]
+scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/rpc/**", "crates/cadetta-adapter/src/locator.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/adapters/**", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/impact_swap_report.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/observed.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-adapter/src/import/accept.rs", "crates/cadetta-adapter/src/session.rs"]
 
 [[links]]
 kind = "blocked-by"
