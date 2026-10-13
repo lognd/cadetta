@@ -33,18 +33,32 @@ retype or re-import, rebuild, check.
 
 ## How
 
-- **Quantities are first-class.** `5in`, `12mm H7` and `10mm +- 0.05mm`
-  are values with a dimension, a kind and a tolerance. A bare number is
-  an error. Values are stored exactly, so converting inches to
-  millimetres and back loses nothing.
+- **Quantities are first-class.** `5in`, `3/4in`, `12mm H7` and
+  `10mm [+-0.05mm]` are values with a dimension, a kind and a tolerance.
+  A bare number is an error. Values are stored exactly, so converting
+  inches to millimetres and back loses nothing.
 - **References, not copies.** A model parameter is an expression over
   the parameters it depends on. Values you can derive must not be
   retyped, and the linter flags values that look copied.
 - **Canonical names.** Every parameter has one path, such as
   `acme.rover::Axle.end_diameter`. Adapters map each CAD tool's native
   names onto these paths.
-- **Fits are declarations.** `fit wheel_axle = H7/p6 on Wheel.hub_bore`
-  computes both sides of the fit from the ISO 286 tables.
+- **Fits and checks are declarations.** `fit seat = p6 on wheel.hub_bore`
+  computes the shaft from the ISO 286 tables; `check` and `require`
+  state what must hold, evaluated over every value in tolerance.
+- **Interfaces make parts swappable.** A design depends on what it needs
+  from a part, not on a vendor SKU. Approved alternates are checked
+  continuously, and `cadetta impact --swap` previews a swap for cost,
+  lead time, end of life or performance before you make it.
+- **Provenance and obligations.** Every value can cite where it came
+  from (`@vendor:"p.2"`, `@measured`). The obligation graph tracks which
+  checks, sign-offs, solver results and CAD files a change invalidates.
+- **A standard library of shop knowledge.** Declare a screw joint with a
+  thread, the clamped thickness and the material it threads into, and
+  the clearance hole, tap drill, thread depth, screw length and callout
+  are computed and cited. Shop rules are data you can override.
+- **External solvers.** Values from a Python or MATLAB analysis come in
+  through a small JSON protocol, cached and checked for staleness.
 - **A tool-agnostic IR.** Source compiles to an intermediate
   representation that every lint and every adapter reads. Adapters can
   `emit` parameter files, `read` existing CAD files, and `drive` a live
@@ -52,22 +66,40 @@ retype or re-import, rebuild, check.
 
 ## Example
 
+A `.cdt` file:
+
 ```text
 namespace acme.rover
 
-/// 5 inch caster wheel, vendor part 4471-B.
-ots Wheel {
-  source "https://vendor.example/4471-B.pdf#page=2"
-  diameter = 5in            // alternatively 5"
-  hub_bore = 12mm H7
-  hub_width = 0.75"
+cite vendor = "https://vendor.example/4471-B.pdf"
+cite colson = "https://colson.example/2-series.pdf"
+
+/// What the rover needs from a caster wheel, whoever makes it.
+interface Caster {
+  hub_bore: Length
+  hub_width: Length
+  load_rating >= 400N
 }
 
-fit wheel_axle = H7/p6 on Wheel.hub_bore
+#[lifecycle(eol, "2027-06")]
+ots Vendor4471B: Caster @vendor {
+  hub_bore    = 12mm H7               @vendor:"p.2"
+  hub_width   = 3/4in
+  load_rating = 450N
+  unit_cost   = 11.20USD
+}
 
-model Axle {
-  end_diameter = wheel_axle.shaft
-  length = 2 * Wheel.hub_width + Frame.span
+ots Colson2Series: Caster @colson {
+  hub_bore    = 12mm H8
+  hub_width   = 7/8in
+  load_rating = 540N
+  unit_cost   = 13.90USD
+}
+
+model Axle(wheel: Caster, span: Length) {
+  fit seat     = p6 on wheel.hub_bore     // shaft side of the fit
+  end_diameter = seat.shaft
+  length       = 2 * wheel.hub_width + span
 }
 
 model Frame {
@@ -75,26 +107,29 @@ model Frame {
 }
 
 assembly Rover {
-  part front_left: Wheel
-  part axle: Axle
+  part wheel[4]: Caster = Vendor4471B alt [Colson2Series]
   part frame: Frame
+  part axle[2]: Axle(wheel = wheel[0], span = frame.span)
 }
 ```
 
 ## Quickstart (planned)
 
 ```sh
-cadetta init                      # cadetta.toml and a hello-world design
-cadetta check                     # compile and lint
-cadetta import freecad part.FCStd # adopt an existing CAD file
-cadetta sync                      # push, rebuild, read back, check for drift
+cadetta init                                # cadetta.toml and a hello-world design
+cadetta check                               # compile and lint
+cadetta import freecad part.FCStd           # adopt an existing CAD file
+cadetta sync                                # push, rebuild, read back, check for drift
+cadetta impact --swap wheel Colson2Series   # preview a part swap
+cadetta why Axle.end_diameter               # where a value comes from
 ```
 
 ## Project layout
 
 | Path | Contents |
 |---|---|
-| `docs/spec/` | The specification: quantities, language, IR, adapters, lints, config and CLI |
+| `docs/spec/` | The specification: quantities, language, IR, obligations, solvers, adapters, lints, config and CLI |
+| `pilots/` | Syntax pilots: realistic designs written against the spec, with friction reports |
 | `docs/decisions/` | Architecture decision records |
 | `design/` | The grimble architecture model |
 | `tickets/` | The frob ticket ledger (do not edit by hand) |

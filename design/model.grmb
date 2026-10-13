@@ -57,11 +57,34 @@ node lint : trusted {
   owns "crates/cadetta-lint/**";
 }
 
+/// The obligation graph, digests, staleness and `cadetta.lock` (obligations.md).
+node obligations : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-obligations/**";
+  may fs.read at "cadetta.lock";
+  may fs.write at "cadetta.lock";
+}
+
 /// Name resolution, kind checking and evaluation into design IR.
 node sema : trusted {
   kind component;
   clearance Internal;
   owns "crates/cadetta-sema/**";
+}
+
+/// Runs external solvers over `cadetta.solve/1` and caches results (solvers.md).
+node solver_host : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-solve/**";
+  may exec at "crates/cadetta-solve/src/**";
+}
+
+/// A user's solver script (Python, MATLAB, ...), outside our code; its outputs are untrusted.
+node solver_script : foreign {
+  kind external;
+  clearance Internal;
 }
 
 /// Lexer, parser and formatter for `.cdt` source (language.md).
@@ -115,6 +138,16 @@ flow f_ir_to_lint : ir -> lint {
   transport in_process;
 }
 
+flow f_ir_to_obligations : ir -> obligations {
+  label Internal;
+  transport in_process;
+}
+
+flow f_obligation_state : obligations -> lint {
+  label Internal;
+  transport in_process;
+}
+
 flow f_observed_ir : adapter_host -> lint {
   label Internal;
   transport in_process;
@@ -140,6 +173,21 @@ flow f_rpc_response : adapter_freecad -> adapter_host {
   transport ipc;
 }
 
+flow f_solve_request : solver_host -> solver_script {
+  label Internal;
+  transport ipc;
+}
+
+flow f_solve_response : solver_script -> solver_host {
+  label Internal;
+  transport ipc;
+}
+
+flow f_solver_results : solver_host -> sema {
+  label Internal;
+  transport file;
+}
+
 /// Only adapters touch CAD tools; the kernel never links a vendor SDK.
 claim kernel_never_touches_cad {
   noflow sema -> cad_tool;
@@ -149,5 +197,11 @@ claim kernel_never_touches_cad {
 /// Lints never talk to a CAD tool directly; everything goes through the IR.
 claim lint_is_tool_agnostic {
   noflow cad_tool -> lint;
+  proof L1;
+}
+
+/// Solver scripts never reach a CAD tool; their outputs enter only through checked IR values.
+claim solvers_never_touch_cad {
+  noflow solver_script -> cad_tool;
   proof L1;
 }

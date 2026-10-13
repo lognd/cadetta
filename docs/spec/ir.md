@@ -1,6 +1,6 @@
 # The intermediate representation
 
-The IR is the one data model every lint and every adapter speaks. It is
+The IR is the one data model every lint, query and adapter speaks. It is
 tool-agnostic: nothing in it is specific to a CAD product except the
 opaque native locators held in bindings.
 
@@ -8,68 +8,89 @@ opaque native locators held in bindings.
 
 | Flavour | Produced by | Contains |
 |---|---|---|
-| Design IR | the compiler, from `.cdt` source | parameters with expressions, dependencies, provenance, fits, checks, waivers |
-| Observed IR | an adapter `read`, from CAD files | parameters with literal values, native names and locators; no expressions |
+| Design IR | the compiler, from `.cdt` source | everything: values, expressions, dependencies, citations, interfaces, parts and alternates, fits, checks, requires, solvers, waivers |
+| Observed IR | an adapter `read`, from CAD files or inspection data | parameters with values, native names and locators; expressions when the native format exposes them (SOLIDWORKS equations, FreeCAD spreadsheet formulas) |
 
-Both serialize to the same JSON schema, `cadetta.ir/1`. Lints that need
-only values run on either flavour; lints that need structure (D, F, C)
-run on design IR; drift lints (R) compare the two through bindings.
+Both serialize to `cadetta.ir/1` JSON. Value lints (D001, M001, N, Q)
+run on either flavour; structural lints (D002, F, C, I, L) on design IR;
+drift lints (R) compare the two through bindings.
 
-Observed IR is what makes adoption incremental: a team with existing
-SOLIDWORKS parts can `cadetta import` them, lint the observed IR
-immediately, and then scaffold `.cdt` source from it.
+Observed IR makes adoption incremental: `cadetta import` reads existing
+CAD files, lints them at once, and scaffolds `.cdt` source.
 
 ## 2. Canonical paths
 
 ```
-path      = namespace "::" Component [ "/" part ] "." param
+path      = namespace "::" Type [ "/" part [ "[" index "]" ] ]* "." member
 example     acme.rover::Axle.end_diameter
-            acme.rover::Rover/front_left.hub_bore
-            acme.rover::wheel_axle.shaft          (fit members)
+            acme.rover::Rover/wheel[2].hub_bore
+            acme.rover::Axle.seat.shaft            (fit members)
 ```
 
-A canonical path is the identity of a parameter across source, IR,
-bindings, waivers and diagnostics. Paths are stable under formatting and
-under reordering; they change only by rename, which `was` records.
+A canonical path is the identity of a node across source, IR, bindings,
+waivers, the lock file and diagnostics. Paths survive formatting and
+reordering; they change only by rename or move, which `was` records.
 
 ## 3. Entities
 
 ```
-Project    { schema: "cadetta.ir/1", flavour, namespace, components[],
-             fits[], checks[], waivers[], digest }
-Component  { path, class: ots|model|assembly, doc?, source?, params[],
-             parts[], span? }
-Param      { path, kind, dimension, value: Value, expr?, deps[],
-             provenance, source?, was[], attrs, doc?, span?, digest }
-Value      { nominal: Rational, lower?: Rational, upper?: Rational,
-             exact: bool, approx?: f64, authored_unit }
+Project    { schema, flavour, namespace, components[], interfaces[], tables[],
+             solvers[], checks[], requires[], waivers[], citations[], digest }
+Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
+             citation?, attrs, members[], parts[], fits[], span?, digest }
+Member     { path, kind, analysis: bool, value?: Value, bound?: Bound, expr?,
+             deps[], role?, citation?, was[], attrs, provenance, doc?, span?,
+             variants?: { "<slot>=<alternate>": Value }, digest, closure }
+Value      { nominal: Exact | Inexact, angle: int, tol?: Affine, conservative: bool,
+             designed?: Exact, authored: string }
+Exact      { r: "num/den", pi: int }                 // magnitude = r * pi^pi, SI base
+Inexact    { f64, root: path }                       // root inexact operation
+Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }
+Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
+Part       { path, type, count?, primary, alternates[], args }
+Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
+Check      { path, expr, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
+             conservative, waived_for[] }
+Solver     { path, script, inputs{}, outputs{}, deps[], result_digest?, stale }
+Citation   { name, target, locator?, kind: url|file|standard|measured|assumed|estimate,
+             file_digest? }
 Provenance = authored | derived | imported { adapter, file, native_name }
-Fit        { path, hole_class, shaft_class, on, nominal, fit_type, hole, shaft }
-Check      { path, lhs, cmp, rhs, verdict?: holds|violates|undecided }
-Waiver     { code, target, because, expires?, target_digest }
-Binding    { path, adapter, locator, native_unit }
+Binding    { path, adapter, locators: [ { locator, kind: global|dimension|property,
+             mode: value|ref, native_unit } ] }
 ```
 
-- `Rational` serializes as a string `"num/den"` in SI base units, with
-  `den > 0` and the fraction reduced. JSON floats never carry a
-  magnitude.
-- `span` is `file:line:col-line:col`, present in design IR.
-- `deps` lists canonical paths the expression reads. The dependency graph
-  is acyclic (D003 otherwise).
+- Magnitudes are never JSON floats: `Exact` is a reduced fraction string
+  plus a pi exponent. `Inexact.f64` is the only float, and names its root.
+- `designed` holds the value before process compensation; `nominal` is
+  the drawn value (language.md 3.8).
+- `deps` are canonical paths; the graph is acyclic (D003).
+- `analysis` marks a `let` (quantities.md 5.3): never emitted or bound.
+- `variants` holds, per part slot and alternate, only the values that
+  differ from the primary evaluation (variant evaluation, language.md
+  3.2). Keys are `"Rover/wheel=Colson2Series"`.
 
 ## 4. Digests
 
-Every Param and Component has a digest: BLAKE3 over its canonical
-encoding (path, kind, value, expr text normalized by the formatter,
-source, attrs). The digest excludes spans and doc comments.
+Every node has two digests, both BLAKE3:
 
-Digests make three things cheap and exact: waiver staleness (a waiver
-binds `target_digest`; W002 when it no longer matches), drift
-attribution (R001 names which side moved since the last sync), and
-incremental adapter pushes (only changed digests are pushed).
+- `digest` (own): over the node's canonical encoding (path, kind, value,
+  normalized expression text, citation, attrs, and for parts the
+  primary, alternates and arguments). It changes when the node's own
+  text does.
+- `closure` (Merkle): over the own digest plus the closure digests of
+  its `deps`, sorted by path. It changes when anything the node reads,
+  transitively, changes, including a cited file's digest and a solver
+  result's digest.
+
+Granularity is the member of a component definition; an instance path
+(`Rover/wheel[2].hub_bore`) has the closure of its member plus the
+part's argument digests. Spans and doc comments are excluded, so
+formatting never changes a digest. Obligations and waivers bind closure
+digests (obligations.md 2, W002); drift attribution (R001) and
+incremental pushes use own digests of emitted values.
 
 ## 5. Stability
 
-`cadetta.ir/1` is versioned. Adding optional fields is a minor change;
-anything else bumps the schema version. The JSON Schema is generated
-from the Rust types and committed under `docs/schemas/`.
+`cadetta.ir/1` is versioned. Adding optional fields is minor; anything
+else bumps the schema. JSON Schemas are generated from the Rust types
+and committed under `docs/schemas/`.

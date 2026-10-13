@@ -1,6 +1,22 @@
 grimble = "2";
 part of cadetta;
 
+/// ADR: draft-1 language decisions (interfaces, alternates, obligations core, solvers).
+vmodel dec_draft1 {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-draft-1-language-decisions.md";
+  decides req_language;
+}
+
+/// ADR: draft-1.1 decisions (let, closure digests, variant evaluation, std fasteners).
+vmodel dec_draft1_1 {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-draft-1-1-decisions.md";
+  decides req_stdlib;
+}
+
 /// ADR: IR between source and every CAD tool.
 vmodel dec_ir {
   kind decision;
@@ -60,9 +76,30 @@ vmodel req_lints {
   ref "docs/spec/lints.md";
 }
 
+/// The obligation graph and lock file (obligations.md). Core.
+vmodel req_obligations {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/obligations.md";
+}
+
 /// Quantities are exact, kinded and single-token (quantities.md).
 vmodel req_quantities {
   kind artifact;
   level requirements;
   ref "docs/spec/quantities.md";
+}
+
+/// The external solver protocol `cadetta.solve/1` (solvers.md).
+vmodel req_solvers {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/solvers.md";
+}
+
+/// The standard library: fits, materials, fasteners, ScrewJoint (stdlib.md).
+vmodel req_stdlib {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/stdlib.md";
 }

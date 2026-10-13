@@ -35,15 +35,48 @@ A binding maps a canonical path to an adapter's native locator, e.g.
 `"Axle_end_diameter"` or to the dimension `"D1@Boss-Extrude1@Axle.SLDPRT"`.
 
 - Bindings live in `bindings/<adapter>.toml`, committed, one table per
-  canonical path. `@native(...)` in source pins one inline.
+  canonical path. A path may bind several native locators (a legacy
+  file often drives one value through a global and a dimension, or two
+  globals); each locator has a `kind` (`global`, `dimension`,
+  `property`). `#[native(adapter, "locator")]` in source pins one
+  inline.
+- Only bound paths are emitted; an unbound parameter is not written.
+  `let` values are never emitted (quantities.md 5.3).
+- Emitted values are values (the emit point, 5.6), never expressions:
+  the dependency structure lives in cadetta, and CAD tools receive
+  numbers or links to cadetta-emitted globals.
 - `cadetta import` proposes bindings and canonical names from observed
-  IR; the user accepts them, which writes the bindings file and scaffolds
-  `.cdt` source. Nobody types the values.
+  IR (including native expressions, which become `.cdt` references); the
+  user accepts them, which writes the bindings file and scaffolds `.cdt`
+  source. Nobody types the values.
 - Unbound native parameters are R002; bound paths missing natively are
-  R003. Renames (`was`) carry bindings forward automatically.
-- Each adapter defines a deterministic default name mangling for emitted
-  parameters (`Axle.end_diameter` -> `Axle_end_diameter` for tools with
-  flat namespaces) so most bindings never need to be written.
+  R003; bindings matching no path are R005. `was` paths carry bindings
+  forward across renames and moves.
+- Name mangling is injective: `Axle.end_diameter` where the target allows
+  dots, otherwise `Axle__end_diameter` (`__` is reserved, N005). Array
+  instances mangle as `Rover__wheel_2__hub_bore`.
+- A locator's `mode` is `ref` (default where the target supports
+  references: the native side keeps a live link to a cadetta-emitted
+  global) or `value` (a flat number). A `ref` dimension points at the
+  global locator bound to the same path; if the path has none, at the
+  global of its referent when the path is a pure alias; otherwise the
+  emitter creates the path's own mangled global.
+- Units at read: a native value without a unit takes the adapter's
+  declared native unit (`initialize`), recorded in observed IR as
+  `unit_assumed`. Formats with no unit information at all need
+  `--assume-unit`; without it the value is read with `exact: false` and
+  a reason. Read never raises Q001; Q001 is a source error.
+
+## 3a. What every emitter spec states
+
+Each built-in emitter has a format document in `docs/spec/emitters/`
+(the first is [sw-equations.md](emitters/sw-equations.md)) fixing: a header line carrying the IR digest and adapter version; line
+order (dependency order, ties by canonical path); globals vs dimension
+lines and refs vs values per binding mode; the emitted point and unit;
+and tolerance and citation as a trailing native comment where the
+format has comments (`"Axle__end_diameter" = 12.029mm  ' 12mm p6, emit
+nominal`). Drift (R001) compares the read-back against the emitted
+point, never the nominal.
 
 ## 4. Contract every adapter MUST meet
 

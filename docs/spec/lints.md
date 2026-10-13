@@ -1,30 +1,33 @@
 # Lint catalog
 
 Every diagnostic has a stable code: one family letter and three digits.
-Codes are never reused; a retired code stays in this table marked
-retired. Every diagnostic carries a canonical path and, for design IR, a
-source span.
+Codes are never reused; retired codes stay listed. Every diagnostic
+carries a canonical path and, for design IR, a source span.
 
 ## 1. Severity and gating
 
-Severities are `error`, `warning`, `info`. `cadetta check` exits 1 when
-any diagnostic is at or above `[lint] fail_on` (default `error`).
-Severity can be raised or lowered per code in `cadetta.toml [lint]`,
-except codes marked "fixed" (they report a broken program, not a style).
+Severities: `error`, `warning`, `info`. `cadetta check` exits 1 when any
+diagnostic is at or above `[lint] fail_on` (default `error`). Severity is
+configurable per code in `cadetta.toml [lint]`, except codes marked
+"fixed" (they report a broken program, not a style).
 
 ## 2. Waivers
 
 ```
-waive M001 on acme.rover::Axle.chamfer {
-  because "matches vendor drawing 1234 rev B"
+waive D001 on acme.parts::Bearing608.* {
+  because "vendor dimensions coincide with ours by design"
   expires 2027-01-01
 }
 ```
 
-A waiver suppresses one code on one canonical path. It binds the
-target's digest at waive time (ir.md 4). Fixed codes cannot be waived
-(W003). An expired waiver is W001; a waiver whose target changed is W002
-(re-review it); a waiver that suppresses nothing is W004.
+A waiver suppresses one code on the paths matched by a path glob. It
+binds the closure digests of its targets at waive time. `for alt NAME`
+scopes it to one alternate's variant (language.md 3.2). Fixed codes cannot be
+waived (W003). W001 expired, W002 a target changed (re-review), W004
+suppresses nothing. A `require` is never waived; it is attested
+(obligations.md 4). `#[allow(CODE)]` is a waiver without expiry for one
+member and still needs a `because` string: `#[allow(M001, "vendor
+drawing 1234")]`.
 
 ## 3. Catalog
 
@@ -32,38 +35,42 @@ target's digest at waive time (ir.md 4). Fixed codes cannot be waived
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| Q001 | unitless-quantity | error | yes | Bare number where a quantity is required. |
-| Q002 | dimension-mismatch | error | yes | `+ - compare` across dimensions. |
+| Q001 | unitless-quantity | error | yes | Bare number where a quantity is required (quantities.md 2). |
+| Q002 | dimension-mismatch | error | yes | `+ -` or comparison across dimensions. |
 | Q003 | kind-mismatch | error | yes | Implicit conversion between named kinds. |
-| Q004 | inexact-emit | warning | | Value not representable at the target's precision. |
-| Q005 | unsupported-toleranced-arithmetic | error | yes | `*` or `/` of two toleranced quantities. |
-| Q006 | inexact-value | info | | Value computed through an inexact operation. |
+| Q004 | inexact-emit | warning | | Value not representable at the target's declared precision. |
+| Q005 | (retired) | | | Was unsupported-toleranced-arithmetic; now conservative evaluation. |
+| Q006 | inexact-value | info | | Reported once at the root inexact operation, with the count of dependents. |
 | Q007 | quantity-literal-split | error | yes | Whitespace between number and unit. |
+| Q008 | angle-dropped | warning | | Angle exponent mismatch (quantities.md 4.3): the missing-2*pi class. |
+| Q009 | non-integer-count | error | yes | A Count that is not an integer. |
+| Q010 | ambiguous-rounding | error | yes | Rounding an inexact value that sits on a tie or step boundary. |
 
 ### N: naming
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | N001 | non-canonical-case | warning | | Name breaks the case canon (language.md 4). |
-| N002 | redundant-prefix | warning | | Parameter repeats its component's name (`Axle.axle_length`); the path already qualifies it. |
-| N003 | unit-in-name | warning | | Name encodes a unit (`diameter_mm`); quantities carry units. |
-| N004 | renamed-reference | warning | | Reference uses a `was` name. |
+| N002 | redundant-prefix | warning | | Member repeats its component's name (`Axle.axle_length`). |
+| N003 | unit-in-name | warning | | Name encodes a unit (`diameter_mm`). |
+| N004 | renamed-reference | warning | | Reference uses a `was` path. |
+| N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
 
 ### D: duplication and single source of truth
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| D001 | restated-value | warning | | An authored literal equals another parameter's value of the same kind in a different component; probably a copy that should be a reference. Info-level when the value is a common round number (configurable list). |
-| D002 | derivable-authored | warning | | An authored literal equals an expression the compiler can form from dependencies already present (e.g. exactly twice an existing value, or a fit member). |
+| D001 | restated-value | warning | | An authored literal in a `model` (or observed IR) equals another parameter's value of the same kind, in any component including its own. Scored by specificity: fires at the configured severity when the literal has at least `[lint] d001_min_digits` significant digits (default 3: `12.012mm`, `6.35mm`), at info below that, and never for `[lint] common_values` unless either side is imported (observed IR), where a coincidence of round numbers is still worth a look. Significant digits are counted in the authored form from the first to the last non-zero digit (`100mm` has 1, `6.35mm` 3). One diagnostic per group of equal values, listing every location. Never between two `ots` parameters. |
+| D002 | derivable-authored | warning | | A literal equals a value the design already offers by name: a fit member or its accessors, a table cell reachable from the component, or a solver output. `12.009mm` equals `seat.shaft.mid`. |
 | D003 | reference-cycle | error | yes | Parameters depend on each other cyclically. |
 
 ### M: magic numbers
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| M001 | unexplained-precision | warning | | Literal has more significant decimals than `[lint] precision` for its kind and has no tolerance, fit, source or doc comment. `12.012mm` is the canonical example. |
-| M002 | magic-factor | info | | Bare numeric factor in an expression other than small integers and simple fractions. |
-| M003 | untoleranced-interface | warning | | Parameter referenced by a `fit` or `check` against another component has no tolerance. |
+| M001 | unexplained-precision | warning | | In a `model`: a literal with more significant decimals than `[lint] precision` for its kind and no tolerance, fit, table lookup or allow. Provenance and doc comments do not explain a value. In an `ots`: the same, unless cited. |
+| M002 | magic-factor | info | | Bare factor other than small integers, simple fractions and powers of ten. |
+| M003 | untoleranced-fit-side | warning | | A parameter used as a side of a `fit` has no tolerance. |
 
 ### F: fits
 
@@ -71,43 +78,72 @@ target's digest at waive time (ir.md 4). Fixed codes cannot be waived
 |---|---|---|---|---|
 | F001 | unknown-fit-class | error | yes | Class not in the ISO 286 tables. |
 | F002 | size-out-of-range | error | yes | Nominal outside the table's size range. |
-| F003 | fit-tolerance-conflict | error | | The fitted parameter's own tolerance disagrees with the fit side it plays. |
+| F003 | fit-tolerance-conflict | error | | A side's own tolerance numerically differs from the class it is declared to play. |
+| F004 | fit-range-violated | error | | A fit's clearance falls outside its declared required range. |
 
-### S: sources and obligations
+### I, L, T, P: interfaces, lifecycle, tables, processes
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| S001 | ots-without-source | warning | | `ots` value with no `source` on it or its component. |
-| S002 | source-unreachable | info | | A local-file `source` path does not exist. |
+| I001 | missing-interface-member | error | yes | An implementer lacks an interface member. |
+| I002 | alternate-not-viable | warning | | An approved alternate violates a check, fit, bound or require under variant evaluation (names it). |
+| I003 | alternate-undecided | info | | An approved alternate is viable but leaves a check undecided that the primary decides. |
+| L001 | end-of-life-part | warning | | A primary is `eol` or `obsolete` and has no viable alternate. Error once its date has passed. |
+| L002 | not-recommended-part | info | | A primary is `nrnd`. |
+| T001 | not-in-table | warning | | An `ots` literal citing a table matches none of its rows. |
+| P001 | missing-process-role | warning | | Under a process, a feature-like parameter has no rule role. |
+
+### S: sources and solvers
+
+| Code | Name | Default | Fixed | Meaning |
+|---|---|---|---|---|
+| S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. |
+| S002 | citation-unreachable | info | | A local-file citation path does not exist. Literal citations (`@"ASTM A276"`) are never checked. |
+| S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
+| S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. |
+| S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
 
 ### C: checks
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| C001 | check-violated | error | | A `check` is false for every value in tolerance. |
-| C002 | check-undecided | warning | | A `check` holds for some values in tolerance and not others. |
+| C001 | check-violated | error | | False for every value in tolerance (names the alternate when relevant). |
+| C002 | check-undecided | warning | | Holds for some values and not others; says if the evaluation was conservative. |
+| C003 | toleranced-equality | warning | | `==` on toleranced operands; suggests accessors. |
+| C004 | derived-feature-in-check | info | | A check reads an arithmetic parameter with toleranced inputs and no tolerance of its own, so it treats a computed value as exact (quantities.md 5.3); suggests `let`. |
+
+### O: obligations
+
+| Code | Name | Default | Fixed | Meaning |
+|---|---|---|---|---|
+| O001 | obligation-stale | warning | | An attestation's digest set changed (error if its role is `required_for = "check"`). |
+| O002 | obligation-open | warning | | A required attestation was never given. |
+| O003 | requirement-unattested | error | | A `require` lacks a required attestation for release. |
 
 ### R: read-back and drift
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| R001 | drift | error | | Observed value differs from design value at a bound path. Message says which side moved since last sync. |
+| R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal). Says which side moved. |
 | R002 | unbound-native | warning | | Native parameter has no binding. |
 | R003 | missing-native | error | | Bound path not found in the native file. |
 | R004 | regen-failed | error | | The CAD tool failed to rebuild after a push. |
+| R005 | orphan-binding | warning | | A binding's path matches no IR path and no `was` path. |
+| R006 | adopt-value-change | info | | On first sync after import, the emitted value differs from the legacy native value. |
 
-### W: waivers
+### U, W
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
+| U001 | unused-parameter | info | | A `model` parameter is read by nothing and bound to nothing. |
 | W001 | waiver-expired | error | yes | |
-| W002 | waiver-stale | warning | yes | Target digest changed since waiver. |
-| W003 | waiver-not-allowed | error | yes | Waiver of a fixed code. |
+| W002 | waiver-stale | warning | yes | A target's digest changed since the waiver. |
+| W003 | waiver-not-allowed | error | yes | Waiver of a fixed code or a `require`. |
 | W004 | waiver-unused | warning | yes | |
 
 ## 4. Rule implementation contract
 
-Each rule is a pure function from IR (and, for R rules, bindings plus
-observed IR) to diagnostics. Each rule has positive and negative fixtures
-under `tests/lints/<code>/`. A rule documents here before it ships; the
-code links back with `frob:doc docs/spec/lints.md#...`.
+Each rule is a pure function from IR (plus, for R and O rules, bindings,
+observed IR and the lock file) to diagnostics, with positive and
+negative fixtures under `tests/lints/<code>/`. A rule is documented here
+before it ships; its code links back with `frob:doc`.
