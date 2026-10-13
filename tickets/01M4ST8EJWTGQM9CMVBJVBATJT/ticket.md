@@ -6,10 +6,14 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:10Z"
+updated = "2026-10-13T05:05:11Z"
 idempotency_key = "replan13:Obligation graph and lock file (cadetta-obligations)"
 labels = ["creates:crates/cadetta-obligations/**"]
 scope = ["crates/cadetta-obligations/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 
 [[links]]
 kind = "blocks"
