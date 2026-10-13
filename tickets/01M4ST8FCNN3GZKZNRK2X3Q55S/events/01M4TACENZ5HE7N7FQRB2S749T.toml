@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:44:30Z"
+digest = "b49cf364a26664d074ca96e3bbc11bd316a53f9bca746bdc2304b3e129a9dcd9"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3c3a7796-303a-4373-ab76-11ea5a2fb94c with nextest profile: default
+    Starting 1 test across 23 binaries (686 tests skipped)
+        PASS [   0.010s] cadetta cmd::compare::tests::every_implementer_is_a_column_with_members_commercial_lifecycle_and_verdicts
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 686 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::compare::tests::every_implementer_is_a_column_with_members_commercial_lifecycle_and_verdicts)"
+size = 599
+status = "measured"
+test_count = 1
+tests_digest = "e0ccf7c3e616ae5a83fd065332347fe7da51e6f2e3051561b2a7af22b6978b9a"
+at = "2026-10-13T09:44:30Z"
+actor = "lognd"
+rev = 1
