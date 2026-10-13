@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a bare enum variant where the parameter type is known, when resolved, then it is accepted; elsewhere it must be qualified (language.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a canonical path with `/part[index]` segments, when resolved, then it matches ir.md 2"
