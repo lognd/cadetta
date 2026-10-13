@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:01:55Z"
+updated = "2026-10-13T08:03:12Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
 labels = ["creates:crates/cadetta-sema/src/checks.rs"]
-scope = ["crates/cadetta-sema/src/checks.rs"]
+scope = ["crates/cadetta-sema/src/checks.rs", "crates/cadetta-sema/src/eval.rs"]
 
 [[links]]
 kind = "blocks"
