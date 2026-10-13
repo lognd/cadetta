@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "write datum, point and placement syntax"
 idempotency_key = "replan14:geo-parse"
 labels = ["creates:crates/cadetta-syntax/src/geometry.rs", "creates:crates/cadetta-syntax/tests/geometry.rs"]
-scope = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/parser.rs"]
+scope = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/format.rs"]
 
 [[links]]
 kind = "blocked-by"
