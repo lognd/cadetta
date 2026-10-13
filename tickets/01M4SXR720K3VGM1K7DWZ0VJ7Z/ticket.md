@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:45Z"
-updated = "2026-10-13T07:57:29Z"
+updated = "2026-10-13T07:57:30Z"
 persona = "library user"
 capability = "know when a pinned dependency changed"
 labels = ["creates:crates/cadetta-obligations/src/lock_package.rs"]
@@ -36,7 +36,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the same dependency content twice, when digested, then the digest is identical regardless of checkout path (packages.md 1; ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a dependency digest, when the closure digest of a reader is computed, then the digest is an input to it (obligations.md 3; packages.md 6)"
