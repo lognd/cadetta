@@ -2,7 +2,8 @@
 id = "01M4STCCQD6C55WEN7HFEBPEYV"
 title = "Lints L001-L002, T001 and P001"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
