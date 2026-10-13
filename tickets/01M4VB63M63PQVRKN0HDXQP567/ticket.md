@@ -2,7 +2,8 @@
 id = "01M4VB63M63PQVRKN0HDXQP567"
 title = "Citation lints and obligations: S002, S004, S008, attest citation records"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
