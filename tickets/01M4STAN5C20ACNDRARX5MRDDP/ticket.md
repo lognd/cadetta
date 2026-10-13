@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T05:05:19Z"
+updated = "2026-10-13T05:05:20Z"
 persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
@@ -18,6 +18,10 @@ scope = ["crates/cadetta-solvers/src/results.rs"]
 [[links]]
 kind = "blocks"
 target = "01M4STAN8QG3QWZQCH5XN3QHMT"
+
+[[links]]
+kind = "blocks"
+target = "01M4STANBCA3XCNHR3X1NJKGFE"
 
 [[acceptance]]
 text = "Given a run, when stored, then `<script>.out.json` holds results keyed by input digest (solvers.md 4)"
