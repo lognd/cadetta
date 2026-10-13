@@ -376,7 +376,7 @@ mod tests {
         assert!(lower_solver(&solver(ok), "p::s").is_ok());
     }
 
-    // frob:tests crates/cadetta-solve/src/decl.rs::SolverDecl::mark_driving kind=unit
+    // frob:tests crates/cadetta-solve/src/decl.rs::SolverDecl.mark_driving kind=unit
     #[test]
     fn outputs_are_bound_until_driving() {
         let mut d = lower_solver(&solver(OK), "p::s").expect("ok");
