@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:42:22Z"
+updated = "2026-10-13T06:42:23Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
@@ -53,7 +53,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `#[emit(mid)]` trailing a member and `#![emit(nominal), display(mm)]` in a component, when parsed, then they attach as member and scope attributes (language.md 3.11)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given `was Globals.plate_thk` and `@vendor:"p.2, table 1"`, when parsed, then the rename and the citation with locator are recorded (language.md 3.3, 3.9)'
