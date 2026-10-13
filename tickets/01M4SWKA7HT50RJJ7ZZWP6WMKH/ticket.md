@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T14:02:36Z"
+updated = "2026-10-13T14:05:39Z"
 persona = "design engineer"
 capability = "get editor problems without an LSP"
 idempotency_key = "replan14:lint-watch"
@@ -25,7 +25,7 @@ target = "01M4SWK9V5CYNNVTAS3PE4EC23"
 
 [[acceptance]]
 text = "Given check --format json --watch, when a source file changes, then a re-run emits one cadetta.diag/1 per line sorted by (file, line, code) (lints.md 1.2; config-cli.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unchanged run, when watching, then nothing new is emitted twice for identical records (config-cli.md 5)"
