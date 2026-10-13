@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "wont-fix"
+reason = "Duplicate empty epic; ~796GVPN is the Workspace bootstrap epic and holds the child stories."
+at = "2026-10-13T05:00:00Z"
+actor = "lognd"
+rev = 1
