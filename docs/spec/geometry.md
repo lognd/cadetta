@@ -161,6 +161,13 @@ plane and z is its normal.
   `holes.start`, `holes.rotation`); those bind and emit, and the derived
   coordinates are analysis-only, never emitted, unless the points are
   hand-listed.
+- Evaluation decisions: a rotation of a pattern follows the datum rotation
+  rules (exact for whole multiples of 90deg, inexact and marked
+  otherwise); a toleranced generator member shares one source variable
+  across the points it moves; a tolerance after a pattern adds one fresh
+  variable per coordinate; an omitted `rotation` has no member; a point
+  count of zero is an error. The counts (`nx`, `ny`, `n`) are structural,
+  not members.
 
 ## 4. Placement
 
