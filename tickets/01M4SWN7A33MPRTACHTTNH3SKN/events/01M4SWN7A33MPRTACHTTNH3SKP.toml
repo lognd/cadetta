@@ -1,0 +1,16 @@
+kind = "create"
+title = "lock verify"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "catch merge-invalidated attestations"
+idempotency_key = "replan14:ob-verify"
+labels = ["creates:crates/cadetta-obligations/src/lock_verify.rs"]
+scope = ["crates/cadetta-obligations/src/lock_verify.rs"]
+acceptance = ["Given a merged lock, when verify runs, then attestations invalidated by the merge are listed and exit is 1 (config-cli.md 3; obligations.md 3)"]
+at = "2026-10-13T05:44:38Z"
+actor = "lognd"
+rev = 1
