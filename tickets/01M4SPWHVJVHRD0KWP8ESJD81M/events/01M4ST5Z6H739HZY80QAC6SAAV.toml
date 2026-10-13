@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Exact rational magnitudes and SI dimension vectors"
+new = "Exact magnitudes r*pi^k and dimension vectors"
+at = "2026-10-13T05:01:21Z"
+actor = "lognd"
+rev = 1
