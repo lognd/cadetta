@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:13:29Z"
+updated = "2026-10-13T07:13:33Z"
 persona = "design engineer"
 capability = "exchange inputs and outputs with a solver in a defined format"
 idempotency_key = "replan13:cadetta.solve/1 request and response protocol"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a malformed or wrong-version response, when parsed, then a typed error is returned (solvers.md 3)"
-bound = false
+bound = true
 +++
