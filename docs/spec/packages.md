@@ -47,6 +47,17 @@ src = "src"                  # module root (default "src")
   workspace. The workspace lock is `<root>/cadetta.lock` and the build
   directory `<root>/build`. The implicit `std` dependency is versioned
   with the compiler.
+- Resolution rules (0.1.0): the walk is breadth first from the root
+  packages in name order, and the first requirement to reach a package
+  selects its source and version. A first requirement the selection
+  fails is E012. A later requirement it fails is E013, and no second
+  copy is loaded. A later, different source for a selected package is
+  ignored with a warning. A dependency without a `cadetta.toml`, a
+  failed git checkout, or a workspace in place of a package is E005. A
+  package that declares no `version` meets no `version` requirement.
+  `version` accepts comma-joined `^`, `~`, `=`, `<`, `<=`, `>`, `>=`
+  and wildcard comparators; a bare version is caret; pre-releases never
+  match. Git and file access are injected, never made by the resolver.
 
 ## 2. Modules
 
