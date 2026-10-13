@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:16:44Z"
+updated = "2026-10-13T13:16:45Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -53,7 +53,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver never reviewed (no lock record), when linted, then it still suppresses, its review is an open waiver obligation O002, and W002 does not fire; W002 fires only when a recorded review is stale (lints.md 2.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given waive ... for alt SLOT=ALT, when evaluated, then it scopes to that variant, with the same O002 and W002 states (lints.md 2.1)"
