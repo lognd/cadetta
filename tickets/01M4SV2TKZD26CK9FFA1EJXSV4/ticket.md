@@ -8,11 +8,11 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:24Z"
+updated = "2026-10-13T19:18:41Z"
 persona = "design engineer"
 capability = "read globals, equations, dimensions and custom properties"
-labels = ["creates:adapters/solidworks/src/read.py"]
-scope = ["adapters/solidworks/src/read.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**"]
 
 [[links]]
 kind = "blocked-by"
