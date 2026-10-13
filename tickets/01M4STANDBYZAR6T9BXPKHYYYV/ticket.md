@@ -2,7 +2,8 @@
 id = "01M4STANDBYZAR6T9BXPKHYYYV"
 title = "Bound versus driving outputs"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
