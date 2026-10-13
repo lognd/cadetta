@@ -2,13 +2,14 @@
 id = "01M4SV2NMPSM42YZT9MXT4YVMW"
 title = "Python Project.open, evaluate and design indexing with schema-generated IR models"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T14:09:28Z"
+updated = "2026-10-13T14:11:19Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
@@ -33,21 +34,21 @@ target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
 [[acceptance]]
 text = "Given a project path, when Project.open then evaluate run, then a typani Result wraps the design IR as pydantic models generated from the IR JSON schema (bindings.md 3.1, 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given design["acme.rover::Axle.end_diameter"], when nominal, max, mid, kind and citation are read, then they match the CLI ir JSON (bindings.md 3.1)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unknown path, when indexed, then a Result error is returned, not a KeyError (bindings.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Project.open(path=None, config=None), when called, then root discovery follows config-cli.md 1.6 (package or workspace)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given project.package and project.modules, when read, then they return the [package] name and version and the sorted module paths under src per package, matching the IR package and modules[] (bindings.md 3.2; ir.md 4)"
-bound = false
+bound = true
 +++
