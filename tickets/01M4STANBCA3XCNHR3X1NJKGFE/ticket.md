@@ -2,7 +2,8 @@
 id = "01M4STANBCA3XCNHR3X1NJKGFE"
 title = "solve --variants and per-variant results"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
