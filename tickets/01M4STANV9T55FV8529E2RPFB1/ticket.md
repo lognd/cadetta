@@ -19,6 +19,10 @@ scope = ["std/cadetta.toml", "std/mod.cdt"]
 kind = "blocks"
 target = "01M4STANXPC2GK2PQN8E8NJG6J"
 
+[[links]]
+kind = "blocks"
+target = "01M4STAP0CCQTR0MM7TAMWC9E8"
+
 [[acceptance]]
 text = "Given `use std.fits`, when resolved, then std is found as an ordinary package with no special-casing (stdlib.md 1)"
 bound = false
