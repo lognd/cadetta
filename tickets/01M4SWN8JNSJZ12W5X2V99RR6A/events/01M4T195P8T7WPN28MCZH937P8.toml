@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:05:26Z"
+digest = "202da67dfcda79f965fbbd4363b88f30e6727bb0d064b247a0919e695e4179a1"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9b33e147-d1c3-43d6-a63e-838b7e93ce50 with nextest profile: default
+    Starting 4 tests across 15 binaries (259 tests skipped)
+        PASS [   0.007s] cadetta scope::tests::malformed_terms_are_errors
+        PASS [   0.008s] cadetta scope::tests::module_prefix_scopes_nodes
+        PASS [   0.008s] cadetta scope::tests::module_and_glob_intersect
+        PASS [   0.009s] cadetta scope::tests::globs_scope_nodes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 4 tests run: 4 passed, 259 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(/scope::tests/)'"
+size = 756
+status = "measured"
+test_count = 4
+tests_digest = "e4a4e8ced84e3bbf672e26f088ef7e0558bb0ea79e6f9570841b0f5ab0879411"
+at = "2026-10-13T07:05:26Z"
+actor = "lognd"
+rev = 1
