@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T13:06:05Z"
+digest = "22e99821d54580aa3b147e079e58e7ab93023414df829f78e6043ba56320b61c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6ac4ccda-5dd1-499c-89c9-98c2e9abc195 with nextest profile: default
+    Starting 1 test across 1 binary (66 tests skipped)
+        PASS [   0.037s] cadetta-lint rules::d::tests::d003_error_on_member_cycle
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.048s] 1 test run: 1 passed, 66 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::d::tests::d003_error_on_member_cycle)'"
+size = 545
+status = "measured"
+test_count = 1
+tests_digest = "23b08fc9757e1efbdcec1dcb4ef96c8422082b077a279f117ff2a18083277fe9"
+at = "2026-10-13T13:06:05Z"
+actor = "lognd"
+rev = 1
