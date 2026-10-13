@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:35:39Z"
+updated = "2026-10-13T16:37:29Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for adapters"
@@ -21,7 +21,7 @@ target = "01M4STCF3A4JQGPYSE7BBHK4BD"
 
 [[acceptance]]
 text = "Given docs/spec/adapters.md, when fixtures are written, then every normative rule and every diagnostic code in adapters has a must-fire and a must-not-fire fixture under tests/conformance/adapters/ (adapters.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
