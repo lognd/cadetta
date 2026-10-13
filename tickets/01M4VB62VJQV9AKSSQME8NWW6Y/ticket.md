@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:45Z"
-updated = "2026-10-13T21:27:10Z"
+updated = "2026-10-13T21:27:23Z"
 persona = "design engineer"
 capability = "cite sources as typed records that someone else can look up"
 outcome_text = "every value says where it came from precisely"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given tests/conformance/language, when the corpus runs, then must-fire and must-not-fire fixtures cover each rule above"
-bound = false
+bound = true
 +++
