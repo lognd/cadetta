@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T21:56:09Z"
+digest = "7681162f2ef971694903893f18d8aef48c38d15cc802b9500fea60d9dfc77336"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0063]: missing field `implicit` in initializer of `Locator`
+   --> crates/cadetta-cli/src/cmd/import.rs:144:8
+    |
+144 |     Ok(Locator {
+    |        ^^^^^^^ missing `implicit`
+
+error[E0063]: missing field `implicit` in initializer of `Locator`
+   --> crates/cadetta-cli/src/cmd/impact_swap_report.rs:658:9
+    |
+658 |         Locator {
+    |         ^^^^^^^ missing `implicit`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `cadetta` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `cadetta` (lib test) due to 2 previous errors
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "s002_"
+size = 938
+status = "measured"
+at = "2026-10-13T21:56:09Z"
+actor = "lognd"
+rev = 1
