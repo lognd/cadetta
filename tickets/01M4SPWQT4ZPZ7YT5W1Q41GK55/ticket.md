@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:01:44Z"
+updated = "2026-10-13T13:01:45Z"
 persona = "design engineer"
 capability = "get lints for the N family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `Iso4762M5` and `M2_5`, when linted, then N001 does not fire (language.md 4)"
-bound = false
+bound = true
 +++
