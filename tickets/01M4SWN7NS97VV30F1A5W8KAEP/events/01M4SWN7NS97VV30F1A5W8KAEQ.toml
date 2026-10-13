@@ -1,0 +1,16 @@
+kind = "create"
+title = "Semantic versus presentational digests"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "avoid false staleness"
+idempotency_key = "replan14:ob-attrs"
+labels = ["creates:crates/cadetta-obligations/src/digest_attrs.rs"]
+scope = ["crates/cadetta-obligations/src/digest_attrs.rs"]
+acceptance = ["Given a change to display, emit, allow or lifecycle date text, when graphed, then no obligation goes stale; a change to process, role, rule roles or default does (ir.md 4)"]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
