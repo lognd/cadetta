@@ -1,0 +1,16 @@
+kind = "create"
+title = "Spans and error recovery"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
+persona = "cadetta contributor"
+capability = "attach file:line:col spans to every node and recover from errors"
+outcome_text = "diagnostics point at source and one error does not hide the rest"
+labels = ["creates:crates/cadetta-syntax/src/span.rs"]
+scope = ["crates/cadetta-syntax/src/span.rs"]
+acceptance = ["Given two syntax errors in one file, when parsed, then both are reported with spans", "Given any AST node, when queried, then it has a file:line:col-line:col span"]
+at = "2026-10-13T04:03:52Z"
+actor = "lognd"
+rev = 1
