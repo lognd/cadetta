@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:59Z"
-updated = "2026-10-13T16:19:35Z"
+updated = "2026-10-13T16:22:06Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for config-cli"
 labels = ["creates:tests/conformance/config-cli/**"]
-scope = ["tests/conformance/config-cli/**"]
+scope = ["tests/conformance/config-cli/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocks"
