@@ -1,0 +1,16 @@
+kind = "create"
+title = "Lints L001-L002, T001 and P001"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+persona = "design engineer"
+capability = "be warned about lifecycle, missing table rows and process roles"
+idempotency_key = "replan13:Lints L001-L002, T001 and P001"
+labels = ["creates:crates/cadetta-lint/src/rules/lifecycle.rs"]
+scope = ["crates/cadetta-lint/src/rules/lifecycle.rs"]
+acceptance = ["Given L001 and L002, when linted, then they fire per the catalog, L001 an error once the date passed (lints.md L)", "Given T001, when an ots literal matches no row, then it fires (lints.md T)", "Given P001, when a feature-like parameter has no role under a process, then it fires (lints.md P)"]
+at = "2026-10-13T05:04:52Z"
+actor = "lognd"
+rev = 1
