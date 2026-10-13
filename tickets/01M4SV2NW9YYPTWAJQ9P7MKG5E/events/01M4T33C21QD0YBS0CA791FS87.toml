@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:37:13Z"
+digest = "0d70b8b2384ae83b1ab6cadc07b83a6fb5d112f5d1cbbc524f95b26c813c3dd1"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 2 items
+
+bindings/python/tests/test_solve.py ..                                   [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3917137-0.xml --------------
+============================== 2 passed in 0.09s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_solve.py::test_input_kind_mismatch_is_protocol_error_naming_input bindings/python/tests/test_solve.py::test_output_kind_mismatch_is_protocol_error_naming_output"
+size = 467
+status = "measured"
+test_count = 2
+tests_digest = "58a21baf1d7a1d551feacfcfbffbe887d0eb28526e2cc877895faf93276f598a"
+at = "2026-10-13T07:37:13Z"
+actor = "lognd"
+rev = 1

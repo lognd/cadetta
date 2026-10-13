@@ -68,6 +68,15 @@ the decimal mark; `M2_5` displays as `M2.5`). `TapClass`: `Soft Hard`.
 `TapColumn`: `Cut75 Cut65 Form`, naming the `TapDrill` columns
 `cut_75 cut_65 form`.
 
+`Materials` units and decisions: `density` in g/cm^3, `yield_strength`
+in MPa, both handbook nominal values for the stock temper the variant
+names (design-stage, not procurement minima); `engagement_factor` is
+steel and stainless 1.0, brass and cast iron 1.5, aluminium and polymers
+2.0; `tap_class` is `Hard` for steels and stainless, `Soft` otherwise.
+Engagement and tap class are shop policy, not published constants.
+`CastIron` (ASTM A48 class 30) has no yield point, so its
+`yield_strength` holds the minimum tensile strength as a stand-in.
+
 Values are stated as the standard publishes them. A dimension published
 as a limit is stored with that tolerance (`head_height` is
 `[+0 -x]` from its maximum; `Din472.groove_dia` and `groove_width`
