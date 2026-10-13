@@ -210,6 +210,10 @@ Evaluation rules (placement.rs):
 - A `for` placement carries the `[*]` index in its canonical path
   (`Assembly/part[*].place.0.x`); an unindexed target covers every
   instance, so it overlaps any other placement of that part (G006).
+- In the IR (op_members.rs) the `[*]` becomes the range variable
+  (`Assembly/part[i].place.0.x`), since `[*]` is valid only in bindings;
+  each argument is a `Place` Member with provenance `authored` and its
+  expression text and span.
 
 ## 5. Checking positions
 
