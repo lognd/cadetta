@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-13T06:38:36Z"
+digest = "096c5bb1546c247e0a84d593df4a98e90e7a511c210da5622a1195232613f913"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID dd9fa80c-ecd9-4131-8034-0cf57a4ebe87 with nextest profile: default
+    Starting 6 tests across 2 binaries (25 tests skipped)
+        PASS [   0.008s] cadetta project::tests::missing_or_empty_src_is_e005
+        PASS [   0.010s] cadetta project::tests::member_and_path_dependency_without_config_is_e005
+        PASS [   0.011s] cadetta project::tests::member_scope_unless_at_workspace_root
+        PASS [   0.010s] cadetta project::tests::modules_sorted_by_path
+        PASS [   0.011s] cadetta project::tests::discovery_walks_up_skips_tableless_and_fails_when_none
+        PASS [   0.012s] cadetta project::tests::duplicate_component_is_e003_with_both_spans
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 6 tests run: 6 passed, 25 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(/project::tests/)'"
+size = 1000
+status = "measured"
+test_count = 6
+tests_digest = "949b99bcf60730883c2a92b45be3742281bbf7dac92764dcde0103c621290fca"
+at = "2026-10-13T06:38:36Z"
+actor = "lognd"
+rev = 1
