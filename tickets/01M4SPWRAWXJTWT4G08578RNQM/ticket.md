@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:56:25Z"
+updated = "2026-10-13T15:56:26Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a push that replaces a native expression, when linted, then R006 is a warning (not info) listing the old expression, and also fires from an adopted record (lints.md 3 R; adapters.md 2.1, 7.4)"
-bound = false
+bound = true
 +++
