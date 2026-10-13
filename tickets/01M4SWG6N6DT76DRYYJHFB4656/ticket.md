@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:54Z"
+updated = "2026-10-13T05:41:55Z"
 persona = "design engineer"
 capability = "compare positions across parts"
 idempotency_key = "replan14:geo-in"
 labels = ["creates:crates/cadetta-geometry/src/reexpress.rs"]
 scope = ["crates/cadetta-geometry/src/reexpress.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWFX82NWXV79EQTA5QX081"
 
 [[acceptance]]
 text = "Given p in D inside a part, when evaluated, then p is carried through the component's own datums (geometry.md 3)"
