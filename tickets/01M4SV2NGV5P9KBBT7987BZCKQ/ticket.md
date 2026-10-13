@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T06:38:54Z"
+updated = "2026-10-13T06:39:27Z"
 persona = "Python user"
 capability = "work with exact Quantities and parse source syntax"
 outcome_text = "results never silently become floats"
@@ -29,7 +29,7 @@ target = "01M4SPWNHPTRETQBYCM6EA2GEV"
 
 [[acceptance]]
 text = 'Given cadetta.quantity("12mm [+-0.1mm]"), when .to("mm") is called, then Fraction(12, 1) is returned and .exact is True (bindings.md 3.1)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an inexact value, when inspected, then .exact == False (bindings.md 3.1)"
