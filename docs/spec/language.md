@@ -228,6 +228,10 @@ interface only, so:
   an error (lints.md 1). An evaluation error under a variant (E007
   lookup miss, a failed `as`) also makes that alternate non-viable, with
   the error as the reason; it never fails the run.
+  A value that cannot be determined under a variant (a solver output
+  with no result for the changed inputs) is unknown there, never borrowed
+  from the primary, and counts as a difference. The engine is
+  `cadetta-variants` `evaluate.rs`: one evaluation per alternate.
 - **Viable** means no check, fit, bound or require violates under the
   variant. Undecided results leave it viable with I003. A non-viable
   alternate stays listed (I002); a waiver may be scoped to one
@@ -308,6 +312,12 @@ ordinary I001 or Q003. Any part lacking the parameter is an
 error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
+
+`N` must be an exact, dimensionless, non-negative whole number. An
+unindexed read of an array whose `N` is 0 is an error, as is an index
+outside `0..N`. `max` and `min` compare nominals and return the whole
+toleranced value of the winner; a roll-up over values of different
+dimensions is an error, and so is one with no contributing part.
 
 ### 3.6 Tables
 

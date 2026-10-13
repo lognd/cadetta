@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:44:08Z"
+digest = "45a71c38368d1033f048ff09815e883925db29f9d21e96c9299c29c198d9242c"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.46s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d91a7f68-550f-4cf1-9134-c8c812a732fe with nextest profile: default
+    Starting 1 test across 21 binaries (521 tests skipped)
+        PASS [   0.010s] cadetta-syntax::std_fasteners_screw iso4762_implements_screw
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 521 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=iso4762_implements_screw)"
+size = 608
+status = "measured"
+test_count = 1
+tests_digest = "4deedc83883dad1598bd9b5b3b9a154cccb0aaf9245b974670522c6fba3796fc"
+at = "2026-10-13T08:44:08Z"
+actor = "lognd"
+rev = 1

@@ -9,4 +9,5 @@ pub mod json;
 pub mod model;
 pub mod observed;
 pub mod path;
+pub mod schema;
 pub mod variant_name;

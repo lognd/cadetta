@@ -243,5 +243,20 @@ part's own digest. Part arguments are nodes keyed `<slot>.<arg>`.
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
-else bumps the schema. JSON Schemas are generated from the Rust types
-and committed under `docs/schemas/`.
+else bumps the schema. JSON Schemas are generated and committed under
+`docs/schemas/` (`cadetta.ir.1.json`, `diag.json`).
+
+Decisions (`cadetta-ir` `schema.rs`): the IR types serialize by hand, so
+the schema is one definition table (`schema_value`) beside them rather
+than a derive; `cadetta.ir.1.json` has `Project` at the root and every
+entity of section 3 under `$defs` (including `Dim` and the item entities
+`Interface`, `Table`, `Waiver`, `Process`). Objects are closed
+(`additionalProperties: false`). A test regenerates the schema and
+compares it to the committed file, and validates a fully populated
+`Project` and each item entity against it, so a serializer change
+without a schema change fails CI. `classify(old, new)` is the rule:
+a new optional property or a new `$defs` entry is minor; a removed or
+retyped property, a new required property, a changed enum or a removed
+definition is breaking and bumps `cadetta.ir/N`. The committed file is
+exactly `schema_json()`; the test does no file or environment access
+(CAP001), so a stale file is replaced by that output.

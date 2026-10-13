@@ -1,0 +1,42 @@
+// std::fasteners screw: the Screw interface and the Iso4762 family (stdlib.md 2).
+//
+// Screw is what a ScrewJoint needs from a screw, whoever makes it. Iso4762 is
+// the ISO 4762 hexagon socket head cap screw family: any thread size M1.6 to
+// M20 and any length (the family does not gate on Iso4762Len; the preferred
+// lengths only constrain what ScrewJoint picks, and a lookup into Iso4762Len
+// itself that misses is E007).
+//
+// thread and length are the family parameters and so are its members.
+// mass is a design-stage estimate: a plain shank cylinder of the thread major
+// diameter plus a head cylinder of head_dia by head_height, in steel at
+// 7.85 g/cm^3. It overstates a real screw slightly (no socket, no thread
+// relief). pi is written 180deg / 1rad, exact in the quantity kernel.
+//
+// PROVENANCE WARNING: the steel density 7.85 g/cm^3 was entered from recall
+// (a handbook nominal, not an ISO 4762 figure); the std citation audit must
+// check it. All dimensional figures come from tables.cdt.
+
+use super::tables::{Iso4762Head, MetricThread, Thread, iso4762}
+
+/// The citation for the steel density used by the mass estimate: Machinery's Handbook.
+cite steel_density = "Machinery's Handbook, density of carbon and alloy steel, 7.85 g/cm^3"
+
+/// What a screw offers a joint: thread, length, head size and mass.
+pub interface Screw {
+  thread: MetricThread
+  major: Length
+  pitch: Length
+  length: Length
+  head_dia: Length
+  head_height: Length
+  mass: Mass
+}
+
+/// ISO 4762 hexagon socket head cap screw of any thread size and length.
+pub ots Iso4762(thread: MetricThread, length: Length): Screw @iso4762 {
+  major       = Thread[thread].major
+  pitch       = Thread[thread].pitch
+  head_dia    = Iso4762Head[thread].head_dia
+  head_height = Iso4762Head[thread].head_height
+  mass        = 7.85g/cm^3 * (180deg / 1rad / 4) * (major ^ 2 * length + head_dia ^ 2 * head_height)  @steel_density
+}

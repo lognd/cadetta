@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T08:46:43Z"
+digest = "1ce32bde5f14e56d60b0c77a0469f95d1ec072eaf71824aa84aa94c593cf318d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 251f476f-0a61-44ee-8500-e3b9cf20cbf0 with nextest profile: default
+    Starting 1 test across 1 binary (21 tests skipped)
+        PASS [   0.006s] cadetta-geometry placement::tests::variants_re_evaluate_members
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 21 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry -E 'test(=placement::tests::variants_re_evaluate_members)'"
+size = 552
+status = "measured"
+test_count = 1
+tests_digest = "e08315f181e1c643c3fe4418d1cb62afe533602711727689bd2e4eb0cafd6698"
+at = "2026-10-13T08:46:43Z"
+actor = "lognd"
+rev = 1

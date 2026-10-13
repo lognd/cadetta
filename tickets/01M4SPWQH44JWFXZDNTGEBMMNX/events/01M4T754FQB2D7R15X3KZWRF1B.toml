@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision (coordinator): lowerer lives in crates/cadetta-sema/src/lower.rs, not cadetta-ir, because cadetta-sema depends on cadetta-ir (dependency direction ir <- sema); ir cannot depend on sema. Criterion 5 corrected per ir.md 3: nominal is the designed value (the part as made) and drawn? is the compensated emitted value; there is no designed field."
+at = "2026-10-13T08:48:06Z"
+actor = "lognd"
+rev = 1
