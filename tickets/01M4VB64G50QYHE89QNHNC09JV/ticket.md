@@ -19,6 +19,10 @@ scope = ["bindings/python/python/**", "bindings/python/tests/**", "bindings/pyth
 kind = "blocked-by"
 target = "01M4VB63RTQENVNZ4DMXBFGJX3"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4VB644Y6YPK6YTBP4T5YM3Y"
+
 [[acceptance]]
 text = "Given the Python package, when design.citation, project.cite_list, project.names, project.bind and project.unbind are called, then they return the CLI's JSON models as Results (bindings.md 3.1, 3.2)"
 bound = false
