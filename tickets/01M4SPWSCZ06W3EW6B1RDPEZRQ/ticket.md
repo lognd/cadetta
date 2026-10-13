@@ -1,0 +1,21 @@
++++
+id = "01M4SPWSCZ06W3EW6B1RDPEZRQ"
+title = "FreeCAD adapter skeleton and initialize"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
+reporter = "lognd"
+created = "2026-10-13T04:03:55Z"
+updated = "2026-10-13T04:03:55Z"
+persona = "cadetta contributor"
+capability = "have a Python adapter that speaks the JSON-RPC protocol"
+outcome_text = "the reference adapter proves the protocol"
+labels = ["creates:adapters/freecad/src/**", "creates:adapters/freecad/pyproject.toml"]
+scope = ["adapters/freecad/src/**", "adapters/freecad/pyproject.toml"]
+
+[[acceptance]]
+text = "Given `cadetta-freecad`, when initialize is sent, then capabilities emit, read and drive are returned"
+bound = false
++++
