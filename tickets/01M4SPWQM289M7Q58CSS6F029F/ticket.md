@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T04:03:53Z"
+updated = "2026-10-13T04:04:01Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
 labels = ["creates:crates/cadetta-lint/src/engine.rs"]
 scope = ["crates/cadetta-lint/src/engine.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWQPYYT8Y5N3P5ZSG20Z9"
 
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
