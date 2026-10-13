@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T15:56:24Z"
+digest = "4cedb2b079aa1db6df4666f1482cb166ce985bbb59dc5767b264c3d3b153e4f8"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2efad9e8-a6df-45df-82fd-d483651c8074 with nextest profile: default
+    Starting 1 test across 2 binaries (162 tests skipped)
+        PASS [   0.036s] cadetta cmd::compare::tests::json_validates_against_compare_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.037s] 1 test run: 1 passed, 162 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::compare::tests::json_validates_against_compare_schema)'"
+size = 871
+status = "measured"
+test_count = 1
+tests_digest = "076ca81542b9d96dd04df6d353018834b9e381a60d062b2ec680069eb69a94cb"
+at = "2026-10-13T15:56:24Z"
+actor = "lognd"
+rev = 1
