@@ -39,8 +39,10 @@ configurators). Not the IR: for the IR use `cadetta ir`. Default `out`:
   strings with `unit` omitted; Text is a JSON string with `unit`
   omitted.
 - `note` carries what a trailing comment carries in other emitters
-  (adapters.md 3a): authored literal with tolerance when it differs from
-  the written text, the emit point when not `nominal`, the citation. It
+  (adapters.md 3a), in this order and separated by single spaces: authored
+  literal with tolerance when it differs from the written text,
+  `emit=POINT` when the emit point is not `nominal`, the citation as
+  written in source. It
   is omitted when empty. A `Text` parameter follows the same rules; as it
   has no tolerance and no emit point, only a citation can appear in its
   note.

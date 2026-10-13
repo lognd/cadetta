@@ -10,7 +10,7 @@ bound locator, for spreadsheets and tools that import tables. Default
 # cadetta emit csv 0.1.0 ir=blake3:<hex> bindings=blake3:<hex>
 name,value,unit,note
 Plate_Thk,6.35,mm,"1/4in @""ASTM B209"""
-PilotBore,12.009,mm,12mm H7; emit mid
+PilotBore,12.009,mm,12mm H7 emit=mid
 NumBolts,4,,
 ```
 
@@ -34,9 +34,11 @@ NumBolts,4,,
   never `10.0`); not representable
   is Q004. `unit` is empty for Counts, Ratios and Text.
 - `note` carries the same content as a trailing comment in other
-  emitters (adapters.md 3a), joined with `; `: authored literal with
-  tolerance when it differs from the written text, the emit point when
-  not `nominal`, the citation. A `Text` row follows the same rules; as it has no
+  emitters (adapters.md 3a), in this order and separated by single spaces: the
+  authored literal with tolerance when it differs from the written text,
+  `emit=POINT` when the emit point is not `nominal`, the citation as
+  written in source (`1/4in emit=mmc @"ASTM B209"`). There is no other
+  separator and no other form of the emit token. A `Text` row follows the same rules; as it has no
   tolerance and no emit point, only a citation can appear in its note.
 - RFC 4180 quoting, LF line endings, UTF-8 without BOM, final newline.
 

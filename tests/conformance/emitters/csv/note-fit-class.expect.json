@@ -12,10 +12,12 @@
     "output": {
       "build/params.csv": {
         "contains": [
-          "\nPilotBore,12.009,mm,12mm H7",
-          "emit"
+          "\nPilotBore,12.009,mm,12mm H7 emit=mid\n"
         ],
-        "excludes": []
+        "excludes": [
+          "; ",
+          "emit mid"
+        ]
       }
     }
   },
@@ -28,7 +30,8 @@
           "\nPilotBore,12,mm,12mm H7\n"
         ],
         "excludes": [
-          "emit"
+          "emit=",
+          "; "
         ]
       }
     }

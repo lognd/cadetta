@@ -5,21 +5,19 @@
   "rule": "note-order",
   "kind": "source",
   "entry": "emit csv",
-  "note": "note order is authored literal, emit point, citation (separator-agnostic assertion)",
+  "note": "note order is authored literal, emit=POINT, citation, separated by single spaces",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,
     "output": {
       "build/params.csv": {
         "contains": [
-          "emit",
-          "ASTM B209"
+          "1/4in emit=mmc @\"\"ASTM B209\"\"\""
         ],
-        "excludes": [],
-        "order": [
-          "1/4in",
-          "emit",
-          "ASTM B209"
+        "excludes": [
+          "emit=mmc 1/4in",
+          "@\"\"ASTM B209\"\" emit=",
+          "; "
         ]
       }
     }
@@ -30,15 +28,11 @@
     "output": {
       "build/params.csv": {
         "contains": [
-          "1/4in",
-          "ASTM B209"
+          "1/4in @\"\"ASTM B209\"\"\""
         ],
         "excludes": [
-          "emit"
-        ],
-        "order_not": [
-          "ASTM B209",
-          "1/4in"
+          "emit=",
+          "; "
         ]
       }
     }

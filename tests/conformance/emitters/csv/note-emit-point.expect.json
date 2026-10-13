@@ -12,10 +12,12 @@
     "output": {
       "build/params.csv": {
         "contains": [
-          "emit",
-          "mmc"
+          "emit=mmc"
         ],
-        "excludes": []
+        "excludes": [
+          "emit mmc",
+          "; emit"
+        ]
       }
     }
   },
@@ -26,7 +28,7 @@
       "build/params.csv": {
         "contains": [],
         "excludes": [
-          "emit",
+          "emit=",
           "mmc"
         ]
       }

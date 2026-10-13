@@ -294,7 +294,11 @@ emitters/sw-equations.md 2);
 globals vs dimension lines and refs vs values per binding mode; the
 emitted point and unit; the default output path; and tolerance and
 citation as a trailing native comment where the format has comments
-(`"Rover__axle__end_diameter" = 12.029mm  ' 12mm p6`). Drift
+(`"Rover__axle__end_diameter" = 12.029mm  ' 12mm p6`). Every emitter
+writes the same content in the same order, separated by single spaces:
+authored literal with tolerance or class, `emit=POINT` when the emit
+point is not `nominal`, then the citation; `json` and `csv` put it in
+their `note` field. Drift
 (R001) compares the read-back against the emitted point, never the
 nominal.
 
