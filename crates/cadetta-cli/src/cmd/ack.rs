@@ -695,4 +695,33 @@ mod tests {
         );
         assert!(!dir.join("cadetta.lock").exists());
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/ack.rs::render
+    #[test]
+    fn json_validates_against_ack_schema() {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../../docs/schemas/ack.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let results = vec![
+            (
+                ObligationId::new(ObligationKind::Check, "a::X.cur"),
+                Action::Recorded,
+            ),
+            (
+                ObligationId::new(ObligationKind::Check, "a::X.old"),
+                Action::Skipped,
+            ),
+        ];
+        let mut out = Vec::new();
+        render(
+            &results,
+            &args("check:a::**", "review"),
+            true,
+            Format::Json,
+            &mut out,
+        );
+        let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
+        assert!(validator.is_valid(&v), "{v}");
+    }
 }

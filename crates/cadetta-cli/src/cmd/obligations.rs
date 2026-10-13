@@ -485,4 +485,25 @@ mod tests {
         assert!(parse_args(&s(&["--bogus"])).is_err());
         assert!(parse_args(&s(&["--role"])).is_err());
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::render
+    #[test]
+    fn json_validates_against_obligations_schema() {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../../docs/schemas/obligations.json"))
+                .unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let r = list(
+            &cands(),
+            &lock(),
+            &policy(None),
+            &Default::default(),
+            &as_of(),
+        );
+        let mut out = Vec::new();
+        render(&r, &as_of(), Format::Json, &mut out);
+        let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
+        assert!(validator.is_valid(&v), "{v}");
+    }
 }
