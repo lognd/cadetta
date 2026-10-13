@@ -8,12 +8,12 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T07:08:34Z"
+updated = "2026-10-13T07:09:48Z"
 persona = "design engineer"
 capability = "use standard fit classes"
 idempotency_key = "replan13:std.fits (ISO 286)"
 labels = ["creates:std/src/fits.cdt"]
-scope = ["std/src/fits.cdt", "crates/cadetta-fits/tests/std_fits.rs", "crates/cadetta-fits/Cargo.toml", "docs/spec/stdlib.md"]
+scope = ["std/src/fits.cdt", "crates/cadetta-fits/tests/std_fits.rs", "crates/cadetta-fits/Cargo.toml", "docs/spec/stdlib.md", "crates/cadetta-syntax/tests/std_fits.rs"]
 
 [[links]]
 kind = "blocks"
