@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:23Z"
+updated = "2026-10-13T05:05:14Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -22,6 +22,10 @@ target = "01M4SPWQ6VDD0177RREW273PYG"
 [[links]]
 kind = "blocks"
 target = "01M4SPWQED1EN19NWQJE5NT0J4"
+
+[[links]]
+kind = "blocks"
+target = "01M4ST7B09TGN6VSXJBZ8FDVCN"
 
 [[acceptance]]
 text = "Given design and observed flavours, when constructed, then both use the same Project type with flavour set (ir.md 1)"
