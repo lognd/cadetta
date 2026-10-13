@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given emit, when a compensated member is written, then the drawn value is written (language.md 3.8)"
-bound = false
+bound = true
 +++
