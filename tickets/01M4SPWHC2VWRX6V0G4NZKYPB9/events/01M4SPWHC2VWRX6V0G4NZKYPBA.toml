@@ -1,0 +1,14 @@
+kind = "create"
+title = "FreeCAD reference adapter (adapters/freecad)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:adapters/freecad/**"]
+scope = ["adapters/freecad/**"]
+body = """
+Outcome: an external Python adapter that emits, reads and drives FreeCAD headless.
+
+Success metric: an emit, push, regen, read-back round trip passes in CI under freecadcmd."""
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
