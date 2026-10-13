@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T08:57:24Z"
+updated = "2026-10-13T08:59:03Z"
 persona = "cadetta contributor"
 capability = "implement an adapter declaring emit, read and drive capabilities"
 outcome_text = "new CAD targets never touch lints"
@@ -37,7 +37,7 @@ target = "01M4ST7B6MNGRQ6967DAWQA5YK"
 
 [[acceptance]]
 text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an adapter result, when failing, then it returns a Result with a diagnostic, not a panic"
