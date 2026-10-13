@@ -1,0 +1,8 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/geometry_bind.rs"]
+new = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/conformance/adapters/**", "crates/cadetta-adapter/src/geometry_bind.rs"]
+reason = "draft 1.5: geometry is verified by transform"
+at = "2026-10-13T19:19:04Z"
+actor = "lognd"
+rev = 1

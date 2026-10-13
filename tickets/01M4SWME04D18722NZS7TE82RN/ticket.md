@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:13Z"
-updated = "2026-10-13T05:44:15Z"
+updated = "2026-10-13T19:18:43Z"
 persona = "design engineer"
 capability = "bind assembly instances"
 idempotency_key = "replan14:sw-asm"
-labels = ["creates:adapters/solidworks/src/assembly.py"]
-scope = ["adapters/solidworks/src/assembly.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Assembly/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Assembly/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Assembly/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Assembly/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Assembly/**"]
 
 [[links]]
 kind = "blocked-by"

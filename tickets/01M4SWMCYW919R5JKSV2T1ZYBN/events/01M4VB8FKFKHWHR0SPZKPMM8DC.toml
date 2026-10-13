@@ -1,0 +1,8 @@
+kind = "field"
+field = "title"
+old = "Frame locators and geometry bindings"
+new = "Geometry verification: frame and instance locators, transform comparison, datums = create"
+reason = "draft 1.5: geometry is verified by transform"
+at = "2026-10-13T19:19:04Z"
+actor = "lognd"
+rev = 1

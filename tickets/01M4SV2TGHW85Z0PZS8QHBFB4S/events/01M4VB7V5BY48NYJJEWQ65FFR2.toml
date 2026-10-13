@@ -1,0 +1,9 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the adapter, when initialize is sent, then name, version, capabilities emit, read and drive, native units, precision and platforms (windows) are returned (adapters.md 5, 6)", "Given the adapter, when initialized, then it advertises open, save and close methods (adapters.md 5)"]
+new = ["Given the solution, when built, then it has the projects of solidworks.md 1 and only Cadetta.SolidWorks.Com and the add-in reference the interop assemblies (from SOLIDWORKS_API_DIR, never committed)", "Given cadetta-solidworks, when initialize is sent, then name, version, capabilities read and drive, features frames, instances, create_frames, tolerances and rename_globals, native units, precision and platforms windows are returned, protocol types are generated from docs/schemas/adapter-protocol.json, and stdout carries protocol only (adapters.md 5; solidworks.md 1)", "Given CI, when the solidworks workflow runs, then Core, the executable (against a fake session) and the tests build and pass on Linux and Windows without SOLIDWORKS"]
+reason = "draft 1.5: C# adapter (ADR decision 13)"
+moved = [0, 0]
+at = "2026-10-13T19:18:43Z"
+actor = "lognd"
+rev = 1

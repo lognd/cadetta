@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a part with equation-manager globals and equations, when read, then observed IR holds each with unit_assumed from the native unit (adapters.md 3)", "Given a dimension D1@Feature@File, when read, then it is observed with its locator and kind dimension (adapters.md 3)", "Given custom properties, when read, then they are observed with kind property (adapters.md 3)", "Given a driven or unextractable value, when read, then exact:false with a reason (adapters.md 4 rule 4)"]
+new = ["Given a part with equation-manager globals and equations, when read, then observed IR holds each with unit_assumed from the native unit (adapters.md 3)", "Given a dimension D1@Feature@File, when read, then it is observed with its locator and kind dimension (adapters.md 3)", "Given custom properties, when read, then they are observed with kind property (adapters.md 3)", "Given a driven or unextractable value, when read, then exact:false with a reason (adapters.md 4 rule 4)", "Given a part or assembly, when read, then dimension equations, dimension tolerances, coordinate-system transforms (frames[]) and component transforms with reference properties (instances[]) are in observed IR (ir.md 1; solidworks.md 4)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T19:18:43Z"
+actor = "lognd"
+rev = 1

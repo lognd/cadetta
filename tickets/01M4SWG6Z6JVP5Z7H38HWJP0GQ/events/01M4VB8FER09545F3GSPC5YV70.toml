@@ -1,0 +1,8 @@
+kind = "field"
+field = "scope"
+old = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs"]
+new = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**"]
+reason = "draft 1.5: parent-child edge criterion, rotation term, G008"
+at = "2026-10-13T19:19:04Z"
+actor = "lognd"
+rev = 1

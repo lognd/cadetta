@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a datum-plane sketch coordinate, when bound, then the dimension is pushed with sign and sketch-origin rules (geometry.md 6)", "Given a sketch not on the datum plane or not dimensioned from its origin, when read, then R007 is raised (lints.md 3 R)"]
+new = ["Given a datum-plane sketch coordinate, when bound, then the dimension is pushed with sign and sketch-origin rules (geometry.md 6)", "Given a sketch not on the datum plane or not dimensioned from its origin, when read, then R007 is raised (lints.md 3 R)", "Given a datum bound to a SOLIDWORKS coordinate system, when read, then its transform is reported in frames[] and, under datums = create, the coordinate system is created and updated from numeric values (solidworks.md 4)"]
+moved = [1, 2]
+at = "2026-10-13T19:19:15Z"
+actor = "lognd"
+rev = 1

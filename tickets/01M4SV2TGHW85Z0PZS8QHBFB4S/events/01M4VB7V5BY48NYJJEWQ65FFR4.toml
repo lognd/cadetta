@@ -1,0 +1,8 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/**", "adapters/solidworks/pyproject.toml"]
+new = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/Directory.Build.props", "adapters/solidworks/src/cadetta-solidworks/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "adapters/solidworks/README.md"]
+reason = "draft 1.5: C# adapter (ADR decision 13)"
+at = "2026-10-13T19:18:43Z"
+actor = "lognd"
+rev = 1

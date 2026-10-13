@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "wont-fix"
+reason = "superseded by draft 1.5: the adapter never creates names; cadetta names (~4T5YM3Y) is the single implementation of mangling (adapters.md 3.1, solidworks.md 3)"
+at = "2026-10-13T19:18:44Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,10 @@
+kind = "create"
+title = "csv read: R016 error for unbound-name row; # comment only at record start"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "found while working ~6NZV18E. Implement per csv.md 1 and 3."
+at = "2026-10-13T18:20:02Z"
+actor = "lognd"
+rev = 1

@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:13Z"
-updated = "2026-10-13T05:44:15Z"
+updated = "2026-10-13T19:18:43Z"
 persona = "design engineer"
 capability = "adopt properties and configurations"
 idempotency_key = "replan14:sw-props"
-labels = ["creates:adapters/solidworks/src/props.py"]
-scope = ["adapters/solidworks/src/props.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Props/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Props/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Props/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Props/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Props/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Props/**"]
 
 [[links]]
 kind = "blocked-by"
