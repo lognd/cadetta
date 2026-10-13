@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:18:57Z"
+digest = "d0f898c8dee3cd689dd52f4586ab631b8f23234de17884ef75fbdb781ad6e958"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID eb95c9be-6737-4f4d-a7e2-30e1a35085a3 with nextest profile: default
+    Starting 1 test across 1 binary (4 tests skipped)
+        PASS [   0.013s] cadetta-ir path::tests::star_only_in_bindings
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 4 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E 'test(=path::tests::star_only_in_bindings)'"
+size = 584
+status = "measured"
+test_count = 1
+tests_digest = "8db8c2f74530d754a268d54eee2d90020aeba3a3ceb20fd5246a23e78e50ed6e"
+at = "2026-10-13T07:18:57Z"
+actor = "lognd"
+rev = 1
