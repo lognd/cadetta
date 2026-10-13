@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `cadetta explain Q007`, when run, then the catalog entry is printed", "Given `cadetta ir`, when run, then cadetta.ir/1 JSON is printed", "Given `cadetta units Length`, when run, then the Length units are listed", "Given `cadetta ir --observed freecad`, when run, then observed IR as cadetta.ir/1 JSON is printed (config-cli.md 2)"]
+new = ["Given `cadetta explain Q007`, when run, then the catalog entry is printed", "Given `cadetta ir`, when run, then cadetta.ir/1 JSON is printed", "Given `cadetta units Length`, when run, then the Length units are listed", "Given `cadetta ir --observed freecad`, when run, then observed IR as cadetta.ir/1 JSON is printed (config-cli.md 2)", "Given ir, explain and units, when run, then outputs validate against ir.json, explain.json and units.json (config-cli.md 3)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
