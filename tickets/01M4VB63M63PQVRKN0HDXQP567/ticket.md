@@ -8,12 +8,16 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T19:17:46Z"
+updated = "2026-10-13T19:19:05Z"
 persona = "design engineer"
 capability = "see when a cited source is incomplete or has changed"
 outcome_text = "nobody signs off values against a superseded datasheet"
 idempotency_key = "d15:cite-lints"
 scope = ["crates/cadetta-lint/src/rules/s.rs", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-obligations/src/**", "crates/cadetta-cli/src/cmd/ack.rs", "tests/conformance/lints/**", "tests/conformance/obligations/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VB62VJQV9AKSSQME8NWW6Y"
 
 [[acceptance]]
 text = "Given a cite missing a field its type requires, a url with neither file nor accessed, or an ots value whose only citation is a note, when linted, then S008; pseudo-citations never are (lints.md S008; language.md 3.9)"
