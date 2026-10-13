@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:12:49Z"
+updated = "2026-10-13T13:12:55Z"
 persona = "design engineer"
 capability = "get lints for the F family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a fitted parameter whose tolerance disagrees with the hole side, when linted, then F003 is reported"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fit whose clearance lies entirely outside its required range, when linted, then F004 error; a partial overlap yields C002 instead (lints.md F)"
