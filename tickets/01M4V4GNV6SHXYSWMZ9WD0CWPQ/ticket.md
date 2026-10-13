@@ -2,7 +2,7 @@
 id = "01M4V4GNV6SHXYSWMZ9WD0CWPQ"
 title = "Spec: sw-equations ref-mode dimension with no bound global and the 'sign' on created globals"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
