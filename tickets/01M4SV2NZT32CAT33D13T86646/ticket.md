@@ -2,7 +2,8 @@
 id = "01M4SV2NZT32CAT33D13T86646"
 title = "Python adapter base class cadetta.adapter.Adapter with JSON-RPC loop"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
