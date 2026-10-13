@@ -2,13 +2,13 @@
 id = "01M4SXVA290E2HY5B284N1B3H9"
 title = "std citation exports at the package root"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T06:05:26Z"
-updated = "2026-10-13T06:05:29Z"
+updated = "2026-10-13T09:00:40Z"
 persona = "design engineer"
 capability = "cite a standard with one line"
 labels = ["creates:std/src/lib.cdt"]
