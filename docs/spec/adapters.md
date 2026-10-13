@@ -180,6 +180,13 @@ variable `"Axle_end_diameter"` or to the dimension
   same path (bindings-file order); if the path has none, at the
   global of its referent when the path is a pure alias; otherwise the
   emitter creates the path's own mangled global (3.1).
+- File defaults (`cadetta-adapter` `bindings.rs`): `mode` defaults to
+  `ref` for a `dimension` locator and `value` otherwise; an omitted
+  `native_unit` means the adapter's declared native unit. A
+  `#[native(adapter, "locator")]` pin replaces the file entry for its
+  path with one `global`, `value` locator (several pins for a path
+  accumulate). A `was` rename moves the binding unless the new path is
+  already bound. `[*]` matches any index when testing R005.
 - Units at read: a native value without a unit takes the adapter's
   declared native unit (`initialize`), recorded in observed IR as
   `unit_assumed`. Formats with no unit information at all need
