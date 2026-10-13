@@ -40,6 +40,13 @@ src = "src"                  # module root (default "src")
   members = ["rover", "crawler", "shop"]`. Members share one lock and
   one `build/`, and depend on each other by path. A product line with a
   shared shop package is one workspace.
+- Loading rules (0.1.0): a dependency with neither `path` nor `git`
+  (a bare version string or `{ version = ".." }`) is rejected as an
+  unsupported registry source (OQ-19). A workspace member without a
+  `cadetta.toml` is E005, and a member must be a package, not another
+  workspace. The workspace lock is `<root>/cadetta.lock` and the build
+  directory `<root>/build`. The implicit `std` dependency is versioned
+  with the compiler.
 
 ## 2. Modules
 

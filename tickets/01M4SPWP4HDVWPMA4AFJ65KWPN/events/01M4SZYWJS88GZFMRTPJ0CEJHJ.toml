@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:42:21Z"
+digest = "e498d23c16cae41ee2e1da1d135877dba8ff91dc12bc38c820943130c0bd4380"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b22706e6-d24c-45ae-9d1c-0eea88f6f763 with nextest profile: default
+    Starting 1 test across 1 binary (31 tests skipped)
+        PASS [   0.006s] cadetta-syntax expr::tests::multiplication_binds_tighter_than_addition
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 31 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=expr::tests::multiplication_binds_tighter_than_addition)'"
+size = 559
+status = "measured"
+test_count = 1
+tests_digest = "39e06ddb343d805c03e65cc7b1a09047191f5efa5661e8765b36f1b9069a60c2"
+at = "2026-10-13T06:42:21Z"
+actor = "lognd"
+rev = 1

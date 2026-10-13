@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Blocked landing: need scope crates/cadetta-obligations/src/lib.rs (pub mod as_of) and docs/spec/obligations.md (resolution order decision); both leased by 01M4ST8EPKBWRWHF51Y5NV3VK0 (E-LEASE-HELD). Work committed on ticket/7EAJ4K1; retry add-scope and land after that lease ends."
+at = "2026-10-13T06:42:54Z"
+actor = "lognd"
+rev = 1

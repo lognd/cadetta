@@ -1,0 +1,32 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:41:37Z"
+digest = "30168c5fcd16e03ec5b058e53d4ad05ab40ee551844da3d6ea94d8d50142d9f4"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e6a96c02-2030-4430-8a4d-908f7e8e7fcc with nextest profile: default
+    Starting 6 tests across 2 binaries (20 tests skipped)
+        PASS [   0.005s] cadetta-lint diag::tests::sorts_by_file_line_code_path
+        PASS [   0.005s] cadetta-obligations as_of::tests::flag_wins_and_is_recorded
+        PASS [   0.005s] cadetta-obligations as_of::tests::rejects_bad_dates
+        PASS [   0.005s] cadetta-obligations as_of::tests::unix_epoch_conversion
+        PASS [   0.005s] cadetta-obligations as_of::tests::config_then_today
+        PASS [   0.005s] cadetta-obligations as_of::tests::expiry_uses_fixed_date
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 6 tests run: 6 passed, 20 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -p cadetta-obligations -E '(package(=cadetta-lint) & (test(=diag::tests::sorts_by_file_line_code_path))) | (package(=cadetta-obligations) & (test(=as_of::tests::config_then_today) | test(=as_of::tests::expiry_uses_fixed_date) | test(=as_of::tests::flag_wins_and_is_recorded) | test(=as_of::tests::rejects_bad_dates) | test(=as_of::tests::unix_epoch_conversion)))'"
+size = 1221
+status = "measured"
+test_count = 6
+tests_digest = "cb3c480a80dc3c2e53a861162f9b2a1edf9da6febbcf229bd8ed280631550f68"
+at = "2026-10-13T06:41:37Z"
+actor = "lognd"
+rev = 1

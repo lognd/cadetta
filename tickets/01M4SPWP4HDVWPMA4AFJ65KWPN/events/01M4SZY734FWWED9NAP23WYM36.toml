@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax/src/expr.rs"]
+new = ["crates/cadetta-syntax/src/expr.rs", "crates/cadetta-syntax/src/lib.rs", "crates/cadetta-syntax/src/parser.rs", "docs/spec/language.md"]
+at = "2026-10-13T06:41:59Z"
+actor = "lognd"
+rev = 1
