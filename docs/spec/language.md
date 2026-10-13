@@ -554,10 +554,29 @@ Rules the grammar left open, fixed by the reference parser:
   `row.in`); elsewhere see the next rule.
 - Expression precedence is pinned by the conformance tests in
   `crates/cadetta-syntax/src/expr.rs`, one per rule of section 5.
-- Keywords used as names are errors (E001). Items and members of kinds
-  not yet parsed (`process`, `table`, `enum`, `fn`, `solver`, `waive`,
-  `unit`, `kind`, `datum`, `place`) produce an E001 diagnostic and are
-  skipped to the next statement.
+- Keywords used as names are errors (E001). `datum` and `place` members
+  are not yet parsed: they produce an E001 diagnostic and are skipped to
+  the next statement.
+- Kind expressions (`Volume / Time`, `Pressure / VolumeFlow^2`) are a
+  left-to-right product or quotient of kind paths, each with an optional
+  integer exponent (`^2`, `^-1`); no parentheses and no rational
+  exponents. They are accepted wherever a type is (`out q: Volume /
+  Time`, parameters, `kind X = ...`). A lone kind stays a plain path.
+- A `table` needs exactly one `key` line (else E001); `cols` is an
+  optional comma list. A row with `=>` ends its line; key-only rows
+  (no `=>`) may share a line, as in `key length: Length  3mm  4mm`.
+- A `process` body holds parameters and `rule NAME(p: Kind) -> Kind =
+  expr` (exactly one parameter). An `enum` needs at least one variant;
+  commas and newlines separate variants, a trailing comma is allowed.
+- A `solver` (item or component member) requires a citation naming its
+  script; its body holds `in a = expr, ...`, `out NAME: kind` and
+  `deps STRING`.
+- `waive CODE on GLOB [for alt SLOT = ALT] { because STRING [expires
+  DATE] }`: the glob, slot and alternate are kept as raw text made of
+  adjacent tokens (no whitespace; `*`, `**`, `[*]`, `::`, `.`, `/`
+  allowed). DATE is strictly `YYYY-MM-DD`, else E001.
+- `unit NAME = expr` defines a unit; `unit KIND UNIT` sets a kind's
+  default display unit.
 - Source locations: lines and columns are 1-based; a column counts
   Unicode characters, not bytes; the end position is exclusive and
   prints as `file:line:col-line:col`. A byte offset inside a character

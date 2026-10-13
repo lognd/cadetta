@@ -16,6 +16,9 @@ use crate::ast::{
 };
 use crate::lexer::{Comment, CommentKind, DiagCode, Diagnostic, Punct, Span, Tok, Token, lex};
 
+#[path = "parser_items.rs"]
+mod items;
+
 /// The deepest expression or type nesting accepted (a bound on recursion, not a language rule).
 pub const MAX_DEPTH: usize = 128;
 
@@ -427,11 +430,14 @@ impl Parser<'_> {
             Tok::Keyword("fit") => ItemKind::Fit(self.fit()?),
             Tok::Keyword("require") => ItemKind::Require(self.require()?),
             Tok::Keyword("check") => ItemKind::Check(self.check()?),
-            Tok::Keyword(
-                k @ ("process" | "table" | "enum" | "fn" | "solver" | "waive" | "unit" | "kind"),
-            ) => {
-                return self.err(format!("`{k}` items are not parsed yet"));
-            }
+            Tok::Keyword("process") => ItemKind::Process(self.process()?),
+            Tok::Keyword("table") => ItemKind::Table(self.table()?),
+            Tok::Keyword("enum") => ItemKind::Enum(self.enum_decl()?),
+            Tok::Keyword("fn") => ItemKind::Fn(self.fn_decl()?),
+            Tok::Keyword("solver") => ItemKind::Solver(self.solver()?),
+            Tok::Keyword("waive") => ItemKind::Waive(self.waive()?),
+            Tok::Keyword("unit") => ItemKind::Unit(self.unit_decl()?),
+            Tok::Keyword("kind") => ItemKind::Kind(self.kind_decl()?),
             other => {
                 return self.err(format!("expected an item, found {}", describe(&other)));
             }
@@ -719,6 +725,11 @@ impl Parser<'_> {
                 let inner = self.ty()?;
                 self.expect_p(Punct::Gt)?;
                 TypeKind::Table(Box::new(inner))
+            } else if matches!(
+                self.tok(),
+                Tok::P(Punct::Star | Punct::Slash | Punct::Caret)
+            ) {
+                TypeKind::KindExpr(self.kind_expr_tail(base)?)
             } else {
                 TypeKind::Path(base)
             }
@@ -923,7 +934,8 @@ impl Parser<'_> {
             (Tok::Keyword("fit"), _) => MemberKind::Fit(self.fit()?),
             (Tok::Keyword("check"), _) => MemberKind::Check(self.check()?),
             (Tok::Keyword("require"), _) => MemberKind::Require(self.require()?),
-            (Tok::Keyword(k @ ("datum" | "place" | "solver")), _) => {
+            (Tok::Keyword("solver"), _) => MemberKind::Solver(self.solver()?),
+            (Tok::Keyword(k @ ("datum" | "place")), _) => {
                 return self.err(format!("`{k}` members are not parsed yet"));
             }
             (Tok::Ident(_), Tok::P(Punct::Colon | Punct::Eq)) => MemberKind::Param(self.param()?),
@@ -1715,6 +1727,7 @@ mod tests {
                 MemberKind::Fit(_) => "fit",
                 MemberKind::Check(_) => "check",
                 MemberKind::Require(_) => "require",
+                MemberKind::Solver(_) => "solver",
                 MemberKind::Error => "error",
             })
             .collect();
