@@ -1,0 +1,3 @@
+model Part {
+  w = ScrewJoint.size
+}

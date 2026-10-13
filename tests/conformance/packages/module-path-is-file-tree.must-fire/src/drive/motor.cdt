@@ -1,0 +1,3 @@
+pub model Motor {
+  torque = 2mm
+}

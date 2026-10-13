@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 3",
+  "rule": "E017",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E017",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

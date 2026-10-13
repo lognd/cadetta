@@ -2,13 +2,14 @@
 id = "01M4SXSGM3WJG86VHC2JKTB9TF"
 title = "Conformance fixtures for packages"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-13T17:55:25Z"
+updated = "2026-10-13T17:57:34Z"
 persona = "spec author"
 capability = "verify an implementation against packages.md"
 labels = ["creates:tests/conformance/packages/**"]

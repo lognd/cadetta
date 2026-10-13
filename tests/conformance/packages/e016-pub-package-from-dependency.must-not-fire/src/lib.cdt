@@ -1,0 +1,4 @@
+use acme.shop::Thing
+model Part {
+  w = Thing.size
+}

@@ -1,0 +1,3 @@
+model Axle(span: Length) {
+  length = span
+}

@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 1",
+  "rule": "E014",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E014",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

@@ -1,0 +1,4 @@
+use package::a::{Thing, Missing}
+model Part {
+  w = Thing.size
+}

@@ -1,0 +1,11 @@
+[package]
+name = "acme.demo"
+version = "0.1.0"
+as_of = "2026-10-13"
+
+[dependencies]
+"acme.a" = { path = "a", version = "1" }
+"acme.b" = { path = "b", version = "1" }
+
+[lint]
+fail_on = "error"

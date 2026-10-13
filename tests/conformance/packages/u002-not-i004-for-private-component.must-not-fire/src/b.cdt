@@ -1,0 +1,4 @@
+use package::Axle
+assembly Rig {
+  part h: Axle(span = 3mm)
+}

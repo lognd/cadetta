@@ -1,0 +1,4 @@
+use package::drive::Motor
+model Part {
+  t = Motor.torque
+}

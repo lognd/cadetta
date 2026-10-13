@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 2 (loading rules)",
+  "rule": "E015",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E015",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

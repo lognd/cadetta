@@ -1,0 +1,4 @@
+use std::fasteners::ScrewJoint
+model Part {
+  w = ScrewJoint.size
+}

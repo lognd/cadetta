@@ -1,0 +1,5 @@
+use package::a::*
+use package::b::*
+model Part {
+  w = 1mm
+}

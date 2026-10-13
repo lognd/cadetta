@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 1 (resolution rules)",
+  "rule": "E005",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E005",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

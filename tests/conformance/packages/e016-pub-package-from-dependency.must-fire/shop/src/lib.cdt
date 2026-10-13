@@ -1,0 +1,3 @@
+pub(package) model Thing {
+  size = 3mm
+}

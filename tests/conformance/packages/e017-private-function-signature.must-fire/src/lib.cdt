@@ -1,0 +1,4 @@
+enum Mode { Fast, Slow }
+pub fn pick(m: Mode) -> Length {
+  3mm
+}
