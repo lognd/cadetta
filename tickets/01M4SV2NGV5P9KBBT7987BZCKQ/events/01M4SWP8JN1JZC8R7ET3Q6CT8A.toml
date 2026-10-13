@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ['Given cadetta.quantity("12mm [+-0.1mm]"), when .to("mm") is called, then Fraction(12, 1) is returned and .exact is True (bindings.md 3.1)', "Given an inexact value, when inspected, then .exact == False (bindings.md 3.1)", "Given arithmetic that violates a kind rule, when evaluated, then a Result error carries the same Q-code the compiler reports (bindings.md 3.1, quantities.md)"]
+new = ['Given cadetta.quantity("12mm [+-0.1mm]"), when .to("mm") is called, then Fraction(12, 1) is returned and .exact is True (bindings.md 3.1)', "Given an inexact value, when inspected, then .exact == False (bindings.md 3.1)", "Given arithmetic that violates a kind rule, when evaluated, then a Result error carries the same Q-code the compiler reports (bindings.md 3.1, quantities.md)", "Given a Quantity, when used, then nominal, min, max, mid, mmc and lmc are computed in Rust, to_exact returns None for inexact and there is no .to (bindings.md 3.1)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:45:13Z"
+actor = "lognd"
+rev = 1
