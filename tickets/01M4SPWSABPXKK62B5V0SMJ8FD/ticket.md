@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a value, when written, then it is the emit point in the locator native_unit with unit suffix at 6 decimals, trailing zeros trimmed; unrepresentable is Q004; Counts and Ratios are bare; Text is not emitted (emitters/sw-equations.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a trailing comment, when written, then it holds the authored literal if its text differs, then the emit point if not nominal, then the citation, and nothing else (emitters/sw-equations.md 1)"
