@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "editors README lacks QB9ANVQ so editors_keywords test fails"
+new = "editors README test still expects the LSP deferral note (main red)"
+at = "2026-10-13T22:50:52Z"
+actor = "lognd"
+rev = 1

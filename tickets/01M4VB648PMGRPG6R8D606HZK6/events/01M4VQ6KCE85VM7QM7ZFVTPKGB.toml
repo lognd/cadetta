@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:47:08Z"
+digest = "71db5e06bba57043d2ac08f987abb9ba903f4dcb0de0472e45ac3bcf8953cc47"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.83s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fd1c58c3-72b9-4f6b-96ef-3042c5b9febb with nextest profile: default
+    Starting 3 tests across 1 binary (113 tests skipped)
+        PASS [   0.071s] cadetta-adapter classify::tests::tolerance_is_part_of_the_compared_record
+        PASS [   0.077s] cadetta-adapter sync::tests::tolerance_edit_in_cad_is_r001
+        PASS [   0.093s] cadetta-adapter sync::tests::synced_record_includes_tolerance
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.097s] 3 tests run: 3 passed, 113 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(tolerance_edit_in_cad_is_r001) | test(synced_record_includes_tolerance) | test(tolerance_is_part_of_the_compared_record)'"
+size = 792
+status = "measured"
+test_count = 3
+tests_digest = "735d391d65b47d4c0505e095ffc1b7a6e872fd4de33cb3cfb34a01fdd8dd4df7"
+at = "2026-10-13T22:47:08Z"
+actor = "lognd"
+rev = 1
