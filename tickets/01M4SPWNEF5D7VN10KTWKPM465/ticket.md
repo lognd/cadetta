@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:15:30Z"
+updated = "2026-10-13T06:15:31Z"
 persona = "design engineer"
 capability = "use K, degC and degF with exact offsets"
 outcome_text = "temperature differences never silently use absolute scales"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given dK, ddegC and ddegF, when parsed, then they are TemperatureDelta units with no offset (quantities.md 3)"
-bound = false
+bound = true
 +++
