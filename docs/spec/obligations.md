@@ -343,6 +343,17 @@ second time is listed with `repeated = true` and not expanded again. A path
 the IR does not define is a usage error (exit 2); an undefined dependency
 (a table, say) appears as an `unresolved` leaf.
 
+`impact PATH` walks the IR from PATH downstream (schema `impact.json`,
+`cadetta.impact/1`): the reverse of the reads `why` follows. A member
+reading PATH `changes`; a solver reading it (deps or inputs) goes `stale`;
+a check whose expression mentions a reached member `may_flip`. Each
+dependent carries `via` (the node it reads that leads to PATH) and `depth`;
+the list is breadth first, then sorted by path. `obligations` lists
+`solver:PATH` (stale) and `check:PATH` (may_flip) ids. Whether a verdict
+actually flips needs two evaluations (`--since`, `--swap`). A path with no
+dependents prints `PATH: no dependents` (JSON: empty arrays); an undefined
+path is a usage error (exit 2).
+
 `obligations --stale` prints per row: obligation id, role, last
 attester, age, nearest changed dep, and when the verdict is unchanged
 "verdict unchanged, margin 0.012mm -> 0.010mm", so re-review is cheap.
