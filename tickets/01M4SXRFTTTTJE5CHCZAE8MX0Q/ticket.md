@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:22:07Z"
+updated = "2026-10-13T07:22:10Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
@@ -28,7 +28,7 @@ target = "01M4SXQWGAYJDGMGKNBMHASNBA"
 
 [[acceptance]]
 text = "Given src/lib.cdt, src/frame.cdt and src/drive/motor.cdt in package acme.rover, when loaded, then modules are acme.rover, acme.rover::frame and acme.rover::drive::motor, and drive.cdt may be absent (packages.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a file or directory under src that is not snake_case, when loaded, then E015 fires (packages.md 2, 7; N001)"
