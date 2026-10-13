@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T23:29:33Z"
+updated = "2026-10-13T23:38:09Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
@@ -45,5 +45,5 @@ bound = false
 
 [[acceptance]]
 text = "Given flip and exact 90deg rotations, when synced, then they are never pushed and are verified only through the transform comparison (adapters.md 3.4)"
-bound = false
+bound = true
 +++
