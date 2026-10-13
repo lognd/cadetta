@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "blocked on ack lease for cmd/mod.rs; WIP slot needed for base-CI clippy fix"
+at = "2026-10-13T08:50:12Z"
+actor = "lognd"
+rev = 1

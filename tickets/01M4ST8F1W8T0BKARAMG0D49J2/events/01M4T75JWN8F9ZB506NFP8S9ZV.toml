@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:48:11Z"
+digest = "1481c7ddd90058e9471bc30ae764ad2aebd28e03fc2cb8f40f3b07f6fb1d0795"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.41s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3ed9e6cf-80c7-4dc4-aa80-610c924ad81d with nextest profile: default
+    Starting 1 test across 20 binaries (514 tests skipped)
+        PASS [   0.010s] cadetta cmd::ack::tests::ack_attests_at_current_closure_digest
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 514 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::ack::tests::ack_attests_at_current_closure_digest)"
+size = 884
+status = "measured"
+test_count = 1
+tests_digest = "8568efd97499fbb5cda74a46eff829a96eb448eed0128fcd222a2caa90a176f7"
+at = "2026-10-13T08:48:11Z"
+actor = "lognd"
+rev = 1

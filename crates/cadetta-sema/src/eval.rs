@@ -134,6 +134,8 @@ pub struct Evaluation {
     pub diagnostics: Vec<EvalDiagnostic>,
     /// The verdict of every `check` and `require`, in source order.
     pub checks: Vec<checks::CheckResult>,
+    /// How many source variables were allocated (ids `0..var_count`); lowering enumerates them.
+    pub var_count: u32,
 }
 
 impl Evaluation {
@@ -452,6 +454,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             values,
             diagnostics: self.diagnostics,
             checks,
+            var_count: self.next_var,
         }
     }
 

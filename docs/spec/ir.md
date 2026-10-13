@@ -205,6 +205,28 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
 - `variants` holds, per part slot and alternate, only the values that
   differ from the primary evaluation (variant evaluation, language.md
   3.2). Keys are `"Rover/wheel=Colson2Series"`.
+- Lowering (`cadetta-sema` `lower.rs`, `lower::lower`): the lowerer lives
+  in sema, not `cadetta-ir`, because sema depends on ir (ir <- sema).
+  Rules it fixes:
+  - A component path has an empty member tail (`pkg::Axle`).
+  - `provenance` is `derived` when the member's `deps` are non-empty,
+    else `authored`. A `let` has `kind = let` and `analysis = true`.
+  - `nominal` is the designed value; for a process-compensated member
+    `drawn` is the compensated nominal (Exact) and there is no separate
+    `designed` field.
+  - `tol` has one term per source variable the evaluated form depends
+    on, with radius `|c|`; the centre-minus-nominal offset is carried by
+    the first term (`lo = offset - r`, `hi = offset + r`). A variable
+    owned by a member is named by that member's path; an anonymous one is
+    named `<member path>.tol<N>`, N being its order within the member.
+    A derived parameter keeps its nominal only (no `tol`); a `let` keeps
+    the analysis form.
+  - `variants` keys are caller-supplied variant names; only values that
+    differ from the primary are stored.
+  - Not lowered yet: waivers, interfaces, tables, `require` obligations,
+    solvers and bindings; datums, points and placements (pending the
+    geometry entities ticket); parameterized components lower with
+    valueless members.
 
 ## 4. Digests
 
