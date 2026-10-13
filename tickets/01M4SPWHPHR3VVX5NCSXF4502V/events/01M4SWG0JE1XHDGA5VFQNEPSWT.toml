@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a clean checkout, when `cargo build --workspace` runs, then all eight crates compile", "Given the workspace, when `cargo test --workspace` runs, then it passes with zero tests failing"]
+new = ["Given a clean checkout, when `cargo build --workspace` runs, then all eight crates compile", "Given the workspace, when `cargo test --workspace` runs, then it passes with zero tests failing", "Given the draft 1.4 crate list, when the workspace builds, then crates cadetta-geometry, cadetta-variants, cadetta-obligations and cadetta-solvers are members too (geometry.md; ir.md)"]
+moved = [1, 2]
+at = "2026-10-13T05:41:48Z"
+actor = "lognd"
+rev = 1
