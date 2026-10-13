@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-geometry/src/aligned.rs"]
+new = ["crates/cadetta-geometry/src/aligned.rs", "crates/cadetta-geometry/src/lib.rs", "tests/conformance/geometry/**"]
+at = "2026-10-13T23:11:59Z"
+actor = "lognd"
+rev = 1
