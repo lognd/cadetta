@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:14:05Z"
+digest = "0f90a233385dc3dc9d30b5a4d4230464ec12b66b0c3ce04fa02269a0f094f527"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.50s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f9a2ec29-6db6-400b-b973-b5eadd704f24 with nextest profile: default
+    Starting 1 test across 1 binary (125 tests skipped)
+        PASS [   0.010s] cadetta-sema renames::tests::records_carry_over_to_the_moved_path
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 125 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=renames::tests::records_carry_over_to_the_moved_path)'"
+size = 836
+status = "measured"
+test_count = 1
+tests_digest = "f1e62bbc95af107377c89b31ea8479238fd7753e897ac107a452937ddc6f6314"
+at = "2026-10-13T09:14:05Z"
+actor = "lognd"
+rev = 1
