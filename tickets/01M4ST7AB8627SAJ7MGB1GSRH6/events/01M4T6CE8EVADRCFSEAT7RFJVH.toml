@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T08:34:36Z"
+digest = "7456dc4ac79726448fdb744aa79e380bd9241c7e67d38067b47ddb692369d6e3"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f01d2b70-138f-4fc4-8284-8028f53b61e6 with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.010s] cadetta-sema affine::tests::arithmetic_parameter_gets_its_own_variable
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::arithmetic_parameter_gets_its_own_variable)'"
+size = 564
+status = "measured"
+test_count = 1
+tests_digest = "10dfdeca18b3d6b1414a58a310a4981a4669e923f9b478d984395a87bdd0af73"
+at = "2026-10-13T08:34:36Z"
+actor = "lognd"
+rev = 1
