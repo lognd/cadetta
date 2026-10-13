@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**"]
+new = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**", "crates/cadetta-ir/**", "crates/cadetta-geometry/Cargo.toml", "Cargo.lock", "docs/spec/ir.md", "docs/spec/geometry.md", "docs/schemas/**", "bindings/python/**"]
+at = "2026-10-13T23:56:45Z"
+actor = "lognd"
+rev = 1
