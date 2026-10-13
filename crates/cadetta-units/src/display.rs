@@ -378,7 +378,7 @@ mod tests {
         DisplaySpec::parse(s).unwrap()
     }
 
-    // frob:tests display::tests::precedence_order
+    // frob:tests crates/cadetta-units/src/display.rs::tests.precedence_order
     #[test]
     fn precedence_order() {
         let mut c = DisplayChoices {
@@ -408,7 +408,7 @@ mod tests {
         );
     }
 
-    // frob:tests display::tests::inch_fraction
+    // frob:tests crates/cadetta-units/src/display.rs::tests.inch_fraction
     #[test]
     fn inch_fraction() {
         let v = inches("45.9375");
@@ -435,7 +435,7 @@ mod tests {
         );
     }
 
-    // frob:tests display::tests::feet_inches
+    // frob:tests crates/cadetta-units/src/display.rs::tests.feet_inches
     #[test]
     fn feet_inches() {
         let v = inches("45.9375");
@@ -462,7 +462,7 @@ mod tests {
         ));
     }
 
-    // frob:tests display::tests::spec_parsing
+    // frob:tests crates/cadetta-units/src/display.rs::tests.spec_parsing
     #[test]
     fn spec_parsing() {
         assert_eq!(spec("mm/rev"), DisplaySpec::Unit("mm/rev".into()));
@@ -477,7 +477,7 @@ mod tests {
         ));
     }
 
-    // frob:tests display::tests::plain_units
+    // frob:tests crates/cadetta-units/src/display.rs::tests.plain_units
     #[test]
     fn plain_units() {
         assert_eq!(
@@ -499,7 +499,7 @@ mod tests {
         );
     }
 
-    // frob:tests display::tests::money_and_percent
+    // frob:tests crates/cadetta-units/src/display.rs::tests.money_and_percent
     #[test]
     fn money_and_percent() {
         let usd = Magnitude::new(Rational::parse_decimal("12.345").unwrap(), 0);
