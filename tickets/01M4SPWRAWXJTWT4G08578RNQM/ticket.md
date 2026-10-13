@@ -2,7 +2,8 @@
 id = "01M4SPWRAWXJTWT4G08578RNQM"
 title = "Lint family Drift rules R001-R006 (needs observed IR)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
