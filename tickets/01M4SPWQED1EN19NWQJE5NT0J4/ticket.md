@@ -2,7 +2,8 @@
 id = "01M4SPWQED1EN19NWQJE5NT0J4"
 title = "BLAKE3 own and closure Merkle digests"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
