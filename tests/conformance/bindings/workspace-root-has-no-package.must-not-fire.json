@@ -1,0 +1,11 @@
+{
+  "api": "Project.open",
+  "args": [
+    "a"
+  ],
+  "files": {
+    "cadetta.toml": "[workspace]\nmembers = [\"a\"]\n",
+    "a/cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
+    "a/src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "api": "Member.value.kind",
+  "args": [
+    "acme.demo::Rover.w"
+  ],
+  "files": {
+    "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
+    "src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+  }
+}

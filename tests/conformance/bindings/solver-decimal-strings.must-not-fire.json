@@ -1,0 +1,11 @@
+{
+  "api": "solver.serve",
+  "args": [],
+  "outputs": {
+    "wall": "Length"
+  },
+  "significant": 6,
+  "returns": {
+    "wall": "3.14159mm"
+  }
+}

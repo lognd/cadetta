@@ -1,0 +1,22 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.5",
+  "rule": "format-source",
+  "kind": "binding",
+  "entry": "python",
+  "note": "generated .cdt text is formatted with format_source, equal to fmt output (idempotent)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "changed": true
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "changed": false,
+    "idempotent": true
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "ambiguous-kind-anonymous",
+  "kind": "binding",
+  "entry": "python",
+  "note": "a dimension shared by Temperature and TemperatureDelta gives an anonymous kind; a unique one names it",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": null,
+    "anonymous": true
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": "Length"
+  }
+}

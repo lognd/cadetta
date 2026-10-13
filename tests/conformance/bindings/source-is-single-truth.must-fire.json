@@ -1,0 +1,7 @@
+{
+  "api": "hasattr",
+  "args": [
+    "Project",
+    "set_param"
+  ]
+}

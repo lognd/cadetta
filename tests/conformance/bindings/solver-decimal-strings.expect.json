@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.3",
+  "rule": "solver-significant",
+  "kind": "binding",
+  "entry": "python",
+  "note": "outputs are decimal strings rounded to `significant` digits, never repr(float)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "wall_output": "3.14159265358979 mm",
+    "why": "repr(float) trips M001 and Q006"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "wall_output": "3.14159 mm"
+  }
+}

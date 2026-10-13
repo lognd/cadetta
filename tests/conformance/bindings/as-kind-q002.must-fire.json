@@ -1,0 +1,7 @@
+{
+  "api": "Quantity.as_kind",
+  "args": [
+    "12mm",
+    "Time"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.3",
+  "rule": "solver-kind-check",
+  "kind": "binding",
+  "entry": "python",
+  "note": "a wrong output kind is a protocol error naming the output",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "protocol-error",
+    "exit": 1,
+    "names": "wall"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0
+  }
+}

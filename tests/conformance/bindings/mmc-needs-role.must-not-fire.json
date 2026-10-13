@@ -1,0 +1,7 @@
+{
+  "api": "Quantity.mmc",
+  "args": [
+    "12mm [+-0.1mm]"
+  ],
+  "role": "hole"
+}

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "instance-paths",
+  "kind": "binding",
+  "entry": "python",
+  "note": "a parameterized component exists only as part axle[N]; Axle.end_diameter and a bare axle path are PathNotFound (ir.md 2, language.md 3.1)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Err",
+    "exit": 2,
+    "error": "PathNotFound"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0
+  }
+}

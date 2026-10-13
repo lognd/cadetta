@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.2",
+  "rule": "workspace-root",
+  "kind": "binding",
+  "entry": "python",
+  "note": "at a workspace root package is None, modules is [] and evaluate() is the CLI usage error; a member scopes",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "package": null,
+    "modules": [],
+    "evaluate_exit": 2
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "package": "acme.demo",
+    "modules": [
+      "lib"
+    ],
+    "evaluate_exit": 0
+  }
+}

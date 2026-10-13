@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3",
+  "rule": "err-is-io-config-usage",
+  "kind": "binding",
+  "entry": "python",
+  "note": "Err means I/O, configuration or usage only (exit code 2)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Err",
+    "exit": 2,
+    "error": "ProjectError"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0
+  }
+}

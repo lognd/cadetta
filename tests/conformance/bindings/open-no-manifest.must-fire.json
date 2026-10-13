@@ -1,0 +1,9 @@
+{
+  "api": "Project.open",
+  "args": [
+    "."
+  ],
+  "files": {
+    "src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+  }
+}

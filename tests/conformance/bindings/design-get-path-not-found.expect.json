@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "design-get-result",
+  "kind": "binding",
+  "entry": "python",
+  "note": "get returns Result[Member, PathNotFound]",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Err",
+    "exit": 2,
+    "error": "PathNotFound"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "kind": "param"
+  }
+}

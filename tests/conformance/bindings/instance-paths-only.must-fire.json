@@ -1,0 +1,10 @@
+{
+  "api": "Design.get",
+  "args": [
+    "acme.demo::Rover/axle.end_diameter"
+  ],
+  "files": {
+    "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
+    "src/lib.cdt": "component Axle(wheel: Wheel, span: Length) { param end_diameter: Length = 12mm; }\npart Rover { part axle[2]: Axle; }\n"
+  }
+}

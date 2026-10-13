@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "to-exact-none-inexact",
+  "kind": "binding",
+  "entry": "python",
+  "note": "to_exact is None for an inexact value (Q006 marked); exact rationals give a Fraction",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": null
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": "1/3"
+  }
+}

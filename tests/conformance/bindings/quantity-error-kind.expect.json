@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "quantity-kind-violation",
+  "kind": "binding",
+  "entry": "python",
+  "note": "kind violation is a programmer bug; Torque vs Energy is Q003 (quantities.md 4)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "raises",
+    "QuantityError": "Q003",
+    "code": "Q003"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "nominal": "2N*m"
+  }
+}

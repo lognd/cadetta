@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.2",
+  "rule": "cli-only-verbs",
+  "kind": "binding",
+  "entry": "python",
+  "note": "init, cite pin and lock verbs stay CLI-only; a Project method named init is a violation",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": true,
+    "why": "init, cite pin and lock maintenance verbs must not be methods"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "api": "solver.serve",
+  "args": [],
+  "inputs": {
+    "load": "Force"
+  },
+  "outputs": {
+    "wall": "Length"
+  },
+  "returns": {
+    "wall": "3mm"
+  }
+}

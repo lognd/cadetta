@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "no-dot-to",
+  "kind": "binding",
+  "entry": "python",
+  "note": "there is no .to; the return type is never a union",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "raises",
+    "AttributeError": "to"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": 0.47244094488188976
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.5",
+  "rule": "no-param-feedback",
+  "kind": "binding",
+  "entry": "python",
+  "note": "Python does not define parameters that feed back into the design; .cdt stays the single source",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": false,
+    "why": "no API defines a parameter outside source and the solver protocol"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "value": true
+  }
+}

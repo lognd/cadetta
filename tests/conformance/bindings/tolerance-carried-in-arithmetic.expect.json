@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.1",
+  "rule": "arithmetic-carries-tolerance",
+  "kind": "binding",
+  "entry": "python",
+  "note": "arithmetic carries tolerance (affine forms, quantities.md 5.4) as the compiler does (OQ-16)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "max": "15.2mm",
+    "min": "14.8mm"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "value",
+    "max": "15mm",
+    "min": "15mm"
+  }
+}

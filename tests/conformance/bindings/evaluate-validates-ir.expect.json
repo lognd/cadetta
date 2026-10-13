@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.2",
+  "rule": "evaluate-runs-ir-verb",
+  "kind": "binding",
+  "entry": "python",
+  "note": "evaluate() runs the ir verb and returns the validated cadetta.ir/1 model",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "schema": "cadetta.ir/1"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Err",
+    "exit": 2,
+    "error": "usage"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3",
+  "rule": "diagnostics-are-ok-report",
+  "kind": "binding",
+  "entry": "python",
+  "note": "a design with error diagnostics is Ok(report), exit 1, never Err",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 1,
+    "report_has_error_diagnostic": true
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "report_has_error_diagnostic": false
+  }
+}

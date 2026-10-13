@@ -1,0 +1,12 @@
+{
+  "api": "Project.reload",
+  "args": [],
+  "files": {
+    "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
+    "src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+  },
+  "edit": {
+    "src/lib.cdt": "part Rover { param w: Length = 11mm; }\n"
+  },
+  "after_reload": "11mm"
+}

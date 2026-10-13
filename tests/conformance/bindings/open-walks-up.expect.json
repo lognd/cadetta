@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "bindings",
+  "section": "bindings.md 3.2",
+  "rule": "open-root-walk",
+  "kind": "binding",
+  "entry": "python",
+  "note": "open walks up to the nearest cadetta.toml with [package] or [workspace]; no manifest is Err(ProjectError)",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "package": "acme.demo"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "Ok",
+    "exit": 0,
+    "package": "acme.demo"
+  }
+}

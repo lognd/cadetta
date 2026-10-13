@@ -1,0 +1,7 @@
+{
+  "api": "Quantity.__add__",
+  "args": [
+    "1N*m as Torque",
+    "1N*m as Torque"
+  ]
+}

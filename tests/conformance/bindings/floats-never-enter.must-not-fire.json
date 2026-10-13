@@ -1,0 +1,7 @@
+{
+  "api": "Quantity.__mul__",
+  "args": [
+    "12mm",
+    3
+  ]
+}
