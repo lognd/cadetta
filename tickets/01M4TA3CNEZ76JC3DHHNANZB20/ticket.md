@@ -7,8 +7,8 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-13T09:53:47Z"
-scope = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**"]
+updated = "2026-10-13T09:54:17Z"
+scope = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**", "design/model.grmb"]
 
 [[acceptance]]
 text = "Given each tests/golden/* package, when parsed, then there are no E001 syntax errors (grammar fixes recorded in docs/spec/language.md where the golden and spec disagree)"
