@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T09:37:54Z"
+updated = "2026-10-13T09:37:55Z"
 persona = "design engineer"
 capability = "split one design across several files"
 idempotency_key = "replan14:ad-scope"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given modules and paths globs on an adapter, when emitting or syncing, then only matching canonical paths reach the adapter (adapters.md 3.2)"
-bound = false
+bound = true
 +++
