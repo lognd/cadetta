@@ -1,0 +1,53 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:34:12Z"
+digest = "0ae06e2fdbc32194b6c6a9cc926cec32d222f4e0d49e4b8498b51d2625e2270c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 14c2ebe8-8e67-426e-9ede-6acf581c8ebb with nextest profile: default
+    Starting 30 tests across 6 binaries (282 tests skipped)
+        PASS [   0.014s] cadetta-adapter bindings::tests::bindings_mangle_collision_r013
+        PASS [   0.012s] cadetta-adapter bindings::tests::bindings_mangle_rules
+        PASS [   0.019s] cadetta-adapter bindings::tests::bind_scope_text_when_expressible
+        PASS [   0.023s] cadetta-adapter bindings::tests::bindings_emits_only_bound
+        PASS [   0.010s] cadetta-adapter bindings::tests::bindings_multi_locator_fields
+        PASS [   0.020s] cadetta cmd::bind::tests::flag_values_may_start_with_a_dash
+        PASS [   0.025s] cadetta cmd::bind::tests::rejects_conflicts_and_invalid_requests
+        PASS [   0.026s] cadetta cmd::bind::tests::remove_drops_the_locator
+        PASS [   0.026s] cadetta-adapter bindings::tests::bind_scope_filters_candidates
+        PASS [   0.032s] cadetta-adapter bindings::tests::bindings_mangle_pure_per_path
+        PASS [   0.034s] cadetta cmd::bind::tests::add_is_canonical_and_idempotent
+        PASS [   0.022s] cadetta-adapter bindings::tests::bindings_native_overrides
+        PASS [   0.014s] cadetta-adapter bindings::tests::bindings_orphans_r005
+        PASS [   0.014s] cadetta-adapter bindings::tests::bindings_ref_resolution
+        PASS [   0.011s] cadetta-adapter bindings::tests::discover_expression_dimension_r002
+        PASS [   0.041s] cadetta cmd::bind::tests::refuses_native_name_collisions
+        PASS [   0.016s] cadetta-adapter bindings::tests::discover_dimension_link
+        PASS [   0.018s] cadetta-adapter bindings::tests::bindings_rejects_bad_input
+        PASS [   0.022s] cadetta-adapter bindings::tests::bindings_was_carry_forward
+        PASS [   0.010s] cadetta-adapter bindings::tests::explicit_replaces_implicit_other_item_adds
+        PASS [   0.010s] cadetta-adapter bindings::tests::discover_two_instances_one_part_r013
+        PASS [   0.018s] cadetta-adapter bindings::tests::discover_global_by_created_name
+        PASS [   0.017s] cadetta-adapter bindings::tests::discover_global_by_was_name
+        PASS [   0.020s] cadetta-adapter bindings::tests::discover_frame_by_datum_name
+        PASS [   0.012s] cadetta-adapter bindings::tests::implicit_never_in_file_never_r005
+        PASS [   0.016s] cadetta-adapter bindings::tests::discover_was_and_current_names_r002
+        PASS [   0.050s] cadetta cmd::bind::tests::json_validates_against_bind_schema
+        PASS [   0.015s] cadetta-adapter bindings::tests::unbind_removes_and_drops_empty_tables
+        PASS [   0.023s] cadetta-adapter bindings::tests::discover_instance_reference
+        PASS [   0.018s] cadetta-adapter bindings::tests::writer_round_trips_and_bind_is_idempotent
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.063s] 30 tests run: 30 passed, 282 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E '(package(=cadetta) & test(~cmd::bind::tests)) | (package(=cadetta-adapter) & test(~bindings::tests))'"
+size = 3100
+status = "measured"
+test_count = 30
+tests_digest = "612228164d29b735d8a39e089c151e772c0f08137d0b670feb2eae4afffd091a"
+at = "2026-10-13T22:34:12Z"
+actor = "lognd"
+rev = 1
