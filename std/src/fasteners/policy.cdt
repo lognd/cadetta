@@ -1,0 +1,120 @@
+// std::fasteners policy: FastenerPolicy and its cited default IsoDefault (stdlib.md 4).
+//
+// FastenerPolicy holds the numbers a shop disagrees about. IsoDefault is the
+// std fallback and the template to copy: a project sets its own with
+// `#![default(FastenerPolicy = AcmeShop)]` or `[defaults]` in cadetta.toml,
+// and the std default applies when neither is set (no lint fires on that
+// fallback; precedence in stdlib.md 4, language.md 3.11).
+//
+// Table-typed members take a table by name (language.md 3.3). The policy
+// tables below carry the columns FastenerPolicy asks for. Engagement factors
+// and the Soft/Hard to tap-column mapping repeat the Materials policy figures
+// (steel and stainless 1.0, brass and cast iron 1.5, aluminium and polymers
+// 2.0) and must be kept in step with materials.cdt.
+//
+// PROVENANCE WARNING: the preferred drill list was derived from the TapDrill
+// table (the union of its three columns), not transcribed from ISO 2306, and
+// the bottom_clearance, tap_lead_in and drill_point figures are the stdlib.md
+// 4 policy values entered from recall of Machinery's Handbook practice (plug
+// tap lead of about 3 pitches; 118 degree point length 0.3 d). The std
+// citation audit must verify all of them.
+
+use crate::materials::{Material, TapClass}
+use super::tables::{Iso4762Len, tapdrill}
+
+/// The citation for the shop-policy figures: Machinery's Handbook.
+pub cite policy_handbook = "Machinery's Handbook, tapping and thread engagement; ISO 2306:2015 preferred drill series"
+
+/// Which TapDrill column a tap uses: cutting at 75% or 65% thread, or forming.
+pub enum TapColumn { Cut75, Cut65, Form }
+
+/// What a shop decides about fasteners: engagement, tap columns, lengths, drills and depths.
+pub interface FastenerPolicy {
+  engagement: Table<Material>
+  tap_columns: Table<TapClass>
+  lengths: Table<Length>
+  drills: Table<Length>
+  bottom_clearance: Length
+  tap_lead_in: Count
+  drill_point: Ratio
+}
+
+/// Thread engagement factor by material, as a multiple of the thread major diameter.
+pub table IsoEngagement @policy_handbook:"thread engagement by material" {
+  key material: Material
+  cols factor: Ratio
+  Material::Al6061T6  => 2.0
+  Material::Al7075T6  => 2.0
+  Material::Al5052H32 => 2.0
+  Material::Ss304     => 1.0
+  Material::Ss316     => 1.0
+  Material::Steel1018 => 1.0
+  Material::Steel4140 => 1.0
+  Material::CastIron  => 1.5
+  Material::Brass360  => 1.5
+  Material::Petg      => 2.0
+  Material::Pla       => 2.0
+  Material::Abs       => 2.0
+  Material::Nylon6    => 2.0
+  Material::Pom       => 2.0
+}
+
+/// TapDrill column by tap class: Soft takes the 75% drill, Hard the larger 65% drill.
+pub table IsoTapColumns @policy_handbook:"tap drill selection by material hardness" {
+  key class: TapClass
+  cols cut: TapColumn, form: TapColumn
+  TapClass::Soft => TapColumn::Cut75, TapColumn::Form
+  TapClass::Hard => TapColumn::Cut65, TapColumn::Form
+}
+
+/// Drills on the shelf, mm: the ISO 2306 preferred sizes the TapDrill table uses (key only).
+pub table IsoDrills @tapdrill:"preferred drill series" {
+  key diameter: Length
+  1.25mm
+  1.3mm
+  1.45mm
+  1.6mm
+  1.65mm
+  1.8mm
+  2.05mm
+  2.1mm
+  2.3mm
+  2.5mm
+  2.6mm
+  2.8mm
+  3.3mm
+  3.4mm
+  3.7mm
+  4.2mm
+  4.3mm
+  4.65mm
+  5mm
+  5.2mm
+  5.55mm
+  6.8mm
+  6.9mm
+  7.4mm
+  8.5mm
+  8.7mm
+  9.3mm
+  10.2mm
+  10.5mm
+  11.2mm
+  14mm
+  14.3mm
+  15mm
+  17.5mm
+  17.9mm
+  18.8mm
+}
+
+/// The std default shop policy: handbook engagement, plug-tap leads and ISO preferred sizes.
+pub ots IsoDefault: FastenerPolicy @policy_handbook {
+  engagement       = IsoEngagement
+  tap_columns      = IsoTapColumns
+  lengths          = Iso4762Len
+  drills           = IsoDrills
+  bottom_clearance = 1mm
+  tap_lead_in      = 3
+  drill_point      = 0.3
+}

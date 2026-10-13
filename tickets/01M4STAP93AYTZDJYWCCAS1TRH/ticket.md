@@ -2,18 +2,19 @@
 id = "01M4STAP93AYTZDJYWCCAS1TRH"
 title = "FastenerPolicy, IsoDefault and the default attribute"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T09:02:19Z"
+updated = "2026-10-13T09:03:12Z"
 persona = "design engineer"
 capability = "set project-wide fastener policy once"
 idempotency_key = "replan13:FastenerPolicy, IsoDefault and the default attribute"
 labels = ["creates:std/src/fasteners/policy.cdt"]
-scope = ["std/src/fasteners/policy.cdt"]
+scope = ["std/src/fasteners/policy.cdt", "crates/cadetta-syntax/tests/std_fasteners_policy.rs", "docs/spec/stdlib.md"]
 
 [[links]]
 kind = "blocks"
