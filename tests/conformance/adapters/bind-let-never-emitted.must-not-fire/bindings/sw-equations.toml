@@ -1,0 +1,5 @@
+["acme.demo::Part.height"]
+locators = [
+  { locator = "S", kind = "global", mode = "value", native_unit = "mm" },
+
+]

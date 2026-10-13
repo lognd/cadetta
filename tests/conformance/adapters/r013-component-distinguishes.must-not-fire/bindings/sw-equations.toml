@@ -1,0 +1,10 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "X", kind = "global", mode = "value", native_unit = "mm", component = "wheel<1>" },
+
+]
+["acme.demo::Part.height"]
+locators = [
+  { locator = "X", kind = "global", mode = "value", native_unit = "mm", component = "wheel<2>" },
+
+]

@@ -1,0 +1,10 @@
+{
+  "source_form": "holes.derived_x",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

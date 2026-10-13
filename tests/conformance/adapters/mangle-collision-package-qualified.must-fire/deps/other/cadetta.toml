@@ -1,0 +1,4 @@
+[package]
+name = "acme.other"
+version = "0.1.0"
+as_of = "2026-10-13"

@@ -1,0 +1,10 @@
+{
+  "source_form": "place.x",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

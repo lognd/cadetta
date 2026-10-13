@@ -1,0 +1,11 @@
+{
+  "args": [
+    "solidworks",
+    "cad/plate.SLDPRT",
+    "--update",
+    "--write"
+  ],
+  "flags": [
+    "write"
+  ]
+}

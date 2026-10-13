@@ -1,0 +1,24 @@
+{
+  "entry": "import",
+  "args": [
+    "solidworks",
+    "cad/plate.SLDPRT",
+    "--update"
+  ],
+  "design": {
+    "acme.demo::Part.width": "10mm"
+  },
+  "native": {
+    "Plate_Thk": "11mm"
+  },
+  "lock": {
+    "synced": [
+      {
+        "path": "acme.demo::Part.width",
+        "locator": "Plate_Thk",
+        "value": "10mm"
+      }
+    ]
+  },
+  "then_sync": true
+}

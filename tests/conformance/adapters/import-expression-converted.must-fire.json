@@ -1,0 +1,28 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "args": [
+    "solidworks",
+    "cad/cover_plate.SLDPRT"
+  ],
+  "items": [
+    {
+      "file": "cad/cover_plate.SLDPRT",
+      "locator": "A",
+      "kind": "global",
+      "number": 20,
+      "unit": "mm",
+      "expression": "\"B\" * 2"
+    },
+    {
+      "file": "cad/cover_plate.SLDPRT",
+      "locator": "B",
+      "kind": "global",
+      "number": 10,
+      "unit": "mm"
+    }
+  ],
+  "existing": {}
+}

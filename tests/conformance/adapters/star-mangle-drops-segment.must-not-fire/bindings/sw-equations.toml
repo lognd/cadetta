@@ -1,0 +1,5 @@
+["acme.demo::Rover/axle[1].end_diameter"]
+locators = [
+  { locator = "D@S@P.SLDPRT", kind = "dimension" },
+
+]

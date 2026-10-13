@@ -1,0 +1,11 @@
+{
+  "source_form": "derived-coordinate",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  },
+  "listed_in_bindings": false
+}

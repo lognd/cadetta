@@ -1,0 +1,5 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "DEFAULT", kind = "global", mode = "value", native_unit = "mm" },
+
+]

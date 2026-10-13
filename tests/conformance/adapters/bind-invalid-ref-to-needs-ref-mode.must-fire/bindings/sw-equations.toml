@@ -1,0 +1,5 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "D", kind = "dimension", mode = "value", ref_to = "W0" },
+
+]

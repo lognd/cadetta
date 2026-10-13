@@ -1,0 +1,8 @@
+{
+  "slot": "acme.shop::Wheel",
+  "primary": "acme.shop::Colson2Series",
+  "alternate": "acme.shop::Colson2Series",
+  "bindings_for": [
+    "acme.shop::Colson2Series"
+  ]
+}

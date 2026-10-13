@@ -1,0 +1,10 @@
+{
+  "source_form": "rotate 45deg",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

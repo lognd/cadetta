@@ -1,0 +1,18 @@
+{
+  "adapter": {
+    "capabilities": [
+      "emit",
+      "read",
+      "drive"
+    ],
+    "version": "1.0"
+  },
+  "pinned_version": "1.0",
+  "calls": [],
+  "op": "push",
+  "locator": {
+    "kind": "dimension",
+    "mode": "ref",
+    "ref_to": "W"
+  }
+}

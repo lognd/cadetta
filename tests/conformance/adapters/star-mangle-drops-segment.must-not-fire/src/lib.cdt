@@ -1,0 +1,6 @@
+model Axle {
+  end_diameter: Length
+}
+model Rover {
+  axle = [Axle { end_diameter = 10mm }, Axle { end_diameter = 10mm }]
+}
