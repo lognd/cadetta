@@ -2,7 +2,8 @@
 id = "01M4STAQG24ZXGZJV3ZYNT9TWR"
 title = "Conformance fixtures for adapters"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
