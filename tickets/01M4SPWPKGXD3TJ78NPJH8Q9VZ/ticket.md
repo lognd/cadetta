@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:16:28Z"
+updated = "2026-10-13T07:16:32Z"
 persona = "design engineer"
 capability = "have expressions checked for units and kinds"
 outcome_text = "Q001, Q002, Q003 and Q005 stop wrong models"
@@ -21,7 +21,7 @@ target = "01M4SPWPPPSEEFAHYTY5H3YD54"
 
 [[acceptance]]
 text = "Given a bare `5` assigned to a Length, when checked, then Q001 unitless-quantity is reported (quantities.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `1mm + 1kg`, when checked, then Q002 dimension-mismatch is reported"
