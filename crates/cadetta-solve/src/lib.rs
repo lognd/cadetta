@@ -8,3 +8,4 @@ pub mod outputs;
 pub mod protocol;
 pub mod results;
 pub mod transport;
+pub mod variants;

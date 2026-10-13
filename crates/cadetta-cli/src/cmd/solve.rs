@@ -17,6 +17,7 @@ use cadetta_solve::results::{
     CurrentDigests, Lookup, ResultFile, SolveResult, digest_bytes, input_digest, out_path,
 };
 use cadetta_solve::transport::{self, SolverConfig, TransportError};
+use cadetta_solve::variants::{self, VariantRequest};
 use cadetta_syntax::ast::{Bind, File, ItemKind, MemberKind, Solver, SolverMemberKind};
 use cadetta_syntax::parser::parse;
 use cadetta_units::UnitTable;
@@ -29,7 +30,7 @@ use crate::{EXIT_OK, EXIT_USAGE, Globals};
 /// Exit code when a solver run or declaration fails (config-cli.md 3).
 pub const EXIT_FAILED: u8 = 1;
 
-const USAGE: &str = "usage: cadetta solve [PATH-GLOB...] [--module PATH]";
+const USAGE: &str = "usage: cadetta solve [PATH-GLOB...] [--module PATH] [--variants]";
 
 /// The parsed command line of `cadetta solve`.
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -38,6 +39,8 @@ pub struct SolveArgs {
     pub globs: Vec<String>,
     /// Restrict to the solvers declared in this module file (relative to the package).
     pub module: Option<String>,
+    /// Also solve each approved alternate whose inputs differ (solvers.md 4.1).
+    pub variants: bool,
 }
 
 /// Parse the words after `solve`; the error is a usage message.
@@ -50,9 +53,7 @@ pub fn parse_args(args: &[String]) -> Result<SolveArgs, String> {
                 Some(path) => parsed.module = Some(path.clone()),
                 None => return Err("`--module` needs a path".to_owned()),
             },
-            "--variants" => {
-                return Err("`--variants` is not implemented yet (solvers.md 4.1)".to_owned());
-            }
+            "--variants" => parsed.variants = true,
             flag if flag.starts_with('-') => return Err(format!("unknown flag `{flag}`")),
             glob => parsed.globs.push(glob.to_owned()),
         }
@@ -347,13 +348,18 @@ pub fn solve_project(
     }
     let mut evaluator = Evaluator::new(&resolver, &table, &sources);
     let configs = config_map(project);
+    let run = RunEnv {
+        configs: &configs,
+        project,
+        args,
+    };
     let mut failed = false;
     let mut usage = false;
     let mut selected = 0usize;
     for &i in scope {
         for target in targets(&project.packages[i], &names[i], &all[i], args) {
             selected += 1;
-            match solve_one(&target, &mut evaluator, &table, &configs, project, out, err) {
+            match solve_one(&target, &mut evaluator, &table, &run, out, err) {
                 Outcome::Ok => {}
                 Outcome::Failed => failed = true,
                 Outcome::Usage => usage = true,
@@ -389,11 +395,11 @@ fn solve_one(
     t: &Target<'_>,
     evaluator: &mut Evaluator<'_, '_>,
     table: &UnitTable,
-    configs: &BTreeMap<String, SolverConfig>,
-    project: &Project,
+    run: &RunEnv<'_>,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Outcome {
+    let (configs, project) = (run.configs, run.project);
     let decl: SolverDecl = match lower_solver(t.ast, &t.path) {
         Ok(d) => d,
         Err(errors) => {
@@ -460,7 +466,7 @@ fn solve_one(
         Lookup::Fresh(_) => {
             tracing::info!(solver = %t.path, "solve: result is fresh, not running");
             let _ = writeln!(out, "fresh {}", t.path);
-            return Outcome::Ok;
+            return solve_variants(t, &script, &digests, run, out, err);
         }
         Lookup::Stale(_) => tracing::info!(solver = %t.path, "solve: result is stale, running"),
         Lookup::Missing => tracing::info!(solver = %t.path, "solve: no result, running"),
@@ -479,6 +485,7 @@ fn solve_one(
             };
         }
     };
+    let digests_for_variants = digests.clone();
     file.upsert(SolveResult {
         solver: t.path.clone(),
         input_digest: digests.input_digest,
@@ -495,7 +502,68 @@ fn solve_one(
     }
     tracing::info!(solver = %t.path, path = %results_path.display(), "solve: result stored");
     let _ = writeln!(out, "solved {}", t.path);
-    Outcome::Ok
+    solve_variants(t, &script, &digests_for_variants, run, out, err)
+}
+
+/// The shared, read-only context of one `solve` run.
+struct RunEnv<'a> {
+    configs: &'a BTreeMap<String, SolverConfig>,
+    project: &'a Project,
+    args: &'a SolveArgs,
+}
+
+/// The requests of each approved alternate whose solver inputs differ from the primary's.
+///
+/// The language evaluator does not yet re-evaluate `in` expressions under a
+/// slot selection (ticket filed), so no variant inputs are produced here;
+/// the planner, runner and store below are exercised through it unchanged.
+fn variant_requests(t: &Target<'_>) -> Vec<VariantRequest> {
+    tracing::info!(solver = %t.path, "solve: variant inputs need selection-aware evaluation");
+    Vec::new()
+}
+
+/// Run and store one result per distinct changed input digest (solvers.md 4.1).
+fn solve_variants(
+    t: &Target<'_>,
+    script: &Path,
+    digests: &CurrentDigests,
+    run: &RunEnv<'_>,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> Outcome {
+    if !run.args.variants {
+        return Outcome::Ok;
+    }
+    let results_path = out_path(script);
+    let mut file = match ResultFile::load(&results_path) {
+        Ok(f) => f,
+        Err(e) => return fail(err, &t.path, "S005", &e.to_string()),
+    };
+    let jobs = variants::plan(&file, &t.path, digests, &variant_requests(t));
+    let mut outcome = Outcome::Ok;
+    for job in &jobs {
+        match transport::run_solver(
+            run.configs,
+            &t.path,
+            script,
+            &job.request,
+            &run.project.root,
+        ) {
+            Ok(response) => {
+                variants::store(&mut file, &t.path, digests, job, &response);
+                let _ = writeln!(out, "solved {} [{}]", t.path, job.variants.join(", "));
+            }
+            Err(e) => {
+                outcome = fail(err, &t.path, e.code(), &e.to_string());
+            }
+        }
+    }
+    if !jobs.is_empty()
+        && let Err(e) = file.save(&results_path)
+    {
+        return fail(err, &t.path, "S005", &e.to_string());
+    }
+    outcome
 }
 
 #[cfg(test)]
@@ -587,8 +655,8 @@ mod tests {
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::parse_args
     #[test]
-    fn variants_flag_is_a_usage_error() {
-        assert!(parse_args(&["--variants".to_owned()]).is_err());
+    fn variants_flag_is_accepted() {
+        assert!(parse_args(&["--variants".to_owned()]).unwrap().variants);
         assert_eq!(parse_args(&["a::*".to_owned()]).unwrap().globs, ["a::*"]);
     }
 }
