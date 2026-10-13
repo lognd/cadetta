@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:38Z"
-updated = "2026-10-13T07:48:16Z"
+updated = "2026-10-13T07:50:32Z"
 persona = "design engineer"
 capability = "catch merge-invalidated attestations"
 idempotency_key = "replan14:ob-verify"
 labels = ["creates:crates/cadetta-obligations/src/lock_verify.rs"]
-scope = ["crates/cadetta-obligations/src/lock_verify.rs"]
+scope = ["crates/cadetta-obligations/src/lock_verify.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
