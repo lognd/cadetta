@@ -4,4 +4,5 @@
 
 pub mod graph;
 pub mod kinds;
+pub mod lock;
 pub mod selector;

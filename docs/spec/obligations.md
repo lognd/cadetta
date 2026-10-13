@@ -187,6 +187,28 @@ Solver results are not in the lock. Their digests live in the
 committed `<stem>.out.json` (solvers.md 4), the only home of that
 state.
 
+Text format (normative for 0.1.0):
+
+- A record is one line ending in `\n`; the file has no blank lines,
+  comments or header, and an empty lock is an empty file. Records are
+  ordered by kind word bytewise (`adopted`, `attest`, `package`, `swap`,
+  `synced`, `waiver`), then by key fields in table order; `synced`
+  value records sort before `synced` file records of the same adapter.
+  A `swap` key is its whole rendered line.
+- Fields are separated by single spaces. A word is bare unless it is
+  empty or has whitespace, control characters, `"` or `\`, or (when
+  positional) `=`; then it is double-quoted with escapes `\\`, `\"`,
+  `\n`, `\r`, `\t`, `\u{HEX}`. `reason` is always quoted.
+- `at` is `YYYY-MM-DD`; digests are lowercase hex; `verdict` is
+  `holds`, `violated` or `undecided`; `margin` is the quantity text;
+  `deps` is the sorted, unique, comma-joined list (empty allowed).
+- Cited-file acknowledgements are `attest citation:PATH` records; there
+  is no separate citation record. Loading tolerates unsorted or
+  duplicate lines (the tie rule applies); `lock verify` flags any file
+  that is not byte-identical to its canonical rendering.
+- Writing is atomic (temp file then rename) and skipped when the bytes
+  are unchanged.
+
 Rules:
 
 - **Identity.** `by` is `git config user.email` unless `--as EMAIL`.
