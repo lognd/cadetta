@@ -41,6 +41,7 @@ node cli : trusted {
   kind component;
   clearance Internal;
   owns "crates/cadetta-cli/Cargo.toml";
+  owns "crates/cadetta-cli/src/cmd/**";
   owns "crates/cadetta-cli/src/config.rs";
   owns "crates/cadetta-cli/src/lib.rs";
   owns "crates/cadetta-cli/src/main.rs";
@@ -49,6 +50,7 @@ node cli : trusted {
   owns "crates/cadetta-cli/src/project.rs";
   may fs.read at "crates/cadetta-cli/**";
   may fs.write at "crates/cadetta-cli/src/project.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
