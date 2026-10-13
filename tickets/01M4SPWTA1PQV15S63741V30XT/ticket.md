@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T04:04:05Z"
+updated = "2026-10-13T05:44:40Z"
 persona = "design engineer"
 capability = "emit to configured adapters and import native files"
 outcome_text = "nobody retypes values and existing designs are adoptable"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a native file, when `cadetta import freecad f.FCStd` runs, then bindings and a scaffolded .cdt are proposed, not written until accepted"
+bound = false
+
+[[acceptance]]
+text = "Given emit and import flags, when run, then exit codes and outputs follow config-cli.md 3 (Q004, R013 give exit 1)"
 bound = false
 +++
