@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T23:38:09Z"
+updated = "2026-10-13T23:38:15Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
@@ -33,7 +33,7 @@ target = "01M4VB640810PZEZHQJ1T5WFTK"
 
 [[acceptance]]
 text = "Given observed frames[] and instances[], when synced, then each bound datum's frame transform and each placement's composed frame are compared per adapters.md 3.4 (|design - read| <= 0.5 * 10^-precision) and a mismatch is R001 on the datum or placement path; placements are verify-only"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given datums = create and the create_frames feature, when synced, then missing datum coordinate systems are requested and composed transforms are pushed with lock synced records (adapters.md 3.4)"
