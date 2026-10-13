@@ -7,9 +7,9 @@ use std::path::Path;
 
 use serde::Deserialize;
 
-use crate::compare::compare;
+use crate::exec::execute;
 use crate::expect::{Block, Expect};
-use crate::run::run_check;
+use crate::verify::verify;
 
 /// One allowlist entry.
 #[derive(Debug, Clone, Deserialize)]
@@ -73,8 +73,6 @@ pub enum Outcome {
     Fail(Vec<String>),
     /// Failed, but allowlisted.
     KnownGap,
-    /// Not runnable yet (kind, entry or values).
-    Skipped(String),
 }
 
 /// Everything a corpus run learned.
@@ -84,7 +82,7 @@ pub struct Report {
     pub outcomes: BTreeMap<String, Outcome>,
     /// Failure lines, each naming fixture, doc and the mismatch.
     pub failures: Vec<String>,
-    /// Informational lines (skips, tolerated gaps).
+    /// Informational lines (tolerated gaps).
     pub notes: Vec<String>,
 }
 
@@ -112,18 +110,6 @@ fn check_pair(dir: &Path, name: &str, doc: &str) -> Result<Outcome, String> {
             expect.doc
         ));
     }
-    if expect.kind != "source" {
-        return Ok(Outcome::Skipped(format!(
-            "kind `{}` has no entry point yet",
-            expect.kind
-        )));
-    }
-    let entry = expect.entry.as_deref().unwrap_or("check");
-    if entry != "check" {
-        return Ok(Outcome::Skipped(format!(
-            "entry `{entry}` has no runner yet"
-        )));
-    }
     let mut problems = Vec::new();
     for (which, block) in [
         ("must-fire", &expect.must_fire),
@@ -147,15 +133,9 @@ fn run_block(
 ) -> Result<Vec<String>, String> {
     let path = fixture_path(dir, name, which, &expect.kind)
         .ok_or_else(|| format!("{which} fixture file is missing"))?;
-    if !block.values.is_empty() {
-        tracing::info!(name, which, "values are not checked until `eval` exists");
-    }
     let prefix = |m: String| format!("{which}: {m}");
-    match run_check(&path) {
-        Ok(result) => Ok(compare(block, &result.produced, result.exit)
-            .into_iter()
-            .map(prefix)
-            .collect()),
+    match execute(expect, &path, block) {
+        Ok(facts) => Ok(verify(block, &facts).into_iter().map(prefix).collect()),
         Err(message) => Ok(vec![prefix(message)]),
     }
 }
@@ -237,9 +217,6 @@ pub fn run_corpus(root: &Path, allow: &KnownGaps) -> Report {
                     for m in p {
                         report.failures.push(format!("{key} [{doc}]: {m}"));
                     }
-                }
-                Outcome::Skipped(why) => {
-                    report.notes.push(format!("{key} [{doc}]: skipped: {why}"))
                 }
                 _ => {}
             }
