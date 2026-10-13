@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:50:46Z"
+updated = "2026-10-13T06:50:47Z"
 persona = "cadetta contributor"
 capability = "parse the remaining item kinds of the grammar"
 idempotency_key = "replan13:Parser for interfaces, tables, processes, solvers and declarations"
@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given kind expressions such as `out q: Volume / Time`, when parsed, then they are accepted wherever a kind is (language.md 3.10)"
-bound = false
+bound = true
 +++
