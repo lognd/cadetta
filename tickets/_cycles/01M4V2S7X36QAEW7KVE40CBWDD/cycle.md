@@ -4,7 +4,7 @@ start = "2026-10-13"
 end = "2026-10-19"
 goal = "Conformance corpus complete; wire standalone modules into check"
 state = "planned"
-tickets = ["01M4SPWSCZ06W3EW6B1RDPEZRQ", "01M4STCD6YD5DZFVD9RJDN02RY"]
+tickets = ["01M4SPWSCZ06W3EW6B1RDPEZRQ", "01M4STCD6YD5DZFVD9RJDN02RY", "01M4STCDGQMN86JQJXKAQ2FX25"]
 created = "2026-10-13T16:50:56Z"
 updated = "2026-10-13T16:50:58Z"
 +++
