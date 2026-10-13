@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T21:52:18Z"
+digest = "875a65e8c4aad2ac2d02fa8fb5e7b7fe58871e5872e67887b660117ca7a4372d"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 00s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8394c46c-b16c-4950-904e-0f0a951ee812 with nextest profile: default
+    Starting 2 tests across 28 binaries (954 tests skipped)
+        PASS [   0.013s] cadetta-lint rules::s::tests::s002_quiet_for_existing_url_and_literal
+        PASS [   0.014s] cadetta-lint rules::s::tests::s002_fires_on_missing_local_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.021s] 2 tests run: 2 passed, 954 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "s002_"
+size = 708
+status = "measured"
+test_count = 2
+tests_digest = "6e3b3d9ece5e4f767be20b124b2bb293fbb5b9a153078c172851e6ba0eddb89b"
+at = "2026-10-13T21:52:18Z"
+actor = "lognd"
+rev = 1
