@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given two Temperatures, when subtracted, then the result is a TemperatureDelta", "Given an affine unit, when multiplied, then an error is returned"]
+new = ["Given two Temperatures, when subtracted, then the result is a TemperatureDelta (quantities.md 3)", "Given an affine unit (degC, degF), when multiplied, then an error value is returned (quantities.md 3)", "Given degF and degC literals, when converted to K, then the exact offset is applied rationally (quantities.md 3)", "Given dK, ddegC and ddegF, when parsed, then they are TemperatureDelta units with no offset (quantities.md 3)"]
+moved = [0, 0]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
