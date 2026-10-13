@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T12:59:22Z"
+updated = "2026-10-13T12:59:38Z"
 persona = "design engineer"
 capability = "emit and read name,value,unit rows"
 outcome_text = "spreadsheets can consume parameters"
@@ -21,7 +21,7 @@ target = "01M4SPWTA1PQV15S63741V30XT"
 
 [[acceptance]]
 text = "Given a design IR, when emitted, then each parameter is one name,value,unit row, golden-file stable"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the CSV, when read, then values round-trip exactly"
