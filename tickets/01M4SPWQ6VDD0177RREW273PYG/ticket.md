@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:48:36Z"
+updated = "2026-10-13T07:49:55Z"
 persona = "cadetta contributor"
 capability = "serialize the IR as cadetta.ir/1 JSON"
 outcome_text = "adapters and tools exchange a stable format"
 labels = ["creates:crates/cadetta-ir/src/json.rs"]
-scope = ["crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/lib.rs"]
+scope = ["crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/lib.rs", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocks"
