@@ -3,10 +3,12 @@ id = "01M4VS6WG57MAD0T8GK956NGG9"
 title = "Wire cadetta_geometry::aligned/distance into check evaluation and emit G004"
 type = "task"
 category = "todo"
-priority = "medium"
+priority = "high"
+points = 5
+parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:22:52Z"
-updated = "2026-10-13T23:22:52Z"
+updated = "2026-10-13T23:29:30Z"
 scope = ["crates/cadetta-sema/src/**", "crates/cadetta-lint/src/**"]
 +++
 
