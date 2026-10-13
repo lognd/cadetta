@@ -173,7 +173,8 @@ solver airflow_req @"analysis/airflow_req.py" {
       margin    = CoolingModule.flow_margin
   out required_flow: VolumeFlow
   out system_k: FlowImpedance
-  deps "analysis/air_properties.csv", "analysis/enclosure_impedance.csv"
+  deps "analysis/air_properties.csv"
+  deps "analysis/enclosure_impedance.csv"
   check positive: required_flow > 0m^3/h
 }
 
@@ -207,7 +208,7 @@ assembly CoolingModule {
   let tip_len      = screws[0].length - (fan.depth + bracket.sheet_thk)
   let lead_slack   = fan.lead_len - bracket.cable_run
 
-  fit screw_pass = fan.mount_hole / screws[0].major_dia [0.05mm .. 0.45mm]   @assumed:"max play so the fan locates on the four screws"
+  fit screw_pass = fan.mount_hole / screws.major_dia [0.05mm .. 0.45mm]   @assumed:"max play so the fan locates on the four screws"
 
   let airflow_op = operating_flow(fan.max_airflow, fan.max_static, airflow_req.system_k)
 

@@ -132,6 +132,8 @@ pub enum Punct {
     Caret,
     /// `?`
     Question,
+    /// `%` standing alone (the percent unit in `#[display(%)]`)
+    Percent,
     /// `@` (citation)
     At,
     /// `->`
@@ -173,6 +175,7 @@ impl Punct {
             Self::Slash => "/",
             Self::Caret => "^",
             Self::Question => "?",
+            Self::Percent => "%",
             Self::At => "@",
             Self::Arrow => "->",
             Self::FatArrow => "=>",
@@ -459,6 +462,20 @@ impl Lexer<'_> {
         }
     }
 
+    /// True when the next line starts with a binary operator (`+ * / ^`), which continues the
+    /// statement instead of starting one (language.md 2); `//` starts a comment, not a `/`.
+    fn continues_on_next_line(&self) -> bool {
+        let mut i = 0;
+        while matches!(self.peek(i), Some(b' ' | b'\t')) {
+            i += 1;
+        }
+        match self.peek(i) {
+            Some(b'+' | b'*' | b'^') => true,
+            Some(b'/') => self.peek(i + 1) != Some(b'/'),
+            _ => false,
+        }
+    }
+
     fn run(&mut self) {
         while let Some(b) = self.peek(0) {
             match b {
@@ -466,6 +483,9 @@ impl Lexer<'_> {
                 b'\n' => {
                     let start = self.pos;
                     self.pos += 1;
+                    if self.continues_on_next_line() {
+                        continue;
+                    }
                     if !matches!(
                         self.out.tokens.last(),
                         Some(Token {
@@ -834,6 +854,7 @@ impl Lexer<'_> {
             (Some(b'/'), _) => (Punct::Slash, 1),
             (Some(b'^'), _) => (Punct::Caret, 1),
             (Some(b'?'), _) => (Punct::Question, 1),
+            (Some(b'%'), _) => (Punct::Percent, 1),
             (Some(b'@'), _) => (Punct::At, 1),
             _ => {
                 let ch = self.src[self.pos..].chars().next().unwrap_or('\u{fffd}');

@@ -589,6 +589,13 @@ impl Printer<'_> {
             MemberKind::Place(pl) => Line::plain(format!("{p}{}", self.place(pl))),
             MemberKind::Error => Line::plain(m.span.slice(self.src).trim().to_owned()),
         };
+        let mut line = line;
+        if let Some(c) = &m.citation {
+            let cite = self.citation(c);
+            let text = line.rest.as_mut().unwrap_or(&mut line.lhs);
+            text.push(' ');
+            text.push_str(&cite);
+        }
         self.leaf(line, m.span, &m.trailing);
     }
 
@@ -691,6 +698,7 @@ impl Printer<'_> {
                     format!("out {}: {}", name.name, self.ty(ty))
                 }
                 SolverMemberKind::Deps(f) => format!("deps {}", quote(f)),
+                SolverMemberKind::Check(c) => self.check(c, ""),
                 SolverMemberKind::Error => m.span.slice(self.src).trim().to_owned(),
             };
             self.leaf(Line::plain(text), m.span, &[]);
@@ -831,7 +839,11 @@ impl Printer<'_> {
             FitSpec::Pair(a, b) => format!("{}/{}", a.name, b.name),
             FitSpec::Paths(a, b) => format!("{} / {}", a.text(), b.text()),
         };
-        let mut rest = format!("{spec} on {}", f.on.text());
+        let mut rest = if f.on_implied {
+            spec
+        } else {
+            format!("{spec} on {}", f.on.text())
+        };
         if let Some((lo, hi)) = &f.range {
             rest.push_str(&format!(" [{} .. {}]", self.expr(lo), self.expr(hi)));
         }
@@ -958,6 +970,11 @@ impl Printer<'_> {
             .map(|a| match &a.name {
                 Some(n) => format!("{} = {}", n.name, self.expr(&a.value)),
                 None => self.expr(&a.value),
+            })
+            .zip(args)
+            .map(|(text, a)| match &a.citation {
+                Some(c) => format!("{text} {}", self.citation(c)),
+                None => text,
             })
             .collect();
         format!("({})", parts.join(", "))
