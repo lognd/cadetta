@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T05:03:57Z"
+updated = "2026-10-13T05:05:27Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for adapters"
 labels = ["creates:tests/conformance/adapters/**"]
 scope = ["tests/conformance/adapters/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STCF3A4JQGPYSE7BBHK4BD"
 
 [[acceptance]]
 text = "Given docs/spec/adapters.md, when fixtures are written, then every normative rule and every diagnostic code in adapters has a must-fire and a must-not-fire fixture under tests/conformance/adapters/ (adapters.md)"
