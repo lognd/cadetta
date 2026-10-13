@@ -99,10 +99,10 @@ error[C001]: false for every value in tolerance
 | `sarif` | SARIF 2.1.0 for code scanning. |
 | `json` | One `cadetta.diag/1` per diagnostic inside the command's report. |
 
-`cadetta check --format json --watch` emits one `cadetta.diag/1` per
-line as files change; that is the 0.1.0 editor integration (problem
-matchers). `cadetta lsp` (diagnostics, hover as `why`, code lens as
-`impact`) is deferred to a later release and tracked as a ticket.
+`cadetta lsp` publishes these records as LSP diagnostics
+(config-cli.md 3.8); `cadetta check --format json --watch` emits one
+`cadetta.diag/1` per line as files change, for problem matchers and
+scripts. Hover as `why` and code lens as `impact` come later.
 
 Short and github rendering rules: `short` is one line per diagnostic;
 a diagnostic with no location omits the `file:line:col: ` prefix, and
