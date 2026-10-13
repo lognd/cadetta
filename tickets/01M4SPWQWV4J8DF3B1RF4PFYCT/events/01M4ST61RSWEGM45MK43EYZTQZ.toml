@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `1mm` repeated across components and not in common_values, when linted, then D001 warning", "Given `1mm` in common_values, when linted, then D001 is info", "Given a literal exactly twice an existing value, when linted, then D002 is reported", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+new = ["Given the literal 12.012mm repeated in a model with at least d001_min_digits significant digits, when linted, then one D001 is reported listing every location (lints.md D)", "Given `100mm` repeated (1 significant digit), when linted, then D001 is info; given a value in common_values then no D001 unless either side is imported (lints.md D)", "Given two ots parameters with equal values, when linted, then D001 does not fire (lints.md D)", "Given `12.009mm` equal to `seat.shaft.mid`, when linted, then D002 is reported (lints.md D)", "Given a literal equal to a table cell reachable from the component or a solver output, when linted, then D002 is reported (lints.md D)", "Given a cycle between members, when linted, then D003 is an error and cannot be waived; a component-level but not member-level loop is clean (language.md 4)", "Given each code, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+moved = [0, 0, 0, 0]
+at = "2026-10-13T05:01:24Z"
+actor = "lognd"
+rev = 1
