@@ -2,7 +2,8 @@
 id = "01M4SWNH4WXPBR7FYSY7EAJ4K1"
 title = "Fixed as-of date for expiry"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
