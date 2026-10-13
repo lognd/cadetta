@@ -2,7 +2,8 @@
 id = "01M4ST8F01H7SYVGYX5G9PCJYT"
 title = "Roles, policy and release gating"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
