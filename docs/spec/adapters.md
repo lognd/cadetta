@@ -159,6 +159,14 @@ variable `"Axle_end_diameter"` or to the dimension
   | `sign` | `-1` negates a coordinate on write and read (geometry.md 6) |
   | `component` | in-assembly instance (`"wheel<2>"`, emitters/sw-equations.md 4) |
 
+- Locator validation (`cadetta-adapter` `locator.rs`): `locator` is non-empty;
+  `ref_to` needs a `dimension` locator in `ref` mode; `sign` does not apply to
+  a `property`; `for` and `config` are non-empty when present; `component` has
+  the form `name<N>`. Native names are namespace-qualified by kind
+  (`global:`, `dimension:`, `property:`, `frame:`), so one name in two
+  namespaces is not R013; the same qualified name from two paths in one
+  configuration and component is.
+
 - Parameterized components exist only as instances. A binding may name
   one instance (`Rover/axle[1].end_diameter`) or all of them
   (`Rover/axle[*].end_diameter`). A `[*]` binding is emitted once, at
