@@ -2,7 +2,8 @@
 id = "01M4STANXPC2GK2PQN8E8NJG6J"
 title = "std.fits (ISO 286)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
