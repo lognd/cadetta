@@ -86,7 +86,7 @@ mod tests {
             .collect()
     }
 
-    // frob:tests crates/cadetta-obligations/src/lock_tidy.rs::tests.drops_superseded_and_orphans_only
+    // frob:tests crates/cadetta-obligations/src/lock_tidy.rs::tidy_text
     #[test]
     fn drops_superseded_and_orphans_only() {
         let text = format!(
@@ -114,7 +114,7 @@ mod tests {
         assert_eq!(lock.len(), 3);
     }
 
-    // frob:tests crates/cadetta-obligations/src/lock_tidy.rs::tests.live_lock_is_untouched_and_resorted
+    // frob:tests crates/cadetta-obligations/src/lock_tidy.rs::drop_orphans
     #[test]
     fn live_lock_is_untouched_and_resorted() {
         let text = format!(
