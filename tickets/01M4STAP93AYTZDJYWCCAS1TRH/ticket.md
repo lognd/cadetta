@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given std::fasteners::IsoDefault, when read, then engagement factors and tap columns come from Materials, lengths from Iso4762Len, drills from the ISO 2306 preferred series, bottom_clearance = 1mm, tap_lead_in = 3 (pitches, plug tap) and drill_point = 0.3 (118deg), each cited to Machinery Handbook (stdlib.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given precedence of a component #![default], module #![default], package [defaults], then the std default IsoDefault, when no override exists, then IsoDefault applies and no lint fires on the fallback (stdlib.md 4)"
