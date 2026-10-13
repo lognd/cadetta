@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = """Given `2'6"`, `2ft6in` and `1h30min`, when lexed, then each is one compound literal; given unordered or non-descending segments then a lex error (quantities.md 2)"""
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `3/4in`, `1-1/2in` and `3 / 4in`, when lexed, then the first two are single literals and the third is three tokens (quantities.md 2)"
