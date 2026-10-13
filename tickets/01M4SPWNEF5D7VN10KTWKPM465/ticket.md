@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:15:00Z"
+updated = "2026-10-13T06:15:10Z"
 persona = "design engineer"
 capability = "use K, degC and degF with exact offsets"
 outcome_text = "temperature differences never silently use absolute scales"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-units/src/affine.rs"]
 
 [[acceptance]]
 text = "Given two Temperatures, when subtracted, then the result is a TemperatureDelta (quantities.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an affine unit (degC, degF), when multiplied, then an error value is returned (quantities.md 3)"
