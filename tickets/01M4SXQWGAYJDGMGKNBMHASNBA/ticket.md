@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a cadetta.toml with [workspace] members, when loaded, then members share one lock and one build/ and may depend on each other by path; a member without cadetta.toml is E005 (packages.md 1; config-cli.md 1.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given [dependencies."acme.shop"] trust = ["source"], when loaded, then trust roles are parsed (packages.md 6)'
