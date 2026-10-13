@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `head_dia <= 8.5mm`, `x >= 9.6mm` and `x in 4mm..6mm`, when constructed, then each is a Bound with min/max limits that is never emitted (quantities.md 5.7)"
-bound = false
+bound = true
 +++
