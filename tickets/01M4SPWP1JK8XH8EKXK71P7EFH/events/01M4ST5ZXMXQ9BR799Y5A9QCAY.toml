@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Parser and AST for declarations"
+new = "Parser and AST for components, parameters and parts"
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
