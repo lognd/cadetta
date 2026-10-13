@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = 'Given the standard functions min max abs sqrt sin cos tan atan2 round_to ceil_to floor_to floor ceil round count and fmt, when evaluated, then each follows the cited rules; `fmt("{} x {}", thread, length)` renders by display rules (language.md 3.8)'
-bound = false
+bound = true
 +++
