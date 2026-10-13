@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given waive ... for alt SLOT=ALT, when evaluated, then it scopes to that variant, with the same O002 and W002 states (lints.md 2.1)"
-bound = false
+bound = true
 +++
