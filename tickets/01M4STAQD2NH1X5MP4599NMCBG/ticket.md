@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T05:03:57Z"
+updated = "2026-10-13T05:05:27Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for ir"
 labels = ["creates:tests/conformance/ir/**"]
 scope = ["tests/conformance/ir/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STCEQRY59W2Q6BGZ6YE6N5"
 
 [[acceptance]]
 text = "Given docs/spec/ir.md, when fixtures are written, then every normative rule and every diagnostic code in ir has a must-fire and a must-not-fire fixture under tests/conformance/ir/ (ir.md)"
