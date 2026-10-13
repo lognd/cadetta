@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T13:28:08Z"
+updated = "2026-10-13T13:32:05Z"
 persona = "design engineer"
 capability = "be warned about lifecycle, missing table rows and process roles"
 idempotency_key = "replan13:Lints L001-L002, T001 and P001"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/lifecycle.rs", "crates/cadetta-lint/src/
 
 [[acceptance]]
 text = "Given L001 and L002, when linted, then they fire per the catalog, L001 an error once the date passed (lints.md L)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given T001, when an ots literal matches no row, then it fires (lints.md T)"
