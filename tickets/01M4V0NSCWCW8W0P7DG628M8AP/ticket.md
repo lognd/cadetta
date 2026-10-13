@@ -7,13 +7,13 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T16:14:06Z"
-updated = "2026-10-13T16:17:13Z"
+updated = "2026-10-13T16:18:01Z"
 idempotency_key = "conformance-runner"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "Given tests/conformance/**/NAME.expect.json, when the runner executes each must-fire and must-not-fire fixture through the cadetta library, then produced diagnostics match the expect.json closed-list rules of tests/conformance/README.md"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fixture whose expectation is not met, when the runner runs, then it fails naming the fixture, doc and missing or extra diagnostic code"
