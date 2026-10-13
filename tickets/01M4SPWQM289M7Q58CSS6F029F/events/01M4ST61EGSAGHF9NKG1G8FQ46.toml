@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ['Given [lint] severity N002="info", when linted, then N002 is info', "Given a fixed code with a severity override, when loaded, then the override is ignored", "Given `waive M001 on acme.rover::Axle.chamfer`, when linted, then M001 on that path is suppressed"]
+new = ['Given [lint] severity N002="info", when linted, then N002 is info', "Given a fixed code with a severity override, when loaded, then the override is ignored", "Given `waive M001 on acme.rover::Axle.chamfer`, when linted, then M001 on that path is suppressed", 'Given `#[allow(M001, "vendor drawing 1234")]` on a member, when linted, then M001 is suppressed there without expiry, and the same without a because string is rejected (lints.md 2)', "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)", "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)", "Given `cadetta explain CODE` data, when queried, then each code exposes name, default severity, fixed flag and meaning from one catalog table (lints.md 3)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:01:24Z"
+actor = "lognd"
+rev = 1

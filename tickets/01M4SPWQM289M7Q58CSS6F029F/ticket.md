@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T04:04:04Z"
+updated = "2026-10-13T05:01:24Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -65,5 +65,21 @@ bound = false
 
 [[acceptance]]
 text = "Given `waive M001 on acme.rover::Axle.chamfer`, when linted, then M001 on that path is suppressed"
+bound = false
+
+[[acceptance]]
+text = 'Given `#[allow(M001, "vendor drawing 1234")]` on a member, when linted, then M001 is suppressed there without expiry, and the same without a because string is rejected (lints.md 2)'
+bound = false
+
+[[acceptance]]
+text = "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)"
+bound = false
+
+[[acceptance]]
+text = "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given `cadetta explain CODE` data, when queried, then each code exposes name, default severity, fixed flag and meaning from one catalog table (lints.md 3)"
 bound = false
 +++
