@@ -4,4 +4,5 @@
 
 pub mod deps;
 pub mod kindcheck;
+pub mod modules;
 pub mod resolve;

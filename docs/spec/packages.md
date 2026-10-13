@@ -81,6 +81,13 @@ The module tree is the file tree under `src`:
   is recorded with `was` on the moved items (5).
 - Files outside `src` (bindings, solver scripts, cited documents) are
   referenced by path relative to the package directory.
+- Loading rules: only `*.cdt` files are modules and other files are
+  ignored. Every directory and file stem under `src` must be
+  `snake_case` (E015). A directory without a parent file (`drive/`
+  with no `drive.cdt`) still yields the implicit parent module. A
+  missing or empty `src` is E005. Files are sorted by path before
+  compile. A path that is absolute or escapes the package directory is
+  rejected.
 
 ## 3. Visibility
 
