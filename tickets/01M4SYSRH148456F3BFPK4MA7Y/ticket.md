@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T06:22:04Z"
-updated = "2026-10-13T06:23:37Z"
+updated = "2026-10-13T06:24:22Z"
 labels = ["creates:crates/cadetta-units/src/units.rs", "creates:crates/cadetta-units/src/affine.rs"]
 scope = ["crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/affine.rs"]
 
