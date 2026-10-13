@@ -25,6 +25,10 @@ target = "01M4SV2NRTBH99MYAY6EWBDP66"
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SV2NW9YYPTWAJQ9P7MKG5E"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2R23GPE64N4CZVNWRJHC"
 
 [[acceptance]]
