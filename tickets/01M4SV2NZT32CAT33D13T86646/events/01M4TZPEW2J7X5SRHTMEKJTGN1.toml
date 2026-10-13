@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T15:56:58Z"
+digest = "50cd7f62375de8ada8ef3600c2c2c1b5e04897c95e2f97df22ff172996fa6dba"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 2 items
+
+bindings/python/tests/test_adapter.py ..                                 [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1161088-0.xml --------------
+============================== 2 passed in 0.20s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_adapter.py::test_initialize_dispatches_and_result_is_schema_shaped bindings/python/tests/test_adapter.py::test_invalid_params_and_unknown_fields_are_refused"
+size = 496
+status = "measured"
+test_count = 2
+tests_digest = "d78790f5e7eaccac7f03abf999f07d3002d06b57e7ac6e1c34cccff817517aa4"
+at = "2026-10-13T15:56:58Z"
+actor = "lognd"
+rev = 1

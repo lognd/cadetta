@@ -1,0 +1,10 @@
+kind = "create"
+title = "solve --format json report and solve-report.json schema"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/solve.rs", "docs/schemas/*.json"]
+body = "found while working ~VN1YQYC: solve prints text only; lock and sync commands do not exist yet, so lock.json and sync.json belong to those command tickets."
+at = "2026-10-13T15:55:21Z"
+actor = "lognd"
+rev = 1

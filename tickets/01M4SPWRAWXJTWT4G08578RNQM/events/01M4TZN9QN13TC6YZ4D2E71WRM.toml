@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T15:56:20Z"
+digest = "17bd87289aa0f36f3a44c5f65a14713a29a44777a0e353053a73c68aa2ba13e6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 189c1874-2aab-4565-8025-79830ffd8ee6 with nextest profile: default
+    Starting 1 test across 1 binary (121 tests skipped)
+        PASS [   0.012s] cadetta-lint rules::r::tests::r004_surfaces_rebuild_failure
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 1 test run: 1 passed, 121 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::r::tests::r004_surfaces_rebuild_failure)'"
+size = 550
+status = "measured"
+test_count = 1
+tests_digest = "2e708b9a5154273a9f1168345c50b865d1074b42111adba253a797e01d6c06cb"
+at = "2026-10-13T15:56:20Z"
+actor = "lognd"
+rev = 1
