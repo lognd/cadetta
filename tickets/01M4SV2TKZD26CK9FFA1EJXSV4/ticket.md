@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T19:18:41Z"
+updated = "2026-10-13T19:18:43Z"
 persona = "design engineer"
 capability = "read globals, equations, dimensions and custom properties"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**"]
@@ -44,5 +44,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a driven or unextractable value, when read, then exact:false with a reason (adapters.md 4 rule 4)"
+bound = false
+
+[[acceptance]]
+text = "Given a part or assembly, when read, then dimension equations, dimension tolerances, coordinate-system transforms (frames[]) and component transforms with reference properties (instances[]) are in observed IR (ir.md 1; solidworks.md 4)"
 bound = false
 +++
