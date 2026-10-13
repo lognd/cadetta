@@ -57,7 +57,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a Locator, when serialized, then it carries kind global|dimension|property|frame, mode, native_unit, ref_to, for, config, sign and component (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Project, when built, then it holds package {name, version}, a sorted modules[] of every module path and dependencies[] (name, version, source, digest), and items in src/lib.cdt sit at the package root (ir.md 3, 4; packages.md 2)"
