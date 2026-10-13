@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:05:14Z"
+updated = "2026-10-13T05:43:35Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -49,5 +49,13 @@ bound = false
 
 [[acceptance]]
 text = "Given a Check, when built, then it holds verdicts for the primary and per alternate and waived_for (ir.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given a Value, when lowered, then nominal is always the designed value and drawn? exists only when a process rule applied, with no designed field (ir.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given a Locator, when serialized, then it carries kind global|dimension|property|frame, mode, native_unit, ref_to, for, config, sign and component (ir.md 3)"
 bound = false
 +++
