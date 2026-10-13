@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:43:14Z"
+updated = "2026-10-13T07:43:15Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an interface-typed slot whose primary changes, when closures are recomputed, then every instance path of the slot changes and a check reading only another part arguments does not (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a part node, when its own digest is computed, then primary, alternates and arguments are included (ir.md 4)"
