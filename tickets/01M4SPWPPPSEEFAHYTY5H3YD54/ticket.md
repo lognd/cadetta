@@ -39,6 +39,10 @@ target = "01M4ST7ADMK0S7SRW6ETCS8ETC"
 kind = "blocks"
 target = "01M4ST7AFZGCN52434BQJRT5MM"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST7AKENKKS96TTXY13YMZQ"
+
 [[acceptance]]
 text = "Given `round_to(x, step)` on exact input, when evaluated, then the result is exact"
 bound = false
