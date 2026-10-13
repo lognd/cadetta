@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:43:36Z"
+updated = "2026-10-13T05:43:39Z"
 persona = "design engineer"
 capability = "see why the CAD tool refused a push"
 idempotency_key = "replan14:lint-r2"
 labels = ["creates:crates/cadetta-lint/src/rules/r_adapter.rs", "creates:tests/lints/R0[01]*/**"]
 scope = ["crates/cadetta-lint/src/rules/r_adapter.rs", "tests/lints/R0[01]*/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQM289M7Q58CSS6F029F"
 
 [[acceptance]]
 text = "Given R004 and R008-R010 from an adapter response, when linted, then they pass through unchanged; R008 is error on sync and info on check (lints.md 3 R)"
