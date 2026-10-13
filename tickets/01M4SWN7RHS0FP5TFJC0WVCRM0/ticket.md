@@ -2,7 +2,8 @@
 id = "01M4SWN7RHS0FP5TFJC0WVCRM0"
 title = "Require rule and O003/W003 interplay"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
