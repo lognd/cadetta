@@ -93,7 +93,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `cadetta explain CODE` data, when queried, then each code exposes name, default severity, fixed flag and meaning from one catalog table (lints.md 3)"
