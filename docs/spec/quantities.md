@@ -210,6 +210,27 @@ assume; the exponent only decides whether a diagnostic fires.
   `|y| == |x|` (so `atan2(3in, 3in) == 45deg` holds). Otherwise
   inexact (1.).
 
+### 4.4 Checker decisions
+
+Fixed by the kind checker (`cadetta-sema` `kindcheck`); they refine, not
+change, 2 and 4.1-4.3.
+
+- An untyped member assigned a bare number is an anonymous dimensionless
+  value; Q001 needs a declared dimensioned target.
+- A bare number beside a dimensioned operand of `+ - min max`, a
+  comparison or a range is Q001 at the bare operand.
+- In `*` and `/` an integer bare number acts as a Count, so it never
+  turns a Count into a Ratio; other bare numbers are anonymous scalars.
+- `x ^ n` with a dimensioned base needs an integer literal `n`; any
+  other exponent is Q002.
+- `sin cos tan` take an Angle: a bare argument is Q001, any other
+  dimension Q002, a wrong angle exponent Q008. They return Ratio.
+- A tolerance deviation of a dimensioned nominal must have its
+  dimension; a bare `0` is allowed.
+- An unknown kind or unit name is E002 (unresolved-name).
+- Expressions that are not quantities (booleans, strings, arrays) and
+  names the checker cannot type are unknown and never cascade.
+
 ## 5. Tolerances
 
 ### 5.1 Syntax
