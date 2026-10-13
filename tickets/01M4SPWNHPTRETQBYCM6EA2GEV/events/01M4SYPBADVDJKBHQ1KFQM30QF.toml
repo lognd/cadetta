@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [10]
+captured_at = "2026-10-13T06:20:12Z"
+digest = "0102addd23b34f945fa771f12f68928650de243fe03dab3c9168126dd2f371a3"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.02s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1ada5741-0df6-4520-8e31-d3f0792d0da8 with nextest profile: default
+    Starting 1 test across 1 binary (28 tests skipped)
+        PASS [   0.044s] cadetta-units kind::tests::angle_worked_cases
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.045s] 1 test run: 1 passed, 28 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units kind::tests::angle_worked_cases"
+size = 534
+status = "measured"
+test_count = 1
+tests_digest = "574f6cb58a5a9adba1a54a07d1166e1f863fc8debc71e458b324a43b6dd622db"
+at = "2026-10-13T06:20:12Z"
+actor = "lognd"
+rev = 1

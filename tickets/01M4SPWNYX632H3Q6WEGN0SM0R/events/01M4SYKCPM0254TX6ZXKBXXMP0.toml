@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:18:35Z"
+digest = "99234f1c30103dc2bf5acef5f67c93c521acbc95f363b3b4c0eaa3c00162cc53"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 131813ee-2aad-48c3-82a5-af48ba07474f with nextest profile: default
+    Starting 1 test across 1 binary (8 tests skipped)
+        PASS [   0.004s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 8 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error)'"
+size = 562
+status = "measured"
+test_count = 1
+tests_digest = "6a745713d6d205ea3388911e49f46aa32c29236dc50a4fee25b4ccedca6e3d60"
+at = "2026-10-13T06:18:35Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,47 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:20:20Z"
+digest = "0e4e784e72d8c265c49788085a797e53f0ebfefa17614f3060f41de7f3515818"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c5d8ade0-bf78-4e0e-ab17-6daaef90df74 with nextest profile: default
+    Starting 25 tests across 5 binaries (23 tests skipped)
+        PASS [   0.011s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.012s] cadetta-units tolerance::tests::deviation_units_may_differ_from_nominal
+        PASS [   0.012s] cadetta-obligations graph::tests::all_ten_edges_buildable
+        PASS [   0.009s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.015s] cadetta-log testing::tests::filter_limits_events_to_matching_target_and_level
+        PASS [   0.014s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.009s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.009s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.016s] cadetta-log testing::tests::plain_level_filter_admits_everything_at_or_above
+        PASS [   0.015s] cadetta tests::verbosity_flags_are_split_off
+        PASS [   0.007s] cadetta-units tolerance::tests::literals_build_ordered_deviation_pairs
+        PASS [   0.016s] cadetta-obligations graph::tests::bad_edges_rejected_and_duplicates_ignored
+        PASS [   0.007s] cadetta-units tolerance::tests::product_of_toleranced_values_is_conservative
+        PASS [   0.013s] cadetta-units tolerance::tests::interval_nominal_is_midpoint
+        PASS [   0.008s] cadetta-units tolerance::tests::inverted_or_mismatched_deviations_are_errors
+        PASS [   0.007s] cadetta-units tolerance::tests::repeated_terms_count_once_and_cancel
+        PASS [   0.009s] cadetta-units tolerance::tests::roots_and_trig_are_conservative
+        PASS [   0.010s] cadetta-units units::tests::errors_are_values
+        PASS [   0.009s] cadetta-units units::tests::exact_factors
+        PASS [   0.011s] cadetta-units units::tests::every_table_unit_resolves
+        PASS [   0.011s] cadetta-units units::tests::compound_is_anonymous
+        PASS [   0.009s] cadetta-units units::tests::inch_factor
+        PASS [   0.009s] cadetta-units units::tests::percent_is_ratio
+        PASS [   0.009s] cadetta-units units::tests::user_unit_resolves_like_builtin
+        PASS [   0.009s] cadetta-units units::tests::quote_aliases
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.029s] 25 tests run: 25 passed, 23 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-log -p cadetta-obligations -p cadetta-units -E '(package(=cadetta) & (test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::verbosity_flags_are_split_off))) | (package(=cadetta-log) & (test(=testing::tests::filter_limits_events_to_matching_target_and_level) | test(=testing::tests::plain_level_filter_admits_everything_at_or_above))) | (package(=cadetta-obligations) & (test(=graph::tests::all_ten_edges_buildable) | test(=graph::tests::bad_edges_rejected_and_duplicates_ignored))) | (package(=cadetta-units) & (test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=tolerance::tests::deviation_units_may_differ_from_nominal) | test(=tolerance::tests::interval_nominal_is_midpoint) | test(=tolerance::tests::inverted_or_mismatched_deviations_are_errors) | test(=tolerance::tests::literals_build_ordered_deviation_pairs) | test(=tolerance::tests::product_of_toleranced_values_is_conservative) | test(=tolerance::tests::repeated_terms_count_once_and_cancel) | test(=tolerance::tests::roots_and_trig_are_conservative) | test(=units::tests::compound_is_anonymous) | test(=units::tests::errors_are_values) | test(=units::tests::every_table_unit_resolves) | test(=units::tests::exact_factors) | test(=units::tests::inch_factor) | test(=units::tests::percent_is_ratio) | test(=units::tests::quote_aliases) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 2639
+status = "measured"
+test_count = 25
+tests_digest = "62bc99c8dd8a0c0bd64d06fd33554397a9e12414401d082d6e2b93692fc62627"
+at = "2026-10-13T06:20:20Z"
+actor = "lognd"
+rev = 1
