@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T08:26:31Z"
+updated = "2026-10-13T08:27:13Z"
 persona = "design engineer"
 capability = "see positions in the IR"
 idempotency_key = "replan14:ir-geo"
@@ -29,7 +29,7 @@ target = "01M4SWFXC2K6D3S93F3ER0GZZA"
 
 [[acceptance]]
 text = "Given a component with datums and points, when lowered, then Datum {path, parent, ops, variants?, digest, closure} and Point {path, datum, coords} are emitted (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given placements, when lowered, then each is an edge {part, datum, on, ops} of the part tree with variants like members (ir.md 3; geometry.md 6)"
