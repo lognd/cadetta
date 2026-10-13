@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:28:13Z"
+updated = "2026-10-13T08:30:33Z"
 persona = "design engineer"
 capability = "sum mass, cost and lead time over every part instance"
 idempotency_key = "replan13:Part arrays, count and roll-ups"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-sema/src/{parts,rollup}.rs"]
 
 [[acceptance]]
 text = "Given `part wheel[4]: Caster`, when evaluated, then count(wheel) is a Count of 4 and `wheel[i]` is an instance; N is evaluated before any member (language.md 3.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `wheel.hub_bore` without an index, when read, then it equals `wheel[0].hub_bore` (language.md 3.5)"
