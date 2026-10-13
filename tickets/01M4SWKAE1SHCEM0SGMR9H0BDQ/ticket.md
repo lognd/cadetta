@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:43:36Z"
+updated = "2026-10-13T05:43:39Z"
 persona = "design engineer"
 capability = "catalog position errors"
 idempotency_key = "replan14:lint-g"
 labels = ["creates:crates/cadetta-lint/src/rules/g.rs", "creates:tests/lints/G*/**"]
 scope = ["crates/cadetta-lint/src/rules/g.rs", "tests/lints/G*/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQM289M7Q58CSS6F029F"
 
 [[acceptance]]
 text = "Given G001-G007, when registered, then defaults match geometry.md 7: G001-G003 and G006 fixed errors, G004 error, G005 and G007 warnings (lints.md 3 G)"
