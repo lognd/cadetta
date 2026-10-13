@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T14:13:03Z"
+updated = "2026-10-13T14:13:04Z"
 persona = "design engineer"
 capability = "keep CAD and design in step"
 idempotency_key = "replan14:ad-sync"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given --no-regen, when pushing, then the lock is not updated (config-cli.md 3.1)"
-bound = false
+bound = true
 +++
