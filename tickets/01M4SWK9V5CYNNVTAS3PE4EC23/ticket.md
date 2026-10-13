@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a run, when sorted, then records are ordered by (file, line, code, path) and the schema is generated from the Rust type (lints.md 1.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given solver and adapter responses, when received, then they reuse the record unchanged (lints.md 1.1; adapters.md 4)"
