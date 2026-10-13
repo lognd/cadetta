@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T23:38:15Z"
+updated = "2026-10-13T23:38:19Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given datums = create and the create_frames feature, when synced, then missing datum coordinate systems are requested and composed transforms are pushed with lock synced records (adapters.md 3.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the instance locator kind and observed frames[] and instances[], when validated, then the IR schema and locator rules of ir.md 3 and adapters.md 3 hold"
