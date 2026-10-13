@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:03:55Z"
+updated = "2026-10-13T04:04:03Z"
 persona = "design engineer"
 capability = "push changed params, regenerate and read back headless"
 outcome_text = "sync is hands-free"
 labels = ["creates:adapters/freecad/src/drive.py"]
 scope = ["adapters/freecad/src/drive.py"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWSQQNCC23KA25TCFVQ98"
 
 [[acceptance]]
 text = "Given a changed digest, when pushed, then only that alias is updated"
