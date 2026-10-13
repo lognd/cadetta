@@ -2,7 +2,8 @@
 id = "01M4ST7APCCWC8KASSNHK0FW70"
 title = "Processes and drawn versus designed values"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
