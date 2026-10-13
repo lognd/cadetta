@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `9.98mm..10.05mm`, when constructed, then the nominal is the midpoint (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `a + a` and `a - a` over one source variable, when evaluated, then repeated and cancelling terms are counted once, so `a - a` has zero tolerance (quantities.md 5.4)"
