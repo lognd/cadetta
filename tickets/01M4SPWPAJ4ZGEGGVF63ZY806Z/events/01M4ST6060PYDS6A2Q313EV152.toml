@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given any valid file, when formatted twice, then output is identical (idempotent)", "Given `=` signs in a block, when formatted, then they are aligned with two-space indent and authored units preserved", "Given formatted source, when lowered, then the IR digest is unchanged"]
+new = ["Given any valid file, when formatted twice, then output is identical (idempotent)", "Given `=` signs in a block, when formatted, then they are aligned with two-space indent and authored units preserved", "Given formatted source, when lowered, then the IR digest is unchanged", "Given trailing attributes and comments on consecutive members, when formatted, then they align into columns (language.md 7)", "Given `cadetta fmt --check` on unformatted source, when run, then it reports the files and changes none (config-cli.md 2)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1

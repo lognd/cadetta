@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T04:04:03Z"
+updated = "2026-10-13T05:01:22Z"
 persona = "design engineer"
 capability = "run a formatter that produces one canonical layout"
 outcome_text = "layout never causes review noise or IR changes"
@@ -33,5 +33,13 @@ bound = false
 
 [[acceptance]]
 text = "Given formatted source, when lowered, then the IR digest is unchanged"
+bound = false
+
+[[acceptance]]
+text = "Given trailing attributes and comments on consecutive members, when formatted, then they align into columns (language.md 7)"
+bound = false
+
+[[acceptance]]
+text = "Given `cadetta fmt --check` on unformatted source, when run, then it reports the files and changes none (config-cli.md 2)"
 bound = false
 +++
