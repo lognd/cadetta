@@ -2,13 +2,13 @@
 id = "01M4SXRFXB1JYNPNKSAY6WB3QC"
 title = "Use grammar and visibility modifiers in the parser"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T06:03:54Z"
+updated = "2026-10-13T07:21:46Z"
 persona = "library author"
 capability = "write use trees, aliases, globs and pub use"
 labels = ["creates:crates/cadetta-syntax/src/parser_use.rs"]
