@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T04:03:54Z"
+updated = "2026-10-13T05:01:24Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -33,5 +33,13 @@ bound = false
 
 [[acceptance]]
 text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
+bound = false
+
+[[acceptance]]
+text = "Given a waiver path glob like `acme.parts::Bearing608.*`, when matched, then it suppresses one code on the matching paths (lints.md 2)"
+bound = false
+
+[[acceptance]]
+text = "Given a waiver of a `require`, when linted, then W003; a require is discharged only by attestation (lints.md 2)"
 bound = false
 +++

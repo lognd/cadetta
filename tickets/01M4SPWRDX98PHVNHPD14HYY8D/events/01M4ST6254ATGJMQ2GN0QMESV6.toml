@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an expired waiver, when linted, then W001 error", "Given a waiver whose target digest changed, when linted, then W002", "Given a waiver of a fixed code, when linted, then W003", "Given a waiver that suppresses nothing, when linted, then W004", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+new = ["Given an expired waiver, when linted, then W001 error", "Given a waiver whose target digest changed, when linted, then W002", "Given a waiver of a fixed code, when linted, then W003", "Given a waiver that suppresses nothing, when linted, then W004", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/", "Given a waiver path glob like `acme.parts::Bearing608.*`, when matched, then it suppresses one code on the matching paths (lints.md 2)", "Given a waiver of a `require`, when linted, then W003; a require is discharged only by attestation (lints.md 2)"]
+moved = [1, 2, 3, 4, 5]
+at = "2026-10-13T05:01:24Z"
+actor = "lognd"
+rev = 1
