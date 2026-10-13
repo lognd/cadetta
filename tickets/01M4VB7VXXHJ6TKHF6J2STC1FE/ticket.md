@@ -8,13 +8,17 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T19:18:44Z"
-updated = "2026-10-13T19:18:44Z"
+updated = "2026-10-13T19:19:06Z"
 persona = "design engineer"
 capability = "link CAD items to cadetta paths by selection"
 outcome_text = "no bindings file entry restates a link SOLIDWORKS already holds"
 idempotency_key = "d15:addin-commands"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Commands/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/**"]
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Commands/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VB7VTPQEHBVQ8ZCR2T1G5K"
 
 [[acceptance]]
 text = "Given Link dimension, when run, then the dimension's equation references the path's created global (created if missing) and its tolerance follows adapters.md 3.6; nothing is written to the bindings file (solidworks.md 3)"
