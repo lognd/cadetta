@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:25:11Z"
+updated = "2026-10-13T16:35:39Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for adapters"
 labels = ["creates:tests/conformance/adapters/**"]
-scope = ["tests/conformance/adapters/**"]
+scope = ["tests/conformance/adapters/**", "tests/conformance/known-gaps.toml", "docs/spec/adapters.md"]
 
 [[links]]
 kind = "blocks"
