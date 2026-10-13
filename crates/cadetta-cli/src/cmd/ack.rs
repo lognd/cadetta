@@ -327,15 +327,34 @@ fn project_candidates(project: &Project) -> Vec<Candidate> {
     Vec::new()
 }
 
-/// `git config user.email`, or `None` when unset or git is missing.
+/// The `email` under `[user]` in git-config text, or `None`.
+fn email_in(text: &str) -> Option<String> {
+    let mut in_user = false;
+    for line in text.lines().map(str::trim) {
+        if line.starts_with('[') {
+            in_user = line.trim_end_matches(']').trim_start_matches('[').trim() == "user";
+        } else if in_user && let Some((key, value)) = line.split_once('=') {
+            let value = value.trim().trim_matches('"');
+            if key.trim().eq_ignore_ascii_case("email") && !value.is_empty() {
+                return Some(value.to_owned());
+            }
+        }
+    }
+    None
+}
+
+/// The git `user.email`: the repository's `.git/config`, else `~/.gitconfig`.
+///
+/// Read directly so `ack` never spawns a process; `None` when neither sets it.
 fn git_email(dir: &Path) -> Option<String> {
-    let out = std::process::Command::new("git")
-        .args(["config", "user.email"])
-        .current_dir(dir)
-        .output()
-        .ok()?;
-    let email = String::from_utf8(out.stdout).ok()?.trim().to_owned();
-    (out.status.success() && !email.is_empty()).then_some(email)
+    let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
+    let candidates = dir
+        .ancestors()
+        .map(|d| d.join(".git").join("config"))
+        .chain(home.map(|h| h.join(".gitconfig")));
+    candidates
+        .filter_map(|p| std::fs::read_to_string(p).ok())
+        .find_map(|t| email_in(&t))
 }
 
 fn render(
@@ -636,6 +655,14 @@ mod tests {
         assert!(parse_args(&s(&["ots:p"])).is_err());
         assert!(parse_args(&s(&["--role", "r"])).is_err());
         assert!(parse_args(&s(&["x", "--role", "r", "--bogus"])).is_err());
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/ack.rs::email_in
+    #[test]
+    fn email_is_read_from_the_user_section() {
+        let text = "[core]\n\temail = no@x\n[user]\n\tname = A\n\temail = ana@x\n";
+        assert_eq!(email_in(text).as_deref(), Some("ana@x"));
+        assert_eq!(email_in("[user]\n\tname = A\n"), None);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/ack.rs::run_ack
