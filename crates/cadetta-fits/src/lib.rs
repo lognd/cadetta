@@ -188,7 +188,7 @@ mod tests {
     use super::*;
 
     // frob:tests crates/cadetta-fits/src/lib.rs::resolve kind=unit
-    // frob:ticket V5G43BT
+    // frob:ticket 01M4SPWPXSG1YKHGF4KV5G43BT
     #[test]
     fn h7_20mm() {
         let r = resolve_mm(20, "H7").unwrap();
@@ -197,7 +197,7 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-fits/src/lib.rs::resolve kind=unit
-    // frob:ticket V5G43BT
+    // frob:ticket 01M4SPWPXSG1YKHGF4KV5G43BT
     #[test]
     fn out_of_range_is_f002() {
         for size in [0, -5, 500 * NM_PER_MM + 1, 600 * NM_PER_MM] {
@@ -208,7 +208,7 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-fits/src/lib.rs::resolve kind=unit
-    // frob:ticket V5G43BT
+    // frob:ticket 01M4SPWPXSG1YKHGF4KV5G43BT
     #[test]
     fn unknown_class_is_f001() {
         for c in ["Z99", "H0", "H19", "H", "7", "Hh7", "H7x", "ZC7", "K7"] {
@@ -218,7 +218,7 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-fits/src/lib.rs::resolve kind=unit
-    // frob:ticket V5G43BT
+    // frob:ticket 01M4SPWPXSG1YKHGF4KV5G43BT
     #[test]
     fn case_picks_side() {
         assert_eq!(resolve_mm(20, "H7").unwrap().side, Side::Hole);
@@ -232,7 +232,7 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-fits/src/lib.rs::resolve kind=unit
-    // frob:ticket V5G43BT
+    // frob:ticket 01M4SPWPXSG1YKHGF4KV5G43BT
     #[test]
     fn class_on_any_expression_value() {
         // 8 mm j5 (golden 02): +4 um / -2 um, the nominal arriving as a computed size.
