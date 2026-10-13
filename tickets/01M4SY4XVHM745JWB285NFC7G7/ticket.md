@@ -24,4 +24,4 @@ text = "Given a second init call, when it runs, then it returns an error and doe
 bound = false
 +++
 
-Mirror /home/logan/projects/frob-v2/crates/gob-log (init.rs: LOG_ENV, default_directive, build_filter, InitError, text/JSON layers, FmtSpan::CLOSE timing, ansi only on a terminal; redact.rs for secret masking). Replace the ad-hoc init_logging in crates/cadetta-cli/src/main.rs. Keep stdout for command output; logs only on stderr.
+Mirror ~/projects/frob-v2/crates/gob-log (init.rs: LOG_ENV, default_directive, build_filter, InitError, text/JSON layers, FmtSpan::CLOSE timing, ansi only on a terminal; redact.rs for secret masking). Replace the ad-hoc init_logging in crates/cadetta-cli/src/main.rs. Keep stdout for command output; logs only on stderr.
