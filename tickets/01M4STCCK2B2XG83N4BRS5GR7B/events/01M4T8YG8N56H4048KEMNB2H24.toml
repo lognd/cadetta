@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:19:24Z"
+digest = "c520e20bca7f475c93eac836d9144e871f9996e1eb8303e264744439523e2653"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ae97d249-f82c-404b-8792-aa1d61719a2e with nextest profile: default
+    Starting 3 tests across 23 binaries (620 tests skipped)
+        PASS [   0.012s] cadetta-lint rules::interface::tests::i001_fires_on_missing_required_member_only
+        PASS [   0.018s] cadetta-lint rules::interface::tests::i003_only_for_viable_alternate_primary_decided
+        PASS [   0.019s] cadetta-lint rules::interface::tests::i004_fires_for_uninstantiated_public_root
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.026s] 3 tests run: 3 passed, 620 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=rules::interface::tests::i001_fires_on_missing_required_member_only)|test(=rules::interface::tests::i003_only_for_viable_alternate_primary_decided)|test(=rules::interface::tests::i004_fires_for_uninstantiated_public_root)"
+size = 791
+status = "measured"
+test_count = 3
+tests_digest = "c0253cbf4e561fb58c993bd4f168a80e2a3ecccd028c86603971a204d0d84040"
+at = "2026-10-13T09:19:24Z"
+actor = "lognd"
+rev = 1
