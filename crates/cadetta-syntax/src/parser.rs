@@ -16,6 +16,8 @@ use crate::ast::{
 };
 use crate::lexer::{Comment, CommentKind, DiagCode, Diagnostic, Punct, Span, Tok, Token, lex};
 
+#[path = "geometry.rs"]
+mod geometry;
 #[path = "parser_items.rs"]
 mod items;
 
@@ -787,7 +789,11 @@ impl Parser<'_> {
                 InterfaceMemberKind::Field { name, optional, ty }
             }
             (Tok::Ident(_), _) => InterfaceMemberKind::Bound(Box::new(self.bound()?)),
-            (Tok::Keyword("datum"), _) => return self.err("`datum` members are not parsed yet"),
+            (Tok::Keyword("datum"), _) => InterfaceMemberKind::Datum(self.datum(true)?),
+            (Tok::Keyword("origin"), _) => {
+                self.reject_origin_name()?;
+                unreachable!("reject_origin_name fails on origin")
+            }
             (other, _) => {
                 return self.err(format!(
                     "expected an interface member, found {}",
@@ -935,8 +941,11 @@ impl Parser<'_> {
             (Tok::Keyword("check"), _) => MemberKind::Check(self.check()?),
             (Tok::Keyword("require"), _) => MemberKind::Require(self.require()?),
             (Tok::Keyword("solver"), _) => MemberKind::Solver(self.solver()?),
-            (Tok::Keyword(k @ ("datum" | "place")), _) => {
-                return self.err(format!("`{k}` members are not parsed yet"));
+            (Tok::Keyword("datum"), _) => MemberKind::Datum(self.datum(false)?),
+            (Tok::Keyword("place"), _) => MemberKind::Place(self.place()?),
+            (Tok::Keyword("origin"), _) => {
+                self.reject_origin_name()?;
+                unreachable!("reject_origin_name fails on origin")
             }
             (Tok::Ident(_), Tok::P(Punct::Colon | Punct::Eq)) => MemberKind::Param(self.param()?),
             (
@@ -1728,6 +1737,8 @@ mod tests {
                 MemberKind::Check(_) => "check",
                 MemberKind::Require(_) => "require",
                 MemberKind::Solver(_) => "solver",
+                MemberKind::Datum(_) => "datum",
+                MemberKind::Place(_) => "place",
                 MemberKind::Error => "error",
             })
             .collect();
