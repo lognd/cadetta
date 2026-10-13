@@ -430,6 +430,12 @@ nominal that is not a whole number of nanometres has no table row (F002).
   Under a process, a parameter whose name suggests a feature but has no
   role is P001.
 
+Evaluation of these (decisions): function bodies and `let` values are
+analysis values, evaluated over the full tolerance of their operands;
+only a parameter stores a design tolerance, and a pure reference is an
+alias (quantities.md 5.3). `match` arms are chosen on the scrutinee's
+variant and a missing variant without `_` is E009.
+
 ### 3.9 Citations
 
 `@name`, `@"literal"`, and an optional locator `@name:"p.2, table 1"`.
@@ -648,6 +654,19 @@ discharges the sign-off obligation of a `holds` require (O003) and
 cannot change a `violated` one, which stays C001. The state `waived`
 applies only to diagnostics suppressed by `waive` or `allow`. The single
 rule is in obligations.md 4.
+
+Decisions (cadetta-sema `checks`): a check condition is a comparison
+chain, `x satisfies P`, or `and`, `or` and `not` over those, combined
+with Kleene logic over holds, violates and undecided; a third kind,
+`==` on toleranced values, is C003 (warning). A bound is looked up
+syntactically, either bare (`P`, in the enclosing component) or as
+`Item.P`, because bounds are not value members; when a parameter and a
+bound share a name, `P.min`/`P.max` read the parameter and `satisfies
+P` reads the bound. A bound's limits are the nominals of its
+expressions. A quantifier ranges over an array literal, one result per
+instance; ranging over a `part` array waits for the parts work. A
+`require` carries its own citation, else its component's, and is
+marked as an obligation (obligations.md).
 
 ## 7. Formatting
 
