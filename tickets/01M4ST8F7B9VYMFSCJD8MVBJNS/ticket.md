@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T09:20:54Z"
+updated = "2026-10-13T09:21:28Z"
 persona = "design engineer"
 capability = "see everything that goes stale or flips if a value changes"
 idempotency_key = "replan13:cadetta impact"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a path with no dependents, when run, then the output says so (obligations.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given impact PATH, when run, then output validates against impact.json (config-cli.md 3)"
