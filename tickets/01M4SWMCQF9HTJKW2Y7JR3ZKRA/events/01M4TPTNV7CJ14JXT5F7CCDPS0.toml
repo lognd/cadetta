@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T13:21:56Z"
+digest = "1734ba79e8e0d3a0737b9347823f2a84cfae62d1546e2fcce3adae33787d498c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.26s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID eb380054-5afc-4d79-ad49-764853172fbf with nextest profile: default
+    Starting 5 tests across 1 binary (60 tests skipped)
+        PASS [   0.010s] cadetta-adapter import::naming::tests::member_snake_and_unit_strip
+        PASS [   0.010s] cadetta-adapter import::naming::tests::deterministic
+        PASS [   0.010s] cadetta-adapter import::naming::tests::collisions_are_suffixed_and_flagged
+        PASS [   0.010s] cadetta-adapter import::naming::tests::expression_references_proposed_members
+        PASS [   0.010s] cadetta-adapter import::naming::tests::component_is_upper_camel_stem
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 5 tests run: 5 passed, 60 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(~import::naming::tests)'"
+size = 1004
+status = "measured"
+test_count = 5
+tests_digest = "95a006e025d39b7b5e72085f63dbd3eb9d99a90a505a2e87bbbf4af211848590"
+at = "2026-10-13T13:21:56Z"
+actor = "lognd"
+rev = 1
