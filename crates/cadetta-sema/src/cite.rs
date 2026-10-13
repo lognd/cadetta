@@ -223,8 +223,8 @@ mod tests {
             .resolve(Some(dir), ms[1].as_ref().expect("b"))
             .expect("file");
         assert_eq!(file.kind, CitationKind::File);
-        let bytes = std::fs::read(dir.join("Cargo.toml")).expect("read");
-        assert_eq!(file.file_digest, Some(digest_bytes(&bytes)));
+        let bytes = include_bytes!("../Cargo.toml");
+        assert_eq!(file.file_digest, Some(digest_bytes(bytes)));
         // a literal never reads the disk
         let lit = t
             .resolve(Some(dir), ms[2].as_ref().expect("c"))
