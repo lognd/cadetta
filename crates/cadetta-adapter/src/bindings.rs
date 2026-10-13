@@ -338,6 +338,10 @@ impl BindingSet {
                 if let Some(c) = &l.component {
                     f.push_str(&format!(", component = {}", quote(c)));
                 }
+                // frob:ticket 01M4VPEE2SE4Y96XGGN17H42KT
+                if let Some(t) = l.tolerance {
+                    f.push_str(&format!(", tolerance = {}", quote(tolerance_text(t))));
+                }
                 out.push_str(&format!("  {{ {f} }},\n"));
             }
             out.push_str("]\n\n");
@@ -636,6 +640,15 @@ pub fn kind_text(k: LocatorKind) -> &'static str {
         LocatorKind::Property => "property",
         LocatorKind::Frame => "frame",
         LocatorKind::Instance => "instance",
+    }
+}
+
+/// The bindings-file spelling of a tolerance policy.
+// frob:ticket 01M4VPEE2SE4Y96XGGN17H42KT
+pub fn tolerance_text(t: TolerancePolicy) -> &'static str {
+    match t {
+        TolerancePolicy::Drive => "drive",
+        TolerancePolicy::Ignore => "ignore",
     }
 }
 
@@ -1596,6 +1609,39 @@ locators = [
         assert!(text.find("CoverPlate.thickness") < text.find("CoverPlate.width"));
         let back = BindingSet::load_str("sw", &text).expect("reload");
         assert_eq!(back.get(&path).expect("w").locators, vec![loc]);
+    }
+
+    // frob:ticket 01M4VPEE2SE4Y96XGGN17H42KT
+    // frob:tests writer_writes_tolerance_canonically
+    #[test]
+    fn writer_writes_tolerance_canonically() {
+        let mut s = BindingSet::load_str("sw", "").expect("load");
+        let path = p("acme.gearbox::CoverPlate.width");
+        let loc = Locator {
+            locator: "D1@Sketch1".into(),
+            kind: LocatorKind::Dimension,
+            mode: LocatorMode::Ref,
+            native_unit: String::new(),
+            ref_to: None,
+            for_alternate: None,
+            config: None,
+            sign: None,
+            component: None,
+            implicit: None,
+            tolerance: Some(TolerancePolicy::Ignore),
+        };
+        assert_eq!(s.bind(&path, loc.clone()), Ok(true));
+        assert_eq!(s.bind(&path, loc.clone()), Ok(false));
+        let text = s.to_toml();
+        assert!(text.contains(", tolerance = \"ignore\" }"), "{text}");
+        let back = BindingSet::load_str("sw", &text).expect("reload");
+        assert_eq!(back.get(&path).expect("w").locators, vec![loc.clone()]);
+        let mut other = loc;
+        other.tolerance = Some(TolerancePolicy::Drive);
+        assert!(matches!(
+            s.bind(&path, other),
+            Err(BindingsError::Conflict { .. })
+        ));
     }
 
     // frob:tests unbind_removes_and_drops_empty_tables
