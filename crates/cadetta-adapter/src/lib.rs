@@ -2,6 +2,8 @@
 //!
 //! Specification: `docs/spec/adapters.md`.
 
+pub mod read_units;
+
 use std::collections::BTreeSet;
 use std::fmt;
 use std::path::PathBuf;
