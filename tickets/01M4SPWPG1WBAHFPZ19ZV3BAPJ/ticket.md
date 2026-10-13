@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:10:43Z"
+updated = "2026-10-13T07:10:44Z"
 persona = "design engineer"
 capability = "get cycle detection and `was` rename resolution"
 outcome_text = "single-source-of-truth errors are caught"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the dependency graph, when built, then it is known without evaluating the design (language.md intro)"
-bound = false
+bound = true
 +++
