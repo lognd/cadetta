@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:40:52Z"
-updated = "2026-10-13T18:12:34Z"
+updated = "2026-10-13T18:13:45Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/adapters.md", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
 text = "Given csv.md 1, json.md 1 and adapters.md 3a, when read, then the note parts are separated by one space and the emit point is written emit=POINT, consistently across the three documents"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the csv note fixtures, when read, then they assert the exact note text (order, emit= token, fit class) rather than loose substrings"
