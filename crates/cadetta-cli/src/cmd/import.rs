@@ -360,7 +360,9 @@ fn program(pkg: &PackageDir, command: &[String]) -> Option<(PathBuf, Vec<String>
     Some((path, rest.to_vec()))
 }
 
-fn find_adapter<'a>(
+/// The package and adapter a `bind`/`import` id (adapter id or built-in name) names.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub(crate) fn find_adapter<'a>(
     project: &'a Project,
     scope: &[usize],
     id: &str,

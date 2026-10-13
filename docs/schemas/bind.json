@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BindReport",
+  "description": "Output of `cadetta bind --format json`: the one locator added or removed.",
+  "type": "object",
+  "required": ["action", "path", "adapter", "locator", "file", "changed"],
+  "additionalProperties": false,
+  "properties": {
+    "action": { "enum": ["add", "remove"] },
+    "path": { "description": "Canonical path.", "type": "string" },
+    "adapter": { "description": "Adapter id.", "type": "string" },
+    "locator": { "description": "Native locator text.", "type": "string" },
+    "file": { "description": "Bindings file, relative to the package directory.", "type": "string" },
+    "changed": { "description": "False when the request was already satisfied and the file was left untouched.", "type": "boolean" }
+  }
+}
