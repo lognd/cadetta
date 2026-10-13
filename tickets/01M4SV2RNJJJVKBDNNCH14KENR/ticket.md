@@ -2,11 +2,12 @@
 id = "01M4SV2RNJJJVKBDNNCH14KENR"
 title = "OQ-16: Tolerance in Python Quantity arithmetic"
 type = "docs"
-category = "triage"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T05:17:05Z"
-updated = "2026-10-13T05:17:05Z"
+updated = "2026-10-13T05:45:34Z"
 labels = ["open-question"]
 
 [[links]]
