@@ -2,7 +2,8 @@
 id = "01M4SXQWGAYJDGMGKNBMHASNBA"
 title = "Package manifest and workspace model"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
