@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:39:59Z"
+digest = "b982db7a9f81ed505208f132a62d23aeddd2feccb57679bd0c2be956f40692cf"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.64s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d1aa169a-11a7-4f98-a816-425f8b2fda2b with nextest profile: default
+    Starting 1 test across 1 binary (15 tests skipped)
+        PASS [   0.009s] cadetta-ir dim::tests::ir_dim_serialized_exponents
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 15 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E 'test(=dim::tests::ir_dim_serialized_exponents)'"
+size = 669
+status = "measured"
+test_count = 1
+tests_digest = "06aa37c6e88b721757ee394e39b644edbcd390589a28cf163d959e6dcd57e6b5"
+at = "2026-10-13T07:39:59Z"
+actor = "lognd"
+rev = 1
