@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T07:27:09Z"
+digest = "04e20aed1c879f2bd669e1ee5b8e3a4a3334db510b3c3df631f808c652750061"
+exit_code = 0
+inline = '''
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.80s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 882703c6-548d-4153-8d70-f043f213af57 with nextest profile: default
+    Starting 1 test across 16 binaries (320 tests skipped)
+        PASS [   0.013s] cadetta-variants interface::tests::reads_depend_on_the_interface_only
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 320 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=interface::tests::reads_depend_on_the_interface_only)"
+size = 905
+status = "measured"
+test_count = 1
+tests_digest = "d9581b30d6141cfb0229b9fd3acb52a6472c9128279cd930e5c2a24c88e3af17"
+at = "2026-10-13T07:27:09Z"
+actor = "lognd"
+rev = 1
