@@ -2,7 +2,8 @@
 id = "01M4SPWNVX14PTZ4B19436P66Q"
 title = "Inexact values and rounding (sqrt, trig, round_to)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
