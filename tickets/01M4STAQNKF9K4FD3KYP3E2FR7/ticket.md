@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T16:32:31Z"
+updated = "2026-10-13T16:34:11Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for obligations"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given draft 1.4 revisions of the document, when fixtures are rewritten, then every rule added or changed in 1.4 has fixtures (docs/spec/README.md)"
