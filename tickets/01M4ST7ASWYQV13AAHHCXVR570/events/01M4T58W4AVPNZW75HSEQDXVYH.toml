@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:15:11Z"
+digest = "79067556bd6cf302f89f47969ca86e0c24683d777910c1dad01e56933991e6d2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 172f9656-f755-4dad-857d-6787bc3aa472 with nextest profile: default
+    Starting 2 tests across 20 binaries (439 tests skipped)
+        PASS [   0.008s] cadetta-sema eval::tests::match_non_exhaustive_names_missing_variants
+        PASS [   0.008s] cadetta-sema eval::tests::match_exhaustive_and_wildcard_select_an_arm
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 2 tests run: 2 passed, 439 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=eval::tests::match_non_exhaustive_names_missing_variants) | test(=eval::tests::match_exhaustive_and_wildcard_select_an_arm) | test(=enums::tests::missing_variants_lists_the_uncovered)'"
+size = 660
+status = "measured"
+test_count = 2
+tests_digest = "27b268333dfa27969949cba62311d651da1cd49c3c5ebf7c37c7ffaa6cfff32c"
+at = "2026-10-13T08:15:11Z"
+actor = "lognd"
+rev = 1
