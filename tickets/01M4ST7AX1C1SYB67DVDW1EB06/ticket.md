@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a component citation, when members have none, then they inherit it; a member citation wins (language.md 3.9)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a local file citation, when resolved, then its file digest is recorded; a literal citation is never checked for reachability (language.md 3.9)"
