@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cadetta.dev/schemas/cite-list.json",
+  "title": "cadetta cite list --format json",
+  "description": "The numbered reference list: IR citations in 3.9.1 numbering order (config-cli.md 3).",
+  "type": "object",
+  "required": ["schema", "citations"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "cadetta.cite-list/1" },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "path", "type", "fields", "digest"],
+        "additionalProperties": false,
+        "properties": {
+          "number": { "type": "integer", "minimum": 1 },
+          "path": { "type": "string" },
+          "type": {
+            "enum": ["standard", "datasheet", "drawing", "catalog", "book", "article", "web", "quote", "document"]
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            }
+          },
+          "file_digest": { "type": "string" },
+          "digest": { "type": "string" }
+        }
+      }
+    }
+  }
+}
