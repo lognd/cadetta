@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T06:10:42Z"
-updated = "2026-10-13T06:14:04Z"
+updated = "2026-10-13T06:17:41Z"
 labels = ["creates:crates/cadetta-log/**"]
 scope = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml", "Cargo.toml", "frob.toml", "design/model.grmb", "crates/cadetta-log/**", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "docs/**"]
 
