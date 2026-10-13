@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T05:01:25Z"
+updated = "2026-10-13T05:44:12Z"
 persona = "design engineer"
 capability = "choose nominal, mid, mmc or lmc and see Q004 for unrepresentable values"
 outcome_text = "emitters decide nothing and never round silently"
@@ -45,5 +45,9 @@ bound = false
 
 [[acceptance]]
 text = "Given emit policy, when a request is built, then the tolerance point and unit are decided upstream and arrive in the request (adapters.md 4 rule 1)"
+bound = false
+
+[[acceptance]]
+text = "Given emit point, when mid, mmc or lmc, then the emitted value follows the policy, and a changed emit attribute re-pushes via the sync record (ir.md 4)"
 bound = false
 +++
