@@ -1,0 +1,16 @@
+kind = "create"
+title = "ISO 286 fit tables (cadetta-fits)"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 8
+parent = "01M4SPWGB2729B40CQE81MHM2Z"
+persona = "design engineer"
+capability = "resolve hole and shaft classes like H7, p6, g6 for any size in range"
+outcome_text = "fits are values, not comments"
+labels = ["creates:crates/cadetta-fits/**"]
+scope = ["crates/cadetta-fits/**"]
+acceptance = ["Given `20mm H7`, when resolved, then the tolerance is +0.021/0 mm per ISO 286", "Given a size outside the table range, when resolved, then F002 is signalled", "Given class `Z99`, when resolved, then F001 is signalled", "Given uppercase and lowercase letters, when resolved, then they are hole and shaft respectively"]
+at = "2026-10-13T04:03:52Z"
+actor = "lognd"
+rev = 1
