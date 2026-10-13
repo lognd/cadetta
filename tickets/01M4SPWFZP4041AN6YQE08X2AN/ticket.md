@@ -6,9 +6,13 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:03:45Z"
-updated = "2026-10-13T04:03:45Z"
+updated = "2026-10-13T04:04:06Z"
 labels = ["creates:crates/cadetta-units/**"]
 scope = ["crates/cadetta-units/**"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWGB2729B40CQE81MHM2Z"
 +++
 
 Outcome: exact rational quantities with dimensions, kinds and tolerances per docs/spec/quantities.md.
