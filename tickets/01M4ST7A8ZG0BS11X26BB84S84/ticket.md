@@ -2,7 +2,8 @@
 id = "01M4ST7A8ZG0BS11X26BB84S84"
 title = "Parser for interfaces, tables, processes, solvers and declarations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
