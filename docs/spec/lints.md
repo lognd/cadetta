@@ -268,6 +268,15 @@ cannot be resolved or evaluated.
 | T001 | not-in-table | warning | | An `ots` literal citing a table matches none of its rows. |
 | P001 | missing-process-role | warning | | Under a process, a feature-like parameter has no rule role. |
 
+I rule implementation notes (0.1.0): I001 checks every non-optional
+interface member and every interface datum by member-root name. I002
+and I003 read the per-alternate check verdicts only (fits, bounds and
+requires reach them through checks); I002 is raised per check and
+alternate, and only when the primary does not itself fail that check
+(then it is C001). I003 requires the alternate to fail no check. I004
+skips private components (U002) and components some part names as its
+type, primary or alternate.
+
 ### S: sources and solvers
 
 | Code | Name | Default | Fixed | Meaning |

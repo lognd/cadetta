@@ -2,13 +2,13 @@
 id = "01M4SXRVB9C797ZD6KGK60DHZ8"
 title = "Lint U002 unused private item and I004 scope"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T06:04:28Z"
+updated = "2026-10-13T09:22:56Z"
 persona = "library author"
 capability = "find dead private items"
 labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
