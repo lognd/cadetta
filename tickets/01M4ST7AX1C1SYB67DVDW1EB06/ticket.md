@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T07:53:22Z"
+updated = "2026-10-13T07:53:23Z"
 persona = "design engineer"
 capability = "attach provenance and policy to values once"
 idempotency_key = "replan13:Attributes, citations and cite declarations"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a local file citation, when resolved, then its file digest is recorded; a literal citation is never checked for reachability (language.md 3.9)"
-bound = false
+bound = true
 +++
