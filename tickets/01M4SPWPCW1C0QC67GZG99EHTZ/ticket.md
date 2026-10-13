@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a canonical path with `/part[index]` segments, when resolved, then it matches ir.md 2"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `Other.param`, when resolved, then the same module is searched before imported names (packages.md 4)"
