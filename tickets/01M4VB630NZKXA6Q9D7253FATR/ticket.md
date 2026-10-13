@@ -8,7 +8,7 @@ points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:41:29Z"
+updated = "2026-10-13T21:43:51Z"
 persona = "design engineer"
 capability = "name a solver's script as an input rather than a citation"
 outcome_text = "citations only ever mean sources"
@@ -21,7 +21,7 @@ target = "01M4VB62VJQV9AKSSQME8NWW6Y"
 
 [[acceptance]]
 text = 'Given solver NAME [@cite] { script "path" ... }, when compiled, then Solver.script is the path, its digest is an input and Solver.citation is the optional CiteRef (solvers.md 1; ir.md 3)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given a solver body without script, or the draft 1.4 form solver NAME @"path", when parsed, then E001 (language.md 5a)'
