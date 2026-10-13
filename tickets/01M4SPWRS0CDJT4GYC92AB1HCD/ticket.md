@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:13:40Z"
+updated = "2026-10-13T13:14:14Z"
 persona = "cadetta contributor"
 capability = "drive external adapters over stdio with initialize, emit, read, push, regen, shutdown"
 outcome_text = "adapters can be written in any language"
@@ -21,17 +21,17 @@ target = "01M4SPWSCZ06W3EW6B1RDPEZRQ"
 
 [[acceptance]]
 text = "Given an external adapter, when initialize is sent, then name, version, capabilities, native units, precision and platforms are returned"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a mock adapter, when the full method sequence runs, then each result validates against the protocol schema"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a version in cadetta.toml not matching initialize, when connecting, then it refuses (OQ-7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the host, when it speaks JSON-RPC, then open, save and close are available for drive adapters and diagnostics reuse cadetta.diag/1 (adapters.md 5)"
-bound = false
+bound = true
 +++

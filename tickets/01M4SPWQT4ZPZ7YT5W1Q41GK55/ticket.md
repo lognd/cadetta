@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:01:45Z"
+updated = "2026-10-13T13:15:20Z"
 persona = "design engineer"
 capability = "get lints for the N family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/n.rs", "creates:tests/conformance/lints/N*/**"]
-scope = ["crates/cadetta-lint/src/rules/n.rs", "tests/conformance/lints/N*/**"]
+scope = ["crates/cadetta-lint/src/rules/n.rs", "tests/conformance/lints/N*/**", "crates/cadetta-lint/src/rules/mod.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "Given parameter `Axle.axle_length`, when linted, then N002 is reported"
