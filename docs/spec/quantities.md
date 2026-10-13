@@ -290,6 +290,13 @@ domain error.
 interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
 `radial`, language.md 3.8) stays defined when x straddles zero.
 
+Decided in implementation: "the same affine form" means structurally
+equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`
+with differing slack are not detected and use the ordinary product. The
+square of an exact form is exact; of a toleranced one it is the interval
+hull of `{a^2, b^2}` (with lower bound 0 when `[a, b]` contains zero),
+marked conservative.
+
 ### 5.5 Rounding
 
 `round_to(x, step)`, `ceil_to(x, step)`, `floor_to(x, step)`; `step`
