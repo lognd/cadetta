@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:36:08Z"
+digest = "ff4e961095aa688ebed37ce34dd8fe87a0b501980c00ff6de747a4940065d794"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7e26b429-d4f9-4830-8094-648b242d38b3 with nextest profile: default
+    Starting 5 tests across 2 binaries (20 tests skipped)
+        PASS [   0.010s] cadetta tests::format_flag_beats_env_and_both_validate
+        PASS [   0.011s] cadetta output::tests::text_is_rustc_style
+        PASS [   0.011s] cadetta output::tests::short_github_sarif_and_json_shapes
+        PASS [   0.011s] cadetta tests::cwd_and_config_are_validated
+        PASS [   0.011s] cadetta output::tests::format_parses_all_five_and_text_is_default
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 5 tests run: 5 passed, 20 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::cwd_and_config_are_validated) | test(=output::tests::format_parses_all_five_and_text_is_default) | test(=output::tests::short_github_sarif_and_json_shapes) | test(=output::tests::text_is_rustc_style)))'"
+size = 858
+status = "measured"
+test_count = 5
+tests_digest = "9a8eccd45a9cd179216f3d067f80201f6c82c865cd76f96814d1ba0fbc297d98"
+at = "2026-10-13T06:36:08Z"
+actor = "lognd"
+rev = 1

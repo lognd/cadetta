@@ -40,8 +40,15 @@ node cad_tool : foreign {
 node cli : trusted {
   kind component;
   clearance Internal;
-  owns "crates/cadetta-cli/**";
+  owns "crates/cadetta-cli/Cargo.toml";
+  owns "crates/cadetta-cli/src/config.rs";
+  owns "crates/cadetta-cli/src/lib.rs";
+  owns "crates/cadetta-cli/src/main.rs";
+  owns "crates/cadetta-cli/src/output.rs";
+  owns "crates/cadetta-cli/src/pkg/**";
+  owns "crates/cadetta-cli/src/project.rs";
   may fs.read at "crates/cadetta-cli/**";
+  may fs.write at "crates/cadetta-cli/src/project.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -138,6 +145,11 @@ flow f_ast : syntax -> sema {
   transport in_process;
 }
 
+flow f_cli_parse : cli -> syntax {
+  label Internal;
+  transport in_process;
+}
+
 flow f_design_ir : sema -> ir {
   label Internal;
   transport in_process;
@@ -199,6 +211,16 @@ flow f_py_cli : cli -> py_binding {
 }
 
 flow f_py_ir : ir -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
+flow f_py_quantity_syntax : syntax -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
+flow f_py_quantity_units : units -> py_binding {
   label Internal;
   transport in_process;
 }

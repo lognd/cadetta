@@ -93,9 +93,17 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
   same strings as `impact --swap SLOT ALT`.
 - Arithmetic follows the language's kind rules and carries tolerance
   (affine forms, quantities.md 5.4), so Python results agree with
-  checks. A violation raises `QuantityError`. `q.as_kind("Length")`
-  mirrors `as` (quantities.md) and raises `QuantityError` (Q003) when
-  the dimension differs.
+  checks. A violation raises `QuantityError`, whose `.code` is the
+  compiler's Q-code. `q.as_kind("Length")` mirrors `as` (quantities.md)
+  and raises `QuantityError` (Q002, the same code `as` gives in the
+  compiler) when the dimension differs.
+- Decided in implementation: `to_exact` is also `None` when a factor
+  of pi remains after dividing by the unit (`180deg` in `rad`), since a
+  `Fraction` cannot hold it. `.mmc`/`.lmc` need a role: a plain parsed
+  quantity raises `QuantityError` (E010) until `q.with_role("hole" |
+  "shaft")`. Affine temperature units (`degC`, `degF`) and ISO fit
+  classes are not accepted by `Quantity` in 0.1. Only integer scalars
+  mix with a Quantity in operators; floats never enter a stored value.
 - `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax and
   returns a `Result`.
 - Interop: `.to_pint(registry)` with the optional `cadetta[pint]`

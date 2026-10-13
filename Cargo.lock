@@ -31,6 +31,7 @@ dependencies = [
  "cadetta-syntax",
  "cadetta-units",
  "serde",
+ "serde_json",
  "thiserror",
  "toml",
  "tracing",
@@ -104,6 +105,8 @@ name = "cadetta-py"
 version = "0.0.0"
 dependencies = [
  "cadetta",
+ "cadetta-syntax",
+ "cadetta-units",
  "pyo3",
  "tracing",
 ]

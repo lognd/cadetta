@@ -2,18 +2,19 @@
 id = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 title = "CLI skeleton, output formats and exit codes"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T06:34:25Z"
+updated = "2026-10-13T06:36:47Z"
 persona = "design engineer"
 capability = "run cadetta with --format text|json, -v and --cwd"
 outcome_text = "scripts and humans both get usable output"
 labels = ["creates:crates/cadetta-cli/src/{main,output}.rs"]
-scope = ["crates/cadetta-cli/src/{main,output}.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/Cargo.toml", "docs/spec/config-cli.md", "Cargo.lock"]
+scope = ["crates/cadetta-cli/src/{main,output}.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/Cargo.toml", "docs/spec/config-cli.md", "Cargo.lock", "design/model.grmb"]
 
 [[links]]
 kind = "blocks"
@@ -33,17 +34,17 @@ target = "01M4SPWTA1PQV15S63741V30XT"
 
 [[acceptance]]
 text = "Given diagnostics at or above fail_on, when a command finishes, then exit code is 1"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a usage or I/O error, when a command finishes, then exit code is 2"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given stdout is not a terminal, when run, then json is the default format"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --format text|short|github|sarif|json or CADETTA_FORMAT, --cwd and --config, when run, then they behave as config-cli.md 4, 5; text is always the default"
-bound = false
+bound = true
 +++
