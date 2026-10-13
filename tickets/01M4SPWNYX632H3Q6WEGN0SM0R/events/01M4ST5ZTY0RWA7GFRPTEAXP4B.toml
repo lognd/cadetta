@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `5 mm`, when lexed, then Q007 quantity-literal-split is reported with a fix-it", "Given `.5mm`, when lexed, then a lex error is reported", 'Given `5"abc"`, when lexed, then a lex error is reported', "Given `// c` and `/// d`, when lexed, then line and doc comments are distinguished"]
+new = ["Given `5 mm`, when lexed, then Q007 quantity-literal-split is reported with a fix-it", "Given `.5mm`, when lexed, then a lex error is reported", 'Given `5"abc"`, when lexed, then a lex error is reported', "Given `// c` and `/// d`, when lexed, then line and doc comments are distinguished", """Given `2'6"`, `2ft6in` and `1h30min`, when lexed, then each is one compound literal; given unordered or non-descending segments then a lex error (quantities.md 2)""", "Given `3/4in`, `1-1/2in` and `3 / 4in`, when lexed, then the first two are single literals and the third is three tokens (quantities.md 2)", "Given `1e-3mm`, `9.81m/s^2` and `5%`, when lexed, then each is a single quantity literal (quantities.md 2)", "Given a reserved keyword from the language.md 2 list as an identifier, when lexed, then it is a keyword token (language.md 2)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
