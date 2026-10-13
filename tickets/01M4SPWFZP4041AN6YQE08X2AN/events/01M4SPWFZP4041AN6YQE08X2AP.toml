@@ -1,0 +1,14 @@
+kind = "create"
+title = "Quantity kernel (cadetta-units)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:crates/cadetta-units/**"]
+scope = ["crates/cadetta-units/**"]
+body = """
+Outcome: exact rational quantities with dimensions, kinds and tolerances per docs/spec/quantities.md.
+
+Success metric: every worked example in quantities.md passes as a unit test and 1in == 25.4mm exactly."""
+at = "2026-10-13T04:03:45Z"
+actor = "lognd"
+rev = 1
