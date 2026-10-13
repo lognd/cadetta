@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:24:50Z"
+digest = "3d7ed916f71e16a6650aecb98737037e294bdb015eec0100d639b84817522c32"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 10bb11fc-a7c4-4d63-85b2-1d3965b479d8 with nextest profile: default
+    Starting 1 test across 14 binaries (80 tests skipped)
+        PASS [   0.011s] cadetta-units units::tests::temperature_factors_agree_with_affine
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 80 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "temperature_factors_agree_with_affine"
+size = 557
+status = "measured"
+test_count = 1
+tests_digest = "363f698d26e7e2f6ba8ccf58e538c13488f3d976613e4009edeac857d3b3f80a"
+at = "2026-10-13T06:24:50Z"
+actor = "lognd"
+rev = 1
