@@ -32,5 +32,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a library update that flips a dependent verdict, when `cadetta check` runs, then the flip is reported through the obligation graph whatever the version number says (packages.md 5)"
-bound = false
+bound = true
 +++
