@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T13:29:04Z"
+updated = "2026-10-13T13:31:39Z"
 persona = "design engineer"
 capability = "tolerance a hole pattern by its pitch"
 idempotency_key = "replan14:geo-pattern"
@@ -21,7 +21,7 @@ target = "01M4SWFX82NWXV79EQTA5QX081"
 
 [[acceptance]]
 text = "Given rect_pattern(nx, ny, dx, dy, rotation), when evaluated, then points are ordered row by row, x fastest, from (-,-) to (+,+), centred on the datum origin (geometry.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a generator, when lowered, then holes.pitch_x, pitch_y, radius, start and rotation are Members that bind and emit while derived coordinates are analysis-only (geometry.md 3; ir.md 2)"
