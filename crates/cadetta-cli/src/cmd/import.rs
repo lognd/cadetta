@@ -752,4 +752,30 @@ for line in sys.stdin:
                 .all(|i| i.unit.as_deref() == Some("in"))
         );
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::run_import
+    #[test]
+    fn json_validates_against_import_schema() {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../../docs/schemas/import.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let dir = project();
+        let globals = Globals {
+            format: Format::Json,
+            cwd: Some(dir.0.clone()),
+            config: None,
+        };
+        for args in [
+            &["fake", "cover_plate.FCStd"][..],
+            &["--accept"],
+            &["fake", "f", "--update"],
+        ] {
+            let args: Vec<String> = args.iter().map(|a| (*a).to_owned()).collect();
+            let (mut out, mut err) = (Vec::new(), Vec::new());
+            assert_eq!(run_import(&args, &globals, &mut out, &mut err), EXIT_OK);
+            let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
+            assert!(validator.is_valid(&v), "{v}");
+        }
+    }
 }

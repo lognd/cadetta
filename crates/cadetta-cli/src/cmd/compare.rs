@@ -507,4 +507,17 @@ mod tests {
         );
         assert!(out.is_empty());
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/compare.rs::render
+    #[test]
+    fn json_validates_against_compare_schema() {
+        let schema: Json =
+            serde_json::from_str(include_str!("../../../../docs/schemas/compare.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let mut out = Vec::new();
+        render(&compare(&ir(), "Caster").unwrap(), Format::Json, &mut out);
+        let v: Json = serde_json::from_slice(&out).unwrap();
+        assert!(validator.is_valid(&v), "{v}");
+    }
 }

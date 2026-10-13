@@ -805,4 +805,30 @@ mod tests {
         assert_eq!(p.modules, ["acme"]);
         assert_eq!(p.globs, ["acme.plate::*"]);
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit
+    #[test]
+    fn json_validates_against_emit_schema() {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../../docs/schemas/emit.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let ok = project(SOURCE, BINDINGS, "");
+        let bad = project(
+            "model A {\n  w: Length = 1/3mm\n}\n",
+            "[\"acme.plate::A.w\"]\nlocators = [ { locator = \"W\", kind = \"global\", native_unit = \"mm\" } ]\n",
+            "precision = 2\n",
+        );
+        for dir in [&ok, &bad] {
+            let globals = Globals {
+                format: Format::Json,
+                cwd: Some(dir.0.clone()),
+                config: None,
+            };
+            let (mut out, mut err) = (Vec::new(), Vec::new());
+            run_emit(&[], &globals, &mut out, &mut err);
+            let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
+            assert!(validator.is_valid(&v), "{v}");
+        }
+    }
 }

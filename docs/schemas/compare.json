@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Compare",
+  "description": "A `cadetta.compare/1` report: one column per implementer of an interface.",
+  "type": "object",
+  "required": ["schema", "iface", "slots", "columns"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "cadetta.compare/1" },
+    "iface": { "type": "string" },
+    "slots": { "description": "Canonical paths of the slots typed by the interface, sorted.", "type": "array", "items": { "type": "string" } },
+    "columns": {
+      "description": "Implementers, sorted by component path.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Column" }
+    }
+  },
+  "$defs": {
+    "Cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value", "bound"],
+      "properties": {
+        "name": { "type": "string" },
+        "value": { "description": "Authored value, or null.", "type": ["string", "null"] },
+        "bound": { "description": "Bound text such as `<= 3`, or null.", "type": ["string", "null"] }
+      }
+    },
+    "Column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "members", "commercial", "lifecycle", "slots", "verdicts"],
+      "properties": {
+        "component": { "type": "string" },
+        "members": { "type": "array", "items": { "$ref": "#/$defs/Cell" } },
+        "commercial": { "type": "array", "items": { "$ref": "#/$defs/Cell" } },
+        "lifecycle": { "type": ["string", "null"] },
+        "slots": { "type": "array", "items": { "type": "string" } },
+        "verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slot", "check", "verdict"],
+            "properties": {
+              "slot": { "type": "string" },
+              "check": { "type": "string" },
+              "verdict": { "enum": ["pass", "fail", "unknown", "not evaluated"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}
