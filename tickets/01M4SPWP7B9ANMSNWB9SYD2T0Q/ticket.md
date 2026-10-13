@@ -2,7 +2,8 @@
 id = "01M4SPWP7B9ANMSNWB9SYD2T0Q"
 title = "Spans and error recovery"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
