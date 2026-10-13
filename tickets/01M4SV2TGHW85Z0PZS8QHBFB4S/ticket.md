@@ -16,6 +16,10 @@ scope = ["adapters/solidworks/src/**", "adapters/solidworks/pyproject.toml"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 
 [[links]]
