@@ -288,7 +288,7 @@ fn ack_citations(citations: &[Citation], signer: &Signer, lock: &mut Lock) -> Re
 }
 
 /// Build the role policy from `[obligations]`; the error is a config message.
-pub fn policy_of(config: &Config) -> Result<Policy, String> {
+pub(crate) fn policy_of(config: &Config) -> Result<Policy, String> {
     let mut policy = Policy::new();
     for (name, role) in &config.obligations.roles {
         let covers: Vec<&str> = role.covers.iter().map(String::as_str).collect();
