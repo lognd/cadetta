@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given emit point, when mid, mmc or lmc, then the emitted value follows the policy, and a changed emit attribute re-pushes via the sync record (ir.md 4)"
-bound = false
+bound = true
 +++
