@@ -2,7 +2,8 @@
 id = "01M4ST8EMQTXAGZAWGE2M5A4BR"
 title = "Obligation graph nodes, edges and states"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
