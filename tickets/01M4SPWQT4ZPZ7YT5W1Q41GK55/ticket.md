@@ -2,7 +2,8 @@
 id = "01M4SPWQT4ZPZ7YT5W1Q41GK55"
 title = "Lint family Naming rules N001-N006"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
