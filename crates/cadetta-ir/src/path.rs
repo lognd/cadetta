@@ -2,7 +2,7 @@
 //!
 //! Grammar and rules: `docs/spec/ir.md` 2. Only the full form (package and item prefix) is
 //! parsed here; the abbreviated in-source form is resolved by sema before a path is built.
-// frob:ticket 013FBDV
+// frob:ticket 01M4SWK9D2DYTDN1TW3013FBDV
 
 use std::fmt;
 use std::str::FromStr;
