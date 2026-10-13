@@ -73,7 +73,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a pure reference parameter, when evaluated, then it aliases the referent source variable (quantities.md 5.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the example `cb = head_dia.max + 1mm`, when evaluated, then an untoleranced 9.5mm is stored (quantities.md 5.3)"
