@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a `let`, when lowered, then the member has analysis=true and is never bound or emitted (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given a variant evaluation, when lowered, then each member stores only the values differing from the primary under "slot=alternate" (ir.md 3, language.md 3.2)'
