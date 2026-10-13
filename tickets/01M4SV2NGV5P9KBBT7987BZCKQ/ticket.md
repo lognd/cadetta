@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T06:32:31Z"
+updated = "2026-10-13T06:32:44Z"
 persona = "Python user"
 capability = "work with exact Quantities and parse source syntax"
 outcome_text = "results never silently become floats"
-labels = ["creates:bindings/python/python/cadetta/quantity.py", "creates:bindings/python/tests/test_quantity.py"]
+labels = ["creates:bindings/python/python/cadetta/quantity.py", "creates:bindings/python/tests/test_quantity.py", "creates:bindings/python/src/quantity.rs"]
 scope = ["bindings/python/python/cadetta/quantity.py", "bindings/python/tests/test_quantity.py", "bindings/python/src/quantity.rs", "bindings/python/src/lib.rs", "bindings/python/Cargo.toml", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "Cargo.lock", "docs/spec/bindings.md", "docs/spec/quantities.md"]
 
 [[links]]
