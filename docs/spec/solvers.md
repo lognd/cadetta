@@ -30,6 +30,15 @@ model Frame {
   member of an assembly resolves like any member, so instances and
   roll-ups are in scope (`motor.stall_torque`, `mass?(self)`).
 - The citation names the script; its digest is an input.
+- An `in` expression must be quantity-valued: quantity literals, name
+  paths and field reads, calls, indexing, unary minus, `+ - * / ^`, `as`
+  and tolerances. A bare number as the whole input (or an operand of
+  `+ -`) is Q001; a string, boolean, array, comparison, logic or range
+  operator, `satisfies`, ISO class, `if`, `match` or block is S007. A bare
+  number is a legal factor, exponent or call argument.
+- The IR `Solver` carries a closure: the sorted paths its inputs read plus
+  the script and `deps` files. Each output is `bound` until a driving use
+  (section 2) marks it `driving`.
 - All relative paths (the script, `deps`, result files) resolve against
   the directory of `cadetta.toml`, never the declaring file or the
   working directory.

@@ -150,6 +150,11 @@ flow f_cli_parse : cli -> syntax {
   transport in_process;
 }
 
+flow f_solver_parse : solver_host -> syntax {
+  label Internal;
+  transport in_process;
+}
+
 flow f_design_ir : sema -> ir {
   label Internal;
   transport in_process;
