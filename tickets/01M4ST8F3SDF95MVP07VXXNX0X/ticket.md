@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given --stale, when run, then only stale rows print and exit 1 follows required_for (config-cli.md 3)"
-bound = false
+bound = true
 +++
