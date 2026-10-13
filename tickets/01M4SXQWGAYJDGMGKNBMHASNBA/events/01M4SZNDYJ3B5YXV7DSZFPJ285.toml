@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:37:10Z"
+digest = "b8f9749b0975e00fce7b93fd2e2ac4f8d2d2f229f715cf2dfaeee18f70b91ee2"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 716181f5-a21c-4403-b0b5-c206b9706779 with nextest profile: default
+    Starting 1 test across 14 binaries (150 tests skipped)
+        PASS [   0.005s] cadetta pkg::manifest::tests::package_fields_default_and_root_module
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 150 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "package_fields_default"
+size = 632
+status = "measured"
+test_count = 1
+tests_digest = "44aabb4ca6d4ea371b67dcffd0e8e6dc1c02f5cb3862d6a980cf9c9d18d3e9f2"
+at = "2026-10-13T06:37:10Z"
+actor = "lognd"
+rev = 1

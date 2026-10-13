@@ -1,0 +1,30 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:37:09Z"
+digest = "057410f2dd651d01c12f2e7b8e772601da2b651e2665196a62735cdf6b08ab6a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e7e72929-b979-4582-b7fe-be6a27f134fd with nextest profile: default
+    Starting 8 tests across 2 binaries (12 tests skipped)
+        PASS [   0.006s] cadetta pkg::manifest::tests::package_fields_default_and_root_module
+        PASS [   0.006s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.006s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.006s] cadetta pkg::manifest::tests::trust_roles_are_parsed
+        PASS [   0.006s] cadetta pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected
+        PASS [   0.008s] cadetta pkg::manifest::tests::std_is_reserved_and_implicit
+        PASS [   0.008s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.010s] cadetta pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 8 tests run: 8 passed, 12 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected) | test(=pkg::manifest::tests::package_fields_default_and_root_module) | test(=pkg::manifest::tests::std_is_reserved_and_implicit) | test(=pkg::manifest::tests::trust_roles_are_parsed) | test(=pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::unknown_argument_is_a_usage_error)))'"
+size = 1167
+status = "measured"
+test_count = 8
+tests_digest = "ce46211f96bb61f97ef3ca5f8f842f7e60bbffe75110ebd34cb7ff283aeb0ed4"
+at = "2026-10-13T06:37:09Z"
+actor = "lognd"
+rev = 1

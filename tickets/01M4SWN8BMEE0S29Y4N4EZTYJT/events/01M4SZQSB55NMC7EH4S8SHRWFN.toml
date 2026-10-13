@@ -1,0 +1,26 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:38:27Z"
+digest = "827ca305c1cd08a7cbb169a1748a1797d816897d69c9956b1d46ff2341851aa0"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 2 items
+
+bindings/python/tests/unit/test_logging.py ..                            [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3453517-0.xml --------------
+============================== 2 passed in 0.02s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/unit/test_logging.py::test_get_logger_returns_named_logger bindings/python/tests/unit/test_logging.py::test_use_protocol_logging_installs_stderr_only_root"
+size = 467
+status = "measured"
+test_count = 2
+tests_digest = "dbb16eb24ec317c996c6e82b75f2ad27502b611348da2a0c0615acc4833869f0"
+at = "2026-10-13T06:38:27Z"
+actor = "lognd"
+rev = 1

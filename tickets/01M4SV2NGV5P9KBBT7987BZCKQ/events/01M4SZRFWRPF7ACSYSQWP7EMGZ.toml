@@ -1,0 +1,30 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:38:50Z"
+digest = "b836699dc46402adbe31d397dabbb65550d238329ea281a3e52eddd30f73b2b9"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0c71f02f-183a-4ce8-9799-97d20163725d with nextest profile: default
+    Starting 8 tests across 3 binaries (72 tests skipped)
+        PASS [   0.005s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.007s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.009s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.017s] cadetta-units display::tests::money_and_percent
+        PASS [   0.016s] cadetta-units display::tests::precedence_order
+        PASS [   0.021s] cadetta-units display::tests::plain_units
+        PASS [   0.025s] cadetta-units display::tests::feet_inches
+        PASS [   0.026s] cadetta-units display::tests::inch_fraction
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.027s] 8 tests run: 8 passed, 72 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-units -E '(package(=cadetta) & (test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::unknown_argument_is_a_usage_error))) | (package(=cadetta-units) & (test(=display::tests::feet_inches) | test(=display::tests::inch_fraction) | test(=display::tests::money_and_percent) | test(=display::tests::plain_units) | test(=display::tests::precedence_order)))'"
+size = 1048
+status = "measured"
+test_count = 8
+tests_digest = "324f7571a3ffbe7053c738a8a412a4a2df6464b6edbb20e705d5615a5c96b6c3"
+at = "2026-10-13T06:38:50Z"
+actor = "lognd"
+rev = 1
