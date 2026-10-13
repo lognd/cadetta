@@ -2,18 +2,19 @@
 id = "01M4SPWPCW1C0QC67GZG99EHTZ"
 title = "Name resolution and canonical paths"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:49:10Z"
+updated = "2026-10-13T06:49:36Z"
 persona = "design engineer"
 capability = "reference parameters as `Other.param` or `part.param`"
 outcome_text = "every value has one canonical path such as acme.rover::Axle.end_diameter"
 labels = ["creates:crates/cadetta-sema/src/resolve.rs"]
-scope = ["crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/src/lib.rs"]
+scope = ["crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
