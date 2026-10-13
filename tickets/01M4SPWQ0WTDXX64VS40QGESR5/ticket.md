@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:16:08Z"
+updated = "2026-10-13T08:17:09Z"
 persona = "design engineer"
 capability = "declare `fit wheel_axle = H7/p6 on Wheel.hub_bore`"
 outcome_text = "fit members and type (clearance, transition, interference) are computed, never authored"
@@ -21,7 +21,7 @@ target = "01M4SPWQH44JWFXZDNTGEBMMNX"
 
 [[acceptance]]
 text = "Given `fit f = H7/p6 on Wheel.hub_bore`, when evaluated, then f.hole, f.shaft, f.clearance and f.type (interference) exist (language.md 3.7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `p6 on wheel.hub_bore` and `H7 on motor.shaft`, when evaluated, then the class letter case picks the side it plays and x is the other side (language.md 3.7)"
