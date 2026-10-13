@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an evaluation error under a variant (table lookup misses, failed `as`), when evaluated, then that alternate is non-viable with the error as reason and the run does not fail (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a solver whose inputs change under a variant, when evaluated, then the variant reads its own result or is unknown (solvers.md 4.1)"
