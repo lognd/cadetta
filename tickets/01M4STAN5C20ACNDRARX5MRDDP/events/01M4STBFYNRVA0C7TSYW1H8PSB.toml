@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a run, when stored, then `<script>.out.json` holds results keyed by input digest (solvers.md 4)", "Given unchanged inputs, when evaluated, then the cached result is used and the solver is not run (solvers.md 4)", "Given changed inputs, when evaluated, then the output is stale but still evaluates until re-solved (solvers.md 4.1)", "Given result digests, when recorded, then they are written to cadetta.lock (obligations.md 3)"]
+new = ["Given a run, when stored, then `<script>.out.json` holds results keyed by input digest (solvers.md 4)", "Given unchanged inputs, when evaluated, then the cached result is used and the solver is not run (solvers.md 4)", "Given changed inputs, when evaluated, then the output is stale but still evaluates until re-solved (solvers.md 4)", "Given result digests, when recorded, then they are written to cadetta.lock (obligations.md 3)"]
+moved = [0, 0, 0, 0]
+at = "2026-10-13T05:04:22Z"
+actor = "lognd"
+rev = 1

@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T05:03:55Z"
+updated = "2026-10-13T05:04:22Z"
 persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
@@ -24,7 +24,7 @@ text = "Given unchanged inputs, when evaluated, then the cached result is used a
 bound = false
 
 [[acceptance]]
-text = "Given changed inputs, when evaluated, then the output is stale but still evaluates until re-solved (solvers.md 4.1)"
+text = "Given changed inputs, when evaluated, then the output is stale but still evaluates until re-solved (solvers.md 4)"
 bound = false
 
 [[acceptance]]
