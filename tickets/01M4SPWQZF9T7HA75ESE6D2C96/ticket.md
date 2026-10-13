@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a parameter used as a fit side with no tolerance, when linted, then M003 is reported (lints.md M)"
-bound = false
+bound = true
 +++
