@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "lease deadlock with ~41V30XT; work kept on branch, resume after it lands"
+at = "2026-10-13T14:37:16Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T14:11:09Z"
+digest = "2001fa0979483e02194ff97f3d058af783ad7dffe5fe71da867deca14b76e61e"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_project.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-802742-0.xml ---------------
+============================== 1 passed in 0.35s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_project.py::test_unknown_path_is_err_not_keyerror"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "9decf9416b0e3b5b2fb9722435e37545792720261b1d21ae53c73714257cb95b"
+at = "2026-10-13T14:11:09Z"
+actor = "lognd"
+rev = 1

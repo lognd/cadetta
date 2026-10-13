@@ -44,6 +44,13 @@ pub enum BindingsError {
         /// The offending value.
         value: i64,
     },
+    /// A locator failed field validation.
+    BadLocator {
+        /// The path key.
+        path: String,
+        /// Why it failed.
+        reason: String,
+    },
     /// Two paths still create one native name after full qualification (R013).
     NameCollision {
         /// The colliding name.
@@ -62,6 +69,7 @@ impl fmt::Display for BindingsError {
             Self::BadSign { path, value } => {
                 write!(f, "binding `{path}`: sign must be 1 or -1, got {value}")
             }
+            Self::BadLocator { path, reason } => write!(f, "binding `{path}`: {reason}"),
             Self::NameCollision { name, paths } => {
                 write!(
                     f,
@@ -336,7 +344,7 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
             });
         }
     };
-    Ok(Locator {
+    let loc = Locator {
         locator: l.locator,
         kind,
         mode,
@@ -346,7 +354,12 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
         config: l.config,
         sign,
         component: l.component,
-    })
+    };
+    crate::locator::validate(&loc).map_err(|e| BindingsError::BadLocator {
+        path: key.to_owned(),
+        reason: e.to_string(),
+    })?;
+    Ok(loc)
 }
 
 /// Whether binding path `b` (which may hold `[*]`) addresses `k`.

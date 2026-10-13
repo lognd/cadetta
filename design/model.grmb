@@ -57,12 +57,17 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/check.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/check_watch.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/emit.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/import.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/swap.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
   may exec at "crates/cadetta-cli/src/cmd/update.rs";
+  may exec at "crates/cadetta-cli/src/cmd/import.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -115,6 +120,8 @@ node py_binding : trusted {
   may exec at "bindings/python/tests/**";
   may fs.read at "bindings/python/python/cadetta/logging/**";
   may fs.read at "bindings/python/tests/**";
+  may fs.write at "bindings/python/tests/**";
+  may exec at "bindings/python/python/cadetta/project.py";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
@@ -183,6 +190,11 @@ flow f_cli_ir : cli -> ir {
 }
 
 flow f_cli_obligations : cli -> obligations {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_adapters : cli -> adapter_host {
   label Internal;
   transport in_process;
 }

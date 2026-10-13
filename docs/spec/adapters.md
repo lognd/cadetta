@@ -159,6 +159,14 @@ variable `"Axle_end_diameter"` or to the dimension
   | `sign` | `-1` negates a coordinate on write and read (geometry.md 6) |
   | `component` | in-assembly instance (`"wheel<2>"`, emitters/sw-equations.md 4) |
 
+- Locator validation (`cadetta-adapter` `locator.rs`): `locator` is non-empty;
+  `ref_to` needs a `dimension` locator in `ref` mode; `sign` does not apply to
+  a `property`; `for` and `config` are non-empty when present; `component` has
+  the form `name<N>`. Native names are namespace-qualified by kind
+  (`global:`, `dimension:`, `property:`, `frame:`), so one name in two
+  namespaces is not R013; the same qualified name from two paths in one
+  configuration and component is.
+
 - Parameterized components exist only as instances. A binding may name
   one instance (`Rover/axle[1].end_diameter`) or all of them
   (`Rover/axle[*].end_diameter`). A `[*]` binding is emitted once, at
@@ -347,6 +355,11 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
   handle}}`. `regen` per-target status is `ok` or `failed`.
 - The host refuses `open`, `save`, `close`, `push` and `regen` unless
   `drive` was declared, and `emit` unless `emit` was.
+- A drive sync runs `open`, `push` per file, `save` (per `[[adapter]]
+  save`; skipped when `never` or when any locator `failed`), `close`,
+  `shutdown`, in that order. `open` reporting a dirty or read-only file
+  is R009: the session is closed and nothing is pushed. Push status is
+  per locator.
 - Every result is parsed against the types in `docs/schemas/adapter-protocol.json`
   (unknown fields are refused); each diagnostic must be a `cadetta.diag/1`
   record.

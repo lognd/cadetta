@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T14:11:10Z"
+digest = "c6704783f26d04c8d8c26d24bcf52dcb950d48855b56452a86f7b74ec39322fb"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_project.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-803323-0.xml ---------------
+============================== 1 passed in 0.10s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_project.py::test_package_and_modules"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "2de9d55beaa9a591fb6d8ba6da77e4cb979e49173072f91a94f2f4785236c7bc"
+at = "2026-10-13T14:11:10Z"
+actor = "lognd"
+rev = 1

@@ -8,6 +8,7 @@ use std::io::Write;
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply};
+use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::graph::ObligationState;
 use cadetta_obligations::lock::Lock;
@@ -67,7 +68,7 @@ pub fn parse_args(args: &[String]) -> Result<CheckArgs, String> {
 pub type DriftHook<'a> = dyn Fn(&Adapter, &IrProject) -> Vec<Diagnostic> + 'a;
 
 /// The default drift hook: the adapter host is not wired, so no drift is observed.
-fn no_drift(adapter: &Adapter, _ir: &IrProject) -> Vec<Diagnostic> {
+pub(crate) fn no_drift(adapter: &Adapter, _ir: &IrProject) -> Vec<Diagnostic> {
     tracing::info!(adapter = %adapter.name, "check: adapter read/drift lints are not wired; skipped");
     Vec::new()
 }
@@ -147,7 +148,7 @@ pub fn run_check(
 
 /// Run `cadetta check` with an explicit drift hook, called once per adapter that can read.
 ///
-/// `--watch` is accepted and runs one pass (the ndjson watcher is a separate verb mode).
+/// `--watch` hands over to the ndjson watch loop in `check_watch`.
 pub fn run_check_with(
     args: &[String],
     globals: &Globals,
@@ -174,7 +175,7 @@ pub fn run_check_with(
         Err(e) => return fail(err, &e.to_string()),
     };
     if parsed.watch {
-        tracing::warn!("check: --watch is not implemented here; running one pass");
+        return super::check_watch::run_watch(args, globals, out, err, drift);
     }
     let policy = match policy_of(&project.config) {
         Ok(p) => p,
@@ -232,7 +233,14 @@ pub fn run_check_with(
     if !scope.is_all() {
         raw.retain(|d| d.path.as_deref().is_some_and(|p| scope.contains(p)));
     }
-    let mut outcome = apply(raw, &cfg, &Suppressions::default());
+    let sup = Suppressions {
+        as_of: Some(as_of.date.to_string()),
+        ..analysis.suppressions.clone()
+    };
+    let mut outcome = apply(raw, &cfg, &sup);
+    // W001-W004 describe the waivers themselves, so they follow the engine run.
+    let waiver_diags = w::check(&outcome, &sup, &cfg);
+    outcome.diagnostics.extend(waiver_diags);
     for d in &mut outcome.diagnostics {
         if (d.code == "O001" || d.code == "O002")
             && gating_keys.contains(&(d.code.clone(), d.path.clone()))
@@ -408,6 +416,44 @@ mod tests {
         assert_eq!(o["path"], "acme.axle::Axle.bore_ok");
     }
 
+    const AXLE_M001: &str = "model Axle {\n  od: Length = 20.1234mm\n}\n";
+
+    // frob:ticket 01M4TQJJK40BJQTA59SMC5WD33
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn ir_lint_families_run_in_check() {
+        let dir = project(AXLE_M001, "");
+        let (_, json, _) = run(&dir, &[]);
+        let c = codes(&json);
+        assert!(c.contains(&"M001".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4TQJJK40BJQTA59SMC5WD33
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn waive_suppresses_through_the_engine_and_unused_waiver_is_w004() {
+        let waived = format!(
+            "{AXLE_M001}waive M001 on acme.axle::Axle.od {{ because \"measured to the micron\" }}\n"
+        );
+        let dir = project(&waived, "");
+        let (_, json, _) = run(&dir, &[]);
+        let m = json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == "M001")
+            .expect("M001 listed in json as waived");
+        assert!(m["waived"].is_object(), "{json}");
+        assert!(!codes(&json).contains(&"W004".to_owned()), "{json}");
+
+        let unused = format!(
+            "{AXLE_OK}waive M001 on acme.axle::Axle.od {{ because \"nothing to waive\" }}\n"
+        );
+        let dir = project(&unused, "");
+        let (_, json, _) = run(&dir, &[]);
+        assert!(codes(&json).contains(&"W004".to_owned()), "{json}");
+    }
+
     fn attest(dir: &Dir, digest: &str) {
         let mut lock = Lock::new();
         lock.insert(Record::Attest(Attest {
@@ -447,7 +493,7 @@ mod tests {
     #[test]
     fn flags_scope_as_of_watch_and_fail_on() {
         let dir = project(AXLE_BAD_CHECK, "");
-        let (code, _, _) = run(&dir, &["--watch", "--as-of", "2026-10-13"]);
+        let (code, _, _) = run(&dir, &["--as-of", "2026-10-13"]);
         assert_eq!(code, 1);
         let (code, json, _) = run(&dir, &["--module", "other"]);
         assert_eq!(code, 0, "{json}");

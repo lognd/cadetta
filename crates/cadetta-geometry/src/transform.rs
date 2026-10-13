@@ -218,7 +218,7 @@ fn identity_rot() -> Mat {
 }
 
 /// `(cos, sin)` of the angle as dimensionless coordinates (see the module decisions).
-fn cos_sin(angle: &Affine) -> Result<(Coord, Coord), TransformError> {
+pub(crate) fn cos_sin(angle: &Affine) -> Result<(Coord, Coord), TransformError> {
     if !angle.dim().dimension.is_dimensionless() {
         return Err(TransformError::NotAnAngle(format!("{:?}", angle.dim())));
     }

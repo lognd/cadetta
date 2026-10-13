@@ -192,6 +192,18 @@ A heat-set insert in 0.1.0 is `tap = Vendor` with `into = Brass360` and
 (language.md 3.7). Models read joint outputs freely as long as no
 member reads itself (D003 is per member, language.md 4).
 
+`ScrewJoint` lives in `std/src/fasteners/screwjoint.cdt` with the enums
+`ClearanceClass` (`Fine Medium Coarse`) and `TapKind` (`Cut Form`). Decisions:
+members are public unless written `priv`, so the public members are exactly
+the table above and the intermediates (`major`, `pitch`, `head`, `column`,
+`drill_nominal`) are `priv`; the shop numbers (engagement factor, tap
+column, preferred lengths, drills, depth allowances) are read from the
+`policy` argument; without `counterbore` the pocket members are `0mm`, so
+`grip` is `clamp`; `float` is the fixed-fastener allowance `(clearance_hole
+- major) / 2`; the tap drill is the policy's column rounded `at_least` into
+`policy.drills`. The `tap = Vendor` form, the `head`, `at`, `onto`, `host`
+and `nut` arguments and the checks arrive with the arguments-and-checks story.
+
 Change `into = base.material` from aluminium to stainless and the tap
 drill, engagement, screw length, thread and drill depths and callout all
 follow; `cadetta impact` shows which CAD files need a re-sync.

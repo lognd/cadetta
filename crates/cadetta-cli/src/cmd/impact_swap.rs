@@ -10,10 +10,15 @@ use serde_json::{Value as Json, json};
 use crate::output::Format;
 use crate::pipeline::analyze;
 use crate::project::Project;
+use crate::universe::Universe;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
+use cadetta_obligations::lock::{Lock, Record};
 
 /// Schema tag of the JSON report; the schema is `docs/schemas/swap.json`.
 pub const SCHEMA: &str = "cadetta.swap/1";
+
+#[path = "impact_swap_report.rs"]
+pub mod report;
 
 const USAGE: &str = "usage: cadetta impact --swap PART NEW";
 
@@ -64,7 +69,7 @@ pub struct Flip {
 }
 
 /// The preview of one swap.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Swap {
     /// Canonical path of the slot.
     pub slot: String,
@@ -80,6 +85,8 @@ pub struct Swap {
     pub flips: Vec<Flip>,
     /// Section 4: the new `part` line.
     pub suggested_edit: String,
+    /// Sections 5 to 7: CAD re-sync, attestations invalidated, commercial deltas.
+    pub report: report::Report,
 }
 
 /// Why a swap cannot be previewed.
@@ -166,8 +173,19 @@ fn suggested_edit(part: &Part, new: &str) -> String {
     )
 }
 
-/// Preview swapping slot `part` to `new` using the variant data carried by `ir`.
+/// Preview swapping slot `part` to `new` using the variant data carried by `ir`, without
+/// attestation scopes.
 pub fn preview(ir: &Ir, part: &str, new: &str) -> Result<Swap, SwapError> {
+    preview_with(ir, part, new, &[])
+}
+
+/// Preview the swap, judging attestations against `scopes` (frob:ticket 01M4ST8FAX8HDAXH8NBC8VKPXW).
+pub fn preview_with(
+    ir: &Ir,
+    part: &str,
+    new: &str,
+    scopes: &[report::AttestScope],
+) -> Result<Swap, SwapError> {
     let slot = find_slot(ir, part).ok_or_else(|| SwapError::NoSlot(part.to_owned()))?;
     let slot_path = slot.path.to_string();
     let approved = slot.alternates.iter().any(|a| names(a, new));
@@ -246,6 +264,11 @@ pub fn preview(ir: &Ir, part: &str, new: &str) -> Result<Swap, SwapError> {
         }
     }
     flips.sort_by(|a, b| a.path.cmp(&b.path));
+    let mut moved: std::collections::BTreeSet<String> =
+        values.iter().map(|v| v.path.clone()).collect();
+    moved.extend(flips.iter().map(|f| f.path.clone()));
+    moved.insert(slot_path.clone());
+    let report = report::build(ir, slot, new, &moved, scopes);
     tracing::debug!(
         slot = %slot_path, new, approved,
         values = values.len(), flips = flips.len(), verdict = verdict.word(),
@@ -259,6 +282,7 @@ pub fn preview(ir: &Ir, part: &str, new: &str) -> Result<Swap, SwapError> {
         values,
         flips,
         suggested_edit: suggested_edit(slot, new),
+        report,
     })
 }
 
@@ -278,6 +302,12 @@ pub fn render(swap: &Swap, format: Format, out: &mut dyn Write) {
             })).collect::<Vec<Json>>(),
             "suggested_edit": swap.suggested_edit,
         });
+        let mut doc = doc;
+        if let Some(obj) = doc.as_object_mut() {
+            for (k, v) in report::to_json(&swap.report) {
+                obj.insert(k.to_owned(), v);
+            }
+        }
         let _ = writeln!(out, "{doc}");
         return;
     }
@@ -307,6 +337,31 @@ pub fn render(swap: &Swap, format: Format, out: &mut dyn Write) {
     }
     let _ = writeln!(out, "4. suggested edit:");
     let _ = writeln!(out, "  {}", swap.suggested_edit);
+    report::write_text(&swap.report, out);
+}
+
+/// The attestation scopes of `ir`: every lock attestation on a check, with its covered keys.
+fn attest_scopes(ir: &Ir, lock: &Lock) -> Vec<report::AttestScope> {
+    let universe = match Universe::of(ir) {
+        Ok(u) => u,
+        Err(e) => {
+            tracing::warn!(error = %e, "impact --swap: no obligation universe; skipping attestations");
+            return Vec::new();
+        }
+    };
+    let mut scopes = Vec::new();
+    for rec in lock.records() {
+        let Record::Attest(a) = rec else { continue };
+        let Some(entry) = universe.entry(&a.id) else {
+            continue;
+        };
+        scopes.push(report::AttestScope {
+            id: a.id.to_string(),
+            role: a.role.clone(),
+            covered: universe.covered_keys(&entry.key),
+        });
+    }
+    scopes
 }
 
 /// Run `cadetta impact --swap PART NEW`; `args` are `PART NEW`. Returns the exit code.
@@ -336,9 +391,14 @@ pub fn run_swap(
     if analysis.halted {
         return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
+    let lock = Lock::load(&project.root.join("cadetta.lock")).unwrap_or_else(|e| {
+        tracing::warn!(error = %e, "impact --swap: lock unreadable; attestations skipped");
+        Lock::new()
+    });
     let mut last = SwapError::NoSlot(part.clone());
     for package in &analysis.packages {
-        match preview(&package.ir, part, new) {
+        let scopes = attest_scopes(&package.ir, &lock);
+        match preview_with(&package.ir, part, new, &scopes) {
             Ok(swap) => {
                 render(&swap, globals.format, out);
                 return EXIT_OK;

@@ -336,7 +336,7 @@ fn email_in(text: &str) -> Option<String> {
 /// The git `user.email`: the repository's `.git/config`, else `~/.gitconfig`.
 ///
 /// Read directly so `ack` never spawns a process; `None` when neither sets it.
-fn git_email(dir: &Path) -> Option<String> {
+pub(crate) fn git_email(dir: &Path) -> Option<String> {
     let home = crate::env::home_dir();
     let candidates = dir
         .ancestors()

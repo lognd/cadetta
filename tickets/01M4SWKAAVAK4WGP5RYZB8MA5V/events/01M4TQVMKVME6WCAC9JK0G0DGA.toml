@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T13:40:00Z"
+digest = "47f28b7c33db51bc5cd4f9e38190978ff5293f75c0796382b4de6dc26791fe79"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 28c001f7-ef0f-496a-b438-2ce04351f366 with nextest profile: default
+    Starting 1 test across 1 binary (106 tests skipped)
+        PASS [   0.017s] cadetta-lint rules::e::tests::e005_missing_package_is_an_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 1 test run: 1 passed, 106 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::e::tests::e005_missing_package_is_an_error)'"
+size = 553
+status = "measured"
+test_count = 1
+tests_digest = "51e264ebdf896f8a2cb97405fa08476c27b36f38e7fc6fa70052b47451825a26"
+at = "2026-10-13T13:40:00Z"
+actor = "lognd"
+rev = 1

@@ -6,10 +6,13 @@ pub mod bindings;
 pub mod builtin;
 pub mod classify;
 pub mod import;
+pub mod locator;
 pub mod policy;
 pub mod read_units;
 pub mod rpc;
 pub mod scope;
+pub mod session;
+pub mod sync;
 pub mod testing;
 
 use std::collections::BTreeSet;

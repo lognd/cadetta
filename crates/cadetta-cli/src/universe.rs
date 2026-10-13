@@ -153,6 +153,19 @@ impl Universe {
         self.checks.iter().find(|e| &e.id == id)
     }
 
+    /// The graph keys `key` covers: itself and every transitive dependency (frob:ticket 01M4ST8FAX8HDAXH8NBC8VKPXW).
+    pub fn covered_keys(&self, key: &str) -> BTreeSet<String> {
+        let mut seen = BTreeSet::new();
+        let mut stack = vec![key.to_owned()];
+        while let Some(k) = stack.pop() {
+            if !seen.insert(k.clone()) {
+                continue;
+            }
+            stack.extend(self.edges.get(&k).into_iter().flatten().cloned());
+        }
+        seen
+    }
+
     /// Explain why `att` on `entry` is stale: the nearest changed upstream node.
     pub fn explain(
         &self,

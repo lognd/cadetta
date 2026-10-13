@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/check_watch.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/src/cmd/mod.rs", "docs/spec/config-cli.md"]
+new = ["crates/cadetta-cli/src/cmd/check_watch.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/src/cmd/mod.rs", "docs/spec/config-cli.md", "design/model.grmb"]
+at = "2026-10-13T14:08:14Z"
+actor = "lognd"
+rev = 1

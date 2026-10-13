@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T13:47:35Z"
+digest = "6d1cf77fe27ce91e114bc9e9ddc966ce0fe67ef33c50cd88e458adf374a19e61"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 209947af-ad01-402d-a6eb-ce7458af831d with nextest profile: default
+    Starting 1 test across 2 binaries (126 tests skipped)
+        PASS [   0.076s] cadetta-sema::std_screwjoint priv_intermediates_are_e016_and_public_members_read
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.081s] 1 test run: 1 passed, 126 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=priv_intermediates_are_e016_and_public_members_read)'"
+size = 640
+status = "measured"
+test_count = 1
+tests_digest = "49e4c520fd96ab0cb108f7a69d2c81ce7bd3f3ed2ae66cd620a1e148cb83fc30"
+at = "2026-10-13T13:47:35Z"
+actor = "lognd"
+rev = 1
