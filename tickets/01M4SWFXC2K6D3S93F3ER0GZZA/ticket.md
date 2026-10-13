@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:46:04Z"
+updated = "2026-10-13T08:46:05Z"
 persona = "design engineer"
 capability = "place parts in a tree"
 idempotency_key = "replan14:geo-place"
 labels = ["creates:crates/cadetta-geometry/src/placement.rs"]
-scope = ["crates/cadetta-geometry/src/placement.rs", "docs/spec/geometry.md"]
+scope = ["crates/cadetta-geometry/src/placement.rs", "docs/spec/geometry.md", "crates/cadetta-geometry/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
