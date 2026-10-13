@@ -1,0 +1,16 @@
+kind = "create"
+title = "cadetta compare"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "compare every implementer of an interface side by side"
+idempotency_key = "replan13:cadetta compare"
+labels = ["creates:crates/cadetta-cli/src/cmd/compare.rs"]
+scope = ["crates/cadetta-cli/src/cmd/compare.rs"]
+acceptance = ["Given `cadetta compare Caster`, when run, then every implementer is a column with interface members, bounds, commercial parameters, lifecycle and which checks hold for each in this design (obligations.md 5)", "Given an interface used by several slots, when run, then the table covers every slot typed by it (obligations.md 5.1)"]
+at = "2026-10-13T05:02:44Z"
+actor = "lognd"
+rev = 1
