@@ -86,6 +86,7 @@ required_for = "release"         # gate sync or solver obligations
 [solvers."acme.rover::wall_sizing"]
 command = ["python", "{script}"]
 transport = "stdio"              # stdio | file
+timeout = 60                     # seconds; optional, unset = no limit
 
 [[adapter]]
 name = "sw-equations"            # built-in
