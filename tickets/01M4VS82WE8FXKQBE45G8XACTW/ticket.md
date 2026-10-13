@@ -2,13 +2,13 @@
 id = "01M4VS82WE8FXKQBE45G8XACTW"
 title = "Treat tests/conformance/known-gaps.toml as an append-shared file for leases"
 type = "chore"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T23:23:31Z"
-updated = "2026-10-13T23:23:31Z"
+updated = "2026-10-13T23:23:35Z"
 idempotency_key = "d15:known-gaps-shared"
 scope = ["frob.toml"]
 
