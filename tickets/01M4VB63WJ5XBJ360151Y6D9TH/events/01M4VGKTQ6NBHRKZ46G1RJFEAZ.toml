@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 588f3411cdc6 (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38464432514/job/115527592430): base red only from parser test spec_example_parses_with_expected_shape reading the draft 1.5 language.md example; fixed by ~E8NWW6Y; unrelated to this ticket"
+at = "2026-10-13T20:50:26Z"
+actor = "lognd"
+rev = 1
