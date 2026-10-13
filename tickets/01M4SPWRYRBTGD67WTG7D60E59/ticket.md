@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:50:03Z"
+updated = "2026-10-13T09:50:04Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an unbound parameter or a `let`, when emitting, then it is not written (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a binding whose path matches nothing, when loaded, then it is reported for R005 (adapters.md 3)"
