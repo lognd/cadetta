@@ -2,7 +2,8 @@
 id = "01M4STAQ6562JJ6XGWKZ48GXKX"
 title = "Conformance fixtures for quantities"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
