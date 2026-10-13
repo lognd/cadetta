@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "inspect IR, diagnostics and unit tables"
 outcome_text = "I can debug without reading source"
 labels = ["creates:crates/cadetta-cli/src/cmd/{ir,explain,units}.rs"]
-scope = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml"]
+scope = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-units/src/units.rs"]
 
 [[acceptance]]
 text = "Given `cadetta explain Q007`, when run, then the catalog entry is printed"
