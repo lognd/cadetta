@@ -8,12 +8,16 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T05:45:13Z"
 persona = "design engineer"
 capability = "model a bolt pattern once"
 idempotency_key = "replan14:sd-screw"
 labels = ["creates:std/fasteners.cdt"]
 scope = ["std/fasteners.cdt"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4STAPCEF5EPEYX0MZDSBA7J"
 
 [[acceptance]]
 text = "Given a ScrewJoint over a pattern, when instantiated, then exactly one joint covers the whole pattern; count versus count(at) is distinguished (stdlib.md 3)"
