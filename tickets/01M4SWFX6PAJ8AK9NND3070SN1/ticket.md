@@ -2,7 +2,8 @@
 id = "01M4SWFX6PAJ8AK9NND3070SN1"
 title = "Interface datums and datum bounds"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
