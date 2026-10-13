@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T07:36:31Z"
+digest = "0d0038c0bf7714746ad9dee717f9f4b741053f44cb6f24c033d67cd538743363"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e9e05d48-f415-4d44-803e-c94d6ba35143 with nextest profile: default
+    Starting 1 test across 1 binary (13 tests skipped)
+        PASS [   0.007s] cadetta-ir model::tests::ir_binding_locators
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 13 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E 'test(=model::tests::ir_binding_locators)'"
+size = 533
+status = "measured"
+test_count = 1
+tests_digest = "d32f8caf70ff67294b19c0304d1f4f1160702a97e12fb18d84fcacfe87e9a450"
+at = "2026-10-13T07:36:31Z"
+actor = "lognd"
+rev = 1
