@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given ir.md 1.4 changes (Dim vector, geometry entities, path grammar, SLOT=ALT), when fixtures are rewritten, then each has fixtures (ir.md 2-3)"
