@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:01:15Z"
+updated = "2026-10-13T08:01:29Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `x satisfies P` with P a bound, when evaluated, then x is tested against P and `P.min`/`P.max` read its limits (quantities.md 5.7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given `require mass_budget: ... @customer:"REQ-12"`, when evaluated, then it is a check carrying a citation and tracked as an obligation (language.md 6)'
