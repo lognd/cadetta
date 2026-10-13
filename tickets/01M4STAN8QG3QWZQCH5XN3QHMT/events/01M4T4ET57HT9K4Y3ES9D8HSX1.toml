@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/solve.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/solvers.md", "crates/cadetta-cli/src/config.rs"]
+new = ["crates/cadetta-cli/src/cmd/solve.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/solvers.md", "crates/cadetta-cli/src/config.rs", "design/model.grmb"]
+at = "2026-10-13T08:00:57Z"
+actor = "lognd"
+rev = 1
