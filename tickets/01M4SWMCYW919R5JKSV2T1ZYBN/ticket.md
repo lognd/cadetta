@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the instance locator kind and observed frames[] and instances[], when validated, then the IR schema and locator rules of ir.md 3 and adapters.md 3 hold"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given flip and exact 90deg rotations, when synced, then they are never pushed and are verified only through the transform comparison (adapters.md 3.4)"
