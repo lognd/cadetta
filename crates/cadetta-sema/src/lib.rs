@@ -2,4 +2,5 @@
 //!
 //! Specification: `docs/spec/language.md`.
 
+pub mod deps;
 pub mod resolve;

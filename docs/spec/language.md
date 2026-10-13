@@ -512,6 +512,16 @@ Default precedence, highest first: the enclosing component's
   the same model (`part mount: Mount(hole = screws.clearance_hole)`
   while `screws` reads `mount.thickness`). Declaration order is
   irrelevant.
+  The graph's nodes are the members of instances (parameters, `let`s,
+  checks, `part` slots and component arguments); it is built from the
+  syntax and name resolution alone, before any evaluation (`cadetta-sema`
+  `deps.rs`). Reading a member of an array `part` also depends on the
+  part's slot, because instances exist only once the count is known; a
+  roll-up (`sum(self, mass)`, `mass(self)`) depends on the slot and the
+  named member of every part, never on the member that contains it.
+- A `was` path is read from its text, since the old item may no longer
+  exist. A reference that fails to resolve but names a `was` path
+  resolves to the parameter's current path and raises N004.
 - A root (a component no `part` instantiates) is evaluated only if all
   of its parameters have defaults; otherwise it is checked only through
   its instances, and if it has none that is I004, which applies only to
