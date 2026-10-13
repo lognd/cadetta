@@ -1,0 +1,10 @@
+kind = "create"
+title = "Spec: sw-equations behaviour when a Text parameter is bound"
+type = "docs"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/emitters/sw-equations.md"]
+body = "found while working ~KW6EQ0D: emitters/sw-equations.md 1 says Text is not emitted but not whether a bound Text path is silently skipped, warned, or a configuration error. Fixture value-text-not-emitted assumes silent skip with no diagnostic. Decide and write the rule."
+at = "2026-10-13T17:21:12Z"
+actor = "lognd"
+rev = 1
