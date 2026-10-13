@@ -196,6 +196,15 @@ a changed emit point still re-pushes. Obligations and waivers bind closure
 digests (obligations.md 2, W002); drift attribution (R001) and
 incremental pushes use own digests of emitted values.
 
+Canonical encoding decisions (`cadetta-ir` `digest.rs`): fields are tagged
+and length-prefixed; `Value.authored` (display text) is excluded along with
+spans and docs; every attribute except `display`, `emit`, `allow` and
+`lifecycle` is semantic; a check's verdicts, `conservative` and `waived_for`
+are results and not hashed; a closure hashes the own digest then the dep
+closure digests in dep path order; an instance closure hashes the member
+closure, the instance path text and, for an interface-typed slot, the slot
+part's own digest. Part arguments are nodes keyed `<slot>.<arg>`.
+
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
