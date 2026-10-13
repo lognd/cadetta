@@ -2,7 +2,8 @@
 id = "01M4SPWPCW1C0QC67GZG99EHTZ"
 title = "Name resolution and canonical paths"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
