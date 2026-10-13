@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:48:15Z"
+updated = "2026-10-13T09:50:13Z"
 persona = "design engineer"
 capability = "get lints for the C family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/c.rs", "tests/conformance/lints/C*/**", 
 
 [[acceptance]]
 text = "Given a check violated across the tolerance, when linted, then C001 error"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an undecided check, when linted, then C002 warning"
