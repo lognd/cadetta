@@ -2,7 +2,8 @@
 id = "01M4ST8F3SDF95MVP07VXXNX0X"
 title = "cadetta obligations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
