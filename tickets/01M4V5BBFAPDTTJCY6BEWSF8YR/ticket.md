@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:35:47Z"
-updated = "2026-10-13T18:03:00Z"
+updated = "2026-10-13T18:05:25Z"
 scope = ["docs/spec/emitters/json.md", "docs/spec/emitters/csv.md", "docs/spec/lints.md", "docs/spec/adapters.md", "docs/spec/config-cli.md", "docs/spec/README.md", "crates/cadetta-lint/src/engine.rs", "tests/conformance/emitters/json/**", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
 text = "Given a bindings file with a dimension locator or mode=ref for the json adapter, when the spec is read, then emitters/json.md states whether emit skips, emits or rejects it and with which code"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a dimension, property or frame locator, or a mode=ref binding, bound to a path the json or csv adapter must emit, when emit runs, then it is the error R015 naming the path and locator, the file is withheld and exit is 1"
