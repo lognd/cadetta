@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1, 2, 3, 4, 5]
+captured_at = "2026-10-13T06:43:55Z"
+digest = "8fa14bc145f2a11a015ef985f067b3a3ee3724a31de2c6f10fc0f462cfbda5f3"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.57s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 79ee86f8-cdcd-46b0-863e-8a4b10ea4ce6 with nextest profile: default
+    Starting 9 tests across 1 binary (16 tests skipped)
+        PASS [   0.005s] cadetta-obligations lock::tests::six_kinds_sorted_by_kind_then_key_line_oriented
+        PASS [   0.005s] cadetta-obligations lock::tests::attest_holds_who_role_when_reason_and_digest_set
+        PASS [   0.005s] cadetta-obligations lock::tests::unsorted_or_duplicate_text_is_not_canonical
+        PASS [   0.006s] cadetta-obligations lock::tests::independent_attestations_merge_as_line_union
+        PASS [   0.006s] cadetta-obligations lock::tests::lock_has_no_solver_records_and_rejects_garbage
+        PASS [   0.007s] cadetta-obligations lock::tests::load_rebuilds_state_and_missing_file_is_empty
+        PASS [   0.007s] cadetta-obligations lock::tests::same_state_same_bytes_and_roundtrip
+        PASS [   0.007s] cadetta-obligations lock::tests::tie_rule_newest_at_then_greater_line
+        PASS [   0.009s] cadetta-obligations lock::tests::save_is_byte_exact_and_skips_unchanged
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 9 tests run: 9 passed, 16 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations lock::"
+size = 1458
+status = "measured"
+test_count = 9
+tests_digest = "e72406a7e79afb8a10cc108da43ec0d380df45e690cf9cf251f78b7913490511"
+at = "2026-10-13T06:43:55Z"
+actor = "lognd"
+rev = 1
