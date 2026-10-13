@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a derived parameter, when lowered, then provenance=derived and deps list its canonical paths", "Given the language.md example, when lowered, then fits, checks and waivers appear in the Project"]
+new = ["Given a derived parameter, when lowered, then provenance=derived and deps list its canonical paths", "Given the language.md example, when lowered, then fits, checks and waivers appear in the Project", "Given a `let`, when lowered, then the member has analysis=true and is never bound or emitted (ir.md 3)", 'Given a variant evaluation, when lowered, then each member stores only the values differing from the primary under "slot=alternate" (ir.md 3, language.md 3.2)', "Given a process-compensated member, when lowered, then `designed` holds the value before compensation and `nominal` the drawn value (ir.md 3, language.md 3.8)", "Given a literal tolerance and a derived affine form, when lowered, then Value.tol holds an Affine of source-variable terms (ir.md 3)"]
+moved = [1, 2]
+at = "2026-10-13T05:01:24Z"
+actor = "lognd"
+rev = 1
