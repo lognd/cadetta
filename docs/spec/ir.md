@@ -149,6 +149,12 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   derived, not stored: a 3x4 matrix of `Exact` (entries from exact
   multiples of 90deg), else `Inexact` with a root; exactness is derived
   from the ops.
+- Wire form of `Op` (`cadetta-ir` `geometry.rs`): a one-key object,
+  `{"offset": {"x"?: path, "y"?: path, "z"?: path}}`,
+  `{"rotate": {"axis": "x|y|z", "angle": path}}`, `{"flip": "x|y"}` or
+  `{"at": path}`; arguments are the paths of their Members. In
+  `Datum.variants` and `Placement.variants` a value is the whole op
+  chain for that alternate (`{"<slot>=<alternate>": [Op]}`).
 - `nominal` is always the designed value (the part as made, what fits,
   checks and reads see). `drawn?` exists only when a process rule
   applied and holds the compensated value that is emitted (language.md

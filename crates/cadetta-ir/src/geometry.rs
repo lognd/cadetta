@@ -42,15 +42,8 @@ impl Serialize for Axis {
 /// One frame operation, shared by `Datum` and `Placement` (ir.md 3).
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Op {
-    /// Translate by the given axes; each present axis names its offset member.
-    Offset {
-        /// Member path of the x offset, if given.
-        x: Option<Path>,
-        /// Member path of the y offset, if given.
-        y: Option<Path>,
-        /// Member path of the z offset, if given.
-        z: Option<Path>,
-    },
+    /// Translate by the given axes (boxed: three paths are large).
+    Offset(Box<OffsetArgs>),
     /// Rotate about an axis by the angle member.
     Rotate {
         /// The rotation axis.
@@ -75,9 +68,7 @@ impl Serialize for Op {
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut m = s.serialize_map(Some(1))?;
         match self {
-            Op::Offset { x, y, z } => {
-                m.serialize_entry("offset", &OffsetArgs { x, y, z })?;
-            }
+            Op::Offset(o) => m.serialize_entry("offset", o)?,
             Op::Rotate { axis, angle } => {
                 m.serialize_entry("rotate", &RotateArgs { axis, angle })?;
             }
@@ -88,18 +79,22 @@ impl Serialize for Op {
     }
 }
 
-/// Borrowed wire form of the offset arguments (absent axes omitted).
-struct OffsetArgs<'a> {
-    x: &'a Option<Path>,
-    y: &'a Option<Path>,
-    z: &'a Option<Path>,
+/// Offset arguments: each present axis names its offset member.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+pub struct OffsetArgs {
+    /// Member path of the x offset, if given.
+    pub x: Option<Path>,
+    /// Member path of the y offset, if given.
+    pub y: Option<Path>,
+    /// Member path of the z offset, if given.
+    pub z: Option<Path>,
 }
 
-impl Serialize for OffsetArgs<'_> {
+impl Serialize for OffsetArgs {
     /// Serialize the present axes only.
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut m = s.serialize_map(None)?;
-        for (k, v) in [("x", self.x), ("y", self.y), ("z", self.z)] {
+        for (k, v) in [("x", &self.x), ("y", &self.y), ("z", &self.z)] {
             if let Some(p) = v {
                 m.serialize_entry(k, p)?;
             }
@@ -145,7 +140,14 @@ impl Datum {
     /// A datum with no variants or digests yet.
     pub fn new(path: Path, parent: Path, ops: Vec<Op>) -> Self {
         debug!(path = %path, ops = ops.len(), "new datum");
-        Datum { path, parent, ops, variants: None, digest: None, closure: None }
+        Datum {
+            path,
+            parent,
+            ops,
+            variants: None,
+            digest: None,
+            closure: None,
+        }
     }
 }
 
@@ -243,11 +245,21 @@ mod tests {
     #[test]
     fn datum_and_placement_share_op_form() {
         let ops = vec![
-            Op::Offset { x: Some(p("acme.r::Rail.site.offset.x")), y: None, z: None },
-            Op::Rotate { axis: Axis::Z, angle: p("acme.r::Rail.site.rotate.z") },
+            Op::Offset(Box::new(OffsetArgs {
+                x: Some(p("acme.r::Rail.site.offset.x")),
+                ..Default::default()
+            })),
+            Op::Rotate {
+                axis: Axis::Z,
+                angle: p("acme.r::Rail.site.rotate.z"),
+            },
             Op::Flip { axis: Axis::X },
         ];
-        let d = Datum::new(p("acme.r::Rail.site"), p("acme.r::Rail.origin"), ops.clone());
+        let d = Datum::new(
+            p("acme.r::Rail.site"),
+            p("acme.r::Rail.origin"),
+            ops.clone(),
+        );
         let pl = Placement {
             part: p("acme.r::Asm/bracket.x"),
             datum: p("acme.r::Bracket.base"),
@@ -270,7 +282,12 @@ mod tests {
     #[test]
     fn placement_variants_keyed_like_members() {
         let mut v = BTreeMap::new();
-        v.insert("a/w=b::C".to_string(), vec![Op::At { point: p("acme.r::Rail.pt") }]);
+        v.insert(
+            "a/w=b::C".to_string(),
+            vec![Op::At {
+                point: p("acme.r::Rail.pt"),
+            }],
+        );
         let pl = Placement {
             part: p("acme.r::Asm/b.x"),
             datum: p("acme.r::B.base"),
