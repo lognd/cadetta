@@ -2,7 +2,8 @@
 id = "01M4SWN8JNSJZ12W5X2V99RR6A"
 title = "Scoping with --module and GLOB"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
