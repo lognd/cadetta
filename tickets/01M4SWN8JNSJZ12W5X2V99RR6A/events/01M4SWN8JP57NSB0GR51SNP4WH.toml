@@ -1,0 +1,16 @@
+kind = "create"
+title = "Scoping with --namespace and GLOB"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+persona = "design engineer"
+capability = "work on part of a project"
+idempotency_key = "replan14:cli-scope"
+labels = ["creates:crates/cadetta-cli/src/scope.rs"]
+scope = ["crates/cadetta-cli/src/scope.rs"]
+acceptance = ["Given check, emit, sync or solve with --namespace NS or canonical-path globs, when run, then only matching nodes are processed (config-cli.md 3)"]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
