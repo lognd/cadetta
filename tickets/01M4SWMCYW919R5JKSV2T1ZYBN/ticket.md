@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T19:19:04Z"
+updated = "2026-10-13T19:19:05Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
@@ -22,6 +22,10 @@ target = "01M4SWK96MJF28HVDDJNPCBMPP"
 [[links]]
 kind = "blocked-by"
 target = "01M4SWMCDEH4NF2SBVCRGE5VV9"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VB636BKBDGRW3NBMGK7CBZ"
 
 [[acceptance]]
 text = "Given observed frames[] and instances[], when synced, then each bound datum's frame transform and each placement's composed frame are compared per adapters.md 3.4 (|design - read| <= 0.5 * 10^-precision) and a mismatch is R001 on the datum or placement path; placements are verify-only"
