@@ -1,0 +1,10 @@
+kind = "create"
+title = "sw-equations emit: R014 error for bound Text param that must be emitted"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "found while working ~WMAWH0R. Implement R014 per emitters/sw-equations.md; fixtures r014-* are skipped until the emit runner exists."
+at = "2026-10-13T18:20:02Z"
+actor = "lognd"
+rev = 1
