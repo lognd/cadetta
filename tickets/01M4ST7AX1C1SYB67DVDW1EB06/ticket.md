@@ -2,7 +2,8 @@
 id = "01M4ST7AX1C1SYB67DVDW1EB06"
 title = "Attributes, citations and cite declarations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
