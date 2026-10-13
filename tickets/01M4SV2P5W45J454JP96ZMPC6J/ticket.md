@@ -17,6 +17,10 @@ scope = ["bindings/python/tests/test_conformance.py"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SV2NMPSM42YZT9MXT4YVMW"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2R23GPE64N4CZVNWRJHC"
 
 [[acceptance]]
