@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T09:13:04Z"
+updated = "2026-10-13T09:14:27Z"
 persona = "design engineer"
 capability = "bind placement offsets to mates"
 idempotency_key = "replan14:geo-opmembers"
 labels = ["creates:crates/cadetta-geometry/src/op_members.rs"]
-scope = ["crates/cadetta-geometry/src/op_members.rs", "crates/cadetta-geometry/src/lib.rs"]
+scope = ["crates/cadetta-geometry/src/op_members.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"

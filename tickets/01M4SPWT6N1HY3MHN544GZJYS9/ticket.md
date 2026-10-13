@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T09:12:42Z"
+updated = "2026-10-13T09:14:26Z"
 persona = "design engineer"
 capability = "inspect IR, diagnostics and unit tables"
 outcome_text = "I can debug without reading source"
 labels = ["creates:crates/cadetta-cli/src/cmd/{ir,explain,units}.rs"]
-scope = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/kind.rs", "docs/schemas/explain.json", "docs/schemas/units.json", "docs/spec/config-cli.md", "Cargo.lock", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs"]
+scope = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/kind.rs", "docs/schemas/explain.json", "docs/schemas/units.json", "docs/spec/config-cli.md", "Cargo.lock", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "design/model.grmb"]
 
 [[acceptance]]
 text = "Given `cadetta explain Q007`, when run, then the catalog entry is printed"
