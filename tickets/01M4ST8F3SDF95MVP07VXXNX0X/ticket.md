@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:57:22Z"
+updated = "2026-10-13T08:58:10Z"
 persona = "design engineer"
 capability = "see the design to-do list of open and stale obligations"
 idempotency_key = "replan13:cadetta obligations"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/cm
 
 [[acceptance]]
 text = "Given a design, when `cadetta obligations [--stale] [--role R]` runs, then open and stale obligations are listed with their role (obligations.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `--format json`, when run, then the output is machine-readable (obligations.md 5)"
