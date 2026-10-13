@@ -55,6 +55,11 @@ path. Under a process, `PATH.drawn` names the drawn value (language.md
 3.8). Paths survive formatting and
 reordering; they change only by rename or move, which `was` records.
 
+- Parsing (`cadetta-ir` `path.rs`): an index is an integer, a for-range
+  variable (`feet[i]`) or `*`; a bare integer is a valid member segment
+  (`place.0.x`); the item name starts uppercase; only the full form
+  parses, and sema expands abbreviations first. Reading a
+  parameter-dependent member by a definition path (no `/` step) is E011.
 - Datum offsets are `Type.<datum>.offset.x|y|z` and rotations
   `.rotate.x|y|z`; placement op arguments are
   `Assembly/part.place.<op index>.<axis>` (`Assembly/part[i].place...`
