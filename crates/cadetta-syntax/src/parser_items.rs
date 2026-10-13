@@ -340,6 +340,8 @@ impl Parser<'_> {
         let kind = if self.eat_kw("in") {
             let mut binds = vec![self.bind()?];
             while self.eat_p(Punct::Comma) {
+                // A comma at the end of a line continues the bindings on the next one.
+                self.skip_blank();
                 binds.push(self.bind()?);
             }
             SolverMemberKind::In(binds)
@@ -350,9 +352,11 @@ impl Parser<'_> {
             SolverMemberKind::Out { name, ty }
         } else if self.eat_kw("deps") {
             SolverMemberKind::Deps(self.expect_str()?)
+        } else if self.is_kw("check") {
+            SolverMemberKind::Check(Box::new(self.check()?))
         } else {
             return self.err(format!(
-                "expected `in`, `out` or `deps`, found {}",
+                "expected `in`, `out`, `deps` or `check`, found {}",
                 describe(&self.tok().clone())
             ));
         };

@@ -411,6 +411,8 @@ pub struct Member {
     pub private: bool,
     /// What it is.
     pub kind: MemberKind,
+    /// A citation after a non-parameter statement (language.md 3.9); parameters carry theirs inside.
+    pub citation: Option<Citation>,
     /// Trailing same-line `#[...]` attributes.
     pub trailing: Vec<Attr>,
     /// Where it is.
@@ -589,6 +591,8 @@ pub struct Arg {
     pub name: Option<Ident>,
     /// The value.
     pub value: Expr,
+    /// A citation after the value (language.md 3.9).
+    pub citation: Option<Citation>,
     /// Where it is.
     pub span: Span,
 }
@@ -600,8 +604,10 @@ pub struct Fit {
     pub name: Ident,
     /// The class or path pair.
     pub spec: FitSpec,
-    /// The path the fit is on.
+    /// The path the fit is on; for an `a / b` fit written without `on` this is the hole path `a`.
     pub on: Path,
+    /// True when `on` was not written (only possible for an `a / b` path pair).
+    pub on_implied: bool,
     /// The required range `[lo .. hi]`.
     pub range: Option<(Expr, Expr)>,
 }
@@ -838,6 +844,8 @@ pub enum SolverMemberKind {
     },
     /// `deps "file"`
     Deps(String),
+    /// `check name: expr` on the solver's own outputs (solvers.md 5)
+    Check(Box<Check>),
     /// A syntax error.
     Error,
 }

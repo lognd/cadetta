@@ -69,6 +69,7 @@ pub fn parse(src: &str) -> Parsed {
         comments: &lexed.comments,
         doc_idx: 0,
         diags: Vec::new(),
+        in_attr: false,
     };
     let mut file = p.file();
     file.span = Span::new(0, src.len());
@@ -118,6 +119,8 @@ struct Parser<'a> {
     comments: &'a [Comment],
     doc_idx: usize,
     diags: Vec<Diagnostic>,
+    /// True while parsing attribute arguments, where unit words (`in`, `%`) read as names.
+    in_attr: bool,
 }
 
 impl Parser<'_> {
@@ -505,21 +508,10 @@ impl Parser<'_> {
         let mut args = Vec::new();
         if self.eat_p(Punct::LParen) {
             self.nest += 1;
-            while !self.is_p(Punct::RParen) {
-                let named = matches!(self.tok(), Tok::Ident(_) | Tok::Keyword(_))
-                    && self.nth_is_p(1, Punct::Eq);
-                if named {
-                    let n = self.attr_name()?;
-                    self.bump();
-                    let value = self.expr()?;
-                    args.push(AttrArg::Named { name: n, value });
-                } else {
-                    args.push(AttrArg::Expr(self.expr()?));
-                }
-                if !self.eat_p(Punct::Comma) {
-                    break;
-                }
-            }
+            let was_attr = std::mem::replace(&mut self.in_attr, true);
+            let parsed = self.attr_args(&mut args);
+            self.in_attr = was_attr;
+            parsed?;
             self.expect_p(Punct::RParen)?;
             self.nest -= 1;
         }
@@ -529,6 +521,26 @@ impl Parser<'_> {
             inner,
             span: self.span_from(start),
         })
+    }
+
+    /// The comma-separated arguments of an attribute, up to (not including) the `)`.
+    fn attr_args(&mut self, args: &mut Vec<AttrArg>) -> PResult<()> {
+        while !self.is_p(Punct::RParen) {
+            let named = matches!(self.tok(), Tok::Ident(_) | Tok::Keyword(_))
+                && self.nth_is_p(1, Punct::Eq);
+            if named {
+                let n = self.attr_name()?;
+                self.bump();
+                let value = self.expr()?;
+                args.push(AttrArg::Named { name: n, value });
+            } else {
+                args.push(AttrArg::Expr(self.expr()?));
+            }
+            if !self.eat_p(Punct::Comma) {
+                break;
+            }
+        }
+        Ok(())
     }
 
     fn citation(&mut self) -> PResult<Citation> {
@@ -751,6 +763,7 @@ impl Parser<'_> {
             attrs: Vec::new(),
             private: false,
             kind: MemberKind::Error,
+            citation: None,
             trailing: Vec::new(),
             span,
         });
@@ -846,6 +859,13 @@ impl Parser<'_> {
                 return self.err(format!("expected a member, found {}", describe(&other)));
             }
         };
+        let citation = if self.is_p(Punct::At)
+            && !matches!(kind, MemberKind::Param(_) | MemberKind::Solver(_))
+        {
+            Some(self.citation()?)
+        } else {
+            None
+        };
         let span = self.span_from(start);
         let mut trailing = Vec::new();
         while self.is_p(Punct::HashBracket) {
@@ -857,6 +877,7 @@ impl Parser<'_> {
             attrs,
             private,
             kind,
+            citation,
             trailing,
             span,
         })
@@ -1021,9 +1042,15 @@ impl Parser<'_> {
                 None
             };
             let value = self.expr()?;
+            let citation = if self.is_p(Punct::At) {
+                Some(self.citation()?)
+            } else {
+                None
+            };
             args.push(Arg {
                 name,
                 value,
+                citation,
                 span: self.span_from(start),
             });
             if !self.eat_p(Punct::Comma) {
@@ -1059,8 +1086,17 @@ impl Parser<'_> {
                 message: "expected an ISO class such as `p6` or a `path / path` pair".to_owned(),
             });
         };
-        self.expect_kw("on")?;
-        let on = self.path(true, true)?;
+        let (on, on_implied) = if self.eat_kw("on") {
+            (self.path(true, true)?, false)
+        } else if let FitSpec::Paths(hole, _) = &spec {
+            // `a / b` names both sides already; `on` defaults to the hole path (language.md 3.7).
+            (hole.clone(), true)
+        } else {
+            return self.err(format!(
+                "expected `on`, found {}",
+                describe(&self.tok().clone())
+            ));
+        };
         let range = if self.is_p(Punct::LBracket) {
             self.bump();
             self.nest += 1;
@@ -1077,6 +1113,7 @@ impl Parser<'_> {
             name,
             spec,
             on,
+            on_implied,
             range,
         })
     }
@@ -1451,6 +1488,21 @@ impl Parser<'_> {
             }
             Tok::Keyword("if") => self.if_expr(),
             Tok::Keyword("match") => self.match_expr(),
+            Tok::Keyword("in") | Tok::P(Punct::Percent) if self.in_attr => {
+                // A unit word in attribute arguments, such as `#[display(%)]` or `in/32`.
+                let name = if self.is_p(Punct::Percent) { "%" } else { "in" };
+                let span = self.bump().span;
+                let id = Ident {
+                    name: name.to_owned(),
+                    span,
+                };
+                let p = Path {
+                    segments: vec![id],
+                    seps: Vec::new(),
+                    span,
+                };
+                Ok(self.mk(ExprKind::Path(p), start))
+            }
             Tok::Keyword(k) => self.err(format!(
                 "`{k}` is a reserved keyword and cannot be used as a name"
             )),

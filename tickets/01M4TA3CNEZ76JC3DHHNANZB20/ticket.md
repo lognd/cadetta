@@ -2,12 +2,13 @@
 id = "01M4TA3CNEZ76JC3DHHNANZB20"
 title = "Golden packages fail in parser/sema"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-13T09:56:15Z"
+updated = "2026-10-13T12:44:49Z"
 scope = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**", "design/model.grmb", "docs/spec/language.md"]
 
 [[acceptance]]

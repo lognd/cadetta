@@ -145,6 +145,7 @@ node syntax : trusted {
   kind component;
   clearance Internal;
   owns "crates/cadetta-syntax/**";
+  may fs.read at "crates/cadetta-syntax/tests/**";
 }
 
 /// Exact rational quantities, units, kinds and tolerances (quantities.md).
