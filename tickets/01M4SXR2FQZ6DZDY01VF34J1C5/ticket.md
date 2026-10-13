@@ -8,11 +8,11 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:40Z"
-updated = "2026-10-13T06:59:26Z"
+updated = "2026-10-13T07:00:02Z"
 persona = "product engineer"
 capability = "depend on a shop library by path or git and get one resolved version"
 labels = ["creates:crates/cadetta-cli/src/pkg/resolve.rs"]
-scope = ["crates/cadetta-cli/src/pkg/resolve.rs", "docs/spec/packages.md"]
+scope = ["crates/cadetta-cli/src/pkg/resolve.rs", "docs/spec/packages.md", "crates/cadetta-cli/src/pkg/mod.rs"]
 
 [[links]]
 kind = "blocked-by"
