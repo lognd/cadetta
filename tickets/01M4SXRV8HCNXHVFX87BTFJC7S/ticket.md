@@ -2,7 +2,8 @@
 id = "01M4SXRV8HCNXHVFX87BTFJC7S"
 title = "Visibility checking: pub, pub(package), priv, E016 and E017"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
