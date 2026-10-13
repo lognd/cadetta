@@ -2,7 +2,8 @@
 id = "01M4STCCZ58C875BTMQ9E54BMT"
 title = "Lints O001-O003 for obligations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
