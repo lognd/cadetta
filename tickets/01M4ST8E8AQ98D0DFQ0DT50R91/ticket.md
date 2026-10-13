@@ -2,7 +2,8 @@
 id = "01M4ST8E8AQ98D0DFQ0DT50R91"
 title = "Interface declarations and implementation checking"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
