@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T09:24:56Z"
+updated = "2026-10-13T09:25:18Z"
 persona = "library author"
 capability = "find dead private items"
 labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
@@ -32,5 +32,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a private parameterized component with no instances, when linted, then U002 fires and I004 does not; I004 fires only for roots of the package being checked (packages.md 3; lints.md I004)"
-bound = false
+bound = true
 +++
