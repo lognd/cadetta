@@ -8,12 +8,16 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:04:19Z"
+updated = "2026-10-13T05:05:22Z"
 persona = "design engineer"
 capability = "declare a screw joint and have it checked"
 idempotency_key = "replan13:ScrewJoint arguments and checks"
 labels = ["creates:std/fasteners/screwjoint_checks.cdt"]
 scope = ["std/fasteners/screwjoint_checks.cdt"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STAPPJR0478N5B1E751RZY"
 
 [[acceptance]]
 text = "Given head, clearance, counterbore, policy, tap Cut/Form/Vendor, depth_available, host and screw_cost, when passed, then each is checked as in stdlib.md 4"
