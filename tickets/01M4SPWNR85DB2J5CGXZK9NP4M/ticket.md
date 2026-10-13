@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:22:27Z"
+updated = "2026-10-13T06:22:46Z"
 persona = "design engineer"
 capability = "compare toleranced quantities as holds, violates or undecided"
 outcome_text = "an undecided check is never counted as holding"
 labels = ["creates:crates/cadetta-units/src/compare.rs"]
-scope = ["crates/cadetta-units/src/compare.rs"]
+scope = ["crates/cadetta-units/src/compare.rs", "crates/cadetta-units/src/lib.rs", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"
