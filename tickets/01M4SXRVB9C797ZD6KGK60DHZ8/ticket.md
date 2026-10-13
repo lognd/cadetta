@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T06:04:06Z"
+updated = "2026-10-13T06:04:28Z"
 persona = "library author"
 capability = "find dead private items"
 labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
@@ -21,6 +21,10 @@ target = "01M4SPWQM289M7Q58CSS6F029F"
 [[links]]
 kind = "blocked-by"
 target = "01M4SXRFXB1JYNPNKSAY6WB3QC"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SXRV8HCNXHVFX87BTFJC7S"
 
 [[acceptance]]
 text = "Given a private item used nowhere in its package, when linted, then U002 warning fires; used once it does not (packages.md 3, 7; lints.md U)"
