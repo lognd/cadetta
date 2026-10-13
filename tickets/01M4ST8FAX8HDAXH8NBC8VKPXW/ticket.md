@@ -2,7 +2,8 @@
 id = "01M4ST8FAX8HDAXH8NBC8VKPXW"
 title = "impact --swap: CAD files, attestations and commercial deltas"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
