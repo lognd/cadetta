@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T06:25:44Z"
+updated = "2026-10-13T06:27:20Z"
 persona = "design engineer"
 capability = "get defined radial distances"
 idempotency_key = "replan14:geo-square"
 labels = ["creates:crates/cadetta-units/src/square.rs"]
-scope = ["crates/cadetta-units/src/square.rs"]
+scope = ["crates/cadetta-units/src/square.rs", "crates/cadetta-units/src/tolerance.rs"]
 
 [[links]]
 kind = "blocked-by"
