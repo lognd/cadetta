@@ -1,0 +1,16 @@
+kind = "create"
+title = "CI pipeline and frob check gates"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWFRR9DAEM60DX796GVPN"
+persona = "cadetta contributor"
+capability = "run cargo fmt, clippy, test and frob check in CI"
+outcome_text = "regressions and process violations are caught before merge"
+labels = ["creates:.github/workflows/**"]
+scope = [".github/workflows/**"]
+acceptance = ["Given a pull request, when CI runs, then cargo fmt --check, clippy -D warnings, cargo test and frob check all execute", "Given a lint violation, when CI runs, then the job fails"]
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
