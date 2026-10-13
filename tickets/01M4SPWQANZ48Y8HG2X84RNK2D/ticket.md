@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:42:13Z"
+updated = "2026-10-13T08:43:29Z"
 persona = "cadetta contributor"
 capability = "generate the schema from the Rust types and commit it"
 outcome_text = "the IR is a public contract with a compatibility check"
 labels = ["creates:docs/schemas/cadetta.ir.1.json", "creates:crates/cadetta-ir/src/schema.rs"]
-scope = ["docs/schemas/cadetta.ir.1.json", "crates/cadetta-ir/src/schema.rs", "crates/cadetta-ir/Cargo.toml"]
+scope = ["docs/schemas/cadetta.ir.1.json", "crates/cadetta-ir/src/schema.rs", "crates/cadetta-ir/Cargo.toml", "crates/cadetta-ir/src/lib.rs"]
 
 [[links]]
 kind = "blocks"

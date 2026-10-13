@@ -313,6 +313,12 @@ error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
 
+`N` must be an exact, dimensionless, non-negative whole number. An
+unindexed read of an array whose `N` is 0 is an error, as is an index
+outside `0..N`. `max` and `min` compare nominals and return the whole
+toleranced value of the winner; a roll-up over values of different
+dimensions is an error, and so is one with no contributing part.
+
 ### 3.6 Tables
 
 ```
