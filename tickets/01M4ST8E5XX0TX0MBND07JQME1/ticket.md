@@ -13,6 +13,10 @@ scope = ["crates/cadetta-variants/**"]
 
 [[links]]
 kind = "blocks"
+target = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+
+[[links]]
+kind = "blocks"
 target = "01M4STANRAWHV180C7RH0NQAY9"
 +++
 
