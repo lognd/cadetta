@@ -1,0 +1,8 @@
+{
+  "args": [
+    "init",
+    "--adapter",
+    "sw-equations"
+  ],
+  "block_contains": "bind = \"explicit\""
+}

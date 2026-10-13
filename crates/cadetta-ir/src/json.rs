@@ -38,6 +38,7 @@ use crate::model::{
     Exact,
     Fit,
     Flavour,
+    Implicit,
     Inexact,
     Locator,
     LocatorKind,
@@ -45,6 +46,8 @@ use crate::model::{
     Member,
     MemberKind,
     Nominal,
+    ObservedFrame,
+    ObservedInstance,
     PackageId,
     Part,
     Project,
@@ -111,6 +114,11 @@ str_enum!(VerdictState {
 str_enum!(LocatorKind {
     LocatorKind::Global => "global", LocatorKind::Dimension => "dimension",
     LocatorKind::Property => "property", LocatorKind::Frame => "frame",
+    LocatorKind::Instance => "instance",
+});
+str_enum!(Implicit {
+    Implicit::Global => "global", Implicit::Link => "link",
+    Implicit::Frame => "frame", Implicit::Reference => "reference",
 });
 str_enum!(LocatorMode { LocatorMode::Value => "value", LocatorMode::Ref => "ref" });
 
@@ -424,6 +432,30 @@ impl Serialize for Locator {
         opt(&mut m, "config", &self.config)?;
         opt(&mut m, "sign", &self.sign)?;
         opt(&mut m, "component", &self.component)?;
+        opt(&mut m, "implicit", &self.implicit)?;
+        m.end()
+    }
+}
+
+impl Serialize for ObservedFrame {
+    /// Serialize as `{ name, document, transform }`.
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut st = s.serialize_struct("ObservedFrame", 3)?;
+        st.serialize_field("name", &self.name)?;
+        st.serialize_field("document", &self.document)?;
+        st.serialize_field("transform", &self.transform)?;
+        st.end()
+    }
+}
+
+impl Serialize for ObservedInstance {
+    /// Serialize as `{ component, document, reference?, transform }`.
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut m = s.serialize_map(None)?;
+        m.serialize_entry("component", &self.component)?;
+        m.serialize_entry("document", &self.document)?;
+        opt(&mut m, "reference", &self.reference)?;
+        m.serialize_entry("transform", &self.transform)?;
         m.end()
     }
 }
@@ -476,6 +508,13 @@ impl Serialize for Project {
         m.serialize_entry("solvers", &self.solvers)?;
         m.serialize_entry("bindings", &self.bindings)?;
         m.serialize_entry("citations", &self.citations)?;
+        // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+        if !self.frames.is_empty() {
+            m.serialize_entry("frames", &self.frames)?;
+        }
+        if !self.instances.is_empty() {
+            m.serialize_entry("instances", &self.instances)?;
+        }
         opt(&mut m, "digest", &self.digest)?;
         m.end()
     }

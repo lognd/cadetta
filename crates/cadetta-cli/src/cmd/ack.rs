@@ -269,15 +269,15 @@ pub fn ack(
     Ok(done)
 }
 
-/// Record `attest citation:PATH` (role `source`) for each file citation not already current.
+/// Record `attest citation:PATH` (role `source`) for each cite item not already current.
+// frob:ticket 01M4VB63M63PQVRKN0HDXQP567
 fn ack_citations(citations: &[Citation], signer: &Signer, lock: &mut Lock) -> Result<(), AckError> {
     for c in citations {
         let Ok(rec) = ack_citation(c, signer.clone()) else {
-            // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-            tracing::debug!(path = %c.path, "citation has no file digest; not acknowledged");
+            tracing::debug!(path = %c.path, "citation could not be recorded; skipped");
             continue;
         };
-        let id = citation_id(c.file().unwrap_or_default());
+        let id = citation_id(&c.path);
         if lock
             .attestation(&id, SOURCE_ROLE)
             .is_some_and(|a| a.digest == rec.digest)

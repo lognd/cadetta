@@ -1,0 +1,16 @@
+{
+  "spec": "1.5",
+  "doc": "config-cli",
+  "section": "config-cli.md 2 (adapter bind)",
+  "rule": "cfg-bind-mode",
+  "kind": "source",
+  "entry": "config",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 2
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

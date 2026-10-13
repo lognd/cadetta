@@ -1,0 +1,40 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:43:51Z"
+digest = "e1b4682f704bbe8b2a4e4f30111b161d660c87b873cab238a599af85e7014ba5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 91626a88-50e5-4b13-8f32-94b7ae067c26 with nextest profile: default
+    Starting 3 tests across 28 binaries (940 tests skipped)
+        PASS [   0.011s] cadetta-syntax parser::items::tests::solver_cited_script
+        PASS [   0.013s] cadetta-solve decl::tests::citation_is_provenance_and_not_an_input
+        PASS [   0.014s] cadetta-syntax parser::items::tests::solver_item_and_member
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 3 tests run: 3 passed, 940 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(citation_is_provenance) | test(solver_cited_script) | test(solver_item_and_member)'"
+size = 1674
+status = "measured"
+test_count = 3
+tests_digest = "8d7b6cbe0f6d131be5fc9c37c957be4c2a318127c1a61757defa5f4b7ca6df42"
+at = "2026-10-13T21:43:51Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+cite spec: standard {
+  number = "ISO 2341"
+  title = "Clevis pins"
+}
+pub ots Pin @spec {
+  dia = 5mm
+}

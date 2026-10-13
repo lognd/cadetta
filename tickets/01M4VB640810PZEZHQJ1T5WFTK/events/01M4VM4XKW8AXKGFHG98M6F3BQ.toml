@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:53:57Z"
+digest = "0e09093e43d6c755c79bd68ffddf0d924e18d8ed1f55743776e03773e60accfe"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.95s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a00985c4-8a02-42b9-8cea-151fe436faee with nextest profile: default
+    Starting 7 tests across 1 binary (99 tests skipped)
+        PASS [   0.013s] cadetta-adapter bindings::tests::discover_global_by_created_name
+        PASS [   0.013s] cadetta-adapter bindings::tests::discover_frame_by_datum_name
+        PASS [   0.014s] cadetta-adapter bindings::tests::explicit_replaces_implicit_other_item_adds
+        PASS [   0.019s] cadetta-adapter bindings::tests::implicit_never_in_file_never_r005
+        PASS [   0.021s] cadetta-adapter bindings::tests::discover_global_by_was_name
+        PASS [   0.024s] cadetta-adapter bindings::tests::discover_dimension_link
+        PASS [   0.024s] cadetta-adapter bindings::tests::discover_instance_reference
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.028s] 7 tests run: 7 passed, 99 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E 'test(/discover_global|discover_dimension_link|discover_frame|discover_instance_reference|implicit_never|explicit_replaces/)'"
+size = 1346
+status = "measured"
+test_count = 7
+tests_digest = "e76fd5f8f3c219d285cd2bee2665169247e29925cd6bf64fa95b9c3893f89fa2"
+at = "2026-10-13T21:53:57Z"
+actor = "lognd"
+rev = 1

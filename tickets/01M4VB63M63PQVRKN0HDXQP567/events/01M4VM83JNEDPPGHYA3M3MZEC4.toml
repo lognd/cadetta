@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:55:56Z"
+digest = "fed8380d5cc56fc2dd365cc1b46b6890b35dfb863174aa6c2480f976a772232b"
+exit_code = 101
+inline = """
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0063]: missing field `implicit` in initializer of `Locator`
+   --> crates/cadetta-cli/src/cmd/import.rs:144:8
+    |
+144 |     Ok(Locator {
+    |        ^^^^^^^ missing `implicit`
+
+error[E0063]: missing field `implicit` in initializer of `Locator`
+   --> crates/cadetta-cli/src/cmd/impact_swap_report.rs:658:9
+    |
+658 |         Locator {
+    |         ^^^^^^^ missing `implicit`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `cadetta` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `cadetta` (lib test) due to 2 previous errors
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "s008_"
+size = 884
+status = "measured"
+at = "2026-10-13T21:55:56Z"
+actor = "lognd"
+rev = 1

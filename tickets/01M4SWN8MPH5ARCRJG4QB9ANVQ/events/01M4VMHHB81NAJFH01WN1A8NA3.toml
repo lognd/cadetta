@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T22:00:53Z"
+digest = "d2243102da3e66bce85a765021fd3d8cedbebb5bf92ff2c3f5d12c1d899ea2fb"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.58s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 803e0b43-2a54-4bb3-8e47-6c56f2aeb109 with nextest profile: default
+    Starting 5 tests across 1 binary (166 tests skipped)
+        PASS [   0.038s] cadetta cmd::lsp::tests::utf16_counts_astral_as_two_units
+        PASS [   0.067s] cadetta cmd::lsp::tests::buffer_errors_are_e001_in_the_negotiated_encoding
+        PASS [   0.068s] cadetta cmd::lsp::tests::utf32_columns_are_characters
+        PASS [   0.064s] cadetta cmd::lsp::tests::mapping_follows_the_spec
+        PASS [   0.080s] cadetta cmd::lsp::tests::end_position_measures_last_line
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.091s] 5 tests run: 5 passed, 166 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib cmd::lsp::tests::mapping_follows_the_spec cmd::lsp::tests::utf16_counts_astral_as_two_units cmd::lsp::tests::utf32_columns_are_characters cmd::lsp::tests::end_position_measures_last_line cmd::lsp::tests::buffer_errors_are_e001_in_the_negotiated_encoding"
+size = 947
+status = "measured"
+test_count = 5
+tests_digest = "e7e25b1b29a10239fdc2a5bb20f22f92f52a3fe83c63374d955a3e7ece9a3ed9"
+at = "2026-10-13T22:00:53Z"
+actor = "lognd"
+rev = 1

@@ -8,8 +8,10 @@ use std::io::Write;
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply};
+use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
 use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
+use cadetta_obligations::citation::{SOURCE_ROLE, check_citation, citation_id};
 use cadetta_obligations::graph::ObligationState;
 use cadetta_obligations::lock::Lock;
 use cadetta_obligations::roles::Policy;
@@ -92,6 +94,46 @@ fn candidates(analysis: &Analysis, policy: &Policy) -> Vec<Candidate> {
     let mut out = universe::candidates(&universes(analysis));
     out.retain(|c| !policy.roles_covering(&c.id).is_empty());
     out
+}
+
+/// S004 diagnostics: acknowledged `cite` items whose digest (fields or cited file) has moved on.
+// frob:ticket 01M4VB63M63PQVRKN0HDXQP567
+fn citation_diagnostics(analysis: &Analysis, lock: &Lock) -> Vec<Diagnostic> {
+    let mut drift = Vec::new();
+    for package in &analysis.packages {
+        let prefix = format!("{}::", package.name);
+        for c in package
+            .ir
+            .citations
+            .iter()
+            .filter(|c| c.path.starts_with(&prefix))
+        {
+            let att = lock.attestation(&citation_id(&c.path), SOURCE_ROLE);
+            if !check_citation(c, att).is_stale() {
+                continue;
+            }
+            let cites = |r: &Option<cadetta_ir::model::CiteRef>| {
+                r.as_ref().and_then(|r| r.cite.as_deref()) == Some(c.path.as_str())
+            };
+            let mut citing = Vec::new();
+            for comp in &package.ir.components {
+                if cites(&comp.citation) {
+                    citing.push(comp.path.to_string());
+                }
+                citing.extend(
+                    comp.members
+                        .iter()
+                        .filter(|m| cites(&m.citation))
+                        .map(|m| m.path.to_string()),
+                );
+            }
+            drift.push(CitationDrift {
+                path: c.path.clone(),
+                citing,
+            });
+        }
+    }
+    s004(&drift)
 }
 
 /// O001/O002 diagnostics for the open and stale obligations; gating rows are errors.
@@ -223,6 +265,9 @@ pub fn run_check_with(
     } else {
         obligation_diagnostics(&analysis, &policy, &lock, &parsed, &as_of)
     };
+    if !analysis.halted {
+        raw.extend(citation_diagnostics(&analysis, &lock));
+    }
     let gating_keys: Vec<(String, Option<String>)> = gating
         .iter()
         .filter(|(_, g)| *g)

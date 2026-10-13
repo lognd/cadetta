@@ -1,0 +1,14 @@
+{
+  "bindings": [],
+  "native_globals": [
+    "acme_demo__Plate__thickness"
+  ],
+  "native_dimensions": [
+    {
+      "name": "D1@Boss",
+      "equation": "\"Other\""
+    }
+  ],
+  "native_frames": [],
+  "native_instances": []
+}

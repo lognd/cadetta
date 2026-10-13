@@ -12,7 +12,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use cadetta_ir::entities::Waiver;
-use cadetta_ir::model::{ComponentClass, MemberKind as IrMemberKind, Project as IrProject};
+use cadetta_ir::model::{
+    Citation, CiteBuiltin, ComponentClass, MemberKind as IrMemberKind, Project as IrProject,
+};
 use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
@@ -203,59 +205,55 @@ fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
     }
 }
 
-/// S001/S002 inputs of one lowered package: `ots` values and citations (the filesystem answer
-/// is taken against the package directory).
-fn s_facts(ir: &IrProject, dir: Option<&Path>) -> (Vec<OtsValueFacts>, Vec<CitationFacts>) {
-    let (mut values, mut cites) = (Vec::new(), Vec::new());
-    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-    let cite_of = |path: String, r: &cadetta_ir::model::CiteRef, span| {
-        let item = r
-            .cite
-            .as_ref()
-            .and_then(|p| ir.citations.iter().find(|c| &c.path == p));
-        // A `file` field is a local file (S002 checks it exists); a url-only cite is a Url;
-        // every other form (note, pseudo-citation, other item) is a Literal.
-        let (kind, target) = match item {
-            Some(c) if c.file().is_some() => {
-                (CitationKind::LocalFile, c.file().unwrap().to_owned())
-            }
-            Some(c) if c.text("url").is_some() => {
-                (CitationKind::Url, c.text("url").unwrap().to_owned())
-            }
-            _ => (CitationKind::Literal, r.display_name()),
-        };
-        let exists = match (&kind, dir) {
-            (CitationKind::LocalFile, Some(d)) => d.join(&target).exists(),
-            _ => true,
-        };
-        CitationFacts {
-            path,
-            kind,
-            target,
-            exists,
-            span,
-        }
-    };
+/// S001/S002/S008 inputs of one lowered package: `ots` values, and the package's own `cite`
+/// items with the filesystem answer taken against the package directory.
+// frob:ticket 01M4VB63M63PQVRKN0HDXQP567
+fn s_facts(
+    ir: &IrProject,
+    package: &str,
+    dir: Option<&Path>,
+) -> (Vec<OtsValueFacts>, Vec<CitationFacts>, Vec<Citation>) {
+    let prefix = format!("{package}::");
+    let own: Vec<Citation> = ir
+        .citations
+        .iter()
+        .filter(|c| c.path.starts_with(&prefix))
+        .cloned()
+        .collect();
+    let cites = own
+        .iter()
+        .filter_map(|c| {
+            let target = c.file()?.to_owned();
+            let exists = dir.is_none_or(|d| d.join(&target).exists());
+            Some(CitationFacts {
+                path: c.path.clone(),
+                kind: CitationKind::LocalFile,
+                target,
+                exists,
+                span: None,
+            })
+        })
+        .collect();
+    let mut values = Vec::new();
     for c in &ir.components {
-        if let Some(cit) = &c.citation {
-            cites.push(cite_of(c.path.to_string(), cit, c.span.clone()));
+        if c.class != ComponentClass::Ots {
+            continue;
         }
         for m in &c.members {
-            if let Some(cit) = &m.citation {
-                cites.push(cite_of(m.path.to_string(), cit, m.span.clone()));
-            }
-            if c.class == ComponentClass::Ots && m.kind == IrMemberKind::Param && m.value.is_some()
-            {
+            if m.kind == IrMemberKind::Param && m.value.is_some() {
+                // A member citation replaces the component's, never merges (language.md 3.9).
+                let applied = m.citation.as_ref().or(c.citation.as_ref());
                 values.push(OtsValueFacts {
                     path: m.path.to_string(),
                     cited: m.citation.is_some(),
                     component_cited: c.citation.is_some(),
+                    note_only: applied.is_some_and(|r| r.builtin == Some(CiteBuiltin::Note)),
                     span: m.span.clone(),
                 });
             }
         }
     }
-    (values, cites)
+    (values, cites, own)
 }
 
 /// A parsed module with everything the later stages borrow.
@@ -760,9 +758,10 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         out.extend(m::check_m003(&ir, &lcfg, locate));
         out.extend(n::check(&ir, &lcfg, locate));
         out.extend(q::check_inexact(&ir, &lcfg, locate));
-        let (ots_values, cites) = s_facts(&ir, Some(&p.dir));
+        let (ots_values, cites, own_cites) = s_facts(&ir, &p.name, Some(&p.dir));
         out.extend(s::check_s001(&ots_values, locate));
         out.extend(s::check_s002(&cites, locate));
+        out.extend(s::check_s008(&own_cites, &ots_values, locate));
         for m in &p.modules {
             module_waivers(&m.file, &mut analysis.suppressions.waivers);
         }

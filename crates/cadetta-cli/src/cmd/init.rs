@@ -50,6 +50,7 @@ impl AdapterKind {
             Self::SwEquations => {
                 "\n[[adapter]]\nname = \"sw-equations\"   # built-in\n\
                  out = \"build/solidworks/equations.txt\"\n\
+                 bind = \"scope\"               # also bind every in-scope path to its created global\n\
                  native_unit = \"mm\"             # unit for unitless native values\n"
             }
         }
@@ -305,6 +306,13 @@ mod tests {
             let config = Config::load(&dir.join("cadetta.toml")).unwrap();
             assert_eq!(config.adapters.len(), 1);
             assert_eq!(config.adapters[0].name, text);
+            // frob:tests crates/cadetta-cli/src/config.rs::BindMode
+            let want = if kind == AdapterKind::SwEquations {
+                crate::config::BindMode::Scope
+            } else {
+                crate::config::BindMode::Explicit
+            };
+            assert_eq!(config.adapters[0].bind, want);
             assert_eq!(
                 out.contains("pip install \"cadetta[solidworks]\""),
                 kind == AdapterKind::Solidworks

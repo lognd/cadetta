@@ -1,0 +1,9 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the deferred lsp command, when implemented after 0.1.0, then it serves cadetta.diag/1 diagnostics over the language server protocol (config-cli.md 3)"]
+new = ["Given cadetta lsp on stdio, when a client initializes, then it advertises only textDocumentSync (open, full change, save, close), documentFormattingProvider and positionEncoding (utf-32 when offered, else utf-16), logs only to stderr, and exits 0 after shutdown then exit, 1 on exit alone (config-cli.md 3.8)", "Given an open or changed .cdt buffer, when parsed, then its E001 diagnostics are published for that document immediately; on open and save the package's full check runs against disk, every package file is published (empty lists clear stale ones), waived diagnostics are omitted, and a superseded run's result is dropped (config-cli.md 3.8)", "Given cadetta.diag/1 records, when mapped, then range, severity 1-4, code, source cadetta, message with note and help lines, and data {path, variant} follow config-cli.md 3.8; lock locations publish on cadetta.lock and native or absent locations are logged only", "Given textDocument/formatting, when requested, then one whole-document edit with fmt output is returned, none when canonical, and an error response for a buffer with syntax errors (config-cli.md 3.8)"]
+reason = "owner brought the LSP into 0.1.0 (draft 1.5 ADR decision 14)"
+moved = [0]
+at = "2026-10-13T21:38:21Z"
+actor = "lognd"
+rev = 1

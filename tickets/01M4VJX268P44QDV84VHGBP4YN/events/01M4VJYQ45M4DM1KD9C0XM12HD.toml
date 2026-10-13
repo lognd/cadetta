@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T21:33:33Z"
+digest = "0cc3467d1d76ad7a4706ad46253f92469cf177278a7384995c9db78ba16e981f"
+provider = "file"
+ref = "docs/decisions/2026-10-13-draft-1-5-decisions.md"
+size = 9223
+status = "measured"
+at = "2026-10-13T21:33:33Z"
+actor = "lognd"
+rev = 1
