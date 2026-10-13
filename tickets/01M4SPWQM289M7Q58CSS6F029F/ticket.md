@@ -2,13 +2,13 @@
 id = "01M4SPWQM289M7Q58CSS6F029F"
 title = "Lint engine, severity gating and waiver application"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:43:36Z"
+updated = "2026-10-13T09:00:42Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -73,33 +73,33 @@ target = "01M4STCCZ58C875BTMQ9E54BMT"
 
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fixed code with a severity override, when loaded, then the override is ignored"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `waive M001 on acme.rover::Axle.chamfer`, when linted, then M001 on that path is suppressed"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given `#[allow(M001, "vendor drawing 1234")]` on a member, when linted, then M001 is suppressed there without expiry, and the same without a because string is rejected (lints.md 2)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `cadetta explain CODE` data, when queried, then each code exposes name, default severity, fixed flag and meaning from one catalog table (lints.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fixed code, required_for floor, [lint] severity and waive/allow, when diagnostics are gated, then precedence is exactly lints.md 1 and fail_on = never makes diagnostics informational (lints.md 1; config-cli.md 2)"
-bound = false
+bound = true
 +++

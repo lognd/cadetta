@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:00:37Z"
+digest = "6be52dd6623f6d524e1d4c7deb690eae73dbb9893e6d11b775cbf8d71a4316f6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 76228225-1c30-4b40-96f1-4807b45ef163 with nextest profile: default
+    Starting 1 test across 21 binaries (563 tests skipped)
+        PASS [   0.006s] cadetta-lint engine::tests::fixed_override_ignored
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 563 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=engine::tests::fixed_override_ignored)"
+size = 544
+status = "measured"
+test_count = 1
+tests_digest = "956653f35070ade7ef73cce22883a4a42a04ef1e3b12de954edc8e5651511bef"
+at = "2026-10-13T09:00:37Z"
+actor = "lognd"
+rev = 1

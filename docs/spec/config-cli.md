@@ -244,6 +244,21 @@ Decided (0.1.0), frob:ticket 01M4ST8F1W8T0BKARAMG0D49J2:
   (obligations.md 5).
 - `ots:` acks also record the file citations under role `source`.
 
+### 3.5 `obligations` details
+
+Decided (0.1.0). Rows are open and stale obligations only; `--stale`
+keeps stale rows. A row's state is judged against the attestation of the
+role named by `--role`, else of the first role (by name) whose `covers`
+matches; an obligation no role covers is open. `--role R` drops
+obligations R does not cover (unknown R is exit 2). Each row prints id,
+role, last attester, age in days as of the report date, nearest changed
+upstream node and, when the stale verdict still holds, "verdict
+unchanged, margin A -> B". Exit 1 when any listed row is required for the
+gate (role or kind `required_for`; `--release` adds the `release` ones),
+so with `--stale` only stale rows count. `--format json` prints one
+`cadetta.obligations/1` document: `as_of`, `as_of_source`, `gated` and an
+`obligations` array of the row fields.
+
 ## 4. Global flags
 
 | Flag | Meaning |

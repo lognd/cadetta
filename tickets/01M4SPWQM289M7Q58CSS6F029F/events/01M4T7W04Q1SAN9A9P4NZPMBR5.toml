@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:00:32Z"
+digest = "d6916ced5c73ad41b7e03f6bd0a0ddc438fad7f9557c28c23789982401b7d380"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.64s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5011cf9e-d9b9-4788-97a1-98b65304e2bc with nextest profile: default
+    Starting 1 test across 21 binaries (563 tests skipped)
+        PASS [   0.008s] cadetta-lint engine::tests::severity_override_applies
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 1 test run: 1 passed, 563 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=engine::tests::severity_override_applies)"
+size = 617
+status = "measured"
+test_count = 1
+tests_digest = "202c13244476ef06949990581538a82297d18f4d02244d64de91d2d3faa4b119"
+at = "2026-10-13T09:00:32Z"
+actor = "lognd"
+rev = 1
