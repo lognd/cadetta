@@ -48,6 +48,7 @@ node cli : trusted {
   owns "crates/cadetta-cli/src/pkg/**";
   owns "crates/cadetta-cli/src/project.rs";
   may fs.read at "crates/cadetta-cli/**";
+  may fs.write at "crates/cadetta-cli/src/project.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -140,6 +141,11 @@ node units : trusted {
 flow f_ast : syntax -> sema {
   producer "crates/cadetta-syntax/src/**";
   consumer "crates/cadetta-sema/src/**";
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_parse : cli -> syntax {
   label Internal;
   transport in_process;
 }
