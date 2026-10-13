@@ -19,6 +19,9 @@ class Quantity:
     @staticmethod
     def _parse(text: str) -> Quantity:
         """Parse source syntax; raises QuantityError."""
+    @staticmethod
+    def _from_ir(text: str) -> Quantity:
+        """Build from an IR Value JSON object; raises QuantityError."""
     @property
     def exact(self) -> bool:
         """True when the magnitude is exact (not marked inexact)."""

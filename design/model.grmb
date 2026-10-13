@@ -115,6 +115,8 @@ node py_binding : trusted {
   may exec at "bindings/python/tests/**";
   may fs.read at "bindings/python/python/cadetta/logging/**";
   may fs.read at "bindings/python/tests/**";
+  may fs.write at "bindings/python/tests/**";
+  may exec at "bindings/python/python/cadetta/project.py";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.

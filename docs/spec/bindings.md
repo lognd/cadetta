@@ -68,7 +68,8 @@ d = m.value                                  # Quantity
 d.nominal.to_exact("mm")   # Fraction(12, 1): exact, or None when inexact
 d.max.to_float("mm")       # upper limit after tolerance, as a float
 d.mid.to_float("in")       # a float only when asked for
-m.kind, m.citation         # "Length", the source
+m.kind, m.citation         # "param" (the IR member kind), the source
+d.kind                     # "Length" (the quantity kind)
 m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 ```
 
@@ -77,7 +78,13 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
   as `Axle(wheel, span)` exists only as `part axle[2]`, so its members
   are `Rover/axle[0].end_diameter` and `[1]`, never `Axle.end_diameter`
   (ir.md 2, language.md 3.1).
-- `Member` is the pydantic model of the JSON member, field for field.
+- `Member` wraps the generated pydantic model of the JSON member (kept
+  as `.model`, field for field); `.value` is the one field rebuilt as a
+  Rust-backed `Quantity` (`Quantity._from_ir`, from the IR `Value`
+  alone), and `.kind` is the IR member kind, as the CLI prints it. The
+  quantity kind is `.value.kind`: the unique built-in kind with the
+  value's dimension, else anonymous (for example a temperature, which
+  is ambiguous between `Temperature` and `TemperatureDelta`).
   `Value` carries `dim`, the exponent vector over the SI base
   dimensions plus angle and currency, so a `Quantity` is built from the
   IR alone; `kind` names the kind (`"Length"`).
@@ -112,6 +119,19 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
   dropped, currency dimensions rejected); floats for numpy via `to_float(unit)`.
 
 ### 3.2 Surface
+
+`Project.open` reads `cadetta.toml` with the config-cli.md 1.6 walk:
+from `path` (default the working directory), or from the directory of
+`config`, up to the nearest `cadetta.toml` with a `[package]` or
+`[workspace]` table; none is `Err(ProjectError)`. Opening inside a
+workspace member scopes to that member; at the workspace root `package`
+is `None`, `modules` is `[]` and `evaluate()` returns the CLI's usage
+error. `project.modules` is computed from the `.cdt` files under the
+package `src` (`lib.cdt` is the package root, implicit parent
+directories are listed), because the IR `modules[]` is not yet populated
+by the CLI. `evaluate()` runs the `ir` verb and validates its JSON with
+the generated models in `cadetta.models.ir` (regenerate with
+`datamodel-codegen` from `docs/schemas/cadetta.ir.1.json`).
 
 Every query and mutation verb has a method; `init`, `cite pin` and the
 `lock` maintenance verbs stay CLI-only (they edit repository files

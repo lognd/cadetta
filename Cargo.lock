@@ -219,6 +219,7 @@ dependencies = [
  "cadetta-syntax",
  "cadetta-units",
  "pyo3",
+ "serde_json",
  "tracing",
 ]
 
