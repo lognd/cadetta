@@ -2,18 +2,19 @@
 id = "01M4ST7A42Q225NZMARTM5V6J5"
 title = "Accessors, roles and bounds"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:05Z"
-updated = "2026-10-13T06:42:20Z"
+updated = "2026-10-13T06:42:47Z"
 persona = "design engineer"
 capability = "read nominal, min, max, mid, mmc and lmc of any quantity, give it a hole or shaft role, and state one- or two-sided bounds"
 idempotency_key = "replan13:Accessors, roles and bounds"
 labels = ["creates:crates/cadetta-units/src/{accessors,bound,role}.rs"]
-scope = ["crates/cadetta-units/src/{accessors,bound,role}.rs"]
+scope = ["crates/cadetta-units/src/{accessors,bound,role}.rs", "crates/cadetta-units/src/lib.rs", "docs/spec/quantities.md"]
 
 [[acceptance]]
 text = "Given an untoleranced quantity, when `.nominal .min .max .mid` are read, then all equal the value (quantities.md 5.2)"
