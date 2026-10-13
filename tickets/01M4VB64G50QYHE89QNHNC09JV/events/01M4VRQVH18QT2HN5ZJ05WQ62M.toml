@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/python/**", "bindings/python/tests/**", "bindings/python/src/**", "bindings/python/scripts/**"]
+new = ["bindings/python/python/**", "bindings/python/tests/**", "bindings/python/src/**", "bindings/python/scripts/**", "bindings/python/pyproject.toml"]
+at = "2026-10-13T23:14:39Z"
+actor = "lognd"
+rev = 1

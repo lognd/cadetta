@@ -9,7 +9,7 @@ use std::io::Write;
 use cadetta_adapter::AdapterError;
 use cadetta_adapter::bindings::{BindingSet, kind_text};
 use cadetta_adapter::locator::{check_native_collisions, validate};
-use cadetta_ir::model::{Locator, LocatorKind, LocatorMode, Sign};
+use cadetta_ir::model::{Locator, LocatorKind, LocatorMode, Sign, TolerancePolicy};
 use cadetta_ir::path::{Path, PathContext};
 use serde::Serialize;
 
@@ -126,11 +126,6 @@ fn parse_kind(text: &str) -> Result<LocatorKind, String> {
 }
 
 fn build_locator(a: &BindArgs) -> Result<Locator, String> {
-    if a.tolerance.is_some() {
-        return Err(
-            "`--tolerance` is not supported yet: bindings carry no tolerance field".to_owned(),
-        );
-    }
     let kind = parse_kind(a.kind.as_deref().unwrap_or_default())?;
     let mode = match a.mode.as_deref() {
         Some("value") => LocatorMode::Value,
@@ -145,6 +140,16 @@ fn build_locator(a: &BindArgs) -> Result<Locator, String> {
         Some("-1") => Some(Sign::Minus),
         Some(other) => return Err(format!("sign must be 1 or -1, got `{other}`")),
     };
+    let tolerance = match a.tolerance.as_deref() {
+        None => None,
+        Some("drive") => Some(TolerancePolicy::Drive),
+        Some("ignore") => Some(TolerancePolicy::Ignore),
+        Some(other) => {
+            return Err(format!(
+                "unknown tolerance `{other}`; expected drive or ignore"
+            ));
+        }
+    };
     Ok(Locator {
         locator: a.locator.clone(),
         kind,
@@ -156,7 +161,7 @@ fn build_locator(a: &BindArgs) -> Result<Locator, String> {
         sign,
         component: a.component.clone(),
         implicit: None,
-        tolerance: None,
+        tolerance,
     })
 }
 
@@ -355,6 +360,37 @@ mod tests {
         assert_eq!(dir.bindings(), first);
     }
 
+    // frob:ticket 01M4VPEE2SE4Y96XGGN17H42KT
+    // frob:tests crates/cadetta-cli/src/cmd/bind.rs::run_bind
+    #[test]
+    fn tolerance_is_written_canonically_and_idempotent() {
+        let dir = project();
+        let dim = |tol: &'static str| {
+            vec![
+                P,
+                "--adapter",
+                "equations",
+                "--locator",
+                "D1@Sketch1",
+                "--kind",
+                "dimension",
+                "--tolerance",
+                tol,
+            ]
+        };
+        let (code, out, e) = run(&dir, Format::Text, &dim("drive"));
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let first = dir.bindings();
+        assert!(first.contains("tolerance = \"drive\""), "{first}");
+        let (code, out, _) = run(&dir, Format::Json, &dim("drive"));
+        assert_eq!(code, EXIT_OK);
+        let v: serde_json::Value = serde_json::from_str(&out).unwrap();
+        assert_eq!(v["changed"], false);
+        assert_eq!(dir.bindings(), first);
+        assert_eq!(run(&dir, Format::Text, &dim("ignore")).0, EXIT_USAGE);
+        assert_eq!(dir.bindings(), first);
+    }
+
     // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
     // frob:tests crates/cadetta-cli/src/cmd/bind.rs::run_bind
     #[test]
@@ -407,8 +443,14 @@ mod tests {
         assert_eq!(run(&dir, Format::Text, &no_adapter).0, EXIT_USAGE);
         assert_eq!(
             run(&dir, Format::Text, &add(&["--tolerance", "drive"])).0,
+            EXIT_USAGE,
+            "tolerance on a non-dimension locator"
+        );
+        assert_eq!(
+            run(&dir, Format::Text, &add(&["--tolerance", "bogus"])).0,
             EXIT_USAGE
         );
+        assert!(!dir.bindings().contains("tolerance"));
         assert_eq!(
             run(&dir, Format::Text, &add(&["--sign", "2"])).0,
             EXIT_USAGE
