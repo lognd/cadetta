@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given csv.md 1, json.md 1 and adapters.md 3a, when read, then the note parts are separated by one space and the emit point is written emit=POINT, consistently across the three documents", "Given the csv note fixtures, when read, then they assert the exact note text (order, emit= token, fit class) rather than loose substrings"]
+moved = []
+at = "2026-10-13T18:12:33Z"
+actor = "lognd"
+rev = 1
