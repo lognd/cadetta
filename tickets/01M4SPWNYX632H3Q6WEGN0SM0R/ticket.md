@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `5"abc"`, when lexed, then a lex error is reported'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `// c` and `/// d`, when lexed, then line and doc comments are distinguished"
