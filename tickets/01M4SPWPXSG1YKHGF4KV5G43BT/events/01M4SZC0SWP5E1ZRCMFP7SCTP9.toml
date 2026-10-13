@@ -1,0 +1,81 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:31:57Z"
+digest = "4a526304975cc3743a3aa680a557885f6131ee56fe5f5b03d79f846f956f92f9"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.80s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 11368bba-cebb-4958-bc1d-7746e3e615ff with nextest profile: default
+    Starting 57 tests across 2 binaries (6 tests skipped)
+        PASS [   0.008s] cadetta-fits tests::h7_20mm
+        PASS [   0.014s] cadetta-fits tests::out_of_range_is_f002
+        PASS [   0.020s] cadetta-units compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact
+        PASS [   0.021s] cadetta-units compare::tests::form_entirely_above_threshold_holds
+        PASS [   0.023s] cadetta-fits tests::class_on_any_expression_value
+        PASS [   0.024s] cadetta-fits tests::golden_values
+        PASS [   0.024s] cadetta-units compare::tests::inexact_near_equal_is_undecided_with_note
+        PASS [   0.024s] cadetta-fits tests::unknown_class_is_f001
+        PASS [   0.027s] cadetta-fits tests::case_picks_side
+        PASS [   0.016s] cadetta-units inexact::tests::ceil_and_floor_to_step
+        PASS [   0.037s] cadetta-fits tests::size_range_edges
+        PASS [   0.037s] cadetta-units compare::tests::dimension_mismatch_is_an_error
+        PASS [   0.018s] cadetta-units inexact::tests::rounding_step_errors_are_values
+        PASS [   0.049s] cadetta-units compare::tests::conservative_undecided_says_so_in_c002
+        PASS [   0.031s] cadetta-units inexact::tests::atan2_special_cases_are_exact
+        PASS [   0.029s] cadetta-units inexact::tests::inexact_plus_exact_is_inexact_and_keeps_root
+        PASS [   0.046s] cadetta-units compare::tests::straddling_form_is_undecided
+        PASS [   0.039s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.029s] cadetta-units inexact::tests::rounding_exact_values_is_exact_ties_away_from_zero
+        PASS [   0.029s] cadetta-units inexact::tests::rounding_a_toleranced_value_keeps_deviations
+        PASS [   0.050s] cadetta-units inexact::tests::inexact_near_tie_or_boundary_is_q010
+        PASS [   0.025s] cadetta-units kind::tests::builtin_canonical_angles
+        PASS [   0.048s] cadetta-units inexact::tests::sqrt_of_two_square_mm_is_marked_inexact_with_root
+        PASS [   0.049s] cadetta-units inexact::tests::trig_is_exact_at_special_angles
+        PASS [   0.030s] cadetta-units kind::tests::force_times_length_is_anonymous
+        PASS [   0.037s] cadetta-units kind::tests::lever_arm_exception_is_exponent_zero_only
+        PASS [   0.079s] cadetta-units kind::tests::count_to_ratio_one_way
+        PASS [   0.083s] cadetta-units kind::tests::anonymous_assigns_to_named
+        PASS [   0.047s] cadetta-units rational::tests::add_across_pi_exponents_is_inexact_unless_zero
+        PASS [   0.057s] cadetta-units kind::tests::registered_kinds_are_distinct
+        PASS [   0.048s] cadetta-units kind::tests::torque_to_energy_needs_as
+        PASS [   0.050s] cadetta-units kind::tests::roots
+        PASS [   0.011s] cadetta-units rational::tests::division_by_zero_is_an_error_value
+        PASS [   0.062s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.100s] cadetta-units kind::tests::count_and_rounding
+        PASS [   0.020s] cadetta-units tolerance::tests::deviation_units_may_differ_from_nominal
+        PASS [   0.110s] cadetta-units kind::tests::angle_worked_cases
+        PASS [   0.026s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.035s] cadetta-units tolerance::tests::interval_nominal_is_midpoint
+        PASS [   0.034s] cadetta-units tolerance::tests::inverted_or_mismatched_deviations_are_errors
+        PASS [   0.132s] cadetta-units kind::tests::additive_rules
+        PASS [   0.035s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.017s] cadetta-units tolerance::tests::product_of_toleranced_values_is_conservative
+        PASS [   0.022s] cadetta-units tolerance::tests::repeated_terms_count_once_and_cancel
+        PASS [   0.022s] cadetta-units tolerance::tests::roots_and_trig_are_conservative
+        PASS [   0.032s] cadetta-units tolerance::tests::literals_build_ordered_deviation_pairs
+        PASS [   0.017s] cadetta-units units::tests::errors_are_values
+        PASS [   0.030s] cadetta-units units::tests::compound_is_anonymous
+        PASS [   0.014s] cadetta-units units::tests::temperature_factors_agree_with_affine
+        PASS [   0.021s] cadetta-units units::tests::percent_is_ratio
+        PASS [   0.123s] cadetta-units kind::tests::named_scaled_by_dimensionless_keeps_kind
+        PASS [   0.027s] cadetta-units units::tests::inch_factor
+        PASS [   0.027s] cadetta-units units::tests::quote_aliases
+        PASS [   0.030s] cadetta-units units::tests::exact_factors
+        PASS [   0.033s] cadetta-units units::tests::user_unit_resolves_like_builtin
+        PASS [   0.042s] cadetta-units units::tests::every_table_unit_resolves
+        PASS [   0.237s] cadetta-units kind::tests::algebra_table_rows
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.284s] 57 tests run: 57 passed, 6 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-fits -p cadetta-units -E '(package(=cadetta-fits) & (test(=tests::case_picks_side) | test(=tests::class_on_any_expression_value) | test(=tests::golden_values) | test(=tests::h7_20mm) | test(=tests::out_of_range_is_f002) | test(=tests::size_range_edges) | test(=tests::unknown_class_is_f001))) | (package(=cadetta-units) & (test(=compare::tests::conservative_undecided_says_so_in_c002) | test(=compare::tests::dimension_mismatch_is_an_error) | test(=compare::tests::form_entirely_above_threshold_holds) | test(=compare::tests::inexact_near_equal_is_undecided_with_note) | test(=compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact) | test(=compare::tests::straddling_form_is_undecided) | test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=inexact::tests::atan2_special_cases_are_exact) | test(=inexact::tests::ceil_and_floor_to_step) | test(=inexact::tests::inexact_near_tie_or_boundary_is_q010) | test(=inexact::tests::inexact_plus_exact_is_inexact_and_keeps_root) | test(=inexact::tests::rounding_a_toleranced_value_keeps_deviations) | test(=inexact::tests::rounding_exact_values_is_exact_ties_away_from_zero) | test(=inexact::tests::rounding_step_errors_are_values) | test(=inexact::tests::sqrt_of_two_square_mm_is_marked_inexact_with_root) | test(=inexact::tests::trig_is_exact_at_special_angles) | test(=kind::tests::additive_rules) | test(=kind::tests::algebra_table_rows) | test(=kind::tests::angle_worked_cases) | test(=kind::tests::anonymous_assigns_to_named) | test(=kind::tests::builtin_canonical_angles) | test(=kind::tests::count_and_rounding) | test(=kind::tests::count_to_ratio_one_way) | test(=kind::tests::force_times_length_is_anonymous) | test(=kind::tests::lever_arm_exception_is_exponent_zero_only) | test(=kind::tests::named_scaled_by_dimensionless_keeps_kind) | test(=kind::tests::registered_kinds_are_distinct) | test(=kind::tests::roots) | test(=kind::tests::torque_to_energy_needs_as) | test(=rational::tests::add_across_pi_exponents_is_inexact_unless_zero) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::division_by_zero_is_an_error_value) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=tolerance::tests::deviation_units_may_differ_from_nominal) | test(=tolerance::tests::interval_nominal_is_midpoint) | test(=tolerance::tests::inverted_or_mismatched_deviations_are_errors) | test(=tolerance::tests::literals_build_ordered_deviation_pairs) | test(=tolerance::tests::product_of_toleranced_values_is_conservative) | test(=tolerance::tests::repeated_terms_count_once_and_cancel) | test(=tolerance::tests::roots_and_trig_are_conservative) | test(=units::tests::compound_is_anonymous) | test(=units::tests::errors_are_values) | test(=units::tests::every_table_unit_resolves) | test(=units::tests::exact_factors) | test(=units::tests::inch_factor) | test(=units::tests::percent_is_ratio) | test(=units::tests::quote_aliases) | test(=units::tests::temperature_factors_agree_with_affine) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 5362
+status = "measured"
+test_count = 57
+tests_digest = "84dabc5ac480211e391b7ed5728ff03e3848f4a8253134747b3069011d070c35"
+at = "2026-10-13T06:31:57Z"
+actor = "lognd"
+rev = 1
