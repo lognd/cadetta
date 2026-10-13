@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:26:30Z"
+updated = "2026-10-13T07:26:31Z"
 persona = "library author"
 capability = "write use trees, aliases, globs and pub use"
 labels = ["creates:crates/cadetta-syntax/src/parser_use.rs"]
@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `pub`, `pub(package)`, `pub use` and `priv row = Iso4762Head[thread]`, when parsed, then visibility is recorded on items, uses and members (packages.md 3, 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given no `mod` declaration or namespace header in a file, when parsed, then none is expected and a `namespace` header is a parse error (packages.md 2)"
