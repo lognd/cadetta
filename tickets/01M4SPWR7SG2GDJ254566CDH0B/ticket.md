@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:50:21Z"
+updated = "2026-10-13T09:51:04Z"
 persona = "design engineer"
 capability = "get lints for the C family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -34,8 +34,4 @@ bound = true
 [[acceptance]]
 text = "Given a violation under an alternate, when linted, then C001 names `for alt NAME` (language.md 3.2)"
 bound = true
-
-[[acceptance]]
-text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
-bound = false
 +++
