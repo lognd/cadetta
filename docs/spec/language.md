@@ -321,7 +321,7 @@ The errors in this section and in 3.8 (a non-whole, dimensioned or
 negative count, an unindexed read of an empty array, an index out of
 range, a roll-up with no contributing part or over mixed dimensions, an
 array literal of mixed kinds) carry the internal evaluation code `EVAL`
-(quantities.md 7); a fractional count such as `part w[2.5]` is Q009.
+(quantities.md); a fractional count such as `part w[2.5]` is Q009.
 
 `N` must be an exact, dimensionless, non-negative whole number. An
 unindexed read of an array whose `N` is 0 is an error, as is an index
