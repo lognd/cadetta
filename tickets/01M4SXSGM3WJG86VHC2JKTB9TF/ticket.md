@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-13T17:53:48Z"
+updated = "2026-10-13T17:54:31Z"
 persona = "spec author"
 capability = "verify an implementation against packages.md"
 labels = ["creates:tests/conformance/packages/**"]
@@ -19,10 +19,10 @@ kind = "blocked-by"
 target = "01M4STAQ2HJ1561N1M6VJHY70G"
 
 [[acceptance]]
-text = "Given docs/spec/packages.md, when fixtures are written, then every normative rule and every diagnostic code (E012-E017, U002) has a must-fire and a must-not-fire fixture under tests/conformance/packages/ (packages.md 7)"
+text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
 bound = false
 
 [[acceptance]]
-text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
+text = "Given docs/spec/packages.md, when fixtures are written, then every check-testable normative rule and every diagnostic code (E012-E017, U002) has a must-fire and a must-not-fire fixture under tests/conformance/packages/; the update entry, section 6 trust, and codeless rules are filed as spec tickets ~XXKBNB8 ~SE9XKVS ~4DKBZVW (packages.md 7)"
 bound = false
 +++
