@@ -241,6 +241,8 @@ pub enum UseTreeKind {
     Glob,
     /// `name::{...}`
     Group(Vec<UseTree>),
+    /// A bare `*` inside a group: a glob of the group's own prefix (`name` is `*`).
+    Star,
 }
 
 /// An item with its docs, attributes and visibility.

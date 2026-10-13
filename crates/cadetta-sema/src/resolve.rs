@@ -1265,6 +1265,16 @@ fn flatten_tree<'u>(
     named: &mut Vec<Import<'u>>,
     globs: &mut Vec<Import<'u>>,
 ) {
+    if matches!(t.kind, UseTreeKind::Star) {
+        globs.push(Import {
+            local: None,
+            root,
+            segs: prefix.to_vec(),
+            vis,
+            span: t.span,
+        });
+        return;
+    }
     let mut segs = prefix.to_vec();
     segs.push(&t.name);
     match &t.kind {
@@ -1287,6 +1297,7 @@ fn flatten_tree<'u>(
                 flatten_tree(root, &segs, i, vis, named, globs);
             }
         }
+        UseTreeKind::Star => unreachable!("handled above"),
     }
 }
 

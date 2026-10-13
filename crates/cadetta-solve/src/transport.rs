@@ -354,9 +354,14 @@ mod tests {
 
     /// Write the canned response to a file and return its path.
     fn fixture() -> String {
-        let p =
-            std::env::temp_dir().join(format!("cadetta-solve-fixture-{}.json", std::process::id()));
-        std::fs::write(&p, OK).unwrap();
+        // Written once per process: parallel tests must not truncate the file mid-read.
+        static PATH: std::sync::OnceLock<std::path::PathBuf> = std::sync::OnceLock::new();
+        let p = PATH.get_or_init(|| {
+            let p = std::env::temp_dir()
+                .join(format!("cadetta-solve-fixture-{}.json", std::process::id()));
+            std::fs::write(&p, OK).unwrap();
+            p
+        });
         p.to_string_lossy().into_owned()
     }
 
