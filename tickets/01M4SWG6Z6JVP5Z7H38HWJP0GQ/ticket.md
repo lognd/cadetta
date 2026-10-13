@@ -17,6 +17,10 @@ scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/floa
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SWFXC2K6D3S93F3ER0GZZA"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWG6XQ2M0GR620Q6MJE3XF"
 
 [[acceptance]]
