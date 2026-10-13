@@ -2,7 +2,8 @@
 id = "01M4SPWP1JK8XH8EKXK71P7EFH"
 title = "Parser and AST for components, parameters and parts"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
