@@ -180,27 +180,6 @@ everything is. A module prefix is compared segment-wise against the
 canonical path, relative to the package or fully qualified, and accepts
 `/` or `::` (`drive` matches `acme.rover::drive::motor::X` but not
 `acme.rover::driveline::X`). Globs use the obligations.md 2.2 grammar.
-
-`check` pipeline and exit rules (decided, 0.1.0): `check` parses every
-module (a lexical error E001 stops the run before evaluation, so later
-stages never see a broken tree), resolves, evaluates, kind-checks,
-lowers each in-scope package to IR and lints the IR; the `std` package
-is loaded from `$CADETTA_STD` or the repository `std/` directory and
-its own findings are not reported. A diagnostic's `path` is the
-canonical path of the member it concerns (for a check verdict, the
-check's path) and its `location` the project-relative file with 1-based
-line and column. A diagnostic without a path is dropped from a scoped
-run (`--module` or GLOB). Open and stale obligations become O002 and
-O001; a row the role policy gates (`required_for = "check"`, or
-`"release"` with `--release`) is an error whatever `[lint] severity`
-says, the others keep their catalog severity. An obligation no role
-covers is not raised (nothing could discharge it). Drift lints run once
-per configured adapter that can read (an external adapter with a
-`command`); emit-only built-ins are skipped. The exit code is 1 when an
-unwaived diagnostic reaches `[lint] fail_on` and 0 otherwise, so
-`fail_on = "never"` always exits 0; a malformed flag, scope or `--as-of`
-is a usage error (2). `--watch` is the ndjson loop of section 5; until
-that lands the flag is accepted and runs one pass.
 A scope matching no node is not an error for these commands.
 
 ### 3.1 `sync` output
