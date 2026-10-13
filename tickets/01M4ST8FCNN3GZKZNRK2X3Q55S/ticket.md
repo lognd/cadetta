@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-13T09:30:23Z"
+updated = "2026-10-13T09:42:56Z"
 persona = "design engineer"
 capability = "compare every implementer of an interface side by side"
 idempotency_key = "replan13:cadetta compare"
 labels = ["creates:crates/cadetta-cli/src/cmd/compare.rs"]
-scope = ["crates/cadetta-cli/src/cmd/compare.rs"]
+scope = ["crates/cadetta-cli/src/cmd/compare.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs"]
 
 [[links]]
 kind = "blocks"

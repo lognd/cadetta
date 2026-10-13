@@ -2,6 +2,7 @@
 //! Command implementations (config-cli.md 3), one module per verb family.
 
 pub mod ack;
+pub mod check;
 pub mod cite;
 pub mod explain;
 pub mod fmt;
@@ -19,6 +20,7 @@ use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 pub use ack::run_ack;
+pub use check::run_check;
 pub use explain::run_explain;
 pub use fmt::run_fmt;
 pub use impact::run_impact;
