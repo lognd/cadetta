@@ -2,7 +2,8 @@
 id = "01M4VB648PMGRPG6R8D606HZK6"
 title = "Drive and compare dimension tolerances"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
