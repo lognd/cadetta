@@ -1,0 +1,15 @@
+kind = "create"
+title = "OQ-7: Adapter discovery and versioning"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-7 from the spec. Closes with an ADR in docs/decisions/.
+
+Question: Adapter discovery and versioning (PATH lookup vs a lockfile of adapter versions).
+
+Recommendation: `cadetta.toml` pins command and version; `initialize` must match."""
+at = "2026-10-13T04:04:07Z"
+actor = "lognd"
+rev = 1
