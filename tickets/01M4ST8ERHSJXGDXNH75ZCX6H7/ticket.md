@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:24Z"
+updated = "2026-10-13T05:05:28Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
@@ -42,6 +42,10 @@ target = "01M4ST8F7B9VYMFSCJD8MVBJNS"
 [[links]]
 kind = "blocks"
 target = "01M4STCCZ58C875BTMQ9E54BMT"
+
+[[links]]
+kind = "blocks"
+target = "01M4STCF8FJ9HGB7EZ37MC24EF"
 
 [[acceptance]]
 text = "Given an attestation on a check, when anything the check reads changes however far upstream, then it becomes stale (obligations.md 2)"
