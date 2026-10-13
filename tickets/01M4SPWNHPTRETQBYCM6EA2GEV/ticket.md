@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an anonymous kind of equal dimension and angle, when assigned to a named kind, then it is accepted (quantities.md 4.1 rule 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a non-integer Count, when constructed, then Q009 is signalled; floor/ceil/round of a dimensionless value yield a Count, ties away from zero (quantities.md 4.2)"
