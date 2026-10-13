@@ -59,6 +59,12 @@ impl Dimension {
         &self.si
     }
 
+    // frob:ticket 01M4SWK92ASN873QYBKXGPTZV0
+    /// The non-zero currency exponents keyed by ISO 4217 code.
+    pub fn currencies(&self) -> &BTreeMap<String, i32> {
+        &self.currency
+    }
+
     /// The exponent of one currency (0 when absent).
     pub fn currency_exp(&self, code: &str) -> i32 {
         self.currency.get(code).copied().unwrap_or(0)

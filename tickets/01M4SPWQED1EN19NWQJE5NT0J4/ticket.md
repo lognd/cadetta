@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:37:34Z"
+updated = "2026-10-13T07:41:24Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
 labels = ["creates:crates/cadetta-ir/src/digest.rs"]
-scope = ["crates/cadetta-ir/src/digest.rs"]
+scope = ["crates/cadetta-ir/src/digest.rs", "crates/cadetta-ir/Cargo.toml", "crates/cadetta-ir/src/lib.rs", "Cargo.lock", "docs/spec/ir.md"]
 
 [[links]]
 kind = "blocks"
