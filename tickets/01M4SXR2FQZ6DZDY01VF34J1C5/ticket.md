@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:40Z"
-updated = "2026-10-13T06:59:25Z"
+updated = "2026-10-13T06:59:26Z"
 persona = "product engineer"
 capability = "depend on a shop library by path or git and get one resolved version"
 labels = ["creates:crates/cadetta-cli/src/pkg/resolve.rs"]
@@ -32,5 +32,5 @@ bound = true
 
 [[acceptance]]
 text = "Given transitive dependencies, when resolved, then the whole project has exactly one version of each package, deterministically ordered (packages.md 1)"
-bound = false
+bound = true
 +++
