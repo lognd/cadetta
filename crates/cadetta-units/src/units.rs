@@ -8,6 +8,7 @@ use std::collections::{BTreeMap, HashMap};
 use thiserror::Error;
 use tracing::{debug, trace};
 
+use crate::affine::{TempClass, TemperatureUnit};
 use crate::dimension::{Dim, Dimension};
 use crate::rational::{Magnitude, MagnitudeError, Rational};
 
@@ -149,12 +150,6 @@ const ATOMS: &[Row] = &[
     ("mV", 1, 1000, 0, "V", "Voltage"),
     ("ohm", 1, 1, 0, "V/A", "Resistance"),
     ("kohm", 1000, 1, 0, "ohm", "Resistance"),
-    // Temperature (absolute) and differences; offsets belong to the affine layer
-    ("degC", 1, 1, 0, "K", "Temperature"),
-    ("degF", 5, 9, 0, "K", "Temperature"),
-    ("dK", 1, 1, 0, "K", "TemperatureDelta"),
-    ("ddegC", 1, 1, 0, "K", "TemperatureDelta"),
-    ("ddegF", 5, 9, 0, "K", "TemperatureDelta"),
 ];
 
 /// Compound unit forms in the table that carry a named default kind.
@@ -253,10 +248,20 @@ impl UnitTable {
             t.define_with(name, &scale, expr, Some(UnitKind::named(kind)))
                 .unwrap_or_else(|e| panic!("builtin unit table row `{name}`: {e}"));
         }
-        for name in ["degC", "degF"] {
-            if let Some(u) = t.atoms.get_mut(name) {
-                u.affine = true;
+        // Temperature scale factors and affine flags come from affine.rs (single source).
+        for unit in TemperatureUnit::ALL {
+            if unit == TemperatureUnit::K {
+                continue;
             }
+            let kind = match unit.class() {
+                TempClass::Absolute => "Temperature",
+                TempClass::Delta => "TemperatureDelta",
+            };
+            let scale = Magnitude::new(unit.factor(), 0);
+            t.define_with(unit.name(), &scale, "K", Some(UnitKind::named(kind)))
+                .unwrap_or_else(|e| panic!("builtin temperature unit `{}`: {e}", unit.name()));
+            let def = t.atoms.get_mut(unit.name()).expect("just defined");
+            def.affine = unit.is_affine();
         }
         for &(expr, kind) in COMPOUNDS {
             let form = t
@@ -584,5 +589,21 @@ mod tests {
             Err(UnitError::AffineInCompound("degC".into()))
         );
         assert!(t.parse("degC").is_ok());
+    }
+
+    // frob:tests crates/cadetta-units/src/units.rs::UnitTable.builtin kind=unit
+    #[test]
+    fn temperature_factors_agree_with_affine() {
+        let t = UnitTable::builtin();
+        for u in TemperatureUnit::ALL {
+            let def = t.parse(u.name()).unwrap();
+            assert_eq!(def.factor, Magnitude::new(u.factor(), 0), "{}", u.name());
+            assert_eq!(
+                t.lookup(u.name()).unwrap().affine,
+                u.is_affine(),
+                "{}",
+                u.name()
+            );
+        }
     }
 }
