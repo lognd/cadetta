@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a primary with status eol or obsolete and no viable alternate, when analysed, then the L001 fact is recorded, error once its date has passed (lints.md L)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a primary with status nrnd, when analysed, then the L002 fact is recorded (lints.md L)"
