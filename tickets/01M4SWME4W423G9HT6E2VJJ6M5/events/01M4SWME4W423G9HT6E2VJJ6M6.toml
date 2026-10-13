@@ -1,0 +1,16 @@
+kind = "create"
+title = "Read cache keyed by file digest"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4SV2TCZM23R46EM75RYSA3B"
+persona = "design engineer"
+capability = "make check fast"
+idempotency_key = "replan14:sw-cache"
+labels = ["creates:adapters/solidworks/src/cache.py"]
+scope = ["adapters/solidworks/src/cache.py"]
+acceptance = ["Given an unchanged file digest, when read runs again, then the cached observed IR is returned without opening the file (adapters.md 2.2)"]
+at = "2026-10-13T05:44:13Z"
+actor = "lognd"
+rev = 1
