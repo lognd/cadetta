@@ -2,7 +2,8 @@
 id = "01M4SWG6T58Q489WASV5DYGF7F"
 title = "distance(), aligned() and G004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
