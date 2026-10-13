@@ -8,12 +8,12 @@ points = 2
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T20:47:23Z"
+updated = "2026-10-13T20:49:28Z"
 persona = "design engineer"
 capability = "rely on a created native name never changing when unrelated paths are added"
 outcome_text = "links made in CAD survive every edit"
 idempotency_key = "d15:pure-mangle"
-scope = ["crates/cadetta-adapter/src/bindings.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**"]
+scope = ["crates/cadetta-adapter/src/bindings.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "crates/cadetta-cli/src/cmd/emit.rs"]
 
 [[acceptance]]
 text = "Given any set of paths, when names are created, then each name is mangle(path, prefix) alone, including datum and placement op paths (adapters.md 3.1)"
