@@ -2,7 +2,8 @@
 id = "01M4SPWR4SAWTESPSK2DP99M5S"
 title = "Lint family Source rules S001-S002"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
