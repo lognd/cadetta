@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:39:22Z"
+updated = "2026-10-13T08:39:26Z"
 persona = "design engineer"
 capability = "declare which sign-offs gate check and release"
 idempotency_key = "replan13:Roles, policy and release gating"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given stale or open obligations with required_for = "check", when gating, then the result fails; release roles fail only under `--release` (obligations.md 4)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a `require`, when waived without an attestation, then it is refused: attestation is the only way (obligations.md 4)"
