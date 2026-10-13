@@ -8,12 +8,16 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-13T05:44:12Z"
+updated = "2026-10-13T05:44:15Z"
 persona = "design engineer"
 capability = "drive sketches from datums"
 idempotency_key = "replan14:sw-frame"
 labels = ["creates:adapters/solidworks/src/frames.py"]
 scope = ["adapters/solidworks/src/frames.py"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMCYW919R5JKSV2T1ZYBN"
 
 [[acceptance]]
 text = "Given a datum-plane sketch coordinate, when bound, then the dimension is pushed with sign and sketch-origin rules (geometry.md 6)"
