@@ -2,18 +2,18 @@
 id = "01M4SWG6N6DT76DRYYJHFB4656"
 title = "Re-expression 'p in D' and G003"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:55Z"
+updated = "2026-10-13T13:43:18Z"
 persona = "design engineer"
 capability = "compare positions across parts"
 idempotency_key = "replan14:geo-in"
 labels = ["creates:crates/cadetta-geometry/src/reexpress.rs"]
-scope = ["crates/cadetta-geometry/src/reexpress.rs"]
+scope = ["crates/cadetta-geometry/src/reexpress.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"

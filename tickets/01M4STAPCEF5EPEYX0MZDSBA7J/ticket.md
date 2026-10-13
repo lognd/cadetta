@@ -2,18 +2,18 @@
 id = "01M4STAPCEF5EPEYX0MZDSBA7J"
 title = "ScrewJoint derived members"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T06:05:27Z"
+updated = "2026-10-13T13:42:08Z"
 persona = "design engineer"
 capability = "read derived joint geometry"
 idempotency_key = "replan13:ScrewJoint derived members"
 labels = ["creates:std/src/fasteners/screwjoint.cdt"]
-scope = ["std/src/fasteners/screwjoint.cdt"]
+scope = ["std/src/fasteners/screwjoint.cdt", "crates/cadetta-sema/tests/**", "docs/spec/stdlib.md"]
 
 [[links]]
 kind = "blocks"
