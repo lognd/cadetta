@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/cite.rs"]
+new = ["crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/Cargo.toml", "Cargo.lock", "docs/spec/config-cli.md", "crates/cadetta-cli/src/cmd/mod.rs"]
+at = "2026-10-13T07:01:33Z"
+actor = "lognd"
+rev = 1

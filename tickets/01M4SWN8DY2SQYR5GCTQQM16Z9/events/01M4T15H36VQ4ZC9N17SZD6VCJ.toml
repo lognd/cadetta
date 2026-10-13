@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:03:22Z"
+digest = "076dc221df7257d2379bdcf85713910bb2c853868408e21d7bd52fb01af4fa2b"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.31s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5cc4b356-2a43-4f81-bf2f-8c59bbf48c85 with nextest profile: default
+    Starting 1 test across 14 binaries (246 tests skipped)
+        PASS [   0.007s] cadetta cmd::cite::tests::url_cite_is_stored_in_cites_and_rewritten
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 246 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::cite::tests::url_cite_is_stored_in_cites_and_rewritten)"
+size = 757
+status = "measured"
+test_count = 1
+tests_digest = "c4c2d5dcc42fd1d6fdd270fb7578ea1ce057f0077b7e9aba714a92f4ca3d8e7c"
+at = "2026-10-13T07:03:22Z"
+actor = "lognd"
+rev = 1

@@ -1,15 +1,15 @@
 //! frob:ticket 01M4SPWSXBTNXW3CPZ6FVHT5ZT
+//! frob:ticket 01M4T11K0VARSN3813NG812VAE
 //! Output formats, the `cadetta.diag/1` record and exit codes
 //! (config-cli.md 3, 5; lints.md 1.1, 1.2).
 //!
 //! Text is the default in every context; JSON only by `--format json` or
 //! `CADETTA_FORMAT=json`, never by terminal detection.
 
-use std::fmt::Write as _;
 use std::str::FromStr;
 
 use cadetta_lint::diag::{self, Diagnostic, Location, Position, Severity};
-use cadetta_lint::render::text;
+use cadetta_lint::render::{github, short, text};
 use serde_json::json;
 
 use crate::config::FailOn;
@@ -74,16 +74,6 @@ fn file_pos(d: &Diagnostic) -> Option<(&str, Position)> {
     }
 }
 
-/// The lower-case name of a severity.
-fn severity_name(severity: Severity) -> &'static str {
-    match severity {
-        Severity::Hint => "hint",
-        Severity::Info => "info",
-        Severity::Warning => "warning",
-        Severity::Error => "error",
-    }
-}
-
 /// Ordering rank of a severity (hint < info < warning < error).
 fn rank(severity: Severity) -> u8 {
     match severity {
@@ -134,58 +124,11 @@ pub fn render(
     let shown: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.waived.is_none()).collect();
     match format {
         Format::Text => shown.iter().map(|d| text::render(d, source_line)).collect(),
-        Format::Short => shown.iter().map(|d| render_short(d)).collect(),
-        Format::Github => shown.iter().map(|d| render_github(d)).collect(),
+        Format::Short => shown.iter().map(|d| short::render(d)).collect(),
+        Format::Github => shown.iter().map(|d| github::render(d)).collect(),
         Format::Sarif => format!("{}\n", render_sarif(&shown)),
         Format::Json => unreachable!("handled above"),
     }
-}
-
-/// `file:line:col: severity[CODE]: message`.
-fn render_short(d: &Diagnostic) -> String {
-    let at = file_pos(d).map_or_else(
-        || "-".to_owned(),
-        |(f, p)| format!("{f}:{}:{}", p.line, p.col),
-    );
-    format!(
-        "{at}: {}[{}]: {}\n",
-        severity_name(d.severity),
-        d.code,
-        d.message
-    )
-}
-
-/// Escape a workflow-command message.
-fn gh_data(text: &str) -> String {
-    text.replace('%', "%25")
-        .replace('\r', "%0D")
-        .replace('\n', "%0A")
-}
-
-/// Escape a workflow-command property value.
-fn gh_prop(text: &str) -> String {
-    gh_data(text).replace(':', "%3A").replace(',', "%2C")
-}
-
-/// A GitHub workflow annotation line.
-fn render_github(d: &Diagnostic) -> String {
-    let level = match d.severity {
-        Severity::Error => "error",
-        Severity::Warning => "warning",
-        Severity::Info | Severity::Hint => "notice",
-    };
-    let mut props = String::new();
-    if let Some((file, pos)) = file_pos(d) {
-        let _ = write!(
-            props,
-            "file={},line={},col={},",
-            gh_prop(file),
-            pos.line,
-            pos.col
-        );
-    }
-    let _ = write!(props, "title={}", gh_prop(&d.code));
-    format!("::{level} {props}::{}\n", gh_data(&d.message))
 }
 
 /// A SARIF 2.1.0 log for code scanning.
@@ -309,7 +252,7 @@ mod tests {
         );
         assert_eq!(
             render(Format::Github, &d, &no_source),
-            "::error file=cad/rover.cdt,line=41,col=3,title=C001::false for every value in tolerance\n"
+            "::error file=cad/rover.cdt,line=41,col=3,endLine=41,endColumn=8,title=C001::false for every value in tolerance\n"
         );
         let sarif: serde_json::Value =
             serde_json::from_str(&render(Format::Sarif, &d, &no_source)).unwrap();
@@ -331,6 +274,7 @@ mod tests {
             because: "b".into(),
         });
         assert_eq!(render(Format::Short, &[d.clone()], &no_source), "");
+        assert_eq!(render(Format::Github, &[d.clone()], &no_source), "");
         assert!(render(Format::Json, &[d], &no_source).contains("\"because\":\"b\""));
     }
 

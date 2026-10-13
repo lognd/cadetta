@@ -157,7 +157,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations. | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
 | `ack SELECTOR --role R --reason "..." [--baseline] [--release] [--dry-run] [--as EMAIL]` | Attest at current digests; `--baseline` records reason `baseline` (obligations.md 4); `waiver:GLOB` records reviewed waivers' digests. | writes `cadetta.lock` | never | `ack.json` |
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
-| `cite pin NAME` | Download a URL citation into `cites/` and rewrite the `cite` to the local path. | writes `cites/`, source | never | - |
+| `cite pin NAME` | Download a URL citation into `cites/` and rewrite the `cite` to the local path. | writes `cites/`, source | never (errors exit 2) | - |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
 | `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
@@ -208,6 +208,12 @@ directory name, normalised, and is echoed.
 `SELECTOR` is `KIND:GLOB[,KIND:GLOB...]` over obligation ids
 (`<kind>:<canonical path>`, obligations.md 4). A selector matching
 nothing is exit 2.
+
+Decided (0.1.0): `cite pin NAME` accepts only a `http(s)` string
+citation declared once in the scoped packages. It stores the bytes as
+`cites/<first 16 hex of blake3>-<file name>` (package-relative; same
+bytes, same path) and rewrites the `cite` string to that path. A path,
+a standard or an unknown or ambiguous NAME is a usage error (exit 2).
 
 ## 4. Global flags
 

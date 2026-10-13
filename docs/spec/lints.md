@@ -92,6 +92,22 @@ line as files change; that is the 0.1.0 editor integration (problem
 matchers). `cadetta lsp` (diagnostics, hover as `why`, code lens as
 `impact`) is deferred to a later release and tracked as a ticket.
 
+Short and github rendering rules: `short` is one line per diagnostic;
+a diagnostic with no location omits the `file:line:col: ` prefix, and
+native and lock locations use the same `file:1:1` and `cadetta.lock:LINE:1`
+positions as text. `github` emits `::LEVEL file=F,line=L,col=C,endLine=L,endColumn=C,title=CODE::MESSAGE`
+with level `error`, `warning`, or `notice` (info and hint); native and lock
+locations give `file` and `line` only, no location gives `title` only.
+`%`, CR and LF are escaped in the message, and also `:` and `,` in properties.
+
+SARIF rendering rules: one run, tool `cadetta`, `rules` are the distinct
+codes present, sorted; `level` is `error`, `warning`, or `note` (info and
+hint). Source locations map to `physicalLocation` regions; native
+locations map to `file` at line 1 col 1 with `adapter` and `locator` kept
+in the location `properties`; lock locations map to `cadetta.lock`. `path`
+is a logical location, `alt` a result property, notes are
+`relatedLocations`, fixes map to `fixes`. Waived diagnostics are omitted.
+
 Text rendering rules: the output is ASCII and carries no color codes.
 The excerpt shows the first line of the span, underlined to the span
 end (to the end of the line for a multi-line span); `alt` is the label

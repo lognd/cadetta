@@ -347,6 +347,8 @@ pub enum InterfaceMemberKind {
         /// The kind.
         ty: Type,
     },
+    /// `datum name`
+    Datum(Datum),
     /// A bound every implementer must meet.
     Bound(Box<Bound>),
     /// A syntax error or a member not parsed yet.
@@ -432,8 +434,50 @@ pub enum MemberKind {
     Require(Require),
     /// `solver ...`
     Solver(Solver),
+    /// `datum name = expr`
+    Datum(Datum),
+    /// `place part on expr [for i in lo..hi]`
+    Place(Place),
     /// A syntax error or a member not parsed yet.
     Error,
+}
+
+/// A datum declaration `datum name [= expr]` (geometry.md 2); no value in an interface.
+// frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Datum {
+    /// The datum name.
+    pub name: Ident,
+    /// The defining expression (`origin.offset(..)`), absent for an interface datum.
+    pub value: Option<Expr>,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// A placement `place target on expr [for i in lo..hi]` (geometry.md 4).
+// frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Place {
+    /// The part datum being placed (`rail.origin`, `feet[i].top`).
+    pub target: Expr,
+    /// The datum it is made to coincide with.
+    pub on: Expr,
+    /// The Count-range form, when given.
+    pub each: Option<PlaceRange>,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// The `for i in lo..hi` clause of a placement.
+// frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct PlaceRange {
+    /// The index variable.
+    pub var: Ident,
+    /// The first index.
+    pub lo: Expr,
+    /// The end of the range (`count(PART)`).
+    pub hi: Expr,
 }
 
 /// A parameter `name [: Type] = expr [citation] { was path }`.

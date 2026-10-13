@@ -5,6 +5,7 @@
 //! Specification: `docs/spec/config-cli.md`. Global flags (`--format`, `--cwd`,
 //! `--config`, `-v`) are parsed here; only `--version` exists as a command so far.
 
+pub mod cmd;
 pub mod config;
 mod env;
 pub mod output;
@@ -160,6 +161,7 @@ pub fn parse_globals(
 #[derive(Debug, PartialEq, Eq)]
 enum Command {
     Version,
+    Cite(Vec<String>),
     Unknown(String),
 }
 
@@ -167,6 +169,7 @@ enum Command {
 fn parse(args: &[String]) -> Command {
     match args.first().map(String::as_str) {
         Some("--version" | "-V") | None => Command::Version,
+        Some("cite") => Command::Cite(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -203,6 +206,7 @@ pub fn run_with_env(
                 EXIT_USAGE
             }
         },
+        Command::Cite(rest) => cmd::run_cite(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE
