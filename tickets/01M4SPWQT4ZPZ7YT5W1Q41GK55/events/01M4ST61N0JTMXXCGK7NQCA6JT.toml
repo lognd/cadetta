@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given parameter `Axle.axle_length`, when linted, then N002 is reported", "Given `diameter_mm`, when linted, then N003 is reported", "Given component `my_axle`, when linted, then N001 is reported", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"]
+new = ["Given parameter `Axle.axle_length`, when linted, then N002 is reported", "Given `diameter_mm`, when linted, then N003 is reported", "Given component `my_axle`, when linted, then N001 is reported", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/", "Given a name containing `__`, when linted, then N005 is an error and cannot be waived (lints.md N)", "Given `Type.member` in an assembly that has a `part` of that type, when linted, then N006 suggests the instance (language.md 3.1)", "Given `Iso4762M5` and `M2_5`, when linted, then N001 does not fire (language.md 4)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:01:24Z"
+actor = "lognd"
+rev = 1
