@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the CSV emitter, when run, then output is RFC 4180 with a header comment and columns name,value,unit,note (emitters/csv.md)"
-bound = false
+bound = true
 +++
