@@ -2,18 +2,19 @@
 id = "01M4SPWSABPXKK62B5V0SMJ8FD"
 title = "Built-in sw-equations adapter (emit and read)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T13:34:31Z"
+updated = "2026-10-13T13:36:31Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
 labels = ["creates:crates/cadetta-adapter/src/builtin/sw_equations.rs"]
-scope = ["crates/cadetta-adapter/src/builtin/sw_equations.rs"]
+scope = ["crates/cadetta-adapter/src/builtin/sw_equations.rs", "crates/cadetta-adapter/src/builtin/mod.rs"]
 
 [[links]]
 kind = "blocks"

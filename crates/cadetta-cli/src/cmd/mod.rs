@@ -8,6 +8,7 @@ pub mod compare;
 pub mod explain;
 pub mod fmt;
 pub mod impact;
+pub mod impact_swap;
 pub mod init;
 pub mod ir;
 pub mod obligations;
@@ -26,7 +27,6 @@ pub use check::run_check;
 pub use compare::run_compare;
 pub use explain::run_explain;
 pub use fmt::run_fmt;
-pub use impact::run_impact;
 pub use init::run_init;
 pub use ir::run_ir;
 pub use obligations::run_obligations;
@@ -34,6 +34,20 @@ pub use solve::run_solve;
 pub use units::run_units;
 pub use update::run_update;
 pub use why::run_why;
+
+/// Run `cadetta impact`: `--swap PART NEW` previews a part swap, otherwise `PATH` queries
+/// downstream dependents.
+pub fn run_impact(
+    args: &[String],
+    globals: &Globals,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
+    match args.split_first() {
+        Some((flag, rest)) if flag == "--swap" => impact_swap::run_swap(rest, globals, out, err),
+        _ => impact::run_impact(args, globals, out, err),
+    }
+}
 
 /// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.
 pub fn run_cite(
