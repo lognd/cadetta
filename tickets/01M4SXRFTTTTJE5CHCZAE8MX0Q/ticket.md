@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:20:47Z"
+updated = "2026-10-13T07:22:05Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
@@ -32,7 +32,7 @@ bound = false
 
 [[acceptance]]
 text = "Given a file or directory under src that is not snake_case, when loaded, then E015 fires (packages.md 2, 7; N001)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an item in a module, when its path is built, then it is package::module::Item and members follow, as in acme.rover::drive::motor::Gm42A.rated_torque (packages.md 2; ir.md 2)"
