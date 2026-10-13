@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:48:50Z"
+updated = "2026-10-13T08:48:57Z"
 persona = "design engineer"
 capability = "attest a selection at current digests"
 idempotency_key = "replan13:cadetta ack"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given ack waiver:GLOB, --as EMAIL or --baseline, when run, then records follow obligations.md 4 and the reason baseline is used (config-cli.md 3)"
-bound = false
+bound = true
 +++
