@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T09:28:42Z"
+updated = "2026-10-13T09:28:43Z"
 persona = "design engineer"
 capability = "keep positions in their datum"
 idempotency_key = "replan14:geo-points"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given Point - Point, Point + Vec, Vec * s and array + vector, when evaluated, then results are in the same datum (geometry.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given arithmetic across datums or array + point, when evaluated, then G001 is raised and nothing converts silently (geometry.md 3, 7)"
