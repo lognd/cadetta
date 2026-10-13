@@ -1,0 +1,16 @@
+kind = "create"
+title = "cadetta obligations"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "see the design to-do list of open and stale obligations"
+idempotency_key = "replan13:cadetta obligations"
+labels = ["creates:crates/cadetta-cli/src/cmd/obligations.rs"]
+scope = ["crates/cadetta-cli/src/cmd/obligations.rs"]
+acceptance = ["Given a design, when `cadetta obligations [--stale] [--role R]` runs, then open and stale obligations are listed with their role (obligations.md 5)", "Given `--format json`, when run, then the output is machine-readable (obligations.md 5)"]
+at = "2026-10-13T05:02:43Z"
+actor = "lognd"
+rev = 1
