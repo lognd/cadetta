@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:13Z"
+updated = "2026-10-13T05:45:14Z"
 persona = "design engineer"
 capability = "script the whole workflow"
 idempotency_key = "replan14:py-mut"
@@ -18,6 +18,10 @@ scope = ["bindings/python/python/cadetta/project_ops.py"]
 [[links]]
 kind = "blocked-by"
 target = "01M4SV2NMPSM42YZT9MXT4YVMW"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWN8G3QTQC5YK07VN1YQYC"
 
 [[acceptance]]
 text = "Given solve, emit, sync, import_ and ack, when called, then each returns Result[Model, CadettaError] with the verb's JSON schema model (bindings.md 3.2)"
