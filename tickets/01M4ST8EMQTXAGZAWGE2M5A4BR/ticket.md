@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T06:10:21Z"
+updated = "2026-10-13T06:10:22Z"
 persona = "design engineer"
 capability = "see every claim as a node with typed edges"
 idempotency_key = "replan13:Obligation graph nodes, edges and states"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an obligation, when identified, then its id is <kind>:<canonical path> and kinds include waiver (obligations.md 2, 4)"
-bound = false
+bound = true
 +++
