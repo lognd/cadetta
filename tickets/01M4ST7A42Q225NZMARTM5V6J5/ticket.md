@@ -2,7 +2,8 @@
 id = "01M4ST7A42Q225NZMARTM5V6J5"
 title = "Accessors, roles and bounds"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
