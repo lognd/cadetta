@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T22:00:51Z"
+updated = "2026-10-13T22:00:53Z"
 persona = "design engineer"
 capability = "see problems in any editor"
 idempotency_key = "replan14:cli-lsp"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given cadetta.diag/1 records, when mapped, then range, severity 1-4, code, source cadetta, message with note and help lines, and data {path, variant} follow config-cli.md 3.8; lock locations publish on cadetta.lock and native or absent locations are logged only"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given textDocument/formatting, when requested, then one whole-document edit with fmt output is returned, none when canonical, and an error response for a buffer with syntax errors (config-cli.md 3.8)"
