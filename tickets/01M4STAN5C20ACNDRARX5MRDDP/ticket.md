@@ -23,6 +23,10 @@ target = "01M4STAN8QG3QWZQCH5XN3QHMT"
 kind = "blocks"
 target = "01M4STANBCA3XCNHR3X1NJKGFE"
 
+[[links]]
+kind = "blocks"
+target = "01M4STANFNKA8G30C6KEEBM38C"
+
 [[acceptance]]
 text = "Given a run, when stored, then `<script>.out.json` holds results keyed by input digest (solvers.md 4)"
 bound = false
