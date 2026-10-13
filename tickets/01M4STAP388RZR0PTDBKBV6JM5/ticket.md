@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T07:46:00Z"
+updated = "2026-10-13T07:46:42Z"
 persona = "design engineer"
 capability = "look up thread, head and nut dimensions"
 idempotency_key = "replan13:Metric fastener tables"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given tolerances, when read, then they are kept as published (stdlib.md 2)"
-bound = false
+bound = true
 +++
