@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T13:36:39Z"
+digest = "e676a35e4660a402f282da579706a742d5b887fd80e2ad85d6579778880cb247"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 49b31956-8349-40f0-b3df-718ef1ef5126 with nextest profile: default
+    Starting 1 test across 1 binary (106 tests skipped)
+        PASS [   0.010s] cadetta-lint rules::e::tests::e010_fires_for_roleless_mmc
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 106 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::e::tests::e010_fires_for_roleless_mmc)'"
+size = 614
+status = "measured"
+test_count = 1
+tests_digest = "37dbf31b9e70e38cce303754b6cf8f41d1c765430655fd03bfe97d69dbc029ee"
+at = "2026-10-13T13:36:39Z"
+actor = "lognd"
+rev = 1
