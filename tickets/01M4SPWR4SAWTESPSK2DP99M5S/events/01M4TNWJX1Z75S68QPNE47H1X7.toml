@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an ots value with no source on it or its component, when linted, then S001 warning", "Given a local-file source that does not exist, when linted, then S002 info", "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"]
+new = ["Given an ots value with no source on it or its component, when linted, then S001 warning", "Given a local-file source that does not exist, when linted, then S002 info"]
+moved = [1, 2, 0]
+at = "2026-10-13T13:05:34Z"
+actor = "lognd"
+rev = 1

@@ -1,6 +1,7 @@
 //! The rule implementations, one module per family.
 
 pub mod c;
+pub mod d;
 pub mod interface;
 pub mod n;
 pub mod obligation;
