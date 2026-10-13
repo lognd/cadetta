@@ -19,6 +19,7 @@ from cadetta.logging import get_logger
 from pydantic import BaseModel, ConfigDict
 from typani import Err, Ok, Result
 
+# frob:ticket ~F2KGRGH
 log = get_logger(__name__)
 
 BINDING_DIR = Path(__file__).resolve().parent.parent
