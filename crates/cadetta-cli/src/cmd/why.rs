@@ -8,14 +8,21 @@ use std::io::Write;
 use cadetta_ir::model::{Check, Member, Project as Ir, Solver};
 use serde_json::{Value as Json, json};
 
+use cadetta_obligations::graph::ObligationId;
+use cadetta_obligations::lock::Lock;
+use cadetta_obligations::why_stale::{ChangedNode, WhyStale};
+
+use super::ack::policy_of;
 use crate::output::Format;
+use crate::pipeline::{Analysis, analyze};
 use crate::project::Project;
+use crate::universe::universes;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 /// Schema tag of the JSON report; the schema is `docs/schemas/why.json`.
 pub const SCHEMA: &str = "cadetta.why/1";
 
-const USAGE: &str = "usage: cadetta why PATH";
+const USAGE: &str = "usage: cadetta why PATH | cadetta why --stale OBLIGATION [--role R]";
 
 /// What a node of the derivation chain is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -151,7 +158,7 @@ impl<'a> Index<'a> {
             reads.extend(
                 self.members
                     .keys()
-                    .filter(|m| c.expr.contains(m.as_str()))
+                    .filter(|m| crate::universe::check_reads(path, &c.expr, m))
                     .cloned(),
             );
         } else if let Some(s) = self.solvers.get(path) {
@@ -250,16 +257,103 @@ pub fn render(root: &Node, format: Format, out: &mut dyn Write) {
     }
 }
 
-/// The evaluated IR of the project.
-///
-/// The source-to-IR lowering is not wired into the CLI yet (as for `obligations`), so a
-/// project offers none and every path is unknown.
-fn project_ir(project: &Project) -> Option<Ir> {
-    tracing::warn!(
-        root = %project.root.display(),
-        "why: no IR pipeline wired into the CLI yet; nothing to trace"
-    );
-    None
+/// The parsed command line of `cadetta why`.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct WhyArgs {
+    /// A path to trace, or with `--stale` the obligation id.
+    pub target: String,
+    /// Explain why the obligation is stale instead of tracing a value.
+    pub stale: bool,
+    /// The role whose attestation is judged (default: the first role covering the obligation).
+    pub role: Option<String>,
+}
+
+/// Parse the words after `why`; the error is a usage message.
+pub fn parse_args(args: &[String]) -> Result<WhyArgs, String> {
+    let mut parsed = WhyArgs::default();
+    let mut target = None;
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--stale" => parsed.stale = true,
+            "--role" => parsed.role = Some(it.next().cloned().ok_or("`--role` needs a value")?),
+            flag if flag.starts_with("--") => return Err(format!("unknown flag `{flag}`")),
+            t if target.is_none() => target = Some(t.to_owned()),
+            extra => return Err(format!("unexpected argument `{extra}`")),
+        }
+    }
+    parsed.target = target.ok_or("missing PATH")?;
+    if parsed.role.is_some() && !parsed.stale {
+        return Err("`--role` needs `--stale`".to_owned());
+    }
+    Ok(parsed)
+}
+
+fn changed_json(c: &ChangedNode) -> Json {
+    json!({"node": c.node, "new": c.new, "old": c.old, "depth": c.depth})
+}
+
+/// The `stale` object of the JSON report and the lines of the text report.
+fn stale_json(id: &ObligationId, role: &str, why: &WhyStale) -> Json {
+    match why {
+        WhyStale::Open => json!({"obligation": id.to_string(), "role": role, "state": "open"}),
+        WhyStale::Current => {
+            json!({"obligation": id.to_string(), "role": role, "state": "current"})
+        }
+        WhyStale::Stale {
+            nearest,
+            others,
+            removed,
+        } => json!({
+            "obligation": id.to_string(),
+            "role": role,
+            "state": "stale",
+            "nearest": changed_json(nearest),
+            "others": others.iter().map(changed_json).collect::<Vec<_>>(),
+            "removed": removed,
+        }),
+    }
+}
+
+fn render_stale(
+    id: &ObligationId,
+    role: &str,
+    why: &WhyStale,
+    chain: &Node,
+    format: Format,
+    out: &mut dyn Write,
+) {
+    if format == Format::Json {
+        let doc = json!({
+            "schema": SCHEMA,
+            "path": id.to_string(),
+            "chain": node_json(chain),
+            "stale": stale_json(id, role, why),
+        });
+        let _ = writeln!(out, "{doc}");
+        return;
+    }
+    match why {
+        WhyStale::Open => {
+            let _ = writeln!(out, "{id} role={role} is open: no attestation to be stale");
+        }
+        WhyStale::Current => {
+            let _ = writeln!(out, "{id} role={role} is current: nothing changed");
+        }
+        WhyStale::Stale {
+            nearest, others, ..
+        } => {
+            let old = nearest.old.as_deref().unwrap_or("unknown");
+            let _ = writeln!(
+                out,
+                "{id} role={role} is stale: nearest changed {} ({} hops) own digest {old} -> {}",
+                nearest.node, nearest.depth, nearest.new
+            );
+            for o in others {
+                let _ = writeln!(out, "  also changed {} ({} hops)", o.node, o.depth);
+            }
+        }
+    }
 }
 
 /// Run `cadetta why`; `args` are the words after the verb. Returns the exit code.
@@ -269,26 +363,83 @@ pub fn run_why(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mu
         let _ = writeln!(err, "error: {message}");
         EXIT_USAGE
     };
-    let [path] = args else {
-        return fail(err, USAGE);
+    let parsed = match parse_args(args) {
+        Ok(p) => p,
+        Err(message) => return fail(err, &format!("{message}; {USAGE}")),
     };
-    if path.starts_with("--") {
-        return fail(err, &format!("unknown flag `{path}`; {USAGE}"));
-    }
-    let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
-        Ok((project, _scope)) => project,
+    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+    {
+        Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
-    let Some(ir) = project_ir(&project) else {
-        return fail(err, &NotFound(path.clone()).to_string());
-    };
-    match trace(&ir, path) {
-        Ok(root) => {
-            render(&root, globals.format, out);
-            EXIT_OK
-        }
-        Err(e) => fail(err, &e.to_string()),
+    let analysis = analyze(&project, &members);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
+    if parsed.stale {
+        return run_stale(&parsed, &project, &analysis, globals, out, err);
+    }
+    for package in &analysis.packages {
+        if let Ok(root) = trace(&package.ir, &parsed.target) {
+            render(&root, globals.format, out);
+            return EXIT_OK;
+        }
+    }
+    fail(err, &NotFound(parsed.target).to_string())
+}
+
+/// `why --stale OBLIGATION`: the nearest changed upstream node of its attestation.
+fn run_stale(
+    parsed: &WhyArgs,
+    project: &Project,
+    analysis: &Analysis,
+    globals: &Globals,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
+    let fail = |err: &mut dyn Write, message: &str| {
+        tracing::error!(%message, "why --stale failed");
+        let _ = writeln!(err, "error: {message}");
+        EXIT_USAGE
+    };
+    let id = match ObligationId::parse(&parsed.target) {
+        Ok(id) => id,
+        Err(e) => return fail(err, &format!("{e}; {USAGE}")),
+    };
+    let policy = match policy_of(&project.config) {
+        Ok(p) => p,
+        Err(message) => return fail(err, &message),
+    };
+    let role = match parsed
+        .role
+        .clone()
+        .or_else(|| policy.roles_covering(&id).first().map(|r| r.name.clone()))
+    {
+        Some(r) => r,
+        None => return fail(err, &format!("no role covers `{id}`; pass `--role`")),
+    };
+    let lock = match Lock::load(&project.root.join("cadetta.lock")) {
+        Ok(l) => l,
+        Err(e) => return fail(err, &e.to_string()),
+    };
+    let universes = universes(analysis);
+    let Some((universe, entry, package)) = universes
+        .iter()
+        .zip(&analysis.packages)
+        .find_map(|(u, p)| u.entry(&id).map(|e| (u, e, p)))
+    else {
+        return fail(err, &NotFound(parsed.target.clone()).to_string());
+    };
+    let why = match universe.explain(entry, lock.attestation(&id, &role)) {
+        Ok(w) => w,
+        Err(e) => return fail(err, &e.to_string()),
+    };
+    let chain = match trace(&package.ir, &entry.key) {
+        Ok(c) => c,
+        Err(e) => return fail(err, &e.to_string()),
+    };
+    render_stale(&id, &role, &why, &chain, globals.format, out);
+    EXIT_OK
 }
 
 #[cfg(test)]

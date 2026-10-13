@@ -3,25 +3,146 @@
   "title": "Why",
   "description": "A `cadetta.why/1` report: the upstream derivation chain of one path.",
   "type": "object",
-  "required": ["schema", "path", "chain"],
+  "required": [
+    "schema",
+    "path",
+    "chain"
+  ],
   "properties": {
-    "schema": { "const": "cadetta.why/1" },
-    "path": { "description": "The path asked about.", "type": "string" },
-    "chain": { "$ref": "#/$defs/Node" }
+    "schema": {
+      "const": "cadetta.why/1"
+    },
+    "path": {
+      "description": "The path asked about.",
+      "type": "string"
+    },
+    "chain": {
+      "$ref": "#/$defs/Node"
+    },
+    "stale": {
+      "type": "object",
+      "description": "Present for `why --stale`: the judgement of one attestation.",
+      "required": [
+        "obligation",
+        "role",
+        "state"
+      ],
+      "properties": {
+        "obligation": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "open",
+            "current",
+            "stale"
+          ]
+        },
+        "nearest": {
+          "$ref": "#/$defs/Changed"
+        },
+        "others": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Changed"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
   },
   "$defs": {
     "Node": {
       "description": "One node of the chain with the nodes it reads.",
       "type": "object",
-      "required": ["path", "kind", "value", "expr", "detail", "repeated", "upstream"],
+      "required": [
+        "path",
+        "kind",
+        "value",
+        "expr",
+        "detail",
+        "repeated",
+        "upstream"
+      ],
       "properties": {
-        "path": { "description": "Canonical path, or the citation name.", "type": "string" },
-        "kind": { "enum": ["member", "check", "solver", "citation", "unresolved"] },
-        "value": { "description": "Value as authored, or null.", "type": ["string", "null"] },
-        "expr": { "description": "Normalized expression, or null.", "type": ["string", "null"] },
-        "detail": { "description": "Citation target, solver script or check verdict, or null.", "type": ["string", "null"] },
-        "repeated": { "description": "True when already expanded earlier in the chain.", "type": "boolean" },
-        "upstream": { "type": "array", "items": { "$ref": "#/$defs/Node" } }
+        "path": {
+          "description": "Canonical path, or the citation name.",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "member",
+            "check",
+            "solver",
+            "citation",
+            "unresolved"
+          ]
+        },
+        "value": {
+          "description": "Value as authored, or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expr": {
+          "description": "Normalized expression, or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "detail": {
+          "description": "Citation target, solver script or check verdict, or null.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "repeated": {
+          "description": "True when already expanded earlier in the chain.",
+          "type": "boolean"
+        },
+        "upstream": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Node"
+          }
+        }
+      }
+    },
+    "Changed": {
+      "type": "object",
+      "required": [
+        "node",
+        "new",
+        "depth"
+      ],
+      "properties": {
+        "node": {
+          "type": "string"
+        },
+        "new": {
+          "type": "string"
+        },
+        "old": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        }
       }
     }
   }
