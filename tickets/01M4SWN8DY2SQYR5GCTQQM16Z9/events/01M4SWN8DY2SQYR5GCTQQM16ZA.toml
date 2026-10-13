@@ -1,0 +1,16 @@
+kind = "create"
+title = "cite pin"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+persona = "design engineer"
+capability = "make citations reproducible"
+idempotency_key = "replan14:cli-cite"
+labels = ["creates:crates/cadetta-cli/src/cmd/cite.rs"]
+scope = ["crates/cadetta-cli/src/cmd/cite.rs"]
+acceptance = ["Given a URL citation, when cite pin NAME runs, then the file is stored in cites/ and the cite rewritten to the local path (config-cli.md 3)"]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
