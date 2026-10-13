@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T15:57:02Z"
+digest = "f911c87843171d4c5ac1e6220af6784c315d2bfe2287372ae6ddc0291804af01"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_adapter.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1161441-0.xml --------------
+============================== 1 passed in 0.20s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_adapter.py::test_drive_methods_are_overridable_and_open_save_close_work"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "b6f6f05a3b7ed562da2314584b795367bfe582a8983bbcbe2009d5605dfe9c4e"
+at = "2026-10-13T15:57:02Z"
+actor = "lognd"
+rev = 1
