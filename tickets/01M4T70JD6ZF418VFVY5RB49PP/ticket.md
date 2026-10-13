@@ -2,7 +2,7 @@
 id = "01M4T70JD6ZF418VFVY5RB49PP"
 title = "Wire the obligation universe (IR closure digests) into cadetta ack"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
