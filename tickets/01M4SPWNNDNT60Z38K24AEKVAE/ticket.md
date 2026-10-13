@@ -2,7 +2,8 @@
 id = "01M4SPWNNDNT60Z38K24AEKVAE"
 title = "Tolerances as affine forms over source variables"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
