@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T07:34:10Z"
+updated = "2026-10-13T07:35:12Z"
 persona = "design engineer"
 capability = "pick a material and read cited properties"
 idempotency_key = "replan13:std.materials (14 variants and Materials table)"
 labels = ["creates:std/src/materials.cdt"]
-scope = ["std/src/materials.cdt"]
+scope = ["std/src/materials.cdt", "crates/cadetta-syntax/tests/std_materials.rs", "docs/spec/stdlib.md"]
 
 [[links]]
 kind = "blocks"
