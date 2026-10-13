@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a binding whose path matches nothing, when loaded, then it is reported for R005 (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given bindings, when loaded, then multi-locator, mangling and all ir.md 3 Locator fields parse (adapters.md 3)"
