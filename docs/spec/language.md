@@ -532,6 +532,10 @@ Rules the grammar left open, fixed by the reference parser:
 - A trailing `#[...]` attribute must be on the same line as its member.
 - `Table<K>` is a type; a space is needed before a following `=`
   because `>=` lexes as one token.
+- A keyword is accepted as a member name after `.` (`T.at_least(x).key`,
+  `row.in`); elsewhere see the next rule.
+- Expression precedence is pinned by the conformance tests in
+  `crates/cadetta-syntax/src/expr.rs`, one per rule of section 5.
 - Keywords used as names are errors (E001). Items and members of kinds
   not yet parsed (`process`, `table`, `enum`, `fn`, `solver`, `waive`,
   `unit`, `kind`, `datum`, `place`) produce an E001 diagnostic and are

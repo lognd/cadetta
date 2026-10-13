@@ -239,6 +239,12 @@ Every quantity has `.nominal .min .max .mid` and, when it has a role
 (5.6), `.mmc .lmc`. Each returns an untoleranced quantity. On an
 untoleranced quantity all of them equal the value.
 
+Decisions (`cadetta-units`): an untoleranced quantity is a toleranced one
+with zero deviations, so the equality above is structural. `.mmc` is the
+smallest size of a hole and the largest of a shaft; `.lmc` is the opposite.
+An accessor that would add different nonzero powers of pi fails rather than
+rounding (section 1).
+
 ### 5.3 Design tolerance vs analysis tolerance
 
 **A parameter is a feature someone makes or buys; a `let` is an analysis
@@ -339,6 +345,12 @@ A bound is a one-sided or two-sided requirement, not a value (language.md
 3.4): `head_dia <= 8.5mm`, `abutment_dia >= 9.6mm`, `x in 4mm..6mm`.
 `x satisfies P` in a check tests x against bound P; `P.min`/`P.max`
 read its limits. A bound is never emitted.
+
+Decisions: `x <= v` has only a `.max` and `x >= v` only a `.min`; reading the
+absent limit yields no value (the checker reports it), never an infinity.
+`x in lo..hi` requires `lo <= hi`. Role provenance is recorded (ISO class,
+fit side, attribute, inherited); an explicit role on a reference wins over
+the inherited one.
 
 ### 5.8 Comparisons are three-valued
 

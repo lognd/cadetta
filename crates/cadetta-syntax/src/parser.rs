@@ -1412,7 +1412,8 @@ impl Parser<'_> {
             match self.tok().clone() {
                 Tok::P(Punct::Dot) => {
                     self.bump();
-                    let name = self.expect_ident()?;
+                    // frob:ticket 01M4SPWP4HDVWPMA4AFJ65KWPN
+                    let name = self.attr_name()?;
                     e = self.mk(ExprKind::Field(Box::new(e), name), start);
                 }
                 Tok::P(Punct::LBracket) => {
