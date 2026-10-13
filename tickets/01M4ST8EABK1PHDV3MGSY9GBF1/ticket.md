@@ -2,7 +2,8 @@
 id = "01M4ST8EABK1PHDV3MGSY9GBF1"
 title = "Interface-typed part slots with primary and alt list"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
