@@ -2,7 +2,8 @@
 id = "01M4SWK96MJF28HVDDJNPCBMPP"
 title = "IR entities Datum, Point, Placement and shared Op"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
