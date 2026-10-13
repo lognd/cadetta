@@ -143,6 +143,21 @@ never collide. The result file is committed. `check` reads it; if any recorded d
 current one, S003 (`solver-stale`) fires and the stale outputs still
 evaluate, marked stale, so the rest of the design keeps checking.
 
+`cadetta solve` evaluates each solver's `in` expressions in the solver's
+scope (the enclosing component for a member solver) and builds the request
+from them. `lit` is the nominal in SI base units (`kg*m/s^2`, `m`, ...) as
+an exact decimal; when that cannot be rendered exactly (a pi factor, a
+dimensionless value) it is the float text of `si`. A solver whose result is
+fresh is not run (the command prints `fresh PATH` and exits 0); a stale or
+missing one is run and its result stored, and a failed run leaves the
+previous result in place and exits 1. `PATH-GLOB` matches the canonical
+solver path with `*` (any run) and `?` (one character); `--module PATH`
+keeps only solvers declared in that module file. A solver with no
+`[solvers."PATH"]` table, or a bad command template, is a usage error
+(exit 2). `timeout` in that table is passed to the transport. `--variants`
+is not implemented yet and is rejected as a usage error. Script and `deps`
+paths resolve against the package directory.
+
 ### 4.1 Solvers under variant evaluation
 
 Results are keyed by the digest of their input values. When variant
