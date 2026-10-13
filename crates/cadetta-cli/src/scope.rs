@@ -235,7 +235,7 @@ mod tests {
         Scope::new(m, g).unwrap().filter(NODES)
     }
 
-    // frob:tests crates/cadetta-cli/src/scope.rs::tests::module_prefix_scopes_nodes
+    // frob:tests crates/cadetta-cli/src/scope.rs::Scope::contains
     #[test]
     fn module_prefix_scopes_nodes() {
         assert_eq!(
@@ -251,7 +251,7 @@ mod tests {
         );
     }
 
-    // frob:tests crates/cadetta-cli/src/scope.rs::tests::globs_scope_nodes
+    // frob:tests crates/cadetta-cli/src/scope.rs::Glob::matches
     #[test]
     fn globs_scope_nodes() {
         assert_eq!(scope(&[], &["acme.rover::Axle.*"]), vec![NODES[4]]);
@@ -267,7 +267,7 @@ mod tests {
         );
     }
 
-    // frob:tests crates/cadetta-cli/src/scope.rs::tests::module_and_glob_intersect
+    // frob:tests crates/cadetta-cli/src/scope.rs::Scope::filter
     #[test]
     fn module_and_glob_intersect() {
         assert_eq!(scope(&["drive"], &["**.ratio"]), vec![NODES[1]]);
@@ -275,7 +275,7 @@ mod tests {
         assert_eq!(scope(&[], &[]).len(), NODES.len());
     }
 
-    // frob:tests crates/cadetta-cli/src/scope.rs::tests::malformed_terms_are_errors
+    // frob:tests crates/cadetta-cli/src/scope.rs::Glob::new
     #[test]
     fn malformed_terms_are_errors() {
         assert_eq!(Glob::new(" "), Err(ScopeError::Empty { what: "glob" }));
