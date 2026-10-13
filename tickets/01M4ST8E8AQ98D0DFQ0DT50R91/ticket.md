@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T07:23:41Z"
+updated = "2026-10-13T07:24:31Z"
 persona = "design engineer"
 capability = "declare what a design needs from a part and have implementers checked against it"
 idempotency_key = "replan13:Interface declarations and implementation checking"
 labels = ["creates:crates/cadetta-variants/src/interface.rs"]
-scope = ["crates/cadetta-variants/src/interface.rs"]
+scope = ["crates/cadetta-variants/src/interface.rs", "crates/cadetta-variants/src/lib.rs", "crates/cadetta-variants/Cargo.toml", "Cargo.lock", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
