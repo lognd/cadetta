@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: a pattern count that is not a literal or parameter-free constant (or is zero / not whole) is E006; sema point.rs pattern_count enforces it, geometry pattern.rs structural_count mirrors it, generator_members lowers count_x/count_y/count as Param members. Removed stale known-gap geometry/datum-zero-count-pattern (now passes); scope widened to tests/conformance/known-gaps.toml. Unrelated pre-existing failure: cadetta-cli editors_keywords (editors/README.md lacks QB9ANVQ)."
+at = "2026-10-13T22:53:18Z"
+actor = "lognd"
+rev = 1
