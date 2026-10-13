@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:05Z"
-updated = "2026-10-13T06:42:05Z"
+updated = "2026-10-13T06:42:19Z"
 persona = "design engineer"
 capability = "read nominal, min, max, mid, mmc and lmc of any quantity, give it a hole or shaft role, and state one- or two-sided bounds"
 idempotency_key = "replan13:Accessors, roles and bounds"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-units/src/{accessors,bound,role}.rs"]
 
 [[acceptance]]
 text = "Given an untoleranced quantity, when `.nominal .min .max .mid` are read, then all equal the value (quantities.md 5.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `12mm [+0.018mm -0]`, when accessors are read, then each returns an untoleranced quantity (quantities.md 5.2)"
