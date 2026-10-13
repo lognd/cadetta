@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a bound Text parameter that an sw-equations emit must write, when the spec is read, then emitters/sw-equations.md, adapters.md and lints.md state that it is the error R014 (withholds the file, exit 1) and that a Text parameter never emitted (out of scope, filtered, or unbound) is not an error", "Given the conformance corpus, when run, then value-text-not-emitted and a new R014 pair encode the rule (must-fire: error R014; must-not-fire: Text param present but not bound or filtered out)"]
+moved = []
+at = "2026-10-13T17:52:41Z"
+actor = "lognd"
+rev = 1
