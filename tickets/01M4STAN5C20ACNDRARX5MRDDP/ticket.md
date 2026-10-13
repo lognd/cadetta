@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given result digests, when recorded, then they live only in the committed .out.json and never in cadetta.lock (solvers.md 4; obligations.md 3)"
-bound = false
+bound = true
 +++
