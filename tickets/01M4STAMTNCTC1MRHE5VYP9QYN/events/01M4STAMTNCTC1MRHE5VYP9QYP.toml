@@ -1,0 +1,15 @@
+kind = "create"
+title = "External solvers (cadetta-solvers)"
+type = "epic"
+category = "todo"
+priority = "medium"
+idempotency_key = "replan13:External solvers (cadetta-solvers)"
+labels = ["creates:crates/cadetta-solvers/**"]
+scope = ["crates/cadetta-solvers/**"]
+body = """
+Outcome: computed values from external programs (FEA, CFD, scripts) enter the design as cited, digest-pinned results, per docs/spec/solvers.md.
+
+Success metric: a solver result changes only when its input digest changes, and variants get their own results."""
+at = "2026-10-13T05:03:55Z"
+actor = "lognd"
+rev = 1
