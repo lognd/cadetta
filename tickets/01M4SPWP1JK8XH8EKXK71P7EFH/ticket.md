@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:28:47Z"
+updated = "2026-10-13T06:28:48Z"
 persona = "design engineer"
 capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a statement ending at newline or `;`, when parsed, then both terminate it, and a newline inside `( )` or `[ ]` does not (language.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a reserved keyword as an identifier, when parsed, then a parse error is reported (language.md 2)"
