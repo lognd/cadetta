@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Check",
+  "description": "The `cadetta check --format json` report: a list of `cadetta.diag/1` records (see diag.json).",
+  "type": "object",
+  "required": ["diagnostics"],
+  "additionalProperties": false,
+  "properties": {
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["schema", "code", "severity", "message"],
+        "properties": { "schema": { "const": "cadetta.diag/1" } }
+      }
+    }
+  }
+}

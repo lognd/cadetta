@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EmitReport",
+  "description": "Output of `cadetta emit --format json`: files written and diagnostics.",
+  "type": "object",
+  "required": ["files", "diagnostics"],
+  "additionalProperties": false,
+  "properties": {
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["adapter", "path", "digest"],
+        "additionalProperties": false,
+        "properties": {
+          "adapter": { "description": "Adapter id that produced the file.", "type": "string" },
+          "path": { "description": "Path relative to the package directory.", "type": "string" },
+          "digest": { "description": "blake3:<hex> of the written bytes.", "type": "string", "pattern": "^blake3:[0-9a-f]+$" }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "description": "Rule code, e.g. Q004 or R013.", "type": "string" },
+          "message": { "type": "string" },
+          "path": { "description": "Canonical path concerned, when there is one.", "type": "string" }
+        }
+      }
+    }
+  }
+}

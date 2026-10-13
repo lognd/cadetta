@@ -1,0 +1,27 @@
+{
+  "$id": "cadetta.ack/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta ack --format json`: what each matched obligation was recorded as.",
+  "properties": {
+    "schema": { "const": "cadetta.ack/1" },
+    "role": { "description": "Role that attested.", "type": "string" },
+    "dry_run": { "type": "boolean" },
+    "written": { "description": "True when the lock was written.", "type": "boolean" },
+    "obligations": {
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "id": { "description": "Obligation id `<kind>:<canonical path>`.", "type": "string" },
+          "action": { "enum": ["recorded", "unchanged", "skipped"] }
+        },
+        "required": ["id", "action"],
+        "type": "object"
+      }
+    }
+  },
+  "required": ["schema", "role", "dry_run", "written", "obligations"],
+  "title": "AckOutput",
+  "type": "object"
+}

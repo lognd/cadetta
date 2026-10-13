@@ -1,0 +1,10 @@
+kind = "create"
+title = "Wire observed IR and sync facts into R001-R006 engine functions"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-lint/src/**"]
+body = "found while working 578RNQM: rules::r takes DriftFact/NativeRef/BindingFact/Replacement/RebuildFailure inputs; adapter host does not yet build them (related ~3RK3GPH)"
+at = "2026-10-13T16:01:13Z"
+actor = "lognd"
+rev = 1

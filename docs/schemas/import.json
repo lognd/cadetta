@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportReport",
+  "description": "Output of `cadetta import --format json`.",
+  "type": "object",
+  "required": ["mode", "written", "items", "unchanged", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "mode": { "enum": ["propose", "accept", "update"] },
+    "written": { "description": "Files written, relative to the package directory.", "type": "array", "items": { "type": "string" } },
+    "items": { "description": "Proposed or adopted canonical paths added.", "type": "array", "items": { "type": "string" } },
+    "unchanged": { "description": "Entries left unchanged, with the reason.", "type": "array", "items": { "type": "string" } },
+    "notes": { "description": "Notes and adapter diagnostics.", "type": "array", "items": { "type": "string" } }
+  }
+}
