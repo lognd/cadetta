@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T09:28:44Z"
+digest = "5c7f6b76e5e9a534ab39fb2a551203f8ff10dd88e0235c76ae6498dc43c31146"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.28s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b63ed968-c756-4c8c-87f2-7ca8de0000de with nextest profile: default
+    Starting 1 test across 23 binaries (648 tests skipped)
+        PASS [   0.010s] cadetta-geometry point::tests::cross_datum_and_array_plus_point_are_g001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 648 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=point::tests::cross_datum_and_array_plus_point_are_g001)"
+size = 722
+status = "measured"
+test_count = 1
+tests_digest = "e4eb01093f58da7dca7586b6c750507889c33168a4e94100e443df04ed166c03"
+at = "2026-10-13T09:28:44Z"
+actor = "lognd"
+rev = 1
