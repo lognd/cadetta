@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `[obligations.roles.X]` with covers and required_for, when loaded, then roles are modelled (obligations.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `[solvers.NAME]` and `[[adapter]]` tables, when loaded, then command, transport, native_unit, version and files parse (config-cli.md 1)"
