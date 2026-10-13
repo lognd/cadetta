@@ -2,7 +2,8 @@
 id = "01M4SWK9FZW89QXVMGTSA2RC7Z"
 title = "Variant naming SLOT=ALT in short and full forms"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
