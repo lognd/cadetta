@@ -23,6 +23,10 @@ target = "01M4SPWNBYWT610BHC6GNSP35P"
 kind = "blocks"
 target = "01M4ST7A42Q225NZMARTM5V6J5"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST7A6D0NTQ7XV9RDV6RBGM"
+
 [[acceptance]]
 text = "Given `1in`, when stored, then its magnitude is exactly 127/5000 m with pi exponent 0 (quantities.md 1)"
 bound = false
