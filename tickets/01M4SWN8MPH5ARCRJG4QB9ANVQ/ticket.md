@@ -2,7 +2,8 @@
 id = "01M4SWN8MPH5ARCRJG4QB9ANVQ"
 title = "cadetta lsp: diagnostics and formatting over stdio"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
