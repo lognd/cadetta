@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:18:36Z"
+updated = "2026-10-13T06:18:55Z"
 persona = "design engineer"
 capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
 outcome_text = "units are unambiguous in source"
 labels = ["creates:crates/cadetta-syntax/src/lexer.rs"]
-scope = ["crates/cadetta-syntax/src/lexer.rs", "crates/cadetta-syntax/src/lib.rs"]
+scope = ["crates/cadetta-syntax/src/lexer.rs", "crates/cadetta-syntax/src/lib.rs", "docs/spec/lints.md", "docs/decisions/2026-10-13-lexer-literal-rules.md"]
 
 [[links]]
 kind = "blocks"
