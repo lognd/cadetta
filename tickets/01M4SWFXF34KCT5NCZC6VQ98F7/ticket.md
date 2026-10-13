@@ -2,7 +2,8 @@
 id = "01M4SWFXF34KCT5NCZC6VQ98F7"
 title = "Placement op Members and canonical paths"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
