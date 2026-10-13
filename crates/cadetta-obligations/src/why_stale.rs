@@ -165,7 +165,7 @@ mod tests {
         record_attest(id, signer, j, &cl, &owns).unwrap()
     }
 
-    // frob:tests ~SF4YG0A
+    // frob:tests crates/cadetta-obligations/src/why_stale.rs::why_stale kind=unit
     #[test]
     fn nearest_changed_upstream_has_old_and_new() {
         let att = attest(&graph("c1", "b1"));
@@ -184,7 +184,7 @@ mod tests {
         assert!(others.is_empty());
     }
 
-    // frob:tests ~SF4YG0A
+    // frob:tests crates/cadetta-obligations/src/why_stale.rs::why_stale kind=unit
     #[test]
     fn nearest_is_closest_to_root() {
         let att = attest(&graph("c1", "b1"));
@@ -205,7 +205,7 @@ mod tests {
         assert_eq!(removed.len(), 2);
     }
 
-    // frob:tests ~SF4YG0A
+    // frob:tests crates/cadetta-obligations/src/why_stale.rs::why_stale kind=unit
     #[test]
     fn covered_node_itself_changed() {
         let att = attest(&graph("c1", "b1"));
@@ -219,7 +219,7 @@ mod tests {
         assert_eq!((nearest.node.as_str(), nearest.depth), ("a", 0));
     }
 
-    // frob:tests ~SF4YG0A
+    // frob:tests crates/cadetta-obligations/src/why_stale.rs::why_stale kind=unit
     #[test]
     fn open_and_current() {
         let g = graph("c1", "b1");
