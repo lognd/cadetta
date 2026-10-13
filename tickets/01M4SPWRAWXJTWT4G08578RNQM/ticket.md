@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:56:20Z"
+updated = "2026-10-13T15:56:24Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given drift, when R001 is reported, then it compares against the emitted point, not the nominal (adapters.md 3a)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the three-way compare, when R001 fires, then it states cad moved, design moved or both moved and shows base, ours and theirs (adapters.md 2; lints.md 3 R)"
