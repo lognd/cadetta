@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "bind every instance safely"
 idempotency_key = "replan14:ad-loc"
 labels = ["creates:crates/cadetta-adapter/src/locator.rs"]
 scope = ["crates/cadetta-adapter/src/locator.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWRYRBTGD67WTG7D60E59"
 
 [[acceptance]]
 text = "Given a binding with kind, mode, ref_to, for, config, sign and component, when loaded, then each is validated (adapters.md 3; ir.md 3)"
