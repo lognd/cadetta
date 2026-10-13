@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:57:23Z"
+updated = "2026-10-13T09:00:32Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -73,7 +73,7 @@ target = "01M4STCCZ58C875BTMQ9E54BMT"
 
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fixed code with a severity override, when loaded, then the override is ignored"
