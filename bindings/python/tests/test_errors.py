@@ -7,7 +7,7 @@ import pytest
 from cadetta.errors import QuantityError
 
 
-# frob:tests bindings/python/python/cadetta/errors.py::QuantityError kind=unit
+# frob:tests bindings/python/src/quantity.rs::Quantity kind=unit
 def test_operator_violations_raise_quantity_error_with_q_code():
     a = cadetta.quantity("1mm").unwrap()
     b = cadetta.quantity("1s").unwrap()
