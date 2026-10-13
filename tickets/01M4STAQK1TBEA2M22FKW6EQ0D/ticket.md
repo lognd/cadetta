@@ -2,7 +2,8 @@
 id = "01M4STAQK1TBEA2M22FKW6EQ0D"
 title = "Conformance fixtures for emitters/sw-equations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
