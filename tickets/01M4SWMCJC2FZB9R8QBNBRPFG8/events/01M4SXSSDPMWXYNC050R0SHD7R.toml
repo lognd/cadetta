@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given two [[adapter]] blocks with the same name, when id is missing, then it is a configuration error; id defaults to name (config-cli.md 2)", "Given namespaces and paths globs, when emitting or syncing, then only matching canonical paths reach the adapter (adapters.md 3.2)"]
+new = ["Given two [[adapter]] blocks with the same name, when id is missing, then it is a configuration error; id defaults to name (config-cli.md 2)", "Given modules and paths globs on an adapter, when emitting or syncing, then only matching canonical paths reach the adapter (adapters.md 3.2)"]
+moved = [1, 0]
+at = "2026-10-13T06:04:37Z"
+actor = "lognd"
+rev = 1

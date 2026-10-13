@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Adapter ids, namespaces and paths scoping"
+new = "Adapter ids, modules and paths scoping"
+at = "2026-10-13T06:04:37Z"
+actor = "lognd"
+rev = 1

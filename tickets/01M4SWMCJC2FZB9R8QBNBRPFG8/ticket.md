@@ -1,6 +1,6 @@
 +++
 id = "01M4SWMCJC2FZB9R8QBNBRPFG8"
-title = "Adapter ids, namespaces and paths scoping"
+title = "Adapter ids, modules and paths scoping"
 type = "story"
 category = "todo"
 priority = "medium"
@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:14Z"
+updated = "2026-10-13T06:04:37Z"
 persona = "design engineer"
 capability = "split one design across several files"
 idempotency_key = "replan14:ad-scope"
@@ -28,6 +28,6 @@ text = "Given two [[adapter]] blocks with the same name, when id is missing, the
 bound = false
 
 [[acceptance]]
-text = "Given namespaces and paths globs, when emitting or syncing, then only matching canonical paths reach the adapter (adapters.md 3.2)"
+text = "Given modules and paths globs on an adapter, when emitting or syncing, then only matching canonical paths reach the adapter (adapters.md 3.2)"
 bound = false
 +++
