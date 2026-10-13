@@ -19,6 +19,10 @@ scope = ["crates/cadetta-syntax/src/expr.rs"]
 kind = "blocks"
 target = "01M4SPWPAJ4ZGEGGVF63ZY806Z"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWPCW1C0QC67GZG99EHTZ"
+
 [[acceptance]]
 text = "Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition"
 bound = false
