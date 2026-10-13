@@ -1,0 +1,15 @@
+kind = "create"
+title = "Conformance fixtures for packages"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
+persona = "spec author"
+capability = "verify an implementation against packages.md"
+labels = ["creates:tests/conformance/packages/**"]
+scope = ["tests/conformance/packages/**"]
+acceptance = ["Given docs/spec/packages.md, when fixtures are written, then every normative rule and every diagnostic code (E012-E017, U002) has a must-fire and a must-not-fire fixture under tests/conformance/packages/ (packages.md 7)", "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"]
+at = "2026-10-13T06:04:28Z"
+actor = "lognd"
+rev = 1
