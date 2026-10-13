@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T04:04:02Z"
+updated = "2026-10-13T05:44:12Z"
 persona = "cadetta contributor"
 capability = "drive external adapters over stdio with initialize, emit, read, push, regen, shutdown"
 outcome_text = "adapters can be written in any language"
@@ -29,5 +29,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a version in cadetta.toml not matching initialize, when connecting, then it refuses (OQ-7)"
+bound = false
+
+[[acceptance]]
+text = "Given the host, when it speaks JSON-RPC, then open, save and close are available for drive adapters and diagnostics reuse cadetta.diag/1 (adapters.md 5)"
 bound = false
 +++

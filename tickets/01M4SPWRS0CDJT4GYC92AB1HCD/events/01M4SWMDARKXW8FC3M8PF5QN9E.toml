@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an external adapter, when initialize is sent, then name, version, capabilities, native units, precision and platforms are returned", "Given a mock adapter, when the full method sequence runs, then each result validates against the protocol schema", "Given a version in cadetta.toml not matching initialize, when connecting, then it refuses (OQ-7)"]
+new = ["Given an external adapter, when initialize is sent, then name, version, capabilities, native units, precision and platforms are returned", "Given a mock adapter, when the full method sequence runs, then each result validates against the protocol schema", "Given a version in cadetta.toml not matching initialize, when connecting, then it refuses (OQ-7)", "Given the host, when it speaks JSON-RPC, then open, save and close are available for drive adapters and diagnostics reuse cadetta.diag/1 (adapters.md 5)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:44:12Z"
+actor = "lognd"
+rev = 1
