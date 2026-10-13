@@ -1,0 +1,16 @@
+kind = "create"
+title = "Lints O001-O003 for obligations"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+persona = "design engineer"
+capability = "see stale, open and unattested obligations as diagnostics"
+idempotency_key = "replan13:Lints O001-O003 for obligations"
+labels = ["creates:crates/cadetta-lint/src/rules/obligation.rs"]
+scope = ["crates/cadetta-lint/src/rules/obligation.rs"]
+acceptance = ["Given O001 to O003 in lints.md, when linted, then each fires per the catalog, O001 an error for roles required for check (lints.md O)", "Given a current attestation, when linted, then none fires (lints.md O)"]
+at = "2026-10-13T05:04:52Z"
+actor = "lognd"
+rev = 1
