@@ -19,6 +19,10 @@ scope = ["crates/cadetta-lint/src/rules/r_adapter.rs", "tests/lints/R0[01]*/**"]
 kind = "blocked-by"
 target = "01M4SPWQM289M7Q58CSS6F029F"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWRAWXJTWT4G08578RNQM"
+
 [[acceptance]]
 text = "Given R004 and R008-R010 from an adapter response, when linted, then they pass through unchanged; R008 is error on sync and info on check (lints.md 3 R)"
 bound = false
