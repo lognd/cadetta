@@ -81,7 +81,7 @@ fn half() -> Magnitude {
     Magnitude::new(Rational::new(1, 2).expect("2 is nonzero"), 0)
 }
 
-fn sign(m: &Magnitude) -> Ordering {
+pub(crate) fn sign(m: &Magnitude) -> Ordering {
     use num_bigint::Sign;
     match m.rational().numer().sign() {
         Sign::Minus => Ordering::Less,
@@ -91,7 +91,7 @@ fn sign(m: &Magnitude) -> Ordering {
 }
 
 /// Order two magnitudes; exact when exponents agree, else via binary64.
-fn cmp_mag(a: &Magnitude, b: &Magnitude) -> Ordering {
+pub(crate) fn cmp_mag(a: &Magnitude, b: &Magnitude) -> Ordering {
     match a.sub(b) {
         Sum::Exact(d) => sign(&d),
         Sum::Inexact(f) => f.partial_cmp(&0.0).unwrap_or(Ordering::Equal),
@@ -414,7 +414,11 @@ impl Affine {
         Self::from_hull(dim, lo, hi)
     }
 
-    fn from_hull(dim: Dim, lo: Magnitude, hi: Magnitude) -> Result<Self, ToleranceError> {
+    pub(crate) fn from_hull(
+        dim: Dim,
+        lo: Magnitude,
+        hi: Magnitude,
+    ) -> Result<Self, ToleranceError> {
         Ok(Self {
             dim,
             center: add(&lo, &hi)?.mul(&half()),

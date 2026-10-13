@@ -8,6 +8,7 @@ pub mod dimension;
 pub mod inexact;
 pub mod kind;
 pub mod rational;
+pub mod square;
 pub mod tolerance;
 pub mod units;
 
