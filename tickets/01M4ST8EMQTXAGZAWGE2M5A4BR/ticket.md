@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the states discharged, stale, violated, undecided, open and waived, when an obligation is classified, then exactly one applies (obligations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)"
