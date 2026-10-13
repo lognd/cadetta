@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:21:13Z"
-updated = "2026-10-13T18:01:26Z"
+updated = "2026-10-13T18:01:52Z"
 scope = ["docs/spec/emitters/sw-equations.md", "docs/spec/adapters.md", "tests/conformance/emitters/sw-equations/**"]
 
 [[acceptance]]
