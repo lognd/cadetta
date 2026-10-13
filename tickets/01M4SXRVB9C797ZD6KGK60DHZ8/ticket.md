@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T09:24:48Z"
+updated = "2026-10-13T09:24:56Z"
 persona = "library author"
 capability = "find dead private items"
 labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
@@ -28,7 +28,7 @@ target = "01M4SXRV8HCNXHVFX87BTFJC7S"
 
 [[acceptance]]
 text = "Given a private item used nowhere in its package, when linted, then U002 warning fires; used once it does not (packages.md 3, 7; lints.md U)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a private parameterized component with no instances, when linted, then U002 fires and I004 does not; I004 fires only for roots of the package being checked (packages.md 3; lints.md I004)"
