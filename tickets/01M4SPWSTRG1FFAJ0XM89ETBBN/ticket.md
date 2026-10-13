@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:03:55Z"
+updated = "2026-10-13T04:04:03Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
 labels = ["creates:crates/cadetta-cli/src/config.rs"]
 scope = ["crates/cadetta-cli/src/config.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 
 [[acceptance]]
 text = "Given the config-cli.md sample, when loaded, then all sections parse"
