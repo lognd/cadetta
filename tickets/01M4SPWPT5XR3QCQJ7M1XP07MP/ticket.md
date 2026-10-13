@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:00:51Z"
+updated = "2026-10-13T08:01:02Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a check true for some values only, when evaluated, then verdict is undecided (C002) (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `check load_ok for w in wheel: ...`, when evaluated, then one verdict per instance is produced (language.md 6)"
