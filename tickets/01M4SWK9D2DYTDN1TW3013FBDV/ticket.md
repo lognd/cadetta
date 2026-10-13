@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given paths such as acme.rover::drive::motor::Gm42A.rated_torque, when parsed, then the package.module::...::Item prefix and members round-trip; a package name is lower.dotted and modules are snake_case (ir.md 2; packages.md 2)"
-bound = false
+bound = true
 +++
