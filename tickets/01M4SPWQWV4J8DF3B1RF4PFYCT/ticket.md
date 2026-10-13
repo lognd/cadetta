@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:06:06Z"
+updated = "2026-10-13T13:07:56Z"
 persona = "design engineer"
 capability = "get lints for the D family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/d.rs", "creates:tests/conformance/lints/D*/**"]
-scope = ["crates/cadetta-lint/src/rules/d.rs", "tests/conformance/lints/D*/**", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/Cargo.toml"]
+scope = ["crates/cadetta-lint/src/rules/d.rs", "tests/conformance/lints/D*/**", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/Cargo.toml", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "Given the literal 12.012mm repeated in a model with at least d001_min_digits significant digits, when linted, then one D001 is reported listing every location (lints.md D)"
