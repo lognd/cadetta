@@ -2,7 +2,8 @@
 id = "01M4SPWPXSG1YKHGF4KV5G43BT"
 title = "ISO 286 fit tables (cadetta-fits)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
