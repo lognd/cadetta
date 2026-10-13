@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:42:21Z"
+digest = "a73fa2fe1e0f604bd3bd64324dfe66ec9ba5ec05aeafbee6f200422c85205dac"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.95s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9b05cca4-713f-4f00-829c-017e7815d5d0 with nextest profile: default
+    Starting 1 test across 18 binaries (361 tests skipped)
+        PASS [   0.006s] cadetta-obligations lock_tidy::tests::drops_superseded_and_orphans_only
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 361 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=lock_tidy::tests::drops_superseded_and_orphans_only)"
+size = 771
+status = "measured"
+test_count = 1
+tests_digest = "21cc752d33d5cbda6ba63b26268080fcca71eb2fff681ec0232f2773d3f71221"
+at = "2026-10-13T07:42:21Z"
+actor = "lognd"
+rev = 1
