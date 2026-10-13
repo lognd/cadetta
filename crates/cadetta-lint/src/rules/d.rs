@@ -144,9 +144,16 @@ fn stated(m: &Member) -> Option<(Key, &Value)> {
     Some((Key::new(&v.dim, exact(v)?), v))
 }
 
-/// True for a literal as written: no expression and nothing read.
-fn is_literal(m: &Member) -> bool {
-    m.provenance == Provenance::Authored && m.expr.is_none() && m.deps.is_empty()
+/// True for a literal as written: nothing read, and either no expression text or text that
+/// is just the authored token (lowering records the source text of a literal as `expr`).
+pub fn is_literal(m: &Member) -> bool {
+    m.provenance == Provenance::Authored
+        && m.deps.is_empty()
+        && match (&m.expr, &m.value) {
+            (None, _) => true,
+            (Some(e), Some(v)) => *e == v.authored,
+            (Some(_), None) => false,
+        }
 }
 
 fn all_members(project: &Project) -> impl Iterator<Item = (&Component, &Member)> {
