@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:18Z"
 persona = "design engineer"
 capability = "see everything that goes stale or flips if a value changes"
 idempotency_key = "replan13:cadetta impact"
 labels = ["creates:crates/cadetta-cli/src/cmd/impact.rs"]
 scope = ["crates/cadetta-cli/src/cmd/impact.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8F91FHYFC01TN6018BAM"
 
 [[acceptance]]
 text = "Given a path, when `cadetta impact PATH` runs, then every downstream node that goes stale or changes verdict is listed (obligations.md 5)"
