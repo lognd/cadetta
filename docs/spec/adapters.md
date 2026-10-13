@@ -63,8 +63,8 @@ if the adapter can read the live model.
 
 **CAD file reflects design.** Only a `drive` adapter (or a `read` of the
 native document itself) discharges this obligation (obligations.md 2).
-The `sw-equations` adapter never does: the file it reads is the file
-cadetta wrote, so the obligation stays open with the reason
+The `sw-equations`, `json` and `csv` adapters never do (none has `drive`):
+the file they read is the file cadetta wrote, so the obligation stays open with the reason
 "unverifiable without drive", and `sync` reports it as O004 (info by
 default). The user may attest it with a role (`ack`).
 
@@ -204,8 +204,10 @@ variable `"Axle_end_diameter"` or to the dimension
   path with one `global`, `value` locator (several pins for a path
   accumulate). A `was` rename moves the binding unless the new path is
   already bound. `[*]` matches any index when testing R005.
-- Units at read: a native value without a unit takes the adapter's
-  declared native unit (`initialize`), recorded in observed IR as
+- Units at read: a native value without a unit takes `--assume-unit` when
+  the run gives one (it wins over the locator's `native_unit`), else the
+  locator's `native_unit`, else the adapter's declared native unit
+  (`initialize`), recorded in observed IR as
   `unit_assumed`. Formats with no unit information at all need
   `--assume-unit` (on `import` and `ir --observed`); without it the
   value is read with `exact: false` and a reason. Read never raises

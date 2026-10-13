@@ -33,14 +33,17 @@ configurators). Not the IR: for the IR use `cadetta ir`. Default `out`:
 - `value` is a decimal string, never a JSON number, so no float rounding
   occurs. It is the emit point (quantities.md 5.6) in the locator's
   `native_unit`, at the declared precision (default 6 decimals,
-  adapters.md 5), trailing zeros trimmed. Not representable at that
+  adapters.md 5), trailing zeros trimmed (a whole number has no decimal point: `10`,
+  never `10.0`). Not representable at that
   precision is Q004. Counts and Ratios are written as integer or decimal
   strings with `unit` omitted; Text is a JSON string with `unit`
   omitted.
 - `note` carries what a trailing comment carries in other emitters
   (adapters.md 3a): authored literal with tolerance when it differs from
   the written text, the emit point when not `nominal`, the citation. It
-  is omitted when empty.
+  is omitted when empty. A `Text` parameter follows the same rules; as it
+  has no tolerance and no emit point, only a citation can appear in its
+  note.
 - JSON is always serialised with 2-space indent, LF line endings, one
   key order as shown, and a final newline.
 
@@ -51,8 +54,18 @@ locators in bindings-file order.
 
 ## 3. Read
 
-`read` parses the same shape. A missing `unit` takes the locator's
-`native_unit` (`unit_assumed`) or `--assume-unit`. `ref` mode does not
+`read` parses the same shape. A missing `unit` takes `--assume-unit` when the
+run gives one, else the locator's `native_unit`, else the adapter's
+declared native unit; the result is recorded as `unit_assumed`. The explicit
+flag wins over the configured `native_unit`. `ref` mode does not
 exist for this format: every locator is `value`. Reading matches a
 parameter by `name` whatever the locator's kind, so R015 (1) is an emit
 rule only.
+
+## 4. Obligations
+
+`json` has no `drive`, so it cannot discharge "CAD file reflects design"
+(obligations.md 2): after `sync` the obligation stays open with the
+reason "unverifiable without drive" and is reported as O004 (info by
+default), exactly as for `sw-equations` (adapters.md 2). A `drive`
+adapter covering the same file discharges it; so does `ack`.

@@ -1,0 +1,3 @@
+model Part {
+  finish: Text = "anodize" @"MIL-A-8625"
+}

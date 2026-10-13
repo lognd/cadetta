@@ -1,0 +1,4 @@
+["acme.demo::Part.finish"]
+locators = [
+  { locator = "Finish", kind = "global", mode = "value", native_unit = "" },
+]

@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "note-text-citation-only",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "a Text param has a note under the same rules; only a citation can appear in it",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "Finish,anodize,,\"@\"\"MIL-A-8625\"\"\""
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "anodize"
+        ],
+        "excludes": [
+          "MIL-A-8625"
+        ]
+      }
+    }
+  }
+}

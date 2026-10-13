@@ -30,12 +30,14 @@ NumBolts,4,,
   reported. `read` is unaffected (3).
 - `value` is a plain decimal, the emit point (quantities.md 5.6) in the
   locator's `native_unit`, at the declared precision (default 6
-  decimals, adapters.md 5), trailing zeros trimmed; not representable
+  decimals, adapters.md 5), trailing zeros trimmed (a whole number has no decimal point: `10`,
+  never `10.0`); not representable
   is Q004. `unit` is empty for Counts, Ratios and Text.
 - `note` carries the same content as a trailing comment in other
   emitters (adapters.md 3a), joined with `; `: authored literal with
   tolerance when it differs from the written text, the emit point when
-  not `nominal`, the citation.
+  not `nominal`, the citation. A `Text` row follows the same rules; as it has no
+  tolerance and no emit point, only a citation can appear in its note.
 - RFC 4180 quoting, LF line endings, UTF-8 without BOM, final newline.
 
 ## 2. Order
@@ -47,5 +49,14 @@ locators in bindings-file order.
 
 `read` parses the same columns. The `path` is not in the file; it is
 resolved through the bindings (adapters.md 3.1). A missing `unit` takes
-the locator's `native_unit` (`unit_assumed`) or `--assume-unit`. Every
+`--assume-unit` when the run gives one, else the locator's `native_unit`,
+else the adapter's declared native unit; the result is recorded as
+`unit_assumed`. The explicit flag wins over the configured `native_unit`. Every
 locator is `value` mode.
+
+## 4. Obligations
+
+`csv` has no `drive`, so "CAD file reflects design" stays open with the
+reason "unverifiable without drive" after `sync` and is reported as O004
+(info by default), as for `json` (emitters/json.md 4) and `sw-equations`
+(adapters.md 2).

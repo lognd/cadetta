@@ -1,0 +1,8 @@
+{
+  "adapters": [
+    "csv",
+    "solidworks"
+  ],
+  "synced": "CoverPlate.SLDPRT",
+  "drive_covers": "CoverPlate.SLDPRT"
+}

@@ -5,7 +5,7 @@
   "rule": "read-native-unit",
   "kind": "binding",
   "entry": "read",
-  "note": "a row with an empty unit takes the locator's native_unit (unit_assumed recorded)",
+  "note": "a param with no unit takes the locator's native_unit (unit_assumed recorded)",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,

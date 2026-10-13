@@ -5,7 +5,7 @@
   "rule": "read-assume-unit",
   "kind": "binding",
   "entry": "read",
-  "note": "--assume-unit supplies the unit of a unitless row",
+  "note": "--assume-unit supplies the unit of a unitless param",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,
@@ -21,8 +21,7 @@
     "exit": 0,
     "observed": {
       "B": {
-        "value": "5mm",
-        "unit_assumed": "mm"
+        "value": "5mm"
       }
     }
   }
