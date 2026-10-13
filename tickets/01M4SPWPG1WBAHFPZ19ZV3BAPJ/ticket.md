@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:08:28Z"
+updated = "2026-10-13T07:10:41Z"
 persona = "design engineer"
 capability = "get cycle detection and `was` rename resolution"
 outcome_text = "single-source-of-truth errors are caught"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-sema/src/deps.rs", "crates/cadetta-sema/src/lib.rs", "d
 
 [[acceptance]]
 text = "Given member a depends on b and b on a, when analysed, then D003 reference-cycle is reported (language.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a model argument that comes from a joint reading another member of the same model, when analysed, then no cycle is reported because D003 is per member, not per component (language.md 4)"
