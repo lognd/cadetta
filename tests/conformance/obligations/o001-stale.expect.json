@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "obligations",
+  "section": "obligations.md 2.3",
+  "rule": "O001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "O001",
+        "severity": "error",
+        "path": "acme.demo::Part.fits_limit"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}
