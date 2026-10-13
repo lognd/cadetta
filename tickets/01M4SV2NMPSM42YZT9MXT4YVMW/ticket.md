@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T14:10:56Z"
+updated = "2026-10-13T14:11:08Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given design["acme.rover::Axle.end_diameter"], when nominal, max, mid, kind and citation are read, then they match the CLI ir JSON (bindings.md 3.1)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unknown path, when indexed, then a Result error is returned, not a KeyError (bindings.md 3)"
