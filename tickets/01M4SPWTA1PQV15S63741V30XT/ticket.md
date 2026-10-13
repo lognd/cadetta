@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T14:17:35Z"
+updated = "2026-10-13T14:36:58Z"
 persona = "design engineer"
 capability = "emit to configured adapters and import native files"
 outcome_text = "nobody retypes values and existing designs are adoptable"
@@ -21,7 +21,7 @@ target = "01M4SPWTDD069AXXQBXD4T6ATZ"
 
 [[acceptance]]
 text = "Given a configured sw-equations adapter, when `cadetta emit` runs, then build/solidworks/equations.txt is written"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a native file, when `cadetta import freecad f.FCStd` runs, then bindings and a scaffolded .cdt are proposed, not written until accepted"
