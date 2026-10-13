@@ -818,11 +818,6 @@ ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
 
 [[gap]]
-fixture = "geometry/datum-zero-count-pattern"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
 fixture = "geometry/g001-array-plus-point"
 ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"

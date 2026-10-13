@@ -1,10 +1,12 @@
 //! Pattern generators `rect_pattern` and `circle_pattern` (geometry.md 3; ir.md 2).
 //!
-//! A generator is a value with named members: `pitch_x`, `pitch_y`, `rotation` for a rectangular
-//! pattern, `radius` and `start` for a circular one. Those members bind and emit (they lower to
-//! authored `Param` IR members); the derived coordinates are analysis-only (`Let`, derived
-//! provenance), never emitted. The point counts (`nx`, `ny`, `n`) are structural and are not
-//! members.
+//! A generator is a value with named members: `count_x`, `count_y`, `pitch_x`, `pitch_y`,
+//! `rotation` for a rectangular pattern, `count`, `radius` and `start` for a circular one. Those
+//! members bind and emit (they lower to authored `Param` IR members); the derived coordinates
+//! are analysis-only (`Let`, derived provenance), never emitted. The point counts (`nx`, `ny`,
+//! `n`) are structural as well as members: each must be an exact whole number known before
+//! evaluation (a literal or a parameter-free constant), see [`structural_count`]; one that is
+//! not is E006.
 //!
 //! Decisions made here (written into geometry.md 3): points carry [`Coord`]s, so a rotation by
 //! a whole multiple of 90deg keeps them exact and any other angle gives inexact intervals with
@@ -14,6 +16,7 @@
 //! omitted `rotation` has no member; a zero count is an error.
 
 // frob:ticket 01M4SWFXADMC8C5Y451JRVBYZM
+// frob:ticket 01M4VB63B9FS1JDEH7V08K12NH
 
 use cadetta_ir::model::{Member as IrMember, MemberKind, Provenance};
 use cadetta_sema::resolve::{CanonPath, Index, MemberSeg};
@@ -200,17 +203,17 @@ impl Generator {
         }
     }
 
-    /// Member names for the positional arguments; `None` marks a structural count.
+    /// Member names for the positional arguments, counts first.
     fn arg_names(self) -> &'static [Option<&'static str>] {
         match self {
             Self::Rect => &[
-                None,
-                None,
+                Some("count_x"),
+                Some("count_y"),
                 Some("pitch_x"),
                 Some("pitch_y"),
                 Some("rotation"),
             ],
-            Self::Circle => &[None, Some("radius"), Some("start")],
+            Self::Circle => &[Some("count"), Some("radius"), Some("start")],
         }
     }
 
@@ -223,8 +226,54 @@ impl Generator {
     }
 }
 
+/// Evaluates a pattern count that must be known before evaluation: an exact whole number
+/// of at least 1 from integer literals, parentheses and `+`, `-`, `*` (geometry.md 3).
+///
+/// Anything else (a parameter, a quantity, a fraction, zero) is E006.
+pub fn structural_count(e: &Expr) -> Result<u32, GeometryError> {
+    fn fail(e: &Expr, why: &str) -> GeometryError {
+        let message = format!(
+            "E006: pattern count must be an exact whole number known before evaluation: {why}"
+        );
+        warn!(%message, "structural count");
+        GeometryError {
+            span: e.span,
+            message,
+        }
+    }
+    fn go(e: &Expr) -> Result<i64, GeometryError> {
+        use cadetta_syntax::ast::{BinOp, ExprKind};
+        match &e.kind {
+            ExprKind::Number(s) => s
+                .replace('_', "")
+                .parse::<i64>()
+                .map_err(|_| fail(e, "not a whole-number literal")),
+            ExprKind::Paren(inner) => go(inner),
+            ExprKind::Binary(op @ (BinOp::Add | BinOp::Sub | BinOp::Mul), a, b) => {
+                let (a, b) = (go(a)?, go(b)?);
+                let r = match op {
+                    BinOp::Add => a.checked_add(b),
+                    BinOp::Sub => a.checked_sub(b),
+                    _ => a.checked_mul(b),
+                };
+                r.ok_or_else(|| fail(e, "overflow"))
+            }
+            _ => Err(fail(e, "not a literal or parameter-free constant")),
+        }
+    }
+    let n = go(e)?;
+    let n = u32::try_from(n).map_err(|_| fail(e, "out of range"))?;
+    if n == 0 {
+        return Err(fail(e, "a count of zero"));
+    }
+    debug!(n, "structural count");
+    Ok(n)
+}
+
 /// Lowers the arguments of a generator call bound at `base` (e.g. `Bracket.holes`) to members
-/// `base.pitch_x` and so on, in argument order; counts are skipped (geometry.md 3).
+/// `base.count_x`, `base.pitch_x` and so on, in argument order, counts included (geometry.md 3).
+///
+/// Each count argument must be structural ([`structural_count`]), else E006.
 pub fn generator_members(
     base: &CanonPath,
     generator: Generator,
@@ -248,6 +297,9 @@ pub fn generator_members(
     let mut out = Vec::new();
     for (arg, name) in args.iter().zip(names) {
         let Some(name) = name else { continue };
+        if name.starts_with("count") {
+            structural_count(arg)?;
+        }
         let mut path = base.clone();
         path.members.push(MemberSeg::Name((*name).to_owned()));
         debug!(%path, "generator member");
@@ -448,6 +500,22 @@ mod tests {
         }
     }
 
+    fn path_expr(name: &str) -> Expr {
+        Expr {
+            kind: ExprKind::Str(name.into()),
+            span: Span::new(0, 0),
+        }
+    }
+
+    // frob:tests crates/cadetta-geometry/src/pattern.rs::structural_count kind=unit
+    #[test]
+    fn structural_counts_are_whole_numbers_known_before_evaluation() {
+        assert_eq!(structural_count(&num("4")).unwrap(), 4);
+        assert!(structural_count(&num("0")).is_err());
+        assert!(structural_count(&num("2.5")).is_err());
+        assert!(structural_count(&path_expr("n")).is_err());
+    }
+
     fn holes() -> CanonPath {
         let mut p = CanonPath::item("acme", &[], "Bracket");
         p.members.push(MemberSeg::Name("holes".into()));
@@ -467,7 +535,12 @@ mod tests {
         let names: Vec<_> = ir.iter().map(|m| m.path.to_string()).collect();
         assert_eq!(
             names,
-            ["acme::Bracket.holes.pitch_x", "acme::Bracket.holes.pitch_y"]
+            [
+                "acme::Bracket.holes.count_x",
+                "acme::Bracket.holes.count_y",
+                "acme::Bracket.holes.pitch_x",
+                "acme::Bracket.holes.pitch_y"
+            ]
         );
         assert!(
             ir.iter()
@@ -479,8 +552,17 @@ mod tests {
         let names: Vec<_> = cm.iter().map(|m| m.path.to_string()).collect();
         assert_eq!(
             names,
-            ["acme::Bracket.holes.radius", "acme::Bracket.holes.start"]
+            [
+                "acme::Bracket.holes.count",
+                "acme::Bracket.holes.radius",
+                "acme::Bracket.holes.start"
+            ]
         );
+
+        let mut bad = args.clone();
+        bad[0] = path_expr("n");
+        let err = generator_members(&holes(), Generator::Rect, &bad, Span::new(0, 0)).unwrap_err();
+        assert!(err.message.starts_with("E006"));
 
         assert!(generator_members(&holes(), Generator::Rect, &args[..3], Span::new(0, 0)).is_err());
 

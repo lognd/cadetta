@@ -9,13 +9,13 @@
 
 // frob:ticket 01M4ST7AFZGCN52434BQJRT5MM
 
-use cadetta_syntax::ast::{Arg, BinOp, Expr};
+use cadetta_syntax::ast::{Arg, BinOp, Expr, ExprKind};
 use cadetta_syntax::span::Span;
 use cadetta_units::{Dim, Dimension, Magnitude, Rational};
 use tracing::{debug, trace};
 
 use super::func::{sqrt, trig};
-use super::{Evaluator, Quant, R, Scope, Val, diag};
+use super::{Evaluator, Fail, Quant, R, Scope, Val, diag};
 
 /// Largest pattern count accepted (guards against runaway arrays).
 const MAX_COUNT: u64 = 65_536;
@@ -144,6 +144,27 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Evaluates a pattern count: structural, so an exact whole number of at least 1 written
+    /// as a literal or parameter-free constant; anything else is E006 (geometry.md 3).
+    // frob:ticket 01M4VB63B9FS1JDEH7V08K12NH
+    fn pattern_count(&mut self, sc: &mut Scope, e: &Expr, what: &str) -> R<u64> {
+        if !parameter_free(e) {
+            return Err(diag(
+                "E006",
+                e.span,
+                format!(
+                    "{what} must be known before evaluation (a literal or parameter-free constant)"
+                ),
+            ));
+        }
+        match self.count_arg(sc, e, what) {
+            Ok(0) => Err(diag("E006", e.span, format!("{what} must be at least 1"))),
+            Ok(n) => Ok(n),
+            Err(Fail::Diag(d)) => Err(diag("E006", d.span, d.message)),
+            Err(other) => Err(other),
+        }
+    }
+
     /// A numeric argument that must be a Length.
     fn length_arg(&mut self, sc: &mut Scope, e: &Expr) -> R<Val> {
         let v = self.eval(sc, e)?;
@@ -179,7 +200,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             "circle_pattern" => {
                 let xs = super::func::arity(name, args, 3, span)?;
-                let n = self.count_arg(sc, xs[0], "the point count")?;
+                let n = self.pattern_count(sc, xs[0], "the point count")?;
                 let r = self.length_arg(sc, xs[1])?;
                 let start = self.quant(sc, xs[2])?;
                 circle_pattern(n, &r, &start, span)
@@ -214,8 +235,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 ),
             ));
         }
-        let nx = self.count_arg(sc, pos[0], "nx")?;
-        let ny = self.count_arg(sc, pos[1], "ny")?;
+        let nx = self.pattern_count(sc, pos[0], "nx")?;
+        let ny = self.pattern_count(sc, pos[1], "ny")?;
         let dx = self.length_arg(sc, pos[2])?;
         let dy = self.length_arg(sc, pos[3])?;
         let rot = match rotation {
@@ -243,6 +264,16 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
         }
         Ok(Val::Array(out))
+    }
+}
+
+/// True when `e` mentions no name, call or parameter: only literals and arithmetic.
+fn parameter_free(e: &Expr) -> bool {
+    match &e.kind {
+        ExprKind::Number(_) | ExprKind::Quantity(_) => true,
+        ExprKind::Paren(x) | ExprKind::Unary(_, x) => parameter_free(x),
+        ExprKind::Binary(_, a, b) => parameter_free(a) && parameter_free(b),
+        _ => false,
     }
 }
 
@@ -424,5 +455,32 @@ mod tests {
         };
         assert_eq!(pt(&a[0]), vec![s("0", "1"), s("0", "1")]);
         assert_eq!(pt(&a[1]), vec![s("1", "100"), s("0", "1")]);
+    }
+}
+
+#[cfg(test)]
+mod count_tests {
+    use crate::eval::tests::{file, run};
+
+    // frob:tests crates/cadetta-sema/src/point.rs::pattern_count
+    #[test]
+    fn pattern_counts_are_structural() {
+        let ok = run(&file(
+            "model M {\n  h = rect_pattern(2 * 2, 1, 10mm, 10mm)\n}\n",
+        ));
+        assert!(ok.diagnostics.is_empty(), "{:?}", ok.diagnostics);
+        for src in [
+            "model M {\n  n = 2\n  h = rect_pattern(n, 1, 10mm, 10mm)\n}\n",
+            "model M {\n  n = 2\n  h = circle_pattern(n, 10mm, 0deg)\n}\n",
+            "model M {\n  h = rect_pattern(0, 1, 10mm, 10mm)\n}\n",
+            "model M {\n  h = circle_pattern(2.5, 10mm, 0deg)\n}\n",
+        ] {
+            let ev = run(&file(src));
+            assert_eq!(
+                ev.diagnostics.iter().map(|d| d.code).collect::<Vec<_>>(),
+                ["E006"],
+                "{src}"
+            );
+        }
     }
 }
