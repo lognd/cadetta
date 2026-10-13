@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T13:34:09Z"
+updated = "2026-10-13T13:34:27Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given global and dimension locators, when emitted, then global lines are `"NAME" = VALUE` and dimension lines carry `"GLOBAL"` in ref mode or a value in value mode (emitters/sw-equations.md 1)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a value, when written, then it is the emit point in the locator native_unit with unit suffix at 6 decimals, trailing zeros trimmed; unrepresentable is Q004; Counts and Ratios are bare; Text is not emitted (emitters/sw-equations.md 1)"
