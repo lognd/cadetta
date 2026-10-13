@@ -8,11 +8,11 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T09:32:50Z"
+updated = "2026-10-13T09:33:52Z"
 persona = "product engineer"
 capability = "re-resolve dependencies on demand"
 labels = ["creates:crates/cadetta-cli/src/cmd/update.rs"]
-scope = ["crates/cadetta-cli/src/cmd/update.rs"]
+scope = ["crates/cadetta-cli/src/cmd/update.rs", "docs/schemas/update.json", "docs/spec/packages.md", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
