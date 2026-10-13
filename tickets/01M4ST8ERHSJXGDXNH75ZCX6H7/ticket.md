@@ -69,7 +69,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an as-built obligation, when classified, then it is stale if the design changed after the inspection (obligations.md 2, OQ-13)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an attestation, when judged, then verdict and margin are recorded and dependency own digests are used (obligations.md 2)"
