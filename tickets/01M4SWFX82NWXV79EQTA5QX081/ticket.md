@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T09:25:04Z"
+updated = "2026-10-13T09:27:32Z"
 persona = "design engineer"
 capability = "keep positions in their datum"
 idempotency_key = "replan14:geo-points"
 labels = ["creates:crates/cadetta-geometry/src/point.rs"]
-scope = ["crates/cadetta-geometry/src/point.rs"]
+scope = ["crates/cadetta-geometry/src/point.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"
