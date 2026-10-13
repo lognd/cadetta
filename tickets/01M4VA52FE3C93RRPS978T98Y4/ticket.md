@@ -2,13 +2,13 @@
 id = "01M4VA52FE3C93RRPS978T98Y4"
 title = "Spec draft 1.5: IEEE citations, placement revision, position tolerance, SOLIDWORKS workflow"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T18:59:44Z"
-updated = "2026-10-13T19:19:06Z"
+updated = "2026-10-13T20:28:54Z"
 labels = ["creates:docs/spec/solidworks.md"]
 scope = ["docs/decisions/**", "docs/spec/README.md", "docs/spec/language.md", "docs/spec/geometry.md", "docs/spec/ir.md", "docs/spec/adapters.md", "docs/spec/lints.md", "docs/spec/obligations.md", "docs/spec/config-cli.md", "docs/spec/stdlib.md", "docs/spec/bindings.md", "docs/spec/solvers.md", "docs/spec/quantities.md", "docs/spec/emitters/sw-equations.md", "docs/spec/solidworks.md", "design/model.grmb", "design/vmodel.grmb", "docs/decisions/2026-10-13-bindings-and-solidworks.md"]
 
