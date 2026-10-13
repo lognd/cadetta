@@ -2,6 +2,7 @@
 //!
 //! Specification: `docs/spec/adapters.md`.
 
+pub mod policy;
 pub mod read_units;
 pub mod testing;
 
