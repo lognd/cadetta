@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:17Z"
+updated = "2026-10-13T05:44:39Z"
 persona = "design engineer"
 capability = "see every claim as a node with typed edges"
 idempotency_key = "replan13:Obligation graph nodes, edges and states"
@@ -29,5 +29,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)"
+bound = false
+
+[[acceptance]]
+text = "Given an obligation, when identified, then its id is <kind>:<canonical path> and kinds include waiver (obligations.md 2, 4)"
 bound = false
 +++

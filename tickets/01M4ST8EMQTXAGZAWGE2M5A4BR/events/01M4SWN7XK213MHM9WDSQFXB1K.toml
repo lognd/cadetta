@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a lowered IR, when the graph is built, then edges derives, cites, implements, instantiates, evaluates, solves, binds, realizes, attests and waives exist as in the obligations.md 1 table", "Given the states discharged, stale, violated, undecided, open and waived, when an obligation is classified, then exactly one applies (obligations.md 2)", "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)"]
+new = ["Given a lowered IR, when the graph is built, then edges derives, cites, implements, instantiates, evaluates, solves, binds, realizes, attests and waives exist as in the obligations.md 1 table", "Given the states discharged, stale, violated, undecided, open and waived, when an obligation is classified, then exactly one applies (obligations.md 2)", "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)", "Given an obligation, when identified, then its id is <kind>:<canonical path> and kinds include waiver (obligations.md 2, 4)"]
+moved = [1, 2, 3]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
