@@ -2,7 +2,8 @@
 id = "01M4SWMCYW919R5JKSV2T1ZYBN"
 title = "Geometry verification: frame and instance locators, transform comparison, datums = create"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
