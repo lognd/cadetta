@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T04:04:02Z"
+updated = "2026-10-13T05:01:25Z"
 persona = "cadetta contributor"
 capability = "implement an adapter declaring emit, read and drive capabilities"
 outcome_text = "new CAD targets never touch lints"
@@ -33,5 +33,9 @@ bound = false
 
 [[acceptance]]
 text = "Given an adapter result, when failing, then it returns a Result with a diagnostic, not a panic"
+bound = false
+
+[[acceptance]]
+text = "Given a drive-capable adapter, when regeneration fails, then rebuild errors are reported as R004 diagnostics (adapters.md 1)"
 bound = false
 +++

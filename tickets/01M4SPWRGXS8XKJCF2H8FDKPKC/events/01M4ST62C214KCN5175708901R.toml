@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions", "Given an adapter result, when failing, then it returns a Result with a diagnostic, not a panic"]
+new = ["Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions", "Given an adapter result, when failing, then it returns a Result with a diagnostic, not a panic", "Given a drive-capable adapter, when regeneration fails, then rebuild errors are reported as R004 diagnostics (adapters.md 1)"]
+moved = [1, 2]
+at = "2026-10-13T05:01:25Z"
+actor = "lognd"
+rev = 1
