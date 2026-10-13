@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T13:43:57Z"
+updated = "2026-10-13T13:47:15Z"
 persona = "design engineer"
 capability = "read derived joint geometry"
 idempotency_key = "replan13:ScrewJoint derived members"
@@ -25,7 +25,7 @@ target = "01M4SXRV8HCNXHVFX87BTFJC7S"
 
 [[acceptance]]
 text = "Given a ScrewJoint, when evaluated, then each derived member in stdlib.md 4 matches its formula (stdlib.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a hand-computed M5 case, when evaluated, then results match exactly (stdlib.md 3)"
