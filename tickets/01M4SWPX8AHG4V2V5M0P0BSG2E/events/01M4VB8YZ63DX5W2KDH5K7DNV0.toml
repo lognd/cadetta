@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Narrowed by draft 1.5 (~78T98Y4): RFS true position is in 0.1.0 (geometry.md 3.1, implemented by ~V2K95H5). This ticket now tracks only material condition modifiers (MMC/LMC bonus)."
+at = "2026-10-13T19:19:20Z"
+actor = "lognd"
+rev = 1
