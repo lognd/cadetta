@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `4mm <= x <= 6mm` and `x satisfies P`, when parsed, then chained comparison and satisfies nodes result (language.md 5, 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `if`, `match` and `{ let a = 1mm; a }`, when parsed, then each is an expression (language.md 5)"
