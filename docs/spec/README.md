@@ -91,8 +91,9 @@ the IR and its JSON schema, the obligation graph and lock file, the
 solver protocol, the lint catalog, built-in file emitters (JSON, CSV,
 SOLIDWORKS linked-equations file), the adapter protocol, the SOLIDWORKS
 adapter and add-in (C#, read and drive, the primary target;
-solidworks.md), the FreeCAD adapter (the CI reference), and the Python
-binding (bindings.md).
+solidworks.md), the FreeCAD adapter (the CI reference), the Python
+binding (bindings.md), and `cadetta lsp` for editors (diagnostics and
+formatting, config-cli.md 3.8).
 
 Out (each recorded as a dropped or deferred ticket with its reason):
 tolerance stack analysis (RSS or statistical), constraint solving,

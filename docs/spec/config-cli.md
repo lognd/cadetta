@@ -176,12 +176,13 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
+| `lsp` | Language server over stdio: diagnostics and formatting (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
 
 `check`, `emit`, `sync` and `solve` accept `--module PATH` (a module
 path prefix, e.g. `--module drive`) and canonical-path globs to scope a
-run. `cadetta lsp` is deferred (a
-ticket); in 0.1.0 the editor integration is `check --format json
---watch` (5).
+run. Editors integrate through `cadetta lsp` (3.8); `check --format
+short` and `check --format json --watch` (5) remain for problem matchers
+and scripts.
 
 Scoping (decided, 0.1.0): a node is in scope when it matches any
 `--module` prefix (if given) and any glob (if given); with neither,
@@ -359,6 +360,54 @@ an existing `.cdt` is left alone, and bindings are appended to for paths and loc
 bound; the rest are reported as `unchanged`. `skip` items are not adopted. Every import failure
 is exit 2, never 1. `--update` is parsed but not implemented yet: it reports a note and changes
 nothing.
+
+### 3.8 `lsp`
+
+`cadetta lsp` is a Language Server Protocol 3.17 server on stdin and
+stdout, for every editor with an LSP client. It is a thin layer over
+`check` and `fmt`: it adds no rule and no diagnostic of its own, so the
+editor shows exactly what `check` reports.
+
+- Transport and logging: LSP base protocol (Content-Length framing) on
+  stdio. stdout carries protocol only; logs go to stderr through
+  `cadetta-log`, filtered by `CADETTA_LOG`, and `window/logMessage` is
+  never used for diagnostics.
+- Capabilities in 0.1.0: `textDocumentSync` (open, change with full
+  text, save without text, close), `documentFormattingProvider`, and
+  `positionEncoding`. Nothing else is advertised; hover (`why`), code
+  lens (`impact`), go to definition and completion are later (a
+  ticket).
+- Projects: each open `.cdt` belongs to the package found by the
+  config-cli.md 1.6 walk from its directory; a document outside any
+  package gets only syntax diagnostics. Several packages may be open at
+  once; each is checked separately.
+- On open and on every change the server lexes and parses the buffer
+  text and publishes its E001 diagnostics for that document at once.
+  On open and on save it runs the full `check` pipeline for the
+  document's package against the files on disk (unsaved buffers do not
+  take part), and publishes the result for every file of the package,
+  replacing what it published before; a file with no diagnostics gets
+  an empty list so stale ones clear. A check already running for the
+  package is superseded: its result is dropped.
+- Mapping from `cadetta.diag/1` (lints.md 1.1): `range` from the
+  location's start and end (1-based line and column, columns in Unicode
+  characters) to 0-based LSP positions in the negotiated encoding;
+  `severity` error 1, warning 2, info 3, hint 4; `code` the diagnostic
+  code; `codeDescription.href` absent; `source` `"cadetta"`; `message`
+  the message followed by its `note:` and `help:` lines; `data` holds
+  the canonical `path` and `variant` when present. A waived diagnostic
+  is not published. A diagnostic whose location is in `cadetta.lock`
+  is published on that file; one with a native location or none is
+  logged, not published.
+- Position encoding: `utf-32` when the client offers it (columns are
+  characters already), else `utf-16`, converting from the document
+  text.
+- Formatting returns one whole-document edit with `fmt`'s output, or no
+  edit when the text is already canonical; a buffer with syntax errors
+  returns an error response (`fmt` refuses it) and leaves the text
+  untouched.
+- `shutdown` then `exit` ends the process with status 0; `exit` without
+  `shutdown` with status 1, as LSP requires.
 
 ## 4. Global flags
 

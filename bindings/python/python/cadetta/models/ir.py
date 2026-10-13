@@ -28,13 +28,33 @@ class Cell1(BaseModel):
     variant: str
 
 
-class CitationKind(StrEnum):
-    url = "url"
-    file = "file"
+class CitationType(StrEnum):
     standard = "standard"
+    datasheet = "datasheet"
+    drawing = "drawing"
+    catalog = "catalog"
+    book = "book"
+    article = "article"
+    web = "web"
+    quote = "quote"
+    document = "document"
+
+
+class CiteBuiltin(StrEnum):
+    note = "note"
     measured = "measured"
     assumed = "assumed"
     estimate = "estimate"
+
+
+class CiteRef(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    builtin: CiteBuiltin | None = None
+    cite: str | None = None
+    locator: str | None = None
+    text: str | None = None
 
 
 class ComponentClass(StrEnum):
@@ -275,11 +295,11 @@ class Citation(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    digest: Digest
+    fields: dict[str, str | list[str]]
     file_digest: Digest | None = None
-    kind: CitationKind
-    locator: str | None = None
-    name: str
-    target: str
+    path: str
+    type: CitationType
 
 
 class Inexact(BaseModel):
@@ -471,7 +491,7 @@ class Member(BaseModel):
     analysis: bool
     attrs: dict[str, str]
     bound: Bound | None = None
-    citation: Citation | None = None
+    citation: CiteRef | None = None
     closure: Digest | None = None
     deps: list[Path]
     digest: Digest | None = None
@@ -519,7 +539,7 @@ class Component(BaseModel):
         extra="forbid",
     )
     attrs: dict[str, str]
-    citation: Citation | None = None
+    citation: CiteRef | None = None
     class_: Annotated[ComponentClass, Field(alias="class")]
     digest: Digest | None = None
     fits: list[Fit]
@@ -535,7 +555,7 @@ class Table(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    citation: Citation | None = None
+    citation: CiteRef | None = None
     cols: list[TableCol]
     key: TableCol
     path: ComponentPath

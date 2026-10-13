@@ -79,7 +79,7 @@ class Member:
         return Quantity._from_ir(text)
 
     @property
-    def citation(self) -> ir.Citation | None:
+    def citation(self) -> ir.CiteRef | None:
         """The citation attached to the member, if any."""
         return self.model.citation
 

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-lint/src/rules/s.rs", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-obligations/src/**", "crates/cadetta-cli/src/cmd/ack.rs", "tests/conformance/lints/**", "tests/conformance/obligations/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/check.rs", "tests/conformance/known-gaps.toml"]
+new = ["crates/cadetta-lint/src/rules/s.rs", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-obligations/src/**", "crates/cadetta-cli/src/cmd/ack.rs", "tests/conformance/lints/**", "tests/conformance/obligations/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/check.rs", "tests/conformance/known-gaps.toml", "tests/conformance/language/s001-*"]
+at = "2026-10-13T21:50:47Z"
+actor = "lognd"
+rev = 1

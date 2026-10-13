@@ -8,12 +8,12 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:32:05Z"
+updated = "2026-10-13T21:50:47Z"
 persona = "design engineer"
 capability = "see when a cited source is incomplete or has changed"
 outcome_text = "nobody signs off values against a superseded datasheet"
 idempotency_key = "d15:cite-lints"
-scope = ["crates/cadetta-lint/src/rules/s.rs", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-obligations/src/**", "crates/cadetta-cli/src/cmd/ack.rs", "tests/conformance/lints/**", "tests/conformance/obligations/**"]
+scope = ["crates/cadetta-lint/src/rules/s.rs", "crates/cadetta-lint/src/rules/mod.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-obligations/src/**", "crates/cadetta-cli/src/cmd/ack.rs", "tests/conformance/lints/**", "tests/conformance/obligations/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/check.rs", "tests/conformance/known-gaps.toml", "tests/conformance/language/s001-*"]
 
 [[links]]
 kind = "blocked-by"

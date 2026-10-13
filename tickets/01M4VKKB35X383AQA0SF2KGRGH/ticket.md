@@ -1,0 +1,21 @@
++++
+id = "01M4VKKB35X383AQA0SF2KGRGH"
+title = "Record the Python model codegen and fail CI when models drift from docs/schemas"
+type = "chore"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4SV2NDDVYW3WN79XN9C707C"
+reporter = "lognd"
+created = "2026-10-13T21:44:48Z"
+updated = "2026-10-13T21:44:48Z"
+idempotency_key = "d15:py-models-check"
+labels = ["creates:bindings/python/scripts/gen_models.py"]
+scope = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py"]
+
+[[acceptance]]
+text = "Given bindings/python/scripts/gen_models.py, when run, then it regenerates every cadetta.models module from docs/schemas with the recorded datamodel-codegen options, and --check exits non-zero when a committed model is stale; the binding CI job runs the check"
+bound = false
++++
+
+Found by ~1KGXRMC: a schema change in a Rust ticket left the generated models stale and turned main red; the codegen options had to be reverse-engineered.

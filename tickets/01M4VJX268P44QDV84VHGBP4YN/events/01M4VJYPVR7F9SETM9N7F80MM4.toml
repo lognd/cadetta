@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:33:32Z"
+digest = "7b111f534e35281139e231dd01ea41d4c7854b00d1bfe3cb7a4c899b73c04efe"
+provider = "file"
+ref = "docs/spec/config-cli.md"
+size = 27514
+status = "measured"
+at = "2026-10-13T21:33:32Z"
+actor = "lognd"
+rev = 1
