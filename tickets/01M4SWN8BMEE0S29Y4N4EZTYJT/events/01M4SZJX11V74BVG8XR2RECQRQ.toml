@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Blocked: need 'pub mod project;' in crates/cadetta-cli/src/lib.rs, which is in the scope lease of 01M4SPWSXBTNXW3CPZ6FVHT5ZT (~FVHT5ZT, worktree cadetta-wt/FVHT5ZT). project.rs is committed on ticket/4EZTYJT with 6 passing tests (verified with the lib.rs line applied locally; git stash holds that one-line edit). Land after ~FVHT5ZT frees lib.rs, or have it add 'pub mod project;'."
+at = "2026-10-13T06:35:48Z"
+actor = "lognd"
+rev = 1
