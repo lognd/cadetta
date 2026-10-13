@@ -1,0 +1,21 @@
++++
+id = "01M4SWP82QQYMBZHRTMZA7KJ1K"
+title = "std.commercial::Sourced"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+reporter = "lognd"
+created = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T05:45:12Z"
+persona = "design engineer"
+capability = "record where parts come from"
+idempotency_key = "replan14:sd-sourced"
+labels = ["creates:std/commercial.cdt"]
+scope = ["std/commercial.cdt"]
+
+[[acceptance]]
+text = "Given Sourced, when a component uses it, then supplier, part number and price members are optional and non-emitting (stdlib.md 6)"
+bound = false
++++

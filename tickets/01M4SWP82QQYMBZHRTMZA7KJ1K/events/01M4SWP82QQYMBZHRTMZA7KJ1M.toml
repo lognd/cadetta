@@ -1,0 +1,16 @@
+kind = "create"
+title = "std.commercial::Sourced"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+persona = "design engineer"
+capability = "record where parts come from"
+idempotency_key = "replan14:sd-sourced"
+labels = ["creates:std/commercial.cdt"]
+scope = ["std/commercial.cdt"]
+acceptance = ["Given Sourced, when a component uses it, then supplier, part number and price members are optional and non-emitting (stdlib.md 6)"]
+at = "2026-10-13T05:45:12Z"
+actor = "lognd"
+rev = 1
