@@ -100,6 +100,14 @@ with level `error`, `warning`, or `notice` (info and hint); native and lock
 locations give `file` and `line` only, no location gives `title` only.
 `%`, CR and LF are escaped in the message, and also `:` and `,` in properties.
 
+SARIF rendering rules: one run, tool `cadetta`, `rules` are the distinct
+codes present, sorted; `level` is `error`, `warning`, or `note` (info and
+hint). Source locations map to `physicalLocation` regions; native
+locations map to `file` at line 1 col 1 with `adapter` and `locator` kept
+in the location `properties`; lock locations map to `cadetta.lock`. `path`
+is a logical location, `alt` a result property, notes are
+`relatedLocations`, fixes map to `fixes`. Waived diagnostics are omitted.
+
 Text rendering rules: the output is ASCII and carries no color codes.
 The excerpt shows the first line of the span, underlined to the span
 end (to the end of the line for a multi-line span); `alt` is the label
