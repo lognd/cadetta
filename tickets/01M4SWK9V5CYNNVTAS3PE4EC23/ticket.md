@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T06:33:14Z"
+updated = "2026-10-13T06:33:15Z"
 persona = "design engineer"
 capability = "get one diagnostic shape from every component"
 idempotency_key = "replan14:lint-diag"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given solver and adapter responses, when received, then they reuse the record unchanged (lints.md 1.1; adapters.md 4)"
-bound = false
+bound = true
 +++
