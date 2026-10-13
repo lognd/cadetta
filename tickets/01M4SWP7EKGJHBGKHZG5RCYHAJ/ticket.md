@@ -2,7 +2,8 @@
 id = "01M4SWP7EKGJHBGKHZG5RCYHAJ"
 title = "Conformance fixtures for emitters/json"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
