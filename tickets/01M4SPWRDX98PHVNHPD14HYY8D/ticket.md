@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver path glob like `acme.parts::Bearing608.*`, when matched, then it suppresses one code on the matching paths (lints.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver of a `require`, when linted, then W003; a require is discharged only by attestation (lints.md 2)"
