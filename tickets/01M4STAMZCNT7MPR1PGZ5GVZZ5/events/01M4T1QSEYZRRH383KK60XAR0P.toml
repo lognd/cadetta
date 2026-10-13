@@ -1,0 +1,40 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:13:02Z"
+digest = "57327d0e67942635e518e46c0b8605bd0b7a868f508bc1307c1876fbe8b0a3cd"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.19s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c4f5821b-aeef-494e-bef1-d9aad2834e53 with nextest profile: default
+    Starting 1 test across 16 binaries (282 tests skipped)
+        PASS [   0.008s] cadetta-solve protocol::tests::request_is_solve_1_json
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 282 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=protocol::tests::request_is_solve_1_json)"
+size = 1595
+status = "measured"
+test_count = 1
+tests_digest = "e9721ff2f874c0096bb21c51e6a474b826599b43ce0f5c190fb31184fb65b990"
+at = "2026-10-13T07:13:02Z"
+actor = "lognd"
+rev = 1
