@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:53:22Z"
+digest = "f76330b1ec9def764b5c0dd02b1fb7a841f8a250b455da913217bad0e014467e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ab2c4237-3aa9-4db3-988c-df670ab97bf3 with nextest profile: default
+    Starting 2 tests across 20 binaries (382 tests skipped)
+        PASS [   0.007s] cadetta-solve lints::tests::s006_fires_for_missing_variant_but_not_missing_primary
+        PASS [   0.007s] cadetta-solve lints::tests::s005_fires_for_failed_run_and_not_for_other_codes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 2 tests run: 2 passed, 382 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=lints::tests::s005_fires_for_failed_run_and_not_for_other_codes)|test(=lints::tests::s006_fires_for_missing_variant_but_not_missing_primary)"
+size = 681
+status = "measured"
+test_count = 2
+tests_digest = "b9ff4949124437cfc0134140cde8771e9e73faf9a2329fd73e75c28f1b05705c"
+at = "2026-10-13T07:53:22Z"
+actor = "lognd"
+rev = 1
