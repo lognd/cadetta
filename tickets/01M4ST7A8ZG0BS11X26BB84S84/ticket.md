@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:45:56Z"
+updated = "2026-10-13T06:50:02Z"
 persona = "cadetta contributor"
 capability = "parse the remaining item kinds of the grammar"
 idempotency_key = "replan13:Parser for interfaces, tables, processes, solvers and declarations"
 labels = ["creates:crates/cadetta-syntax/src/parser_items.rs"]
-scope = ["crates/cadetta-syntax/src/parser_items.rs"]
+scope = ["crates/cadetta-syntax/src/parser_items.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/ast.rs", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given `interface Caster { diameter: Length  load_rating >= 400N }`, when parsed, then members and bounds are recorded (language.md 3.2, 3.4)"
