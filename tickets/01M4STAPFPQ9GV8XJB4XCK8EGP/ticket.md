@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T23:26:43Z"
+updated = "2026-10-13T23:33:19Z"
 persona = "design engineer"
 capability = "declare a screw joint and have it checked"
 idempotency_key = "replan13:ScrewJoint arguments and checks"
@@ -21,15 +21,15 @@ target = "01M4STAPPJR0478N5B1E751RZY"
 
 [[acceptance]]
 text = "Given head, clearance, counterbore, policy, tap Cut/Form/Vendor, depth_available, host and screw_cost, when passed, then each is checked as in stdlib.md 4"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given tap=Vendor, when evaluated, then host and screw_cost apply (stdlib.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an omitted `into`, when evaluated, then its default applies (stdlib.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a violated check, when evaluated, then a diagnostic names the check (stdlib.md 3)"
