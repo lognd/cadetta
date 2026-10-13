@@ -2,6 +2,8 @@
 //!
 //! Specification: `docs/spec/language.md`.
 
+pub mod attrs;
+pub mod cite;
 pub mod deps;
 pub mod eval;
 pub mod kindcheck;
