@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:00:31Z"
+updated = "2026-10-13T13:05:47Z"
 persona = "design engineer"
 capability = "get lints for the D family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -37,9 +37,5 @@ bound = false
 
 [[acceptance]]
 text = "Given a cycle between members, when linted, then D003 is an error and cannot be waived; a component-level but not member-level loop is clean (language.md 4)"
-bound = false
-
-[[acceptance]]
-text = "Given each code, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
 bound = false
 +++
