@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T09:22:24Z"
+updated = "2026-10-13T09:24:18Z"
 persona = "design engineer"
 capability = "choose nominal, mid, mmc or lmc and see Q004 for unrepresentable values"
 outcome_text = "emitters decide nothing and never round silently"
@@ -29,7 +29,7 @@ target = "01M4SPWSABPXKK62B5V0SMJ8FD"
 
 [[acceptance]]
 text = 'Given `point = "mid"`, when resolved, then the midpoint of the limits is selected'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a rational not representable at declared precision, when converted, then Q004 is returned with the error"
