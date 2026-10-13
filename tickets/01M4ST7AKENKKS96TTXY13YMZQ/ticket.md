@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a part lacking the parameter, when rolled up without `?`, then an error; with `sum?(self, mass)` the missing parts are listed in the result note (language.md 3.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given parameterized components with defaults, when instantiated, then optional arguments apply and enum arguments may be bare variants (language.md 3.1)"
