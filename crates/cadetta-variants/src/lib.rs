@@ -3,3 +3,4 @@
 //! Specification: `docs/spec/ir.md`.
 
 pub mod interface;
+pub mod lifecycle;

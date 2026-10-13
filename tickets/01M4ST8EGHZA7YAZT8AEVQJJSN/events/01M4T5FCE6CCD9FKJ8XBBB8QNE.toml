@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:18:44Z"
+digest = "5f089ac7cc72c739dead1a448512854000718525e02a1366d77fd4457887b6b5"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d717bd1d-0ef9-47e6-891f-f9c4b3d031a2 with nextest profile: default
+    Starting 1 test across 1 binary (7 tests skipped)
+        PASS [   0.006s] cadetta-variants lifecycle::tests::eol_without_alternate_is_l001_error_after_date
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 7 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-variants -E test(=lifecycle::tests::eol_without_alternate_is_l001_error_after_date)"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "fd5709577423ccd08619e9da1125c64039879773f98c9a14343f1ff7ba716381"
+at = "2026-10-13T08:18:44Z"
+actor = "lognd"
+rev = 1
