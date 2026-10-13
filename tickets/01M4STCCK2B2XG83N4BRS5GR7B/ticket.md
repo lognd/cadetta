@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T05:43:37Z"
+updated = "2026-10-13T06:04:57Z"
 persona = "design engineer"
 capability = "be warned about unsound alternates and unevaluated roots"
 idempotency_key = "replan13:Lints I001-I004 for interfaces and alternates"
@@ -25,5 +25,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a check that fails only under an approved alternate, when linted, then it is reported once as I002 (warning, configurable to error) on that alternate, while C001 and C002 are the primary's verdicts (language.md 3.2; lints.md 3 I)"
+bound = false
+
+[[acceptance]]
+text = "Given I004, when linted, then it fires only for roots of the package being checked, and an unused private parameterized component is U002 instead (lints.md I004; packages.md 3)"
 bound = false
 +++
