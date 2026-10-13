@@ -2,7 +2,8 @@
 id = "01M4STAP69F2SZMD1C8HBVSAZC"
 title = "Screw interface and Iso4762 family"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
