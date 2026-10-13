@@ -1,0 +1,16 @@
+kind = "create"
+title = "required_for and sync never discharged by equations"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "gate releases on real sync"
+idempotency_key = "replan14:ob-kinds"
+labels = ["creates:crates/cadetta-obligations/src/kinds.rs"]
+scope = ["crates/cadetta-obligations/src/kinds.rs"]
+acceptance = ["Given [obligations.kinds.sync] required_for, when set, then it gates sync and solver obligations; sw-equations emission alone never discharges a sync obligation (obligations.md 2.3; config-cli.md 2)"]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
