@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a path, when `cadetta impact PATH` runs, then every downstream node that goes stale or changes verdict is listed (obligations.md 5)", "Given a path with no dependents, when run, then the output says so (obligations.md 5)"]
+new = ["Given a path, when `cadetta impact PATH` runs, then every downstream node that goes stale or changes verdict is listed (obligations.md 5)", "Given a path with no dependents, when run, then the output says so (obligations.md 5)", "Given impact PATH, when run, then output validates against impact.json (config-cli.md 3)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
