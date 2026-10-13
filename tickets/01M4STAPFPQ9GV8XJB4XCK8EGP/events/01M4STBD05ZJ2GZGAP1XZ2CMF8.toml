@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given head, clearance, counterbore, policy, tap Cut/Form/Vendor, depth_available, host and screw_cost, when passed, then each is checked as in stdlib.md 4", "Given tap=Vendor, when evaluated, then host and screw_cost apply (stdlib.md 4)", "Given an omitted `into`, when evaluated, then its default applies (stdlib.md 4)", "Given a violated check, when evaluated, then a diagnostic names the check (stdlib.md 4)"]
+new = ["Given head, clearance, counterbore, policy, tap Cut/Form/Vendor, depth_available, host and screw_cost, when passed, then each is checked as in stdlib.md 4", "Given tap=Vendor, when evaluated, then host and screw_cost apply (stdlib.md 3)", "Given an omitted `into`, when evaluated, then its default applies (stdlib.md 3)", "Given a violated check, when evaluated, then a diagnostic names the check (stdlib.md 3)"]
+moved = [0, 0, 0, 0]
+at = "2026-10-13T05:04:19Z"
+actor = "lognd"
+rev = 1
