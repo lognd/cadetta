@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:44:26Z"
+updated = "2026-10-13T07:45:56Z"
 persona = "cadetta contributor"
 capability = "serialize the IR as cadetta.ir/1 JSON"
 outcome_text = "adapters and tools exchange a stable format"
@@ -25,7 +25,7 @@ target = "01M4SPWQH44JWFXZDNTGEBMMNX"
 
 [[acceptance]]
 text = 'Given a rational 127/5000, when serialized, then it is the string "127/5000" with den > 0 and reduced'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given any IR, when serialized, then no magnitude is a JSON float"
