@@ -2,7 +2,8 @@
 id = "01M4SPWS23PN7M3TKKW8SA8QRK"
 title = "Emit policy: tolerance point and Q004 precision"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
