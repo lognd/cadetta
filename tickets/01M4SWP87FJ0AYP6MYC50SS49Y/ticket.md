@@ -2,7 +2,8 @@
 id = "01M4SWP87FJ0AYP6MYC50SS49Y"
 title = "QuantityError with Q-code"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
