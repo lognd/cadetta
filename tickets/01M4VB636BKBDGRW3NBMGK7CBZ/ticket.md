@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:36:04Z"
+updated = "2026-10-13T22:36:05Z"
 persona = "design engineer"
 capability = "place parts with a verb that does not suggest contact and place arrays without index plumbing"
 outcome_text = "placements read the way parts sit"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given D.offset(p) with p typed on D as the first op, when evaluated, then it equals D.offset(x = p.x, y = p.y[, z]) with Members whose expression is the point; p on another datum, or the point form after another op, is G001 (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given place feet.top at base.underside.offset(base.foot_sites), when evaluated, then instance i is placed at point i; mismatched counts, an anchor with no array operand, or an array anchor on an indexed target is G004 (geometry.md 4)"
