@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:10Z"
-updated = "2026-10-13T05:44:10Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "know what a sync will do"
 idempotency_key = "replan14:ad-classify"
 labels = ["creates:crates/cadetta-adapter/src/classify.rs"]
 scope = ["crates/cadetta-adapter/src/classify.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 
 [[acceptance]]
 text = "Given base (lock), design and CAD values, when classified, then each of push, skip, converged, drift (R001) and conflict follows the adapters.md 2 table row for row"
