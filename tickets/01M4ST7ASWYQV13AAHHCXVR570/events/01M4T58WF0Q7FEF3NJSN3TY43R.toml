@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:15:11Z"
+digest = "d2f4f4c4a6438bdffe4c164d611b41577748f521804a3ee25b4f26833116e1c5"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 16bb56f2-c1bf-437a-9fc7-0973d1ae5945 with nextest profile: default
+    Starting 6 tests across 20 binaries (435 tests skipped)
+        PASS [   0.008s] cadetta-sema eval::tests::round_to_inexact_near_tie_is_q010
+        PASS [   0.008s] cadetta-sema eval::tests::rounding_to_count_and_count_of_array
+        PASS [   0.008s] cadetta-sema eval::tests::trig_exact_special_angles_and_inexact
+        PASS [   0.009s] cadetta-sema eval::tests::fmt_renders_by_display_rules
+        PASS [   0.009s] cadetta-sema eval::tests::min_max_abs_follow_intervals
+        PASS [   0.010s] cadetta-sema eval::tests::sqrt_exact_inexact_and_dimension
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 6 tests run: 6 passed, 435 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=eval::tests::min_max_abs_follow_intervals) | test(=eval::tests::sqrt_exact_inexact_and_dimension) | test(=eval::tests::trig_exact_special_angles_and_inexact) | test(=eval::tests::rounding_to_count_and_count_of_array) | test(=eval::tests::round_to_inexact_near_tie_is_q010) | test(=eval::tests::fmt_renders_by_display_rules) | test(=func::tests::template_splits_placeholders_and_escapes)'"
+size = 976
+status = "measured"
+test_count = 6
+tests_digest = "464cea3a7f8997b4f186604e7480614f5734510b04c268da0fe272652ff981b1"
+at = "2026-10-13T08:15:11Z"
+actor = "lognd"
+rev = 1
