@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:46:22Z"
 persona = "design engineer"
 capability = "get lints for the N family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -28,10 +28,6 @@ text = "Given component `my_axle`, when linted, then N001 is reported"
 bound = false
 
 [[acceptance]]
-text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
-bound = false
-
-[[acceptance]]
 text = "Given a name containing `__`, when linted, then N005 is an error and cannot be waived (lints.md N)"
 bound = false
 
@@ -41,5 +37,9 @@ bound = false
 
 [[acceptance]]
 text = "Given `Iso4762M5` and `M2_5`, when linted, then N001 does not fire (language.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
 bound = false
 +++
