@@ -1,0 +1,10 @@
+kind = "create"
+title = "Packages, modules and visibility (packages.md)"
+type = "epic"
+category = "todo"
+priority = "medium"
+idempotency_key = "replan15:packages-epic"
+body = "Rust-style packages, file-tree modules, visibility, use resolution, renames and cross-package obligations. Spec: docs/spec/packages.md; decision: docs/decisions/2026-10-13-packages-and-modules.md. Replaces the namespace model."
+at = "2026-10-13T06:03:28Z"
+actor = "lognd"
+rev = 1
