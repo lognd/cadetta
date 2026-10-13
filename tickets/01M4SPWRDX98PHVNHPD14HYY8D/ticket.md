@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:16:40Z"
+updated = "2026-10-13T13:16:41Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver that suppresses nothing, when linted, then W004"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver path glob like `acme.parts::Bearing608.*`, when matched, then it suppresses one code on the matching paths (lints.md 2)"
