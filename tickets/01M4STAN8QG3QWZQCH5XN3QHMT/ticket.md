@@ -2,7 +2,8 @@
 id = "01M4STAN8QG3QWZQCH5XN3QHMT"
 title = "cadetta solve"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
