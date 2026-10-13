@@ -2,12 +2,12 @@
 id = "01M4V5MP7JHJVCCP08F6NZV18E"
 title = "csv.md: read behaviour for unknown names and quoted hash fields unspecified"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:40:53Z"
-updated = "2026-10-13T18:16:01Z"
+updated = "2026-10-13T18:16:02Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/lints.md", "docs/spec/adapters.md", "docs/spec/config-cli.md", "docs/spec/README.md", "crates/cadetta-lint/src/engine.rs", "tests/conformance/emitters/csv/**", "tests/conformance/emitters/json/**"]
 
 [[acceptance]]
