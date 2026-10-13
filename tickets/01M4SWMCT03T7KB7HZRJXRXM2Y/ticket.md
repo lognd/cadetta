@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T15:13:59Z"
+updated = "2026-10-13T15:55:29Z"
 persona = "design engineer"
 capability = "adopt without re-typing"
 idempotency_key = "replan14:ad-imp-acc"
 labels = ["creates:crates/cadetta-adapter/src/import/accept.rs"]
-scope = ["crates/cadetta-adapter/src/import/accept.rs"]
+scope = ["crates/cadetta-adapter/src/import/accept.rs", "crates/cadetta-adapter/src/import/mod.rs"]
 
 [[links]]
 kind = "blocked-by"
