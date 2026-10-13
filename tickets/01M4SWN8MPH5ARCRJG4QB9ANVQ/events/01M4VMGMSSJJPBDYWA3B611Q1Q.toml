@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:59:52Z"
+digest = "6874ffd424564e6891fd109193b8b458b3c6e3bda1b4ec6fd5065d7a2b1d192e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 54.51s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7c7ea978-96e1-4859-a16e-4db898ce3aa5 with nextest profile: default
+    Starting 1 test across 1 binary (3 tests skipped)
+        PASS [   0.012s] cadetta::lsp capabilities_and_exit_codes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 3 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test lsp capabilities_and_exit_codes"
+size = 776
+status = "measured"
+test_count = 1
+tests_digest = "82d52800083be3d7c43bb9cfc83f4b740b646d078a1aa342d31fa9eec7eecba9"
+at = "2026-10-13T21:59:52Z"
+actor = "lognd"
+rev = 1
