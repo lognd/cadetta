@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:17Z"
 persona = "design engineer"
 capability = "see every claim as a node with typed edges"
 idempotency_key = "replan13:Obligation graph nodes, edges and states"
 labels = ["creates:crates/cadetta-obligations/src/graph.rs"]
 scope = ["crates/cadetta-obligations/src/graph.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8EPKBWRWHF51Y5NV3VK0"
 
 [[acceptance]]
 text = "Given a lowered IR, when the graph is built, then edges derives, cites, implements, instantiates, evaluates, solves, binds, realizes, attests and waives exist as in the obligations.md 1 table"
