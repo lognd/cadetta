@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T14:11:29Z"
+updated = "2026-10-13T14:18:21Z"
 persona = "design engineer"
 capability = "bind every instance safely"
 idempotency_key = "replan14:ad-loc"
 labels = ["creates:crates/cadetta-adapter/src/locator.rs"]
-scope = ["crates/cadetta-adapter/src/locator.rs", "crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/lib.rs"]
+scope = ["crates/cadetta-adapter/src/locator.rs", "crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/lib.rs", "docs/spec/adapters.md"]
 
 [[links]]
 kind = "blocked-by"
