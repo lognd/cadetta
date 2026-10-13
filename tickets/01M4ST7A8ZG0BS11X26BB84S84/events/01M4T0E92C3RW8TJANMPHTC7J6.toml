@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:50:42Z"
+digest = "859678936f621fcd1d4a5474f615317864e02f07b94c594a0a9dbed105a18f90"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.64s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 591dbb91-76c7-49a4-a627-8a4088b0a8a5 with nextest profile: default
+    Starting 1 test across 1 binary (42 tests skipped)
+        PASS [   0.006s] cadetta-syntax parser::items::tests::component_implements_interface_lists_and_citation
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 42 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'package(=cadetta-syntax) & (test(=parser::items::tests::component_implements_interface_lists_and_citation))'"
+size = 629
+status = "measured"
+test_count = 1
+tests_digest = "72290a46bd19b32a25dd21d8e6afa66c7dcc3a9b1e730da33b7bf2e9805fc2b8"
+at = "2026-10-13T06:50:42Z"
+actor = "lognd"
+rev = 1

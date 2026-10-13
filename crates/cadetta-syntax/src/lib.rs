@@ -4,6 +4,7 @@
 
 pub mod ast;
 pub mod expr;
+pub mod format;
 pub mod lexer;
 pub mod parser;
 pub mod span;

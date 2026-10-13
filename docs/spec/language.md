@@ -489,6 +489,24 @@ Default precedence, highest first: the enclosing component's
 - Inside a component, a bare name is its own member or parameter; a
   component's arguments are in scope; `Other.member` resolves a
   component; in an assembly, `part.member` resolves an instance.
+- Reference resolution (decided in the resolver, `cadetta-sema`
+  `resolve.rs`): a reference is a path plus `.field` and `[index]`
+  steps. If it contains `::`, the part before the first `::` is a
+  package (`acme.rover`, `std`), `package`, `self`, `super`, or a local
+  name (an enum or module alias); the `::` names then descend modules to
+  an item (a module's parent may have no file), and an enum item takes
+  one variant. Otherwise the first name is looked up as a local binding,
+  then the component's own argument or member or `part`, then module
+  items, explicit `use`, globs and the prelude. A component argument is
+  not a member: `Type.argument` is E011. `Type.member` is checked for
+  parameter dependence through the member's definition and the members
+  it reads (including `part` arguments); the first parameter in
+  declaration order is named in E011. A bare enum variant is accepted
+  only as an argument whose declared parameter type is that enum, and
+  only when the name is not otherwise in scope. An index in a reference
+  must be an integer literal, because a canonical path carries only
+  integers (ir.md 2); other indexes are for the evaluator. Visibility
+  (E016, E017) is checked by the lint family, not by resolution.
 - Reference cycles are D003, found between members, not components: a
   model's argument may come from a joint that reads another member of
   the same model (`part mount: Mount(hole = screws.clearance_hole)`
@@ -588,6 +606,30 @@ rule is in obligations.md 4.
 `cadetta fmt`: two-space indent, one statement per line, aligned `=`,
 trailing attributes and comments, units and literal forms preserved.
 Formatting never changes the IR digest.
+
+Formatter decisions (cadetta-syntax `format`):
+
+- A file with any syntax error is refused, never formatted away. Items
+  the parser skips with E001 (`process`, `table`, `enum`, `fn`, `solver`,
+  `waive`, `unit`, `kind` items; `datum`, `place`, `solver` members) are
+  therefore not formattable yet, and neither is the golden corpus.
+- LF newlines, one final newline, no line wrapping: multi-line
+  expressions collapse to one line (`{ let a = 1; a + b }`,
+  `match s { A => 1, _ => 2 }`). Blank lines survive, at most one in a row,
+  none after `{`.
+- Consecutive single-line statements form an alignment group (broken by a
+  blank line, own-line comment, doc, leading attribute or a block). In a
+  group `=` is aligned, then trailing attributes (`#[a, b]`, merged) and
+  trailing `//` comments are aligned into columns, two spaces apart.
+- Own-line comments stay before the statement they precede. A comment
+  inside a statement is hoisted above it. A same-line trailing comment
+  stays trailing.
+- Numbers, quantity literals and citations are copied from the source
+  text; strings are re-quoted with the two escapes.
+- The output is re-parsed and its tree (spans aside) must equal the
+  input's, otherwise the formatter returns an error and emits nothing.
+  This is the guarantee behind "never changes the IR digest".
+- `is_formatted` backs `cadetta fmt --check`: it reports and changes nothing.
 
 ## Open questions
 
