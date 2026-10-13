@@ -1,0 +1,13 @@
+kind = "create"
+title = "Workspace bootstrap"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:Cargo.toml"]
+scope = ["Cargo.toml"]
+body = """
+Outcome: a Cargo workspace with all crates, CI and frob check gates so every other epic can land code.
+Success metric: cargo build and cargo test pass on an empty workspace in CI, and frob check exits 0 on main."""
+at = "2026-10-13T04:02:19Z"
+actor = "lognd"
+rev = 1
