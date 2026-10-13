@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an input or output whose kind differs from the declaration, when served, then a protocol error naming the output is returned (bindings.md 3.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the solver decorator, when outputs are written, then they are decimal strings rounded to significant digits (default 6, per-output override), never repr(float); a wrong kind is a protocol error naming the output (bindings.md 3.3)"
