@@ -481,3 +481,128 @@ reason = "angle/count pi handling differs from spec"
 fixture = "quantities/c002-inexact-boundary"
 ticket = "~G5NT80Z"
 reason = "C002 not raised for inexact boundary"
+
+[[gap]]
+fixture = "stdlib/check-aligned"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-aligned-nut-floating"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-depth-ok-drill"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-depth-ok-vendor"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-grip-positive"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-not-bottomed"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-count-with-pattern"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-joint-per-pattern"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-vendor-needs-depth"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/g004-joint-pattern-count"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/g005-float-unlocated"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/vendor-tap-members-absent"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/commercial-misspelling-not-a-member"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/e002-module-not-shipped"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/f001-j-outside-it5-7"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-optional-members"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-wrong-kind"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/materials-density-units"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/materials-tap-class"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/q003-sourced-named-kind"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/screw-price-not-in-iso4762"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/d003-joint-reads-itself"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/e016-joint-priv-intermediate"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/m003-hole-fit-side"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/policy-iso-default-silent"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
