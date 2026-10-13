@@ -2,7 +2,8 @@
 id = "01M4SWFXC2K6D3S93F3ER0GZZA"
 title = "Placement tree: place A on B, composition, G002 and G006"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
