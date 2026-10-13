@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:05:12Z"
+updated = "2026-10-13T05:05:13Z"
 persona = "design engineer"
 capability = "evaluate every parameter to a quantity"
 outcome_text = "derived values are exact and usable by lints and emitters"
@@ -34,6 +34,10 @@ target = "01M4ST7AB8627SAJ7MGB1GSRH6"
 [[links]]
 kind = "blocks"
 target = "01M4ST7ADMK0S7SRW6ETCS8ETC"
+
+[[links]]
+kind = "blocks"
+target = "01M4ST7AFZGCN52434BQJRT5MM"
 
 [[acceptance]]
 text = "Given `round_to(x, step)` on exact input, when evaluated, then the result is exact"
