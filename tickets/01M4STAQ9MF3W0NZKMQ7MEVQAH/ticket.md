@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:21:53Z"
+updated = "2026-10-13T16:24:59Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for language"
 labels = ["creates:tests/conformance/language/**"]
-scope = ["tests/conformance/language/**"]
+scope = ["tests/conformance/language/**", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
