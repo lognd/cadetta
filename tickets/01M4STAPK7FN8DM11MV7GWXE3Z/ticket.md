@@ -2,7 +2,8 @@
 id = "01M4STAPK7FN8DM11MV7GWXE3Z"
 title = "std.retaining (Din471, Din472)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
