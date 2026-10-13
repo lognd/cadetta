@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T13:34:09Z"
+updated = "2026-10-13T13:34:12Z"
 persona = "design engineer"
 capability = "preview a part swap before editing"
 idempotency_key = "replan13:impact --swap: verdict, changed values, flips and suggested edit"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the outcome, when printed, then section 1 verdict is ok, ok with warnings or blocked, and a violated require cannot be waived (obligations.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given changed values, when printed, then direct (interface members) come before derived, with old and new values, a `let` included (obligations.md 5.1)"
