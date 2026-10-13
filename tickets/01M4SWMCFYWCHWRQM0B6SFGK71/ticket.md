@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:14Z"
 persona = "design engineer"
 capability = "drive a live CAD session"
 idempotency_key = "replan14:ad-session"
 labels = ["creates:crates/cadetta-adapter/src/session.rs"]
 scope = ["crates/cadetta-adapter/src/session.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 
 [[acceptance]]
 text = "Given a drive adapter, when sync runs, then the host calls open, push, save per [[adapter]] save, close and shutdown in order (adapters.md 2.2, 5)"
