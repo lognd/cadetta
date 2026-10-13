@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T09:00:32Z"
+updated = "2026-10-13T09:00:37Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -77,7 +77,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a fixed code with a severity override, when loaded, then the override is ignored"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `waive M001 on acme.rover::Axle.chamfer`, when linted, then M001 on that path is suppressed"
