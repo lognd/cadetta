@@ -51,7 +51,7 @@ fn rank(v: Vis) -> u8 {
     }
 }
 
-fn member_name(m: &Member) -> Option<&str> {
+pub(crate) fn member_name(m: &Member) -> Option<&str> {
     match &m.kind {
         MemberKind::Param(p) => Some(&p.name.name),
         MemberKind::Let(l) => Some(&l.name.name),
@@ -347,7 +347,7 @@ fn decl_ctx(id: &CanonPath) -> Ctx {
     }
 }
 
-fn item_name(it: &Item) -> Option<&str> {
+pub(crate) fn item_name(it: &Item) -> Option<&str> {
     let n: &Ident = match &it.kind {
         ItemKind::Component(c) => &c.name,
         ItemKind::Interface(i) => &i.name,

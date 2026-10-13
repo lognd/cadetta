@@ -226,7 +226,7 @@ cannot be resolved or evaluated.
 | N001 | non-canonical-case | warning | | Name breaks the case canon: package `lower.dotted`, module `snake_case`, type `PascalCase`, rest `snake_case` (language.md 4). |
 | N002 | redundant-prefix | warning | | Member repeats its component's name (`Axle.axle_length`). |
 | N003 | unit-in-name | warning | | Name encodes a unit (`diameter_mm`). |
-| N004 | renamed-reference | warning | | Reference uses a `was` path. |
+| N004 | renamed-reference | warning | | Reference uses a `was` path, including one naming another module, file or package (packages.md 5). |
 | N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
 | N006 | type-read-beside-instance | warning | | `Type.member` in an assembly that has a `part` of that type; suggests the instance (language.md 3.1). |
 
