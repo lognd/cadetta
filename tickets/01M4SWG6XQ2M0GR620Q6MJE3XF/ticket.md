@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:55Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "screw here and prove alignment"
 idempotency_key = "replan14:geo-screwpos"
-labels = ["creates:std/fasteners/screwjoint_position.cdt"]
-scope = ["std/fasteners/screwjoint_position.cdt"]
+labels = ["creates:std/src/fasteners/screwjoint_position.cdt"]
+scope = ["std/src/fasteners/screwjoint_position.cdt"]
 
 [[links]]
 kind = "blocked-by"
