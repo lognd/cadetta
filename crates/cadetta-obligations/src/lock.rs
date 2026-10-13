@@ -808,20 +808,35 @@ impl Lock {
         Self::load_with(|| std::fs::read_to_string(path))
     }
 
-    /// Write the canonical bytes to `path` atomically, skipping the write when unchanged.
-    /// Returns whether the file was written.
-    pub fn save(&self, path: &Path) -> Result<bool, LockError> {
+    /// Write the canonical bytes through injected `read` (current bytes) and `write` closures,
+    /// skipping the write when unchanged. Returns whether `write` ran.
+    pub fn save_with(
+        &self,
+        read: impl FnOnce() -> io::Result<String>,
+        write: impl FnOnce(&str) -> io::Result<()>,
+    ) -> Result<bool, LockError> {
         let bytes = self.render();
-        if std::fs::read_to_string(path).is_ok_and(|old| old == bytes) {
-            debug!(path = %path.display(), "cadetta.lock unchanged; not written");
+        if read().is_ok_and(|old| old == bytes) {
+            debug!("cadetta.lock unchanged; not written");
             return Ok(false);
         }
-        let mut tmp = path.as_os_str().to_owned();
-        tmp.push(".tmp");
-        std::fs::write(&tmp, bytes.as_bytes())?;
-        std::fs::rename(&tmp, path)?;
-        debug!(path = %path.display(), records = self.len(), "cadetta.lock written");
+        write(&bytes)?;
+        debug!(records = self.len(), "cadetta.lock written");
         Ok(true)
+    }
+
+    /// Write the canonical bytes to `path` atomically (temp file then rename), skipping the
+    /// write when unchanged. Returns whether the file was written.
+    pub fn save(&self, path: &Path) -> Result<bool, LockError> {
+        self.save_with(
+            || std::fs::read_to_string(path),
+            |bytes| {
+                let mut tmp = path.as_os_str().to_owned();
+                tmp.push(".tmp");
+                std::fs::write(&tmp, bytes.as_bytes())?;
+                std::fs::rename(&tmp, path)
+            },
+        )
     }
 }
 
@@ -1024,17 +1039,28 @@ mod tests {
         assert!(Lock::load_with(|| Err(io::Error::from(io::ErrorKind::PermissionDenied))).is_err());
     }
 
-    // frob:tests crates/cadetta-obligations/src/lock.rs::Lock.save
+    // frob:tests crates/cadetta-obligations/src/lock.rs::Lock.save_with
     #[test]
     fn save_is_byte_exact_and_skips_unchanged() {
-        let dir = std::env::temp_dir().join(format!("cadetta-lock-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        let p = dir.join("cadetta.lock");
-        let _ = std::fs::remove_file(&p);
-        assert!(sample().save(&p).unwrap());
-        assert!(!sample().save(&p).unwrap());
-        assert_eq!(std::fs::read_to_string(&p).unwrap(), sample().render());
-        assert_eq!(Lock::load(&p).unwrap(), sample());
-        let _ = std::fs::remove_dir_all(&dir);
+        let mut disk = String::new();
+        let lock = sample();
+        assert!(
+            lock.save_with(
+                || Ok(disk.clone()),
+                |b| {
+                    disk = b.to_owned();
+                    Ok(())
+                }
+            )
+            .unwrap()
+        );
+        assert_eq!(disk, lock.render());
+        let d2 = disk.clone();
+        assert!(
+            !lock
+                .save_with(|| Ok(d2.clone()), |_| panic!("must not write"))
+                .unwrap()
+        );
+        assert_eq!(Lock::parse(&disk).unwrap(), lock);
     }
 }
