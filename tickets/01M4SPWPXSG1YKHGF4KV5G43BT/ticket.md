@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:32:44Z"
+updated = "2026-10-13T06:33:02Z"
 persona = "design engineer"
 capability = "resolve hole and shaft classes like H7, p6, g6 for any size in range"
 outcome_text = "fits are values, not comments"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given class `Z99`, when resolved, then F001 is signalled"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given uppercase and lowercase letters, when resolved, then they are hole and shaft respectively"
