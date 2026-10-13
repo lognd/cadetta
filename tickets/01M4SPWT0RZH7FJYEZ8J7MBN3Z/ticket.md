@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T07:06:06Z"
+updated = "2026-10-13T07:07:59Z"
 persona = "design engineer"
 capability = "run `cadetta init` and `cadetta fmt [--check]`"
 outcome_text = "I can start a project and keep layout canonical"
 labels = ["creates:crates/cadetta-cli/src/cmd/{init,fmt}.rs"]
-scope = ["crates/cadetta-cli/src/cmd/{init,fmt}.rs"]
+scope = ["crates/cadetta-cli/src/cmd/{init,fmt}.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md"]
 
 [[acceptance]]
 text = "Given an existing project, when init repeats, then nothing is overwritten"
