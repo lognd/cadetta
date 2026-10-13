@@ -62,6 +62,7 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/swap.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
   may exec at "crates/cadetta-cli/src/cmd/update.rs";
 }
