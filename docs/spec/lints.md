@@ -393,6 +393,7 @@ come from the adapter's responses and are passed through unchanged
 | R011 | component-mismatch | warning | | The file instantiated in an assembly is not the file bound to the slot's primary (for example after a manual swap). |
 | R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
 | R013 | name-collision | error | yes | Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md). |
+| R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
 
 ### U, W
 

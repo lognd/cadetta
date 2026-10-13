@@ -1,3 +1,4 @@
 model Part {
+  note: Text = "anodize"
   width = 10mm
 }
