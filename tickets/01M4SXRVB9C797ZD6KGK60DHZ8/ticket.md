@@ -2,7 +2,8 @@
 id = "01M4SXRVB9C797ZD6KGK60DHZ8"
 title = "Lint U002 unused private item and I004 scope"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
