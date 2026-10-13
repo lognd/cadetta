@@ -61,5 +61,5 @@ bound = true
 
 [[acceptance]]
 text = "Given Project, when built, then it holds package {name, version}, a sorted modules[] of every module path and dependencies[] (name, version, source, digest), and items in src/lib.cdt sit at the package root (ir.md 3, 4; packages.md 2)"
-bound = false
+bound = true
 +++
