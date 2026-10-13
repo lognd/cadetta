@@ -8,12 +8,12 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:13Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "record where parts come from"
 idempotency_key = "replan14:sd-sourced"
-labels = ["creates:std/commercial.cdt"]
-scope = ["std/commercial.cdt"]
+labels = ["creates:std/src/commercial.cdt"]
+scope = ["std/src/commercial.cdt"]
 
 [[links]]
 kind = "blocked-by"

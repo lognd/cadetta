@@ -1,0 +1,7 @@
+kind = "field"
+field = "labels"
+old = ["creates:std/commercial.cdt"]
+new = ["creates:std/src/commercial.cdt"]
+at = "2026-10-13T06:05:15Z"
+actor = "lognd"
+rev = 1
