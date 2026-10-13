@@ -120,6 +120,8 @@ node solver_host : trusted {
   clearance Internal;
   owns "crates/cadetta-solve/**";
   may exec at "crates/cadetta-solve/src/**";
+  may fs.read at "crates/cadetta-solve/src/**";
+  may fs.write at "crates/cadetta-solve/src/**";
 }
 
 /// A user's solver script (Python, MATLAB, ...), outside our code; its outputs are untrusted.
