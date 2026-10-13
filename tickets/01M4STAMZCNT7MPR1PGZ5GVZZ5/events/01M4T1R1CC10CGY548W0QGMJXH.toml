@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T07:13:33Z"
+digest = "168e03b152ed4a1253b96c72b2fe7c764ec5faa058628265eeebd5850684a8cf"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c02ceb7e-635a-4c15-aa34-f4d5b28f6c02 with nextest profile: default
+    Starting 1 test across 16 binaries (282 tests skipped)
+        PASS [   0.009s] cadetta-solve protocol::tests::malformed_or_wrong_version_is_typed_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 282 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=protocol::tests::malformed_or_wrong_version_is_typed_error)"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "9bd11af5ce878879c4ad8d0e44bc0052ae216594a5da097ed174bc3dac9671cc"
+at = "2026-10-13T07:13:33Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a size over 30 mm, when IT1..IT4 are looked up, then widths match ISO 286-1 table 1"]
+moved = []
+at = "2026-10-13T07:12:05Z"
+actor = "lognd"
+rev = 1
