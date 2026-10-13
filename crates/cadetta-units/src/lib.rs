@@ -4,6 +4,7 @@
 
 pub mod affine;
 pub mod dimension;
+pub mod inexact;
 pub mod kind;
 pub mod rational;
 pub mod tolerance;
@@ -11,6 +12,7 @@ pub mod units;
 
 pub use affine::{AffineError, TempClass, Temperature, TemperatureDelta, TemperatureUnit};
 pub use dimension::{Dim, Dimension, DimensionError, SI_BASE_COUNT};
+pub use inexact::{InexactError, InexactValue, RootOp, Value};
 pub use kind::{Assigned, KindError, KindTable, KindWarning, KindedDim, Rounding};
 pub use rational::{Magnitude, MagnitudeError, Rational, Sum};
 pub use tolerance::{Affine, InexactInterval, ToleranceError, Toleranced, VarId};
