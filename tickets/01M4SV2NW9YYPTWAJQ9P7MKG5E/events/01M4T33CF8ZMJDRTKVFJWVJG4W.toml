@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T07:37:14Z"
+digest = "1428eb0120df9c6d14821981ff2f6e7748e1c940b22b5e1928e1833ee6c306f8"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 3 items
+
+bindings/python/tests/test_solve.py ...                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3917181-0.xml --------------
+============================== 3 passed in 0.09s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_solve.py::test_outputs_are_rounded_decimal_strings_not_repr_float bindings/python/tests/test_solve.py::test_inexact_and_large_values_have_no_exponent bindings/python/tests/test_solve.py::test_output_kind_mismatch_is_protocol_error_naming_output"
+size = 467
+status = "measured"
+test_count = 3
+tests_digest = "014972cbfeaa735a70a82b728520ac7bc521dcbeb0672433eb304f3e176bb971"
+at = "2026-10-13T07:37:14Z"
+actor = "lognd"
+rev = 1

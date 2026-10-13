@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T07:37:13Z"
+updated = "2026-10-13T07:37:14Z"
 persona = "solver author"
 capability = "write a solver as a decorated Python function"
 outcome_text = "I speak cadetta.solve/1 without protocol code"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the solver decorator, when outputs are written, then they are decimal strings rounded to significant digits (default 6, per-output override), never repr(float); a wrong kind is a protocol error naming the output (bindings.md 3.3)"
-bound = false
+bound = true
 +++
 
 Supersedes the dropped story ~3G45QS8 (Python solver helper package, helpers/python/**); that ticket stays dropped and is not reopened.
