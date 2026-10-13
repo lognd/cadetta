@@ -6,6 +6,7 @@ pub mod bindings;
 pub mod builtin;
 pub mod classify;
 pub mod import;
+pub mod locator;
 pub mod policy;
 pub mod read_units;
 pub mod rpc;
