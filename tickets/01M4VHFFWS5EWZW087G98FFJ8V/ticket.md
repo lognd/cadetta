@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:07:45Z"
-updated = "2026-10-13T21:21:19Z"
+updated = "2026-10-13T21:21:20Z"
 persona = "design engineer"
 capability = "edit .cdt files with highlighting and inline diagnostics in my editor"
 outcome_text = "cadetta feels like a real language from day one"
@@ -34,7 +34,7 @@ bound = true
 
 [[acceptance]]
 text = "Given editors/README.md, when read, then it indexes the editors, explains that cadetta lsp is deferred (~QB9ANVQ), and recommends diagnostics bridges for now: the VS Code task, nvim-lint or efm-langserver for Neovim and Helix, ALE for Vim, flymake for Emacs, all driving cadetta check --format short; the root README links it"
-bound = false
+bound = true
 +++
 
 Grammar facts (spec draft 1.5): reserved keywords are language.md 2 (cadetta_syntax::lexer::KEYWORDS); contextual keywords `at` (after a place target), `script` (solver body), `position` (tolerance bracket). Comments `//`, doc comments `///`; attributes `#[...]` and `#![...]`; strings with \" and \\ escapes; citations `@name`, `@a::b`, `@"note"`, optional `:"locator"`; pseudo-citations measured, assumed, estimate; paths with `::`; quantity literals per quantities.md 2 (number, optional fraction `3/4`, unit suffix: `12mm`, `5in`, `0.5mm`, `60m^3/h`); tolerance brackets `[+-0.1mm]`, `[+0.018mm -0]`, `[position 0.2mm]`; ISO 286 classes (`H7`, `p6`, `js6`) after an expression; the built-in types of language.md 4 prelude (Bool Text Count Ratio Point2 Point3 Vec2 Vec3 Datum Table) and kinds of quantities.md; builtin functions of language.md 3.8; cite types (standard datasheet drawing catalog book article web quote document). Diagnostics: `cadetta check --format short` prints `file:line:col: severity[CODE]: message` (lints.md 1.2). Python in the generator follows house rules (module logger, no print except the tool's own output via logging/stdout handler as the repo's Python does, pydantic models for the grammar file, typani Result for fallible loading); run it with uv. Marketplace publishing is out of scope (owner's account); file a ticket for it and for a tree-sitter grammar (Helix, Zed, Neovim treesitter highlighting) instead of building them.
