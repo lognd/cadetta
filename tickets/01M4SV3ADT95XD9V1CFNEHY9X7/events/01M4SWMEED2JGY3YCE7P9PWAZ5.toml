@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a licensed Windows machine, when the cadetta sync loop runs on the pilot r3-05 part, then emit, read, push, regen round trip passes and the result is recorded in adapters/solidworks/SMOKE.md (adapters.md 6)"]
+new = ["Given a licensed Windows machine, when the cadetta sync loop runs on the pilot r3-05 part, then emit, read, push, regen round trip passes and the result is recorded in adapters/solidworks/SMOKE.md (adapters.md 6)", "Given a release smoke test, when run on Windows, then attach, sync, save and restore are exercised against a real SOLIDWORKS (adapters.md 2)"]
+moved = [1]
+at = "2026-10-13T05:44:13Z"
+actor = "lognd"
+rev = 1
