@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T06:50:46Z"
+digest = "c80c863fc1b616bfbf923a7edc7d71af51c608422d9610db663e66842ab66875"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ece5800a-411a-4e5a-9883-3290f580a48b with nextest profile: default
+    Starting 3 tests across 1 binary (40 tests skipped)
+        PASS [   0.007s] cadetta-syntax parser::items::tests::solver_item_and_member
+        PASS [   0.008s] cadetta-syntax parser::items::tests::waive_forms
+        PASS [   0.007s] cadetta-syntax parser::items::tests::declarations_enum_fn_unit_kind_cite
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 3 tests run: 3 passed, 40 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'package(=cadetta-syntax) & (test(=parser::items::tests::solver_item_and_member) | test(=parser::items::tests::waive_forms) | test(=parser::items::tests::declarations_enum_fn_unit_kind_cite))'"
+size = 722
+status = "measured"
+test_count = 3
+tests_digest = "dd5af4782f80ac594ad700ea1abfb41203b1f0c181572eb125cb20cec59b55ce"
+at = "2026-10-13T06:50:46Z"
+actor = "lognd"
+rev = 1

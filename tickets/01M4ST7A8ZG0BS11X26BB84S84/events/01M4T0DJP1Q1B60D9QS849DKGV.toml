@@ -1,0 +1,70 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:50:16Z"
+digest = "4e29be9bcb387cf36166dc4963d0417292e2e013501ab64a6f4f04ebc0fc9422"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cacfdfa2-06fa-4bd9-b5a4-c1fa0c7b43ff with nextest profile: default
+    Starting 45 tests across 4 binaries (110 tests skipped)
+        PASS [   0.014s] cadetta project::tests::member_and_path_dependency_without_config_is_e005
+        PASS [   0.021s] cadetta-syntax expr::tests::bracket_is_index_unless_it_starts_with_sign
+        PASS [   0.021s] cadetta project::tests::discovery_walks_up_skips_tableless_and_fails_when_none
+        PASS [   0.022s] cadetta-syntax expr::tests::multiplication_binds_tighter_than_addition
+        PASS [   0.023s] cadetta-syntax expr::tests::calls_and_lookups_parse
+        PASS [   0.024s] cadetta-syntax expr::tests::chained_comparison_and_satisfies
+        PASS [   0.011s] cadetta-syntax expr::tests::precedence_ladder_postfix_to_comparison
+        PASS [   0.029s] cadetta project::tests::member_scope_unless_at_workspace_root
+        PASS [   0.032s] cadetta project::tests::duplicate_component_is_e003_with_both_spans
+        PASS [   0.011s] cadetta-syntax expr::tests::rename_and_citation_with_locator_recorded
+        PASS [   0.010s] cadetta-syntax expr::tests::tolerance_and_iso_class_attach_to_operand
+        PASS [   0.008s] cadetta-syntax lexer::tests::exponent_compound_unit_and_percent_are_single_quantities
+        PASS [   0.032s] cadetta-syntax expr::tests::member_and_scope_attributes_attach
+        PASS [   0.031s] cadetta-syntax expr::tests::if_match_and_block_are_expressions
+        PASS [   0.010s] cadetta-syntax lexer::tests::compound_literals_are_one_token
+        PASS [   0.008s] cadetta-syntax lexer::tests::fractions_need_no_whitespace_and_a_unit
+        PASS [   0.034s] cadetta project::tests::modules_sorted_by_path
+        PASS [   0.013s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+        PASS [   0.011s] cadetta-syntax lexer::tests::line_and_doc_comments_are_distinguished
+        PASS [   0.007s] cadetta-syntax parser::tests::errors_recover_and_parsing_continues
+        PASS [   0.010s] cadetta-syntax lexer::tests::strings_attributes_and_punctuation
+        PASS [   0.012s] cadetta-syntax lexer::tests::split_literal_is_q007_with_fixit
+        PASS [   0.013s] cadetta-syntax lexer::tests::reserved_words_lex_as_keywords
+        PASS [   0.015s] cadetta-syntax parser::tests::expressions_tolerances_and_classes
+        PASS [   0.011s] cadetta-syntax parser::tests::part_has_one_primary_and_alternates
+        PASS [   0.017s] cadetta-syntax parser::tests::doc_comments_attach_to_items
+        PASS [   0.008s] cadetta-syntax parser::tests::statements_end_at_newline_or_semicolon
+        PASS [   0.018s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.024s] cadetta-syntax parser::tests::all_member_productions_accepted
+        PASS [   0.021s] cadetta-syntax parser::tests::reserved_keyword_as_identifier_is_error
+        PASS [   0.018s] cadetta-syntax span::tests::every_node_has_a_location
+        PASS [   0.020s] cadetta-syntax parser::tests::use_trees_aliases_globs_and_roots
+        PASS [   0.025s] cadetta-syntax parser::tests::spec_example_parses_with_expected_shape
+        PASS [   0.039s] cadetta-syntax parser::tests::file_is_uses_and_items_with_no_header
+        PASS [   0.018s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.079s] cadetta project::tests::missing_or_empty_src_is_e005
+        PASS [   0.023s] cadetta-units display::tests::precedence_order
+        PASS [   0.017s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.034s] cadetta-syntax span::tests::two_errors_reported_with_spans
+        PASS [   0.024s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.050s] cadetta-units display::tests::feet_inches
+        PASS [   0.050s] cadetta-units display::tests::money_and_percent
+        PASS [   0.036s] cadetta-units units::tests::user_unit_resolves_like_builtin
+        PASS [   0.068s] cadetta-units display::tests::plain_units
+        PASS [   0.070s] cadetta-units display::tests::inch_fraction
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.122s] 45 tests run: 45 passed, 110 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-syntax -p cadetta-units -E '(package(=cadetta) & (test(=project::tests::discovery_walks_up_skips_tableless_and_fails_when_none) | test(=project::tests::duplicate_component_is_e003_with_both_spans) | test(=project::tests::member_and_path_dependency_without_config_is_e005) | test(=project::tests::member_scope_unless_at_workspace_root) | test(=project::tests::missing_or_empty_src_is_e005) | test(=project::tests::modules_sorted_by_path))) | (package(=cadetta-syntax) & (test(=expr::tests::bracket_is_index_unless_it_starts_with_sign) | test(=expr::tests::calls_and_lookups_parse) | test(=expr::tests::chained_comparison_and_satisfies) | test(=expr::tests::if_match_and_block_are_expressions) | test(=expr::tests::member_and_scope_attributes_attach) | test(=expr::tests::multiplication_binds_tighter_than_addition) | test(=expr::tests::precedence_ladder_postfix_to_comparison) | test(=expr::tests::rename_and_citation_with_locator_recorded) | test(=expr::tests::tolerance_and_iso_class_attach_to_operand) | test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::leading_and_trailing_dot_are_lex_errors) | test(=lexer::tests::line_and_doc_comments_are_distinguished) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::reserved_words_lex_as_keywords) | test(=lexer::tests::split_literal_is_q007_with_fixit) | test(=lexer::tests::strings_attributes_and_punctuation) | test(=parser::tests::all_member_productions_accepted) | test(=parser::tests::doc_comments_attach_to_items) | test(=parser::tests::errors_recover_and_parsing_continues) | test(=parser::tests::expressions_tolerances_and_classes) | test(=parser::tests::file_is_uses_and_items_with_no_header) | test(=parser::tests::part_has_one_primary_and_alternates) | test(=parser::tests::reserved_keyword_as_identifier_is_error) | test(=parser::tests::spec_example_parses_with_expected_shape) | test(=parser::tests::statements_end_at_newline_or_semicolon) | test(=parser::tests::use_trees_aliases_globs_and_roots) | test(=parser_items::tests::component_implements_interface_lists_and_citation) | test(=parser_items::tests::component_parameter_defaults_are_recorded) | test(=parser_items::tests::declarations_enum_fn_unit_kind_cite) | test(=parser_items::tests::interface_members_and_bounds) | test(=parser_items::tests::item_errors_recover) | test(=parser_items::tests::kind_expressions_accepted_wherever_a_kind_is) | test(=parser_items::tests::process_params_and_rules) | test(=parser_items::tests::solver_item_and_member) | test(=parser_items::tests::table_rows_and_key_only_rows) | test(=parser_items::tests::table_without_key_is_an_error) | test(=parser_items::tests::waive_forms) | test(=span::tests::every_node_has_a_location) | test(=span::tests::two_errors_reported_with_spans))) | (package(=cadetta-units) & (test(=display::tests::feet_inches) | test(=display::tests::inch_fraction) | test(=display::tests::money_and_percent) | test(=display::tests::plain_units) | test(=display::tests::precedence_order) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 4635
+status = "measured"
+test_count = 45
+tests_digest = "44911b81e5d6ca1e66afdffef6a0c9945699043f2f18dfc3df8add4f4f656002"
+at = "2026-10-13T06:50:16Z"
+actor = "lognd"
+rev = 1
