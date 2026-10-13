@@ -25,7 +25,7 @@ node adapter_host : trusted {
   may fs.write at "crates/cadetta-adapter/src/import/propose.rs";
 }
 
-/// External SOLIDWORKS adapter (Python, pywin32 COM), the primary drive target.
+/// External SOLIDWORKS adapter (C#, COM interop: protocol executable and add-in), the primary drive target.
 node adapter_solidworks : authenticated {
   kind component;
   clearance Internal;

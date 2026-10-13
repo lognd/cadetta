@@ -41,6 +41,14 @@ vmodel dec_draft1_4 {
   decides req_geometry;
 }
 
+/// ADR: draft-1.5 decisions (typed citations, placement at, true position, native links, C# SOLIDWORKS adapter).
+vmodel dec_draft1_5 {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-draft-1-5-decisions.md";
+  decides req_geometry;
+}
+
 /// ADR: IR between source and every CAD tool.
 vmodel dec_ir {
   kind decision;
