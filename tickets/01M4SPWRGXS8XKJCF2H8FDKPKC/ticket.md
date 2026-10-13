@@ -23,6 +23,10 @@ target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 kind = "blocks"
 target = "01M4SPWRYRBTGD67WTG7D60E59"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWS23PN7M3TKKW8SA8QRK"
+
 [[acceptance]]
 text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
 bound = false
