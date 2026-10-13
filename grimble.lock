@@ -1,0 +1,26 @@
+version = 2
+digest_scheme = 2
+
+[[symbol]]
+identity = "bindings/python/python/cadetta/models/ir.py::Project"
+symref = "bindings/python/python/cadetta/models/ir.py::Project"
+sig = "c3ee9078270cd948cc9a24dccdc5ee2c92900e8c69142da0276b58440565e74a"
+body = "09d28c93ca2369aaa3aa52b0f3ef0d4b530cebd39ba3d358e6fab45caf35d3af"
+doc = "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+attr = "124743c0fea29c88185bb838d63416294fe5371f04fb7d86db89c9773c82f500"
+contract = "c0ba1563deb0929f3e67021b29710523d533ac0075caa08f0a02cc1e9a438bb1"
+acked_by = "lognd <logan@logandapp.com>"
+acked_at = "2026-10-13T22:16:05.094962953Z"
+reason = "IR Project (Rust) and generated Python ir.py acked together; SYS007 flags either end changing after"
+
+[[symbol]]
+identity = "crates/cadetta-ir/src/model.rs::Project"
+symref = "crates/cadetta-ir/src/model.rs::Project"
+sig = "85b69a4864a09ec8f23a589320fcd5023e2417ff0eb0f5c444bed13f735ca3ae"
+body = "b694de04c8bbff4c89a8da75f9007f5aed2c94e9b32cd2c002c05275924d0985"
+doc = "0322889030fbac1e66069003302d6faae1326ecee2ac4d550180ea1c79171022"
+attr = "5fcd2468a88634104919d201ed71fc11461273cdf4ef48eb301c9dbbfe346e7d"
+contract = "df40841011d47a8473c69f22cc4124b43cb011c2d06e210dfb07426dc0892eba"
+acked_by = "lognd <logan@logandapp.com>"
+acked_at = "2026-10-13T22:16:05.094962953Z"
+reason = "IR Project (Rust) and generated Python ir.py acked together; SYS007 flags either end changing after"
