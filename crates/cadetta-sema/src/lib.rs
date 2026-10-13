@@ -10,6 +10,8 @@ pub mod fits;
 pub mod imports;
 pub mod kindcheck;
 pub mod modules;
+pub mod parts;
 pub mod process;
 pub mod resolve;
+pub mod rollup;
 pub mod tables;
