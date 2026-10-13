@@ -2,7 +2,8 @@
 id = "01M4STAQD2NH1X5MP4599NMCBG"
 title = "Conformance fixtures for ir"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
