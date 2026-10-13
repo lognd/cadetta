@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:46:03Z"
+updated = "2026-10-13T08:46:09Z"
 persona = "design engineer"
 capability = "attest a selection at current digests"
 idempotency_key = "replan13:cadetta ack"
@@ -25,7 +25,7 @@ bound = false
 
 [[acceptance]]
 text = "Given a repeat with no digest change, when run, then no lock change is made (obligations.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given ack waiver:GLOB, --as EMAIL or --baseline, when run, then records follow obligations.md 4 and the reason baseline is used (config-cli.md 3)"
