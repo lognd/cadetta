@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `round_to`, `ceil_to` and `floor_to` of an exact value, when evaluated, then the result is an exact rational multiple of step, ties away from zero, deviations kept (quantities.md 5.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an inexact value within 1e-9 relative of a tie or step boundary, when rounded, then Q010 ambiguous-rounding is returned (quantities.md 5.5)"

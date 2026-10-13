@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:24:45Z"
+digest = "525d4c0e216a943d6530c087381f463b063a4720c13712fb4a7c5b0f3a3ffd05"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ab98b0d4-31f2-40d4-8857-9a1458af82ee with nextest profile: default
+    Starting 3 tests across 1 binary (46 tests skipped)
+        PASS [   0.008s] cadetta-units inexact::tests::rounding_exact_values_is_exact_ties_away_from_zero
+        PASS [   0.008s] cadetta-units inexact::tests::rounding_a_toleranced_value_keeps_deviations
+        PASS [   0.008s] cadetta-units inexact::tests::ceil_and_floor_to_step
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 3 tests run: 3 passed, 46 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units rounding_exact_values ceil_and_floor rounding_a_toleranced"
+size = 749
+status = "measured"
+test_count = 3
+tests_digest = "dced1e87918875ecf1a3ce6b249ec59baf7ca9b2ebd03ff618917ec00bc17c46"
+at = "2026-10-13T06:24:45Z"
+actor = "lognd"
+rev = 1
