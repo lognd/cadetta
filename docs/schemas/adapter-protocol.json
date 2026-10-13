@@ -1,0 +1,682 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Messages",
+  "description": "Every protocol message shape, for schema generation only.",
+  "type": "object",
+  "properties": {
+    "emit_params": {
+      "description": "Params of `emit`.",
+      "$ref": "#/$defs/EmitParams"
+    },
+    "emit_result": {
+      "description": "Result of `emit`.",
+      "$ref": "#/$defs/EmitResult"
+    },
+    "initialize_params": {
+      "description": "Params of `initialize`.",
+      "$ref": "#/$defs/InitializeParams"
+    },
+    "initialize_result": {
+      "description": "Result of `initialize`.",
+      "$ref": "#/$defs/InitializeResult"
+    },
+    "open_params": {
+      "description": "Params of `open`.",
+      "$ref": "#/$defs/OpenParams"
+    },
+    "open_result": {
+      "description": "Result of `open`.",
+      "$ref": "#/$defs/OpenResult"
+    },
+    "push_params": {
+      "description": "Params of `push`.",
+      "$ref": "#/$defs/PushParams"
+    },
+    "push_result": {
+      "description": "Result of `push`.",
+      "$ref": "#/$defs/PushResult"
+    },
+    "read_params": {
+      "description": "Params of `read`.",
+      "$ref": "#/$defs/ReadParams"
+    },
+    "read_result": {
+      "description": "Result of `read`.",
+      "$ref": "#/$defs/ReadResult"
+    },
+    "regen_params": {
+      "description": "Params of `regen`.",
+      "$ref": "#/$defs/RegenParams"
+    },
+    "regen_result": {
+      "description": "Result of `regen`.",
+      "$ref": "#/$defs/RegenResult"
+    },
+    "save_result": {
+      "description": "Result of `save`.",
+      "$ref": "#/$defs/SaveResult"
+    },
+    "session_params": {
+      "description": "Params of `save` and `close`.",
+      "$ref": "#/$defs/SessionParams"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "initialize_params",
+    "initialize_result",
+    "emit_params",
+    "emit_result",
+    "open_params",
+    "open_result",
+    "read_params",
+    "read_result",
+    "push_params",
+    "push_result",
+    "regen_params",
+    "regen_result",
+    "session_params",
+    "save_result"
+  ],
+  "$defs": {
+    "CapabilityName": {
+      "description": "An adapter capability name as declared at `initialize`.",
+      "oneOf": [
+        {
+          "description": "IR to file.",
+          "type": "string",
+          "const": "emit"
+        },
+        {
+          "description": "File to observed IR.",
+          "type": "string",
+          "const": "read"
+        },
+        {
+          "description": "IR to and from a live tool.",
+          "type": "string",
+          "const": "drive"
+        }
+      ]
+    },
+    "ChangedParam": {
+      "description": "One changed parameter in a `push`.",
+      "type": "object",
+      "properties": {
+        "locator": {
+          "description": "Where it lives in the native file.",
+          "type": "string"
+        },
+        "mode": {
+          "description": "How to write it.",
+          "$ref": "#/$defs/PushMode"
+        },
+        "path": {
+          "description": "Canonical parameter path.",
+          "type": "string"
+        },
+        "ref_to": {
+          "description": "Link target when `mode` is `ref`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "description": "The new value."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "value",
+        "locator",
+        "mode"
+      ]
+    },
+    "ClientInfo": {
+      "description": "Name and version of the calling host.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Client name, `cadetta`.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Client version.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+    "DiagRecord": {
+      "$ref": "diag.json"
+    },
+    "EmitParams": {
+      "description": "Params of `emit`.",
+      "type": "object",
+      "properties": {
+        "bindings": {
+          "description": "The bindings table."
+        },
+        "design": {
+          "description": "The design IR (`cadetta.ir/1`)."
+        },
+        "policy": {
+          "description": "The policy decided upstream."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "design",
+        "bindings",
+        "policy"
+      ]
+    },
+    "EmitResult": {
+      "description": "Result of `emit`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "files": {
+          "description": "Files written.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FileDigest"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "diagnostics"
+      ]
+    },
+    "FileDigest": {
+      "description": "A file path with the digest of its bytes.",
+      "type": "object",
+      "properties": {
+        "digest": {
+          "description": "`blake3:` digest of the file bytes.",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path of the file.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "digest"
+      ]
+    },
+    "FileState": {
+      "description": "Dirty and read-only state of one opened file.",
+      "type": "object",
+      "properties": {
+        "dirty": {
+          "description": "Unsaved changes exist (R009).",
+          "type": "boolean"
+        },
+        "path": {
+          "description": "Path of the file.",
+          "type": "string"
+        },
+        "readonly": {
+          "description": "The file is read-only (R009).",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "dirty",
+        "readonly"
+      ]
+    },
+    "InitializeParams": {
+      "description": "Params of `initialize`.",
+      "type": "object",
+      "properties": {
+        "client": {
+          "description": "The calling host.",
+          "$ref": "#/$defs/ClientInfo"
+        },
+        "protocol": {
+          "description": "Protocol identifier, [`PROTOCOL`].",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "client"
+      ]
+    },
+    "InitializeResult": {
+      "description": "Result of `initialize`.",
+      "type": "object",
+      "properties": {
+        "capabilities": {
+          "description": "Declared capabilities.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CapabilityName"
+          }
+        },
+        "name": {
+          "description": "Adapter name.",
+          "type": "string"
+        },
+        "native_units": {
+          "description": "The tool's native length unit, as a unit symbol.",
+          "type": "string"
+        },
+        "platforms": {
+          "description": "Platforms the adapter runs on (`linux`, `macos`, `windows`).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "precision": {
+          "description": "Fractional decimal digits of the native number format.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "version": {
+          "description": "Adapter version; must equal `[[adapter]] version` (R008).",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "capabilities",
+        "native_units",
+        "precision",
+        "platforms"
+      ]
+    },
+    "LocatorStatus": {
+      "description": "Per-locator result of a `push`.",
+      "type": "object",
+      "properties": {
+        "locator": {
+          "description": "The locator.",
+          "type": "string"
+        },
+        "new": {
+          "description": "Value after the push, if known."
+        },
+        "old": {
+          "description": "Value before the push, if known."
+        },
+        "status": {
+          "description": "What happened.",
+          "$ref": "#/$defs/PushStatus"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "locator",
+        "status"
+      ]
+    },
+    "OpenParams": {
+      "description": "Params of `open`.",
+      "type": "object",
+      "properties": {
+        "files": {
+          "description": "Files to open.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "files"
+      ]
+    },
+    "OpenResult": {
+      "description": "Result of `open`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "session": {
+          "description": "The new session.",
+          "$ref": "#/$defs/Session"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "session",
+        "diagnostics"
+      ]
+    },
+    "PushMode": {
+      "description": "How `push` writes a dimension.",
+      "oneOf": [
+        {
+          "description": "Create or keep the link to `ref_to`.",
+          "type": "string",
+          "const": "ref"
+        },
+        {
+          "description": "Set the number.",
+          "type": "string",
+          "const": "value"
+        }
+      ]
+    },
+    "PushParams": {
+      "description": "Params of `push`.",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "File the changes apply to.",
+          "type": "string"
+        },
+        "params": {
+          "description": "Changed parameters.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ChangedParam"
+          }
+        },
+        "session": {
+          "description": "Session handle.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "session",
+        "file",
+        "params"
+      ]
+    },
+    "PushResult": {
+      "description": "Result of `push`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "statuses": {
+          "description": "One status per locator, never only a summary.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LocatorStatus"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "statuses",
+        "diagnostics"
+      ]
+    },
+    "PushStatus": {
+      "description": "Outcome of one pushed locator.",
+      "oneOf": [
+        {
+          "description": "Written.",
+          "type": "string",
+          "const": "pushed"
+        },
+        {
+          "description": "Already equal; nothing written.",
+          "type": "string",
+          "const": "skipped"
+        },
+        {
+          "description": "Refused by the adapter.",
+          "type": "string",
+          "const": "rejected"
+        },
+        {
+          "description": "Attempted and failed.",
+          "type": "string",
+          "const": "failed"
+        }
+      ]
+    },
+    "ReadParams": {
+      "description": "Params of `read`.",
+      "type": "object",
+      "properties": {
+        "source": {
+          "description": "Where to read from.",
+          "$ref": "#/$defs/ReadSource"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "source"
+      ]
+    },
+    "ReadResult": {
+      "description": "Result of `read`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "observed": {
+          "description": "The observed IR."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "observed",
+        "diagnostics"
+      ]
+    },
+    "ReadSource": {
+      "description": "What `read` reads: file paths, or an open session.",
+      "oneOf": [
+        {
+          "description": "Read these files; the adapter opens and closes its own session.",
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "files"
+          ]
+        },
+        {
+          "description": "Read from this session handle.",
+          "type": "object",
+          "properties": {
+            "session": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "session"
+          ]
+        }
+      ]
+    },
+    "RegenParams": {
+      "description": "Params of `regen`.",
+      "type": "object",
+      "properties": {
+        "session": {
+          "description": "Session handle.",
+          "type": "string"
+        },
+        "targets": {
+          "description": "Targets to regenerate.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "session",
+        "targets"
+      ]
+    },
+    "RegenResult": {
+      "description": "Result of `regen`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Rebuild diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "targets": {
+          "description": "One status per target.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TargetStatus"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "targets",
+        "diagnostics"
+      ]
+    },
+    "RegenState": {
+      "description": "Outcome of regenerating one target.",
+      "oneOf": [
+        {
+          "description": "Rebuilt cleanly.",
+          "type": "string",
+          "const": "ok"
+        },
+        {
+          "description": "Rebuild failed (R004).",
+          "type": "string",
+          "const": "failed"
+        }
+      ]
+    },
+    "SaveResult": {
+      "description": "Result of `save`.",
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "description": "Diagnostics.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DiagRecord"
+          }
+        },
+        "files": {
+          "description": "Files saved.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FileDigest"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "files",
+        "diagnostics"
+      ]
+    },
+    "Session": {
+      "description": "An open session: an opaque handle and per-file state.",
+      "type": "object",
+      "properties": {
+        "files": {
+          "description": "Per-file state.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FileState"
+          }
+        },
+        "handle": {
+          "description": "Opaque session handle.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "handle",
+        "files"
+      ]
+    },
+    "SessionParams": {
+      "description": "Params of `save` and `close`.",
+      "type": "object",
+      "properties": {
+        "session": {
+          "description": "Session handle.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "session"
+      ]
+    },
+    "TargetStatus": {
+      "description": "Per-target result of a `regen`.",
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "What happened.",
+          "$ref": "#/$defs/RegenState"
+        },
+        "target": {
+          "description": "The target.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target",
+        "status"
+      ]
+    }
+  }
+}
