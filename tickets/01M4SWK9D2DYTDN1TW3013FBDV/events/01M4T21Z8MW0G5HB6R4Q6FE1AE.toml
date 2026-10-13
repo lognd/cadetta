@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T07:18:59Z"
+digest = "cc170ab787c59f7b7817dd5233cd66902b07ee4a33c394d5d33914e5b056e435"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a47ecba8-bac1-4945-9f93-426d17f3a2e9 with nextest profile: default
+    Starting 1 test across 1 binary (4 tests skipped)
+        PASS [   0.024s] cadetta-ir path::tests::definition_read_of_parameter_dependent_member_is_e011
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.025s] 1 test run: 1 passed, 4 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E 'test(=path::tests::definition_read_of_parameter_dependent_member_is_e011)'"
+size = 564
+status = "measured"
+test_count = 1
+tests_digest = "959d2e41b4affc992d4dd28b79c41830eb9ee2cd8efda959db0f6b0b31862030"
+at = "2026-10-13T07:18:59Z"
+actor = "lognd"
+rev = 1
