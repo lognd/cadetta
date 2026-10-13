@@ -1,0 +1,14 @@
+kind = "create"
+title = "CLI and cadetta.toml (cadetta-cli)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:crates/cadetta-cli/**"]
+scope = ["crates/cadetta-cli/**"]
+body = """
+Outcome: the cadetta command and its configuration per docs/spec/config-cli.md.
+
+Success metric: all nine commands run end to end on a sample project with documented exit codes."""
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
