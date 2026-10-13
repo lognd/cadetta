@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T05:44:40Z"
+updated = "2026-10-13T06:04:57Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -45,5 +45,9 @@ bound = false
 
 [[acceptance]]
 text = "Given cadetta.toml, when parsed, then [defaults], [units], [emit], [lint], [obligations], [solvers] and [[adapter]] keys have the types and defaults of config-cli.md 2"
+bound = false
+
+[[acceptance]]
+text = "Given [package] name, version, src and as_of, [dependencies] path and git entries with version and trust, and a [workspace] members table, when loaded, then each has the type and default of config-cli.md 2 and packages.md 1 (the old [project] namespace, sources and roots keys are rejected)"
 bound = false
 +++
