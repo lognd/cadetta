@@ -5,11 +5,11 @@
 
 use std::io::Write;
 
-use cadetta_ir::model::{Digest, Project as IrProject};
+use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply};
 use cadetta_obligations::as_of::{AsOf, Date as Today};
-use cadetta_obligations::graph::{ObligationId, ObligationKind, ObligationState};
+use cadetta_obligations::graph::ObligationState;
 use cadetta_obligations::lock::Lock;
 use cadetta_obligations::roles::Policy;
 
@@ -19,6 +19,7 @@ use crate::config::{Adapter, Config};
 use crate::pipeline::{Analysis, analyze};
 use crate::project::Project;
 use crate::scope::Scope;
+use crate::universe::{self, universes};
 use crate::{EXIT_USAGE, Globals, output};
 
 const USAGE: &str =
@@ -87,23 +88,8 @@ fn lint_config(config: &Config) -> Result<LintConfig, String> {
 
 /// One `check` obligation per IR check that some role covers.
 fn candidates(analysis: &Analysis, policy: &Policy) -> Vec<Candidate> {
-    let mut out = Vec::new();
-    for p in &analysis.packages {
-        for c in &p.ir.checks {
-            let id = ObligationId::new(ObligationKind::Check, c.path.to_string());
-            if policy.roles_covering(&id).is_empty() {
-                continue;
-            }
-            out.push(Candidate {
-                id,
-                current: Digest(cadetta_ir::digest::check_digest(c).0),
-                deps: Vec::new(),
-                judgement: None,
-                suppressed: false,
-                nearest_changed: None,
-            });
-        }
-    }
+    let mut out = universe::candidates(&universes(analysis));
+    out.retain(|c| !policy.roles_covering(&c.id).is_empty());
     out
 }
 
@@ -271,7 +257,7 @@ pub fn run_check_with(
 mod tests {
     use super::*;
     use crate::output::Format;
-    use cadetta_obligations::graph::Verdict;
+    use cadetta_obligations::graph::{ObligationId, ObligationKind, Verdict};
     use cadetta_obligations::lock::{Attest, Date, Hex, Record};
     use serde_json::Value;
     use std::cell::Cell;

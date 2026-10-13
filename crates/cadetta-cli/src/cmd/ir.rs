@@ -1,18 +1,20 @@
 //! frob:ticket 01M4SPWT6N1HY3MHN544GZJYS9
+//! frob:ticket 01M4TA3CEMSKPPZTY1CM2AFDDQ
 //! `cadetta ir [--observed ADAPTER] [--assume-unit U]`: print the design or observed IR of a
 //! package as `cadetta.ir/1` JSON (ir.md, config-cli.md 3).
 //!
-//! The source-to-IR lowering and the adapter host are not wired into the CLI yet (the same
-//! gap `obligations` and `ack` log), so the IR printed has the package identity and no
-//! members; the shape is already the final `cadetta.ir/1` document.
+//! The design IR is the package lowered by `pipeline::analyze` and digested; the observed IR
+//! still comes from an empty builder because the adapter host is not wired into the CLI yet.
 
 use std::io::Write;
 
+use cadetta_ir::digest::digest_project;
 use cadetta_ir::model::{Flavour, PackageId, Project as Ir};
 use cadetta_ir::observed::ObservedBuilder;
 use cadetta_units::UnitTable;
 
 use crate::config::normalise_package_name;
+use crate::pipeline::analyze;
 use crate::project::{PackageDir, Project};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
@@ -97,8 +99,19 @@ pub fn run_ir(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mut
     let id = package_id(pkg);
     let ir = match &parsed.observed {
         None => {
-            tracing::warn!(package = %id.name, "ir: no source-to-IR pipeline wired yet; printing an empty design IR");
-            Ir::new(Flavour::Design, id)
+            let analysis = analyze(&project, &scope);
+            if analysis.halted {
+                return fail(err, "a syntax error stopped analysis; run `cadetta check`");
+            }
+            let mut ir = analysis
+                .packages
+                .into_iter()
+                .find(|p| p.name == id.name)
+                .map_or_else(|| Ir::new(Flavour::Design, id), |p| p.ir);
+            if let Err(e) = digest_project(&mut ir) {
+                return fail(err, &format!("could not digest the IR: {e}"));
+            }
+            ir
         }
         Some(name) => {
             let known = pkg
@@ -208,6 +221,13 @@ mod tests {
         assert_eq!(v["flavour"], "design");
         assert_eq!(v["package"]["name"], "acme.rover");
         assert_eq!(v["package"]["version"], "1.2.3");
+        let members: usize = v["components"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|c| c["members"].as_array().map_or(0, Vec::len))
+            .sum();
+        assert!(members > 0, "lowered members expected: {v}");
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/ir.rs::run_ir

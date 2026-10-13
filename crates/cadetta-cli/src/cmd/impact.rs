@@ -9,6 +9,7 @@ use cadetta_ir::model::Project as Ir;
 use serde_json::{Value as Json, json};
 
 use crate::output::Format;
+use crate::pipeline::analyze;
 use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
@@ -116,7 +117,10 @@ pub fn downstream(ir: &Ir, path: &str) -> Result<Impact, NotFound> {
     for c in &ir.checks {
         let cp = c.path.to_string();
         kinds.insert(cp.clone(), Kind::Check);
-        for m in members.iter().filter(|m| c.expr.contains(m.as_str())) {
+        for m in members
+            .iter()
+            .filter(|m| crate::universe::check_reads(&cp, &c.expr, m))
+        {
             readers.entry(m.clone()).or_default().insert(cp.clone());
         }
     }
@@ -206,18 +210,6 @@ pub fn render(impact: &Impact, format: Format, out: &mut dyn Write) {
     }
 }
 
-/// The evaluated IR of the project.
-///
-/// The source-to-IR lowering is not wired into the CLI yet (as for `why`), so a project
-/// offers none and every path is unknown.
-fn project_ir(project: &Project) -> Option<Ir> {
-    tracing::warn!(
-        root = %project.root.display(),
-        "impact: no IR pipeline wired into the CLI yet; nothing to trace"
-    );
-    None
-}
-
 /// Run `cadetta impact`; `args` are the words after the verb. Returns the exit code.
 pub fn run_impact(
     args: &[String],
@@ -236,20 +228,22 @@ pub fn run_impact(
     if path.starts_with("--") {
         return fail(err, &format!("unknown flag `{path}`; {USAGE}"));
     }
-    let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
-        Ok((project, _scope)) => project,
+    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+    {
+        Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
-    let Some(ir) = project_ir(&project) else {
-        return fail(err, &NotFound(path.clone()).to_string());
-    };
-    match downstream(&ir, path) {
-        Ok(impact) => {
-            render(&impact, globals.format, out);
-            EXIT_OK
-        }
-        Err(e) => fail(err, &e.to_string()),
+    let analysis = analyze(&project, &members);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
+    for package in &analysis.packages {
+        if let Ok(impact) = downstream(&package.ir, path) {
+            render(&impact, globals.format, out);
+            return EXIT_OK;
+        }
+    }
+    fail(err, &NotFound(path.clone()).to_string())
 }
 
 #[cfg(test)]

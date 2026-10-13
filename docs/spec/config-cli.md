@@ -294,6 +294,23 @@ so with `--stale` only stale rows count. `--format json` prints one
 `cadetta.obligations/1` document: `as_of`, `as_of_source`, `gated` and an
 `obligations` array of the row fields.
 
+### 3.6 Lowered-source verbs
+
+Decided (0.1.0). `why`, `impact`, `ir`, `obligations`, `ack` and `check` all
+lower the sources through one analysis and stop with exit 2 when a syntax
+error halted it. `ir` prints the lowered design IR with digests. A check
+reads the members whose canonical path occurs in its expression, or that
+sit in its scope and whose bare name is an identifier token of it. A check
+obligation's covered digest is the closure digest of the check node over
+those members, so editing the check or anything upstream stales it. `ack`
+records the verdict as the check's primary verdict and the margin as `-`
+(the IR carries verdicts, not margins), with no citations; only check
+obligations are offered so far. `why --stale OBLIGATION [--role R]` judges
+the attestation of R (default: the first covering role) and prints
+`cadetta.why/1` whose `chain` traces the check and whose `stale` object
+carries `state` (`open`, `current`, `stale`) and, when stale, `nearest`
+`{node,new,old,depth}`, `others` and `removed`.
+
 ## 4. Global flags
 
 | Flag | Meaning |

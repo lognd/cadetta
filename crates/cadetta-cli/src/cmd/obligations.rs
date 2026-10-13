@@ -10,10 +10,13 @@ use cadetta_obligations::graph::{ObligationId, ObligationState};
 use cadetta_obligations::lock::{Attest, Lock};
 use cadetta_obligations::roles::Policy;
 use cadetta_obligations::staleness::{Judgement, classify_attested};
+use cadetta_obligations::why_stale::WhyStale;
 
 use super::ack::policy_of;
 use crate::output::Format;
+use crate::pipeline::{Analysis, analyze};
 use crate::project::Project;
+use crate::universe::{candidates, universes};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 /// Exit code when a gating obligation is open or stale (config-cli.md 3).
@@ -252,16 +255,39 @@ pub fn render(report: &Report, as_of: &AsOf, format: Format, out: &mut dyn Write
     }
 }
 
-/// The obligations the current design offers.
+/// The obligations the current design offers, from the lowered packages (ir.md 4).
 ///
-/// Closure digests come from the IR (ir.md 4); the source-to-IR lowering is not wired into
-/// the CLI yet, so a project offers none and the list is empty.
-fn project_candidates(project: &Project) -> Vec<Candidate> {
-    tracing::warn!(
-        root = %project.root.display(),
-        "obligations: no IR pipeline wired into the CLI yet; no obligations are offered"
-    );
-    Vec::new()
+/// Each IR check is one candidate judged against its closure digest; a candidate whose
+/// attestation (of the requested or first covering role) is stale also carries the nearest
+/// changed upstream node (`why --stale`).
+fn project_candidates(
+    analysis: &Analysis,
+    lock: &Lock,
+    policy: &Policy,
+    args: &ObligationsArgs,
+) -> Vec<Candidate> {
+    let universes = universes(analysis);
+    let mut out = candidates(&universes);
+    for cand in &mut out {
+        let role = args.role.clone().or_else(|| {
+            policy
+                .roles_covering(&cand.id)
+                .first()
+                .map(|r| r.name.clone())
+        });
+        let att = role.as_deref().and_then(|r| lock.attestation(&cand.id, r));
+        let Some((u, entry)) = universes
+            .iter()
+            .find_map(|u| u.entry(&cand.id).map(|e| (u, e)))
+        else {
+            continue;
+        };
+        if let Ok(WhyStale::Stale { nearest, .. }) = u.explain(entry, att) {
+            cand.nearest_changed = Some(nearest.node);
+        }
+    }
+    tracing::debug!(count = out.len(), "obligations: candidates from the IR");
+    out
 }
 
 /// Run `cadetta obligations`; `args` are the words after the verb. Returns the exit code.
@@ -280,8 +306,9 @@ pub fn run_obligations(
         Ok(p) => p,
         Err(message) => return fail(err, &format!("{message}; {USAGE}")),
     };
-    let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
-        Ok((project, _scope)) => project,
+    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+    {
+        Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
     let policy = match policy_of(&project.config) {
@@ -306,8 +333,12 @@ pub fn run_obligations(
         Ok(a) => a,
         Err(e) => return fail(err, &e.to_string()),
     };
+    let analysis = analyze(&project, &members);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
+    }
     let report = list(
-        &project_candidates(&project),
+        &project_candidates(&analysis, &lock, &policy, &parsed),
         &lock,
         &policy,
         &parsed,
