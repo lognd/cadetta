@@ -17,6 +17,7 @@ categories = ["science", "development-tools"]
 cadetta-ir.workspace = true
 cadetta-sema.workspace = true
 cadetta-syntax.workspace = true
+cadetta-variants.workspace = true
 tracing.workspace = true
 
 [lints]
