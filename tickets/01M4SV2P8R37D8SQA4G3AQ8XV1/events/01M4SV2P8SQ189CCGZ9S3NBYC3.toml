@@ -1,0 +1,16 @@
+kind = "create"
+title = "Optional cadetta[pint] interop (Quantity.to_pint)"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SV2NDDVYW3WN79XN9C707C"
+persona = "Python user"
+capability = "convert Quantities to pint"
+outcome_text = "I can use numpy and pint workflows"
+labels = ["creates:bindings/python/python/cadetta/pint_interop.py", "creates:bindings/python/tests/test_pint.py"]
+scope = ["bindings/python/python/cadetta/pint_interop.py", "bindings/python/tests/test_pint.py"]
+acceptance = ["Given the cadetta[pint] extra installed, when .to_pint(registry) is called, then an equivalent pint Quantity is returned (bindings.md 3.1)", "Given pint is absent, when .to_pint is called, then a Result error names the missing extra (bindings.md 3.1)"]
+at = "2026-10-13T05:17:03Z"
+actor = "lognd"
+rev = 1
