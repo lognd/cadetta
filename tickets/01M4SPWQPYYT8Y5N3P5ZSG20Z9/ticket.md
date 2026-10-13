@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T12:52:33Z"
+updated = "2026-10-13T12:53:53Z"
 persona = "design engineer"
 capability = "get lints for the Q family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/q.rs", "tests/conformance/lints/Q*/**"]
 
 [[acceptance]]
 text = "Given `x: Length = 5`, when linted, then Q001 error is reported (lints.md Q)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `5 mm`, when linted, then Q007 is reported with a fix-it and cannot be waived (lints.md Q)"
