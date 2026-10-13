@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T07:50:28Z"
+updated = "2026-10-13T07:53:19Z"
 persona = "design engineer"
 capability = "attach provenance and policy to values once"
 idempotency_key = "replan13:Attributes, citations and cite declarations"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-sema/src/{attrs,cite}.rs", "crates/cadetta-sema/src/lib
 
 [[acceptance]]
 text = "Given `#[emit(mid)]`, `#![display(mm)]` and trailing `#[...]`, when resolved, then scope defaults apply and the member attribute wins (language.md 3.11)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given `cite name = "url-or-path"`, `@name:"locator"`, `@"literal"` and `@measured:"who, when"`, when resolved, then each citation has a kind url|file|standard|measured|assumed|estimate (language.md 3.9, ir.md 3)'
