@@ -8,13 +8,17 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T19:18:44Z"
-updated = "2026-10-13T19:18:44Z"
+updated = "2026-10-13T19:19:06Z"
 persona = "design engineer"
 capability = "see a part's cadetta paths beside the model in SOLIDWORKS"
 outcome_text = "linking starts from what the engineer selects"
 idempotency_key = "d15:addin-pane"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/AddIn/**"]
 scope = ["design/model.grmb", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/AddIn/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 
 [[acceptance]]
 text = "Given an open document, when the pane loads, then it finds the nearest cadetta.toml, runs cadetta names solidworks --format json and lists the document component's paths with value, tolerance, citation and doc (solidworks.md 3)"
