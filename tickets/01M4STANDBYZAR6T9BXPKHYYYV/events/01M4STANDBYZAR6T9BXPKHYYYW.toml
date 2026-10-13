@@ -1,0 +1,16 @@
+kind = "create"
+title = "Bound versus driving outputs"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
+persona = "design engineer"
+capability = "use solver outputs as checked values or as drivers"
+idempotency_key = "replan13:Bound versus driving outputs"
+labels = ["creates:crates/cadetta-solvers/src/outputs.rs"]
+scope = ["crates/cadetta-solvers/src/outputs.rs"]
+acceptance = ["Given a bound output, when evaluated, then it is checked against the design and never drives it (solvers.md 4)", "Given a driving output, when evaluated, then downstream values derive from it and cite the solver (solvers.md 4)", "Given a stale output, when evaluated, then it still evaluates with the S003 fact (solvers.md 4.1, lints.md S)"]
+at = "2026-10-13T05:03:55Z"
+actor = "lognd"
+rev = 1
