@@ -283,6 +283,14 @@ as_of`) fixes the date read by every date-dependent rule (W001, W005,
 L001, attestation age). The JSON report header records the date used,
 so a historic result is reproducible.
 
+Resolution order: `--as-of`, then `[package] as_of`, then the system
+date (UTC). The date is `YYYY-MM-DD`, validated strictly (impossible
+days such as `2026-02-30` are a usage error, exit 2). An expiry has
+passed only when its date is strictly before the as-of date, so a
+waiver with `expires = as_of` still suppresses on that day. The report
+header carries `as_of` and `as_of_source` (`flag`, `config` or
+`today`). Implemented in `cadetta-obligations::as_of`.
+
 All queries emit JSON (`--format json`) so other tools, including frob,
 can consume them. Their schemas live in `docs/schemas/` and are
 generated from the Rust types: `diag.json` (the `cadetta.diag/1`
