@@ -1,0 +1,11 @@
+{
+  "adapter": {
+    "capabilities": [
+      "emit"
+    ],
+    "version": "1.1"
+  },
+  "pinned_version": "1.0",
+  "calls": [],
+  "op": "initialize"
+}

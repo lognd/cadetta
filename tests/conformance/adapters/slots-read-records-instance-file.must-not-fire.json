@@ -1,0 +1,5 @@
+{
+  "assembly": "cad/rover.SLDASM",
+  "instances": {},
+  "slot_primary_file": "cad/wheel.SLDPRT"
+}

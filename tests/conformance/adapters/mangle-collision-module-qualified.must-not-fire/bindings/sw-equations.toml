@@ -1,0 +1,10 @@
+["acme.demo.a::Part.width"]
+locators = [
+  { locator = "D@S@P.SLDPRT", kind = "dimension" },
+
+]
+["acme.demo.b::Other.width"]
+locators = [
+  { locator = "D2@S@P.SLDPRT", kind = "dimension" },
+
+]

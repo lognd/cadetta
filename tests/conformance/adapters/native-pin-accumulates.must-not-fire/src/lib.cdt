@@ -1,0 +1,4 @@
+model Part {
+  #[native(sw-equations, "P1")]
+  width = 10mm
+}

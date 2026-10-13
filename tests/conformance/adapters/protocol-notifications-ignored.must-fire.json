@@ -1,0 +1,17 @@
+{
+  "adapter": {
+    "capabilities": [
+      "emit",
+      "read",
+      "drive"
+    ],
+    "version": "1.0"
+  },
+  "pinned_version": "1.0",
+  "calls": [],
+  "op": "read",
+  "wire": [
+    "{\"jsonrpc\":\"2.0\",\"method\":\"log\",\"params\":{}}",
+    "{\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"observed\":[]}}"
+  ]
+}

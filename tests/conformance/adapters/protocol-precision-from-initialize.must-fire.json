@@ -1,0 +1,17 @@
+{
+  "adapter": {
+    "capabilities": [
+      "emit",
+      "read",
+      "drive"
+    ],
+    "version": "1.0"
+  },
+  "pinned_version": "1.0",
+  "calls": [],
+  "op": "initialize",
+  "reply": {
+    "precision": 4
+  },
+  "config_precision": null
+}

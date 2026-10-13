@@ -1,0 +1,11 @@
+{
+  "locator": "Plate_Thk",
+  "path": "acme.demo::Part.width",
+  "base": "12.009mm",
+  "ours": "12.009mm",
+  "theirs": "12mm",
+  "native_expression": null,
+  "force_design": false,
+  "nominal": "12mm",
+  "emit_point": "mid"
+}

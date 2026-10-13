@@ -1,0 +1,31 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 4",
+  "rule": "Q004",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q004",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "file_written": false
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"T\" = 0.25mm"
+        ],
+        "excludes": []
+      }
+    },
+    "file_written": true
+  }
+}

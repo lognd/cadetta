@@ -1,0 +1,22 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 2.3",
+  "rule": "R008",
+  "kind": "binding",
+  "entry": "sync",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R008",
+        "severity": "error"
+      }
+    ],
+    "exit": 2,
+    "sync_ran": false
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "sync_ran": true
+  }
+}

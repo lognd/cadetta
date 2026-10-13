@@ -1,0 +1,8 @@
+{
+  "native_names": [
+    "Part__width"
+  ],
+  "bindings": {
+    "Part__width": "acme.demo::Part.width"
+  }
+}

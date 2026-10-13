@@ -1,0 +1,28 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "args": [
+    "solidworks",
+    "cad/plate.SLDPRT",
+    "--update",
+    "--write"
+  ],
+  "items": [
+    {
+      "file": "cad/cover_plate.SLDPRT",
+      "locator": "area",
+      "kind": "global",
+      "number": 60,
+      "unit": "mm"
+    }
+  ],
+  "existing": {},
+  "lock_base": {
+    "area": "50mm"
+  },
+  "source": {
+    "area": "area = 50mm"
+  }
+}

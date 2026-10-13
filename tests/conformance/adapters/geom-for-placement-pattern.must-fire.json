@@ -1,0 +1,10 @@
+{
+  "source_form": "for-placement over pattern",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

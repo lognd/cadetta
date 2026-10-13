@@ -1,0 +1,5 @@
+["acme.demo::Rover/axle[1].len"]
+locators = [
+  { locator = "L1", kind = "global", mode = "value", native_unit = "mm" },
+
+]

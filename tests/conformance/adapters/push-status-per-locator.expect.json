@@ -1,0 +1,33 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 4",
+  "rule": "push-status",
+  "kind": "binding",
+  "entry": "sync",
+  "must_fire": {
+    "diagnostics": [],
+    "push_status": {
+      "Plate_Thk": {
+        "status": "pushed",
+        "old": "10mm",
+        "new": "12mm"
+      },
+      "Other": {
+        "status": "pushed",
+        "old": "1mm",
+        "new": "6mm"
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "push_status": {
+      "Plate_Thk": {
+        "status": "pushed",
+        "old": "10mm",
+        "new": "12mm"
+      }
+    }
+  }
+}

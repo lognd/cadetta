@@ -1,0 +1,39 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 3.2",
+  "rule": "adapter-id",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "outputs": {
+      "build/eq.txt": {
+        "contains": [
+          "\"MAIN\""
+        ],
+        "excludes": [
+          "\"OTHER\""
+        ]
+      },
+      "build/other.txt": {
+        "contains": [
+          "\"OTHER\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"DEFAULT\""
+        ],
+        "excludes": []
+      }
+    }
+  }
+}

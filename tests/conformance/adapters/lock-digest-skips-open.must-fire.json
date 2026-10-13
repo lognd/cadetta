@@ -1,0 +1,9 @@
+{
+  "entry": "read",
+  "file": "cad/plate.SLDPRT",
+  "on_disk_digest": "blake3:aa",
+  "lock_digest": "blake3:aa",
+  "lock_values": {
+    "Plate_Thk": "10mm"
+  }
+}

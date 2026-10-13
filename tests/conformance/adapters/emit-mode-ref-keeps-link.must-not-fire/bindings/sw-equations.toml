@@ -1,0 +1,6 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "W", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D@S@P.SLDPRT", kind = "dimension", mode = "value" },
+
+]

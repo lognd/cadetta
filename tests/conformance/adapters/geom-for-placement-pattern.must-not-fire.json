@@ -1,0 +1,10 @@
+{
+  "source_form": "plain placement",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

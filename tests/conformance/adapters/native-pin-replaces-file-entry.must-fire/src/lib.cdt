@@ -1,0 +1,4 @@
+model Part {
+  #[native(sw-equations, "PINNED")]
+  width = 10mm
+}

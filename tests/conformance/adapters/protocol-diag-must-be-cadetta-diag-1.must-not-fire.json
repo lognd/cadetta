@@ -1,0 +1,24 @@
+{
+  "adapter": {
+    "capabilities": [
+      "emit",
+      "read",
+      "drive"
+    ],
+    "version": "1.0"
+  },
+  "pinned_version": "1.0",
+  "calls": [],
+  "op": "read",
+  "reply": {
+    "observed": [],
+    "diagnostics": [
+      {
+        "schema": "cadetta.diag/1",
+        "code": "R004",
+        "severity": "error",
+        "message": "m"
+      }
+    ]
+  }
+}

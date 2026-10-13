@@ -1,0 +1,28 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 2",
+  "rule": "idempotent",
+  "kind": "binding",
+  "entry": "sync",
+  "must_fire": {
+    "diagnostics": [],
+    "class": [
+      "converged"
+    ],
+    "writes": [],
+    "regen": false,
+    "documents_touched": false,
+    "lock_updated": true
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "class": [
+      "push"
+    ],
+    "writes": [
+      "cad/plate.SLDPRT"
+    ],
+    "regen": true
+  }
+}

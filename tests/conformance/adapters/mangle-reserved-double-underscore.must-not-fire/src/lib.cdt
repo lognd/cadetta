@@ -1,0 +1,3 @@
+model Part {
+  a_b = 1mm
+}
