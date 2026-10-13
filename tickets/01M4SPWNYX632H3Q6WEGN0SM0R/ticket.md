@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:18:08Z"
+updated = "2026-10-13T06:18:35Z"
 persona = "design engineer"
 capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
 outcome_text = "units are unambiguous in source"
@@ -21,7 +21,7 @@ target = "01M4SPWP1JK8XH8EKXK71P7EFH"
 
 [[acceptance]]
 text = "Given `5 mm`, when lexed, then Q007 quantity-literal-split is reported with a fix-it"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `.5mm`, when lexed, then a lex error is reported"
