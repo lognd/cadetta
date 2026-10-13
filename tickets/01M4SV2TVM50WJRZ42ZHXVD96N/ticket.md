@@ -16,6 +16,10 @@ scope = ["adapters/solidworks/src/regen.py"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWRAWXJTWT4G08578RNQM"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2TR8ENTA87J1DDKCF816"
 
 [[acceptance]]
