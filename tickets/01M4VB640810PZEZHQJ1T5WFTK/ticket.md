@@ -8,12 +8,16 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T19:17:47Z"
+updated = "2026-10-13T19:19:05Z"
 persona = "design engineer"
 capability = "link a dimension in CAD without restating it in a bindings file"
 outcome_text = "nothing is said twice"
 idempotency_key = "d15:native-links"
 scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/scope.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/init.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "tests/conformance/config-cli/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VB63WJ5XBJ360151Y6D9TH"
 
 [[acceptance]]
 text = "Given observed IR with a global named by an in-scope path's created name (or a was name), a dimension whose equation is exactly that global, a frame named by a datum's created name, or an instance whose reference property names a part, when bound, then the implicit locator of adapters.md 3.5 exists with Locator.implicit set and nothing is written to the bindings file"
