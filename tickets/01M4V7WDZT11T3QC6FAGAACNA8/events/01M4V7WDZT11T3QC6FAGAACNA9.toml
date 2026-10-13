@@ -1,0 +1,10 @@
+kind = "create"
+title = "csv emit: note parts single-space separated, emit=POINT token"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "found while working ~KZVVBCA. See csv.md and adapters.md 3a."
+at = "2026-10-13T18:20:03Z"
+actor = "lognd"
+rev = 1
