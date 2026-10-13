@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T21:27:10Z"
+digest = "131dbdc9e0c505d4ed129d273814bbffc9faa62d68ffbbff508a3ae9aa52545a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5a6672f4-2c87-47c1-9b51-0fa32d633a07 with nextest profile: default
+    Starting 2 tests across 27 binaries (931 tests skipped)
+        PASS [   0.017s] cadetta-syntax::golden_parse golden_sources_parse_without_syntax_errors
+        PASS [  12.721s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  12.724s] 2 tests run: 2 passed, 931 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(/std_lib_root/) | test(golden_sources_parse) | test(conformance_corpus_matches)'"
+size = 649
+status = "measured"
+test_count = 2
+tests_digest = "092b8e6245f90fc3a7464e67f9132c3d5672848aa89a637c7caadaf18e585152"
+at = "2026-10-13T21:27:10Z"
+actor = "lognd"
+rev = 1
