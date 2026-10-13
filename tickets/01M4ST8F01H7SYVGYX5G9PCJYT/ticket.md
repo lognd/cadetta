@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given roles, when configured, then members and distinct_from_author are enforced (config-cli.md 2; obligations.md 4)"
-bound = false
+bound = true
 +++
