@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver naming a fixed code or a require diagnostic, when linted, then W003 fires; a require is never suppressed (lints.md 2.1, 2.3; obligations.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given #[allow(CODE, "because")], when linted, then it needs a reason, no expiry, no lock record, and W004 checks it (lints.md 2.2)'
