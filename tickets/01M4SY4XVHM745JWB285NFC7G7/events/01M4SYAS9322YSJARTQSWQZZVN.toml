@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Shared logging init mirroring frob-v2 gob-log"
+new = "cadetta-log crate: the single tracing subscriber owner (mirrors gob-log)"
+at = "2026-10-13T06:13:53Z"
+actor = "lognd"
+rev = 1

@@ -2,18 +2,19 @@
 id = "01M4SPWHVJVHRD0KWP8ESJD81M"
 title = "Exact magnitudes r*pi^k and dimension vectors"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:47Z"
-updated = "2026-10-13T06:10:33Z"
+updated = "2026-10-13T06:13:42Z"
 persona = "cadetta contributor"
 capability = "represent a magnitude as an arbitrary-precision rational over a 7-element SI dimension vector"
 outcome_text = "values are exact and comparable only across equal dimensions"
 labels = ["creates:crates/cadetta-units/src/{rational,dimension}.rs"]
-scope = ["crates/cadetta-units/src/{rational,dimension}.rs"]
+scope = ["crates/cadetta-units/src/{rational,dimension}.rs", "crates/cadetta-units/Cargo.toml", "crates/cadetta-units/src/lib.rs", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml", "Cargo.toml", "frob.toml", "design/model.grmb", "crates/cadetta-log/**"]
+new = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml", "Cargo.toml", "frob.toml", "design/model.grmb", "crates/cadetta-log/**", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "docs/**"]
+at = "2026-10-13T06:14:04Z"
+actor = "lognd"
+rev = 1
