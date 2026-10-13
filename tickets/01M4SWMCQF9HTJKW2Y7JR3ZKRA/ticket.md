@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T13:19:09Z"
+updated = "2026-10-13T13:19:27Z"
 persona = "design engineer"
 capability = "get readable imported names"
 idempotency_key = "replan14:ad-imp-name"
 labels = ["creates:crates/cadetta-adapter/src/import/naming.rs"]
-scope = ["crates/cadetta-adapter/src/import/naming.rs"]
+scope = ["crates/cadetta-adapter/src/import/naming.rs", "crates/cadetta-adapter/src/import/mod.rs"]
 
 [[links]]
 kind = "blocked-by"
