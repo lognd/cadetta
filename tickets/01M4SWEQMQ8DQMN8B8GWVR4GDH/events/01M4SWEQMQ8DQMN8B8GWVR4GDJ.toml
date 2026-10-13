@@ -1,0 +1,10 @@
+kind = "create"
+title = "Positions and datums (geometry.md)"
+type = "epic"
+category = "todo"
+priority = "medium"
+idempotency_key = "replan14:epic-geometry"
+body = "Outcome: datum-typed positions, a placement tree, axis checks, pattern generators and screw-joint positions checked three-valued without a solver or geometry kernel (docs/spec/geometry.md, draft 1.4; closes OQ-10)."
+at = "2026-10-13T05:41:06Z"
+actor = "lognd"
+rev = 1
