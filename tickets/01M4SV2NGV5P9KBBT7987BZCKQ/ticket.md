@@ -19,6 +19,10 @@ scope = ["bindings/python/python/cadetta/quantity.py", "bindings/python/tests/te
 kind = "blocked-by"
 target = "01M4SPWHVJVHRD0KWP8ESJD81M"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWNBYWT610BHC6GNSP35P"
+
 [[acceptance]]
 text = 'Given cadetta.quantity("12mm [+-0.1mm]"), when .to("mm") is called, then Fraction(12, 1) is returned and .exact is True (bindings.md 3.1)'
 bound = false
