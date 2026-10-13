@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = """Given `5"` and `2'`, when resolved, then they alias in and ft (quantities.md 2)"""
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `%`, when resolved, then 5% is exactly 1/20 of kind Ratio (quantities.md 2)"
