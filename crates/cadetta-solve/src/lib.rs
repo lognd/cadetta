@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/solvers.md`.
 
 pub mod decl;
+pub mod lints;
 pub mod outputs;
 pub mod protocol;
 pub mod results;
