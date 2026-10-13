@@ -2,7 +2,8 @@
 id = "01M4V5BBMBBBB79V852A4RA9PQ"
 title = "Spec: json read unit precedence and number formatting gaps"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
