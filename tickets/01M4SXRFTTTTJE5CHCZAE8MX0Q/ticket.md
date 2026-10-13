@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:16:08Z"
+updated = "2026-10-13T07:17:47Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
-scope = ["crates/cadetta-sema/src/modules.rs"]
+scope = ["crates/cadetta-sema/src/modules.rs", "docs/spec/packages.md"]
 
 [[links]]
 kind = "blocked-by"

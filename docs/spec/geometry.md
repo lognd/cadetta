@@ -87,6 +87,12 @@ plane and z is its normal.
   5.1) and makes every coordinate carried through it conservative
   (quantities.md 5.4); the exactness rule applies to the untoleranced
   nominal only.
+- A datum is built only from `origin` or a datum declared earlier in the
+  same component, so datum chains cannot cycle. The first operation of a
+  kind in a chain has the path `Rail.site.offset.x`; the n-th (n > 0)
+  carries an index, `Rail.site.offset[1].x`. `flip(x | y)` takes a bare
+  axis and no value, so it has no Member; `flip(z)` is an error because
+  it does not reverse the normal.
 - An interface may declare datums (`datum mount`), and each implementer
   defines them. A placement on an interface-typed part therefore
   survives a swap: the alternate brings its own `mount`.

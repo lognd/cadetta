@@ -91,6 +91,8 @@ name = "cadetta-geometry"
 version = "0.0.0"
 dependencies = [
  "cadetta-ir",
+ "cadetta-sema",
+ "cadetta-syntax",
  "tracing",
 ]
 
