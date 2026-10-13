@@ -146,7 +146,7 @@ mod tests {
     const S1: &str = "synced freecad acme::d locator=L value=1\n";
     const S2: &str = "synced freecad acme::d locator=L value=2\n";
 
-    // frob:tests cadetta_obligations::lock_merge::merge
+    // frob:tests crates/cadetta-obligations/src/lock_merge.rs::merge
     #[test]
     fn unions_in_sorted_order_with_tie_rule() {
         let ours = format!("{B}{A}");
@@ -158,7 +158,7 @@ mod tests {
         assert_eq!(flipped.text(), m.text());
     }
 
-    // frob:tests cadetta_obligations::lock_merge::merge
+    // frob:tests crates/cadetta-obligations/src/lock_merge.rs::merge
     #[test]
     fn differing_synced_values_conflict() {
         let m = merge_text(S1, S2, "synced freecad acme::d locator=L value=3\n").unwrap();
@@ -166,7 +166,7 @@ mod tests {
         assert!(m.text().contains("<<<<<<< ours"));
     }
 
-    // frob:tests cadetta_obligations::lock_merge::merge
+    // frob:tests crates/cadetta-obligations/src/lock_merge.rs::merge
     #[test]
     fn one_sided_synced_change_wins() {
         let m = merge_text(S1, S1, S2).unwrap();
@@ -174,7 +174,7 @@ mod tests {
         assert_eq!(m.text(), S2);
     }
 
-    // frob:tests cadetta_obligations::lock_merge::merge
+    // frob:tests crates/cadetta-obligations/src/lock_merge.rs::merge
     #[test]
     fn invalid_records_are_dropped() {
         let m = merge_text_with("", A, B, |r| r.render() != A.trim_end()).unwrap();
