@@ -154,7 +154,7 @@ mod tests {
         path.segments.iter().map(|s| s.name.as_str()).collect()
     }
 
-    // frob:tests crates/cadetta-syntax/src/parser_use.rs::Parser::use_decl kind=unit
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn use_path_roots_are_recorded() {
         let p = clean(
@@ -185,7 +185,7 @@ mod tests {
         ));
     }
 
-    // frob:tests crates/cadetta-syntax/src/parser_use.rs::Parser::use_decl kind=unit
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn aliases_globs_and_nested_trees_are_recorded() {
         let p = clean("use a::b as c\nuse a::b::*\nuse a::{A, B as C, sub::{D, *}}\n");
@@ -211,7 +211,7 @@ mod tests {
         assert!(matches!(g[1].kind, UseTreeKind::Star));
     }
 
-    // frob:tests crates/cadetta-syntax/src/parser_use.rs::Parser::vis kind=unit
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn visibility_is_recorded_on_items_uses_and_members() {
         let p = clean(
@@ -228,7 +228,7 @@ mod tests {
         assert!(!m.members[1].private);
     }
 
-    // frob:tests crates/cadetta-syntax/src/parser_use.rs::Parser::use_decl kind=unit
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn no_module_or_namespace_header_is_expected() {
         clean("use a::b\nmodel M {\n}\n");
