@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T13:47:34Z"
+updated = "2026-10-13T13:47:35Z"
 persona = "design engineer"
 capability = "read derived joint geometry"
 idempotency_key = "replan13:ScrewJoint derived members"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a dependent package that reads a priv ScrewJoint member, when checked, then E016 fires (packages.md 3)"
-bound = false
+bound = true
 +++
