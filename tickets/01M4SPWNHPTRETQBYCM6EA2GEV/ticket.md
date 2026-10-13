@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given Force * Length, when multiplied, then the kind is anonymous, deliberately not Torque or Energy (quantities.md 4.1 rule 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `sqrt(Area)` and `cbrt(Volume)`, when evaluated, then the kind is Length; given `sqrt(Length)` then Q011 root-of-dimension is returned (quantities.md 4.1, Q011)"
