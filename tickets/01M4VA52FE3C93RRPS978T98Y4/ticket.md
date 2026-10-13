@@ -18,7 +18,7 @@ bound = true
 
 [[acceptance]]
 text = "Given geometry.md, when read, then placement is 'place A at B' with elementwise array placement, op paths match datum op paths, the bolt float applies to any parent-child joint edge with a rotational term, and RFS position tolerance is specified"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given adapters.md and solidworks.md, when read, then mangling is a pure per-path function, native links are implicit bindings, and the SOLIDWORKS workflow (C# adapter and add-in, frames, placements, tolerances) is specified"
