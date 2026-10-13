@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:41:16Z"
+digest = "e65ffbab06461569d88c7c06ebea78438d7ecdd3e2e75e12d3be62ce6a2d9dad"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d20caa83-cc4f-4033-aabc-5cb886d5dcd2 with nextest profile: default
+    Starting 1 test across 14 binaries (167 tests skipped)
+        PASS [   0.005s] cadetta pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 167 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "workspace_members_load"
+size = 573
+status = "measured"
+test_count = 1
+tests_digest = "d7eefdcf2c27884b7505fc5be561f413a07c474ca6058b96fdf07d07d3e0f439"
+at = "2026-10-13T06:41:16Z"
+actor = "lognd"
+rev = 1

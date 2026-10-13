@@ -8,6 +8,7 @@
 pub mod config;
 mod env;
 pub mod output;
+pub mod pkg;
 pub mod project;
 
 use std::path::PathBuf;

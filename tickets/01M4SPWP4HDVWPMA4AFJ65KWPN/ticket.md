@@ -2,18 +2,18 @@
 id = "01M4SPWP4HDVWPMA4AFJ65KWPN"
 title = "Expression grammar with tolerance, ISO class, attributes and citations"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:05:12Z"
+updated = "2026-10-13T06:42:21Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
 labels = ["creates:crates/cadetta-syntax/src/expr.rs"]
-scope = ["crates/cadetta-syntax/src/expr.rs"]
+scope = ["crates/cadetta-syntax/src/expr.rs", "crates/cadetta-syntax/src/lib.rs", "crates/cadetta-syntax/src/parser.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
@@ -29,15 +29,15 @@ target = "01M4ST7A8ZG0BS11X26BB84S84"
 
 [[acceptance]]
 text = "Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition (language.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the precedence list in language.md 5, when parsed, then postfix > unary - > ^ > * / > + - > .. > as > comparisons"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]`, `20mm H7` and `x j5`, when parsed, then tolerance and ISO class postfixes attach to the operand (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `a[0]` and `a [+-0.1mm]`, when parsed, then the first is indexing and the second a tolerance because the bracket starts with + or - (quantities.md 5.1)"
