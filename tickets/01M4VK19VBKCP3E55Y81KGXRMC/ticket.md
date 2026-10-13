@@ -2,7 +2,8 @@
 id = "01M4VK19VBKCP3E55Y81KGXRMC"
 title = "Python binding IR models are stale after typed citations (CI red)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 2
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
