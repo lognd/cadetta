@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:28:09Z"
+updated = "2026-10-13T07:28:10Z"
 persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given two solvers sharing one script, when stored, then results are keyed inside the one file by canonical solver path (acme.drive::DriveModule.drive_torque for a member, acme.drive::drive_torque at file scope) and never collide (solvers.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given result digests, when recorded, then they live only in the committed .out.json and never in cadetta.lock (solvers.md 4; obligations.md 3)"
