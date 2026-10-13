@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the whole std tree, when linted, then no S001 is raised (stdlib.md 6, lints.md S)", "Given a value without a citation, when found, then the audit fails (stdlib.md 6)"]
+new = ["Given the whole std tree, when linted, then no S001 is raised, as stdlib.md intro requires every std value cited (stdlib.md intro, lints.md S)", "Given a value without a citation, when found, then the audit fails (stdlib.md intro)"]
+moved = [0, 0]
+at = "2026-10-13T05:04:29Z"
+actor = "lognd"
+rev = 1
