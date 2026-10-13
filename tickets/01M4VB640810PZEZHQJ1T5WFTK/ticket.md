@@ -8,12 +8,12 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T21:32:15Z"
+updated = "2026-10-13T21:34:28Z"
 persona = "design engineer"
 capability = "link a dimension in CAD without restating it in a bindings file"
 outcome_text = "nothing is said twice"
 idempotency_key = "d15:native-links"
-scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/scope.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/init.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "tests/conformance/config-cli/**"]
+scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/scope.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/init.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "tests/conformance/config-cli/**", "crates/cadetta-ir/src/observed.rs,crates/cadetta-adapter/src/locator.rs,crates/cadetta-adapter/src/import/propose.rs,crates/cadetta-cli/src/cmd/import.rs,crates/cadetta-cli/src/cmd/impact_swap_report.rs"]
 
 [[links]]
 kind = "blocked-by"
