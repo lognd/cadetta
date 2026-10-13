@@ -343,6 +343,16 @@ values compares nominals only when written on accessors (`a.nominal ==
 b.nominal`); on raw toleranced values it is almost always `undecided`
 and C003 suggests the accessor form.
 
+Decision table, with `d = a - b` taken symbolically so shared source
+variables cancel (5.4): for `>`, `holds` if `min d > 0`, `violates` if
+`max d <= 0`; `>=`, `<`, `<=` are the mirror cases; `==` holds only when
+`d` is exactly zero and violates when zero is outside `d`; `!=` is its
+negation. When an operand is inexact or the operands carry different
+nonzero `pi^k`, `d` is computed in binary64 and widened by 1e-9 of the
+largest operand magnitude on each side before deciding. C003 is raised
+for any `==`/`!=` with a toleranced operand, in addition to C002 when
+the result is undecided.
+
 ## 6. Display
 
 Storage is SI; display unit selection, in order: `#[display(unit)]` on

@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1, 2, 3, 4, 5]
+captured_at = "2026-10-13T06:22:46Z"
+digest = "1dbd0d6e1c1b8a361b2d697f27644fa99929ceca41ecf10ede4ad5fb6f311938"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.48s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 769782de-b9f8-4ba6-9651-33984ced535f with nextest profile: default
+    Starting 6 tests across 1 binary (36 tests skipped)
+        PASS [   0.007s] cadetta-units compare::tests::dimension_mismatch_is_an_error
+        PASS [   0.008s] cadetta-units compare::tests::conservative_undecided_says_so_in_c002
+        PASS [   0.008s] cadetta-units compare::tests::form_entirely_above_threshold_holds
+        PASS [   0.011s] cadetta-units compare::tests::straddling_form_is_undecided
+        PASS [   0.011s] cadetta-units compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact
+        PASS [   0.012s] cadetta-units compare::tests::inexact_near_equal_is_undecided_with_note
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 6 tests run: 6 passed, 36 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units compare::tests"
+size = 1081
+status = "measured"
+test_count = 6
+tests_digest = "c6dfe014360a26dd2cc0a82bb0bf712c3bb141aeee42ae2cb9513dae4dc7ae2c"
+at = "2026-10-13T06:22:46Z"
+actor = "lognd"
+rev = 1

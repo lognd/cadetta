@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:24:45Z"
+digest = "bcf4277e346382dd86e619af581eb0fe574a61f979f475ff04499e9c58c3878a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ab5d9ffe-a3c0-4414-99a4-524e68419975 with nextest profile: default
+    Starting 2 tests across 1 binary (47 tests skipped)
+        PASS [   0.008s] cadetta-units inexact::tests::atan2_special_cases_are_exact
+        PASS [   0.008s] cadetta-units inexact::tests::trig_is_exact_at_special_angles
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 2 tests run: 2 passed, 47 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units trig_is_exact atan2_special"
+size = 637
+status = "measured"
+test_count = 2
+tests_digest = "818132047a73fde178ce6f4200d207305cbe2b35945a58ea8817803e957d8439"
+at = "2026-10-13T06:24:45Z"
+actor = "lognd"
+rev = 1
