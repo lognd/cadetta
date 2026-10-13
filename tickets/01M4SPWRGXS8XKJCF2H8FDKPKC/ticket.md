@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:05:15Z"
+updated = "2026-10-13T05:05:16Z"
 persona = "cadetta contributor"
 capability = "implement an adapter declaring emit, read and drive capabilities"
 outcome_text = "new CAD targets never touch lints"
@@ -30,6 +30,10 @@ target = "01M4SPWS23PN7M3TKKW8SA8QRK"
 [[links]]
 kind = "blocks"
 target = "01M4ST7B3CYJNHGNCCQ3EYW9WC"
+
+[[links]]
+kind = "blocks"
+target = "01M4ST7B6MNGRQ6967DAWQA5YK"
 
 [[acceptance]]
 text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
