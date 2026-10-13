@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T06:29:51Z"
+updated = "2026-10-13T06:30:06Z"
 persona = "design engineer"
 capability = "gate releases on real sync"
 idempotency_key = "replan14:ob-kinds"
@@ -21,5 +21,5 @@ target = "01M4ST8EMQTXAGZAWGE2M5A4BR"
 
 [[acceptance]]
 text = "Given [obligations.kinds.sync] required_for, when set, then it gates sync and solver obligations; sw-equations emission alone never discharges a sync obligation (obligations.md 2.3; config-cli.md 2)"
-bound = false
+bound = true
 +++
