@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T14:36:58Z"
+updated = "2026-10-13T14:36:59Z"
 persona = "design engineer"
 capability = "emit to configured adapters and import native files"
 outcome_text = "nobody retypes values and existing designs are adoptable"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given emit and import flags, when run, then exit codes and outputs follow config-cli.md 3 (Q004, R013 give exit 1)"
-bound = false
+bound = true
 +++

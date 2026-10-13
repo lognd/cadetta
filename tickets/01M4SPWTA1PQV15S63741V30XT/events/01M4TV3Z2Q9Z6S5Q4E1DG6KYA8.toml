@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T14:36:59Z"
+digest = "d0f096dc3363928a68de13829e50fd5da09135bf955be359c421612dbefa2b72"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f935b384-ea98-4324-8f95-b357281d5313 with nextest profile: default
+    Starting 4 tests across 2 binaries (146 tests skipped)
+        PASS [   0.013s] cadetta cmd::import::tests::never_exits_one
+        PASS [   0.014s] cadetta cmd::emit::tests::usage_errors_exit_two
+        PASS [   0.023s] cadetta cmd::emit::tests::unrepresentable_value_exits_one
+        PASS [   0.023s] cadetta cmd::emit::tests::native_name_collision_exits_one
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.024s] 4 tests run: 4 passed, 146 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::emit::tests::unrepresentable_value_exits_one) | test(=cmd::emit::tests::native_name_collision_exits_one) | test(=cmd::emit::tests::usage_errors_exit_two) | test(=cmd::import::tests::never_exits_one)'"
+size = 777
+status = "measured"
+test_count = 4
+tests_digest = "50af6ba43d614e3e07c6275f41bb7c6ec51f31d3608033e2762f34995193955f"
+at = "2026-10-13T14:36:59Z"
+actor = "lognd"
+rev = 1
