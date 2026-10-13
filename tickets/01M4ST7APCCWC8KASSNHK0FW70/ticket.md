@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a parameter without a role under `#![process(Fdm)]`, when evaluated, then it is not compensated; roles have no `#!` default (language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a feature-like parameter name without a role, when analysed, then the P001 fact is recorded (language.md 3.8)"
