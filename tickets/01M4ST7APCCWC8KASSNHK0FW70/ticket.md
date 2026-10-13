@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:21:16Z"
+updated = "2026-10-13T08:21:17Z"
 persona = "design engineer"
 capability = "compensate printed holes once, in a process, without hand-adjusting dimensions"
 idempotency_key = "replan13:Processes and drawn versus designed values"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a feature-like parameter name without a role, when analysed, then the P001 fact is recorded (language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given emit, when a compensated member is written, then the drawn value is written (language.md 3.8)"
