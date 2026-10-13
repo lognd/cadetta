@@ -17,6 +17,10 @@ scope = ["crates/cadetta-geometry/src/reexpress.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SWFX4ZH1Q8BJPEEWYEKQJC"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWFX82NWXV79EQTA5QX081"
 
 [[acceptance]]
