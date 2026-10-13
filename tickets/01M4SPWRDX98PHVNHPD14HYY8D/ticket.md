@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:16:43Z"
+updated = "2026-10-13T13:16:44Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver with a lock waiver record whose target closure digest has since changed, when linted, then W002 fires and the suppressed diagnostic reappears until re-reviewed with `cadetta ack waiver:GLOB` (lints.md 2.1)"
