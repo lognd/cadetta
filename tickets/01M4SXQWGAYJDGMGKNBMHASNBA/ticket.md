@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:34Z"
-updated = "2026-10-13T06:36:41Z"
+updated = "2026-10-13T06:36:42Z"
 persona = "library author"
 capability = "declare a package with dependencies, or group packages in a workspace"
 labels = ["creates:crates/cadetta-cli/src/pkg/manifest.rs"]
@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "Given [dependencies] entries with path, or git plus tag, rev or branch, when loaded, then each is typed; a registry source is rejected as unsupported (packages.md 1; OQ-19)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a package named std, when loaded, then it is rejected, and std is an implicit dependency at the compiler version (packages.md 1)"
