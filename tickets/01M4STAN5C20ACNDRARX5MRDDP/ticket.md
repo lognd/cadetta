@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
 labels = ["creates:crates/cadetta-solvers/src/results.rs"]
-scope = ["crates/cadetta-solvers/src/results.rs", "crates/cadetta-solve/src/results.rs"]
+scope = ["crates/cadetta-solvers/src/results.rs", "crates/cadetta-solve/src/results.rs", "crates/cadetta-solve/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
