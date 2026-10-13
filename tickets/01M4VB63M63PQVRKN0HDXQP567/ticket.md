@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:58:24Z"
+updated = "2026-10-13T22:00:51Z"
 persona = "design engineer"
 capability = "see when a cited source is incomplete or has changed"
 outcome_text = "nobody signs off values against a superseded datasheet"
@@ -21,7 +21,7 @@ target = "01M4VB62VJQV9AKSSQME8NWW6Y"
 
 [[acceptance]]
 text = "Given a cite missing a field its type requires, a url with neither file nor accessed, or an ots value whose only citation is a note, when linted, then S008; pseudo-citations never are (lints.md S008; language.md 3.9)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a cite whose file is missing, when linted, then S002 (lints.md)"
