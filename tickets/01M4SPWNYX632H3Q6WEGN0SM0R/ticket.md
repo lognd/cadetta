@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:18:35Z"
+updated = "2026-10-13T06:18:36Z"
 persona = "design engineer"
 capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
 outcome_text = "units are unambiguous in source"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `// c` and `/// d`, when lexed, then line and doc comments are distinguished"
-bound = false
+bound = true
 
 [[acceptance]]
 text = """Given `2'6"`, `2ft6in` and `1h30min`, when lexed, then each is one compound literal; given unordered or non-descending segments then a lex error (quantities.md 2)"""
