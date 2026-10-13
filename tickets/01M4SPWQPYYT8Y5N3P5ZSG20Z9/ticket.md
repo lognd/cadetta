@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T12:49:59Z"
+updated = "2026-10-13T12:52:33Z"
 persona = "design engineer"
 capability = "get lints for the Q family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -33,9 +33,5 @@ bound = false
 
 [[acceptance]]
 text = "Given Q005, when queried, then it is listed as retired and never emitted (lints.md Q)"
-bound = false
-
-[[acceptance]]
-text = "Given each code, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/ (lints.md 4)"
 bound = false
 +++

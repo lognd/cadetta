@@ -1,0 +1,29 @@
+kind = "evidence"
+captured_at = "2026-10-13T12:53:25Z"
+digest = "a92bbd0a47468b0e784252089e841b64b8124e9bce42715425c971acc86a998a"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.84s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 211868ab-84c0-41b2-bc27-5b46410206a8 with nextest profile: default
+    Starting 6 tests across 1 binary (40 tests skipped)
+        PASS [   0.015s] cadetta-adapter policy::tests::emit_point_follows_policy_and_change_repushes
+        PASS [   0.021s] cadetta-adapter builtin::json::tests::emit_is_byte_identical_golden
+        PASS [   0.025s] cadetta-adapter builtin::json::tests::header_is_excluded_from_comparison
+        PASS [   0.032s] cadetta-adapter builtin::json::tests::ref_mode_and_bad_schema_rejected
+        PASS [   0.031s] cadetta-adapter builtin::json::tests::inexact_is_q004_and_values_are_strings
+        PASS [   0.035s] cadetta-adapter builtin::json::tests::read_returns_emitted_values
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.039s] 6 tests run: 6 passed, 40 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter -E '(package(=cadetta-adapter) & (test(=builtin::json::tests::emit_is_byte_identical_golden) | test(=builtin::json::tests::header_is_excluded_from_comparison) | test(=builtin::json::tests::inexact_is_q004_and_values_are_strings) | test(=builtin::json::tests::read_returns_emitted_values) | test(=builtin::json::tests::ref_mode_and_bad_schema_rejected) | test(=policy::tests::emit_point_follows_policy_and_change_repushes)))'"
+size = 1119
+status = "measured"
+test_count = 6
+tests_digest = "30d546e3dbebb2e7c68089665ec8c52dde4ab760c6890b01c6ebbbe515c846b6"
+at = "2026-10-13T12:53:25Z"
+actor = "lognd"
+rev = 1
