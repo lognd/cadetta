@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:34:26Z"
+digest = "134c7634a14fd543f9215f6df66b501efef0214f2119589442bedb686060663e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.41s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f8cddd2e-077f-4533-a5cf-c1c4beb7a45b with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.013s] cadetta-sema affine::tests::each_instance_parameter_is_independent
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::each_instance_parameter_is_independent)'"
+size = 666
+status = "measured"
+test_count = 1
+tests_digest = "8adeafce8a211c804967f054a7ae92f683dd48609807fdefef997b86c03ec80e"
+at = "2026-10-13T08:34:26Z"
+actor = "lognd"
+rev = 1
