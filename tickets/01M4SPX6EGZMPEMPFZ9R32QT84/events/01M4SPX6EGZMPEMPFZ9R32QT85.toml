@@ -1,0 +1,9 @@
+kind = "create"
+title = "Out of scope: GUI"
+type = "task"
+category = "todo"
+priority = "medium"
+body = "Out of 0.1.0 scope per docs/spec/README.md."
+at = "2026-10-13T04:04:08Z"
+actor = "lognd"
+rev = 1
