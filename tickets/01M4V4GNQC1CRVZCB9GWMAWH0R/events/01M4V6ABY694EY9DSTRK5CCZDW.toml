@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/WMAWH0R; scope: docs/spec/emitters/sw-equations.md, docs/spec/lints.md, docs/spec/adapters.md, docs/spec/config-cli.md, docs/spec/README.md, crates/cadetta-lint/src/engine.rs, tests/conformance/emitters/sw-equations/**; ttl 7200s"
+at = "2026-10-13T17:52:41Z"
+actor = "lognd"
+rev = 1

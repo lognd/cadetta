@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given docs/spec/packages.md, when fixtures are written, then every normative rule and every diagnostic code (E012-E017, U002) has a must-fire and a must-not-fire fixture under tests/conformance/packages/ (packages.md 7)", "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"]
+new = ["Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)", "Given docs/spec/packages.md, when fixtures are written, then every check-testable normative rule and every diagnostic code (E012-E017, U002) has a must-fire and a must-not-fire fixture under tests/conformance/packages/; the update entry, section 6 trust, and codeless rules are filed as spec tickets ~XXKBNB8 ~SE9XKVS ~4DKBZVW (packages.md 7)"]
+moved = [0, 1]
+at = "2026-10-13T17:54:31Z"
+actor = "lognd"
+rev = 1
