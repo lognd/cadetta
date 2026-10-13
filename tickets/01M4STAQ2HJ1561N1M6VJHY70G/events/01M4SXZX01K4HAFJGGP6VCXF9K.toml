@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T06:07:57Z"
+digest = "898f52c5324da70412498dfa28fc01658d1b3de6cd61f86f713dbfbb3e4b3a6e"
+provider = "file"
+ref = "tests/conformance/README.md"
+size = 3808
+status = "measured"
+at = "2026-10-13T06:07:57Z"
+actor = "lognd"
+rev = 1
