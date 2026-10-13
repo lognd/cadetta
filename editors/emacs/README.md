@@ -18,7 +18,13 @@ Manual:
     (add-to-list 'load-path "/path/to/cadetta/editors/emacs")
     (require 'cadetta-mode)
 
-Flymake is enabled with `M-x flymake-mode` in a `cadetta-mode` buffer.
+Primary: eglot with `cadetta lsp`:
+
+    (add-to-list 'eglot-server-programs '(cadetta-mode . ("cadetta" "lsp")))
+    (add-hook 'cadetta-mode-hook #'eglot-ensure)
+
+Hover and code lens are not yet provided (ticket ~0CXQ6EZ). Fallback:
+`M-x flymake-mode` in a `cadetta-mode` buffer uses `cadetta-flymake`.
 
 ## Status
 
