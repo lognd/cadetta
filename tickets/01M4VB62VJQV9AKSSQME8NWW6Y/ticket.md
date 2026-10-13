@@ -8,12 +8,12 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:45Z"
-updated = "2026-10-13T19:17:45Z"
+updated = "2026-10-13T20:34:01Z"
 persona = "design engineer"
 capability = "cite sources as typed records that someone else can look up"
 outcome_text = "every value says where it came from precisely"
 idempotency_key = "d15:cite-core"
-scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-sema/src/cite.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**"]
+scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/**", "crates/cadetta-sema/src/cite.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-ir/src/**", "docs/schemas/cadetta.ir.1.json", "std/src/**", "tests/golden/**", "tests/conformance/language/**", "crates/cadetta-lint/src/diag.rs", "crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/lib.rs", "crates/cadetta-lint/src/render", "crates/cadetta-lint/src/rules", "crates/cadetta-obligations/src/citation.rs", "crates/cadetta-obligations/src/graph.rs", "crates/cadetta-cli/src/cmd/cite.rs", "crates/cadetta-cli/src/cmd/why.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-adapter/src/builtin/csv.rs", "crates/cadetta-adapter/src/builtin/json.rs", "crates/cadetta-adapter/src/builtin/mod.rs", "crates/cadetta-adapter/src/builtin/sw_equations.rs", "crates/cadetta-solve/src/outputs.rs", "crates/cadetta-sema/src/affine.rs", "crates/cadetta-sema/src/array.rs", "crates/cadetta-sema/src/attrs.rs", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-sema/src/deps.rs", "crates/cadetta-sema/src/enums.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/fits.rs", "crates/cadetta-sema/src/func.rs", "crates/cadetta-sema/src/imports.rs", "crates/cadetta-sema/src/kindcheck.rs", "crates/cadetta-sema/src/lib.rs", "crates/cadetta-sema/src/modules.rs", "crates/cadetta-sema/src/parts.rs", "crates/cadetta-sema/src/point.rs", "crates/cadetta-sema/src/process.rs", "crates/cadetta-sema/src/renames.rs", "crates/cadetta-sema/src/rollup.rs", "crates/cadetta-sema/src/tables.rs", "crates/cadetta-sema/src/visibility.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Given cite NAME: TYPE { fields } with the language.md 3.9 types and fields, when compiled, then Project.citations holds {path, type, fields, file_digest?, digest} sorted by path and citing nodes carry a CiteRef (language.md 3.9; ir.md 3)"
