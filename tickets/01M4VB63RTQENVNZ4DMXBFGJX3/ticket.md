@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:56:07Z"
+updated = "2026-10-13T22:56:08Z"
 persona = "design engineer"
 capability = "print the design's reference list and vendor a web source"
 outcome_text = "a design review has a bibliography and a URL can be drift-checked"
@@ -30,5 +30,5 @@ bound = true
 
 [[acceptance]]
 text = "Given cite pin NAME on a cite with a url, when run, then the bytes land in cites/<16 hex>-<name>, file is set, url kept and accessed added when absent; no url, unknown or ambiguous NAME exits 2 (config-cli.md 3)"
-bound = false
+bound = true
 +++
