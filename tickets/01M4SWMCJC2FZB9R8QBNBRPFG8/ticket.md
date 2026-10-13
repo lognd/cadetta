@@ -2,7 +2,8 @@
 id = "01M4SWMCJC2FZB9R8QBNBRPFG8"
 title = "Adapter ids, modules and paths scoping"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
