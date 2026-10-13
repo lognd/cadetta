@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 77e68de0264d (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38479456289/job/115578254800): base red only from this test's stale needle; this ticket fixes it"
+at = "2026-10-13T22:55:41Z"
+actor = "lognd"
+rev = 1
