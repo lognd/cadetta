@@ -8,6 +8,10 @@ reporter = "lognd"
 created = "2026-10-13T05:17:05Z"
 updated = "2026-10-13T05:17:05Z"
 labels = ["open-question"]
+
+[[links]]
+kind = "relates"
+target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 +++
 
 Open question OQ-16 from bindings.md. Closes with an ADR in docs/decisions/.
