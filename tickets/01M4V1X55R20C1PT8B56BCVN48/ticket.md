@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-13T23:12:23Z"
+updated = "2026-10-13T23:13:44Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md", "tests/conformance/obligations/**", "tests/conformance/adapters/**", "tests/conformance/emitters/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a fixture whose implementation lags the spec, when the runner executes, then it is listed in tests/conformance/known-gaps.toml with a ticket handle and reason, and a listed fixture that starts passing fails the run"
-bound = false
+bound = true
 +++
 
 Runner skips emit sw-equations, classify, sync, protocol, read, import, push-plan, impact-swap, emit-twice, emit-read and binary kinds; adapters corpus fixtures for those are written but unexecuted. found while working ~YNT9TWR
