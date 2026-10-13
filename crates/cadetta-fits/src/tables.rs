@@ -34,10 +34,10 @@ pub(crate) fn fine_range(size_nm: i64) -> Option<Range> {
 /// IT1..IT18 in tenths of a micrometre, one row per grade, by main range.
 #[rustfmt::skip]
 const IT_TENTHS_UM: [[i64; 13]; 18] = [
-    [8, 10, 10, 12, 15, 20, 25, 35, 45, 60, 80, 100, 130],
-    [12, 15, 15, 20, 25, 30, 40, 50, 70, 80, 100, 120, 150],
-    [20, 25, 25, 30, 40, 50, 60, 80, 100, 120, 150, 180, 200],
-    [30, 40, 40, 50, 60, 80, 100, 120, 140, 160, 180, 200, 230],
+    [8, 10, 10, 12, 15, 15, 20, 25, 35, 45, 60, 70, 80],
+    [12, 15, 15, 20, 25, 25, 30, 40, 50, 70, 80, 90, 100],
+    [20, 25, 25, 30, 40, 40, 50, 60, 80, 100, 120, 130, 150],
+    [30, 40, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200],
     [40, 50, 60, 80, 90, 110, 130, 150, 180, 200, 230, 250, 270],
     [60, 80, 90, 110, 130, 160, 190, 220, 250, 290, 320, 360, 400],
     [100, 120, 150, 180, 210, 250, 300, 350, 400, 460, 520, 570, 630],
@@ -120,4 +120,29 @@ pub(crate) fn shaft_lower_um(letter: &str, grade: u8, r: Range) -> Option<i64> {
         "p" => P_EI[r.coarse],
         _ => return None,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // frob:ticket 01M4T1E2SJJS6GBRWKFDRWZP5A
+    /// IT1..IT4 match ISO 286-1 table 1 across all main ranges (regression for over-30 mm rows).
+    #[test]
+    fn it1_to_it4_match_iso286_table1() {
+        let expect: [[i64; 13]; 4] = [
+            [8, 10, 10, 12, 15, 15, 20, 25, 35, 45, 60, 70, 80],
+            [12, 15, 15, 20, 25, 25, 30, 40, 50, 70, 80, 90, 100],
+            [20, 25, 25, 30, 40, 40, 50, 60, 80, 100, 120, 130, 150],
+            [30, 40, 40, 50, 60, 70, 80, 100, 120, 140, 160, 180, 200],
+        ];
+        for (g, row) in expect.iter().enumerate() {
+            for (c, &tenths) in row.iter().enumerate() {
+                assert_eq!(it_nm(c, g as u8 + 1), tenths * 100, "IT{} range {c}", g + 1);
+            }
+        }
+        // 30-50 mm is coarse index 5.
+        assert_eq!(it_nm(5, 3), 4_000);
+        assert_eq!(it_nm(5, 4), 7_000);
+    }
 }

@@ -3,3 +3,4 @@
 //! Specification: `docs/spec/solvers.md`.
 
 pub mod decl;
+pub mod protocol;
