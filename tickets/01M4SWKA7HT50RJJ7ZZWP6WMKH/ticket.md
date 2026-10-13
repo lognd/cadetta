@@ -19,6 +19,10 @@ scope = ["crates/cadetta-cli/src/cmd/check_watch.rs"]
 kind = "blocked-by"
 target = "01M4SPWT3FP4SN4RTCHE631Y52"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWK9V5CYNNVTAS3PE4EC23"
+
 [[acceptance]]
 text = "Given check --format json --watch, when a source file changes, then a re-run emits one cadetta.diag/1 per line sorted by (file, line, code) (lints.md 1.2; config-cli.md 5)"
 bound = false
