@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:10:41Z"
+updated = "2026-10-13T07:10:42Z"
 persona = "design engineer"
 capability = "get cycle detection and `was` rename resolution"
 outcome_text = "single-source-of-truth errors are caught"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a model argument that comes from a joint reading another member of the same model, when analysed, then no cycle is reported because D003 is per member, not per component (language.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a part count expression that reads a member depending on the part, when analysed, then D003 is reported (language.md 3.5)"
