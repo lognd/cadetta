@@ -13,6 +13,10 @@ scope = ["crates/cadetta-ir/**"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWH74K9QQS72Z9YMTPD72"
 +++
 
 Outcome: the tool-agnostic cadetta.ir/1 data model, its committed JSON Schema and BLAKE3 digests.
