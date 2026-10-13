@@ -1,0 +1,19 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T12:54:01Z"
+digest = "743808f1504424f44d2f34736cff26432ee4ff5a51c1198a68f440e0dc7db0cc"
+exit_code = 101
+inline = """
+error: package ID specification `cadetta-cli` did not match any packages
+
+help: a package with a similar name exists: `cadetta-ir`
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics --package cadetta-cli` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-p cadetta-cli -E 'test(=universe::tests::ack_records_an_attestation_for_the_check)'"
+size = 326
+status = "measured"
+at = "2026-10-13T12:54:01Z"
+actor = "lognd"
+rev = 1

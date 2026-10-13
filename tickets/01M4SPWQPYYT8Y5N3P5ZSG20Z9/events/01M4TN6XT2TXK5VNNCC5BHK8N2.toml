@@ -1,0 +1,147 @@
+kind = "evidence"
+captured_at = "2026-10-13T12:52:33Z"
+digest = "b128f5b6c6f2a5626335afd21c98a7ca400101e1b4b2d91f56c32bf602262196"
+exit_code = 0
+inline = '''
+   Compiling syn v2.0.119
+   Compiling tracing-core v0.1.36
+   Compiling serde_json v1.0.154
+   Compiling libc v0.2.190
+   Compiling regex-syntax v0.8.11
+   Compiling aho-corasick v1.1.5
+   Compiling ring v0.17.14
+   Compiling log v0.4.34
+   Compiling smallvec v1.16.3
+   Compiling version_check v0.9.5
+   Compiling zerocopy v0.8.59
+   Compiling getrandom v0.3.4
+   Compiling zeroize v1.9.1
+   Compiling ahash v0.8.12
+   Compiling num-bigint v0.4.8
+   Compiling httparse v1.10.1
+   Compiling parking_lot_core v0.9.12
+   Compiling rustls-pki-types v1.15.1
+   Compiling untrusted v0.9.0
+   Compiling num-iter v0.1.46
+   Compiling num-complex v0.4.6
+   Compiling percent-encoding v2.3.2
+   Compiling rustls v0.23.45
+   Compiling bytes v1.12.1
+   Compiling lazy_static v1.5.1
+   Compiling scopeguard v1.2.0
+   Compiling num-rational v0.4.2
+   Compiling tracing-serde v0.2.0
+   Compiling sharded-slab v0.1.7
+   Compiling lock_api v0.4.14
+   Compiling tracing-log v0.2.0
+   Compiling getrandom v0.2.17
+   Compiling http v1.5.0
+   Compiling schemars v1.2.3
+   Compiling thread_local v1.1.10
+   Compiling allocator-api2 v0.2.21
+   Compiling bit-vec v0.8.0
+   Compiling num v0.4.3
+   Compiling foldhash v0.2.0
+   Compiling heck v0.5.0
+   Compiling borrow-or-share v0.2.4
+   Compiling subtle v2.6.1
+   Compiling equivalent v1.0.2
+   Compiling nu-ansi-term v0.50.3
+   Compiling base64 v0.23.1
+   Compiling regex-automata v0.4.18
+   Compiling unicode-general-category v1.1.0
+   Compiling jsonschema-value v0.58.5
+   Compiling hashbrown v0.17.1
+   Compiling fluent-uri v0.4.1
+   Compiling fraction v0.17.0
+   Compiling bit-set v0.8.0
+   Compiling parking_lot v0.12.5
+   Compiling webpki-roots v1.0.9
+   Compiling ureq-proto v0.6.4
+   Compiling num-cmp v0.1.0
+   Compiling tracing-attributes v0.1.31
+   Compiling strum_macros v0.28.0
+   Compiling outref v0.5.2
+   Compiling utf8-zero v0.8.1
+   Compiling micromap v0.3.0
+   Compiling vsimd v0.8.0
+   Compiling bytecount v0.6.9
+   Compiling jsonschema-regex v0.58.5
+   Compiling email_address v0.2.9
+   Compiling data-encoding v2.11.1
+   Compiling rustls-webpki v0.103.15
+   Compiling tracing v0.1.44
+   Compiling uuid-simd v0.8.0
+   Compiling referencing v0.58.5
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling strum v0.28.0
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling matchers v0.2.0
+   Compiling regex v1.13.1
+   Compiling fancy-regex v0.19.2
+   Compiling tracing-subscriber v0.3.23
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling jsonschema v0.58.5
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling ureq v3.4.2
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID be367d54-4bf6-493e-8bcc-8c90b6158597 with nextest profile: default
+    Starting 37 tests across 3 binaries (138 tests skipped)
+        PASS [   0.018s] cadetta-lint diag::tests::serialize_has_all_fields
+        PASS [   0.021s] cadetta-lint diag::tests::location_kinds
+        PASS [   0.015s] cadetta-lint engine::tests::allow_needs_because_and_has_no_expiry
+        PASS [   0.040s] cadetta cmd::compare::tests::usage_errors_exit_two
+        PASS [   0.028s] cadetta-lint diag::tests::sorts_by_file_line_code_path
+        PASS [   0.020s] cadetta-lint engine::tests::expired_waiver_stops_suppressing
+        PASS [   0.062s] cadetta cmd::check::tests::stale_check_obligation_exits_one
+        PASS [   0.028s] cadetta-lint engine::tests::precedence_floor_and_fail_on
+        PASS [   0.068s] cadetta cmd::check::tests::bad_arguments_are_usage_errors
+        PASS [   0.017s] cadetta-lint engine::tests::waiver_binds_target_digests
+        PASS [   0.076s] cadetta cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span
+        PASS [   0.084s] cadetta cmd::check::tests::drift_lints_run_for_adapters_that_can_read
+        PASS [   0.083s] cadetta cmd::check::tests::clean_project_exits_zero
+        PASS [   0.017s] cadetta-lint engine::tests::waiver_scoped_to_alt
+        PASS [   0.082s] cadetta cmd::check::tests::obligations_no_role_covers_are_not_raised
+        PASS [   0.036s] cadetta-lint engine::tests::severity_override_applies
+        PASS [   0.019s] cadetta-lint rules::interface::tests::i001_waiver_is_refused
+        PASS [   0.027s] cadetta-lint engine::tests::waiver_suppresses_path
+        PASS [   0.097s] cadetta cmd::check::tests::violated_check_is_c001_with_path
+        PASS [   0.014s] cadetta-lint rules::obligation::tests::o001_warns_when_stale
+        PASS [   0.016s] cadetta-lint rules::obligation::tests::o002_fires_when_open_and_covers_waiver_review
+        PASS [   0.022s] cadetta-lint rules::interface::tests::i002_only_when_primary_does_not_fail
+        PASS [   0.034s] cadetta-lint render::sarif::tests::log_shape_rules_and_results
+        PASS [   0.024s] cadetta-lint rules::obligation::tests::o001_errors_for_role_required_for_check
+        PASS [   0.015s] cadetta-lint rules::obligation::tests::o003_errors_on_unsigned_require_only
+        PASS [   0.017s] cadetta-lint rules::q::tests::q005_is_retired_and_never_emitted
+        PASS [   0.019s] cadetta-lint rules::q::tests::q006_once_per_root_with_dependent_count
+        PASS [   0.025s] cadetta-lint rules::q::tests::fixed_codes_ignore_severity_override
+        PASS [   0.025s] cadetta-lint rules::q::tests::q001_fires_as_error
+        PASS [   0.018s] cadetta-lint rules::q::tests::q006_silent_when_all_exact
+        PASS [   0.019s] cadetta-lint rules::q::tests::q007_keeps_fix_and_cannot_be_waived
+        PASS [   0.033s] cadetta-lint rules::q::tests::default_severities_of_q004_q006_q008
+        PASS [   0.049s] cadetta-lint rules::interface::tests::i003_only_for_viable_alternate_primary_decided
+        PASS [   0.037s] cadetta-lint rules::obligation::tests::s_kinds_are_not_double_reported
+        PASS [   0.052s] cadetta-lint rules::obligation::tests::current_attestation_is_quiet
+        PASS [   0.156s] cadetta cmd::check::tests::release_role_gates_open_obligations_only_with_release
+        PASS [   0.184s] cadetta cmd::check::tests::flags_scope_as_of_watch_and_fail_on
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.187s] 37 tests run: 37 passed, 138 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-lint -E '(package(=cadetta) & (test(=cmd::check::tests::bad_arguments_are_usage_errors) | test(=cmd::check::tests::clean_project_exits_zero) | test(=cmd::check::tests::drift_lints_run_for_adapters_that_can_read) | test(=cmd::check::tests::flags_scope_as_of_watch_and_fail_on) | test(=cmd::check::tests::obligations_no_role_covers_are_not_raised) | test(=cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span) | test(=cmd::check::tests::release_role_gates_open_obligations_only_with_release) | test(=cmd::check::tests::stale_check_obligation_exits_one) | test(=cmd::check::tests::violated_check_is_c001_with_path) | test(=cmd::compare::tests::usage_errors_exit_two))) | (package(=cadetta-lint) & (test(=diag::tests::location_kinds) | test(=diag::tests::serialize_has_all_fields) | test(=diag::tests::sorts_by_file_line_code_path) | test(=engine::tests::allow_needs_because_and_has_no_expiry) | test(=engine::tests::expired_waiver_stops_suppressing) | test(=engine::tests::precedence_floor_and_fail_on) | test(=engine::tests::severity_override_applies) | test(=engine::tests::waiver_binds_target_digests) | test(=engine::tests::waiver_scoped_to_alt) | test(=engine::tests::waiver_suppresses_path) | test(=render::sarif::tests::log_shape_rules_and_results) | test(=rules::interface::tests::i001_waiver_is_refused) | test(=rules::interface::tests::i002_only_when_primary_does_not_fail) | test(=rules::interface::tests::i003_only_for_viable_alternate_primary_decided) | test(=rules::obligation::tests::current_attestation_is_quiet) | test(=rules::obligation::tests::o001_errors_for_role_required_for_check) | test(=rules::obligation::tests::o001_warns_when_stale) | test(=rules::obligation::tests::o002_fires_when_open_and_covers_waiver_review) | test(=rules::obligation::tests::o003_errors_on_unsigned_require_only) | test(=rules::obligation::tests::s_kinds_are_not_double_reported) | test(=rules::q::tests::default_severities_of_q004_q006_q008) | test(=rules::q::tests::fixed_codes_ignore_severity_override) | test(=rules::q::tests::q001_fires_as_error) | test(=rules::q::tests::q005_is_retired_and_never_emitted) | test(=rules::q::tests::q006_once_per_root_with_dependent_count) | test(=rules::q::tests::q006_silent_when_all_exact) | test(=rules::q::tests::q007_keeps_fix_and_cannot_be_waived)))'"
+size = 6899
+status = "measured"
+test_count = 37
+tests_digest = "af786770a0fb564c1431cb4eed42dd70e011efaa181be2831ee4981c178c015a"
+at = "2026-10-13T12:52:33Z"
+actor = "lognd"
+rev = 1
