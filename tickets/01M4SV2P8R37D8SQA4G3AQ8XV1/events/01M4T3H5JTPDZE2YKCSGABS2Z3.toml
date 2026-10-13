@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:44:45Z"
+digest = "47a075081db44ad10e6ae983a2f8380c0a6b6912a11e92ef97890e36466455a5"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_pint.py .                                     [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3979358-0.xml --------------
+============================== 1 passed in 0.32s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_pint.py::test_length_converts_to_equivalent_pint_quantity"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "f708bf77c017b4d8fa72ac24b83105505fcd9ca1a8060cfa83194f225e4a255b"
+at = "2026-10-13T07:44:45Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "PROVENANCE: all figures typed from memory of ISO 273/724/2306/4762/4032 and Machinery's Handbook, not transcribed. Least certain: counterbore dia/depth M1.6-M2.5, cut_65 and form drill columns, M16/M20 form drills, nut height minima. Golden 01 assumed values (Iso273 M4/M5 medium, Thread major, counterbore M4 8x4.4 M5 9.5x5.4, TapDrill cut_75 3.3/4.2, Iso4762Len 8/10/12/16) match; no mismatches. MetricThread enum declared in tables.cdt (no other ticket scoped it). Needs the std citation audit."
+at = "2026-10-13T07:45:08Z"
+actor = "lognd"
+rev = 1
