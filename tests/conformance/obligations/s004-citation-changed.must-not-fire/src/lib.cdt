@@ -1,0 +1,4 @@
+cite spec = "docs/spec.txt"
+ots Tube @spec {
+  od = 20mm @spec:"p.1"
+}

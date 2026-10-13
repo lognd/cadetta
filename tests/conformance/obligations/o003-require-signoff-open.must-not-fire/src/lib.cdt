@@ -1,0 +1,4 @@
+model Part {
+  mass = 3kg
+  require budget: mass <= 4kg "mass budget"
+}

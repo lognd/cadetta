@@ -1,0 +1,6 @@
+model Part {
+  width: Length = 14mm
+  limit: Length = 12mm
+  #[allow(C001, "accepted")]
+  check fits_limit: width <= limit "width within limit"
+}

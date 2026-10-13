@@ -1,0 +1,7 @@
+model Part {
+  mass = 5kg
+  require budget: mass <= 4kg "mass budget"
+}
+waive C001 on acme.demo::Part.budget {
+  because "accepted"
+}
