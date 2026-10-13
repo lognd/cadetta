@@ -23,6 +23,10 @@ target = "01M4SPWPT5XR3QCQJ7M1XP07MP"
 kind = "blocks"
 target = "01M4SPWQ0WTDXX64VS40QGESR5"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
+
 [[acceptance]]
 text = "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact rational is 1.9m * ... equal to 338.1mm"
 bound = false
