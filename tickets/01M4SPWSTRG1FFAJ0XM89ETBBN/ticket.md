@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T06:23:18Z"
+updated = "2026-10-13T06:23:19Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `[solvers.NAME]` and `[[adapter]]` tables, when loaded, then command, transport, native_unit, version and files parse (config-cli.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)"
