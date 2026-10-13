@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T22:23:02Z"
+updated = "2026-10-13T22:24:51Z"
 persona = "design engineer"
 capability = "have drawing tolerances come from the design"
 outcome_text = "tolerances are not retyped on drawings"
@@ -21,7 +21,7 @@ target = "01M4VB640810PZEZHQJ1T5WFTK"
 
 [[acceptance]]
 text = "Given an adapter with the tolerances feature and a dimension locator with tolerance = drive, when pushed, then the design tolerance is sent as symmetric, bilateral, limits or fit class per adapters.md 3.6, as limits when the emit point is not nominal"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a read-back tolerance that differs, when synced, then it is classified in the same three-way record as the value and reported as R001 (adapters.md 3.6)"
