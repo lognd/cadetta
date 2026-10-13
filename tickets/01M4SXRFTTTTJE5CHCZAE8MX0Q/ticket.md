@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:20:47Z"
+updated = "2026-10-13T07:22:25Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
@@ -28,21 +28,21 @@ target = "01M4SXQWGAYJDGMGKNBMHASNBA"
 
 [[acceptance]]
 text = "Given src/lib.cdt, src/frame.cdt and src/drive/motor.cdt in package acme.rover, when loaded, then modules are acme.rover, acme.rover::frame and acme.rover::drive::motor, and drive.cdt may be absent (packages.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a file or directory under src that is not snake_case, when loaded, then E015 fires (packages.md 2, 7; N001)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an item in a module, when its path is built, then it is package::module::Item and members follow, as in acme.rover::drive::motor::Gm42A.rated_torque (packages.md 2; ir.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given matches under src, when compiled, then files are sorted by path so digests are deterministic; a component defined twice in one module is E003 with both spans (config-cli.md 1.3, 1.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a path to a bindings, solver script or cited file, when resolved, then it is relative to the package directory, not src (packages.md 2)"
-bound = false
+bound = true
 +++
