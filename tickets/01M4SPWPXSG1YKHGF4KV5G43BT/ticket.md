@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:32:29Z"
+updated = "2026-10-13T06:32:35Z"
 persona = "design engineer"
 capability = "resolve hole and shaft classes like H7, p6, g6 for any size in range"
 outcome_text = "fits are values, not comments"
@@ -21,7 +21,7 @@ target = "01M4SPWQ0WTDXX64VS40QGESR5"
 
 [[acceptance]]
 text = "Given `20mm H7`, when resolved, then the tolerance is +0.021/0 mm per ISO 286"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a size outside the table range, when resolved, then F002 is signalled"
