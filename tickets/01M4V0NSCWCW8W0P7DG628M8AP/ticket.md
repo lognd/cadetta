@@ -7,7 +7,7 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T16:14:06Z"
-updated = "2026-10-13T16:18:13Z"
+updated = "2026-10-13T16:18:41Z"
 idempotency_key = "conformance-runner"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
