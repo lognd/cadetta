@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/src/fasteners/tables.cdt"]
+new = ["std/src/fasteners/tables.cdt", "crates/cadetta-syntax/tests/std_fasteners_tables.rs", "changelog.d/01M4STAP388RZR0PTDBKBV6JM5*"]
+at = "2026-10-13T07:44:51Z"
+actor = "lognd"
+rev = 1

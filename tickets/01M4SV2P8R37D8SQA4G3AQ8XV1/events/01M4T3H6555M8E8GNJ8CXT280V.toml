@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:44:46Z"
+digest = "9156aafe4385ddb3e97d447296ba3c094fef8234f09c4bbb1e2abd4c03412601"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_pint.py .                                     [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3979367-0.xml --------------
+============================== 1 passed in 0.17s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_pint.py::test_missing_pint_is_err_naming_extra"
+size = 495
+status = "measured"
+test_count = 1
+tests_digest = "074a3648ea7b457e321b946d1ed8948d83196263baa9724000bd43a95f7fde6a"
+at = "2026-10-13T07:44:46Z"
+actor = "lognd"
+rev = 1

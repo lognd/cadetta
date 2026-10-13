@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:03Z"
-updated = "2026-10-13T07:43:06Z"
+updated = "2026-10-13T07:44:46Z"
 persona = "Python user"
 capability = "convert Quantities to pint"
 outcome_text = "I can use numpy and pint workflows"
@@ -21,9 +21,9 @@ target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
 [[acceptance]]
 text = "Given the cadetta[pint] extra installed, when .to_pint(registry) is called, then an equivalent pint Quantity is returned (bindings.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given pint is absent, when .to_pint is called, then a Result error names the missing extra (bindings.md 3.1)"
-bound = false
+bound = true
 +++
