@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:24:41Z"
+updated = "2026-10-13T08:24:47Z"
 persona = "design engineer"
 capability = "swap parts without losing placements"
 idempotency_key = "replan14:geo-ifdatum"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a bound shaft.z == mount.z on interface datums, when an implementer has the opposite convention, then C001 is raised against that implementer (geometry.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a swap to an alternate, when a placement uses mount, then the alternate's own mount is used (geometry.md 2)"
