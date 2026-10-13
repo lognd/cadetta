@@ -8,12 +8,12 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T06:41:35Z"
+updated = "2026-10-13T06:42:26Z"
 persona = "design engineer"
 capability = "commit attestations and digests so the graph is rebuildable at any commit"
 idempotency_key = "replan13:cadetta.lock format and persistence"
 labels = ["creates:crates/cadetta-obligations/src/lock.rs"]
-scope = ["crates/cadetta-obligations/src/lock.rs"]
+scope = ["crates/cadetta-obligations/src/lock.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocks"
