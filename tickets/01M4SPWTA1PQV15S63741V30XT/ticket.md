@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T14:36:59Z"
+updated = "2026-10-13T14:37:16Z"
 persona = "design engineer"
 capability = "emit to configured adapters and import native files"
 outcome_text = "nobody retypes values and existing designs are adoptable"
 labels = ["creates:crates/cadetta-cli/src/cmd/{emit,import}.rs"]
-scope = ["crates/cadetta-cli/src/cmd/{emit,import}.rs", "crates/cadetta-cli/src/{lib.rs,cmd/mod.rs}", "crates/cadetta-adapter/src/import/propose.rs", "docs/spec/config-cli.md"]
+scope = ["crates/cadetta-cli/src/cmd/{emit,import}.rs", "crates/cadetta-cli/src/{lib.rs,cmd/mod.rs}", "crates/cadetta-adapter/src/import/propose.rs", "docs/spec/config-cli.md", "design/model.grmb"]
 
 [[links]]
 kind = "blocks"
