@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `round_to(x, step)` on exact input, when evaluated, then the result is exact", "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact value equals 338.1mm"]
+new = ["Given `round_to(x, step)` on exact input, when evaluated, then the result is exact", "Given `length = 2 * Wheel.hub_width + Frame.span` with 0.75in and 300mm, when evaluated, then the exact value equals 338.1mm", "Given a member `let`, when evaluated, then it keeps its full analysis form, is readable as a part argument and from other components, and is flagged analysis (language.md 3.3, quantities.md 5.3)", "Given a parameter assigned from arithmetic, when evaluated, then it stores the nominal and only its own written tolerance (quantities.md 5.3)", "Given a pure reference parameter, when evaluated, then it aliases the referent source variable (quantities.md 5.3)", "Given the example `cb = head_dia.max + 1mm`, when evaluated, then an untoleranced 9.5mm is stored (quantities.md 5.3)"]
+moved = [1, 2]
+at = "2026-10-13T05:01:23Z"
+actor = "lognd"
+rev = 1
