@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:27:08Z"
+updated = "2026-10-13T06:27:28Z"
 persona = "design engineer"
 capability = "print quantities in the unit I chose, including fractional inches"
 idempotency_key = "replan13:Display unit selection and fractional formats"
@@ -29,5 +29,5 @@ bound = false
 
 [[acceptance]]
 text = "Given a money value, when printed, then it uses the currency minor unit and percentages print to one decimal, half away from zero (obligations.md 5.1)"
-bound = false
+bound = true
 +++
