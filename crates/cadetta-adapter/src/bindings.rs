@@ -1582,6 +1582,7 @@ locators = [
             sign: Some(Sign::Minus),
             component: None,
             implicit: None,
+            tolerance: None,
         };
         assert_eq!(s.bind(&path, loc.clone()), Ok(true));
         assert_eq!(s.bind(&path, loc.clone()), Ok(false));
