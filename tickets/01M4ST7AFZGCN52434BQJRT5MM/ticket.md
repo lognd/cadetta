@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:31:27Z"
+updated = "2026-10-13T08:31:51Z"
 persona = "design engineer"
 capability = "compute hole patterns as points without trigonometry by hand"
 idempotency_key = "replan13:Arrays, Point2/Point3 and geometry patterns"
 labels = ["creates:crates/cadetta-sema/src/{array,point}.rs"]
-scope = ["crates/cadetta-sema/src/{array,point}.rs"]
+scope = ["crates/cadetta-sema/src/{array,point}.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/func.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
