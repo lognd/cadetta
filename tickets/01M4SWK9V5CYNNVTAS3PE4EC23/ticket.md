@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T06:31:15Z"
+updated = "2026-10-13T06:31:40Z"
 persona = "design engineer"
 capability = "get one diagnostic shape from every component"
 idempotency_key = "replan14:lint-diag"
 labels = ["creates:crates/cadetta-lint/src/diag.rs", "creates:docs/schemas/diag.json"]
-scope = ["crates/cadetta-lint/src/diag.rs", "docs/schemas/diag.json"]
+scope = ["crates/cadetta-lint/src/diag.rs", "docs/schemas/diag.json", "crates/cadetta-lint/Cargo.toml", "crates/cadetta-lint/src/lib.rs", "Cargo.toml", "Cargo.lock"]
 
 [[links]]
 kind = "blocked-by"
