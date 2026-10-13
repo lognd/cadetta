@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T20:31:21Z"
+digest = "350c0377957d39e42693cdf69d1038ac4599a055c9617786f66c6c026a49d85a"
+provider = "file"
+ref = "docs/spec/geometry.md"
+size = 28242
+status = "measured"
+at = "2026-10-13T20:31:21Z"
+actor = "lognd"
+rev = 1
