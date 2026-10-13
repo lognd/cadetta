@@ -298,6 +298,18 @@ type, primary or alternate.
 | C003 | toleranced-equality | warning | | `==` on toleranced operands; suggests accessors. |
 | C004 | derived-feature-in-check | info | | A check reads an arithmetic parameter with toleranced inputs and no tolerance of its own, so it treats a computed value as exact (quantities.md 5.3); suggests `let`. |
 
+C rule implementation notes (0.1.0): `cadetta-lint` `rules/c.rs` reads
+the check verdicts. C001 and C002 are raised per verdict: once for the
+primary and once for each alternate that fails or is undecided, the
+latter with `alt` set and `for alt SLOT=ALT` in the message, so a waiver
+may be scoped to one alternate (language.md 3.2); I002 additionally
+warns when only an alternate fails. C003 inspects the operands of each
+`==`/`!=` in the check text and fires when one reads a toleranced member
+of the check's component other than through `.nominal`. C004 fires per
+derived parameter (a `param` with an expression and dependencies, no
+tolerance of its own) that the check reads while one of its dependencies
+is toleranced.
+
 ### O: obligations
 
 O001 and O002 cover role attestations only; staleness of a citation is
