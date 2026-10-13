@@ -164,6 +164,7 @@ version = "0.0.0"
 dependencies = [
  "cadetta-syntax",
  "serde",
+ "serde_json",
  "thiserror",
  "tracing",
 ]

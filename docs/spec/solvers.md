@@ -97,6 +97,11 @@ Response:
   digits (default 6, overridable per output), not `repr(float)`, which
   would trip M001 and Q006 at the consumer (bindings.md 3.3). Other
   languages must do the same.
+- Output classification (decided in cadetta-solve): an output must be a
+  JSON string that lexes as exactly one quantity literal. A JSON number,
+  a bare-number string, or a string holding any other expression is Q001
+  against the solver. A lexical error, a non-string value, bad JSON, or a
+  missing or different `schema` is S005 (a typed protocol error).
 - Two transports: `stdio` (request on stdin, response on stdout) and
   `file` (the command template receives `{in}` and `{out}` paths; for
   MATLAB: `["matlab", "-batch", "wall_sizing('{in}','{out}')"]`).
