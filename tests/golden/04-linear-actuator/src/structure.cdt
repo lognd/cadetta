@@ -1,0 +1,44 @@
+// The made parts: motor mount, floating-end bearing block, carriage plate.
+
+use package::parts::bearings::Bearing608
+use package::parts::motion::{Nema17Motor, BrassNut, Mgn12hCarriage}
+use std::materials::{Material, Materials}
+
+/// 6 mm plate carrying the motor; the clearance hole comes from the screw joint.
+pub model MotorMount(motor: Nema17Motor, clearance_hole_diameter: Length) {
+  fit pilot = H8 on motor.pilot_diameter
+  material = Material::Al6061T6
+  thickness = 6mm
+  width = 60mm
+  height = 60mm
+  pilot_bore = pilot.hole                                     #[emit(mid)]
+  clearance_bore = clearance_hole_diameter
+  hole_pitch = motor.hole_pitch.nominal [+-0.05mm]            // tighter than the motor's own +-0.1
+  bolt_circle_diameter = round_to(sqrt(2 * hole_pitch.nominal^2), 0.01mm)   // 43.84mm
+  mass = Materials[material].density * thickness * width * height
+
+  datum motor_site = origin.flip(x)                           // faces the motor flange
+  holes: [Point2 on motor_site; 4] = rect_pattern(2, 2, hole_pitch, hole_pitch)
+}
+
+/// Floating-end bearing housing.
+pub model EndBlock(bearing: Bearing608, axis_height: Length) {
+  fit seat = H7 on bearing.outer_diameter
+  seat_bore = seat.hole                                       #[emit(mid)]
+  seat_depth = bearing.width.nominal + 0.1mm
+  back_wall = 5mm
+  thickness = seat_depth + back_wall
+  through_bore = 10mm
+  height = axis_height + bearing.outer_diameter.nominal / 2 + back_wall
+}
+
+/// Plate bridging the two carriages and holding the nut.
+pub model CarriagePlate(nut: BrassNut, rail_spacing: Length, carriage: Mgn12hCarriage) {
+  fit nut_relief = H11/c11 on nut.body_diameter
+  material = Material::Al6061T6
+  thickness = 6mm
+  length = 80mm
+  width = rail_spacing + carriage.width
+  nut_relief_bore = nut_relief.hole                           #[emit(mid)]
+  mass = Materials[material].density * thickness * width * length
+}

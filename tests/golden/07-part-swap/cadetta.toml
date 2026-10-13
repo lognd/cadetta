@@ -1,0 +1,31 @@
+[package]
+name = "acme.cooling"
+version = "0.1.0"
+as_of = "2026-10-13"
+
+[lint]
+fail_on = "error"
+precision = { Length = 2, Mass = 3, Money = 2 }
+
+# Roles are defined but not gating: the case ships no lock file, so no
+# attestation exists and no O002 is raised.
+[obligations.roles.source]
+covers = ["ots:*"]
+
+[obligations.roles.tolerance_review]
+covers = ["fit:*", "check:*"]
+
+[obligations.roles.thermal_signoff]
+covers = ["require:*"]
+
+[solvers."acme.cooling::airflow_req"]
+command = ["python", "{script}"]
+transport = "stdio"
+
+[[adapter]]
+name = "freecad"
+command = ["cadetta-freecad"]
+version = "0.1"
+files = ["cad/freecad/*.FCStd"]
+save = "after-sync"
+native_unit = "mm"

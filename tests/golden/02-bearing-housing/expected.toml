@@ -1,0 +1,414 @@
+[case]
+spec = "1.4"
+status = "hand-evaluated"
+exercises = ["quantities.md 5", "language.md 3.1", "language.md 3.7", "language.md 6", "stdlib.md 2", "stdlib.md 6", "geometry.md 2", "geometry.md 5.1"]
+
+# Layout: one implicit instance, shared by Housing, Shaft and Spacer.
+
+[[value]]
+path = "acme.bearing_housing::Layout.bearing_spacing"
+nominal = "30mm"
+min = "30mm"
+max = "30mm"
+
+[[value]]
+path = "acme.bearing_housing::Layout.end_wall"
+nominal = "3mm"
+min = "3mm"
+max = "3mm"
+
+[[value]]
+path = "acme.bearing_housing::Layout.end_margin"
+nominal = "3mm"
+min = "3mm"
+max = "3mm"
+
+[[value]]
+path = "acme.bearing_housing::Layout.left_overhang"
+nominal = "22mm"
+min = "22mm"
+max = "22mm"
+
+[[value]]
+path = "acme.bearing_housing::Layout.right_overhang"
+nominal = "8mm"
+min = "8mm"
+max = "8mm"
+
+[[value]]
+path = "acme.bearing_housing::Layout.ring_support_dia"
+nominal = "19mm"
+min = "18.9mm"
+max = "19.1mm"
+note = "one variable shared by housing.shoulder_dia and spacer.outer_dia"
+
+# Vendor parts (instances).
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[0].bore"
+nominal = "8mm"
+min = "7.992mm"
+max = "8mm"
+note = "SKF d, +0 -0.008"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[0].outer_dia"
+nominal = "22mm"
+min = "21.991mm"
+max = "22mm"
+note = "SKF D, +0 -0.009"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[0].width"
+nominal = "7mm"
+min = "6.88mm"
+max = "7mm"
+note = "SKF B, +0 -0.12"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[1].bore"
+nominal = "8mm"
+min = "7.992mm"
+max = "8mm"
+note = "SKF d, +0 -0.008"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[1].outer_dia"
+nominal = "22mm"
+min = "21.991mm"
+max = "22mm"
+note = "SKF D, +0 -0.009"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[1].width"
+nominal = "7mm"
+min = "6.88mm"
+max = "7mm"
+note = "SKF B, +0 -0.12"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[0].radial_clearance.min"
+nominal = "2um"
+note = "lower limit of the C0 Normal bound 2um..13um"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/bearing[0].mass"
+nominal = "0.012kg"
+min = "0.012kg"
+max = "0.012kg"
+note = "std::commercial::Sourced member"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/ring.bore_nominal"
+nominal = "22mm"
+min = "22mm"
+max = "22mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/ring.thickness"
+nominal = "1mm"
+min = "0.94mm"
+max = "1mm"
+note = "Din472[22mm].ring_thickness, +0 -0.06 written on the ots"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/ring.groove_dia"
+nominal = "23mm"
+min = "23mm"
+max = "23.13mm"
+note = "Din472[22mm].groove_dia, H11"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/ring.groove_width"
+nominal = "1.1mm"
+min = "1.1mm"
+max = "1.24mm"
+note = "Din472[22mm].groove_width, H13"
+
+# Housing.
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.bore_fit.hole"
+nominal = "22mm"
+min = "22mm"
+max = "22.021mm"
+note = "H7 on 22mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.bore_fit.shaft"
+nominal = "22mm"
+min = "21.991mm"
+max = "22mm"
+note = "the vendor outer_dia, its own deviations"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.bore_fit.clearance"
+nominal = "0mm"
+min = "0mm"
+max = "0.03mm"
+note = "hole - shaft: clearance fit, zero minimum"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.bore_dia"
+nominal = "22mm"
+min = "22mm"
+max = "22.021mm"
+note = "alias of bore_fit.hole"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.outer_dia"
+nominal = "36mm"
+min = "36mm"
+max = "36mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.shoulder_dia"
+nominal = "19mm"
+min = "18.9mm"
+max = "19.1mm"
+note = "alias of Layout.ring_support_dia"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.groove_dia"
+nominal = "23mm"
+min = "23mm"
+max = "23.13mm"
+note = "alias of ring.groove_dia"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.groove_width"
+nominal = "1.1mm"
+min = "1.1mm"
+max = "1.24mm"
+note = "alias of ring.groove_width"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.groove_pos"
+nominal = "40mm"
+min = "39.95mm"
+max = "40.05mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.end_margin"
+nominal = "3mm"
+min = "3mm"
+max = "3mm"
+note = "alias of Layout.end_margin"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.length"
+nominal = "44.1mm"
+min = "44.1mm"
+max = "44.1mm"
+note = "40 + 1.1 + 3; a feature, stores nominal only"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/housing.wall_thickness"
+nominal = "7mm"
+min = "7mm"
+max = "7mm"
+note = "(36 - 22) / 2; a feature, stores nominal only"
+
+# Shaft.
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.bearing_seat.hole"
+nominal = "8mm"
+min = "7.992mm"
+max = "8mm"
+note = "the vendor bore"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.bearing_seat.shaft"
+nominal = "8mm"
+min = "7.998mm"
+max = "8.004mm"
+note = "j5 on 8mm: +4um -2um"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.bearing_seat.clearance"
+nominal = "0mm"
+min = "-0.012mm"
+max = "0.002mm"
+note = "bore - seat: transition fit"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.seat_dia"
+nominal = "8mm"
+min = "7.998mm"
+max = "8.004mm"
+note = "alias of bearing_seat.shaft"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.shoulder_dia"
+nominal = "11mm"
+min = "10.89mm"
+max = "11mm"
+note = "h11 on 11mm: 0 -110um"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.left_overhang"
+nominal = "22mm"
+min = "22mm"
+max = "22mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.right_overhang"
+nominal = "8mm"
+min = "8mm"
+max = "8mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.length"
+nominal = "67mm"
+min = "67mm"
+max = "67mm"
+note = "22 + 30 + 7 + 8; a feature, stores nominal only"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.seat_a.offset.z"
+nominal = "22mm"
+min = "22mm"
+max = "22mm"
+note = "alias of left_overhang"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.seat_b.offset.x"
+nominal = "0mm"
+min = "-0.01mm"
+max = "0.01mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.seat_b.offset.y"
+nominal = "0mm"
+min = "-0.01mm"
+max = "0.01mm"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/shaft.seat_b.offset.z"
+nominal = "30mm"
+min = "30mm"
+max = "30mm"
+note = "alias of Layout.bearing_spacing"
+
+# Spacer.
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/spacer.length"
+nominal = "23mm"
+min = "22.95mm"
+max = "23.05mm"
+note = "(30 - 7) +-0.05, its own drawing tolerance"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/spacer.outer_dia"
+nominal = "19mm"
+min = "18.9mm"
+max = "19.1mm"
+note = "alias of Layout.ring_support_dia"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/spacer.bore_dia"
+nominal = "16mm"
+min = "16mm"
+max = "16.2mm"
+
+# Axial stack-up (analysis lets, full affine tolerance, all terms independent).
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/groove_side"
+nominal = "40.1mm"
+min = "40.05mm"
+max = "40.35mm"
+note = "40 [-0.05,+0.05] + 1.1 [0,+0.14] - 1 [-0.06,0]"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/stack_side"
+nominal = "40mm"
+min = "39.71mm"
+max = "40.05mm"
+note = "3 + 23 [-0.05,+0.05] + 2 x 7 [-0.12,0]"
+
+[[value]]
+path = "acme.bearing_housing::BearingUnit/axial_play"
+nominal = "0.1mm"
+min = "0mm"
+max = "0.64mm"
+note = "groove_side - stack_side; lower limit is exactly 0"
+
+
+# Verdicts.
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/seat_creep"
+result = "undecided"
+conservative = false
+note = "bore - seat in [-12um, +2um], both instances; j5 can be loose"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/seat_squeeze"
+result = "undecided"
+conservative = false
+note = "4/5 x (seat - bore) in [-1.6um, +9.6um] vs radial_clearance.min 2um"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/housing_not_pinched"
+result = "holds"
+conservative = false
+note = "bore_dia - outer_dia in [0, 0.03mm], both instances"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/shoulder_supports_ring"
+result = "holds"
+conservative = false
+note = "min 10.89mm >= 10mm"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/shoulder_clears_seal"
+result = "holds"
+conservative = false
+note = "max 11mm < 12.6mm"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/housing_shoulder_ok"
+result = "holds"
+conservative = false
+note = "max 19.1mm <= 20mm"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/ring_size_ok"
+result = "holds"
+conservative = false
+note = "22mm == 22mm on nominals"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/groove_edge_ok"
+result = "holds"
+conservative = false
+note = "3mm >= 1.5mm"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/axial_play_ok"
+result = "undecided"
+conservative = false
+note = "axial_play in [0, 0.64mm]; 0 <= x holds, x <= 0.5mm does not; linear, so not conservative"
+
+[[verdict]]
+path = "acme.bearing_housing::BearingUnit/shaft.seats_coaxial"
+result = "holds"
+conservative = true
+note = "radial sup = 0.01mm x sqrt(2) = 0.01414mm <= 0.02mm; square-aware interval, conservative evaluation"
+
+# Diagnostics: errors and warnings are closed.
+
+[[diagnostic]]
+code = "C002"
+path = "acme.bearing_housing::BearingUnit/seat_creep"
+
+[[diagnostic]]
+code = "C002"
+path = "acme.bearing_housing::BearingUnit/seat_squeeze"
+
+[[diagnostic]]
+code = "C002"
+path = "acme.bearing_housing::BearingUnit/axial_play_ok"

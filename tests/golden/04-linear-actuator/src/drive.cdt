@@ -1,0 +1,31 @@
+// Drivetrain analysis for the 300 mm linear actuator: nothing here is made, so all of it is `let`.
+// Angle exponents (quantities.md 4.3): Torque -1, Lead -1, AngularVelocity +1.
+
+use package::parts::motion::{Stepper, LeadScrew}
+
+/// Thrust, speed and step-rate analysis of a motor driving a lead screw.
+pub model Drivetrain(motor: Stepper, screw: LeadScrew) {
+  /// Pull-out derate at running speed.
+  torque_ratio: Ratio = 50%                         @assumed:"vendor curve, 600 rpm"
+  /// Dry brass on stainless.
+  friction_coefficient: Ratio = 0.15                @assumed:"Machinery's Handbook 0.1 to 0.2"
+  motor_speed: AngularVelocity = 600rpm
+  microsteps: Count = 16
+
+  let running_torque: Torque = motor.holding_torque * torque_ratio
+  let travel_per_rev: Length = screw.lead * 1rev                    // exponent 0, clean
+  let circumference: Length = (1rev * (screw.pitch_diameter / 2)) as Length
+  let lead_angle: Angle = atan2(travel_per_rev, circumference)      #[display(deg)]
+  let friction_angle: Angle = atan2(friction_coefficient, cos(screw.flank_half_angle))   #[display(deg)]
+  let efficiency: Ratio = tan(lead_angle) / tan(lead_angle + friction_angle)   #[display(%)]
+
+  let thrust: Force = running_torque * efficiency / screw.lead      // pi is inside Lead
+  let work_in: Energy = running_torque * 1rev
+  let work_out: Energy = thrust * screw.lead * 1rev
+  check energy_balance: work_out <= work_in "efficiency above 100 percent"
+
+  let max_speed: Velocity = motor_speed * screw.lead                // exactly 80mm/s
+  let steps_per_rev: Count = 360deg / motor.step_angle              // exactly 200
+  let linear_resolution: Length = travel_per_rev / (steps_per_rev * microsteps)
+  let step_rate: Frequency = motor_speed * steps_per_rev * microsteps / 1rev   // exactly 32kHz
+}

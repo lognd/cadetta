@@ -1,0 +1,13 @@
+# One table per canonical path (adapters.md 3). FanBracket takes parameters,
+# so its members are bound at the instance path under CoolingModule.
+["acme.cooling::CoolingModule/bracket.cutout_dia"]
+locators = [{ locator = "cad/freecad/fan_bracket.FCStd#Params.cutout_dia", kind = "global" }]
+
+["acme.cooling::CoolingModule/bracket.guard_ring_id"]
+locators = [{ locator = "cad/freecad/fan_guard.FCStd#Params.guard_ring_id", kind = "global" }]
+
+["acme.cooling::CoolingModule/fan.depth"]
+locators = [{ locator = "cad/freecad/cooling_module.FCStd#Params.fan_depth", kind = "global" }]
+
+["acme.cooling::CoolingModule/screws[*].length"]
+locators = [{ locator = "cad/freecad/cooling_module.FCStd#Params.screw_length", kind = "global" }]

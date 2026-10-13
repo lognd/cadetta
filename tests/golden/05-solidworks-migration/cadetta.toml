@@ -1,0 +1,14 @@
+[package]
+name = "acme.gearbox"
+version = "0.1.0"
+as_of = "2026-10-13"
+
+[emit]
+point = "nominal"
+
+# Built-in equations-file emitter; id defaults to the name, so the
+# bindings are bindings/sw-equations.toml and the output is
+# build/solidworks/sw-equations.txt.
+[[adapter]]
+name = "sw-equations"
+native_unit = "mm"

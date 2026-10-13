@@ -1,0 +1,188 @@
+
+use std::commercial::Sourced
+use std::fits::iso286
+use std::fasteners::{MetricThread, ScrewJoint, FastenerPolicy, TapClass, TapColumn}
+use std::materials::{Material, Materials}
+
+// Shop policy for every ScrewJoint in this file (stdlib.md 4).
+#![default(FastenerPolicy = AcmeShop)]
+
+cite vendor_a  = "docs/vendor/gm37-a.pdf"
+cite vendor_b  = "docs/vendor/gm42-b.pdf"
+cite customer  = "docs/requirements.md"
+cite rail_cert = "ASTM A276"
+
+// Policy tables (stdlib.md 4). Copied from IsoDefault, then edited.
+table AcmeEngagement @"shop standard SS-104 rev C" {
+  key material: Material
+  cols factor: Ratio
+  Material::Al6061T6 => 1.5
+  Material::Ss304    => 1.0
+}
+
+table AcmeTapColumns @"shop standard SS-104 rev C" {
+  key class: TapClass
+  cols cut: TapColumn, form: TapColumn
+  TapClass::Soft => TapColumn::Cut75, TapColumn::Form
+  TapClass::Hard => TapColumn::Cut65, TapColumn::Form
+}
+
+table AcmeLengths @"shop standard SS-104 rev C" {
+  key length: Length
+  8mm; 10mm; 12mm; 16mm; 20mm
+}
+
+table AcmeDrills @"shop standard SS-104 rev C" {
+  key diameter: Length
+  2.5mm; 2.55mm; 3.3mm; 3.4mm; 4.2mm; 4.3mm; 5.5mm
+}
+
+/// Acme shop standard: softer engagement rule for 6061, a fixed drill set.
+ots AcmeShop: FastenerPolicy @"shop standard SS-104 rev C" {
+  engagement       = AcmeEngagement
+  tap_columns      = AcmeTapColumns
+  lengths          = AcmeLengths
+  drills           = AcmeDrills
+  bottom_clearance = 0.5mm
+  tap_lead_in      = 2                         // pitches
+  drill_point      = 0.3
+}
+
+/// What the drive module needs from a gearmotor, whoever makes it.
+/// Commercial data (mass, cost, lead time) comes from Sourced, not from here.
+interface GearMotor {
+  datum mount                     // flange face; z is the flange normal
+  shaft_dia: Length
+  shaft_len: Length               // protrusion beyond the flange face
+  pilot_dia: Length
+  hole_pitch: Length              // square pattern, centre to centre
+  mount_holes: [Point2 on mount; 4]
+  mount_thread: MetricThread
+  flange_thk: Length
+  rated_torque >= 0.8N*m          // every implementer must meet this
+}
+
+#[lifecycle(eol, "2027-03")]
+ots Gm37A: GearMotor, Sourced @vendor_a {
+  datum mount  = origin
+  shaft_dia    = 6mm [+0 -0.008mm]         @vendor_a:"p.3, shaft"
+  shaft_len    = 32mm [+-0.5mm]            @vendor_a:"p.3, drawing"
+  pilot_dia    = 12mm [-0.006mm -0.017mm]  @vendor_a:"p.3, pilot"
+  hole_pitch   = 31mm                      @vendor_a:"p.3, drawing"
+  mount_holes  = rect_pattern(2, 2, hole_pitch, hole_pitch)
+  mount_thread = MetricThread::M3
+  flange_thk   = 3mm                       @vendor_a:"p.3, flange"
+  rated_torque = 1.2N*m                    @vendor_a:"p.1"
+  mass         = 210g
+  unit_cost    = 24.50USD
+  lead_time    = 1wk
+}
+
+#[lifecycle(active, "2026-10")]
+ots Gm42B: GearMotor, Sourced @vendor_b {
+  datum mount  = origin
+  shaft_dia    = 8mm [+0 -0.009mm]         @vendor_b:"p.4, shaft"
+  shaft_len    = 34mm [+-0.5mm]            @vendor_b:"p.4, drawing"
+  pilot_dia    = 16mm [-0.006mm -0.017mm]  @vendor_b:"p.4, pilot"
+  hole_pitch   = 35mm                      @vendor_b:"p.4, drawing"
+  mount_holes  = rect_pattern(2, 2, hole_pitch, hole_pitch)
+  mount_thread = MetricThread::M4
+  flange_thk   = 4mm                       @vendor_b:"p.4, flange"
+  rated_torque = 2.0N*m                    @vendor_b:"p.1"
+  mass         = 380g
+  unit_cost    = 31.00USD
+  lead_time    = 5wk
+}
+
+/// Machined plate: motor bolts to one face, the plate bolts to the rail.
+model MotorPlate(motor: GearMotor): Sourced {
+  material  = Material::Al6061T6
+  thickness = 10mm [+-0.1mm]                 @estimate:"stock 10mm plate, mill both faces"
+  width     = 80mm
+  height    = 60mm
+
+  fit pilot = H7 on motor.pilot_dia [0.005mm .. 0.05mm]
+  #[emit(mid)]
+  pilot_bore = pilot.hole                    // depends on the motor: 12 vs 16 mm
+
+  /// Motor face: centre of the tapped pattern the motor is placed on.
+  datum motor_face = origin
+  motor_tapped: [Point2 on motor_face; 4] = rect_pattern(2, 2, motor.hole_pitch, motor.hole_pitch) [+-0.05mm]
+
+  /// Rail face: centre of the clearance pattern that bolts to the rail.
+  datum rail_face = origin
+  rail_holes: [Point2 on rail_face; 4] = rect_pattern(2, 2, 40mm, 40mm) [+-0.1mm]
+
+  mass      = Materials[material].density * (width * height * thickness)
+  unit_cost = 38.00USD                       @estimate:"shop quote Q-2210"
+  lead_time = 3wk                            @estimate:"shop quote Q-2210"
+}
+
+/// Wheel hub, bored to the motor shaft.
+model WheelHub(motor: GearMotor): Sourced {
+  width       = 8mm [+-0.1mm]
+  tire_radius = 50mm
+  fit hub_seat = H7 on motor.shaft_dia [0mm .. 0.03mm]
+  #[emit(mid)]
+  bore        = hub_seat.hole                // depends on the motor: 6 vs 8 mm
+  mass        = 25g                          @estimate:"CAD, 6061, 2026-10-01"
+  unit_cost   = 9.00USD                      @estimate:"shop quote Q-2211"
+  lead_time   = 2wk                          @estimate:"shop quote Q-2211"
+}
+
+/// 304 flat bar chassis rail section.
+model ChassisRail: Sourced {
+  material  = Material::Ss304
+  thickness = 10mm [+-0.15mm]                @rail_cert:"flat bar tolerance, assumed"
+
+  /// Centre of the tapped pattern the plate is placed on.
+  datum site = origin
+  tapped: [Point2 on site; 4] = rect_pattern(2, 2, 40mm, 40mm) [+-0.05mm]
+
+  mass      = 320g                           @estimate:"100 x 40 x 10, 8.0 g/cc"
+  unit_cost = 14.00USD                       @estimate:"stockist list price"
+  lead_time = 2wk                            @estimate:"stockist"
+}
+
+assembly DriveModule {
+  part motor: GearMotor = Gm37A alt [Gm42B]
+  part plate: MotorPlate(motor = motor)
+  part hub: WheelHub(motor = motor)
+  part rail: ChassisRail
+
+  // Placement tree: rail on the origin, plate on the rail's pattern datum,
+  // motor on the plate's pattern datum. The hub is not positioned.
+  place rail.origin on origin
+  place plate.rail_face on rail.site
+  place motor.mount on plate.motor_face
+
+  // Motor to plate: tapped into 6061 (cut tap, 75% drill, shop engagement factor).
+  part motor_screws: ScrewJoint(thread = motor.mount_thread, clamp = motor.flange_thk, host = plate,
+                                at = motor.mount_holes, onto = plate.motor_tapped,
+                                depth_available = plate.thickness)
+  // Plate to rail: counterbored in the plate, tapped into 304 (65% drill, factor 1.0).
+  // grip = plate.thickness - counterbore_depth, so the screw is sized from the material under the head.
+  part rail_screws: ScrewJoint(thread = MetricThread::M5, clamp = plate.thickness, host = rail,
+                               at = plate.rail_holes, onto = rail.tapped,
+                               counterbore = true, depth_available = rail.thickness)
+
+  // Wheel inner face to rail outer face. Flange sits on plate, plate on rail, hub flush with shaft end.
+  let wheel_gap = motor.shaft_len - hub.width - plate.thickness - rail.thickness
+  check gap_ok: 2mm <= wheel_gap <= 6mm "wheel clears the rail and does not rub"
+
+  let module_mass = mass?(self)
+  let module_cost = sum?(self, unit_cost)    // screws listed as missing: Iso4762 has no price (stdlib.md 4)
+  let module_lead = max?(self, lead_time)
+  let robot_mass  = 10kg + 2 * module_mass   // frame and electronics 10kg, two modules
+
+  // Solver as an assembly member: instances and roll-ups are in scope (solvers.md 1).
+  // Under variant evaluation robot_mass changes, so each variant needs `cadetta solve --variants` (solvers.md 4.1).
+  solver drive_torque @"analysis/drive_torque.py" {
+    in  robot_mass = robot_mass, wheel_radius = hub.tire_radius
+    out torque_per_motor: Torque
+  }
+
+  check torque_ok: motor.rated_torque >= 1.5 * drive_torque.torque_per_motor "1.5x margin on solver torque"
+  require slope_torque: motor.rated_torque >= 1.5 * drive_torque.torque_per_motor @customer:"REQ-12 s3.2"
+  require mass_budget: module_mass <= 0.95kg @customer:"REQ-14"
+}

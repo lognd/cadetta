@@ -1,0 +1,255 @@
+{
+  "swap": {
+    "slot": "acme.cooling::CoolingModule/fan",
+    "new": "acme.cooling::SunonMf80201",
+    "approved": true
+  },
+  "verdict": "blocked",
+  "values_changed": {
+    "direct": [
+      {
+        "path": "acme.cooling::CoolingModule/fan.depth",
+        "old": "25mm",
+        "new": "20mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.lead_time",
+        "old": "6wk",
+        "new": "10wk"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.mass",
+        "old": "85g",
+        "new": "62g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.max_airflow",
+        "old": "60m^3/h",
+        "new": "38m^3/h"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.max_static",
+        "old": "40Pa",
+        "new": "22Pa"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.moq",
+        "old": "50",
+        "new": "100"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.mount_hole",
+        "old": "4.3mm",
+        "new": "4.5mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.mpn",
+        "old": "MF80251V1-1000U-A99",
+        "new": "MF80201V1-1000U-A99"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.unit_cost",
+        "old": "6.85USD",
+        "new": "4.95USD"
+      }
+    ],
+    "derived": [
+      {
+        "path": "acme.cooling::CoolingModule.airflow_op",
+        "old": "32.92m^3/h",
+        "new": "22.9m^3/h"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.module_cost",
+        "old": "9.046USD",
+        "new": "7.122USD"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.module_mass",
+        "old": "180.6g",
+        "new": "155.6g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.stack_height",
+        "old": "29.1mm",
+        "new": "24.1mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.tip_len",
+        "old": "5.5mm",
+        "new": "3.5mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.worst_lead",
+        "old": "6wk",
+        "new": "10wk"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/bracket.screw_length",
+        "old": "32mm",
+        "new": "25mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/bracket.screw_stack",
+        "old": "28.6mm",
+        "new": "23.6mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[0].length",
+        "old": "32mm",
+        "new": "25mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[0].mass",
+        "old": "2.4g",
+        "new": "1.9g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[0].unit_cost",
+        "old": "0.044USD",
+        "new": "0.038USD"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[1].length",
+        "old": "32mm",
+        "new": "25mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[1].mass",
+        "old": "2.4g",
+        "new": "1.9g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[1].unit_cost",
+        "old": "0.044USD",
+        "new": "0.038USD"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[2].length",
+        "old": "32mm",
+        "new": "25mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[2].mass",
+        "old": "2.4g",
+        "new": "1.9g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[2].unit_cost",
+        "old": "0.044USD",
+        "new": "0.038USD"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[3].length",
+        "old": "32mm",
+        "new": "25mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[3].mass",
+        "old": "2.4g",
+        "new": "1.9g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/screws[3].unit_cost",
+        "old": "0.044USD",
+        "new": "0.038USD"
+      }
+    ]
+  },
+  "verdicts_flipped": [
+    {
+      "path": "acme.cooling::CoolingModule.airflow_ok",
+      "kind": "require",
+      "old": "holds",
+      "new": "violates"
+    },
+    {
+      "path": "acme.cooling::CoolingModule.lead_time_ok",
+      "kind": "check",
+      "old": "holds",
+      "new": "violates"
+    },
+    {
+      "path": "acme.cooling::CoolingModule.screw_pass",
+      "kind": "fit",
+      "old": "holds",
+      "new": "undecided"
+    }
+  ],
+  "suggested_edit": {
+    "file": "src/lib.cdt",
+    "line": 196,
+    "text": "part fan: AxialFan80 = SunonMf80201 alt [NoctuaNfA8Pwm, SunonMf80251]"
+  },
+  "cad_resync": {
+    "stale": [
+      {
+        "file": "cad/freecad/cooling_module.FCStd",
+        "paths": [
+          "acme.cooling::CoolingModule/fan.depth",
+          "acme.cooling::CoolingModule/screws[*].length"
+        ]
+      }
+    ],
+    "not_stale": [
+      "cad/freecad/fan_bracket.FCStd",
+      "cad/freecad/fan_guard.FCStd"
+    ],
+    "replace_component": []
+  },
+  "attestations_invalidated": [
+    {
+      "role": "thermal_signoff",
+      "affected": 1,
+      "covered": 1
+    },
+    {
+      "role": "tolerance_review",
+      "affected": 9,
+      "covered": 13
+    }
+  ],
+  "commercial_deltas": {
+    "assembly": "acme.cooling::CoolingModule",
+    "sum_unit_cost": [
+      {
+        "currency": "USD",
+        "old": "9.046USD",
+        "new": "7.122USD",
+        "delta": "-1.924USD",
+        "percent": "-21.3%"
+      }
+    ],
+    "max_lead_time": {
+      "old": "6wk",
+      "new": "10wk",
+      "delta": "+4wk",
+      "percent": "+66.7%"
+    },
+    "mass": {
+      "old": "180.6g",
+      "new": "155.6g",
+      "delta": "-25g",
+      "percent": "-13.8%"
+    },
+    "moq": [
+      {
+        "path": "acme.cooling::CoolingModule/fan",
+        "old": "50",
+        "new": "100"
+      }
+    ],
+    "missing": {
+      "unit_cost": [],
+      "lead_time": [
+        "acme.cooling::CoolingModule/bracket",
+        "acme.cooling::CoolingModule/grommet",
+        "acme.cooling::CoolingModule/screws[0]",
+        "acme.cooling::CoolingModule/screws[1]",
+        "acme.cooling::CoolingModule/screws[2]",
+        "acme.cooling::CoolingModule/screws[3]"
+      ],
+      "mass": []
+    }
+  }
+}

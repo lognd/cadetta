@@ -1,0 +1,27 @@
+{
+  "schema": "cadetta.solve-result/1",
+  "results": [
+    {
+      "solver": "acme.drive::DriveModule.drive_torque",
+      "input_digest": "blake3:TBD",
+      "script_digest": "blake3:TBD",
+      "dep_digests": {},
+      "inputs": {
+        "robot_mass": {
+          "lit": "11.4044kg",
+          "si": 11.4044,
+          "min": 11.401808,
+          "max": 11.406992
+        },
+        "wheel_radius": {
+          "lit": "50mm",
+          "si": 0.05
+        }
+      },
+      "outputs": {
+        "torque_per_motor": "0.683141N*m"
+      },
+      "diagnostics": []
+    }
+  ]
+}

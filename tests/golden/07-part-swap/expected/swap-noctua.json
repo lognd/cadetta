@@ -1,0 +1,192 @@
+{
+  "swap": {
+    "slot": "acme.cooling::CoolingModule/fan",
+    "new": "acme.cooling::NoctuaNfA8Pwm",
+    "approved": true
+  },
+  "verdict": "ok with warnings",
+  "values_changed": {
+    "direct": [
+      {
+        "path": "acme.cooling::CoolingModule/fan.connector_env",
+        "old": "8mm",
+        "new": "11.4mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.inlet_dia",
+        "old": "76mm",
+        "new": "74mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.lead_len",
+        "old": "300mm",
+        "new": "200mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.lead_time",
+        "old": "6wk",
+        "new": "2wk"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.mass",
+        "old": "85g",
+        "new": "78g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.max_airflow",
+        "old": "60m^3/h",
+        "new": "90.9m^3/h"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.max_static",
+        "old": "40Pa",
+        "new": "23.2Pa"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.moq",
+        "old": "50",
+        "new": "1"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.mpn",
+        "old": "MF80251V1-1000U-A99",
+        "new": "NF-A8 PWM"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.supplier",
+        "old": "Sunon",
+        "new": "Noctua"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/fan.unit_cost",
+        "old": "6.85USD",
+        "new": "16.9USD"
+      }
+    ],
+    "derived": [
+      {
+        "path": "acme.cooling::CoolingModule.airflow_op",
+        "old": "32.92m^3/h",
+        "new": "30.43m^3/h"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.lead_slack",
+        "old": "180mm",
+        "new": "80mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.module_cost",
+        "old": "9.046USD",
+        "new": "19.096USD"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.module_mass",
+        "old": "180.6g",
+        "new": "173.6g"
+      },
+      {
+        "path": "acme.cooling::CoolingModule.worst_lead",
+        "old": "6wk",
+        "new": "2wk"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/bracket.cutout_dia",
+        "old": "77mm",
+        "new": "75mm"
+      },
+      {
+        "path": "acme.cooling::CoolingModule/bracket.guard_ring_id",
+        "old": "77mm",
+        "new": "75mm"
+      }
+    ]
+  },
+  "verdicts_flipped": [
+    {
+      "path": "acme.cooling::CoolingModule.grommet_pass",
+      "kind": "check",
+      "old": "holds",
+      "new": "undecided"
+    }
+  ],
+  "suggested_edit": {
+    "file": "src/lib.cdt",
+    "line": 196,
+    "text": "part fan: AxialFan80 = NoctuaNfA8Pwm alt [SunonMf80201, SunonMf80251]"
+  },
+  "cad_resync": {
+    "stale": [
+      {
+        "file": "cad/freecad/fan_bracket.FCStd",
+        "paths": [
+          "acme.cooling::CoolingModule/bracket.cutout_dia"
+        ]
+      },
+      {
+        "file": "cad/freecad/fan_guard.FCStd",
+        "paths": [
+          "acme.cooling::CoolingModule/bracket.guard_ring_id"
+        ]
+      }
+    ],
+    "not_stale": [
+      "cad/freecad/cooling_module.FCStd"
+    ],
+    "replace_component": []
+  },
+  "attestations_invalidated": [
+    {
+      "role": "thermal_signoff",
+      "affected": 1,
+      "covered": 1
+    },
+    {
+      "role": "tolerance_review",
+      "affected": 9,
+      "covered": 13
+    }
+  ],
+  "commercial_deltas": {
+    "assembly": "acme.cooling::CoolingModule",
+    "sum_unit_cost": [
+      {
+        "currency": "USD",
+        "old": "9.046USD",
+        "new": "19.096USD",
+        "delta": "+10.05USD",
+        "percent": "+111.1%"
+      }
+    ],
+    "max_lead_time": {
+      "old": "6wk",
+      "new": "2wk",
+      "delta": "-4wk",
+      "percent": "-66.7%"
+    },
+    "mass": {
+      "old": "180.6g",
+      "new": "173.6g",
+      "delta": "-7g",
+      "percent": "-3.9%"
+    },
+    "moq": [
+      {
+        "path": "acme.cooling::CoolingModule/fan",
+        "old": "50",
+        "new": "1"
+      }
+    ],
+    "missing": {
+      "unit_cost": [],
+      "lead_time": [
+        "acme.cooling::CoolingModule/bracket",
+        "acme.cooling::CoolingModule/grommet",
+        "acme.cooling::CoolingModule/screws[0]",
+        "acme.cooling::CoolingModule/screws[1]",
+        "acme.cooling::CoolingModule/screws[2]",
+        "acme.cooling::CoolingModule/screws[3]"
+      ],
+      "mass": []
+    }
+  }
+}

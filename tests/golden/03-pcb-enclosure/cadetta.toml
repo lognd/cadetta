@@ -1,0 +1,9 @@
+[package]
+name = "acme.pienclosure"
+version = "0.1.0"
+
+[units]
+display = { Length = "mm" }
+
+[lint]
+fail_on = "error"

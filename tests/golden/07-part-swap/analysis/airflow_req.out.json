@@ -1,0 +1,19 @@
+{
+  "schema": "cadetta.solve-result/1",
+  "results": [
+    {
+      "solver": "acme.cooling::airflow_req",
+      "input_digest": "blake3:TBD",
+      "script_digest": "blake3:TBD",
+      "dep_digests": {
+        "analysis/air_properties.csv": "blake3:TBD",
+        "analysis/enclosure_impedance.csv": "blake3:TBD"
+      },
+      "outputs": {
+        "required_flow": "24.1m^3/h",
+        "system_k": "216000Pa*s^2/m^6"
+      },
+      "diagnostics": []
+    }
+  ]
+}

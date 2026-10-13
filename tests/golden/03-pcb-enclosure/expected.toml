@@ -1,0 +1,369 @@
+[case]
+spec = "1.4"
+status = "hand-evaluated"
+exercises = ["geometry.md 3", "language.md 3.8", "quantities.md 5.6", "stdlib.md 3", "language.md 3.7"]
+
+[[value]]
+path = "acme.pienclosure::Case.wall"
+nominal = "2.7mm"
+
+[[value]]
+path = "acme.pienclosure::Case.standoff_height"
+nominal = "5mm"
+
+[[value]]
+path = "acme.pienclosure::Case.cavity_length"
+nominal = "87mm"
+
+[[value]]
+path = "acme.pienclosure::Case.cavity_width"
+nominal = "58mm"
+
+[[value]]
+path = "acme.pienclosure::Case.cavity_height"
+nominal = "25.4mm"
+
+[[value]]
+path = "acme.pienclosure::Case.outer_length"
+nominal = "92.4mm"
+
+[[value]]
+path = "acme.pienclosure::Case.outer_width"
+nominal = "63.4mm"
+
+[[value]]
+path = "acme.pienclosure::Case.outer_height"
+nominal = "30.2mm"
+
+[[value]]
+path = "acme.pienclosure::Case.board_top_z"
+nominal = "8.8mm"
+
+[[value]]
+path = "acme.pienclosure::Case.top_gap"
+nominal = "2mm"
+
+[[value]]
+path = "acme.pienclosure::Case.standoff_diameter"
+nominal = "6.2mm"
+
+[[value]]
+path = "acme.pienclosure::Case.insert_hole"
+nominal = "3.2mm"
+min = "3.15mm"
+max = "3.25mm"
+note = "designed value; fits and checks read this"
+
+[[value]]
+path = "acme.pienclosure::Case.insert_hole.drawn"
+nominal = "3.4mm"
+note = "hole rule: 3.2 + hole_comp 0.2; drawn value is exact, no tolerance of its own"
+
+[[value]]
+path = "acme.pienclosure::Case.locating_pin"
+nominal = "2.5mm"
+note = "designed"
+
+[[value]]
+path = "acme.pienclosure::Case.locating_pin.drawn"
+nominal = "2.4mm"
+note = "boss rule: 2.5 - 0.1"
+
+[[value]]
+path = "acme.pienclosure::Case.insert.clearance"
+nominal = "-0.4mm"
+min = "-0.55mm"
+max = "-0.25mm"
+note = "3.2 [+-0.05] - 3.6 [+-0.1]; required [-0.4mm .. -0.1mm]"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes_site.offset.x"
+nominal = "32.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes_site.offset.y"
+nominal = "28mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[0].x"
+nominal = "-29mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[0].y"
+nominal = "-24.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[1].x"
+nominal = "29mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[1].y"
+nominal = "-24.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[2].x"
+nominal = "-29mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[2].y"
+nominal = "24.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[3].x"
+nominal = "29mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi.holes[3].y"
+nominal = "24.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.standoff_site.offset.x"
+nominal = "36.2mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.standoff_site.offset.y"
+nominal = "31.7mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.standoff_site.offset.z"
+nominal = "8.8mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[0].x"
+nominal = "-29mm"
+min = "-29.05mm"
+max = "-28.95mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[0].y"
+nominal = "-24.5mm"
+min = "-24.55mm"
+max = "-24.45mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[1].x"
+nominal = "29mm"
+min = "28.95mm"
+max = "29.05mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[1].y"
+nominal = "-24.5mm"
+min = "-24.55mm"
+max = "-24.45mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[2].x"
+nominal = "-29mm"
+min = "-29.05mm"
+max = "-28.95mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[2].y"
+nominal = "24.5mm"
+min = "24.45mm"
+max = "24.55mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[3].x"
+nominal = "29mm"
+min = "28.95mm"
+max = "29.05mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.mount_points[3].y"
+nominal = "24.5mm"
+min = "24.45mm"
+max = "24.55mm"
+note = "one independent +-0.05mm source per coordinate"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.usbc_cut_x"
+nominal = "14.9mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.hdmi0_cut_x"
+nominal = "29.7mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.hdmi1_cut_x"
+nominal = "43.2mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.ethernet_cut_y"
+nominal = "13.95mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.usb_lower_cut_y"
+nominal = "32.7mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.usb_upper_cut_y"
+nominal = "50.7mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.usbc_cut_z"
+nominal = "10.45mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.hdmi_cut_z"
+nominal = "10.35mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.ethernet_cut_z"
+nominal = "15.55mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.usb_cut_z"
+nominal = "16.6mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.lip_width"
+nominal = "62mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/base.lip_width.drawn"
+nominal = "61.9mm"
+note = "lip_out rule: 62 - 0.1"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usbc_width"
+nominal = "12.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usbc_width.drawn"
+nominal = "12.7mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usbc_height"
+nominal = "6.3mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usbc_height.drawn"
+nominal = "6.5mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.hdmi_width"
+nominal = "11.1mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.hdmi_width.drawn"
+nominal = "11.3mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.hdmi_height"
+nominal = "6.1mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.hdmi_height.drawn"
+nominal = "6.3mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.ethernet_width"
+nominal = "17mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.ethernet_width.drawn"
+nominal = "17.2mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.ethernet_height"
+nominal = "14.5mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.ethernet_height.drawn"
+nominal = "14.7mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usb_width"
+nominal = "14.1mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usb_width.drawn"
+nominal = "14.3mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usb_height"
+nominal = "16.6mm"
+
+[[value]]
+path = "acme.pienclosure::PiCase/cut.usb_height.drawn"
+nominal = "16.8mm"
+note = "slot rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/lid.lip_pocket"
+nominal = "62.6mm"
+note = "62 + 2 x 0.3"
+
+[[value]]
+path = "acme.pienclosure::PiCase/lid.lip_pocket.drawn"
+nominal = "62.8mm"
+note = "lip_in rule: + 0.2"
+
+[[value]]
+path = "acme.pienclosure::PiCase/pi_screws.clearance_hole"
+nominal = "2.7mm"
+note = "clearance = fine; Iso273 M2_5 fine value is std data, not in the spec text"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.stack_fits"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.wall_is_printable"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.usbc_clears_corner"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.hdmi_web"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.ethernet_vs_usb"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.usb_web"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.mounting_pattern"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.insert_hole_fits"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.lid_seats"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::PiCase.pi_hole_clears_screw"
+result = "holds"
+
+[[verdict]]
+path = "acme.pienclosure::Case.insert"
+result = "undecided"
+
+[[diagnostic]]
+code = "C002"
+path = "acme.pienclosure::Case.insert"

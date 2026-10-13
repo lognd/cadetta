@@ -1,0 +1,17 @@
+// Small parts library: the off-the-shelf tube and wall the bracket is
+// designed against. Items are `pub`; lib.cdt re-exports Tube.
+
+use std::materials::Material
+
+/// 20 mm OD aluminium tube to be clamped.
+pub ots Tube @"supplier drawing TUBE-20x2 rev A (hypothetical vendor)" {
+  od   = 20mm h11
+  wall = 2mm
+}
+
+/// The wall the bracket is screwed to: its material and its tapped anchor pattern.
+pub ots Wall @"wall anchor drawing WALL-01 rev A (hypothetical)" {
+  material = Material::Al6061T6
+  datum site = origin.offset(y = 1200mm)      // centre of the anchor pattern
+  anchors: [Point2 on site; 2] = rect_pattern(2, 1, 32mm [+-0.1mm], 0mm)
+}

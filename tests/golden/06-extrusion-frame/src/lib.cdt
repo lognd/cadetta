@@ -1,0 +1,163 @@
+// Workbench frame: 80/20 1010-series aluminum extrusion, 1/4-20 hardware.
+// US shop, imperial. Catalog numbers are from memory; verify each against
+// the current catalog page before cutting.
+
+cite catalog = "https://8020.net/"
+
+/// 80/20 1010 profile, 6105-T5 aluminum (not in std::materials::Material).
+ots Extrusion1010 @catalog:"1010 profile page, verify edition" {
+  alloy = "6105-T5"
+  section = 1in                    // 1.000 in square
+  slot_opening = 0.256in           // T-slot opening
+  center_bore = 0.205in            // tapped 1/4-20 from the end (tap drill #7 = 0.201in)
+  cut_tol = 0.010in                // standard saw-cut tolerance, +-
+  mass_per_length = 0.5lb/ft
+}
+
+/// 1/4-20 UNC button head cap screw, 5/8 in long. std::fasteners.inch is
+/// not shipped before 0.2.0 (stdlib.md 1), so the hardware is modelled by hand.
+ots ButtonHeadScrew @"ASME B18.3 / ASME B1.1" {
+  designation = "1/4-20 UNC-2A"
+  major_diameter = 1/4in
+  pitch = 1/20in
+  length = 5/8in
+}
+
+/// Drop-in T-nut for 1010, 1/4-20 thread.
+ots TNut @catalog:"drop-in T-nut" {
+  designation = "1/4-20 UNC-2B"
+  major_diameter = 1/4in
+  pitch = 1/20in
+}
+
+/// Plywood shelf stock, nominal 3/4 in, actual 23/32 in.
+ots Plywood @"APA PS 1-09, Table 3" {
+  nominal_thickness = 3/4in
+  thickness = 23/32in
+  sheet_width = 4ft
+  sheet_length = 8ft
+  density: Density = 34lb/ft^3
+}
+
+/// Overall envelope of the bench frame (outside dimensions).
+model Envelope {
+  width = 4ft
+  depth = 2'6"
+  height = 3ft
+  lower_rail_bottom = 8in          // floor to underside of the lower rails
+  clearance = 1/16in               // shelf panel is cut this much under the inside dimension
+  cut_step = 1/32in                // all cut lengths round to this
+  corner_count: Count = 4
+}
+
+/// Vertical leg, standing on its foot datum.
+model Leg {
+  #![display(in/32)]
+  length = Envelope.height
+  cut_length = round_to(length, Envelope.cut_step) [+- Extrusion1010.cut_tol]  #[emit(nominal)]
+  datum foot = origin
+  top: Point3 on foot = Point3(0in, 0in, length)    // upper end of the leg axis
+}
+
+/// Rail running along the width, between legs.
+model WidthRail {
+  #![display(in/32)]
+  length = round_to(Envelope.width - 2 * Extrusion1010.section, Envelope.cut_step)
+  cut_length = length [+- Extrusion1010.cut_tol]
+}
+
+/// Rail running along the depth, between legs.
+model DepthRail {
+  #![display(in/32)]
+  length = round_to(Envelope.depth - 2 * Extrusion1010.section, Envelope.cut_step)
+  cut_length = length [+- Extrusion1010.cut_tol]
+}
+
+/// Triangular corner gusset, 1/4 in aluminum plate, 45 degree isosceles.
+model Gusset {
+  leg = 3in
+  thickness = 1/4in
+  apex_angle: Angle = atan2(leg, leg)
+  let hypotenuse = leg * sqrt(2)                    // reference size, not cut to
+  area = leg ^ 2 / 2
+  bolts: Count = 2
+  t_nuts: Count = 2
+  engagement = ButtonHeadScrew.length - thickness   // thread past the plate, into the T-nut
+  check forty_five: apex_angle == 45deg "gusset must be 45 degrees"
+  check engagement_ok: engagement >= 3/2 * ButtonHeadScrew.major_diameter "screw must engage 1.5 diameters"
+}
+
+/// Corner clip holding a shelf panel to a rail.
+model PanelClip {
+  bolts: Count = 1
+  t_nuts: Count = 1
+}
+
+/// Diagonal brace across the back opening between the two rail levels.
+model Brace {
+  #![display(in/32)]
+  span_x = Envelope.width - 2 * Extrusion1010.section
+  span_y = Envelope.height - Envelope.lower_rail_bottom - 2 * Extrusion1010.section
+  let raw_length = sqrt(span_x ^ 2 + span_y ^ 2)                 // opening diagonal, inexact
+  cut_length = round_to(raw_length, Envelope.cut_step) [+- Extrusion1010.cut_tol]  // long-point length
+  let slope_angle: Angle = atan2(span_y, span_x)                 // brace axis to horizontal
+  miter_angle: Angle = round_to(90deg - slope_angle, 0.5deg)     // saw setting off square
+  ends: Count = 2
+  end_bolts: Count = 1
+  end_t_nuts: Count = 1
+}
+
+/// Shelf panel: inside frame dimension less clearance, to nearest 1/32.
+model ShelfPanel {
+  #![display(in/32)]
+  length = round_to(WidthRail.length - Envelope.clearance, Envelope.cut_step)
+  width = round_to(DepthRail.length - Envelope.clearance, Envelope.cut_step)
+  thickness = Plywood.thickness
+  area = length * width
+  mass_each: Mass = area * thickness * Plywood.density
+}
+
+assembly Workbench {
+  part leg[4]: Leg
+  part width_rail[4]: WidthRail    // upper/lower x front/back
+  part depth_rail[4]: DepthRail    // upper/lower x left/right
+  part brace[1]: Brace
+  part panel[2]: ShelfPanel
+
+  // One gusset per rail end; four clips per panel.
+  part gusset[2 * (count(width_rail) + count(depth_rail))]: Gusset
+  part panel_clip[count(panel) * Envelope.corner_count]: PanelClip
+
+  // Legs stand at the four corners, centred in their 1in section: front-left,
+  // front-right, back-left, back-right.
+  let inset = Extrusion1010.section / 2
+  corners: [Point2 on origin; 4] = [
+    Point2(inset, inset),
+    Point2(Envelope.width - inset, inset),
+    Point2(inset, Envelope.depth - inset),
+    Point2(Envelope.width - inset, Envelope.depth - inset)
+  ]
+  place leg[i].foot on origin.at(corners[i]) for i in 0..count(leg)
+
+  total_bolts: Count = sum(gusset.bolts) + sum(panel_clip.bolts) + sum(brace.ends) * brace[0].end_bolts
+  total_t_nuts: Count = sum(gusset.t_nuts) + sum(panel_clip.t_nuts) + sum(brace.ends) * brace[0].end_t_nuts
+
+  total_extrusion_length = sum(leg.cut_length) + sum(width_rail.cut_length) + sum(depth_rail.cut_length) + sum(brace.cut_length)
+  extrusion_mass: Mass = total_extrusion_length * Extrusion1010.mass_per_length
+
+  sheet_utilization: Ratio = count(panel) * panel[0].area / (Plywood.sheet_width * Plywood.sheet_length)
+  sheet_waste: Ratio = 1 - sheet_utilization
+  slot_to_section: Ratio = Extrusion1010.slot_opening / Extrusion1010.section
+
+  check panel_fits_width for r in width_rail: panel[0].length < r.cut_length "panel must fit between legs"
+  check panel_fits_depth for r in depth_rail: panel[0].width < r.cut_length "panel must fit between legs"
+  check bolts_match_tnuts: total_bolts == total_t_nuts
+  check threads_match: ButtonHeadScrew.major_diameter == TNut.major_diameter and ButtonHeadScrew.pitch == TNut.pitch "screw and T-nut thread must agree"
+  check screw_clears_slot: ButtonHeadScrew.major_diameter < Extrusion1010.slot_opening "screw shank must pass the T-slot opening"
+
+  // The placed legs must stand where the cut rails say: leg spacing less one
+  // section is the rail length, and every leg reaches the envelope height.
+  check leg_gap_x: (leg[1].top in origin).x - (leg[0].top in origin).x - Extrusion1010.section == width_rail[0].length
+  check leg_gap_y: (leg[2].top in origin).y - (leg[0].top in origin).y - Extrusion1010.section == depth_rail[0].length
+  check legs_reach_height for l in leg: (l.top in origin).z == Envelope.height
+}

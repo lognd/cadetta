@@ -1,0 +1,504 @@
+[case]
+spec = "1.4"
+status = "hand-evaluated"
+exercises = ["stdlib.md 3", "stdlib.md 4", "stdlib.md 6", "geometry.md 2", "geometry.md 4", "geometry.md 5", "language.md 3.2", "language.md 3.5", "language.md 3.7", "solvers.md 1", "solvers.md 4", "bindings.md 3.3", "quantities.md 5"]
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.clearance_hole"
+nominal = "3.4mm"
+min = "3.4mm"
+max = "3.4mm"
+note = "Iso273 medium, M3 into 6061"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.float"
+nominal = "0.2mm"
+min = "0.2mm"
+max = "0.2mm"
+note = "(clearance_hole - major) / 2"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.min_engagement"
+nominal = "4.5mm"
+min = "4.5mm"
+max = "4.5mm"
+note = "AcmeEngagement factor 1.5 x major"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.grip"
+nominal = "3mm"
+min = "3mm"
+max = "3mm"
+note = "clamp = motor.flange_thk, no counterbore"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.screw_length"
+nominal = "8mm"
+min = "8mm"
+max = "8mm"
+note = "AcmeLengths at_least(grip + min_engagement)"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.tap_drill"
+nominal = "2.5mm"
+min = "2.5mm"
+max = "2.5mm"
+note = "TapDrill cut_75 (AcmeTapColumns Soft)"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.thread_depth"
+nominal = "5.5mm"
+min = "5.5mm"
+max = "5.5mm"
+note = "screw_length - grip + bottom_clearance 0.5mm"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.drill_depth"
+nominal = "7.25mm"
+min = "7.25mm"
+max = "7.25mm"
+note = "thread_depth + 2 pitches + 0.3 x tap_drill"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.clearance_hole"
+nominal = "4.5mm"
+min = "4.5mm"
+max = "4.5mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "Iso273 medium, M4 into 6061"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.float"
+nominal = "0.25mm"
+min = "0.25mm"
+max = "0.25mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "(clearance_hole - major) / 2"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.min_engagement"
+nominal = "6mm"
+min = "6mm"
+max = "6mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "AcmeEngagement factor 1.5 x major"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.grip"
+nominal = "4mm"
+min = "4mm"
+max = "4mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "clamp = motor.flange_thk, no counterbore"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.screw_length"
+nominal = "10mm"
+min = "10mm"
+max = "10mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "AcmeLengths at_least(grip + min_engagement)"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.tap_drill"
+nominal = "3.3mm"
+min = "3.3mm"
+max = "3.3mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "TapDrill cut_75 (AcmeTapColumns Soft)"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.thread_depth"
+nominal = "6.5mm"
+min = "6.5mm"
+max = "6.5mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "screw_length - grip + bottom_clearance 0.5mm"
+
+[[value]]
+path = "acme.drive::DriveModule/motor_screws.drill_depth"
+nominal = "8.89mm"
+min = "8.89mm"
+max = "8.89mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "thread_depth + 2 pitches + 0.3 x tap_drill"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.clearance_hole"
+nominal = "5.5mm"
+min = "5.5mm"
+max = "5.5mm"
+note = "Iso273 medium M5"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.float"
+nominal = "0.25mm"
+min = "0.25mm"
+max = "0.25mm"
+note = "(clearance_hole - major) / 2"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.counterbore_dia"
+nominal = "9.5mm"
+min = "9.5mm"
+max = "9.5mm"
+note = "Iso4762Head M5 (assumed table value)"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.counterbore_depth"
+nominal = "5.4mm"
+min = "5.4mm"
+max = "5.4mm"
+note = "Iso4762Head M5 (assumed table value)"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.grip"
+nominal = "4.6mm"
+min = "4.5mm"
+max = "4.7mm"
+note = "plate.thickness - counterbore_depth"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.min_engagement"
+nominal = "5mm"
+min = "5mm"
+max = "5mm"
+note = "AcmeEngagement factor 1.0 x major (304)"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.screw_length"
+nominal = "10mm"
+min = "10mm"
+max = "10mm"
+note = "AcmeLengths at_least(grip + min_engagement) = at_least(9.6mm)"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.tap_drill"
+nominal = "4.3mm"
+min = "4.3mm"
+max = "4.3mm"
+note = "TapDrill cut_65 (AcmeTapColumns Hard)"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.thread_depth"
+nominal = "5.9mm"
+min = "5.8mm"
+max = "6mm"
+note = "screw_length - grip + bottom_clearance 0.5mm"
+
+[[value]]
+path = "acme.drive::DriveModule/rail_screws.drill_depth"
+nominal = "8.79mm"
+min = "8.69mm"
+max = "8.89mm"
+note = "thread_depth + 2 x 0.8mm + 0.3 x 4.3mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.hole"
+nominal = "12mm"
+min = "12mm"
+max = "12.018mm"
+note = "H7 on 12mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.shaft"
+nominal = "12mm"
+min = "11.983mm"
+max = "11.994mm"
+note = "vendor pilot_dia"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.clearance"
+nominal = "0mm"
+min = "0.006mm"
+max = "0.035mm"
+note = "hole - shaft, inside required 0.005mm .. 0.05mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot_bore"
+nominal = "12mm"
+min = "12mm"
+max = "12.018mm"
+note = "alias of pilot.hole, emitted at mid 12.009mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.hole"
+nominal = "16mm"
+min = "16mm"
+max = "16.018mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "H7 on 16mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.shaft"
+nominal = "16mm"
+min = "15.983mm"
+max = "15.994mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "vendor pilot_dia"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot.clearance"
+nominal = "0mm"
+min = "0.006mm"
+max = "0.035mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "hole - shaft, inside required 0.005mm .. 0.05mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.pilot_bore"
+nominal = "16mm"
+min = "16mm"
+max = "16.018mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "alias of pilot.hole, emitted at mid 16.009mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.hole"
+nominal = "6mm"
+min = "6mm"
+max = "6.012mm"
+note = "H7 on 6mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.shaft"
+nominal = "6mm"
+min = "5.992mm"
+max = "6mm"
+note = "vendor shaft_dia"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.clearance"
+nominal = "0mm"
+min = "0mm"
+max = "0.02mm"
+note = "hole - shaft, inside required 0mm .. 0.03mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.bore"
+nominal = "6mm"
+min = "6mm"
+max = "6.012mm"
+note = "alias of hub_seat.hole, emitted at mid 6.006mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.hole"
+nominal = "8mm"
+min = "8mm"
+max = "8.015mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "H7 on 8mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.shaft"
+nominal = "8mm"
+min = "7.991mm"
+max = "8mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "vendor shaft_dia"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.hub_seat.clearance"
+nominal = "0mm"
+min = "0mm"
+max = "0.024mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "hole - shaft, inside required 0mm .. 0.03mm"
+
+[[value]]
+path = "acme.drive::DriveModule/hub.bore"
+nominal = "8mm"
+min = "8mm"
+max = "8.015mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "alias of hub_seat.hole, emitted at mid 8.0075mm"
+
+[[value]]
+path = "acme.drive::DriveModule/plate.mass"
+nominal = "0.1296kg"
+min = "0.128304kg"
+max = "0.130896kg"
+note = "Materials[Al6061T6].density 2700 kg/m^3 x 80 x 60 x (10 +-0.1) mm"
+
+[[value]]
+path = "acme.drive::DriveModule.wheel_gap"
+nominal = "4mm"
+min = "3.15mm"
+max = "4.85mm"
+note = "32 - 8 - 10 - 10; four independent variables, deviation 0.5+0.1+0.1+0.15"
+
+[[value]]
+path = "acme.drive::DriveModule.wheel_gap"
+nominal = "6mm"
+min = "5.15mm"
+max = "6.85mm"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "34 - 8 - 10 - 10, same deviation"
+
+[[value]]
+path = "acme.drive::DriveModule.module_mass"
+nominal = "0.7022kg"
+min = "0.700904kg"
+max = "0.703496kg"
+note = "motor 0.210 + 4 x M3x8 + 4 x M5x10 + plate + hub 0.025 + rail 0.320; assumes Iso4762 masses 1.1g (M3x8), 2.4g (M4x10), 3.3g (M5x10)"
+
+[[value]]
+path = "acme.drive::DriveModule.module_mass"
+nominal = "0.8774kg"
+min = "0.876104kg"
+max = "0.878696kg"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "motor 0.380 + 4 x M4x10 + 4 x M5x10 + plate + hub + rail"
+
+[[value]]
+path = "acme.drive::DriveModule.module_cost"
+nominal = "85.50USD"
+min = "85.50USD"
+max = "85.50USD"
+note = "24.50 + 38.00 + 9.00 + 14.00; screws have no unit_cost and are listed as missing"
+
+[[value]]
+path = "acme.drive::DriveModule.module_cost"
+nominal = "92.00USD"
+min = "92.00USD"
+max = "92.00USD"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "31.00 + 38.00 + 9.00 + 14.00; screws missing"
+
+[[value]]
+path = "acme.drive::DriveModule.module_lead"
+nominal = "3wk"
+min = "3wk"
+max = "3wk"
+note = "max?: plate 3wk"
+
+[[value]]
+path = "acme.drive::DriveModule.module_lead"
+nominal = "5wk"
+min = "5wk"
+max = "5wk"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "max?: Gm42B 5wk"
+
+[[value]]
+path = "acme.drive::DriveModule.robot_mass"
+nominal = "11.4044kg"
+min = "11.401808kg"
+max = "11.406992kg"
+note = "10kg + 2 x module_mass"
+
+[[value]]
+path = "acme.drive::DriveModule.robot_mass"
+nominal = "11.7548kg"
+min = "11.752208kg"
+max = "11.757392kg"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "10kg + 2 x module_mass"
+
+[[value]]
+path = "acme.drive::DriveModule.drive_torque.torque_per_motor"
+nominal = "0.683141N*m"
+min = "0.683141N*m"
+max = "0.683141N*m"
+note = "from analysis/drive_torque.out.json: 11.4044 x 2.39605 / 2 x 0.05, 6 significant digits"
+
+[[verdict]]
+path = "acme.drive::DriveModule.gap_ok"
+result = "holds"
+conservative = false
+note = "[3.15, 4.85] inside [2, 6]"
+
+[[verdict]]
+path = "acme.drive::DriveModule.gap_ok"
+result = "undecided"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "[5.15, 6.85] straddles the 6mm limit"
+
+[[verdict]]
+path = "acme.drive::DriveModule.torque_ok"
+result = "holds"
+conservative = false
+note = "1.5 x 0.683141 = 1.0247115 N*m <= 1.2"
+
+[[verdict]]
+path = "acme.drive::DriveModule.torque_ok"
+result = "undecided"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "drive_torque has no recorded result for this input set (solvers.md 4.1)"
+
+[[verdict]]
+path = "acme.drive::DriveModule.slope_torque"
+result = "holds"
+conservative = false
+note = "same expression as torque_ok"
+
+[[verdict]]
+path = "acme.drive::DriveModule.slope_torque"
+result = "undecided"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "drive_torque has no recorded result for this input set (solvers.md 4.1)"
+
+[[verdict]]
+path = "acme.drive::DriveModule.mass_budget"
+result = "holds"
+conservative = false
+note = "max 0.703496kg <= 0.95kg"
+
+[[verdict]]
+path = "acme.drive::DriveModule.mass_budget"
+result = "holds"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "max 0.878696kg <= 0.95kg"
+
+[[verdict]]
+path = "acme.drive::DriveModule/plate.pilot"
+result = "holds"
+conservative = false
+note = "clearance [0.006, 0.035] inside [0.005, 0.05]"
+
+[[verdict]]
+path = "acme.drive::DriveModule/plate.pilot"
+result = "holds"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "clearance [0.006, 0.035] inside [0.005, 0.05]"
+
+[[verdict]]
+path = "acme.drive::DriveModule/hub.hub_seat"
+result = "holds"
+conservative = false
+note = "clearance [0, 0.020] inside [0, 0.03]"
+
+[[verdict]]
+path = "acme.drive::DriveModule/hub.hub_seat"
+result = "holds"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "clearance [0, 0.024] inside [0, 0.03]"
+
+[[verdict]]
+path = "acme.drive::DriveModule/motor.rated_torque"
+result = "holds"
+conservative = false
+note = "interface bound >= 0.8N*m; 1.2N*m"
+
+[[verdict]]
+path = "acme.drive::DriveModule/motor.rated_torque"
+result = "holds"
+conservative = false
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+note = "interface bound >= 0.8N*m; 2.0N*m"
+
+[[diagnostic]]
+code = "I003"
+path = "acme.drive::DriveModule.gap_ok"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"
+
+[[diagnostic]]
+code = "S006"
+path = "acme.drive::DriveModule.drive_torque"
+variant = "acme.drive::DriveModule/motor=acme.drive::Gm42B"

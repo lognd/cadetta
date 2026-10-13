@@ -1,0 +1,293 @@
+# Hand-evaluated against spec draft 1.4. Std table figures are assumed
+# (stdlib.md 2 names columns, not values): Iso273 medium M4 4.5mm and M5
+# 5.5mm; Thread major M4 4mm and M5 5mm; Iso4762Head counterbore M4
+# 8mm x 4.4mm and M5 9.5mm x 5.4mm; TapDrill cut_75 M4 3.3mm and M5 4.2mm;
+# Al6061T6 engagement factor 2.0 and tap class Soft; Iso4762Len contains 16mm.
+# Policy-dependent joint members (thread_depth, drill_depth, callout) and the
+# mass roll-up are not pinned: IsoDefault and the screw masses are unspecified.
+
+[case]
+spec = "1.4"
+status = "hand-evaluated"
+exercises = ["quantities.md 5.3", "quantities.md 5.4", "language.md 3.1", "language.md 3.7", "stdlib.md 3", "geometry.md 2", "geometry.md 4", "geometry.md 5"]
+
+# ---- tube, fit ------------------------------------------------------
+[[value]]
+path = "acme.bracket::parts::Tube.od"
+nominal = "20mm"
+min = "19.87mm"
+max = "20mm"
+note = "h11 shaft, IT11 for 18-30mm is 0.130mm"
+
+[[value]]
+path = "acme.bracket::Bracket.tube_seat.hole"
+nominal = "20mm"
+min = "20mm"
+max = "20.13mm"
+note = "H11 on the tube nominal"
+
+[[value]]
+path = "acme.bracket::Bracket.tube_seat.shaft"
+nominal = "20mm"
+min = "19.87mm"
+max = "20mm"
+note = "Tube.od as its own shaft side"
+
+[[value]]
+path = "acme.bracket::Bracket.tube_seat.clearance"
+nominal = "0mm"
+min = "0mm"
+max = "0.26mm"
+note = "hole - shaft: max 20.13 - 19.87"
+
+[[value]]
+path = "acme.bracket::Bracket.clamp_bore"
+nominal = "20mm"
+min = "20mm"
+max = "20.13mm"
+note = "pure reference to tube_seat.hole"
+
+# ---- bracket plate and wall pattern ---------------------------------
+[[value]]
+path = "acme.bracket::Bracket.mount_hole_z"
+nominal = "55mm"
+min = "55mm"
+max = "55mm"
+note = "70 - 15"
+
+[[value]]
+path = "acme.bracket::Bracket.fillet_radius"
+nominal = "5mm"
+min = "5mm"
+max = "5mm"
+note = "thickness / 2"
+
+[[value]]
+path = "acme.bracket::Bracket.edge_distance"
+nominal = "12mm"
+min = "11.9mm"
+max = "12.1mm"
+note = "let: (56 +-0.1 - 32 +-0.1) / 2, both tolerances kept"
+
+[[value]]
+path = "acme.bracket::Bracket.mount_holes.pitch_x"
+nominal = "32mm"
+min = "31.9mm"
+max = "32.1mm"
+note = "alias of mount_spacing"
+
+[[value]]
+path = "acme.bracket::parts::Wall.anchors.pitch_x"
+nominal = "32mm"
+min = "31.9mm"
+max = "32.1mm"
+note = "generator member, its own source variable"
+
+[[value]]
+path = "acme.bracket::Bracket.mount_site.offset.y"
+nominal = "55mm"
+min = "55mm"
+max = "55mm"
+
+[[value]]
+path = "acme.bracket::Bracket.clamp_split.offset.z"
+nominal = "9.5mm"
+min = "9.5mm"
+max = "9.5mm"
+note = "clamp_cap_depth + slit_width"
+
+# ---- mount_screws: M5, counterbored, into the wall (Al6061T6) -------
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.clearance_hole"
+nominal = "5.5mm"
+min = "5.5mm"
+max = "5.5mm"
+note = "Iso273 M5 medium"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.counterbore_dia"
+nominal = "9.5mm"
+min = "9.5mm"
+max = "9.5mm"
+note = "Iso4762Head M5, nominal untoleranced"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.counterbore_depth"
+nominal = "5.4mm"
+min = "5.4mm"
+max = "5.4mm"
+note = "Iso4762Head M5"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.min_engagement"
+nominal = "10mm"
+min = "10mm"
+max = "10mm"
+note = "2.0 * 5mm, aluminium"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.grip"
+nominal = "4.6mm"
+min = "4.6mm"
+max = "4.6mm"
+note = "10 - 5.4"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.screw_length"
+nominal = "16mm"
+min = "16mm"
+max = "16mm"
+note = "Iso4762Len.at_least(4.6 + 10 = 14.6)"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.tap_drill"
+nominal = "4.2mm"
+min = "4.2mm"
+max = "4.2mm"
+note = "TapDrill M5 cut_75 (soft host)"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/mount_screws.float"
+nominal = "0.25mm"
+min = "0.25mm"
+max = "0.25mm"
+note = "(5.5 - 5) / 2"
+
+# ---- clamp_screws: M4, counterbored, into the bracket ---------------
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.clearance_hole"
+nominal = "4.5mm"
+min = "4.5mm"
+max = "4.5mm"
+note = "Iso273 M4 medium"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.counterbore_dia"
+nominal = "8mm"
+min = "8mm"
+max = "8mm"
+note = "Iso4762Head M4"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.counterbore_depth"
+nominal = "4.4mm"
+min = "4.4mm"
+max = "4.4mm"
+note = "Iso4762Head M4"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.min_engagement"
+nominal = "8mm"
+min = "8mm"
+max = "8mm"
+note = "2.0 * 4mm"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.grip"
+nominal = "5.1mm"
+min = "5.1mm"
+max = "5.1mm"
+note = "clamp 8 + 1.5 = 9.5, minus 4.4"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.screw_length"
+nominal = "16mm"
+min = "16mm"
+max = "16mm"
+note = "Iso4762Len.at_least(5.1 + 8 = 13.1)"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.tap_drill"
+nominal = "3.3mm"
+min = "3.3mm"
+max = "3.3mm"
+note = "TapDrill M4 cut_75"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/clamp_screws.float"
+nominal = "0.25mm"
+min = "0.25mm"
+max = "0.25mm"
+note = "(4.5 - 4) / 2"
+
+# ---- clamp layout, fed by the joint's clearance_hole ----------------
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_bolt_offset"
+nominal = "16.25mm"
+min = "16.25mm"
+max = "16.25mm"
+note = "20/2 + 4.5/2 + 4; a feature, stores the nominal only (quantities.md 5.3)"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_edge_distance"
+nominal = "9.75mm"
+min = "9.75mm"
+max = "9.75mm"
+note = "let: (52 - 2 * 16.25) / 2; clamp_bolt_offset is untoleranced"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_cap_holes[0].x"
+nominal = "-16.25mm"
+min = "-16.3mm"
+max = "-16.2mm"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_cap_holes[1].x"
+nominal = "16.25mm"
+min = "16.2mm"
+max = "16.3mm"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_tapped[0].x"
+nominal = "-16.25mm"
+min = "-16.3mm"
+max = "-16.2mm"
+
+[[value]]
+path = "acme.bracket::WallTubeMount/bracket.clamp_tapped[1].x"
+nominal = "16.25mm"
+min = "16.2mm"
+max = "16.3mm"
+
+# ---- verdicts -------------------------------------------------------
+[[verdict]]
+path = "acme.bracket::Bracket.bore_fits_tube"
+result = "holds"          # clearance in [0, 0.26] mm, 0 >= 0
+
+[[verdict]]
+path = "acme.bracket::WallTubeMount.mount_edge_distance"
+result = "holds"          # [11.9, 12.1] >= 11
+
+[[verdict]]
+path = "acme.bracket::WallTubeMount.mount_cb_edge"
+result = "holds"          # [11.9, 12.1] > 4.75
+
+[[verdict]]
+path = "acme.bracket::WallTubeMount.mount_cb_overlap"
+result = "holds"          # [31.9, 32.1] > 9.5
+
+[[verdict]]
+path = "acme.bracket::WallTubeMount.mount_hole_clears_fillet"
+result = "holds"          # 55 - 4.75 = 50.25 >= 15
+
+[[verdict]]
+path = "acme.bracket::WallTubeMount.clamp_edge"
+result = "holds"          # 9.75 >= 9
+
+# Joint alignment (geometry.md 5): allowance 0.25mm. Mount pairs differ by
+# at most 0.1mm in x (pitch variables of both patterns, halved), 0 in y.
+[[verdict]]
+path = "acme.bracket::WallTubeMount/mount_screws.aligned"
+result = "holds"
+conservative = true
+
+# Clamp pairs differ by at most 0.1mm per axis: distance <= 0.1414mm.
+[[verdict]]
+path = "acme.bracket::WallTubeMount/clamp_screws.aligned"
+result = "holds"
+conservative = true
+
+# ---- diagnostics ----------------------------------------------------
+# The list of errors and warnings is closed and empty: the design is clean.
+# Info diagnostics not listed (D001 on the two 32mm pitches, C004 on
+# clamp_edge_distance, U001) are not compared.

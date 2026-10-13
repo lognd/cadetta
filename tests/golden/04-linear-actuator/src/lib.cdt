@@ -1,0 +1,96 @@
+// 300 mm linear actuator: NEMA 17, Tr8x8(P2) screw, twin MGN12 rails.
+// Draft 1.4: one ScrewJoint per hole pattern, datum-typed hole patterns,
+// instance paths for parameterized parts, std::commercial roll-ups.
+
+use self::parts::bearings::Bearing608
+use self::parts::motion::{Nema17Motor, FlexCoupler, TrScrew, TrThread, BrassNut}
+use self::parts::motion::{Mgn12Rail, Mgn12hCarriage}
+use std::fasteners::ScrewJoint
+use self::drive::Drivetrain
+use self::structure::{MotorMount, EndBlock, CarriagePlate}
+
+cite fastlist = "fastener price list FL-2 rev A (hypothetical vendor)"
+
+assembly Actuator {
+  travel            = 300mm                  was stroke
+  axis_height       = 25mm
+  rail_spacing      = 60mm
+  overtravel_margin = 5mm
+  payload_mass      = 5kg
+  required_accel    = 5m/s^2
+  required_speed    = 50mm/s
+  rail_friction: Ratio = 1%
+  safety_factor: Ratio = 2
+  controller_max_step_rate = 100kHz
+
+  coupler_to_nut_gap = 5mm
+  nut_to_bearing_gap = 5mm
+  journal_overhang   = 3mm
+
+  part motor: Nema17Motor
+  part coupler: FlexCoupler
+  part nut: BrassNut
+  part bearing: Bearing608
+  part carriage[2]: Mgn12hCarriage
+
+  /// Cut length: ceil to the vendor increment.
+  let screw_min_length = coupler.bore_depth + coupler_to_nut_gap + nut.length + travel
+                       + nut_to_bearing_gap + bearing.width.nominal + journal_overhang
+  screw_length = ceil_to(screw_min_length, screw.cut_increment)
+  part screw: TrScrew(thread = Tr8P2, starts = 4, length = screw_length)
+
+  let rail_min_length = travel + carriage.length + 2 * overtravel_margin
+  rail_length = ceil_to(rail_min_length, rail.stock_step)
+  part rail[2]: Mgn12Rail(length = rail_length)
+
+  part drive: Drivetrain(motor = motor, screw = screw)
+  part motor_mount: MotorMount(motor = motor, clearance_hole_diameter = motor_screws.clearance_hole)
+  part end_block: EndBlock(bearing = bearing, axis_height = axis_height)
+  part plate: CarriagePlate(nut = nut, rail_spacing = rail_spacing, carriage = carriage[0])
+
+  place motor.origin on origin
+  place motor_mount.motor_site on motor.face
+
+  /// Motor to mount: M3 through the 6 mm plate into the motor's tapped flange (a vendor
+  /// thread of fixed depth). The motor pilot locates the plate, so the joint is locating.
+  part motor_screws: ScrewJoint(
+    thread = M3, clamp = motor_mount.thickness, into = motor.face_material,
+    tap = Vendor, depth_available = motor.thread_depth, locating = true,
+    at = motor_mount.holes, onto = motor.mount_holes,
+    screw_cost = 0.12USD @fastlist)
+
+  /// 8 mm journal in the 608 bore; transition range is the point of the check.
+  fit journal = g6 on bearing.bore [0um .. 20um]
+  /// Coupler bore on motor shaft: free fit, both sides vendor-toleranced.
+  fit motor_shaft = coupler.bore_motor_side / motor.shaft_diameter [0um .. 30um]
+
+  moving_mass: Mass = payload_mass + plate.mass + sum(carriage.mass) + nut.mass
+  required_thrust: Force = safety_factor * moving_mass * (required_accel + 1gn * rail_friction)
+
+  let shaft_stickout = motor.shaft_length - motor_mount.thickness
+  let coupler_start = shaft_stickout - coupler.bore_depth
+  let overhang = screw_length - screw_min_length + journal_overhang
+  let screw_tip_depth = motor_screws.screw_length - motor_screws.grip
+
+  // Commercial roll-ups over every part, recursively; parts without the member are listed as missing.
+  let hardware_cost = sum?(self, unit_cost)
+  let longest_lead = max?(self, lead_time)
+
+  check thrust_margin: drive.thrust >= required_thrust "thrust below load requirement"
+  check speed_margin: drive.max_speed >= required_speed
+  check step_rate_ok: drive.step_rate <= controller_max_step_rate
+  check coupler_torque: motor.holding_torque <= coupler.rated_torque
+  check coupler_clears_plate: coupler_start >= 2mm
+  check shaft_engaged: 0mm <= coupler.bore_depth <= shaft_stickout
+  check overhang_in_wall: overhang <= end_block.back_wall
+  check tip_in_thread: screw_tip_depth <= motor.thread_depth
+  check motor_clears_base: axis_height - motor.face_width / 2 >= 2mm
+  check nut_clears_base: axis_height - nut.flange_diameter / 2 >= 2mm
+  check nut_between_carriages: rail_spacing - carriage.width >= nut.flange_diameter + 2mm
+  check carriage_load for c in carriage: c.static_load >= 10 * moving_mass * 1gn
+}
+
+waive C002 on acme.actuator::Actuator.journal {
+  because "g6 journal vs P0 bore can touch by 3 um at extremes; floating end, accepted"
+  expires 2027-06-30
+}

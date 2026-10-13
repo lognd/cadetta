@@ -1,0 +1,97 @@
+
+use std::fits::iso286
+use std::fasteners::ScrewJoint
+use std::materials::Material
+use self::parts::Wall
+pub use self::parts::Tube
+
+// ---------------------------------------------------------------------
+// Off-the-shelf facts (module parts)
+// ---------------------------------------------------------------------
+// Screws, clearance holes, tap drills and counterbores come from
+// std::fasteners::ScrewJoint; the bracket alloy is a std Material. The
+// tube and wall, which are not in std, live in the parts module.
+
+// ---------------------------------------------------------------------
+// The machined bracket
+// ---------------------------------------------------------------------
+
+/// Machined (bend-free) L-bracket: wall leg with two counterbored holes,
+/// shelf leg carrying an integral split clamp for the tube. The clamp
+/// bolt clearance hole is an argument because the clamp joint sizes it.
+model Bracket(clamp_hole: Length) {
+  material = Material::Al6061T6
+
+  /// Hole class: bore sized H11 against the tube's own (shaft) tolerance.
+  fit tube_seat = H11 on Tube.od
+
+  // --- plate -------------------------------------------------------
+  thickness: Length = 10mm       // both legs
+  width: Length = 56mm [+-0.1mm]
+  wall_leg_height = 70mm
+  shelf_depth = 50mm
+  fillet_radius = thickness / 2  // internal corner between legs, corner-radius cutter
+
+  // --- wall mounting holes (sizes: see the mount_screws joint) ------
+  top_edge_distance = 15mm
+  mount_hole_z = wall_leg_height - top_edge_distance
+  mount_hole_count: Count = 2
+  mount_spacing = 32mm [+-0.1mm] // matches the wall anchor pattern
+  datum mount_site = origin.offset(y = mount_hole_z).flip(x)   // flipped: mates face to face with a wall datum
+  mount_holes: [Point2 on mount_site; mount_hole_count] = rect_pattern(mount_hole_count, 1, mount_spacing, 0mm)
+  let edge_distance = (width - mount_spacing) / 2   // analysis value: keeps both tolerances
+
+  // --- tube clamp --------------------------------------------------
+  clamp_bore = tube_seat.hole
+  clamp_web = 4mm
+  clamp_block_width = 52mm
+  clamp_cap_depth = 8mm          // clamp-ear thickness above the slit
+  slit_width = 1.5mm
+  clamp_top_height = 40mm        // underside of the shelf to the top of the cap
+  clamp_bolt_offset = clamp_bore / 2 + clamp_hole / 2 + clamp_web
+  datum clamp_top   = origin.offset(y = clamp_top_height, z = shelf_depth / 2).rotate(x = 90deg)
+  datum clamp_split = clamp_top.offset(z = clamp_cap_depth + slit_width)   // face of the tapped half
+  clamp_cap_holes: [Point2 on clamp_top; 2] = [Point2(-clamp_bolt_offset, 0mm), Point2(clamp_bolt_offset, 0mm)] [+-0.05mm]
+  clamp_tapped: [Point2 on clamp_split; 2] = [Point2(-clamp_bolt_offset, 0mm), Point2(clamp_bolt_offset, 0mm)] [+-0.05mm]
+  let clamp_edge_distance = (clamp_block_width - 2 * clamp_bolt_offset) / 2
+
+  check bore_fits_tube: tube_seat.clearance >= 0mm "bore passes the tube"
+}
+
+// ---------------------------------------------------------------------
+// Assembly
+// ---------------------------------------------------------------------
+
+/// Bracket on a wall, holding a tube.
+assembly WallTubeMount {
+  part wall: Wall
+  part bracket: Bracket(clamp_hole = clamp_screws.clearance_hole)
+  part tube: Tube
+
+  place wall.origin on origin
+  place bracket.mount_site on wall.site
+
+  // "Screw here", one joint per hole pattern: clearance holes and counterbores in
+  // the bracket, tap drill in the wall, screw length, engagement, and the proof
+  // that the two patterns line up.
+  part mount_screws: ScrewJoint(
+    thread = M5, clamp = bracket.thickness, host = wall, counterbore = true,
+    at = bracket.mount_holes, onto = wall.anchors)
+
+  // The screw crosses the slit, so the slit counts toward the clamped stack.
+  part clamp_screws: ScrewJoint(
+    thread = M4, clamp = bracket.clamp_cap_depth + bracket.slit_width,
+    host = bracket, counterbore = true,
+    at = bracket.clamp_cap_holes, onto = bracket.clamp_tapped)
+
+  // --- layout checks, on the joint outputs ---------------------------
+  check mount_edge_distance: bracket.edge_distance >= 2 * mount_screws.clearance_hole "edge distance >= 2d"
+  check mount_cb_edge: bracket.edge_distance > mount_screws.counterbore_dia / 2 "counterbore must not break out of the side"
+  check mount_cb_overlap: bracket.mount_spacing > mount_screws.counterbore_dia "counterbores must not overlap"
+  check mount_hole_clears_fillet: bracket.mount_hole_z - mount_screws.counterbore_dia / 2 >= bracket.thickness + bracket.fillet_radius "counterbore clear of the fillet"
+  check clamp_edge: bracket.clamp_edge_distance >= 2 * clamp_screws.clearance_hole "edge distance >= 2d"
+
+  // Engagement, grip, bottoming-out and alignment are checked inside each ScrewJoint.
+  // Roll-up over every part's mass (parts without one are listed as missing).
+  let screw_mass = mass?(self)
+}

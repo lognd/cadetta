@@ -1,0 +1,193 @@
+
+use std::fasteners::ScrewJoint
+use std::materials::Material
+
+cite pidrawing = "https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-mechanical-drawing.pdf"
+cite cnckitchen = "https://www.cnckitchen.com/blog/tipps-amp-tricks-fr-gewindeeinstze-im-3d-druck"
+
+/// Raspberry Pi 4 Model B. Origin: board lower-left corner seen from the top,
+/// X along the 85mm edge, Y along the 56mm edge, Z up from the PCB top face.
+ots RaspberryPi4B @pidrawing {
+  board_length = 85mm
+  board_width = 56mm
+  thickness = 1.4mm @measured:"caliper; not on the drawing"
+  corner_radius = 3mm
+
+  /// Hole 1 centre; holes are 3.5mm from the left and bottom edges.
+  hole_inset = 3.5mm
+  hole_pitch_x = 58mm
+  hole_pitch_y = 49mm
+  hole_diameter = 2.7mm
+  hole_pad_diameter = 6.2mm         // keep-out for the standoff top, drawing note
+
+  /// Centre of the mounting-hole pattern (the pattern-datum idiom, geometry.md 1).
+  datum holes_site = origin.offset(x = hole_inset + hole_pitch_x / 2, y = hole_inset + hole_pitch_y / 2)
+  /// The four mounting holes, row by row from (-,-) to (+,+) about holes_site.
+  holes: [Point2 on holes_site; 4] = rect_pattern(2, 2, hole_pitch_x, hole_pitch_y)
+
+  // Bottom long edge (Y = 0), connector centre positions along X.
+  usbc_x = 11.2mm
+  hdmi0_x = 26mm
+  hdmi1_x = 39.5mm
+  // Right short edge (X = 85), connector centre positions along Y.
+  ethernet_y = 10.25mm
+  usb_lower_y = 29mm
+  usb_upper_y = 47mm
+
+  // Receptacle body sizes (width along its edge x height above the PCB top).
+  usbc_width = 9mm
+  usbc_height = 3.3mm
+  hdmi_width = 6.6mm
+  hdmi_height = 3.1mm
+  ethernet_width = 16mm
+  ethernet_height = 13.5mm
+  usb_width = 13.1mm
+  usb_height = 15.6mm
+  tallest_component = 17mm          // top of the stacked USB receptacle incl. shell, with margin
+  underside_relief = 1.5mm          // solder-tail height under the PCB
+}
+
+/// Heat-set insert, M2.5 x 4 straight knurled brass (generic vendor data).
+ots Insert @cnckitchen {
+  thread_diameter = 2.5mm
+  outer_diameter = 3.6mm [+-0.1mm]
+  length = 4mm
+  recommended_hole = 3.2mm [+-0.05mm]   // as-printed hole for the insert; melts into the wall
+}
+
+/// PETG on a 0.4mm nozzle FDM printer. Compensation measured on our printer.
+process Fdm @measured:"calibration coupon print 2026-09-30, caliper" {
+  nozzle = 0.4mm
+  line_width = 0.45mm
+  layer_height = 0.2mm
+  shrinkage = 0.4%
+  infill = 20%
+  perimeters: Count = 6
+  hole_comp = 0.2mm [+-0.05mm]      // printed holes come out small by this much (diameter)
+  slot_comp = 0.2mm                 // rectangular cutouts shrink the same way
+  boss_comp = 0.1mm                 // external features come out large
+  lip_in_comp = 0.2mm               // lid pocket (inner mating face) comes out small
+  lip_out_comp = -0.1mm             // base lip (outer mating face) comes out large
+  rule hole(d: Length) -> Length = d + hole_comp
+  rule slot(d: Length) -> Length = d + slot_comp
+  rule boss(d: Length) -> Length = d - boss_comp
+  rule lip_in(d: Length) -> Length = d + lip_in_comp
+  rule lip_out(d: Length) -> Length = d + lip_out_comp
+}
+
+/// Shell dimensions shared by base and lid.
+model Case {
+  #![process(Fdm)]
+
+  /// Material around the cavity.
+  wall: Length = Fdm.perimeters * Fdm.line_width
+  floor_thickness = 2.4mm
+  lid_thickness = 2.4mm
+  board_clearance = 1mm             // gap between PCB edge and the inner wall
+  top_clearance = 2mm               // gap between tallest component and the lid
+  standoff_height = Insert.length + 1mm                // insert depth plus floor-side web
+
+  cavity_length = RaspberryPi4B.board_length + 2 * board_clearance
+  cavity_width = RaspberryPi4B.board_width + 2 * board_clearance
+  cavity_height = standoff_height + RaspberryPi4B.thickness + RaspberryPi4B.tallest_component + top_clearance
+
+  outer_length = cavity_length + 2 * wall
+  outer_width = cavity_width + 2 * wall
+  outer_height = floor_thickness + cavity_height + lid_thickness
+
+  /// Z of the PCB top face above the base outer bottom.
+  board_top_z = floor_thickness + standoff_height + RaspberryPi4B.thickness
+
+  /// Insert hole: designed as printed, drawn bigger by the process.
+  insert_hole = Insert.recommended_hole  #[hole]
+  fit insert = insert_hole / Insert.outer_diameter [-0.4mm .. -0.1mm]
+  #[allow(P001, "pad diameter is a keep-out from the Pi drawing, not printed to size")]
+  standoff_diameter = RaspberryPi4B.hole_pad_diameter
+  locating_pin = RaspberryPi4B.hole_diameter - 0.2mm  #[boss]
+
+  // Analysis stack-up: free height above the tallest component, vs the required clearance.
+  let top_gap = cavity_height - standoff_height - RaspberryPi4B.thickness - RaspberryPi4B.tallest_component
+}
+
+/// The lower shell. Origin: outer lower-left corner of the floor underside.
+model Base {
+  #![process(Fdm)]
+
+  /// Centre of the standoff pattern, at PCB-top height; the Pi is placed on it.
+  datum standoff_site = origin.offset(
+    x = Case.wall + Case.board_clearance + RaspberryPi4B.hole_inset + RaspberryPi4B.hole_pitch_x / 2,
+    y = Case.wall + Case.board_clearance + RaspberryPi4B.hole_inset + RaspberryPi4B.hole_pitch_y / 2,
+    z = Case.board_top_z)
+
+  /// Standoff centres, same pitches as the board's hole pattern.
+  mount_points: [Point2 on standoff_site; 4] = rect_pattern(2, 2, RaspberryPi4B.hole_pitch_x, RaspberryPi4B.hole_pitch_y) [+-0.05mm]
+
+  // Connector cutout centres in the base frame: front wall along X, right wall along Y.
+  usbc_cut_x = Case.wall + Case.board_clearance + RaspberryPi4B.usbc_x
+  hdmi0_cut_x = Case.wall + Case.board_clearance + RaspberryPi4B.hdmi0_x
+  hdmi1_cut_x = Case.wall + Case.board_clearance + RaspberryPi4B.hdmi1_x
+  ethernet_cut_y = Case.wall + Case.board_clearance + RaspberryPi4B.ethernet_y
+  usb_lower_cut_y = Case.wall + Case.board_clearance + RaspberryPi4B.usb_lower_y
+  usb_upper_cut_y = Case.wall + Case.board_clearance + RaspberryPi4B.usb_upper_y
+
+  // Cutout centre heights above the floor underside.
+  usbc_cut_z = Case.board_top_z + RaspberryPi4B.usbc_height / 2
+  hdmi_cut_z = Case.board_top_z + RaspberryPi4B.hdmi_height / 2
+  ethernet_cut_z = Case.board_top_z + RaspberryPi4B.ethernet_height / 2
+  usb_cut_z = Case.board_top_z + RaspberryPi4B.usb_height / 2
+
+  overlap = 2mm
+  /// Outer face of the base lip the lid sits on.
+  lip_width = Case.outer_width - 2 * Case.wall + 2 * overlap  #[lip_out]
+}
+
+/// Cutout sizes only; the slot rule applies to every member here, so positions live in Base.
+model BaseCutouts {
+  #![process(Fdm), slot]
+
+  plug_allowance = 1mm
+  usbc_width = round_to(RaspberryPi4B.usbc_width + 3.5mm, 0.1mm)
+  usbc_height = round_to(RaspberryPi4B.usbc_height + 3mm, 0.1mm)
+  hdmi_width = round_to(RaspberryPi4B.hdmi_width + 4.5mm, 0.1mm)
+  hdmi_height = round_to(RaspberryPi4B.hdmi_height + 3mm, 0.1mm)
+  ethernet_width = round_to(RaspberryPi4B.ethernet_width + plug_allowance, 0.1mm)
+  ethernet_height = round_to(RaspberryPi4B.ethernet_height + plug_allowance, 0.1mm)
+  usb_width = round_to(RaspberryPi4B.usb_width + plug_allowance, 0.1mm)
+  usb_height = round_to(RaspberryPi4B.usb_height + plug_allowance, 0.1mm)
+}
+
+/// The lid; the pocket is sized from the lip it overlaps.
+model Lid(lip: Length) {
+  #![process(Fdm)]
+
+  seat_clearance = 0.3mm            // per side, between lip and pocket
+  /// Lid pocket that overlaps the base lip.
+  lip_pocket = lip + 2 * seat_clearance  #[lip_in]
+}
+
+assembly PiCase {
+  #![process(Fdm)]
+
+  part base: Base
+  part cut: BaseCutouts
+  part lid: Lid(lip = base.lip_width)
+  part pi: RaspberryPi4B
+
+  place pi.holes_site on base.standoff_site
+
+  // Pi onto the inserts: one joint for the whole pattern, holes proven to line up.
+  part pi_screws: ScrewJoint(thread = M2_5, clamp = pi.thickness, into = Material::Brass360,
+                             tap = Vendor, depth_available = Insert.length, clearance = fine,
+                             at = pi.holes, onto = base.mount_points)
+
+  check stack_fits: Case.top_gap >= Case.top_clearance
+  check wall_is_printable: Case.wall >= 4 * Fdm.nozzle
+  check usbc_clears_corner: base.usbc_cut_x - cut.usbc_width / 2 > Case.wall + pi.corner_radius "USB-C cutout runs into the corner radius"
+  check hdmi_web: base.hdmi1_cut_x - base.hdmi0_cut_x - cut.hdmi_width >= 2 * Fdm.line_width "web between HDMI cutouts too thin to print"
+  check ethernet_vs_usb: base.usb_lower_cut_y - base.ethernet_cut_y > cut.usb_width / 2 + cut.ethernet_width / 2 "cutouts overlap"
+  check usb_web: base.usb_upper_cut_y - base.usb_lower_cut_y - cut.usb_width >= 2 * Fdm.line_width "web between USB cutouts too thin to print"
+  check mounting_pattern: (pi.holes[3] in pi.origin).y.nominal == pi.board_width - pi.hole_inset
+  check insert_hole_fits: Case.insert_hole < Case.standoff_diameter - 2 * Fdm.line_width
+  check lid_seats: lid.lip_pocket - base.lip_width >= 2 * Fdm.layer_height "pocket clearance below two layers"
+  check pi_hole_clears_screw: pi.hole_diameter >= pi_screws.clearance_hole
+}

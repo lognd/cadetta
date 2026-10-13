@@ -1,0 +1,66 @@
+
+use std::fasteners::{MetricThread, Iso273, Thread, Iso4762Head}
+
+/// Gearbox cover plate, 6061-T6 plate stock.
+model CoverPlate {
+  length        = 120mm
+  width         = 80mm   @assumed:"bare 80 in legacy file, --assume-unit mm"
+  corner_radius = 5mm
+  bolt_pitch_x  = 100mm
+  bolt_pitch_y  = 60mm   @assumed:"bare 60 in legacy file, --assume-unit mm"
+
+  /// Clearance hole for the bolt thread, ISO 273 medium class.
+  hole_dia      = Iso273[Bolt.thread].medium
+
+  /// Pilot bore, ISO 286 H7 (12.000 to 12.018 mm).
+  /// Emitted at the midpoint.
+  pilot_bore    = 12mm H7   #[emit(mid)]
+
+  /// Stock thickness, 1/4 in nominal.
+  thickness     = 0.25in    @"ASTM B209 6061-T6 plate, 1/4 in nominal"
+
+  cbore_dia     = Bolt.head_dia + 1mm
+  /// Counterbore depth, half the plate.
+  cbore_depth   = thickness / 2
+}
+
+/// Gasket, same outline and hole pattern as the cover plate. Pure references are
+/// aliases: they share the plate's source variable and its emit point.
+model Gasket {
+  length        = CoverPlate.length
+  width         = CoverPlate.width
+  corner_radius = CoverPlate.corner_radius
+  bolt_pitch_x  = CoverPlate.bolt_pitch_x
+  bolt_pitch_y  = CoverPlate.bolt_pitch_y
+  hole_dia      = CoverPlate.hole_dia
+  pilot_bore    = CoverPlate.pilot_bore
+  thickness     = 1.5mm
+}
+
+/// Cap screw as modeled in SOLIDWORKS: M6 socket head, dimensions from std tables.
+model Bolt {
+  thread       = MetricThread::M6
+  shank_dia    = Thread[thread].major
+  head_dia     = Iso4762Head[thread].head_dia
+  head_height  = Iso4762Head[thread].head_height
+
+  /// 0.75in is not a standard M6 length (16, 20 mm); kept from the legacy design, review.
+  length       = 0.75in
+
+  /// Stack the screw passes through before it reaches the housing.
+  let stack    = CoverPlate.thickness + Gasket.thickness
+  /// Thread depth: length less plate and gasket (counterbore not credited).
+  thread_depth = length - stack
+}
+
+assembly GearboxCover {
+  bolt_count: Count = 4
+
+  part plate: CoverPlate
+  part gasket: Gasket
+  part bolt[bolt_count]: Bolt
+
+  check cbore_clears_head for b in bolt: plate.cbore_dia > b.head_dia "counterbore must clear head"
+  check hole_clears_shank for b in bolt: plate.hole_dia > b.shank_dia
+  check thread_in_housing for b in bolt: b.thread_depth > 0mm "screw must reach the housing"
+}

@@ -1,0 +1,11 @@
+[package]
+name = "acme.drive"
+version = "0.1.0"
+as_of = "2026-10-13"
+
+[lint]
+fail_on = "error"
+
+[solvers."acme.drive::DriveModule.drive_torque"]
+command = ["python", "{script}"]
+transport = "stdio"

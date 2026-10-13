@@ -1,0 +1,133 @@
+[case]
+spec = "1.4"
+status = "hand-evaluated"
+exercises = ["quantities.md 5.3", "quantities.md 5.6", "language.md 3.3", "language.md 3.7", "language.md 3.11", "stdlib.md 2", "adapters.md 3", "adapters.md 3.1", "emitters/sw-equations.md", "config-cli.md"]
+
+[[value]]
+path = "acme.gearbox::CoverPlate.length"
+nominal = "120mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.width"
+nominal = "80mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.corner_radius"
+nominal = "5mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.bolt_pitch_x"
+nominal = "100mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.bolt_pitch_y"
+nominal = "60mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.hole_dia"
+nominal = "6.6mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.pilot_bore"
+nominal = "12mm"
+min = "12mm"
+max = "12.018mm"
+note = "ISO 286 H7"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.thickness"
+nominal = "0.25in"
+note = "equals 6.35 mm exactly"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.cbore_dia"
+nominal = "11mm"
+note = "head_dia 10 mm + 1 mm"
+
+[[value]]
+path = "acme.gearbox::CoverPlate.cbore_depth"
+nominal = "3.175mm"
+note = "thickness / 2"
+
+[[value]]
+path = "acme.gearbox::Gasket.length"
+nominal = "120mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.width"
+nominal = "80mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.corner_radius"
+nominal = "5mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.bolt_pitch_x"
+nominal = "100mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.bolt_pitch_y"
+nominal = "60mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.hole_dia"
+nominal = "6.6mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.pilot_bore"
+nominal = "12mm"
+min = "12mm"
+max = "12.018mm"
+
+[[value]]
+path = "acme.gearbox::Gasket.thickness"
+nominal = "1.5mm"
+
+[[value]]
+path = "acme.gearbox::Bolt.shank_dia"
+nominal = "6mm"
+
+[[value]]
+path = "acme.gearbox::Bolt.head_dia"
+nominal = "10mm"
+
+[[value]]
+path = "acme.gearbox::Bolt.head_height"
+nominal = "6mm"
+
+[[value]]
+path = "acme.gearbox::Bolt.length"
+nominal = "0.75in"
+note = "equals 19.05 mm"
+
+[[value]]
+path = "acme.gearbox::Bolt.stack"
+nominal = "7.85mm"
+note = "6.35 + 1.5"
+
+[[value]]
+path = "acme.gearbox::Bolt.thread_depth"
+nominal = "11.2mm"
+note = "19.05 - 7.85"
+
+[[value]]
+path = "acme.gearbox::GearboxCover.bolt_count"
+nominal = "4"
+
+[[verdict]]
+path = "acme.gearbox::GearboxCover.cbore_clears_head"
+result = "holds"
+
+[[verdict]]
+path = "acme.gearbox::GearboxCover.hole_clears_shank"
+result = "holds"
+
+[[verdict]]
+path = "acme.gearbox::GearboxCover.thread_in_housing"
+result = "holds"
+
+[[artifact]]
+command = "cadetta emit sw-equations"
+produces = "build/solidworks/sw-equations.txt"
+expected = "expected/equations.txt"
+mask = ['blake3:\S+']
