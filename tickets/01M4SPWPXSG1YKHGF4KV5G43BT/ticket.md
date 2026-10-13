@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:33:03Z"
+updated = "2026-10-13T06:33:04Z"
 persona = "design engineer"
 capability = "resolve hole and shaft classes like H7, p6, g6 for any size in range"
 outcome_text = "fits are values, not comments"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `Bearing.bore.nominal j5` (a class on any expression), when resolved, then the tolerance comes from std.fits.iso286 (quantities.md 5.1)"
-bound = false
+bound = true
 +++
