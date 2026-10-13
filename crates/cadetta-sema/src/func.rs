@@ -8,6 +8,7 @@
 //! them (`round_to`) to get an exact quantity back.
 
 // frob:ticket 01M4ST7ASWYQV13AAHHCXVR570
+// frob:ticket 01M4ST7AFZGCN52434BQJRT5MM
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -184,7 +185,7 @@ fn positional<'a>(name: &str, args: &'a [Arg], span: Span) -> R<Vec<&'a Expr>> {
     Ok(out)
 }
 
-fn arity<'a>(name: &str, args: &'a [Arg], want: usize, span: Span) -> R<Vec<&'a Expr>> {
+pub(super) fn arity<'a>(name: &str, args: &'a [Arg], want: usize, span: Span) -> R<Vec<&'a Expr>> {
     let xs = positional(name, args, span)?;
     if xs.len() != want {
         return Err(diag(
@@ -223,6 +224,13 @@ fn is_builtin(name: &str) -> bool {
             | "round"
             | "count"
             | "fmt"
+            | "Point2"
+            | "Point3"
+            | "Vec2"
+            | "Vec3"
+            | "rect_pattern"
+            | "circle_pattern"
+            | "distance"
     )
 }
 
@@ -404,6 +412,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     _ => Err(diag("EVAL", xs[0].span, "`count` takes an array")),
                 }
             }
+            "Point2" | "Point3" | "Vec2" | "Vec3" | "rect_pattern" | "circle_pattern"
+            | "distance" => self.geometry(sc, name, args, span),
             _ => self.fmt(sc, args, span),
         }
     }
@@ -599,6 +609,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Val::Array(a) => {
                 let items: Vec<String> = a.iter().map(|x| self.render(x, unit)).collect();
                 format!("[{}]", items.join(", "))
+            }
+            Val::Point(c) => {
+                let items: Vec<String> = c.iter().map(|x| self.render(x, unit)).collect();
+                format!("({})", items.join(", "))
             }
             Val::Quantity(q) => {
                 if let Some(u) = unit {
@@ -831,7 +845,7 @@ fn domain(e: &InexactError, span: Span) -> Fail {
     diag(e.code().unwrap_or("EVAL"), span, e.to_string())
 }
 
-fn sqrt(v: &Val, span: Span) -> R<Val> {
+pub(super) fn sqrt(v: &Val, span: Span) -> R<Val> {
     match v {
         Val::Quantity(q) => {
             let dim = sqrt_dim(q.dim(), span)?;
@@ -859,7 +873,7 @@ fn sqrt(v: &Val, span: Span) -> R<Val> {
     }
 }
 
-fn trig(name: &str, q: &Quant, span: Span) -> R<Val> {
+pub(super) fn trig(name: &str, q: &Quant, span: Span) -> R<Val> {
     if !q.dim().dimension.is_dimensionless() || q.dim().angle != 1 {
         return Err(diag(
             "Q002",
