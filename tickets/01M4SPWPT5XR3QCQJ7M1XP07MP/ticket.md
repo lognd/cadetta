@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:01:29Z"
+updated = "2026-10-13T08:01:44Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `require mass_budget: ... @customer:"REQ-12"`, when evaluated, then it is a check carrying a citation and tracked as an obligation (language.md 6)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check name, when lowered, then it is the check canonical path (language.md 6)"
