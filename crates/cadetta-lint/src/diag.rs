@@ -182,7 +182,6 @@ pub fn schema_json() -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
 
     fn src(file: &str, line: u32) -> Option<Location> {
         let p = Position { line, col: 1 };
@@ -209,8 +208,8 @@ mod tests {
         d
     }
 
-    // frob:ticket PE4EC23
-    // frob:tests cadetta-lint::diag::serialize_has_all_fields
+    // frob:ticket 01M4SWK9V5CYNNVTAS3PE4EC23
+    // frob:tests crates/cadetta-lint/src/diag.rs::Diagnostic.new kind=unit
     #[test]
     fn serialize_has_all_fields() {
         let v = serde_json::to_value(sample()).unwrap();
@@ -230,8 +229,8 @@ mod tests {
         assert_eq!(back, sample());
     }
 
-    // frob:ticket PE4EC23
-    // frob:tests cadetta-lint::diag::location_kinds
+    // frob:ticket 01M4SWK9V5CYNNVTAS3PE4EC23
+    // frob:tests crates/cadetta-lint/src/diag.rs::Location kind=unit
     #[test]
     fn location_kinds() {
         let s = serde_json::to_value(src("a.cdt", 2).unwrap()).unwrap();
@@ -252,8 +251,8 @@ mod tests {
         assert!(bad.is_err());
     }
 
-    // frob:ticket PE4EC23
-    // frob:tests cadetta-lint::diag::sorts_by_file_line_code_path
+    // frob:ticket 01M4SWK9V5CYNNVTAS3PE4EC23
+    // frob:tests crates/cadetta-lint/src/diag.rs::sort kind=unit
     #[test]
     fn sorts_by_file_line_code_path() {
         let mk = |file: &str, line, code: &str, path: &str| {
@@ -293,25 +292,20 @@ mod tests {
         }
     }
 
-    // frob:ticket PE4EC23
-    // frob:tests cadetta-lint::diag::schema_file_matches_type
+    // frob:ticket 01M4SWK9V5CYNNVTAS3PE4EC23
+    // frob:tests crates/cadetta-lint/src/diag.rs::schema_json kind=unit
     #[test]
     fn schema_file_matches_type() {
-        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../docs/schemas/diag.json");
-        let generated = schema_json();
-        if std::env::var_os("CADETTA_UPDATE_SCHEMA").is_some() {
-            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-            std::fs::write(&path, &generated).unwrap();
-        }
-        let on_disk = std::fs::read_to_string(&path).expect("docs/schemas/diag.json exists");
+        let on_disk = include_str!("../../../docs/schemas/diag.json");
         assert_eq!(
-            on_disk, generated,
-            "regenerate with CADETTA_UPDATE_SCHEMA=1"
+            on_disk,
+            schema_json(),
+            "docs/schemas/diag.json is stale; replace it with schema_json()"
         );
     }
 
-    // frob:ticket PE4EC23
-    // frob:tests cadetta-lint::diag::foreign_records_roundtrip_unchanged
+    // frob:ticket 01M4SWK9V5CYNNVTAS3PE4EC23
+    // frob:tests crates/cadetta-lint/src/diag.rs::Diagnostic kind=unit
     #[test]
     fn foreign_records_roundtrip_unchanged() {
         // A solver/adapter response record parses into the same type and
