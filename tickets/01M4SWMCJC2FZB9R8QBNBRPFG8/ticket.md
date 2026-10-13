@@ -19,6 +19,10 @@ scope = ["crates/cadetta-adapter/src/scope.rs"]
 kind = "blocked-by"
 target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWSTRG1FFAJ0XM89ETBBN"
+
 [[acceptance]]
 text = "Given two [[adapter]] blocks with the same name, when id is missing, then it is a configuration error; id defaults to name (config-cli.md 2)"
 bound = false
