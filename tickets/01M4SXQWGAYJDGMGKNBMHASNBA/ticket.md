@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a package named std, when loaded, then it is rejected, and std is an implicit dependency at the compiler version (packages.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a cadetta.toml with [workspace] members, when loaded, then members share one lock and one build/ and may depend on each other by path; a member without cadetta.toml is E005 (packages.md 1; config-cli.md 1.3)"
