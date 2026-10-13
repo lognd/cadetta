@@ -108,6 +108,14 @@ members `thread major pitch length head_dia head_height mass` and
 implements `std::fasteners::Screw`. It accepts any length; preferred
 lengths only constrain what `ScrewJoint` picks.
 
+`Screw` (`std/src/fasteners/screw.cdt`) has members `thread major pitch
+length head_dia head_height mass`. `Iso4762.mass` is a design-stage
+estimate: a shank cylinder of the thread major diameter and the length
+plus a head cylinder of `head_dia` by `head_height`, in steel at 7.85
+g/cm^3 (no socket or thread relief, so it slightly overstates), with pi
+written `180deg / 1rad`. The density was entered from recall and is
+flagged for the citation audit.
+
 ## 3. Screw joints: "screw here"
 
 ```

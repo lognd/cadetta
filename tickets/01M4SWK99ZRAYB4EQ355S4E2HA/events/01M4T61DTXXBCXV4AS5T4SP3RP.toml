@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:28:34Z"
+digest = "8e7b7f89e24d1e8dc0ba33a5ed3cfef11f8aac62f3d01f3b594ee2597398ae7f"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.47s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e00d3bc0-c9dc-4dc0-a4f2-de167f1a521f with nextest profile: default
+    Starting 1 test across 1 binary (39 tests skipped)
+        PASS [   0.006s] cadetta-ir entities::tests::interface_table_process_shape
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 39 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E test(=entities::tests::interface_table_process_shape)"
+size = 608
+status = "measured"
+test_count = 1
+tests_digest = "e03b33690246dc094fe109dcbebf71abcae9c738e5706fff32c6966bc4b7a5a1"
+at = "2026-10-13T08:28:34Z"
+actor = "lognd"
+rev = 1

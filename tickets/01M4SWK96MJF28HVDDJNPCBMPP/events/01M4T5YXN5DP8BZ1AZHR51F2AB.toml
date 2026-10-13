@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:27:13Z"
+digest = "943107cdcd43843e2c82bdb6dd4570559a3563e5c7c24615c895865a6c1588d9"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 256b9c09-7e6d-4b67-8dc9-f44ef2d7166f with nextest profile: default
+    Starting 1 test across 20 binaries (483 tests skipped)
+        PASS [   0.006s] cadetta-ir geometry::tests::datum_and_placement_share_op_form
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 483 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=geometry::tests::datum_and_placement_share_op_form)"
+size = 609
+status = "measured"
+test_count = 1
+tests_digest = "ae188a604e7bf2f28253ef04707cfaef9d216d1f027a1f51e12b578b03913f8f"
+at = "2026-10-13T08:27:13Z"
+actor = "lognd"
+rev = 1

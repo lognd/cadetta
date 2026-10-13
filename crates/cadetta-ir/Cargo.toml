@@ -19,8 +19,6 @@ thiserror.workspace = true
 cadetta-units.workspace = true
 blake3 = "1"
 serde.workspace = true
-
-[dev-dependencies]
 serde_json.workspace = true
 
 [lints]

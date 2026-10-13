@@ -359,6 +359,15 @@ square of an exact form is exact; of a toleranced one it is the interval
 hull of `{a^2, b^2}` (with lower bound 0 when `[a, b]` contains zero),
 marked conservative.
 
+Decided in implementation (`cadetta-sema` affine): source variables are
+keyed by (instance path, parameter name), so two instances of one part
+own distinct variables and vary independently (OQ-9 stays open for
+matched lots). An alias binds to its referent's variable and never
+allocates; a tolerance written inside an expression owns an anonymous
+variable. C004 is recorded when a stored parameter is computed (no
+variable, not an alias, not a `let`) while the form of its expression
+carries tolerance.
+
 ### 5.5 Rounding
 
 `round_to(x, step)`, `ceil_to(x, step)`, `floor_to(x, step)`; `step`

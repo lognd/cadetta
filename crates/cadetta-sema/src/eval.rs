@@ -19,12 +19,14 @@
 
 // frob:ticket 01M4SPWPPPSEEFAHYTY5H3YD54
 // frob:ticket 01M4ST7ASWYQV13AAHHCXVR570
+// frob:ticket 01M4ST7AFZGCN52434BQJRT5MM
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm, UnOp,
+    BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm, Type,
+    UnOp,
 };
 use cadetta_syntax::lexer::Segment;
 use cadetta_syntax::span::Span;
@@ -38,12 +40,16 @@ use tracing::{debug, trace, warn};
 use crate::deps::Severity;
 use crate::resolve::{CanonPath, Ctx, Level, MemberSeg, PackageSrc, Resolved, Resolver};
 
+#[path = "array.rs"]
+pub mod array;
 #[path = "checks.rs"]
 pub mod checks;
 #[path = "enums.rs"]
 pub mod enums;
 #[path = "func.rs"]
 pub mod func;
+#[path = "point.rs"]
+pub mod point;
 
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -79,6 +85,8 @@ pub enum Val {
     },
     /// An array of values.
     Array(Vec<Val>),
+    /// A `Point2`/`Point3` (or `Vec2`/`Vec3`): two or three Length components.
+    Point(Vec<Val>),
     /// An inexact number (`sqrt`, trigonometry): interval plus root operation.
     Inexact(func::Inex),
 }
@@ -319,6 +327,7 @@ enum RefKind {
 #[derive(Clone)]
 struct Def<'p> {
     expr: &'p Expr,
+    ty: Option<&'p Type>,
     is_let: bool,
     ctx: Ctx,
     span: Span,
@@ -471,6 +480,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         } else {
             self.eval_param(&mut scope, &def, key)
         };
+        let result = match (result, def.ty) {
+            (Ok(ev), Some(ty)) => self
+                .check_declared(&mut scope, ty, &ev.value, def.span)
+                .map(|()| ev),
+            (r, _) => r,
+        };
         self.in_progress.remove(key);
         let out = match result {
             Ok(v) => Some(v),
@@ -616,6 +631,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     fn eval(&mut self, sc: &mut Scope, e: &Expr) -> R<Val> {
         let span = e.span;
+        if let ExprKind::Field(base, member) = &e.kind
+            && let Some(i) = ["x", "y", "z"].iter().position(|m| *m == member.name)
+            && let Ok(Val::Point(comps)) = self.eval(sc, base)
+        {
+            return comps.get(i).cloned().ok_or_else(|| {
+                diag(
+                    "EVAL",
+                    span,
+                    format!("this point has no `.{}`", member.name),
+                )
+            });
+        }
         if let ExprKind::Field(..) = &e.kind
             && let Some(r) = self.bound_limit(sc, e)
         {
@@ -642,6 +669,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 for x in xs {
                     out.push(self.eval(sc, x)?);
                 }
+                self.check_homogeneous(&out, span)?;
                 Ok(Val::Array(out))
             }
             ExprKind::Match { scrutinee, arms } => self.eval_match(sc, scrutinee, arms, span),
@@ -689,6 +717,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match op {
             BinOp::Add | BinOp::Sub | BinOp::Mul | BinOp::Div => {
                 let (av, bv) = (self.eval(sc, l)?, self.eval(sc, r)?);
+                if matches!(av, Val::Point(_) | Val::Array(_))
+                    || matches!(bv, Val::Point(_) | Val::Array(_))
+                {
+                    return point::compound(op, &av, &bv, span);
+                }
                 let (Val::Quantity(a), Val::Quantity(b)) = (&av, &bv) else {
                     return func::inex_binary(op, &av, &bv, span);
                 };
@@ -887,9 +920,9 @@ fn index_component<'p>(
     };
     let item = CanonPath::item(package, module, &c.name.name);
     for m in &c.members {
-        let (name, expr, is_let, span) = match &m.kind {
-            MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span),
-            MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span),
+        let (name, expr, is_let, span, ty) = match &m.kind {
+            MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span, p.ty.as_ref()),
+            MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span, l.ty.as_ref()),
             _ => continue,
         };
         let mut key = item.clone();
@@ -898,6 +931,7 @@ fn index_component<'p>(
             key,
             Def {
                 expr,
+                ty,
                 is_let,
                 ctx: ctx.clone(),
                 span,

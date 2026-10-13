@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:34:26Z"
+digest = "5853128b5731352a5148e80c1909db8d04f85a7dc11daed6a4cc2565b849809a"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.37s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3a45c086-42ca-484a-b58e-fffd832cb2db with nextest profile: default
+    Starting 1 test across 1 binary (16 tests skipped)
+        PASS [   0.027s] cadetta-variants evaluate::tests::work_is_linear_in_alternates
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.040s] 1 test run: 1 passed, 16 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-variants -E 'test(=evaluate::tests::work_is_linear_in_alternates)'"
+size = 657
+status = "measured"
+test_count = 1
+tests_digest = "828553bec4e263d48696fe07d279fce2db3c2e1175a9887f25c033108de67551"
+at = "2026-10-13T08:34:26Z"
+actor = "lognd"
+rev = 1

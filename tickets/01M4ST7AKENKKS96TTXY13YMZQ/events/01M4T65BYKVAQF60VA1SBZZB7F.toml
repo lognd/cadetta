@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T08:30:40Z"
+digest = "d10ec066e63db0ecbdbbd9db0df773b29be8302c603db94b831de08bcef138cf"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 563703b9-15c7-46e2-8ee1-d6dfcd3120b5 with nextest profile: default
+    Starting 1 test across 1 binary (97 tests skipped)
+        PASS [   0.006s] cadetta-sema rollup::tests::missing_parameter_errors_unless_optional_which_lists_parts
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 97 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=rollup::tests::missing_parameter_errors_unless_optional_which_lists_parts)'"
+size = 785
+status = "measured"
+test_count = 1
+tests_digest = "707a175925464396428404fa0227414c1ddb6313c8eda1c990139e06be91e50d"
+at = "2026-10-13T08:30:40Z"
+actor = "lognd"
+rev = 1

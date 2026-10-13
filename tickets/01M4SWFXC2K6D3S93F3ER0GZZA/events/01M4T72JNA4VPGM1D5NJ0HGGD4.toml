@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:46:42Z"
+digest = "05b164702116286417a05b49ded61293865324bcb1ee492bdfdcac6e70ae4b66"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ea45fa32-1c04-4137-90c5-57e3f94574cd with nextest profile: default
+    Starting 2 tests across 1 binary (20 tests skipped)
+        PASS [   0.006s] cadetta-geometry placement::tests::z_directions_included
+        PASS [   0.006s] cadetta-geometry placement::tests::datum_frames_coincide
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 2 tests run: 2 passed, 20 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry -E 'test(=placement::tests::datum_frames_coincide) or test(=placement::tests::z_directions_included)'"
+size = 629
+status = "measured"
+test_count = 2
+tests_digest = "e06545e834cd1ec8b7b7b02591e9cd0d220e20fb36bda5f67470d9968a69091a"
+at = "2026-10-13T08:46:42Z"
+actor = "lognd"
+rev = 1

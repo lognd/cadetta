@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/obligations.md`.
 
 pub mod as_of;
+pub mod citation;
 pub mod digest_attrs;
 pub mod graph;
 pub mod kinds;
@@ -12,5 +13,6 @@ pub mod lock_merge;
 pub mod lock_package;
 pub mod lock_tidy;
 pub mod lock_verify;
+pub mod roles;
 pub mod selector;
 pub mod staleness;

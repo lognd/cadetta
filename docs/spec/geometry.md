@@ -87,6 +87,14 @@ plane and z is its normal.
   5.1) and makes every coordinate carried through it conservative
   (quantities.md 5.4); the exactness rule applies to the untoleranced
   nominal only.
+  Decided in the transform: only whole multiples of 90deg are exact, so
+  60deg or 30deg are inexact although their sine is rational; an
+  untoleranced inexact angle roots Q006 at sin or cos; a toleranced
+  angle's entries are conservative intervals and carry a Q006 root only
+  when the nominal is not a multiple of 90deg. Offsets stay exact affine
+  forms (a tolerance is a source variable through exact rotations), and a
+  coordinate carried through an inexact or toleranced rotation becomes an
+  inexact interval.
 - A datum is built only from `origin` or a datum declared earlier in the
   same component, so datum chains cannot cycle. The first operation of a
   kind in a chain has the path `Rail.site.offset.x`; the n-th (n > 0)
@@ -190,6 +198,18 @@ on rail.top.offset(x = 40mm).rotate(z = 90deg)`.
   `Assembly/part.place.<op index>.<axis>` (`Drive/plate.place.0.x`;
   `Assembly/part[i].place...` for a for-placement); ir.md 2.
 - Variants (language.md 3.2) re-evaluate placements like any member.
+
+Evaluation rules (placement.rs):
+
+- A part's frame is the anchor's frame, then the `on` operations, then
+  the inverse of the placed datum (its operations reversed and
+  negated). This is composition only; it never solves.
+- A subassembly is a node whose datums are its own; its parts are
+  placed relative to its `origin`, and instance paths join with `/`.
+- Placing on a part that is itself never placed is G003.
+- A `for` placement carries the `[*]` index in its canonical path
+  (`Assembly/part[*].place.0.x`); an unindexed target covers every
+  instance, so it overlaps any other placement of that part (G006).
 
 ## 5. Checking positions
 

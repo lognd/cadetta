@@ -109,6 +109,12 @@ Diagnostic rules:
   `cadetta cite pin NAME` downloads a URL citation into `cites/`
   (content-addressed) and rewrites the `cite` to that local path so it
   can. Whole-file granularity is the 0.1.0 behaviour.
+- Decided (0.1.0): `cadetta ack ots:PATH --role source` records, per
+  file citation, an `attest citation:<cited path>` with role `source`
+  whose digest hashes the cited file's digest together with the
+  citation text (target and locator). Either changing makes the
+  obligation stale and records S004. Literal, URL and pseudo-citations
+  have no file digest and no check.
 - The `sw-equations` adapter never discharges `sync`: the state stays
   `open` with reason "unverifiable without drive" (adapters.md).
 - Decided (0.1.0): only `sync` and `solver` accept a kind-level
@@ -285,6 +291,15 @@ the newest commit that changed any covered node.
 `required_for = "check"`; `cadetta check --release` also fails on the
 `release` ones. `required_for` sets a severity floor (error); see
 lints.md 1 for precedence with `[lint] severity`.
+
+Decided (0.1.0): a role gates an obligation when one of its `covers`
+selectors matches the id and the obligation is `stale` or `open`; the
+first matching role with a gating `required_for` is reported, and a
+kind-level `required_for` (2.3) gates independently. `ack` rejects an
+attestation whose role does not cover the obligation, whose `by` is not
+in `members`, or (with `distinct_from_author`) equals the author; an
+unknown author fails closed. A `require` can only be signed off by a
+current attestation; a waiver request without one is refused.
 
 Adoption: `cadetta ack --baseline SELECTOR --role R` discharges every
 matching open obligation at current digests with reason `baseline`, so

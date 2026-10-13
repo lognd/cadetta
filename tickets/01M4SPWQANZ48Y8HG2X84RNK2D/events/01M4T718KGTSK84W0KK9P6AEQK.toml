@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T08:45:52Z"
+digest = "cc9280587b316fb939544f65aa0672face63a627230379ef6aa1c3581a0be66c"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.01s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 424399cc-b83a-40bb-92e3-7f37b7677dc9 with nextest profile: default
+    Starting 1 test across 1 binary (13 tests skipped)
+        PASS [   0.007s] cadetta-lint diag::tests::schema_file_matches_type
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 13 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E test(=diag::tests::schema_file_matches_type)"
+size = 873
+status = "measured"
+test_count = 1
+tests_digest = "9bbaf02a574a859469103850fc353824ad636d78345f1c7a0ce6f4e5b50b6d4c"
+at = "2026-10-13T08:45:52Z"
+actor = "lognd"
+rev = 1
