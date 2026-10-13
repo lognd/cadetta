@@ -2,18 +2,18 @@
 id = "01M4SWMCMY3QH9282ZJ07XBBB7"
 title = "Import proposal in proposal.toml and proposal.cdt"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:14Z"
+updated = "2026-10-13T09:56:25Z"
 persona = "design engineer"
 capability = "adopt an existing CAD model"
 idempotency_key = "replan14:ad-imp-prop"
 labels = ["creates:crates/cadetta-adapter/src/import/propose.rs"]
-scope = ["crates/cadetta-adapter/src/import/propose.rs"]
+scope = ["crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-adapter/src/import/mod.rs", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml"]
 
 [[links]]
 kind = "blocked-by"

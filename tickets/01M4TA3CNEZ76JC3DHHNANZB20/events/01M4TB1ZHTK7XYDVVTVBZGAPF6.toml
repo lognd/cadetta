@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**", "design/model.grmb"]
+new = ["crates/cadetta-syntax", "tests/golden", "crates/cadetta-solve", "crates/cadetta-syntax/**", "tests/golden/**", "crates/cadetta-solve/**", "design/model.grmb", "docs/spec/language.md"]
+at = "2026-10-13T09:56:15Z"
+actor = "lognd"
+rev = 1
