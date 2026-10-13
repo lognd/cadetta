@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:43:39Z"
+updated = "2026-10-13T05:46:31Z"
 persona = "design engineer"
 capability = "see why the CAD tool refused a push"
 idempotency_key = "replan14:lint-r2"
-labels = ["creates:crates/cadetta-lint/src/rules/r_adapter.rs", "creates:tests/lints/R0[01]*/**"]
-scope = ["crates/cadetta-lint/src/rules/r_adapter.rs", "tests/lints/R0[01]*/**"]
+labels = ["creates:crates/cadetta-lint/src/rules/r_adapter.rs", "creates:tests/conformance/lints/R0[01]*/**"]
+scope = ["crates/cadetta-lint/src/rules/r_adapter.rs", "tests/conformance/lints/R0[01]*/**"]
 
 [[links]]
 kind = "blocked-by"
