@@ -19,6 +19,10 @@ scope = ["adapters/solidworks/src/frames.py"]
 kind = "blocked-by"
 target = "01M4SWMCYW919R5JKSV2T1ZYBN"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMDFARQR4Q9HCBERB21PP"
+
 [[acceptance]]
 text = "Given a datum-plane sketch coordinate, when bound, then the dimension is pushed with sign and sketch-origin rules (geometry.md 6)"
 bound = false
