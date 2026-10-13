@@ -3,5 +3,6 @@
 //! Specification: `docs/spec/language.md`.
 
 pub mod deps;
+pub mod eval;
 pub mod kindcheck;
 pub mod resolve;
