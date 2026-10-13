@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given Datum and Placement nodes, when digested, then a moved datum changes the closure of everything that reads through it (ir.md 4; geometry.md 6)"
-bound = false
+bound = true
 +++
