@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given promoting an alternate, when the primary changes, then the old primary stays approved only if the edit puts it in the list (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a failing alternate, when evaluated, then C001/C002 are not raised for it and I002 names each failing check, fit, bound or require (language.md 3.2; obligations.md 2.3)"
