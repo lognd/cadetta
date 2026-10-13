@@ -8,11 +8,11 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T06:05:26Z"
-updated = "2026-10-13T09:00:40Z"
+updated = "2026-10-13T09:02:07Z"
 persona = "design engineer"
 capability = "cite a standard with one line"
 labels = ["creates:std/src/lib.cdt"]
-scope = ["std/src/lib.cdt"]
+scope = ["std/src/lib.cdt", "crates/cadetta-syntax/tests/std_lib_root.rs"]
 
 [[links]]
 kind = "blocked-by"
@@ -24,13 +24,13 @@ target = "01M4STANV9T55FV8529E2RPFB1"
 
 [[acceptance]]
 text = "Given user code `cite din472 = std::din472`, when resolved and checked, then the citation resolves and no S001 fires (stdlib.md intro; packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the exported items of std, when listed, then every one is pub and exactly the items stdlib.md lists are exported (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given std lib.cdt, when read, then it exports one pub cite per standard it uses at the root (std::iso273, std::iso286, std::din472 and so on) (stdlib.md intro)"
-bound = false
+bound = true
 +++
