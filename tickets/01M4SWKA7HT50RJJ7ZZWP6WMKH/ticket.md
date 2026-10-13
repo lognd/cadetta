@@ -2,18 +2,18 @@
 id = "01M4SWKA7HT50RJJ7ZZWP6WMKH"
 title = "check --watch with newline-delimited cadetta.diag/1"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:43:38Z"
+updated = "2026-10-13T14:02:36Z"
 persona = "design engineer"
 capability = "get editor problems without an LSP"
 idempotency_key = "replan14:lint-watch"
 labels = ["creates:crates/cadetta-cli/src/cmd/check_watch.rs"]
-scope = ["crates/cadetta-cli/src/cmd/check_watch.rs"]
+scope = ["crates/cadetta-cli/src/cmd/check_watch.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/src/cmd/mod.rs", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
