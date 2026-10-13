@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a drive adapter reporting a rebuild failure, when linted, then R004 error is surfaced (adapters.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given drift, when R001 is reported, then it compares against the emitted point, not the nominal (adapters.md 3a)"
