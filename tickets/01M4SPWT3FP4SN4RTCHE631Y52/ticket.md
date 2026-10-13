@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given check flags --release --as-of --watch --module PATH GLOB, when run, then exit 1 follows fail_on (config-cli.md 3)"
-bound = false
+bound = true
 +++
