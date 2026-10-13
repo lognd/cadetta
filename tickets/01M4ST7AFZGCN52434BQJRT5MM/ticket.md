@@ -2,7 +2,8 @@
 id = "01M4ST7AFZGCN52434BQJRT5MM"
 title = "Arrays, Point2/Point3 and geometry patterns"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
