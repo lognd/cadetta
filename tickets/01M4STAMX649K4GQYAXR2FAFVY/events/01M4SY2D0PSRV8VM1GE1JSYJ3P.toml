@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "needs syntax AST, units kernel and IR types that are still empty scaffolds; retry after those land"
+at = "2026-10-13T06:09:19Z"
+actor = "lognd"
+rev = 1
