@@ -114,6 +114,13 @@ class Flavour(StrEnum):
     observed = "observed"
 
 
+class Implicit(StrEnum):
+    global_ = "global"
+    link = "link"
+    frame = "frame"
+    reference = "reference"
+
+
 class InterfaceMember(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -133,6 +140,7 @@ class LocatorKind(StrEnum):
     dimension = "dimension"
     property = "property"
     frame = "frame"
+    instance = "instance"
 
 
 class LocatorMode(StrEnum):
@@ -325,6 +333,7 @@ class Locator(BaseModel):
     component: str | None = None
     config: str | None = None
     for_: Annotated[str | None, Field(alias="for")] = None
+    implicit: Implicit | None = None
     kind: LocatorKind
     locator: str
     mode: LocatorMode
@@ -508,6 +517,25 @@ class Member(BaseModel):
     was: list[str]
 
 
+class ObservedFrame(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    document: str
+    name: str
+    transform: list[list[Value]]
+
+
+class ObservedInstance(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    component: str
+    document: str
+    reference: str | None = None
+    transform: list[list[Value]]
+
+
 class Point(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -573,6 +601,8 @@ class Project(BaseModel):
     dependencies: list[Dependency]
     digest: Digest | None = None
     flavour: Flavour
+    frames: list[ObservedFrame] | None = None
+    instances: list[ObservedInstance] | None = None
     modules: list[str]
     package: PackageId
     schema_: Annotated[
