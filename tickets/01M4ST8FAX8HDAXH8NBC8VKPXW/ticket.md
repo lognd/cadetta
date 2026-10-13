@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-13T14:01:31Z"
+updated = "2026-10-13T14:01:32Z"
 persona = "design engineer"
 capability = "see what a swap costs and what must be re-synced and re-reviewed"
 idempotency_key = "replan13:impact --swap: CAD files, attestations and commercial deltas"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given money, percentages and quantities, when printed, then money uses the currency minor unit and percentages one decimal half away from zero (obligations.md 5.1)"
-bound = false
+bound = true
 +++
