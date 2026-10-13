@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:17:04Z"
-updated = "2026-10-13T17:47:54Z"
+updated = "2026-10-13T17:48:01Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 labels = ["creates:tests/conformance/bindings/**"]
@@ -28,5 +28,5 @@ bound = true
 
 [[acceptance]]
 text = "Given draft 1.4 revisions of the document, when fixtures are rewritten, then every rule added or changed in 1.4 has fixtures (docs/spec/README.md)"
-bound = false
+bound = true
 +++
