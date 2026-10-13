@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:26:38Z"
+updated = "2026-10-13T06:27:01Z"
 persona = "design engineer"
 capability = "print quantities in the unit I chose, including fractional inches"
 idempotency_key = "replan13:Display unit selection and fractional formats"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-units/src/display.rs", "crates/cadetta-units/src/lib.rs
 
 [[acceptance]]
 text = "Given `#[display(unit)]`, `#![display(...)]`, `[units] display` and the authored unit, when a value is printed, then they apply in that order (quantities.md 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `#[display(in/32)]`, when 45.9375in is printed, then it reads `45-15/16in` (quantities.md 6)"
