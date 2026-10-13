@@ -2,7 +2,8 @@
 id = "01M4SWG6N6DT76DRYYJHFB4656"
 title = "Re-expression 'p in D' and G003"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
