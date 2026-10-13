@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:24Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "write cadetta values into SOLIDWORKS and keep dimensions linked"
 labels = ["creates:adapters/solidworks/src/emit.py", "creates:adapters/solidworks/src/drive.py"]
@@ -44,5 +44,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a changed digest, when pushed, then only that locator is updated (adapters.md 5)"
+bound = false
+
+[[acceptance]]
+text = "Given save and guard settings, when pushing, then per-locator status is returned and the save policy honoured (adapters.md 2.2, 5)"
 bound = false
 +++
