@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-lint/src/render/short.rs", "crates/cadetta-lint/src/render/github.rs"]
+new = ["crates/cadetta-lint/src/render/short.rs", "crates/cadetta-lint/src/render/github.rs", "crates/cadetta-lint/src/render/mod.rs", "crates/cadetta-lint/src/render/text.rs"]
+at = "2026-10-13T06:57:43Z"
+actor = "lognd"
+rev = 1

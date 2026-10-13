@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:59:25Z"
+digest = "0bb73234ab944ec54aa77f6240a2ed2ff244cec16e9823e122bddf5e15e779b9"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 38505a35-a09c-4111-901f-5809fe7168de with nextest profile: default
+    Starting 1 test across 14 binaries (238 tests skipped)
+        PASS [   0.008s] cadetta pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 238 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy)"
+size = 579
+status = "measured"
+test_count = 1
+tests_digest = "477c1a6c8b65b018bb578da8f482f7a6f85056cdd3286279f26185967a237da1"
+at = "2026-10-13T06:59:25Z"
+actor = "lognd"
+rev = 1

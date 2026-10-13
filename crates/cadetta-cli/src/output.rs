@@ -8,16 +8,17 @@
 use std::fmt::Write as _;
 use std::str::FromStr;
 
-use serde::Serialize;
+use cadetta_lint::diag::{self, Diagnostic, Location, Position, Severity};
+use cadetta_lint::render::text;
 use serde_json::json;
 
-use crate::config::{FailOn, Severity};
+use crate::config::FailOn;
 
 /// Exit code when diagnostics reach `fail_on` (config-cli.md 3).
 pub const EXIT_DIAGNOSTICS: u8 = 1;
 
 /// Schema tag carried by every diagnostic record.
-pub const DIAG_SCHEMA: &str = "cadetta.diag/1";
+pub const DIAG_SCHEMA: &str = diag::SCHEMA;
 
 /// An output format selected by `--format` or `CADETTA_FORMAT` (config-cli.md 5).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -58,157 +59,44 @@ impl FromStr for Format {
     }
 }
 
-/// A 1-based line and column.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-pub struct Position {
-    /// 1-based line.
-    pub line: u32,
-    /// 1-based column.
-    pub col: u32,
-}
-
-/// Where to look (lints.md 1.1 `location`).
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-#[serde(tag = "kind", rename_all = "lowercase")]
-pub enum Location {
-    /// A span in `.cdt` source.
-    Source {
-        /// File path relative to the project root.
-        file: String,
-        /// Span start.
-        start: Position,
-        /// Span end.
-        end: Position,
-    },
-    /// A locator in a CAD-native file.
-    Native {
-        /// Adapter id.
-        adapter: String,
-        /// Native file.
-        file: String,
-        /// Adapter locator.
-        locator: String,
-    },
-    /// A line in `cadetta.lock`.
-    Lock {
-        /// 1-based line.
-        line: u32,
-    },
-}
-
-/// A related fact or location attached to a diagnostic.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct Note {
-    /// The note text.
-    pub message: String,
-    /// Where it applies, if anywhere.
-    pub location: Option<Location>,
-}
-
-/// A suppression recorded on a waived diagnostic.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct Waived {
-    /// The waiver that suppressed it.
-    pub waiver: String,
-    /// Its `because` reason.
-    pub because: String,
-}
-
-/// One `cadetta.diag/1` record (lints.md 1.1), minus `fixes` until a fixing rule exists.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-pub struct Diagnostic {
-    /// Always [`DIAG_SCHEMA`].
-    pub schema: &'static str,
-    /// Catalog code.
-    pub code: String,
-    /// Effective severity.
-    #[serde(serialize_with = "serialize_severity")]
-    pub severity: Severity,
-    /// Canonical path of the subject.
-    pub path: Option<String>,
-    /// `SLOT=ALTERNATE` under variant evaluation.
-    pub alt: Option<String>,
-    /// One sentence, no trailing period.
-    pub message: String,
-    /// Where to look.
-    pub location: Option<Location>,
-    /// Related facts.
-    pub notes: Vec<Note>,
-    /// Suppression, shown in JSON only.
-    pub waived: Option<Waived>,
-}
-
-impl Diagnostic {
-    /// A diagnostic with only a code, severity and message set.
-    pub fn new(code: &str, severity: Severity, message: &str) -> Self {
-        Self {
-            schema: DIAG_SCHEMA,
-            code: code.to_owned(),
-            severity,
-            path: None,
-            alt: None,
-            message: message.to_owned(),
-            location: None,
-            notes: Vec::new(),
-            waived: None,
-        }
-    }
-
-    /// The source file and start position, when the location has one.
-    fn file_pos(&self) -> Option<(&str, Position)> {
-        match self.location.as_ref()? {
-            Location::Source { file, start, .. } => Some((file, *start)),
-            Location::Native { file, .. } => Some((file, Position { line: 1, col: 1 })),
-            Location::Lock { line } => Some((
-                "cadetta.lock",
-                Position {
-                    line: *line,
-                    col: 1,
-                },
-            )),
-        }
+/// The source file and start position of a diagnostic's location, if it has one.
+fn file_pos(d: &Diagnostic) -> Option<(&str, Position)> {
+    match d.location.as_ref()? {
+        Location::Source { file, start, .. } => Some((file, *start)),
+        Location::Native { file, .. } => Some((file, Position { line: 1, col: 1 })),
+        Location::Lock { line } => Some((
+            "cadetta.lock",
+            Position {
+                line: *line,
+                col: 1,
+            },
+        )),
     }
 }
 
 /// The lower-case name of a severity.
 fn severity_name(severity: Severity) -> &'static str {
     match severity {
+        Severity::Hint => "hint",
         Severity::Info => "info",
         Severity::Warning => "warning",
         Severity::Error => "error",
     }
 }
 
-/// Serde hook: write a [`Severity`] as its lower-case name.
-fn serialize_severity<S: serde::Serializer>(
-    severity: &Severity,
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
-    serializer.serialize_str(severity_name(*severity))
-}
-
-/// Ordering rank of a severity (info < warning < error).
+/// Ordering rank of a severity (hint < info < warning < error).
 fn rank(severity: Severity) -> u8 {
     match severity {
-        Severity::Info => 0,
-        Severity::Warning => 1,
-        Severity::Error => 2,
+        Severity::Hint => 0,
+        Severity::Info => 1,
+        Severity::Warning => 2,
+        Severity::Error => 3,
     }
 }
 
 /// Sort into the deterministic (file, line, code, path) order (lints.md 1.1).
 pub fn sort_diagnostics(diagnostics: &mut [Diagnostic]) {
-    diagnostics.sort_by(|a, b| {
-        let key = |d: &Diagnostic| {
-            d.file_pos()
-                .map(|(f, p)| (f.to_owned(), p.line))
-                .unwrap_or_default()
-        };
-        key(a)
-            .cmp(&key(b))
-            .then_with(|| a.code.cmp(&b.code))
-            .then_with(|| a.path.cmp(&b.path))
-    });
+    diag::sort(diagnostics);
 }
 
 /// Exit code for a finished command: 1 when any unwaived diagnostic is at
@@ -216,9 +104,9 @@ pub fn sort_diagnostics(diagnostics: &mut [Diagnostic]) {
 pub fn exit_code(diagnostics: &[Diagnostic], fail_on: FailOn) -> u8 {
     let threshold = match fail_on {
         FailOn::Never => return crate::EXIT_OK,
-        FailOn::Info => 0,
-        FailOn::Warning => 1,
-        FailOn::Error => 2,
+        FailOn::Info => 1,
+        FailOn::Warning => 2,
+        FailOn::Error => 3,
     };
     let failing = diagnostics
         .iter()
@@ -245,7 +133,7 @@ pub fn render(
     }
     let shown: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.waived.is_none()).collect();
     match format {
-        Format::Text => shown.iter().map(|d| render_text(d, source_line)).collect(),
+        Format::Text => shown.iter().map(|d| text::render(d, source_line)).collect(),
         Format::Short => shown.iter().map(|d| render_short(d)).collect(),
         Format::Github => shown.iter().map(|d| render_github(d)).collect(),
         Format::Sarif => format!("{}\n", render_sarif(&shown)),
@@ -255,7 +143,7 @@ pub fn render(
 
 /// `file:line:col: severity[CODE]: message`.
 fn render_short(d: &Diagnostic) -> String {
-    let at = d.file_pos().map_or_else(
+    let at = file_pos(d).map_or_else(
         || "-".to_owned(),
         |(f, p)| format!("{f}:{}:{}", p.line, p.col),
     );
@@ -284,10 +172,10 @@ fn render_github(d: &Diagnostic) -> String {
     let level = match d.severity {
         Severity::Error => "error",
         Severity::Warning => "warning",
-        Severity::Info => "notice",
+        Severity::Info | Severity::Hint => "notice",
     };
     let mut props = String::new();
-    if let Some((file, pos)) = d.file_pos() {
+    if let Some((file, pos)) = file_pos(d) {
         let _ = write!(
             props,
             "file={},line={},col={},",
@@ -308,10 +196,9 @@ fn render_sarif(shown: &[&Diagnostic]) -> serde_json::Value {
             let level = match d.severity {
                 Severity::Error => "error",
                 Severity::Warning => "warning",
-                Severity::Info => "note",
+                Severity::Info | Severity::Hint => "note",
             };
-            let locations: Vec<_> = d
-                .file_pos()
+            let locations: Vec<_> = file_pos(d)
                 .map(|(file, pos)| {
                     json!({ "physicalLocation": {
                         "artifactLocation": { "uri": file },
@@ -334,47 +221,10 @@ fn render_sarif(shown: &[&Diagnostic]) -> serde_json::Value {
     })
 }
 
-/// The rustc-style rendering (lints.md 1.2).
-fn render_text(d: &Diagnostic, source_line: &dyn Fn(&str, u32) -> Option<String>) -> String {
-    let mut out = format!("{}[{}]: {}\n", severity_name(d.severity), d.code, d.message);
-    let located = d.file_pos();
-    let width = located.map_or(1, |(_, p)| p.line.to_string().len());
-    let pad = " ".repeat(width);
-    if let Some((file, pos)) = located {
-        let _ = writeln!(out, "{pad}--> {file}:{}:{}", pos.line, pos.col);
-        if let Some(text) = source_line(file, pos.line) {
-            let span = match &d.location {
-                Some(Location::Source { start, end, .. }) if end.line == start.line => {
-                    end.col.saturating_sub(start.col).max(1) as usize
-                }
-                _ => 1,
-            };
-            let _ = writeln!(out, "{pad} |");
-            let _ = writeln!(out, "{} | {text}", pos.line);
-            let _ = writeln!(
-                out,
-                "{pad} | {}{}{}",
-                " ".repeat(pos.col.saturating_sub(1) as usize),
-                "^".repeat(span),
-                d.alt
-                    .as_ref()
-                    .map_or(String::new(), |a| format!(" under {a}")),
-            );
-        }
-        let _ = writeln!(out, "{pad} |");
-    }
-    for note in &d.notes {
-        let _ = writeln!(out, "{pad} = note: {}", note.message);
-    }
-    if let Some(path) = &d.path {
-        let _ = writeln!(out, "{pad} = path: {path}");
-    }
-    out.push('\n');
-    out
-}
-
 #[cfg(test)]
 mod tests {
+    use cadetta_lint::diag::{Note, Waived};
+
     use super::*;
 
     fn sample() -> Diagnostic {

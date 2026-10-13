@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T06:55:01Z"
+updated = "2026-10-13T06:56:25Z"
 persona = "design engineer"
 capability = "write datum, point and placement syntax"
 idempotency_key = "replan14:geo-parse"
 labels = ["creates:crates/cadetta-syntax/src/geometry.rs", "creates:crates/cadetta-syntax/tests/geometry.rs"]
-scope = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs"]
+scope = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/format.rs", "docs/spec/language.md", "docs/spec/geometry.md", "crates/cadetta-sema/src/resolve.rs"]
 
 [[links]]
 kind = "blocked-by"
