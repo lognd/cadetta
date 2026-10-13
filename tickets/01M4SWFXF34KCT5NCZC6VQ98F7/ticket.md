@@ -2,18 +2,18 @@
 id = "01M4SWFXF34KCT5NCZC6VQ98F7"
 title = "Placement op Members and canonical paths"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T05:41:45Z"
+updated = "2026-10-13T09:11:01Z"
 persona = "design engineer"
 capability = "bind placement offsets to mates"
 idempotency_key = "replan14:geo-opmembers"
 labels = ["creates:crates/cadetta-geometry/src/op_members.rs"]
-scope = ["crates/cadetta-geometry/src/op_members.rs"]
+scope = ["crates/cadetta-geometry/src/op_members.rs", "crates/cadetta-geometry/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
