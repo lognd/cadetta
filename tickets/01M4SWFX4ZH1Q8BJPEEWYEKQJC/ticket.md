@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:29:20Z"
+updated = "2026-10-13T08:31:42Z"
 persona = "design engineer"
 capability = "compose datum transforms exactly"
 idempotency_key = "replan14:geo-transform"
@@ -29,7 +29,7 @@ target = "01M4SWFX374CNSPDDD289Z9BCS"
 
 [[acceptance]]
 text = "Given untoleranced rotations by whole multiples of 90deg, when composed, then the 3x4 transform is Exact (geometry.md 2; ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given any other angle, when composed, then the transform is Inexact with a root and Q006 applies to the nominal (geometry.md 2; quantities.md 1)"
