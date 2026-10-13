@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
 labels = ["creates:crates/cadetta-obligations/src/staleness.rs"]
-scope = ["crates/cadetta-obligations/src/staleness.rs", "crates/cadetta-obligations/src/lib.rs"]
+scope = ["crates/cadetta-obligations/src/staleness.rs", "crates/cadetta-obligations/src/lib.rs", "crates/cadetta-ir/src/digest.rs"]
 
 [[links]]
 kind = "blocks"
