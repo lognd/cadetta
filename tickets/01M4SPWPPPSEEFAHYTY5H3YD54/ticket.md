@@ -2,18 +2,18 @@
 id = "01M4SPWPPPSEEFAHYTY5H3YD54"
 title = "Evaluation to exact values and analysis lets"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:05:13Z"
+updated = "2026-10-13T07:24:35Z"
 persona = "design engineer"
 capability = "evaluate every parameter to a quantity"
 outcome_text = "derived values are exact and usable by lints and emitters"
 labels = ["creates:crates/cadetta-sema/src/eval.rs"]
-scope = ["crates/cadetta-sema/src/eval.rs"]
+scope = ["crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/quantities.md"]
 
 [[links]]
 kind = "blocks"

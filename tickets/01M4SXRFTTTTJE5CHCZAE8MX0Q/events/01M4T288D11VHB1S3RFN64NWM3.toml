@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T07:22:20Z"
+digest = "8631e752dd87d3ba311ca542c44c64b19c7c7bc58c401c884ee38a4b45869290"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.96s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c3c56356-dfde-4077-9306-b07c7f6da379 with nextest profile: default
+    Starting 1 test across 1 binary (28 tests skipped)
+        PASS [   0.008s] cadetta-sema modules::tests::duplicate_component_in_a_module_is_e003_with_both_spans
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 28 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E test(=modules::tests::duplicate_component_in_a_module_is_e003_with_both_spans)"
+size = 831
+status = "measured"
+test_count = 1
+tests_digest = "0229ac5cffd0f5d7d0945e4605b83da1041098f482148ee7f6e496b78ca6bee1"
+at = "2026-10-13T07:22:20Z"
+actor = "lognd"
+rev = 1
