@@ -2,7 +2,8 @@
 id = "01M4SWK92ASN873QYBKXGPTZV0"
 title = "IR Dim vector over SI base, angle and currency"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
