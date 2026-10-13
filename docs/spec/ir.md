@@ -157,6 +157,14 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   until computed, `Project.modules` and `dependencies` are kept sorted
   by their setters, and a member's `Locator.for` is the field
   `for_alternate` in Rust.
+- JSON encoding (`cadetta-ir` `json.rs`): `Exact.r` is always
+  `"num/den"` (reduced, `den > 0`, integers as `"n/1"`); absent optional
+  fields are omitted; enums are lowercase strings (`Sign` is the integer
+  `1` or `-1`); `Member.priv`, `Part.type`, `Fit.type` and `Locator.for`
+  are the wire names of the Rust fields `private`, `type_name`,
+  `fit_type` and `for_alternate`; `Provenance` is `"authored"`,
+  `"derived"` or `{ "imported": { adapter, file, native_name } }`. A
+  non-finite `Inexact.f64` is a serialization error.
 - Obligation and attestation state is not IR: it lives in the
   `cadetta.obligations/1` schema (obligations.md).
 - `deps` are canonical paths; the graph is acyclic (D003).
