@@ -2,7 +2,8 @@
 id = "01M4SWN7TZ6W1GXT2PDFTM5D6Y"
 title = "required_for and sync never discharged by equations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
