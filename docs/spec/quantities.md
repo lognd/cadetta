@@ -245,6 +245,14 @@ are counted once and linear chains are exact. Nonlinear operations
 bounds and mark the result conservative; a conservative `undecided`
 says so in its C002 message. `* /` of two toleranced quantities is
 legal and conservative (it was Q005 in draft 0; Q005 is retired).
+Each source variable ranges over `[-1, 1]` and an asymmetric literal
+`[lower upper]` contributes centre `nominal + (lower + upper)/2` and
+coefficient `(upper - lower)/2`; a nonlinear fallback keeps the interval
+hull as a centre plus a variable-free symmetric slack, which only grows.
+Adding terms of different nonzero `pi^k` is an error in a form (it would
+be inexact); `sqrt`, `sin`, `cos` and `tan` return an outward-widened
+binary64 interval, always conservative, and `tan` over a pole is a
+domain error.
 `x ^ 2` and `x * x` of the same affine form use a square-aware
 interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
 `radial`, language.md 3.8) stays defined when x straddles zero.
