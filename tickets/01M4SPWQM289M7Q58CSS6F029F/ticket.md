@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T09:00:41Z"
+updated = "2026-10-13T09:00:42Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -101,5 +101,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a fixed code, required_for floor, [lint] severity and waive/allow, when diagnostics are gated, then precedence is exactly lints.md 1 and fail_on = never makes diagnostics informational (lints.md 1; config-cli.md 2)"
-bound = false
+bound = true
 +++
