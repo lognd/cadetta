@@ -225,6 +225,25 @@ citation declared once in the scoped packages. It stores the bytes as
 bytes, same path) and rewrites the `cite` string to that path. A path,
 a standard or an unknown or ambiguous NAME is a usage error (exit 2).
 
+### 3.4 `ack` details
+
+Decided (0.1.0), frob:ticket 01M4ST8F1W8T0BKARAMG0D49J2:
+
+- Usage errors (exit 2): no `--role`, a role not declared under
+  `[obligations.roles]`, a selector matching no obligation, no `--reason`
+  (unless `--baseline` or the selector matches only `waiver:` ids), no
+  attester identity (`--as EMAIL`, else `git config user.email`), or a
+  role refused by the role policy (obligations.md 5). A refusal writes
+  nothing: `ack` is atomic.
+- `--baseline` skips obligations the role already attested and records
+  reason `baseline` on the rest.
+- `--release` restricts the ack to roles that gate `check --release`
+  (`required_for` of `check` or `release`); others are skipped.
+- An ack at an unchanged digest changes nothing, not even `by` or `at`.
+- An unknown author fails closed for `distinct_from_author` roles
+  (obligations.md 5).
+- `ots:` acks also record the file citations under role `source`.
+
 ## 4. Global flags
 
 | Flag | Meaning |

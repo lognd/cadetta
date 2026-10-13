@@ -7,3 +7,8 @@ pub(crate) const FORMAT_ENV: &str = "CADETTA_FORMAT";
 pub(crate) fn format_var() -> Option<String> {
     std::env::var(FORMAT_ENV).ok()
 }
+
+/// Reads `HOME`: `None` when unset (used to find `~/.gitconfig` for `ack`).
+pub(crate) fn home_dir() -> Option<std::path::PathBuf> {
+    std::env::var_os("HOME").map(std::path::PathBuf::from)
+}
