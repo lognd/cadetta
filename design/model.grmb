@@ -209,6 +209,16 @@ flow f_py_ir : ir -> py_binding {
   transport in_process;
 }
 
+flow f_py_quantity_syntax : syntax -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
+flow f_py_quantity_units : units -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
 flow f_quantities : units -> sema {
   label Internal;
   transport in_process;

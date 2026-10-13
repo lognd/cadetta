@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:39:27Z"
+digest = "f5ea9f4e9d86ad2b6550fd345b0f1bc9a7126858bb47fd48b2738a87ed7fdead"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 1 item
+
+bindings/python/tests/test_quantity.py .                                 [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3458447-0.xml --------------
+============================== 1 passed in 0.08s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_quantity.py::test_inexact_value_reports_not_exact"
+size = 466
+status = "measured"
+test_count = 1
+tests_digest = "510e62ff610c1aafc9436cb07abeb91b0d40bd05f7e7cecb95a727c8f5893a55"
+at = "2026-10-13T06:39:27Z"
+actor = "lognd"
+rev = 1

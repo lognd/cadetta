@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:39:28Z"
+digest = "c665ea67b78f7c8d89cf50a3bf93c3e02c861c32169d8ff3b733bfee300f5649"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 4 items
+
+bindings/python/tests/test_quantity.py ....                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3458462-0.xml --------------
+============================== 4 passed in 0.08s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_quantity.py::test_limits_are_computed_in_rust bindings/python/tests/test_quantity.py::test_mmc_lmc_need_a_role bindings/python/tests/test_quantity.py::test_no_dot_to_method bindings/python/tests/test_quantity.py::test_inexact_value_reports_not_exact"
+size = 467
+status = "measured"
+test_count = 4
+tests_digest = "2679e31a1f35ef917468ab98d4891d73a63ef2c81c802f4ad63c772d7e525eaf"
+at = "2026-10-13T06:39:28Z"
+actor = "lognd"
+rev = 1

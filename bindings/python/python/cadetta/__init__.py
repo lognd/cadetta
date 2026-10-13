@@ -5,5 +5,6 @@ The interop API is specified in docs/spec/bindings.md.
 """
 
 from cadetta._core import core_version
+from cadetta.quantity import Quantity, QuantityError, quantity
 
-__all__ = ["core_version"]
+__all__ = ["Quantity", "QuantityError", "core_version", "quantity"]
