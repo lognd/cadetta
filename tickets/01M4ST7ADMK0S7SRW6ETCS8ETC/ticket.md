@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:01:22Z"
+updated = "2026-10-13T08:01:36Z"
 persona = "design engineer"
 capability = "look values up in cited tables by key, nearest or at-least"
 idempotency_key = "replan13:Tables, lookups and Table<K> parameters"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a lookup that misses, when evaluated, then an error value is returned (and the part is non-viable under variant evaluation) (language.md 3.6, 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a key-only table such as Iso4762Len, when `.at_least(x).key` is read, then it works and column reads are rejected (language.md 3.6)"
