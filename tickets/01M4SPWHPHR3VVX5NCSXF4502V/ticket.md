@@ -2,7 +2,8 @@
 id = "01M4SPWHPHR3VVX5NCSXF4502V"
 title = "Cargo workspace skeleton with all crates"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
