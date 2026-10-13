@@ -1,0 +1,77 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:20:23Z"
+digest = "e44666da0424e12d962b949aaab6753ca0ff998689f60635b999deced56b182c"
+exit_code = 0
+inline = '''
+   Compiling tracing-core v0.1.36
+   Compiling log v0.4.34
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling lazy_static v1.5.1
+   Compiling libc v0.2.190
+   Compiling zeroize v1.9.1
+   Compiling thread_local v1.1.10
+   Compiling nu-ansi-term v0.50.3
+   Compiling smallvec v1.16.3
+   Compiling untrusted v0.9.0
+   Compiling bytes v1.12.1
+   Compiling sharded-slab v0.1.7
+   Compiling httparse v1.10.1
+   Compiling winnow v1.0.4
+   Compiling tracing v0.1.44
+   Compiling tracing-serde v0.2.0
+   Compiling tracing-log v0.2.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling subtle v2.6.1
+   Compiling base64 v0.23.1
+   Compiling webpki-roots v1.0.9
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling http v1.5.0
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling getrandom v0.2.17
+   Compiling serde_spanned v1.1.2
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling utf8-zero v0.8.1
+   Compiling percent-encoding v2.3.2
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling ring v0.17.14
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling regex-automata v0.4.18
+   Compiling ureq-proto v0.6.4
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling rustls-webpki v0.103.15
+   Compiling rustls v0.23.45
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling matchers v0.2.0
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling tracing-subscriber v0.3.23
+   Compiling regex v1.13.1
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling ureq v3.4.2
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 59.66s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b4edd58b-8c9b-4ab5-85b9-072a92135790 with nextest profile: default
+    Starting 1 test across 23 binaries (613 tests skipped)
+        PASS [   0.009s] cadetta-geometry placement_for::tests::every_instance_is_placed
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 613 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=placement_for::tests::every_instance_is_placed)'"
+size = 2732
+status = "measured"
+test_count = 1
+tests_digest = "58e466d63165b721c1fec674ae7692210cc6c355061e3bea6f2ca10b90591e26"
+at = "2026-10-13T09:20:23Z"
+actor = "lognd"
+rev = 1

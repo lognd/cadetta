@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:21:28Z"
+digest = "40e78116d51faafd9c9af52361dea004d54e6872aa4291624b6ce4e46b06aa8e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4f32d9af-f656-4008-8e45-ac55db1a96de with nextest profile: default
+    Starting 1 test across 23 binaries (613 tests skipped)
+        PASS [   0.010s] cadetta-geometry placement_for::tests::at_offsets_to_the_point
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 613 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=placement_for::tests::at_offsets_to_the_point)'"
+size = 608
+status = "measured"
+test_count = 1
+tests_digest = "489e158a595df1a3991f0e6102f96a055f144888ec80f7d08a88af784474ca81"
+at = "2026-10-13T09:21:28Z"
+actor = "lognd"
+rev = 1

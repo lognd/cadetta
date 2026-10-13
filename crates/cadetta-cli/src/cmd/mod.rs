@@ -3,10 +3,13 @@
 
 pub mod ack;
 pub mod cite;
+pub mod explain;
 pub mod fmt;
 pub mod init;
+pub mod ir;
 pub mod obligations;
 pub mod solve;
+pub mod units;
 pub mod why;
 
 use std::io::Write;
@@ -15,10 +18,13 @@ use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 pub use ack::run_ack;
+pub use explain::run_explain;
 pub use fmt::run_fmt;
 pub use init::run_init;
+pub use ir::run_ir;
 pub use obligations::run_obligations;
 pub use solve::run_solve;
+pub use units::run_units;
 pub use why::run_why;
 
 /// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.

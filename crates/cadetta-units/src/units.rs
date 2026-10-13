@@ -277,6 +277,19 @@ impl UnitTable {
         t
     }
 
+    // frob:ticket 01M4SPWT6N1HY3MHN544GZJYS9
+    /// Every registered atom unit, sorted by symbol (for `cadetta units`).
+    pub fn atoms(&self) -> Vec<UnitDef> {
+        let mut v: Vec<UnitDef> = self.atoms.values().cloned().collect();
+        v.sort_by(|a, b| a.name.cmp(&b.name));
+        v
+    }
+
+    /// The built-in compound unit expressions with their named kinds (quantities.md 3).
+    pub fn compounds() -> &'static [(&'static str, &'static str)] {
+        COMPOUNDS
+    }
+
     /// Look up one unit symbol (`"` and `'` alias `in` and `ft`; ISO 4217 codes are Money).
     pub fn lookup(&self, name: &str) -> Option<UnitDef> {
         let name = match name {

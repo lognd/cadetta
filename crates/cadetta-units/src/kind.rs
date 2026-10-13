@@ -232,6 +232,12 @@ impl KindTable {
         Self { kinds }
     }
 
+    // frob:ticket 01M4SPWT6N1HY3MHN544GZJYS9
+    /// Every registered kind name with its dimension, sorted by name (for `cadetta units`).
+    pub fn all(&self) -> Vec<(&str, &Dim)> {
+        self.kinds.iter().map(|(k, d)| (k.as_str(), d)).collect()
+    }
+
     /// Canonical dimension and angle of a registered kind.
     pub fn dim_of(&self, name: &str) -> Option<&Dim> {
         self.kinds.get(name)

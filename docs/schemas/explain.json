@@ -1,0 +1,17 @@
+{
+  "$id": "cadetta.explain/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta explain CODE --format json`: one lint catalog entry.",
+  "properties": {
+    "code": { "pattern": "^[A-Z][0-9]{3}$", "type": "string" },
+    "default": { "enum": ["error", "warning", "info", "hint"] },
+    "fixed": { "type": "boolean" },
+    "meaning": { "type": "string" },
+    "name": { "type": "string" },
+    "schema": { "const": "cadetta.explain/1" }
+  },
+  "required": ["schema", "code", "name", "default", "fixed", "meaning"],
+  "title": "ExplainOutput",
+  "type": "object"
+}
