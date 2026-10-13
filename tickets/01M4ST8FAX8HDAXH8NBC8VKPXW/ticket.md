@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-13T13:54:19Z"
+updated = "2026-10-13T14:01:27Z"
 persona = "design engineer"
 capability = "see what a swap costs and what must be re-synced and re-reviewed"
 idempotency_key = "replan13:impact --swap: CAD files, attestations and commercial deltas"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-cli/src/cmd/impact_swap_report.rs", "crates/cadetta-cli
 
 [[acceptance]]
 text = "Given bound paths whose emitted value changes, when printed, then CAD files to re-sync list the paths and unchanged files are listed as not stale (obligations.md 5.1 section 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given attestations whose covered closure digests change, when printed, then each is listed with the count of covered nodes affected (obligations.md 5.1 section 6)"
