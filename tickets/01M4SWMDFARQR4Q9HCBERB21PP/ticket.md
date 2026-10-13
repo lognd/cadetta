@@ -23,6 +23,10 @@ target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 kind = "blocked-by"
 target = "01M4SV3AAC44Q1DCE44GG3XB6W"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMCFYWCHWRQM0B6SFGK71"
+
 [[acceptance]]
 text = "Given a running SOLIDWORKS, when open runs, then the adapter attaches; otherwise it starts one hidden (adapters.md 2.2)"
 bound = false
