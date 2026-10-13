@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:40:53Z"
-updated = "2026-10-13T18:16:02Z"
+updated = "2026-10-13T18:19:00Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/lints.md", "docs/spec/adapters.md", "docs/spec/config-cli.md", "docs/spec/README.md", "crates/cadetta-lint/src/engine.rs", "tests/conformance/emitters/csv/**", "tests/conformance/emitters/json/**"]
 
 [[acceptance]]
 text = "Given a csv or json file row whose name has no binding, when read runs, then the spec says it is the error R016 naming the row, no observed IR is produced and exit is 1, and a fixture pair covers it for each format"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a csv quoted field spanning lines whose continuation line begins with #, when read runs, then the spec says only a record start is tested for #, the continuation is data, and a fixture pair covers it"
