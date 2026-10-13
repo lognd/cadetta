@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a rebuild error, when regen runs, then R004 regen-failed is returned naming the feature (adapters.md 5, lints.md R004)", "Given a session with unsaved user changes, when driving, then the adapter refuses and reports (OQ-8)"]
+new = ["Given a rebuild error, when regen runs, then R004 regen-failed is returned naming the feature (adapters.md 5, lints.md R004)", "Given a session with unsaved user changes, when driving, then the adapter refuses and reports (OQ-8)", "Given a regen failure, when pushing, then R004 is reported and atomic restore runs (adapters.md 2.3)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:13Z"
+actor = "lognd"
+rev = 1

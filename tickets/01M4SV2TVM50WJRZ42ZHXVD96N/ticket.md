@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:24Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "regenerate headless and see rebuild failures as diagnostics"
 labels = ["creates:adapters/solidworks/src/regen.py"]
@@ -32,5 +32,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a session with unsaved user changes, when driving, then the adapter refuses and reports (OQ-8)"
+bound = false
+
+[[acceptance]]
+text = "Given a regen failure, when pushing, then R004 is reported and atomic restore runs (adapters.md 2.3)"
 bound = false
 +++
