@@ -1,0 +1,16 @@
+kind = "create"
+title = "Selector grammar KIND:GLOB"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "pick obligations precisely"
+idempotency_key = "replan14:ob-selector"
+labels = ["creates:crates/cadetta-obligations/src/selector.rs"]
+scope = ["crates/cadetta-obligations/src/selector.rs"]
+acceptance = ["Given KIND:GLOB[,KIND:GLOB...], when parsed, then it matches obligation ids <kind>:<canonical path>; a selector matching nothing is exit 2 (config-cli.md 3.3; obligations.md 4)"]
+at = "2026-10-13T05:44:38Z"
+actor = "lognd"
+rev = 1
