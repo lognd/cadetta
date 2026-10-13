@@ -19,6 +19,10 @@ scope = ["crates/cadetta-obligations/src/level.rs"]
 kind = "blocked-by"
 target = "01M4ST8EMQTXAGZAWGE2M5A4BR"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWK9D2DYTDN1TW3013FBDV"
+
 [[acceptance]]
 text = "Given a closure reading no component parameter or interface slot, when targeted, then the obligation is at definition path; otherwise instance paths with identical argument closures form one obligation (obligations.md 2; ir.md 2)"
 bound = false
