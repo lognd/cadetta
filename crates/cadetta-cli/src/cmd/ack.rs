@@ -347,7 +347,7 @@ fn email_in(text: &str) -> Option<String> {
 ///
 /// Read directly so `ack` never spawns a process; `None` when neither sets it.
 fn git_email(dir: &Path) -> Option<String> {
-    let home = std::env::var_os("HOME").map(std::path::PathBuf::from);
+    let home = crate::env::home_dir();
     let candidates = dir
         .ancestors()
         .map(|d| d.join(".git").join("config"))
