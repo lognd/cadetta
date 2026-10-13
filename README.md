@@ -54,22 +54,30 @@ Software solved the same problems with types, compilers, linters, build
 systems and CI. Cadetta brings those tools to design parameters, and
 the CAD tool becomes a build target.
 
-## The idea in one picture
+## How it works
 
-```
-  .cdt source  --compile-->  design IR  --lint-->  diagnostics, obligations
-  (quantities,                   |
-   tolerances,                   +--emit / drive-->  SOLIDWORKS, FreeCAD, files
-   citations)                    |                         |
-                                 +<--read (observed IR)----+   drift, import
-```
+Cadetta runs one cycle every time you check or sync a design:
 
-- The **source** is plain text in git, reviewed like code.
-- The **IR** is tool-agnostic. Every lint, query and adapter reads it,
-  and JSON consumers can read it too.
-- **Adapters** are the only part that touches a CAD tool. CAD keeps
-  owning shapes and mates; cadetta owns the numbers and the reasons for
-  them.
+1. **Write.** The design's numbers live in `.cdt` files: plain text in
+   git, reviewed like code. Each value carries its units, tolerance and
+   source.
+2. **Compile.** Cadetta evaluates the source into an intermediate
+   representation (IR). The IR is tool-agnostic: every lint, query and
+   adapter reads it, and so can anything that reads JSON.
+3. **Check.** The linter and the checks run over the IR for every value
+   in tolerance and every approved alternate. The obligation graph marks
+   which sign-offs, solver results and CAD files are now stale.
+4. **Sync.** Adapters, the only part of cadetta that touches a CAD tool,
+   compare the design with what the CAD file holds and with what was
+   last synced. They push the values that changed, rebuild the model,
+   and read the result back.
+5. **Reconcile.** Anything that differs on the CAD side becomes drift
+   you can see. You resolve it by keeping the design or by writing the
+   CAD-side value back into the source. Existing CAD files enter the
+   cycle the same way, through `import`.
+
+The CAD tool keeps owning shapes and mates. Cadetta owns the numbers,
+the reasons for them, and the checks on them.
 
 ## A short tour
 
