@@ -168,6 +168,9 @@ enum Command {
     Obligations(Vec<String>),
     Ack(Vec<String>),
     Why(Vec<String>),
+    Ir(Vec<String>),
+    Explain(Vec<String>),
+    Units(Vec<String>),
     Unknown(String),
 }
 
@@ -182,6 +185,9 @@ fn parse(args: &[String]) -> Command {
         Some("obligations") => Command::Obligations(args[1..].to_vec()),
         Some("ack") => Command::Ack(args[1..].to_vec()),
         Some("why") => Command::Why(args[1..].to_vec()),
+        Some("ir") => Command::Ir(args[1..].to_vec()),
+        Some("explain") => Command::Explain(args[1..].to_vec()),
+        Some("units") => Command::Units(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -225,6 +231,9 @@ pub fn run_with_env(
         Command::Obligations(rest) => cmd::run_obligations(&rest, &globals, out, err),
         Command::Ack(rest) => cmd::run_ack(&rest, &globals, out, err),
         Command::Why(rest) => cmd::run_why(&rest, &globals, out, err),
+        Command::Ir(rest) => cmd::run_ir(&rest, &globals, out, err),
+        Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
+        Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE
