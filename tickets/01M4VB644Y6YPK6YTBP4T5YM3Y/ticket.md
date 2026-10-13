@@ -2,7 +2,8 @@
 id = "01M4VB644Y6YPK6YTBP4T5YM3Y"
 title = "CLI verbs names and bind"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
