@@ -2,7 +2,8 @@
 id = "01M4STANFNKA8G30C6KEEBM38C"
 title = "Solver lints S003, S005 and S006"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
