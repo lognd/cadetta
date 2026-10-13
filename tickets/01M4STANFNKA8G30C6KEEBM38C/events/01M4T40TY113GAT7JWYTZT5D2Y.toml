@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:53:06Z"
+digest = "6396afb6dc27df98d1901e160a8a7f087bf0fe489947d80cb5569a24814fcb7b"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4ddb475c-6e71-4316-8cfb-67f69d39ea64 with nextest profile: default
+    Starting 1 test across 20 binaries (383 tests skipped)
+        PASS [   0.007s] cadetta-solve lints::tests::s003_fires_when_stale_and_not_when_fresh
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 383 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=lints::tests::s003_fires_when_stale_and_not_when_fresh)"
+size = 772
+status = "measured"
+test_count = 1
+tests_digest = "8196d253eec5df6266c742c5077fed8147f47c1724cdc0831337ef0d8ef34005"
+at = "2026-10-13T07:53:06Z"
+actor = "lognd"
+rev = 1
