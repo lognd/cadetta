@@ -19,6 +19,10 @@ scope = ["bindings/python/python/cadetta/models/**"]
 kind = "blocked-by"
 target = "01M4SPWQANZ48Y8HG2X84RNK2D"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWK9V5CYNNVTAS3PE4EC23"
+
 [[acceptance]]
 text = "Given docs/schemas, when models are generated, then Member, Value (with dim), Quantity and the diag record are pydantic models field for field (bindings.md 3.1, 3.2)"
 bound = false
