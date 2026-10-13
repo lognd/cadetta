@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/XF4502V; scope: Cargo.toml, crates/*/Cargo.toml, crates/*/src/lib.rs, adapters/freecad/pyproject.toml, crates/cadetta-geometry/Cargo.toml, crates/cadetta-geometry/src/lib.rs; ttl 7200s"
+at = "2026-10-13T06:07:17Z"
+actor = "lognd"
+rev = 1
