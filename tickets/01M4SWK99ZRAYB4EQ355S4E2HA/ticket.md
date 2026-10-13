@@ -19,6 +19,10 @@ scope = ["crates/cadetta-ir/src/entities.rs"]
 kind = "blocked-by"
 target = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4ST8E8AQ98D0DFQ0DT50R91"
+
 [[acceptance]]
 text = "Given interfaces with bounds and datums, tables, waivers with targets_closure, and processes, when lowered, then each has its ir.md 3 entity (ir.md 3)"
 bound = false
