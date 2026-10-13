@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:31:34Z"
+digest = "ccbc24a87f00aac888c61633952fb5c5a9e24344c69a51c74d0c7341b9f957a2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2f332e83-db90-451f-b9c8-f0c14142e6c7 with nextest profile: default
+    Starting 2 tests across 23 binaries (653 tests skipped)
+        PASS [   0.006s] cadetta-adapter classify::tests::force_design_pushes_over_r001
+        PASS [   0.010s] cadetta-adapter classify::tests::header_excluded_from_noop
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 2 tests run: 2 passed, 653 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=classify::tests::force_design_pushes_over_r001) | test(=classify::tests::header_excluded_from_noop)'"
+size = 642
+status = "measured"
+test_count = 2
+tests_digest = "1f45589c456678a93d8ec965634b578a267d6aba7de27c7ade5174f8ff1908f7"
+at = "2026-10-13T09:31:34Z"
+actor = "lognd"
+rev = 1

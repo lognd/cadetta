@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:40:14Z"
+digest = "a6bf8f655d2881c07aa4d628e713e5dc13f51ddf1bea5ad320bb4fad40fdec2c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d981b70c-16ea-49d6-a22d-626314702329 with nextest profile: default
+    Starting 1 test across 23 binaries (680 tests skipped)
+        PASS [   0.029s] cadetta cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.033s] 1 test run: 1 passed, 680 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span)"
+size = 571
+status = "measured"
+test_count = 1
+tests_digest = "375c9dfdc0e8f24fc2f6f5e327cedda4bea0a0bd42e44cad4388388842189f2c"
+at = "2026-10-13T09:40:14Z"
+actor = "lognd"
+rev = 1

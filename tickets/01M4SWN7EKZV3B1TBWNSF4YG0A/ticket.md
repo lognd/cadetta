@@ -2,18 +2,18 @@
 id = "01M4SWN7EKZV3B1TBWNSF4YG0A"
 title = "why --stale"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T05:44:44Z"
+updated = "2026-10-13T09:42:35Z"
 persona = "design engineer"
 capability = "see why something went stale"
 idempotency_key = "replan14:ob-stale"
 labels = ["creates:crates/cadetta-obligations/src/why_stale.rs"]
-scope = ["crates/cadetta-obligations/src/why_stale.rs"]
+scope = ["crates/cadetta-obligations/src/why_stale.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"

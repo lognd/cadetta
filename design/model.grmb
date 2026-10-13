@@ -19,6 +19,8 @@ node adapter_host : trusted {
   owns "crates/cadetta-adapter/**";
   may exec at "crates/cadetta-adapter/src/external/**";
   may fs.write at "crates/cadetta-adapter/src/builtin/**";
+  may fs.read at "crates/cadetta-adapter/src/testing.rs";
+  may fs.write at "crates/cadetta-adapter/src/testing.rs";
 }
 
 /// External SOLIDWORKS adapter (Python, pywin32 COM), the primary drive target.
@@ -52,6 +54,7 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/project.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/check.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";

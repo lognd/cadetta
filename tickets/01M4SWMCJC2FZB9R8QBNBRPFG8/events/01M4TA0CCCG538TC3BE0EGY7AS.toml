@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T09:37:55Z"
+digest = "676b8b42acf2022d16e2252f94d067fcbb6d054c2b57779399518e28f0df592f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4ef802f2-e8ed-48e4-b571-603b65013137 with nextest profile: default
+    Starting 3 tests across 23 binaries (668 tests skipped)
+        PASS [   0.009s] cadetta-adapter scope::tests::run_scope_narrows
+        PASS [   0.009s] cadetta-adapter scope::tests::single_star_stays_in_segment
+        PASS [   0.011s] cadetta-adapter scope::tests::modules_and_paths_restrict
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 3 tests run: 3 passed, 668 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=scope::tests::modules_and_paths_restrict) | test(=scope::tests::single_star_stays_in_segment) | test(=scope::tests::run_scope_narrows)'"
+size = 709
+status = "measured"
+test_count = 3
+tests_digest = "fb310b77faad16ff8bf5a96c1b5ed9da69a7c3e5bc15e701fcfa64be843cf90e"
+at = "2026-10-13T09:37:55Z"
+actor = "lognd"
+rev = 1

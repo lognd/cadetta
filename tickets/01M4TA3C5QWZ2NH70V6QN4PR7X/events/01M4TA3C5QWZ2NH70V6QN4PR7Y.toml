@@ -1,0 +1,10 @@
+kind = "create"
+title = "Obligation enumeration limited to check kind"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-obligations"]
+body = "found while working ~E631Y52. requires, fits, citations, ots, sync, waiver, S003/S004/O004 not enumerated; check closures lack read-member deps."
+at = "2026-10-13T09:39:34Z"
+actor = "lognd"
+rev = 1

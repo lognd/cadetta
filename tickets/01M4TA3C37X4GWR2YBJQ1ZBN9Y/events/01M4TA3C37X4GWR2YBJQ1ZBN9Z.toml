@@ -1,0 +1,10 @@
+kind = "create"
+title = "Fits and variant evaluations not derived for lowering"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-ir"]
+body = "found while working ~E631Y52. pipeline calls lower with empty variants and fits."
+at = "2026-10-13T09:39:34Z"
+actor = "lognd"
+rev = 1
