@@ -13,6 +13,7 @@ pub mod ir;
 pub mod obligations;
 pub mod solve;
 pub mod units;
+pub mod update;
 pub mod why;
 
 use std::io::Write;
@@ -31,6 +32,7 @@ pub use ir::run_ir;
 pub use obligations::run_obligations;
 pub use solve::run_solve;
 pub use units::run_units;
+pub use update::run_update;
 pub use why::run_why;
 
 /// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.
