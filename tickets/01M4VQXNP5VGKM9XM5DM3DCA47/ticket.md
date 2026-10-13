@@ -2,13 +2,13 @@
 id = "01M4VQXNP5VGKM9XM5DM3DCA47"
 title = "Spec: module path notation differs between adapters.md 3.2 (dotted) and packages.md 2 (file-tree, E015)"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-13T23:46:57Z"
+updated = "2026-10-13T23:47:00Z"
 scope = ["tests/conformance/adapters/scope-*", "tests/conformance/known-gaps.toml", "docs/spec/adapters.md", "docs/spec/config-cli.md", "crates/cadetta-adapter/src/scope.rs"]
 
 [[acceptance]]
