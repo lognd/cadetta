@@ -30,6 +30,9 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.optional-dependencies]
+pint = ["pint>=0.24"]
+
 [project.scripts]
 cadetta = "cadetta.__main__:main"
 
@@ -41,7 +44,7 @@ Changelog = "https://github.com/lognd/cadetta/blob/main/CHANGELOG.md"
 Issues = "https://github.com/lognd/cadetta/issues"
 
 [dependency-groups]
-dev = ["maturin>=1.9,<2", "pytest>=8", "ruff>=0.6"]
+dev = ["maturin>=1.9,<2", "pint>=0.24", "pytest>=8", "ruff>=0.6"]
 
 [tool.maturin]
 manifest-path = "Cargo.toml"

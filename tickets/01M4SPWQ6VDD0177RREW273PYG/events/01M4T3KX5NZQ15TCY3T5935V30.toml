@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:45:56Z"
+digest = "d3550536f12c800220c4bed9f4f1c62209dcbb97a3afcb8db734ca8e4c712060"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.40s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c2e25527-d8b6-4f7a-aa5c-9b077c0ad85b with nextest profile: default
+    Starting 1 test across 18 binaries (375 tests skipped)
+        PASS [   0.013s] cadetta-ir json::tests::json_rational_string_reduced
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 375 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=json::tests::json_rational_string_reduced)"
+size = 1155
+status = "measured"
+test_count = 1
+tests_digest = "3ce9c786ebd5ada5d185865a00d71c26b86cdbca54898a10f78ebcdda5ca7fe0"
+at = "2026-10-13T07:45:56Z"
+actor = "lognd"
+rev = 1

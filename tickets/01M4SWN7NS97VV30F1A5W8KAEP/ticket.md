@@ -2,18 +2,18 @@
 id = "01M4SWN7NS97VV30F1A5W8KAEP"
 title = "Semantic versus presentational digests"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T05:44:44Z"
+updated = "2026-10-13T07:46:00Z"
 persona = "design engineer"
 capability = "avoid false staleness"
 idempotency_key = "replan14:ob-attrs"
 labels = ["creates:crates/cadetta-obligations/src/digest_attrs.rs"]
-scope = ["crates/cadetta-obligations/src/digest_attrs.rs"]
+scope = ["crates/cadetta-obligations/src/digest_attrs.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
