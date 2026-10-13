@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given declaration order reversed, when resolved, then results are identical"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `Type.member` on a parameterized component whose member depends on no parameter, when resolved, then it reads without an instance; if it depends on a parameter an error names the parameter (language.md 3.1)"
