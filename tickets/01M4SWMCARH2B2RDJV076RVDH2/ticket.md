@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:13Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 idempotency_key = "replan14:ad-r8910"
 labels = ["creates:crates/cadetta-adapter/src/availability.rs"]
 scope = ["crates/cadetta-adapter/src/availability.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMC5P00K0B1SZ9JPTJW8W"
 
 [[acceptance]]
 text = "Given an unavailable adapter, when sync runs, then R008 is an error and exit 2; when check runs it is info (adapters.md 4; config-cli.md 3)"
