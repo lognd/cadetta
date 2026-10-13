@@ -263,6 +263,15 @@ loop is clean.
 | M002 | magic-factor | info | | Bare factor other than small integers, simple fractions and powers of ten. |
 | M003 | untoleranced-fit-side | warning | | A parameter used as a side of a `fit` has no tolerance. |
 
+Implementation rules (decided with the M rules): the M rules look at authored parameter literals
+only (no expression, nothing read), so a table lookup never reaches them and `allow` is applied by
+the engine. M001 counts decimals in the authored number, ignoring trailing zeros (`12.50mm` has 1),
+against `[lint] precision` for the value's kind; a kind with no entry is never reported. A
+tolerance or use as a fit side explains a literal; a citation explains it only in an `ots`. M002
+applies to dimensionless literals that are uncited: plain means an integer of magnitude at most 10,
+a fraction with numerator and denominator at most 10, or a power of ten (`1000`, `0.01`). M003 is
+reported once per fit-side member without a tolerance.
+
 ### F: fits
 
 | Code | Name | Default | Fixed | Meaning |
