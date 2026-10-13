@@ -2,7 +2,8 @@
 id = "01M4ST8ET5NPMBSVXFVD4WN8XP"
 title = "Citation digests and source acknowledgement"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
