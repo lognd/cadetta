@@ -2,7 +2,8 @@
 id = "01M4ST8EPKBWRWHF51Y5NV3VK0"
 title = "cadetta.lock format and persistence"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
