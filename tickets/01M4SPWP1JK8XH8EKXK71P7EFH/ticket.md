@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:19:13Z"
+updated = "2026-10-13T06:26:48Z"
 persona = "design engineer"
 capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
 labels = ["creates:crates/cadetta-syntax/src/{parser,ast}.rs"]
-scope = ["crates/cadetta-syntax/src/{parser,ast}.rs"]
+scope = ["crates/cadetta-syntax/src/{parser,ast}.rs", "crates/cadetta-syntax/src/lib.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
