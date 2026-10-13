@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:31:50Z"
+digest = "bcf493faa925e517a2dad1bdaaa58cebc0ebdd09c9d7aff90a5ed9f4deccd614"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 052bb9a4-448e-4ad7-9046-a91a59bee901 with nextest profile: default
+    Starting 1 test across 1 binary (13 tests skipped)
+        PASS [   0.005s] cadetta-geometry transform::tests::toleranced_angle_is_conservative
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 13 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry -E 'test(=transform::tests::toleranced_angle_is_conservative)'"
+size = 556
+status = "measured"
+test_count = 1
+tests_digest = "5dbaf597cb3e858ee9916c13e841068619b8615d15b446e55c30c250e47aaf08"
+at = "2026-10-13T08:31:50Z"
+actor = "lognd"
+rev = 1
