@@ -215,6 +215,20 @@ Evaluation rules (placement.rs):
   each argument is a `Place` Member with provenance `authored` and its
   expression text and span.
 
+For-placements and `.at` (placement_for.rs):
+
+- `.at(point)` must be the last operation of the anchor chain and takes
+  one positional point. It is `.offset(x, y)` with the point's
+  coordinates (also z for a `Point3`); its three arguments are
+  Members whose expression is the point, so a point is never split
+  into two Lengths in the source.
+- Instance `i` of a for-placement is evaluated with the range variable
+  bound to `i`; instance paths read `Assembly/feet[i]`.
+- G007 is judged per array node that has at least one placement: any
+  instance in `0..count` covered by no placement is listed in the
+  diagnostic. A whole-array placement covers every instance; a range
+  running past the count is not G007.
+
 ## 5. Checking positions
 
 - Any check may read converted positions: `check fan_clear: (fan.face in

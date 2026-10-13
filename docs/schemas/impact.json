@@ -1,0 +1,46 @@
+{
+  "$id": "cadetta.impact/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta impact PATH --format json`: everything downstream of one path.",
+  "properties": {
+    "schema": { "const": "cadetta.impact/1" },
+    "path": { "description": "The path asked about.", "type": "string" },
+    "dependents": {
+      "description": "Downstream nodes, nearest first, then sorted by path.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Dependent" }
+    },
+    "obligations": {
+      "description": "Obligations that go stale or whose verdict may change.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/Obligation" }
+    }
+  },
+  "required": ["schema", "path", "dependents", "obligations"],
+  "title": "ImpactOutput",
+  "type": "object",
+  "$defs": {
+    "Dependent": {
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string" },
+        "kind": { "enum": ["member", "check", "solver"] },
+        "via": { "description": "The node it reads that leads back to PATH.", "type": "string" },
+        "depth": { "description": "Reads between this node and PATH, at least 1.", "type": "integer", "minimum": 1 },
+        "effect": { "enum": ["changes", "stale", "may_flip"] }
+      },
+      "required": ["path", "kind", "via", "depth", "effect"],
+      "type": "object"
+    },
+    "Obligation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": { "description": "Obligation id, `KIND:PATH`.", "type": "string" },
+        "effect": { "enum": ["stale", "may_flip"] }
+      },
+      "required": ["id", "effect"],
+      "type": "object"
+    }
+  }
+}

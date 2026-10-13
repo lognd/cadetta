@@ -6,4 +6,5 @@ pub mod datum;
 pub mod interface_datum;
 pub mod op_members;
 pub mod placement;
+pub mod placement_for;
 pub mod transform;
