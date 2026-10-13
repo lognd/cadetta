@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "Prerequisite ~4KQ2DZW (IR data model types) is still todo; crates/cadetta-ir has only an empty lib.rs, so there are no node types to digest."
+at = "2026-10-13T07:13:06Z"
+actor = "lognd"
+rev = 1
