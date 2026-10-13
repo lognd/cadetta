@@ -2,7 +2,8 @@
 id = "01M4STCCVN188CD3VRZC374QTM"
 title = "Lint U001 unused parameter"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
