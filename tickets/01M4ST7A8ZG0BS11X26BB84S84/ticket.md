@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:50:16Z"
+updated = "2026-10-13T06:50:42Z"
 persona = "cadetta contributor"
 capability = "parse the remaining item kinds of the grammar"
 idempotency_key = "replan13:Parser for interfaces, tables, processes, solvers and declarations"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-syntax/src/parser_items.rs", "crates/cadetta-syntax/src
 
 [[acceptance]]
 text = "Given `interface Caster { diameter: Length  load_rating >= 400N }`, when parsed, then members and bounds are recorded (language.md 3.2, 3.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `ots Vendor4471B: Caster @vendor { ... }` and an `: A, B` iface list, when parsed, then implements is recorded (language.md 3)"
