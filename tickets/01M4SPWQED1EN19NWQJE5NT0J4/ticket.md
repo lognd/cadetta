@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:41:24Z"
+updated = "2026-10-13T07:43:02Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
@@ -21,7 +21,7 @@ target = "01M4SPWQH44JWFXZDNTGEBMMNX"
 
 [[acceptance]]
 text = "Given two sources differing only in spans, doc comments or formatting, when digested, then own and closure digests are equal (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a changed value, when digested, then the node own digest changes (ir.md 4)"
