@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T06:10:42Z"
-updated = "2026-10-13T06:10:47Z"
+updated = "2026-10-13T06:11:11Z"
 scope = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml"]
 
 [[acceptance]]
