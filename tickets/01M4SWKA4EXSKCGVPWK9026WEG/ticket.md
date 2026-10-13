@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given native or lock locations, when rendered, then they map to artifact locations without losing the path (lints.md 1.1, 1.2)"
-bound = false
+bound = true
 +++
