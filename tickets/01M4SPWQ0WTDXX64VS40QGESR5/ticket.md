@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T08:17:22Z"
+updated = "2026-10-13T08:17:23Z"
 persona = "design engineer"
 capability = "declare `fit wheel_axle = H7/p6 on Wheel.hub_bore`"
 outcome_text = "fit members and type (clearance, transition, interference) are computed, never authored"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the fitted parameter carries a disagreeing tolerance, when analysed, then F003 is signalled (language.md 3.7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fit side, when evaluated, then it has the hole or shaft role (quantities.md 5.6)"
