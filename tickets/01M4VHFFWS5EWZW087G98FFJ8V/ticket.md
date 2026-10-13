@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:07:45Z"
-updated = "2026-10-13T21:20:54Z"
+updated = "2026-10-13T21:21:16Z"
 persona = "design engineer"
 capability = "edit .cdt files with highlighting and inline diagnostics in my editor"
 outcome_text = "cadetta feels like a real language from day one"
@@ -18,7 +18,7 @@ scope = ["README.md", ".github/workflows/ci.yml", "editors/**", "crates/cadetta-
 
 [[acceptance]]
 text = "Given editors/grammar/cadetta.toml, the single list of keyword, contextual-keyword, builtin-type, builtin-function, pseudo-citation and token-pattern classes, when editors/generate.py runs, then it writes every editor's grammar from it, and --check exits non-zero when a committed grammar is stale; CI runs the check"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given crates/cadetta-cli/tests/editors_keywords.rs, when cargo test runs, then the reserved keywords in editors/grammar/cadetta.toml equal cadetta_syntax::lexer::KEYWORDS"

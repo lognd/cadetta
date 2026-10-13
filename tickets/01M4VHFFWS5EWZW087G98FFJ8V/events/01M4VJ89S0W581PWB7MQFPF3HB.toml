@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T21:21:16Z"
+digest = "d051ffe73778d5487da9ee68c4530cc64143be69a3242988c9691dc8fa7d0a99"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.24s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2bb46c9e-5167-4042-9d66-1163f3a05496 with nextest profile: default
+    Starting 1 test across 28 binaries (933 tests skipped)
+        PASS [   0.399s] cadetta::editors_keywords generated_grammars_are_current
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.405s] 1 test run: 1 passed, 933 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "generated_grammars_are_current"
+size = 654
+status = "measured"
+test_count = 1
+tests_digest = "fadcec434957b8d8642a4309ff85ca8c42c858fabddc176bbf7c3223ed51f8f3"
+at = "2026-10-13T21:21:16Z"
+actor = "lognd"
+rev = 1
