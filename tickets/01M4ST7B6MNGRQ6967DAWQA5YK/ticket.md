@@ -2,7 +2,8 @@
 id = "01M4ST7B6MNGRQ6967DAWQA5YK"
 title = "Adapter contract test harness"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
