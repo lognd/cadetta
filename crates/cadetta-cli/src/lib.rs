@@ -4,6 +4,8 @@
 //!
 //! Specification: `docs/spec/config-cli.md`. Only `--version` exists so far.
 
+pub mod config;
+
 /// Version string printed by `cadetta --version`.
 pub const VERSION: &str = concat!("cadetta ", env!("CARGO_PKG_VERSION"));
 
