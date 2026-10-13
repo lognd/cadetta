@@ -53,7 +53,16 @@ A quantity literal is ONE token: a number immediately followed by a unit.
 - **Compound literals**: two or more number-unit segments of the same
   dimension in strictly descending unit size, no spaces: `2'6"`,
   `2ft6in`, `1h30min`. Only the last segment may be a decimal.
-- `5 mm` (whitespace before the unit) is Q007 with a fix-it.
+- `5 mm` (whitespace before the unit) is Q007 with a fix-it. The lexer flags a built-in
+  unit atom after spaces or tabs following a number (`5 in` is always
+  this mistake); the fix-it deletes the whitespace and the joined
+  literal is still emitted. `%` is excluded because it may be an operator.
+- A fraction or mixed number is a literal only when a unit follows it
+  immediately; a bare `3/4` is number, `/`, number, and a bare `1-1/2`
+  is a subtraction. Literal numbers stay exact source text until sema
+  converts them to rationals.
+- Compound-literal order is judged by built-in unit size within Length,
+  Time, Angle or Mass; any other unit there is a lex error (E001).
 - **Bare numbers** are dimensionless and of anonymous kind. They are
   legal (a) as factors, divisors or exponents, (b) as operands of `+ -`
   and comparisons whose other operand is dimensionless (a Count, a Ratio
