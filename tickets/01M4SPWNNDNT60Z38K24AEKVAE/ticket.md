@@ -53,7 +53,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a product of two toleranced values, when evaluated, then the result falls back to interval bounds and is marked conservative; Q005 no longer exists (quantities.md 5.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given sqrt or trig of a toleranced value, when evaluated, then the result is conservative (quantities.md 5.4)"
