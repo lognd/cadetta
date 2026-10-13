@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T07:34:12Z"
+updated = "2026-10-13T07:37:13Z"
 persona = "solver author"
 capability = "write a solver as a decorated Python function"
 outcome_text = "I speak cadetta.solve/1 without protocol code"
@@ -29,7 +29,7 @@ target = "01M4STANJE3QCD30B9Z3G45QS8"
 
 [[acceptance]]
 text = "Given a decorated function, when .serve() reads a cadetta.solve/1 request on stdin, then it writes a valid response with the solver version on stdout (bindings.md 3.3, solvers.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an input or output whose kind differs from the declaration, when served, then a protocol error naming the output is returned (bindings.md 3.3)"
