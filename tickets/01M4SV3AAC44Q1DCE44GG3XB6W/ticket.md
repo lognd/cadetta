@@ -14,6 +14,10 @@ capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:adapters/solidworks/tests/**", "creates:.github/workflows/solidworks.yml"]
 scope = ["adapters/solidworks/tests/**", ".github/workflows/solidworks.yml"]
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
+
 [[acceptance]]
 text = "Given recorded COM transcripts, when the fake replays them, then emit, read, push and regen tests pass on Linux CI (adapters.md 6)"
 bound = false
