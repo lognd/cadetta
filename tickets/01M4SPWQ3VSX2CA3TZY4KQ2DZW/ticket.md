@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a Check, when built, then it holds verdicts for the primary and per alternate and waived_for (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Value, when lowered, then nominal is always the designed value and drawn? exists only when a process rule applied, with no designed field (ir.md 3)"
