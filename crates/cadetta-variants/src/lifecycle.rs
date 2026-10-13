@@ -397,7 +397,7 @@ mod tests {
         }
     }
 
-    // frob:tests cadetta_variants::lifecycle::parse_attr
+    // frob:tests crates/cadetta-variants/src/lifecycle.rs::parse_attr kind=unit
     #[test]
     fn parses_status_and_date() {
         let got = parse_attr(&attr("eol", "2027-06")).unwrap();
@@ -420,7 +420,7 @@ mod tests {
         ));
     }
 
-    // frob:tests cadetta_variants::lifecycle::analyse
+    // frob:tests crates/cadetta-variants/src/lifecycle.rs::analyse kind=unit
     #[test]
     fn eol_without_alternate_is_l001_error_after_date() {
         let p = lc(Status::Eol, "2027-06");
@@ -436,7 +436,7 @@ mod tests {
         assert!(analyse("P", Some(&obs), &alts, &d("2028-01-01")).is_none());
     }
 
-    // frob:tests cadetta_variants::lifecycle::analyse
+    // frob:tests crates/cadetta-variants/src/lifecycle.rs::analyse kind=unit
     #[test]
     fn nrnd_is_l002_with_candidates() {
         let p = lc(Status::Nrnd, "2026-01");
@@ -446,7 +446,7 @@ mod tests {
         assert_eq!(f.candidates, vec!["A".to_string()]);
     }
 
-    // frob:tests cadetta_variants::lifecycle::analyse
+    // frob:tests crates/cadetta-variants/src/lifecycle.rs::analyse kind=unit
     #[test]
     fn active_date_is_last_verified_and_raises_nothing() {
         let p = lc(Status::Active, "2020-01");
