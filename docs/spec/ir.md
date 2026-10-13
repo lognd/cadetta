@@ -257,5 +257,6 @@ compares it to the committed file, and validates a fully populated
 without a schema change fails CI. `classify(old, new)` is the rule:
 a new optional property or a new `$defs` entry is minor; a removed or
 retyped property, a new required property, a changed enum or a removed
-definition is breaking and bumps `cadetta.ir/N`. Regenerate with
-`CADETTA_BLESS_SCHEMA=1 cargo test -p cadetta-ir schema`.
+definition is breaking and bumps `cadetta.ir/N`. The committed file is
+exactly `schema_json()`; the test does no file or environment access
+(CAP001), so a stale file is replaced by that output.

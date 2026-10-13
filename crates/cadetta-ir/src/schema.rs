@@ -909,18 +909,11 @@ mod tests {
     // frob:tests crates/cadetta-ir/src/schema.rs::schema_json kind=unit
     #[test]
     fn schema_file_matches_types() {
-        let path = concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../docs/schemas/cadetta.ir.1.json"
-        );
-        if std::env::var_os("CADETTA_BLESS_SCHEMA").is_some() {
-            std::fs::write(path, schema_json()).unwrap();
-        }
-        let on_disk = std::fs::read_to_string(path).unwrap();
+        let on_disk = include_str!("../../../docs/schemas/cadetta.ir.1.json");
         assert_eq!(
             on_disk,
             schema_json(),
-            "docs/schemas/cadetta.ir.1.json is stale; regenerate with CADETTA_BLESS_SCHEMA=1 cargo test -p cadetta-ir schema"
+            "docs/schemas/cadetta.ir.1.json is stale; replace it with schema_json()"
         );
     }
 
