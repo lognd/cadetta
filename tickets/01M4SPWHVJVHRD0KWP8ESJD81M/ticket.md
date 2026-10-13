@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:47Z"
-updated = "2026-10-13T06:10:32Z"
+updated = "2026-10-13T06:10:33Z"
 persona = "cadetta contributor"
 capability = "represent a magnitude as an arbitrary-precision rational over a 7-element SI dimension vector"
 outcome_text = "values are exact and comparable only across equal dimensions"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a currency unit such as USD, when its dimension is built, then it is its own base dimension beyond the seven SI ones (quantities.md 1, 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an angle quantity, when stored, then the integer angle exponent is tracked beside the dimension and does not change the magnitude (quantities.md 1, 4.3)"
