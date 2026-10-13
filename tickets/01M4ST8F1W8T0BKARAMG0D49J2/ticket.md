@@ -2,7 +2,8 @@
 id = "01M4ST8F1W8T0BKARAMG0D49J2"
 title = "cadetta ack"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
