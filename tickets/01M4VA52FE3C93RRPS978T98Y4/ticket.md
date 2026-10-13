@@ -2,7 +2,8 @@
 id = "01M4VA52FE3C93RRPS978T98Y4"
 title = "Spec draft 1.5: IEEE citations, placement revision, position tolerance, SOLIDWORKS workflow"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
