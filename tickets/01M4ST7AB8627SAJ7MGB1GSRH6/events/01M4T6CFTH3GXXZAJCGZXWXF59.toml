@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T08:34:37Z"
+digest = "fab70e0f27fa31c8ae5bd87a23acb8059625ecb597f4716f043090f53bbd751e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 78fbe89e-37f3-471e-839e-70c371766c83 with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.010s] cadetta-sema affine::tests::c004_for_computed_parameter_over_toleranced_inputs
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::c004_for_computed_parameter_over_toleranced_inputs)'"
+size = 572
+status = "measured"
+test_count = 1
+tests_digest = "92a55fbeb4b3d4dc1e689d4f1fcb31c8d60e5f0e499417be7c3101104255490f"
+at = "2026-10-13T08:34:37Z"
+actor = "lognd"
+rev = 1
