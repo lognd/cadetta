@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T05:17:08Z"
+updated = "2026-10-13T05:17:24Z"
 persona = "design engineer"
 capability = "read globals, equations, dimensions and custom properties"
 labels = ["creates:adapters/solidworks/src/read.py"]
@@ -25,6 +25,10 @@ target = "01M4ST7B3CYJNHGNCCQ3EYW9WC"
 [[links]]
 kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV3AAC44Q1DCE44GG3XB6W"
 
 [[acceptance]]
 text = "Given a part with equation-manager globals and equations, when read, then observed IR holds each with unit_assumed from the native unit (adapters.md 3)"
