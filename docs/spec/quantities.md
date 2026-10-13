@@ -53,7 +53,16 @@ A quantity literal is ONE token: a number immediately followed by a unit.
 - **Compound literals**: two or more number-unit segments of the same
   dimension in strictly descending unit size, no spaces: `2'6"`,
   `2ft6in`, `1h30min`. Only the last segment may be a decimal.
-- `5 mm` (whitespace before the unit) is Q007 with a fix-it.
+- `5 mm` (whitespace before the unit) is Q007 with a fix-it. The lexer flags a built-in
+  unit atom after spaces or tabs following a number (`5 in` is always
+  this mistake); the fix-it deletes the whitespace and the joined
+  literal is still emitted. `%` is excluded because it may be an operator.
+- A fraction or mixed number is a literal only when a unit follows it
+  immediately; a bare `3/4` is number, `/`, number, and a bare `1-1/2`
+  is a subtraction. Literal numbers stay exact source text until sema
+  converts them to rationals.
+- Compound-literal order is judged by built-in unit size within Length,
+  Time, Angle or Mass; any other unit there is a lex error (E001).
 - **Bare numbers** are dimensionless and of anonymous kind. They are
   legal (a) as factors, divisors or exponents, (b) as operands of `+ -`
   and comparisons whose other operand is dimensionless (a Count, a Ratio
@@ -136,6 +145,30 @@ subtracting two Temperatures yields a TemperatureDelta.
    exponent (4.3), after any Q008 the assignment raises. `as` may change the angle exponent but never the
    dimension: `travel as Length` turns `lead * 1rev`-style values into a
    plain Length without the `/ 1rad` idiom.
+
+6. Decided rules (implementation, cadetta-units `kind.rs`):
+   - A "dimensionless value" in rule 3 has dimensionless dimension and
+     angle exponent 0 (Ratio, Count, anonymous). `Angle * Ratio` keeps
+     Angle; `Angle * Angle` is anonymous.
+   - A Count scaled by a non-Count dimensionless value is a Ratio
+     (`Count * Count` stays Count; the product is not an integer
+     otherwise). `Count / Count` is anonymous.
+   - Table rows match operand kinds by name, not dimension: a
+     package kind such as Stress does not match a Pressure row. A row
+     applies only when the result dimension and angle equal the named
+     kind's canonical ones; otherwise the result is anonymous.
+   - `x ^ n` for `n` other than 2 or 3 on Length is anonymous.
+   - `sqrt`/`cbrt` need every dimension exponent and the angle
+     exponent to divide; otherwise Q011.
+   - `as` never raises Q008 (it is the explicit angle conversion);
+     it still requires equal dimension (Q002).
+   - Torque and Energy share a dimension and differ only in angle
+     exponent, so Torque assigned to Energy is Q003, while Torque
+     against Length is Q002.
+   - A literal takes its kind's canonical angle exponent, so
+     `0.45N*m` already carries -1.
+   - `floor`/`ceil`/`round` of a value carrying a `pi` factor are
+     Q006 (not exactly representable as a Count).
 
 ### 4.2 Count
 
@@ -245,6 +278,14 @@ are counted once and linear chains are exact. Nonlinear operations
 bounds and mark the result conservative; a conservative `undecided`
 says so in its C002 message. `* /` of two toleranced quantities is
 legal and conservative (it was Q005 in draft 0; Q005 is retired).
+Each source variable ranges over `[-1, 1]` and an asymmetric literal
+`[lower upper]` contributes centre `nominal + (lower + upper)/2` and
+coefficient `(upper - lower)/2`; a nonlinear fallback keeps the interval
+hull as a centre plus a variable-free symmetric slack, which only grows.
+Adding terms of different nonzero `pi^k` is an error in a form (it would
+be inexact); `sqrt`, `sin`, `cos` and `tan` return an outward-widened
+binary64 interval, always conservative, and `tan` over a pole is a
+domain error.
 `x ^ 2` and `x * x` of the same affine form use a square-aware
 interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
 `radial`, language.md 3.8) stays defined when x straddles zero.
@@ -256,6 +297,17 @@ must have x's dimension. The result is an exact rational multiple of
 step. Ties round away from zero. The nominal is rounded; deviations are
 kept. If x is inexact and within 1e-9 (relative) of a tie or step
 boundary, the result is Q010 (error: ambiguous rounding).
+
+Decided in implementation: the boundary is a tie for `round_to` and an
+integer multiple of step for `ceil_to` and `floor_to`; "within 1e-9
+(relative)" means a distance, in step units, of at most `1e-9 *
+max(|boundary|, 1)`. A quotient `x / step` with differing `pi`
+exponents is irrational, so it is treated as inexact for this check.
+`sqrt` is exact for a perfect-square rational with an even `pi`
+exponent (`sqrt(4mm^2)` is exactly `2mm`) and inexact otherwise; an
+inexact operand keeps its own root operation, so Q006 names the first
+one. `tan` at an odd multiple of 90deg and `atan2(0, 0)` are domain
+errors.
 
 ### 5.6 Roles and the emitted point
 
@@ -290,6 +342,16 @@ result is `undecided` with an inexactness note. `==` on toleranced
 values compares nominals only when written on accessors (`a.nominal ==
 b.nominal`); on raw toleranced values it is almost always `undecided`
 and C003 suggests the accessor form.
+
+Decision table, with `d = a - b` taken symbolically so shared source
+variables cancel (5.4): for `>`, `holds` if `min d > 0`, `violates` if
+`max d <= 0`; `>=`, `<`, `<=` are the mirror cases; `==` holds only when
+`d` is exactly zero and violates when zero is outside `d`; `!=` is its
+negation. When an operand is inexact or the operands carry different
+nonzero `pi^k`, `d` is computed in binary64 and widened by 1e-9 of the
+largest operand magnitude on each side before deciding. C003 is raised
+for any `==`/`!=` with a toleranced operand, in addition to C002 when
+the result is undecided.
 
 ## 6. Display
 

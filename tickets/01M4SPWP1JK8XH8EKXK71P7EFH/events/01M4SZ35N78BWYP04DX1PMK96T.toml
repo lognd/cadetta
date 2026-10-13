@@ -1,0 +1,59 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:27:06Z"
+digest = "89c7e8044cb44b3020b2b2e3430528c49e350f653431dbc4aa3f88094af570cb"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f7da8a3d-751a-4514-a46b-a6c401b0ad30 with nextest profile: default
+    Starting 34 tests across 2 binaries (1 test skipped)
+        PASS [   0.012s] cadetta-syntax lexer::tests::line_and_doc_comments_are_distinguished
+        PASS [   0.014s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+        PASS [   0.013s] cadetta-syntax lexer::tests::reserved_words_lex_as_keywords
+        PASS [   0.014s] cadetta-syntax lexer::tests::exponent_compound_unit_and_percent_are_single_quantities
+        PASS [   0.014s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.012s] cadetta-syntax lexer::tests::split_literal_is_q007_with_fixit
+        PASS [   0.014s] cadetta-syntax lexer::tests::strings_attributes_and_punctuation
+        PASS [   0.016s] cadetta-syntax parser::tests::errors_recover_and_parsing_continues
+        PASS [   0.016s] cadetta-syntax parser::tests::doc_comments_attach_to_items
+        PASS [   0.011s] cadetta-syntax parser::tests::spec_example_parses_with_expected_shape
+        PASS [   0.026s] cadetta-syntax lexer::tests::fractions_need_no_whitespace_and_a_unit
+        PASS [   0.016s] cadetta-syntax parser::tests::use_trees_aliases_globs_and_roots
+        PASS [   0.029s] cadetta-syntax parser::tests::all_member_productions_accepted
+        PASS [   0.033s] cadetta-syntax lexer::tests::compound_literals_are_one_token
+        PASS [   0.020s] cadetta-syntax parser::tests::file_is_uses_and_items_with_no_header
+        PASS [   0.007s] cadetta-units rational::tests::add_across_pi_exponents_is_inexact_unless_zero
+        PASS [   0.021s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.015s] cadetta-units dimension::tests::length_plus_mass_is_an_error_value
+        PASS [   0.009s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.023s] cadetta-units dimension::tests::currency_is_its_own_base_dimension
+        PASS [   0.013s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.011s] cadetta-units units::tests::compound_is_anonymous
+        PASS [   0.030s] cadetta-syntax parser::tests::statements_end_at_newline_or_semicolon
+        PASS [   0.033s] cadetta-syntax parser::tests::expressions_tolerances_and_classes
+        PASS [   0.032s] cadetta-syntax parser::tests::reserved_keyword_as_identifier_is_error
+        PASS [   0.013s] cadetta-units units::tests::errors_are_values
+        PASS [   0.014s] cadetta-units units::tests::every_table_unit_resolves
+        PASS [   0.011s] cadetta-units units::tests::exact_factors
+        PASS [   0.041s] cadetta-syntax parser::tests::part_has_one_primary_and_alternates
+        PASS [   0.014s] cadetta-units units::tests::quote_aliases
+        PASS [   0.016s] cadetta-units units::tests::inch_factor
+        PASS [   0.014s] cadetta-units units::tests::percent_is_ratio
+        PASS [   0.027s] cadetta-units rational::tests::powers_and_decimals_are_exact
+        PASS [   0.013s] cadetta-units units::tests::user_unit_resolves_like_builtin
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.061s] 34 tests run: 34 passed, 1 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -p cadetta-units -E '(package(=cadetta-syntax) & (test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::leading_and_trailing_dot_are_lex_errors) | test(=lexer::tests::line_and_doc_comments_are_distinguished) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::reserved_words_lex_as_keywords) | test(=lexer::tests::split_literal_is_q007_with_fixit) | test(=lexer::tests::strings_attributes_and_punctuation) | test(=parser::tests::all_member_productions_accepted) | test(=parser::tests::doc_comments_attach_to_items) | test(=parser::tests::errors_recover_and_parsing_continues) | test(=parser::tests::expressions_tolerances_and_classes) | test(=parser::tests::file_is_uses_and_items_with_no_header) | test(=parser::tests::part_has_one_primary_and_alternates) | test(=parser::tests::reserved_keyword_as_identifier_is_error) | test(=parser::tests::spec_example_parses_with_expected_shape) | test(=parser::tests::statements_end_at_newline_or_semicolon) | test(=parser::tests::use_trees_aliases_globs_and_roots))) | (package(=cadetta-units) & (test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=dimension::tests::currency_is_its_own_base_dimension) | test(=dimension::tests::length_plus_mass_is_an_error_value) | test(=rational::tests::add_across_pi_exponents_is_inexact_unless_zero) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=units::tests::compound_is_anonymous) | test(=units::tests::errors_are_values) | test(=units::tests::every_table_unit_resolves) | test(=units::tests::exact_factors) | test(=units::tests::inch_factor) | test(=units::tests::percent_is_ratio) | test(=units::tests::quote_aliases) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 3661
+status = "measured"
+test_count = 34
+tests_digest = "26d48d671c8caa0d25156b0a170e9f832ce49236639bb4a9a69512e72b3bfaf2"
+at = "2026-10-13T06:27:06Z"
+actor = "lognd"
+rev = 1

@@ -120,6 +120,14 @@ Key notes:
   script; `<stem>.out.json` then holds one entry per solver path
   (solvers.md 4).
 - `as_of` is overridden by `--as-of`.
+- Loading is strict: an unknown key anywhere is a configuration error
+  (exit 2) that names it, so the retired `[project]` table and its
+  `sources` and `roots` keys are rejected. A file has exactly one of
+  `[package]` and `[workspace]`. `precision` values and `d001_min_digits`
+  are integers (`d001_min_digits >= 1`); `common_values` stay quantity
+  text until sema reads them. `transport` defaults to `stdio`, `save`
+  to `after-sync`, a role's `covers` must be non-empty, and a repeated
+  adapter `name` needs distinct `id`s.
 - `[defaults]` applies per package. `[package]`, `[dependencies]` and
   `[workspace]` are defined in packages.md 1; I004 applies only to the
   roots of the package being checked (packages.md 3).

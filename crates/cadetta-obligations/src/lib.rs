@@ -3,3 +3,4 @@
 //! Specification: `docs/spec/obligations.md`.
 
 pub mod graph;
+pub mod selector;

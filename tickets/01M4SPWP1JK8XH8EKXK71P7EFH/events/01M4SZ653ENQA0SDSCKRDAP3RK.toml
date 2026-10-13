@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [7]
+captured_at = "2026-10-13T06:28:50Z"
+digest = "fd8c22711f68f92b95eabbef623a9cb2c687fa3152f00bf54e0c473a079435b6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cc0cb587-3d88-4185-879b-b71cc721c05f with nextest profile: default
+    Starting 1 test across 1 binary (18 tests skipped)
+        PASS [   0.008s] cadetta-syntax parser::tests::use_trees_aliases_globs_and_roots
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 18 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax use_trees_aliases_globs_and_roots"
+size = 552
+status = "measured"
+test_count = 1
+tests_digest = "979b6378e5d968193a95cf18b73d2456f75b77e24fff4877e760ccf04ae86dce"
+at = "2026-10-13T06:28:50Z"
+actor = "lognd"
+rev = 1

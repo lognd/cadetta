@@ -103,6 +103,28 @@ impl Dimension {
         r
     }
 
+    // frob:ticket 01M4SPWNHPTRETQBYCM6EA2GEV
+    /// Exact `n`-th root when every exponent divides by `n`, else `None` (`n` > 0).
+    pub fn root(&self, n: i32) -> Option<Self> {
+        if n <= 0
+            || self
+                .si
+                .iter()
+                .chain(self.currency.values())
+                .any(|e| e % n != 0)
+        {
+            return None;
+        }
+        let mut si = self.si;
+        si.iter_mut().for_each(|e| *e /= n);
+        let currency = self
+            .currency
+            .iter()
+            .map(|(c, e)| (c.clone(), e / n))
+            .collect();
+        Some(Self { si, currency })
+    }
+
     /// Require equal dimensions, as `+ -` and comparisons do.
     pub fn check_same(&self, o: &Self) -> Result<(), DimensionError> {
         if self == o {

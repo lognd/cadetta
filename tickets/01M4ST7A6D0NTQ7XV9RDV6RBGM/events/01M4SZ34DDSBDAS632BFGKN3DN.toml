@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:27:08Z"
+digest = "6bbaa99dbe56ce232f92fa0f0ce111b651e38aa9b0abd26c192077ee562fbe78"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.62s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1204eb22-4365-4829-a788-104e9f8cc079 with nextest profile: default
+    Starting 1 test across 1 binary (51 tests skipped)
+        PASS [   0.041s] cadetta-units display::tests::inch_fraction
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.042s] 1 test run: 1 passed, 51 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E 'test(=display::tests::inch_fraction)'"
+size = 586
+status = "measured"
+test_count = 1
+tests_digest = "7976d72b3bedcd5437a7060ca286ff6b75106671e8dc2e69d9a866c579612d99"
+at = "2026-10-13T06:27:08Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T06:27:28Z"
+digest = "4216a0951c5761e47b631633aa3d9724107a6b8b2cf1e43b11ade53ff198374e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.58s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8be21536-c032-46b9-8c5a-8d2e1d363705 with nextest profile: default
+    Starting 1 test across 1 binary (51 tests skipped)
+        PASS [   0.084s] cadetta-units display::tests::money_and_percent
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.087s] 1 test run: 1 passed, 51 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E 'test(=display::tests::money_and_percent)'"
+size = 710
+status = "measured"
+test_count = 1
+tests_digest = "b0c2afa8c392979b9a8fcaf06ed806d0a5fde790b356db2973fb7f3843ba60ee"
+at = "2026-10-13T06:27:28Z"
+actor = "lognd"
+rev = 1

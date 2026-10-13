@@ -72,6 +72,15 @@ used by `waive` (lints.md 2): `*` matches within one path segment,
 `obligations` and `impact` all take exactly this grammar; a selector
 that matches nothing is a usage error (exit 2).
 
+Glob details (decided, 0.1.0): segments are separated by `::`, `.` and
+`/`, so `*` never crosses any of them (`acme.rover::*` matches
+`acme.rover::Axle` but not `acme.rover::Axle.press`). `[*]` matches any
+index segment, `[N]`, `[A..B]` or a literal `[*]`. A selector with
+several terms matches the union of its terms and is an error only when
+the whole union is empty, not when a single term is. Empty terms,
+missing `:`, an unknown KIND and an unterminated `[` are also usage
+errors (exit 2).
+
 ### 2.3 Kinds, states and diagnostics
 
 | Obligation | Discharged by | Stale when | Diagnostic |

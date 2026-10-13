@@ -1,7 +1,6 @@
 # Lexer literal rules
 
-Status: accepted (ticket GN0SM0R). To be folded into quantities.md 2
-when that file is next open for editing.
+Status: accepted (ticket GN0SM0R). Folded into quantities.md 2.
 
 - Q007: the lexer recognises a built-in unit atom (quantities.md 3)
   after spaces or tabs following a number. The fix-it deletes the
