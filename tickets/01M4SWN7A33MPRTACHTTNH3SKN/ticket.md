@@ -2,7 +2,8 @@
 id = "01M4SWN7A33MPRTACHTTNH3SKN"
 title = "lock verify"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
