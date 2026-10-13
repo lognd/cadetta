@@ -1,0 +1,16 @@
+{
+  "bindings": [],
+  "native_globals": [],
+  "native_dimensions": [],
+  "native_frames": [],
+  "native_instances": [
+    {
+      "name": "bracket<1>",
+      "reference": "bracket"
+    },
+    {
+      "name": "bracket<2>",
+      "reference": "bracket"
+    }
+  ]
+}

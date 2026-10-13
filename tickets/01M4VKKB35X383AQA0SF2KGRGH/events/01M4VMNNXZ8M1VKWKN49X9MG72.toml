@@ -1,0 +1,8 @@
+kind = "field"
+field = "points"
+old = 2
+new = 3
+reason = "frob-v2 advice: gen --check is the hard gate, the grimble flow documents the contract"
+at = "2026-10-13T22:03:34Z"
+actor = "lognd"
+rev = 1

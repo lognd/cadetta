@@ -1,0 +1,16 @@
+{
+  "spec": "1.5",
+  "doc": "config-cli",
+  "section": "config-cli.md 3.2",
+  "rule": "init-sw-equations-bind-scope",
+  "kind": "source",
+  "entry": "init",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

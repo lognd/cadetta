@@ -9,7 +9,9 @@
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 
-use cadetta_ir::model::{Binding, Locator, LocatorKind, LocatorMode, Sign};
+use cadetta_ir::model::{
+    Binding, Implicit, Locator, LocatorKind, LocatorMode, MemberKind, Project, Sign,
+};
 use cadetta_ir::path::{Index, Path, PathContext, Seg};
 use serde::Deserialize;
 
@@ -19,6 +21,9 @@ use crate::{AdapterDiagnostic, Severity};
 pub const R005: &str = "R005";
 /// Diagnostic code for two emitted paths creating one native name (adapters.md 3.1).
 pub const R013: &str = "R013";
+/// Diagnostic code for an unbound native item, including a non-bare-reference dimension (adapters.md 3.5).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+pub const R002: &str = "R002";
 
 /// A failure loading or building bindings.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -111,6 +116,7 @@ enum RawKind {
     Dimension,
     Property,
     Frame,
+    Instance,
 }
 
 #[derive(Deserialize, Clone, Copy)]
@@ -180,9 +186,126 @@ impl BindingSet {
         &self.adapter
     }
 
-    /// All bindings, sorted by path text.
+    /// All bindings, file entries and implicit locators alike, sorted by path text.
     pub fn entries(&self) -> &[Binding] {
         &self.entries
+    }
+
+    /// The bindings a bindings file would hold: explicit locators only, never an implicit one.
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    pub fn file_entries(&self) -> Vec<Binding> {
+        self.entries
+            .iter()
+            .filter_map(|b| {
+                let locators: Vec<Locator> = b
+                    .locators
+                    .iter()
+                    .filter(|l| l.implicit.is_none())
+                    .cloned()
+                    .collect();
+                (!locators.is_empty()).then(|| Binding {
+                    path: b.path.clone(),
+                    adapter: b.adapter.clone(),
+                    locators,
+                })
+            })
+            .collect()
+    }
+
+    /// Adds discovered or scope-implied locators (adapters.md 3.5); never touches the file.
+    ///
+    /// An explicit locator of the same kind and native name replaces the implicit one (the
+    /// implicit one is dropped); a different native item adds to the path's locators.
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    pub fn add_implicit(&mut self, found: Vec<Binding>) {
+        for b in found {
+            for loc in b.locators {
+                debug_assert!(
+                    loc.implicit.is_some(),
+                    "add_implicit takes implicit locators"
+                );
+                let idx = match self.entries.iter().position(|e| e.path == b.path) {
+                    Some(i) => i,
+                    None => {
+                        self.entries.push(Binding {
+                            path: b.path.clone(),
+                            adapter: self.adapter.clone(),
+                            locators: Vec::new(),
+                        });
+                        self.entries.len() - 1
+                    }
+                };
+                let entry = &mut self.entries[idx];
+                let same = |l: &Locator| l.kind == loc.kind && l.locator == loc.locator;
+                if entry.locators.iter().any(same) {
+                    tracing::debug!(path = %b.path, locator = %loc.locator,
+                        "bindings: implicit locator already present or replaced by explicit");
+                    continue;
+                }
+                tracing::info!(path = %b.path, locator = %loc.locator, implicit = ?loc.implicit,
+                    "bindings: implicit locator added");
+                entry.locators.push(loc);
+            }
+        }
+        self.entries.sort_by_key(|b| b.path.to_string());
+    }
+
+    /// `bind = "scope"`: gives every candidate its created global as an implicit `global` locator.
+    ///
+    /// Candidates the caller has already restricted to the adapter's own scope; this skips
+    /// a `let`, a member of another package (`package`), a `Text` path when `can_text` is
+    /// false, and any path already bound to an explicit global (it creates no name, 3.1).
+    /// Two candidates creating one name are R013.
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    pub fn bind_scope(
+        &mut self,
+        candidates: &[ScopeCandidate],
+        package: &str,
+        prefix: &str,
+        can_text: bool,
+    ) -> Result<usize, BindingsError> {
+        let chosen: Vec<&ScopeCandidate> = candidates
+            .iter()
+            .filter(|c| {
+                let ok = matches!(
+                    c.kind,
+                    MemberKind::Param | MemberKind::Datum | MemberKind::Place
+                ) && c.path.package == package
+                    && (can_text || !c.text)
+                    && !self.has_explicit_global(&c.path);
+                if !ok {
+                    tracing::trace!(path = %c.path, "bindings: not scope-bound");
+                }
+                ok
+            })
+            .collect();
+        let paths: Vec<Path> = chosen.iter().map(|c| c.path.clone()).collect();
+        let names = mangle_all(&paths, prefix)?;
+        let found: Vec<Binding> = names
+            .into_iter()
+            .map(|(path, name)| Binding {
+                path,
+                adapter: self.adapter.clone(),
+                locators: vec![implicit_locator(
+                    name,
+                    LocatorKind::Global,
+                    Implicit::Global,
+                )],
+            })
+            .collect();
+        let n = found.len();
+        self.add_implicit(found);
+        tracing::info!(adapter = %self.adapter, n, "bindings: scope binding applied");
+        Ok(n)
+    }
+
+    fn has_explicit_global(&self, path: &Path) -> bool {
+        self.entries.iter().any(|b| {
+            path_matches(&b.path, path)
+                && b.locators
+                    .iter()
+                    .any(|l| l.kind == LocatorKind::Global && l.implicit.is_none())
+        })
     }
 
     /// The binding for exactly `path`, if any.
@@ -206,6 +329,7 @@ impl BindingSet {
                 config: None,
                 sign: None,
                 component: None,
+                implicit: None,
             };
             if let Some(b) = self.entries.iter_mut().find(|b| b.path == pin.path) {
                 if replaced.contains(&pin.path) {
@@ -251,6 +375,7 @@ impl BindingSet {
         let known: Vec<&Path> = known.into_iter().collect();
         self.entries
             .iter()
+            .filter(|b| b.locators.iter().any(|l| l.implicit.is_none()))
             .filter(|b| !known.iter().any(|k| path_matches(&b.path, k)))
             .map(|b| {
                 tracing::warn!(path = %b.path, "bindings: orphan binding (R005)");
@@ -326,6 +451,7 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
         RawKind::Dimension => LocatorKind::Dimension,
         RawKind::Property => LocatorKind::Property,
         RawKind::Frame => LocatorKind::Frame,
+        RawKind::Instance => LocatorKind::Instance,
     };
     let mode = match l.mode {
         Some(RawMode::Value) => LocatorMode::Value,
@@ -354,6 +480,7 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
         config: l.config,
         sign,
         component: l.component,
+        implicit: None,
     };
     crate::locator::validate(&loc).map_err(|e| BindingsError::BadLocator {
         path: key.to_owned(),
@@ -452,6 +579,293 @@ pub fn mangle_all(paths: &[Path], prefix: &str) -> Result<Vec<(Path, String)>, B
     }
     tracing::debug!(n = names.len(), "bindings: names mangled");
     Ok(uniq.into_iter().cloned().zip(names).collect())
+}
+
+/// One in-scope member offered to scope binding (`bind = "scope"`).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ScopeCandidate {
+    /// The member path.
+    pub path: Path,
+    /// The member kind (`let` is `Let`, never bound).
+    pub kind: MemberKind,
+    /// True for a `Text` value.
+    pub text: bool,
+}
+
+fn implicit_locator(name: String, kind: LocatorKind, why: Implicit) -> Locator {
+    Locator {
+        locator: name,
+        kind,
+        mode: LocatorMode::Value,
+        native_unit: String::new(),
+        ref_to: None,
+        for_alternate: None,
+        config: None,
+        sign: None,
+        component: None,
+        implicit: Some(why),
+    }
+}
+
+/// One in-scope path offered to the forward table of created names (adapters.md 3.5).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct NameSource {
+    /// The current path.
+    pub path: Path,
+    /// Its `was` paths, as canonical text.
+    pub was: Vec<String>,
+    /// The member kind (a frame only binds a datum).
+    pub kind: MemberKind,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct TableHit {
+    path: Path,
+    kind: MemberKind,
+    was: bool,
+}
+
+/// Created native name to path, including `was` names; used by discovery, never inverted.
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ForwardTable {
+    by_name: BTreeMap<String, Vec<TableHit>>,
+}
+
+impl ForwardTable {
+    /// Builds the table from in-scope paths; two paths creating one name are R013.
+    pub fn build(sources: &[NameSource], prefix: &str) -> Result<Self, BindingsError> {
+        let paths: Vec<Path> = sources.iter().map(|s| s.path.clone()).collect();
+        let mut table = Self::default();
+        for (path, name) in mangle_all(&paths, prefix)? {
+            let kind = sources
+                .iter()
+                .find(|s| s.path == path)
+                .map_or(MemberKind::Param, |s| s.kind);
+            table.by_name.entry(name).or_default().push(TableHit {
+                path,
+                kind,
+                was: false,
+            });
+        }
+        for src in sources {
+            for w in &src.was {
+                let Ok(old) = Path::parse(w, PathContext::General) else {
+                    tracing::warn!(was = %w, path = %src.path, "forward table: unparsable was path");
+                    continue;
+                };
+                let name = mangle(&old, prefix);
+                let hits = table.by_name.entry(name.clone()).or_default();
+                if hits.iter().any(|h| !h.was) {
+                    tracing::debug!(name, "forward table: was name shadowed by a current name");
+                    continue;
+                }
+                hits.push(TableHit {
+                    path: src.path.clone(),
+                    kind: src.kind,
+                    was: true,
+                });
+            }
+        }
+        tracing::debug!(names = table.by_name.len(), "forward table built");
+        Ok(table)
+    }
+
+    fn lookup(&self, name: &str) -> &[TableHit] {
+        self.by_name.get(name).map_or(&[], Vec::as_slice)
+    }
+}
+
+/// A part's placement node and the reference text instances use to name it (`bracket`, `feet[2]`).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Placement {
+    /// The part instance path relative to its assembly.
+    pub reference: String,
+    /// The placement node (`Mount/bracket.place`).
+    pub node: Path,
+}
+
+/// What discovery found: implicit bindings and the diagnostics it raised.
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Discovery {
+    /// Implicit bindings, to feed [`BindingSet::add_implicit`].
+    pub bindings: Vec<Binding>,
+    /// R002 and R013 findings.
+    pub diagnostics: Vec<AdapterDiagnostic>,
+}
+
+fn finding(code: &str, severity: Severity, message: String) -> AdapterDiagnostic {
+    tracing::warn!(code, %message, "discovery finding");
+    AdapterDiagnostic {
+        code: code.to_owned(),
+        severity,
+        message,
+    }
+}
+
+/// The global a native equation names when it is exactly one quoted reference (`"G"`).
+fn bare_reference(expr: &str) -> Option<&str> {
+    let inner = expr.trim().strip_prefix('"')?.strip_suffix('"')?;
+    (!inner.is_empty() && !inner.contains('"')).then_some(inner)
+}
+
+/// Discovers the native links of adapters.md 3.5 in an observed IR.
+///
+/// Looks native names up in `table` (never parses one back into a path); `placements`
+/// maps instance reference text to placement nodes. Pure over its inputs.
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+pub fn discover(observed: &Project, table: &ForwardTable, placements: &[Placement]) -> Discovery {
+    let mut out = Discovery::default();
+    let exprs: HashMap<&Path, &str> = observed
+        .components
+        .iter()
+        .flat_map(|c| &c.members)
+        .filter_map(|m| m.expr.as_deref().map(|e| (&m.path, e)))
+        .collect();
+    let mut add =
+        |path: &Path, loc: Locator| match out.bindings.iter_mut().find(|b| &b.path == path) {
+            Some(b) => b.locators.push(loc),
+            None => out.bindings.push(Binding {
+                path: path.clone(),
+                adapter: String::new(),
+                locators: vec![loc],
+            }),
+        };
+    let mut diagnostics = Vec::new();
+
+    // Globals: the current name binds; a was name binds only when the current name is absent.
+    let natives: Vec<&Locator> = observed.bindings.iter().flat_map(|b| &b.locators).collect();
+    let mut globals: BTreeMap<String, Path> = BTreeMap::new();
+    for l in natives.iter().filter(|l| l.kind == LocatorKind::Global) {
+        let hits = table.lookup(&l.locator);
+        let Some(first) = hits.first() else { continue };
+        if first.was {
+            if hits.len() > 1 {
+                diagnostics.push(finding(
+                    R002,
+                    Severity::Warning,
+                    format!(
+                        "native global `{}` is a was name of several paths",
+                        l.locator
+                    ),
+                ));
+                continue;
+            }
+            let current_present = natives.iter().any(|o| {
+                o.kind == LocatorKind::Global
+                    && table
+                        .lookup(&o.locator)
+                        .iter()
+                        .any(|h| !h.was && h.path == first.path)
+            });
+            if current_present {
+                diagnostics.push(finding(
+                    R002,
+                    Severity::Warning,
+                    format!(
+                        "native global `{}` is an old (was) name of `{}`, whose current name also exists",
+                        l.locator, first.path
+                    ),
+                ));
+                continue;
+            }
+        }
+        globals.insert(l.locator.clone(), first.path.clone());
+        add(
+            &first.path,
+            Locator {
+                native_unit: l.native_unit.clone(),
+                ..implicit_locator(l.locator.clone(), LocatorKind::Global, Implicit::Global)
+            },
+        );
+    }
+
+    // Dimensions: a link only when the equation is exactly a bare reference to such a global.
+    for b in &observed.bindings {
+        for l in b
+            .locators
+            .iter()
+            .filter(|l| l.kind == LocatorKind::Dimension)
+        {
+            let Some(expr) = exprs.get(&b.path) else {
+                continue;
+            };
+            match bare_reference(expr).and_then(|g| globals.get(g).map(|p| (g, p))) {
+                Some((g, path)) => add(
+                    path,
+                    Locator {
+                        mode: LocatorMode::Ref,
+                        ref_to: Some(g.to_owned()),
+                        native_unit: l.native_unit.clone(),
+                        ..implicit_locator(l.locator.clone(), LocatorKind::Dimension, Implicit::Link)
+                    },
+                ),
+                None => diagnostics.push(finding(
+                    R002,
+                    Severity::Warning,
+                    format!(
+                        "dimension `{}` is not a link: its equation is `{expr}`, not a bare reference to a bound global",
+                        l.locator
+                    ),
+                )),
+            }
+        }
+    }
+
+    // Frames named by a datum's created name.
+    for f in &observed.frames {
+        for h in table
+            .lookup(&f.name)
+            .iter()
+            .filter(|h| h.kind == MemberKind::Datum)
+        {
+            add(
+                &h.path,
+                implicit_locator(f.name.clone(), LocatorKind::Frame, Implicit::Frame),
+            );
+        }
+    }
+
+    // Instances named by reference property; two naming one part are R013.
+    let mut by_ref: BTreeMap<&str, Vec<&str>> = BTreeMap::new();
+    for i in &observed.instances {
+        if let Some(r) = i.reference.as_deref() {
+            by_ref.entry(r).or_default().push(&i.component);
+        }
+    }
+    for (r, names) in by_ref {
+        let Some(pl) = placements.iter().find(|p| p.reference == r) else {
+            continue;
+        };
+        if names.len() > 1 {
+            diagnostics.push(finding(
+                R013,
+                Severity::Error,
+                format!("instances {} all name part `{r}`", names.join(", ")),
+            ));
+            continue;
+        }
+        add(
+            &pl.node,
+            implicit_locator(
+                names[0].to_owned(),
+                LocatorKind::Instance,
+                Implicit::Reference,
+            ),
+        );
+    }
+
+    out.diagnostics = diagnostics;
+    tracing::info!(
+        bindings = out.bindings.len(),
+        diagnostics = out.diagnostics.len(),
+        "discovery done"
+    );
+    out
 }
 
 #[cfg(test)]
@@ -639,5 +1053,342 @@ locators = [
             BindingSet::load_str("sw", bad),
             Err(BindingsError::BadSign { .. })
         ));
+    }
+
+    use cadetta_ir::model::{Exact, Nominal, ObservedFrame, ObservedInstance, PackageId};
+    use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
+    use cadetta_units::{Dim, Magnitude, Rational};
+
+    fn src(path: &str, kind: MemberKind, was: &[&str]) -> NameSource {
+        NameSource {
+            path: p(path),
+            was: was.iter().map(|s| (*s).to_owned()).collect(),
+            kind,
+        }
+    }
+
+    fn native(name: &str, kind: LocatorKind, expr: Option<&str>) -> ObservedParam {
+        ObservedParam {
+            native_name: name.into(),
+            locator: Locator {
+                locator: name.into(),
+                kind,
+                mode: LocatorMode::Value,
+                native_unit: "mm".into(),
+                ref_to: None,
+                for_alternate: None,
+                config: None,
+                sign: None,
+                component: None,
+                implicit: None,
+            },
+            nominal: Nominal::Exact(Exact(Magnitude::new(Rational::new(5, 1).unwrap(), 0))),
+            dim: Dim::default(),
+            text: "5".into(),
+            expr: expr.map(str::to_owned),
+            unit_assumed: Some("mm".into()),
+            inexact_reason: None,
+        }
+    }
+
+    fn observed(params: Vec<ObservedParam>) -> Project {
+        let pkg = PackageId {
+            name: "acme.gearbox".into(),
+            version: "0.0.0".into(),
+        };
+        let mut b = ObservedBuilder::new(pkg, "sw", "a.sldprt").expect("builder");
+        for q in params {
+            b.push(q).expect("push");
+        }
+        b.build()
+    }
+
+    fn table() -> ForwardTable {
+        ForwardTable::build(
+            &[
+                src("acme.gearbox::CoverPlate.thickness", MemberKind::Param, &[]),
+                src(
+                    "acme.gearbox::CoverPlate.width",
+                    MemberKind::Param,
+                    &["acme.gearbox::CoverPlate.w"],
+                ),
+                src("acme.gearbox::CoverPlate.origin", MemberKind::Datum, &[]),
+            ],
+            "",
+        )
+        .expect("table")
+    }
+
+    fn name_of(path: &str) -> String {
+        mangle(&p(path), "")
+    }
+
+    // frob:tests discover_global_by_created_name
+    #[test]
+    fn discover_global_by_created_name() {
+        let g = name_of("acme.gearbox::CoverPlate.thickness");
+        let d = discover(
+            &observed(vec![native(&g, LocatorKind::Global, None)]),
+            &table(),
+            &[],
+        );
+        assert!(d.diagnostics.is_empty());
+        let l = &d.bindings[0].locators[0];
+        assert_eq!(d.bindings[0].path, p("acme.gearbox::CoverPlate.thickness"));
+        assert_eq!(
+            (l.kind, l.implicit),
+            (LocatorKind::Global, Some(Implicit::Global))
+        );
+    }
+
+    // frob:tests discover_global_by_was_name
+    #[test]
+    fn discover_global_by_was_name() {
+        let old = name_of("acme.gearbox::CoverPlate.w");
+        let d = discover(
+            &observed(vec![native(&old, LocatorKind::Global, None)]),
+            &table(),
+            &[],
+        );
+        assert!(d.diagnostics.is_empty());
+        assert_eq!(d.bindings[0].path, p("acme.gearbox::CoverPlate.width"));
+    }
+
+    // frob:tests discover_was_and_current_names_r002
+    #[test]
+    fn discover_was_and_current_names_r002() {
+        let old = name_of("acme.gearbox::CoverPlate.w");
+        let cur = name_of("acme.gearbox::CoverPlate.width");
+        let d = discover(
+            &observed(vec![
+                native(&old, LocatorKind::Global, None),
+                native(&cur, LocatorKind::Global, None),
+            ]),
+            &table(),
+            &[],
+        );
+        assert_eq!(d.bindings.len(), 1);
+        assert_eq!(d.bindings[0].locators[0].locator, cur);
+        assert_eq!(d.diagnostics.len(), 1);
+        assert_eq!(d.diagnostics[0].code, R002);
+    }
+
+    // frob:tests discover_dimension_link
+    #[test]
+    fn discover_dimension_link() {
+        let g = name_of("acme.gearbox::CoverPlate.thickness");
+        let d = discover(
+            &observed(vec![
+                native(&g, LocatorKind::Global, None),
+                native("D1@Boss", LocatorKind::Dimension, Some(&format!("\"{g}\""))),
+            ]),
+            &table(),
+            &[],
+        );
+        assert!(d.diagnostics.is_empty());
+        let dim = &d.bindings[0].locators[1];
+        assert_eq!(dim.kind, LocatorKind::Dimension);
+        assert_eq!(dim.mode, LocatorMode::Ref);
+        assert_eq!(dim.ref_to.as_deref(), Some(g.as_str()));
+        assert_eq!(dim.implicit, Some(Implicit::Link));
+    }
+
+    // frob:tests discover_expression_dimension_r002
+    #[test]
+    fn discover_expression_dimension_r002() {
+        let g = name_of("acme.gearbox::CoverPlate.thickness");
+        let expr = format!("\"{g}\" * 2");
+        let d = discover(
+            &observed(vec![
+                native(&g, LocatorKind::Global, None),
+                native("D1@Boss", LocatorKind::Dimension, Some(&expr)),
+            ]),
+            &table(),
+            &[],
+        );
+        assert_eq!(d.bindings[0].locators.len(), 1);
+        assert_eq!(d.diagnostics[0].code, R002);
+        assert!(d.diagnostics[0].message.contains(&expr));
+    }
+
+    // frob:tests discover_frame_by_datum_name
+    #[test]
+    fn discover_frame_by_datum_name() {
+        let f = name_of("acme.gearbox::CoverPlate.origin");
+        let mut o = observed(vec![]);
+        o.frames.push(ObservedFrame {
+            name: f.clone(),
+            document: "a".into(),
+            transform: vec![],
+        });
+        o.frames.push(ObservedFrame {
+            name: name_of("acme.gearbox::CoverPlate.thickness"),
+            document: "a".into(),
+            transform: vec![],
+        });
+        let d = discover(&o, &table(), &[]);
+        assert_eq!(d.bindings.len(), 1, "a frame binds a datum only");
+        let l = &d.bindings[0].locators[0];
+        assert_eq!(
+            (l.kind, l.implicit),
+            (LocatorKind::Frame, Some(Implicit::Frame))
+        );
+        assert_eq!(l.locator, f);
+    }
+
+    fn inst(c: &str, r: &str) -> ObservedInstance {
+        ObservedInstance {
+            component: c.into(),
+            document: "asm".into(),
+            reference: Some(r.into()),
+            transform: vec![],
+        }
+    }
+
+    fn placements() -> Vec<Placement> {
+        vec![Placement {
+            reference: "bracket".into(),
+            node: p("acme.gearbox::Mount/bracket.place"),
+        }]
+    }
+
+    // frob:tests discover_instance_reference
+    #[test]
+    fn discover_instance_reference() {
+        let mut o = observed(vec![]);
+        o.instances.push(inst("bracket<1>", "bracket"));
+        o.instances.push(inst("other<1>", "unknown"));
+        let d = discover(&o, &table(), &placements());
+        assert!(d.diagnostics.is_empty());
+        assert_eq!(d.bindings.len(), 1);
+        let l = &d.bindings[0].locators[0];
+        assert_eq!(
+            (l.kind, l.implicit),
+            (LocatorKind::Instance, Some(Implicit::Reference))
+        );
+        assert_eq!(l.locator, "bracket<1>");
+    }
+
+    // frob:tests discover_two_instances_one_part_r013
+    #[test]
+    fn discover_two_instances_one_part_r013() {
+        let mut o = observed(vec![]);
+        o.instances.push(inst("bracket<1>", "bracket"));
+        o.instances.push(inst("bracket<2>", "bracket"));
+        let d = discover(&o, &table(), &placements());
+        assert!(d.bindings.is_empty());
+        assert_eq!(d.diagnostics[0].code, R013);
+    }
+
+    fn implicit_global(path: &str) -> Binding {
+        Binding {
+            path: p(path),
+            adapter: "sw".into(),
+            locators: vec![implicit_locator(
+                "G".into(),
+                LocatorKind::Global,
+                Implicit::Global,
+            )],
+        }
+    }
+
+    // frob:tests implicit_never_in_file_never_r005
+    #[test]
+    fn implicit_never_in_file_never_r005() {
+        let mut s = BindingSet::load_str("sw", "").expect("load");
+        s.add_implicit(vec![implicit_global("acme.gearbox::Gone.x")]);
+        assert_eq!(s.entries().len(), 1);
+        assert!(s.file_entries().is_empty());
+        assert!(s.orphans(&[]).is_empty());
+    }
+
+    // frob:tests explicit_replaces_implicit_other_item_adds
+    #[test]
+    fn explicit_replaces_implicit_other_item_adds() {
+        let mut s = BindingSet::load_str("sw", FILE).expect("load");
+        let path = "acme.gearbox::CoverPlate.thickness";
+        let mut same = implicit_global(path);
+        same.locators[0].locator = "Plate_Thk".into();
+        let other = implicit_global(path);
+        s.add_implicit(vec![same, other]);
+        let locs = &s.get(&p(path)).expect("b").locators;
+        assert_eq!(locs.len(), 4);
+        assert_eq!(locs.iter().filter(|l| l.implicit.is_some()).count(), 1);
+        assert_eq!(
+            s.file_entries()
+                .iter()
+                .find(|b| b.path == p(path))
+                .unwrap()
+                .locators
+                .len(),
+            3
+        );
+    }
+
+    fn cand(path: &str, kind: MemberKind, text: bool) -> ScopeCandidate {
+        ScopeCandidate {
+            path: p(path),
+            kind,
+            text,
+        }
+    }
+
+    // frob:tests bind_scope_filters_candidates
+    #[test]
+    fn bind_scope_filters_candidates() {
+        let mut s = BindingSet::load_str("sw", FILE).expect("load");
+        let n = s
+            .bind_scope(
+                &[
+                    cand("acme.gearbox::CoverPlate.width", MemberKind::Param, false),
+                    cand("acme.gearbox::CoverPlate.origin", MemberKind::Datum, false),
+                    cand("acme.gearbox::CoverPlate.scratch", MemberKind::Let, false),
+                    cand("acme.other::Thing.size", MemberKind::Param, false),
+                    cand("acme.gearbox::CoverPlate.label", MemberKind::Param, true),
+                    cand(
+                        "acme.gearbox::CoverPlate.thickness",
+                        MemberKind::Param,
+                        false,
+                    ),
+                ],
+                "acme.gearbox",
+                "",
+                false,
+            )
+            .expect("scope");
+        assert_eq!(n, 2);
+        assert!(s.get(&p("acme.gearbox::CoverPlate.width")).is_some());
+        assert!(s.get(&p("acme.gearbox::CoverPlate.scratch")).is_none());
+        assert!(s.get(&p("acme.other::Thing.size")).is_none());
+        assert!(s.get(&p("acme.gearbox::CoverPlate.label")).is_none());
+        let t = s.get(&p("acme.gearbox::CoverPlate.thickness")).unwrap();
+        assert!(
+            t.locators.iter().all(|l| l.implicit.is_none()),
+            "explicit global kept"
+        );
+        assert!(
+            s.file_entries()
+                .iter()
+                .all(|b| b.locators.iter().all(|l| l.implicit.is_none()))
+        );
+    }
+
+    // frob:tests bind_scope_text_when_expressible
+    #[test]
+    fn bind_scope_text_when_expressible() {
+        let mut s = BindingSet::load_str("sw", "").expect("load");
+        let n = s
+            .bind_scope(
+                &[cand(
+                    "acme.gearbox::CoverPlate.label",
+                    MemberKind::Param,
+                    true,
+                )],
+                "acme.gearbox",
+                "",
+                true,
+            )
+            .expect("scope");
+        assert_eq!(n, 1);
     }
 }

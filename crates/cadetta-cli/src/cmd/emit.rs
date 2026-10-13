@@ -10,7 +10,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_adapter::bindings::{BindingSet, R013, RefTarget, mangle_all};
+use cadetta_adapter::bindings::{BindingSet, R013, RefTarget, ScopeCandidate, mangle_all};
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
@@ -27,7 +27,7 @@ use cadetta_units::{Magnitude, UnitTable};
 use serde::Serialize;
 
 use crate::cmd::ir::package_id;
-use crate::config::{Adapter, EmitPoint as ConfigPoint};
+use crate::config::{Adapter, BindMode, EmitPoint as ConfigPoint};
 use crate::output::Format;
 use crate::pipeline::analyze;
 use crate::project::{PackageDir, Project};
@@ -638,7 +638,7 @@ fn emit_package(
             continue;
         }
         let bindings_file = pkg.dir.join(adapter.bindings_path());
-        let (set, bindings_text) = match std::fs::read_to_string(&bindings_file) {
+        let (mut set, bindings_text) = match std::fs::read_to_string(&bindings_file) {
             Ok(text) => match BindingSet::load_str(adapter.id(), &text) {
                 Ok(set) => (set, text),
                 Err(e) => {
@@ -652,6 +652,35 @@ fn emit_package(
             }
         };
         let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
+        // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+        if adapter.bind == BindMode::Scope {
+            let package = pkg.config.package.as_ref().and_then(|p| p.name.as_deref());
+            let candidates: Vec<ScopeCandidate> = ir
+                .components
+                .iter()
+                .flat_map(|c| &c.members)
+                .filter(|m| !m.analysis && m.value.is_some() && scope.accepts(&m.path.to_string()))
+                .map(|m| ScopeCandidate {
+                    path: m.path.clone(),
+                    kind: m.kind,
+                    // sw-equations cannot express Text; such members carry no numeric value.
+                    text: m.value.is_none(),
+                })
+                .collect();
+            match set.bind_scope(
+                &candidates,
+                package.unwrap_or_default(),
+                &adapter.prefix,
+                false,
+            ) {
+                Ok(n) => tracing::info!(adapter = %adapter.id(), n, "emit: bind = scope applied"),
+                Err(e) => {
+                    tracing::warn!(error = %e, "emit: native name collision (R013)");
+                    report.diagnostics.push(diag(R013, e.to_string(), None));
+                    continue;
+                }
+            }
+        }
         let job = Job {
             adapter,
             set: &set,
@@ -852,6 +881,42 @@ mod tests {
             run_emit(&[], &globals, &mut out, &mut err);
             let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
             assert!(validator.is_valid(&v), "{v}");
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package
+    #[test]
+    fn bind_scope_emits_every_in_scope_path_and_writes_no_bindings() {
+        let src = "model CoverPlate {\n  thickness: Length = 6mm\n  offset: Length = 2mm\n  let twice = thickness * 2\n}\n";
+        let dir = project(src, BINDINGS, "bind = \"scope\"\n");
+        let before = std::fs::read_to_string(dir.0.join("bindings/equations.toml")).unwrap();
+        let (code, out, e) = run(&dir, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/solidworks/equations.txt")).unwrap();
+        assert!(
+            text.contains("\"Plate_Thk\" = 6mm"),
+            "explicit name kept: {text}"
+        );
+        assert!(text.contains("\"Off_X\" = -2mm"), "{text}");
+        assert!(
+            !text.contains("twice") && !text.contains("12mm"),
+            "let emitted: {text}"
+        );
+        assert_eq!(
+            std::fs::read_to_string(dir.0.join("bindings/equations.toml")).unwrap(),
+            before
+        );
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package
+    #[test]
+    fn bind_scope_creates_globals_for_unbound_paths() {
+        let dir = project(SOURCE, "", "bind = \"scope\"\n");
+        let (code, out, _) = run(&dir, &[]);
+        assert_eq!(code, EXIT_OK, "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/solidworks/equations.txt")).unwrap();
+        for v in ["6mm", "2mm", "9mm"] {
+            assert!(text.contains(v), "{v} missing: {text}");
         }
     }
 }

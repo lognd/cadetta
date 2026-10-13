@@ -1,0 +1,8 @@
+{
+  "bind": "scope",
+  "paths": [
+    "acme.demo::Plate.thickness",
+    "acme.demo::Plate.width"
+  ],
+  "emitted_globals": 2
+}

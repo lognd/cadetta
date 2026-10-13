@@ -486,6 +486,16 @@
       ],
       "type": "string"
     },
+    "Implicit": {
+      "description": "The native fact that implied a locator no bindings file lists.",
+      "enum": [
+        "global",
+        "link",
+        "frame",
+        "reference"
+      ],
+      "type": "string"
+    },
     "Inexact": {
       "additionalProperties": false,
       "description": "A float result of an inexact operation; the only float in the IR.",
@@ -588,6 +598,9 @@
         "for": {
           "type": "string"
         },
+        "implicit": {
+          "$ref": "#/$defs/Implicit"
+        },
         "kind": {
           "$ref": "#/$defs/LocatorKind"
         },
@@ -626,7 +639,8 @@
         "global",
         "dimension",
         "property",
-        "frame"
+        "frame",
+        "instance"
       ],
       "type": "string"
     },
@@ -742,6 +756,63 @@
           "$ref": "#/$defs/Inexact"
         }
       ]
+    },
+    "ObservedFrame": {
+      "additionalProperties": false,
+      "description": "A frame seen in a native document (observed flavour).",
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "transform": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/Value"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "document",
+        "name",
+        "transform"
+      ],
+      "type": "object"
+    },
+    "ObservedInstance": {
+      "additionalProperties": false,
+      "description": "A component instance seen in a native document (observed flavour).",
+      "properties": {
+        "component": {
+          "type": "string"
+        },
+        "document": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "transform": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/Value"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "component",
+        "document",
+        "transform"
+      ],
+      "type": "object"
     },
     "Op": {
       "description": "A frame operation shared by Datum and Placement.",
@@ -1330,6 +1401,18 @@
     },
     "flavour": {
       "$ref": "#/$defs/Flavour"
+    },
+    "frames": {
+      "items": {
+        "$ref": "#/$defs/ObservedFrame"
+      },
+      "type": "array"
+    },
+    "instances": {
+      "items": {
+        "$ref": "#/$defs/ObservedInstance"
+      },
+      "type": "array"
     },
     "modules": {
       "items": {

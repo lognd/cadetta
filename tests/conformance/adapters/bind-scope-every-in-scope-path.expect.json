@@ -1,0 +1,16 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.5 (scope binding)",
+  "rule": "bind-scope",
+  "kind": "binding",
+  "entry": "emit sw-equations",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

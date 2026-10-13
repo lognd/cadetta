@@ -590,6 +590,23 @@ pub enum LocatorKind {
     Property,
     /// A reference frame.
     Frame,
+    /// A placed component instance (the placement node `Assembly/part.place`).
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    Instance,
+}
+
+/// Which native fact implied a locator no bindings file lists (ir.md 3, adapters.md 3.5).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum Implicit {
+    /// A global named by an in-scope path's created name.
+    Global,
+    /// A dimension whose equation is exactly a bare reference to such a global.
+    Link,
+    /// A frame named by a datum's created name.
+    Frame,
+    /// An instance whose reference property names a part instance path.
+    Reference,
 }
 
 /// Whether a native entry holds the value or links to another (ir.md 3).
@@ -631,6 +648,35 @@ pub struct Locator {
     pub sign: Option<Sign>,
     /// The in-assembly instance (`wheel<2>`).
     pub component: Option<String>,
+    /// Set when the locator was discovered natively, not listed in a bindings file.
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    pub implicit: Option<Implicit>,
+}
+
+/// A frame seen in a native document (ir.md 3 observed `frames`).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, PartialEq)]
+pub struct ObservedFrame {
+    /// The native frame name.
+    pub name: String,
+    /// The document holding it.
+    pub document: String,
+    /// The 3x4 transform (rotation columns then translation).
+    pub transform: Vec<Vec<Value>>,
+}
+
+/// A component instance seen in a native document (ir.md 3 observed `instances`).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, PartialEq)]
+pub struct ObservedInstance {
+    /// The native instance name.
+    pub component: String,
+    /// The document holding it.
+    pub document: String,
+    /// The reference property text, when set.
+    pub reference: Option<String>,
+    /// The 3x4 transform.
+    pub transform: Vec<Vec<Value>>,
 }
 
 /// A member's native bindings for one adapter (ir.md 3 `Binding`).
@@ -689,6 +735,11 @@ pub struct Project {
     pub bindings: Vec<Binding>,
     /// Citations.
     pub citations: Vec<Citation>,
+    /// Observed frames (observed flavour only).
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    pub frames: Vec<ObservedFrame>,
+    /// Observed instances (observed flavour only).
+    pub instances: Vec<ObservedInstance>,
     /// Own digest.
     pub digest: Option<Digest>,
 }
@@ -711,6 +762,8 @@ impl Project {
             solvers: Vec::new(),
             bindings: Vec::new(),
             citations: Vec::new(),
+            frames: Vec::new(),
+            instances: Vec::new(),
             digest: None,
         }
     }
@@ -877,6 +930,7 @@ mod tests {
             config: Some("Default".into()),
             sign: Some(Sign::Minus),
             component: Some("wheel<2>".into()),
+            implicit: None,
         };
         let b = Binding {
             path: p("acme.rover::Axle.d"),
@@ -935,6 +989,7 @@ mod tests {
             config: None,
             sign: Some(Sign::Plus),
             component: None,
+            implicit: None,
         };
         assert_eq!(l.kind, LocatorKind::Frame);
         assert_eq!(l.sign, Some(Sign::Plus));

@@ -1,0 +1,13 @@
+{
+  "bind": "scope",
+  "paths": [
+    "acme.demo::Plate.thickness"
+  ],
+  "lets": [
+    "acme.demo::Plate.twice"
+  ],
+  "other_packages": [
+    "acme.other::Thing.size"
+  ],
+  "emitted_globals": 1
+}
