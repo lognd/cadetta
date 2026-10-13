@@ -1,0 +1,16 @@
+kind = "create"
+title = "Built-in SOLIDWORKS linked-equations adapter"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWH74K9QQS72Z9YMTPD72"
+persona = "design engineer"
+capability = "emit and read an equations text file for Link to external file"
+outcome_text = "SOLIDWORKS globals update without retyping"
+labels = ["creates:crates/cadetta-adapter/src/builtin/sw_equations.rs"]
+scope = ["crates/cadetta-adapter/src/builtin/sw_equations.rs"]
+acceptance = ["Given `Axle.end_diameter`, when emitted, then the file contains the global variable `Axle_end_diameter` with its value in mm", "Given an equations file, when read, then observed IR carries native names and locators"]
+at = "2026-10-13T04:03:55Z"
+actor = "lognd"
+rev = 1
