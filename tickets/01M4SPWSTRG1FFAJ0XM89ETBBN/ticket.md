@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given cadetta.toml, when parsed, then [defaults], [units], [emit], [lint], [obligations], [solvers] and [[adapter]] keys have the types and defaults of config-cli.md 2"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given [package] name, version, src and as_of, [dependencies] path and git entries with version and trust, and a [workspace] members table, when loaded, then each has the type and default of config-cli.md 2 and packages.md 1 (the old [project] namespace, sources and roots keys are rejected)"
