@@ -1,0 +1,49 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T07:01:00Z"
+digest = "e9bf619defa6077faaf08da16ba773fb91f64329482d02ff68cc9af9bf191eb5"
+exit_code = 101
+inline = """
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+error[E0599]: no variant, associated function, or constant named `Datum` found for enum `MemberKind` in the current scope
+  --> crates/cadetta-syntax/tests/geometry.rs:29:21
+   |
+29 |     let MemberKind::Datum(d) = &ms[0].kind else {
+   |                     ^^^^^ variant, associated function, or constant not found in `MemberKind`
+
+error[E0599]: no variant, associated function, or constant named `Place` found for enum `MemberKind` in the current scope
+  --> crates/cadetta-syntax/tests/geometry.rs:49:21
+   |
+49 |     let MemberKind::Place(pl) = &ms[3].kind else {
+   |                     ^^^^^ variant, associated function, or constant not found in `MemberKind`
+
+error[E0599]: no variant, associated function, or constant named `Place` found for enum `MemberKind` in the current scope
+  --> crates/cadetta-syntax/tests/geometry.rs:64:61
+   |
+64 |     assert!(ms.iter().all(|m| matches!(&m.kind, MemberKind::Place(_))));
+   |                                                             ^^^^^ variant, associated function, or constant not found in `MemberKind`
+
+error[E0599]: no variant, associated function, or constant named `Place` found for enum `MemberKind` in the current scope
+  --> crates/cadetta-syntax/tests/geometry.rs:65:21
+   |
+65 |     let MemberKind::Place(p) = &ms[1].kind else {
+   |                     ^^^^^ variant, associated function, or constant not found in `MemberKind`
+
+error[E0599]: no variant, associated function, or constant named `Datum` found for enum `InterfaceMemberKind` in the current scope
+   --> crates/cadetta-syntax/tests/geometry.rs:113:63
+    |
+113 |     assert!(matches!(&i.members[0].kind, InterfaceMemberKind::Datum(d) if d.value.is_none()));
+    |                                                               ^^^^^ variant, associated function, or constant not found in `InterfaceMemberKind`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `cadetta-syntax` (test "geometry") due to 5 previous errors
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-E 'test(=origin_is_reserved_as_a_member_name)'"
+size = 2240
+status = "measured"
+at = "2026-10-13T07:01:00Z"
+actor = "lognd"
+rev = 1

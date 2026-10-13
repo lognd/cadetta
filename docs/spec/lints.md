@@ -92,6 +92,14 @@ line as files change; that is the 0.1.0 editor integration (problem
 matchers). `cadetta lsp` (diagnostics, hover as `why`, code lens as
 `impact`) is deferred to a later release and tracked as a ticket.
 
+Short and github rendering rules: `short` is one line per diagnostic;
+a diagnostic with no location omits the `file:line:col: ` prefix, and
+native and lock locations use the same `file:1:1` and `cadetta.lock:LINE:1`
+positions as text. `github` emits `::LEVEL file=F,line=L,col=C,endLine=L,endColumn=C,title=CODE::MESSAGE`
+with level `error`, `warning`, or `notice` (info and hint); native and lock
+locations give `file` and `line` only, no location gives `title` only.
+`%`, CR and LF are escaped in the message, and also `:` and `,` in properties.
+
 Text rendering rules: the output is ASCII and carries no color codes.
 The excerpt shows the first line of the span, underlined to the span
 end (to the end of the line for a multi-line span); `alt` is the label
@@ -250,6 +258,7 @@ cannot be resolved or evaluated.
 | S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only `file` citations are drift-detected; `cadetta cite pin` vendors a URL. |
 | S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
 | S006 | solver-unsolved-variant | warning | | A variant changes a solver's inputs and no result exists for them; dependent verdicts are undecided (solvers.md 4.1). |
+| S007 | solver-input-not-quantity | error | yes | A solver `in` expression is not a quantity-valued expression, or an `out` has no kind (solvers.md 1). |
 
 ### C: checks
 

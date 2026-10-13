@@ -8,7 +8,7 @@ use std::fmt::Write as _;
 use crate::diag::{Diagnostic, Location, Severity};
 
 /// The lower-case severity word used in the header line.
-fn severity_word(s: Severity) -> &'static str {
+pub(super) fn severity_word(s: Severity) -> &'static str {
     match s {
         Severity::Error => "error",
         Severity::Warning => "warning",
@@ -18,7 +18,7 @@ fn severity_word(s: Severity) -> &'static str {
 }
 
 /// The file and 1-based line/column a location points at, if it has one.
-fn file_pos(loc: &Location) -> (&str, u32, u32) {
+pub(super) fn file_pos(loc: &Location) -> (&str, u32, u32) {
     match loc {
         Location::Source { file, start, .. } => (file, start.line, start.col),
         Location::Native { file, .. } => (file, 1, 1),

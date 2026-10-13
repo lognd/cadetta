@@ -2,3 +2,4 @@
 //! Packages and workspaces (packages.md): the manifest model first.
 
 pub mod manifest;
+pub mod resolve;

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Hook cadetta_lint::render::short::render_all and github::render_all into the --format short|github handling in output.rs (see config-cli.md and lints.md 1.2). Split from RQA2FJR, which was out of scope for output.rs."
+at = "2026-10-13T07:01:22Z"
+actor = "lognd"
+rev = 1
