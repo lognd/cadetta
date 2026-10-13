@@ -2,13 +2,13 @@
 id = "01M4SPWNYX632H3Q6WEGN0SM0R"
 title = "Lexer with single-token quantity literals"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T05:01:22Z"
+updated = "2026-10-13T06:15:03Z"
 persona = "design engineer"
 capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
 outcome_text = "units are unambiguous in source"
