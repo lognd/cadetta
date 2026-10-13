@@ -2,7 +2,8 @@
 id = "01M4V0NSCWCW8W0P7DG628M8AP"
 title = "Conformance corpus runner"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
