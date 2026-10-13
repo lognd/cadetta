@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T05:43:35Z"
+updated = "2026-10-13T05:43:37Z"
 persona = "design engineer"
 capability = "see positions in the IR"
 idempotency_key = "replan14:ir-geo"
 labels = ["creates:crates/cadetta-ir/src/geometry.rs"]
 scope = ["crates/cadetta-ir/src/geometry.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
 
 [[acceptance]]
 text = "Given a component with datums and points, when lowered, then Datum {path, parent, ops, variants?, digest, closure} and Point {path, datum, coords} are emitted (ir.md 3)"
