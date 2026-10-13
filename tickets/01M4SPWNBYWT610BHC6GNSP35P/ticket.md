@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:16:26Z"
+updated = "2026-10-13T06:16:27Z"
 persona = "design engineer"
 capability = "use every unit in the quantities.md table (m mm in ft deg N*m psi rpm ...)"
 outcome_text = "I can author values in the units my datasheets use"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `N*m*s`, when parsed, then it yields an anonymous kind of dimension M L^2 T^-1 (quantities.md 4.1 rule 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = """Given `5"` and `2'`, when resolved, then they alias in and ft (quantities.md 2)"""
