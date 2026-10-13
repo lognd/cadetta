@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:02:07Z"
-updated = "2026-10-13T09:28:31Z"
+updated = "2026-10-13T09:30:35Z"
 persona = "adapter author"
 capability = "prove an adapter meets the five contract rules"
 idempotency_key = "replan13:Adapter contract test harness"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-adapter/src/testing.rs", "crates/cadetta-adapter/src/li
 
 [[acceptance]]
 text = "Given an adapter, when emit runs twice, then the bytes are identical (adapters.md 4 rule 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a read-capable adapter, when emit then read run, then IR values compare equal (round trip) (adapters.md 4 rule 2)"
