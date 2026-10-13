@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T04:03:56Z"
+updated = "2026-10-13T04:04:05Z"
 persona = "design engineer"
 capability = "emit to configured adapters and import native files"
 outcome_text = "nobody retypes values and existing designs are adoptable"
 labels = ["creates:crates/cadetta-cli/src/cmd/{emit,import}.rs"]
 scope = ["crates/cadetta-cli/src/cmd/{emit,import}.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWTDD069AXXQBXD4T6ATZ"
 
 [[acceptance]]
 text = "Given a configured sw-equations adapter, when `cadetta emit` runs, then build/solidworks/equations.txt is written"
