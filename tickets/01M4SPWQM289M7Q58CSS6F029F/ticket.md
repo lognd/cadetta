@@ -19,6 +19,10 @@ scope = ["crates/cadetta-lint/src/engine.rs"]
 kind = "blocks"
 target = "01M4SPWQPYYT8Y5N3P5ZSG20Z9"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWQT4ZPZ7YT5W1Q41GK55"
+
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
 bound = false
