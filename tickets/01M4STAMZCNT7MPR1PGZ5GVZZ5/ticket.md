@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:13:33Z"
+updated = "2026-10-13T07:14:39Z"
 persona = "design engineer"
 capability = "exchange inputs and outputs with a solver in a defined format"
 idempotency_key = "replan13:cadetta.solve/1 request and response protocol"
 labels = ["creates:crates/cadetta-solvers/src/protocol.rs"]
-scope = ["crates/cadetta-solvers/src/protocol.rs", "crates/cadetta-solve/src/protocol.rs", "crates/cadetta-solve/src/lib.rs", "crates/cadetta-solve/Cargo.toml"]
+scope = ["crates/cadetta-solvers/src/protocol.rs", "crates/cadetta-solve/src/protocol.rs", "crates/cadetta-solve/src/lib.rs", "crates/cadetta-solve/Cargo.toml", "docs/spec/solvers.md"]
 
 [[links]]
 kind = "blocks"
