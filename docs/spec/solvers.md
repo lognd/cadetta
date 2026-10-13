@@ -154,6 +154,13 @@ from the primary: checks and requires reading them are `undecided`
 under that variant, with S006 (`solver-unsolved-variant`), and
 `impact --swap` says which solve to run.
 
+Digests are `blake3:<hex>`; the input digest is taken over the canonical
+request JSON (sorted keys, no whitespace). A stored result is fresh only
+when its input, script and every dep digest match the current ones; any
+difference makes it stale (S003) and its outputs still evaluate. A result is
+identified by (solver path, variant); storing replaces the entry with the
+same key, and the file is rewritten sorted.
+
 Solver result digests live only here: the lock file does not record
 them (obligations.md 3), so the committed `.out.json` is the single
 home of a solver's staleness evidence.

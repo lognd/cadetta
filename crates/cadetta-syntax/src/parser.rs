@@ -20,6 +20,8 @@ use crate::lexer::{Comment, CommentKind, DiagCode, Diagnostic, Punct, Span, Tok,
 mod geometry;
 #[path = "parser_items.rs"]
 mod items;
+#[path = "parser_use.rs"]
+mod use_decls;
 
 /// The deepest expression or type nesting accepted (a bound on recursion, not a language rule).
 pub const MAX_DEPTH: usize = 128;
@@ -454,19 +456,6 @@ impl Parser<'_> {
         }))))
     }
 
-    fn vis(&mut self) -> PResult<Vis> {
-        if !self.eat_kw("pub") {
-            return Ok(Vis::Private);
-        }
-        if self.is_p(Punct::LParen) && self.nth_is_kw(1, "package") {
-            self.bump();
-            self.bump();
-            self.expect_p(Punct::RParen)?;
-            return Ok(Vis::PubPackage);
-        }
-        Ok(Vis::Pub)
-    }
-
     fn cite(&mut self) -> PResult<Cite> {
         self.expect_kw("cite")?;
         let name = self.expect_ident()?;
@@ -478,112 +467,6 @@ impl Parser<'_> {
             CiteTarget::Path(self.path(false, false)?)
         };
         Ok(Cite { name, target })
-    }
-
-    // ---- use ----
-
-    fn use_decl(&mut self, vis: Vis, start: usize) -> PResult<Use> {
-        self.expect_kw("use")?;
-        let path_start = self.start();
-        let root = if self.eat_kw("package") {
-            UseRoot::Package
-        } else if self.eat_kw("self") {
-            UseRoot::SelfMod
-        } else if self.eat_kw("super") {
-            let mut n = 1;
-            while self.is_p(Punct::ColonColon) && self.nth_is_kw(1, "super") {
-                self.bump();
-                self.bump();
-                n += 1;
-            }
-            UseRoot::Super(n)
-        } else {
-            let mut parts = vec![self.expect_ident()?];
-            while self.is_p(Punct::Dot) {
-                self.bump();
-                parts.push(self.expect_ident()?);
-            }
-            UseRoot::Pkg(parts)
-        };
-        let mut segments = Vec::new();
-        let mut kind = None;
-        while self.is_p(Punct::ColonColon) {
-            self.bump();
-            match self.tok() {
-                Tok::P(Punct::Star) => {
-                    self.bump();
-                    kind = Some(UseKind::Glob);
-                    break;
-                }
-                Tok::P(Punct::LBrace) => {
-                    kind = Some(UseKind::Tree(self.use_group()?));
-                    break;
-                }
-                _ => segments.push(self.expect_ident()?),
-            }
-        }
-        let path = UsePath {
-            root,
-            segments,
-            span: self.span_from(path_start),
-        };
-        let kind = match kind {
-            Some(k) => k,
-            None => {
-                let alias = if self.eat_kw("as") {
-                    Some(self.expect_ident()?)
-                } else {
-                    None
-                };
-                UseKind::Single { alias }
-            }
-        };
-        Ok(Use {
-            vis,
-            path,
-            kind,
-            span: self.span_from(start),
-        })
-    }
-
-    fn use_group(&mut self) -> PResult<Vec<UseTree>> {
-        self.expect_p(Punct::LBrace)?;
-        self.nest += 1;
-        let mut trees = Vec::new();
-        while !self.is_p(Punct::RBrace) {
-            trees.push(self.use_tree()?);
-            if !self.eat_p(Punct::Comma) {
-                break;
-            }
-        }
-        self.expect_p(Punct::RBrace)?;
-        self.nest -= 1;
-        Ok(trees)
-    }
-
-    fn use_tree(&mut self) -> PResult<UseTree> {
-        let start = self.start();
-        let name = self.expect_ident()?;
-        let kind = if self.eat_p(Punct::ColonColon) {
-            if self.eat_p(Punct::Star) {
-                UseTreeKind::Glob
-            } else if self.is_p(Punct::LBrace) {
-                UseTreeKind::Group(self.use_group()?)
-            } else {
-                return self.err("expected `*` or `{` after `::` in a use tree");
-            }
-        } else if self.eat_kw("as") {
-            UseTreeKind::Leaf {
-                alias: Some(self.expect_ident()?),
-            }
-        } else {
-            UseTreeKind::Leaf { alias: None }
-        };
-        Ok(UseTree {
-            name,
-            kind,
-            span: self.span_from(start),
-        })
     }
 
     // ---- attributes and citations ----

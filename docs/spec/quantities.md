@@ -295,6 +295,22 @@ analysis tolerance of its expression.**
   own whose inputs are toleranced is C004 (info: "did you mean `let`?"),
   because the check then treats a computed value as exact.
 
+Decided in implementation (`cadetta-sema` eval): the nominal of an
+expression is tracked through arithmetic separately from the affine
+centre, so `cb = head_dia + 1mm` stores the sum of nominals even when
+`head_dia` is asymmetric; `.max` and the other accessors read bounds
+and the tracked nominal. A parameter is an alias only when it is a pure
+reference to a non-`let` quantity; a parameter reading a `let` stores
+that `let`'s nominal untoleranced. A bracket with a single `+v` term has
+0 on the lower side and a single `-v` term has 0 on the upper side; with
+more terms the lower and upper deviations are the least and greatest
+signed deviation. A tolerance written inside a larger expression or a
+`let` owns an anonymous source variable. Evaluation failures with no
+spec code (division by a divisor containing zero, mixed `pi` exponents,
+a construct evaluated by a later stage) carry the internal code `EVAL`.
+Parameterized components are evaluated only as instances, and inexact
+values (`sqrt`, trigonometry) are not yet represented by evaluation.
+
 ### 5.4 Evaluation is affine
 
 Each toleranced parameter of each part instance is one independent
