@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a schema change, when classified, then adding optional fields is minor and anything else bumps cadetta.ir/N (ir.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given draft 1.4, when schemas are generated, then docs/schemas also holds diag.json and the entities of ir.md 3 including Dim and Datum (ir.md 5; lints.md 1.1)"
