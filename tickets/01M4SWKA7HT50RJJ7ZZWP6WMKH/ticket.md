@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T14:05:39Z"
+updated = "2026-10-13T14:05:40Z"
 persona = "design engineer"
 capability = "get editor problems without an LSP"
 idempotency_key = "replan14:lint-watch"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an unchanged run, when watching, then nothing new is emitted twice for identical records (config-cli.md 5)"
-bound = false
+bound = true
 +++
