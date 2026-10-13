@@ -2,7 +2,8 @@
 id = "01M4SPWQM289M7Q58CSS6F029F"
 title = "Lint engine, severity gating and waiver application"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
