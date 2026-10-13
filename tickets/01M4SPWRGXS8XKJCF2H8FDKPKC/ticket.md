@@ -1,0 +1,25 @@
++++
+id = "01M4SPWRGXS8XKJCF2H8FDKPKC"
+title = "Adapter trait, capabilities and error type"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH74K9QQS72Z9YMTPD72"
+reporter = "lognd"
+created = "2026-10-13T04:03:54Z"
+updated = "2026-10-13T04:03:54Z"
+persona = "cadetta contributor"
+capability = "implement an adapter declaring emit, read and drive capabilities"
+outcome_text = "new CAD targets never touch lints"
+labels = ["creates:crates/cadetta-adapter/src/lib.rs"]
+scope = ["crates/cadetta-adapter/src/lib.rs"]
+
+[[acceptance]]
+text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
+bound = false
+
+[[acceptance]]
+text = "Given an adapter result, when failing, then it returns a Result with a diagnostic, not a panic"
+bound = false
++++
