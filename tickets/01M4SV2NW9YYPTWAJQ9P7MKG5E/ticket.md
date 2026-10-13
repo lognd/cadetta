@@ -23,6 +23,10 @@ target = "01M4STAMZCNT7MPR1PGZ5GVZZ5"
 kind = "blocked-by"
 target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
+[[links]]
+kind = "supersedes"
+target = "01M4STANJE3QCD30B9Z3G45QS8"
+
 [[acceptance]]
 text = "Given a decorated function, when .serve() reads a cadetta.solve/1 request on stdin, then it writes a valid response with the solver version on stdout (bindings.md 3.3, solvers.md)"
 bound = false
