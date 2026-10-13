@@ -8,7 +8,7 @@ points = 2
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T21:34:57Z"
-updated = "2026-10-13T21:41:53Z"
+updated = "2026-10-13T21:42:13Z"
 idempotency_key = "d15:py-models-citeref"
 scope = ["bindings/python/python/**", "bindings/python/tests/**"]
 
