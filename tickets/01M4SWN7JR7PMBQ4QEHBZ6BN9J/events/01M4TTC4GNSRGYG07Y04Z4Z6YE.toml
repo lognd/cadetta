@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T14:23:57Z"
+digest = "dd65f00ec600f2b0f6551a43f64c70d9ffa978f8eb0cfd4ac01077ced506418f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID dc7eab8b-2e4b-4153-bf06-58296b166552 with nextest profile: default
+    Starting 3 tests across 2 binaries (143 tests skipped)
+        PASS [   0.021s] cadetta cmd::swap::tests::edit_rewrites_only_the_primary_and_alt_list
+        PASS [   0.025s] cadetta cmd::swap::tests::blocked_verdict_stops_before_any_write
+        PASS [   0.083s] cadetta cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.088s] 3 tests run: 3 passed, 143 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record) | test(=cmd::swap::tests::blocked_verdict_stops_before_any_write) | test(=cmd::swap::tests::edit_rewrites_only_the_primary_and_alt_list)'"
+size = 756
+status = "measured"
+test_count = 3
+tests_digest = "e3ef7fb2f02302d4717c93087db880292e223bafefb7c81317ce301a6816bf69"
+at = "2026-10-13T14:23:57Z"
+actor = "lognd"
+rev = 1
