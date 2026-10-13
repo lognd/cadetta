@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:10:21Z"
+digest = "5c83b4196d97607b43fdbeb6dbf342dbe202544f9f9627ad750eebaf7328ad8c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 47977a82-380d-49d4-8210-6880e8f627d7 with nextest profile: default
+    Starting 1 test across 1 binary (5 tests skipped)
+        PASS [   0.012s] cadetta-obligations graph::tests::recomputed_kinds_never_stale
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 5 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E 'test(recomputed_kinds_never_stale)'"
+size = 549
+status = "measured"
+test_count = 1
+tests_digest = "d784c46cd89e83f218024b1f2ae3afc5faad885b7d37a8fa40e20aa2978ddf22"
+at = "2026-10-13T06:10:21Z"
+actor = "lognd"
+rev = 1
