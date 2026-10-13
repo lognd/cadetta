@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:56:06Z"
+digest = "e5c0cfc4fe5f07e3961c68afaf5c339f3d17f70539a055f09f3f661b699a776d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ca7e3502-ff67-4fde-b05c-f70b8a225a2e with nextest profile: default
+    Starting 11 tests across 29 binaries (998 tests skipped)
+        PASS [   0.024s] cadetta cmd::cite::tests::ieee_authors_join_and_truncate
+        PASS [   0.026s] cadetta cmd::cite::tests::ieee_book_template
+        PASS [   0.029s] cadetta cmd::cite::tests::ieee_article_template
+        PASS [   0.032s] cadetta cmd::cite::tests::ieee_other_template_with_url_and_accessed
+        PASS [   0.039s] cadetta cmd::cite::tests::ieee_separators_collapse_and_one_final_period
+        PASS [   0.039s] cadetta cmd::cite::tests::ieee_online_parts_need_a_url
+        PASS [   0.056s] cadetta cmd::cite::tests::list_numbers_by_path_order_with_dependencies_after_their_reader
+        PASS [   0.062s] cadetta cmd::cite::tests::ieee_labels_by_type
+        PASS [   0.075s] cadetta cmd::cite::tests::ieee_dates_print_at_their_precision
+        PASS [   0.075s] cadetta cmd::cite::tests::ieee_who_is_authors_else_organization
+        PASS [   0.095s] cadetta cmd::cite::tests::list_scope_limits_the_roots_but_not_what_they_read
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.101s] 11 tests run: 11 passed, 998 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cmd::cite::tests::ieee cmd::cite::tests::list_numbers cmd::cite::tests::list_scope"
+size = 1432
+status = "measured"
+test_count = 11
+tests_digest = "7d24ce16a6f63b904cf95039485069622c86414f2c47506546b852ed4b80a2e6"
+at = "2026-10-13T22:56:06Z"
+actor = "lognd"
+rev = 1

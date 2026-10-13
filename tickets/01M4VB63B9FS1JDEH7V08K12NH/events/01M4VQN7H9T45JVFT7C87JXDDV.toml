@@ -1,0 +1,33 @@
+kind = "evidence"
+captured_at = "2026-10-13T22:55:39Z"
+digest = "657e3f58d40c17fc63a8369f77d520c8a4090097285d0a27692e9be13352b13d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.72s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 681f1440-77c9-4f2f-977b-7b1645821d22 with nextest profile: default
+    Starting 10 tests across 3 binaries (169 tests skipped)
+        PASS [   0.019s] cadetta-geometry pattern::tests::structural_counts_are_whole_numbers_known_before_evaluation
+        PASS [   0.019s] cadetta-geometry pattern::tests::generator_members_bind_and_derived_coordinates_are_analysis_only
+        PASS [   0.022s] cadetta-geometry pattern::tests::tolerance_after_a_pattern_is_one_variable_per_coordinate
+        PASS [   0.026s] cadetta-geometry pattern::tests::rotation_by_a_quarter_turn_stays_exact
+        PASS [   0.029s] cadetta-geometry pattern::tests::rect_points_run_row_by_row_centred_on_the_origin
+        PASS [   0.039s] cadetta-sema eval::point::tests::rect_pattern_is_centred_rows_first
+        PASS [   0.042s] cadetta-geometry pattern::tests::circle_points_are_evenly_spaced_from_start
+        PASS [   0.045s] cadetta-sema eval::point::tests::circle_pattern_and_distance
+        PASS [   0.054s] cadetta-sema eval::point::count_tests::pattern_counts_are_structural
+        PASS [   0.055s] cadetta-geometry pattern::tests::a_toleranced_pitch_member_tolerates_the_pitch_itself
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.059s] 10 tests run: 10 passed, 169 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -p cadetta-geometry -E 'test(/pattern/)'"
+size = 1591
+status = "measured"
+test_count = 10
+tests_digest = "f6775475ff9bdf90a63d776b388fad245b78140b37ae63655c18c05993ffd6f0"
+at = "2026-10-13T22:55:39Z"
+actor = "lognd"
+rev = 1
