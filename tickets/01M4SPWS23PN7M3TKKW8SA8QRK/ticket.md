@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T09:24:18Z"
+updated = "2026-10-13T09:25:26Z"
 persona = "design engineer"
 capability = "choose nominal, mid, mmc or lmc and see Q004 for unrepresentable values"
 outcome_text = "emitters decide nothing and never round silently"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a rational not representable at declared precision, when converted, then Q004 is returned with the error"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `mmc` or `lmc` on a parameter with no role, when resolved, then an error is returned (quantities.md 5.6)"
