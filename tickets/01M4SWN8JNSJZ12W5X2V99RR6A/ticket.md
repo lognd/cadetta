@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T07:00:39Z"
+updated = "2026-10-13T07:05:06Z"
 persona = "design engineer"
 capability = "work on part of a project"
 idempotency_key = "replan14:cli-scope"
 labels = ["creates:crates/cadetta-cli/src/scope.rs"]
-scope = ["crates/cadetta-cli/src/scope.rs"]
+scope = ["crates/cadetta-cli/src/scope.rs", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
