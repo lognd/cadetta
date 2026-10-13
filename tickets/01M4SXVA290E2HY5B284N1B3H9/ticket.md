@@ -8,7 +8,7 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T06:05:26Z"
-updated = "2026-10-13T09:01:57Z"
+updated = "2026-10-13T09:02:01Z"
 persona = "design engineer"
 capability = "cite a standard with one line"
 labels = ["creates:std/src/lib.cdt"]
@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the exported items of std, when listed, then every one is pub and exactly the items stdlib.md lists are exported (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given std lib.cdt, when read, then it exports one pub cite per standard it uses at the root (std::iso273, std::iso286, std::din472 and so on) (stdlib.md intro)"
