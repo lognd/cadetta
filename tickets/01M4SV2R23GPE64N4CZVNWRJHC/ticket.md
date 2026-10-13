@@ -2,7 +2,8 @@
 id = "01M4SV2R23GPE64N4CZVNWRJHC"
 title = "Conformance fixtures for bindings"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
