@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T08:54:41Z"
+digest = "ffb4431675aed992a85f41d6c6cf58f3bf2ec97029c3d902ccf97efea8401299"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b8fb84f2-76a2-4b25-8d63-9a276eca5e9f with nextest profile: default
+    Starting 1 test across 21 binaries (541 tests skipped)
+        PASS [   0.011s] cadetta-sema lower::tests::derived_tolerance_is_an_affine_of_source_variables
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 541 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=lower::tests::derived_tolerance_is_an_affine_of_source_variables)'"
+size = 571
+status = "measured"
+test_count = 1
+tests_digest = "2290bbce76b5b6670b8e765dd7f647a353d4c0665ff98ae476f17edb0ffea00f"
+at = "2026-10-13T08:54:41Z"
+actor = "lognd"
+rev = 1

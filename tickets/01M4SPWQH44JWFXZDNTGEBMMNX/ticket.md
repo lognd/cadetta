@@ -2,13 +2,14 @@
 id = "01M4SPWQH44JWFXZDNTGEBMMNX"
 title = "Lower evaluated program to design IR"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:50:28Z"
+updated = "2026-10-13T08:54:55Z"
 persona = "cadetta contributor"
 capability = "lower sema output into design IR with provenance, deps and spans"
 outcome_text = "lints and emitters consume a single structure"
@@ -33,25 +34,25 @@ target = "01M4STCEQRY59W2Q6BGZ6YE6N5"
 
 [[acceptance]]
 text = "Given a derived parameter, when lowered, then provenance=derived and deps list its canonical paths"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the language.md example, when lowered, then fits, checks and waivers appear in the Project"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a `let`, when lowered, then the member has analysis=true and is never bound or emitted (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given a variant evaluation, when lowered, then each member stores only the values differing from the primary under "slot=alternate" (ir.md 3, language.md 3.2)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a process-compensated member, when lowered, then `designed` holds the value before compensation and `nominal` the drawn value (ir.md 3, language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a literal tolerance and a derived affine form, when lowered, then Value.tol holds an Affine of source-variable terms (ir.md 3)"
-bound = false
+bound = true
 +++
