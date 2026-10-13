@@ -394,6 +394,7 @@ come from the adapter's responses and are passed through unchanged
 | R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
 | R013 | name-collision | error | yes | Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
+| R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
 
 ### U, W
 

@@ -640,6 +640,13 @@ pub const CATALOG: &[CodeInfo] = &[
         meaning: "An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1); a `Text` parameter that is not emitted is never reported",
     },
     CodeInfo {
+        code: "R015",
+        name: "locator-unsupported",
+        default: Severity::Error,
+        fixed: true,
+        meaning: "An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = \"ref\"` binding, on a format with only `global` value rows (`json`, `csv`); a locator that is not emitted is never reported",
+    },
+    CodeInfo {
         code: "U001",
         name: "unused-parameter",
         default: Severity::Info,

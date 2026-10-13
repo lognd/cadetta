@@ -22,6 +22,14 @@ configurators). Not the IR: for the IR use `cadetta ir`. Default `out`:
   excluded from the `sync` no-op comparison (adapters.md 2).
 - `name` is the bound locator (kind `global`) or the mangled path
   (adapters.md 3.1).
+- Only `global` locators in `value` mode are emitted. A `dimension`,
+  `property` or `frame` locator, or any locator with `mode = "ref"`,
+  bound to a path this run must emit is the error R015 (naming the path
+  and the locator), the file is withheld and the exit status is 1; it is
+  never skipped silently and never emitted under its locator string.
+  "Must emit" is defined as for R014 (emitters/sw-equations.md 1): a
+  locator that is filtered out, narrowed away or on a `let` is not
+  reported. `read` is unaffected (3).
 - `value` is a decimal string, never a JSON number, so no float rounding
   occurs. It is the emit point (quantities.md 5.6) in the locator's
   `native_unit`, at the declared precision (default 6 decimals,
@@ -45,4 +53,6 @@ locators in bindings-file order.
 
 `read` parses the same shape. A missing `unit` takes the locator's
 `native_unit` (`unit_assumed`) or `--assume-unit`. `ref` mode does not
-exist for this format: every locator is `value`.
+exist for this format: every locator is `value`. Reading matches a
+parameter by `name` whatever the locator's kind, so R015 (1) is an emit
+rule only.

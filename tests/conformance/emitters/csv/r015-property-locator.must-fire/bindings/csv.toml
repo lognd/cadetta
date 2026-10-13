@@ -1,0 +1,9 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "D1@Sk@Plate.SLDPRT", kind = "property", mode = "value", native_unit = "mm" },
+]
+
+["acme.demo::Part.depth"]
+locators = [
+  { locator = "Depth", kind = "global", mode = "value", native_unit = "mm" },
+]

@@ -1,0 +1,33 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "R015",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "a dimension locator on a value-row format is the error R015 when emitted",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R015",
+        "severity": "error"
+      }
+    ],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "Depth",
+          "Width"
+        ],
+        "excludes": [
+          "D1@Sk"
+        ]
+      }
+    }
+  }
+}

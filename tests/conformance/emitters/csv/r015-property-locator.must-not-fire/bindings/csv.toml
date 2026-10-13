@@ -1,0 +1,9 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "Width", kind = "global", mode = "value", native_unit = "mm" },
+]
+
+["acme.demo::Part.depth"]
+locators = [
+  { locator = "Depth", kind = "global", mode = "value", native_unit = "mm" },
+]

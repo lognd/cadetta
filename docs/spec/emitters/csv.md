@@ -20,6 +20,14 @@ NumBolts,4,,
 - Line 2 is the fixed column row `name,value,unit,note`.
 - `name` is the bound locator (kind `global`) or the mangled path
   (adapters.md 3.1).
+- Only `global` locators in `value` mode are emitted. A `dimension`,
+  `property` or `frame` locator, or any locator with `mode = "ref"`,
+  bound to a path this run must emit is the error R015 (naming the path
+  and the locator), the file is withheld and the exit status is 1; it is
+  never skipped silently and never emitted under its locator string.
+  "Must emit" is defined as for R014 (emitters/sw-equations.md 1): a
+  locator that is filtered out, narrowed away or on a `let` is not
+  reported. `read` is unaffected (3).
 - `value` is a plain decimal, the emit point (quantities.md 5.6) in the
   locator's `native_unit`, at the declared precision (default 6
   decimals, adapters.md 5), trailing zeros trimmed; not representable

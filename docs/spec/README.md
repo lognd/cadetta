@@ -45,7 +45,7 @@ Decisions are recorded in `docs/decisions/`; architecture is modeled in
 | Duplication: one OTS dimension drives many parts | Values are referenced, never restated; derived values are expressions over their sources | D001-D003, E001-E011 |
 | Naming: "diameter" everywhere, uncanonical prefixes | Names are scoped by canonical paths (`pkg::module::Component.param`); case and form are linted; adapters map native names to canonical ones | N001-N006 |
 | Magic numbers: is 12.012mm a mistake or a fit? | Tolerances and ISO 286 fits are values, not comments; unexplained precision is flagged | M001-M003, F001-F004 |
-| Manual retyping into CAD | Adapters emit, read and drive CAD tools; drift is linted | R001-R014 |
+| Manual retyping into CAD | Adapters emit, read and drive CAD tools; drift is linted | R001-R015 |
 | Changing a part (cost, lead time, end of life, performance) | Interfaces, approved alternates verified continuously, swap previews | I, L, `impact --swap` |
 | Copying a shop policy or parts library between projects | Packages with `pub` APIs, versioned dependencies, lock-pinned digests | packages.md |
 | Hand-computing holes, tap drills and screw lengths | `std::fasteners::ScrewJoint` derives them from thread, clamp and material | stdlib.md 3 |
