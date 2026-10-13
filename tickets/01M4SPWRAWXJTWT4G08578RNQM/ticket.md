@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:54:59Z"
+updated = "2026-10-13T15:56:06Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/r.rs", "tests/conformance/lints/R*/**", 
 
 [[acceptance]]
 text = "Given an observed value differing from design at a bound path, when linted, then R001 names which side moved since last sync"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a native parameter with no binding, when linted, then R002 warning"
