@@ -8,8 +8,9 @@
 //! Specification: `docs/spec/lints.md` (S), `docs/spec/language.md` 3.
 
 // frob:ticket 01M4SPWR4SAWTESPSK2DP99M5S
+// frob:ticket 01M4VB63M63PQVRKN0HDXQP567
 
-use cadetta_ir::model::SpanRef;
+use cadetta_ir::model::{Citation, CitationType, SpanRef};
 use tracing::{debug, trace};
 
 use crate::diag::{Diagnostic, Location, Severity};
@@ -20,6 +21,12 @@ pub const CODE_S001: &str = "S001";
 /// The S002 rule code.
 pub const CODE_S002: &str = "S002";
 
+/// The S004 rule code.
+pub const CODE_S004: &str = "S004";
+
+/// The S008 rule code.
+pub const CODE_S008: &str = "S008";
+
 /// Citation facts about one `ots` value.
 #[derive(Clone, Debug)]
 pub struct OtsValueFacts {
@@ -29,6 +36,8 @@ pub struct OtsValueFacts {
     pub cited: bool,
     /// True when the owning `ots` component carries a citation.
     pub component_cited: bool,
+    /// True when the citation that applies (its own, else its component's) is an inline note.
+    pub note_only: bool,
     /// Source span of the value.
     pub span: Option<SpanRef>,
 }
@@ -86,6 +95,15 @@ pub fn check_s001(
     out
 }
 
+/// A `cite` item whose digest differs from the acknowledged one, with the values cited to it.
+#[derive(Clone, Debug)]
+pub struct CitationDrift {
+    /// Canonical path of the `cite` item.
+    pub path: String,
+    /// Canonical paths of the nodes citing it.
+    pub citing: Vec<String>,
+}
+
 /// Run S002 over `cites`: local-file citations whose path does not exist.
 pub fn check_s002(
     cites: &[CitationFacts],
@@ -113,6 +131,108 @@ pub fn check_s002(
     out
 }
 
+/// Run S004 over `drift`: acknowledged `cite` items whose digest changed since.
+pub fn check_s004(drift: &[CitationDrift]) -> Vec<Diagnostic> {
+    drift
+        .iter()
+        .map(|c| {
+            debug!(path = %c.path, citing = c.citing.len(), "S004: citation changed");
+            let mut d = Diagnostic::new(
+                CODE_S004,
+                Severity::Warning,
+                format!(
+                    "citation `{}` changed since it was acknowledged; re-read the source for: {}",
+                    c.path,
+                    c.citing.join(", ")
+                ),
+            );
+            d.path = Some(c.path.clone());
+            d
+        })
+        .collect()
+}
+
+/// Field groups a citation type needs; each group is satisfied by any one of its names.
+fn required_fields(ty: CitationType) -> &'static [&'static [&'static str]] {
+    match ty {
+        CitationType::Standard => &[&["number"], &["title"]],
+        CitationType::Datasheet => &[&["organization"], &["number"], &["rev", "date"]],
+        CitationType::Drawing => &[&["organization"], &["number"], &["rev"]],
+        CitationType::Catalog => &[&["organization"], &["title"], &["edition", "date"]],
+        CitationType::Book => &[&["title"], &["publisher"], &["edition", "date"]],
+        CitationType::Article => &[&["author"], &["title"], &["journal"], &["date"]],
+        CitationType::Web => &[&["title"], &["url"], &["accessed"]],
+        CitationType::Quote => &[&["organization"], &["number"], &["date"]],
+        CitationType::Document => &[&["title"], &["number", "date"]],
+    }
+}
+
+/// The fields `c` lacks, each rendered as `a` or `a or b` (a `url` without `file` needs `accessed`).
+pub fn missing_fields(c: &Citation) -> Vec<String> {
+    let mut missing: Vec<String> = required_fields(c.ty)
+        .iter()
+        .filter(|group| !group.iter().any(|f| c.fields.contains_key(*f)))
+        .map(|group| group.join(" or "))
+        .collect();
+    let web_accessed = c.ty == CitationType::Web;
+    if c.fields.contains_key("url")
+        && !c.fields.contains_key("file")
+        && !c.fields.contains_key("accessed")
+        && !web_accessed
+    {
+        missing.push("accessed".to_owned());
+    }
+    missing
+}
+
+/// Run S008 over `cites` (incomplete records) and `values` (an `ots` value cited only by a note).
+pub fn check_s008(
+    cites: &[Citation],
+    values: &[OtsValueFacts],
+    locate: impl Fn(&SpanRef) -> Location,
+) -> Vec<Diagnostic> {
+    let mut out = Vec::new();
+    for c in cites {
+        let missing = missing_fields(c);
+        if missing.is_empty() {
+            trace!(path = %c.path, "S008: citation complete");
+            continue;
+        }
+        debug!(path = %c.path, ?missing, "S008: citation incomplete");
+        let mut d = Diagnostic::new(
+            CODE_S008,
+            Severity::Warning,
+            format!(
+                "citation `{}` ({}) lacks {}",
+                c.path,
+                c.ty.name(),
+                missing
+                    .iter()
+                    .map(|m| format!("`{m}`"))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
+        );
+        d.path = Some(c.path.clone());
+        out.push(d);
+    }
+    for v in values.iter().filter(|v| v.note_only) {
+        debug!(path = %v.path, "S008: ots value cited only by a note");
+        let mut d = Diagnostic::new(
+            CODE_S008,
+            Severity::Warning,
+            format!(
+                "ots value `{}` is cited only by an inline note; cite a source nobody has to guess",
+                v.path
+            ),
+        );
+        d.path = Some(v.path.clone());
+        d.location = v.span.as_ref().map(&locate);
+        out.push(d);
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -122,6 +242,7 @@ mod tests {
             path: "demo::Bolt.pitch".into(),
             cited,
             component_cited,
+            note_only: false,
             span: None,
         }
     }
@@ -170,5 +291,98 @@ mod tests {
             cite(CitationKind::Literal, false),
         ];
         assert!(check_s002(&c, |_| unreachable!()).is_empty());
+    }
+
+    fn item(ty: CitationType, fields: &[(&str, &str)]) -> Citation {
+        use cadetta_ir::model::CiteField;
+        let f = fields
+            .iter()
+            .map(|(k, v)| ((*k).to_owned(), CiteField::Text((*v).to_owned())))
+            .collect();
+        Citation::new("demo::c", ty, f, None)
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s008
+    #[test]
+    fn s008_fires_per_type_missing_field() {
+        let cases = [
+            item(CitationType::Standard, &[("title", "T")]),
+            item(
+                CitationType::Datasheet,
+                &[("organization", "O"), ("number", "N")],
+            ),
+            item(
+                CitationType::Drawing,
+                &[("organization", "O"), ("number", "N")],
+            ),
+            item(
+                CitationType::Catalog,
+                &[("organization", "O"), ("title", "T")],
+            ),
+            item(CitationType::Book, &[("title", "T"), ("publisher", "P")]),
+            item(
+                CitationType::Article,
+                &[("author", "A"), ("title", "T"), ("journal", "J")],
+            ),
+            item(
+                CitationType::Web,
+                &[("title", "T"), ("url", "https://x.example")],
+            ),
+            item(
+                CitationType::Quote,
+                &[("organization", "O"), ("number", "N")],
+            ),
+            item(CitationType::Document, &[("title", "T")]),
+        ];
+        for c in &cases {
+            let d = check_s008(std::slice::from_ref(c), &[], |_| unreachable!());
+            assert_eq!(d.len(), 1, "{:?}", c.ty);
+            assert_eq!(d[0].code, "S008");
+            assert_eq!(d[0].severity, Severity::Warning);
+        }
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s008
+    #[test]
+    fn s008_url_without_file_needs_accessed_but_file_or_accessed_is_enough() {
+        let base = [("organization", "O"), ("number", "N"), ("date", "2024")];
+        let mut with_url = base.to_vec();
+        with_url.push(("url", "https://x.example/a.pdf"));
+        let c = item(CitationType::Quote, &with_url);
+        assert_eq!(missing_fields(&c), vec!["accessed".to_owned()]);
+        with_url.push(("file", "docs/a.pdf"));
+        assert!(missing_fields(&item(CitationType::Quote, &with_url)).is_empty());
+        let mut with_acc = base.to_vec();
+        with_acc.extend([("url", "https://x.example"), ("accessed", "2026-09-30")]);
+        assert!(missing_fields(&item(CitationType::Quote, &with_acc)).is_empty());
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s008
+    #[test]
+    fn s008_quiet_when_complete_and_fires_on_note_only_ots() {
+        let ok = item(
+            CitationType::Standard,
+            &[("number", "ISO 273"), ("title", "T")],
+        );
+        assert!(check_s008(&[ok], &[], |_| unreachable!()).is_empty());
+        let mut v = val(true, false);
+        assert!(check_s008(&[], std::slice::from_ref(&v), |_| unreachable!()).is_empty());
+        v.note_only = true;
+        let d = check_s008(&[], &[v], |_| unreachable!());
+        assert_eq!(d.len(), 1);
+        assert_eq!(d[0].code, "S008");
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s004
+    #[test]
+    fn s004_lists_citing_values() {
+        let d = check_s004(&[CitationDrift {
+            path: "demo::c".into(),
+            citing: vec!["demo::Bolt.pitch".into()],
+        }]);
+        assert_eq!(d.len(), 1);
+        assert_eq!(d[0].code, "S004");
+        assert!(d[0].message.contains("demo::Bolt.pitch"));
+        assert!(check_s004(&[]).is_empty());
     }
 }

@@ -413,7 +413,7 @@ pub const CATALOG: &[CodeInfo] = &[
         name: "citation-changed",
         default: Severity::Warning,
         fixed: false,
-        meaning: "A cited local file's digest differs from the acknowledged one",
+        meaning: "A citation's digest (fields or cited file) differs from the acknowledged one",
     },
     CodeInfo {
         code: "S005",
@@ -435,6 +435,14 @@ pub const CATALOG: &[CodeInfo] = &[
         default: Severity::Error,
         fixed: true,
         meaning: "A solver `in` expression is not a quantity-valued expression, or an `out` has no kind (solvers.md 1)",
+    },
+    CodeInfo {
+        // frob:ticket 01M4VB63M63PQVRKN0HDXQP567
+        code: "S008",
+        name: "citation-incomplete",
+        default: Severity::Warning,
+        fixed: false,
+        meaning: "A `cite` lacks a field its type needs, has a `url` with neither `file` nor `accessed`, or an `ots` value is cited only by an inline note",
     },
     CodeInfo {
         code: "C001",

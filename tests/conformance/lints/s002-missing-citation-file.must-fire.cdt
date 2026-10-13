@@ -1,4 +1,8 @@
-cite spec: document { file = "docs/missing.pdf" }
+cite spec: document {
+  file = "docs/missing.pdf"
+  title = "Pin sheet"
+  date = "2026-01-01"
+}
 pub ots Pin @spec {
   dia = 5mm
 }

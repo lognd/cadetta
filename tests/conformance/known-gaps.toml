@@ -258,11 +258,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "obligations/s004-citation-changed"
-ticket = "~Y0NVZAF"
-reason = "CLI obligation universe does not enumerate ots/citation obligations, so S004 never fires"
-
-[[gap]]
 fixture = "obligations/w003-waive-require"
 ticket = "~SN4G7QS"
 reason = "waive naming a require diagnostic suppresses it instead of raising W003"
