@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Format::Short and Format::Github output is produced by cadetta_lint::render::short and ::github (no duplicate renderer in output.rs)", "Waived diagnostics are omitted from short and github output"]
+moved = []
+at = "2026-10-13T07:02:31Z"
+actor = "lognd"
+rev = 1

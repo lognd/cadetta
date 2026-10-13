@@ -6,7 +6,7 @@
 //! from the source text, so authored units and literal forms survive.
 //!
 //! Files with syntax errors (including items the parser skips with E001, such as
-//! `datum`, `place`, `process`, `table`, `enum`, `fn`, `solver`, `waive`, `unit`
+//! `process`, `table`, `enum`, `fn`, `solver`, `waive`, `unit`
 //! and `kind`) cannot be formatted yet: [`FormatError::Syntax`].
 
 // frob:ticket 01M4SPWPAJ4ZGEGGVF63ZY806Z
@@ -15,11 +15,11 @@ use std::fmt;
 
 use crate::ast::{
     Arg, Attr, AttrArg, BinOp, Block, Bound, BoundKind, Check, Citation, Cite, CiteName,
-    CiteTarget, CmpOp, Component, ComponentClass, Ctor, Doc, Expr, ExprKind, File, FileEntry, Fit,
-    FitSpec, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind, KindOp, Let, Member,
-    MemberKind, Param, ParamDecl, Part, Path, Pattern, Process, ProcessMemberKind, Require, Solver,
-    SolverMemberKind, Table, TolSign, Type, TypeKind, UnOp, UnitDecl, Use, UseKind, UsePath,
-    UseRoot, UseTree, UseTreeKind, Vis,
+    CiteTarget, CmpOp, Component, ComponentClass, Ctor, Datum, Doc, Expr, ExprKind, File,
+    FileEntry, Fit, FitSpec, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind,
+    KindOp, Let, Member, MemberKind, Param, ParamDecl, Part, Path, Pattern, Place, Process,
+    ProcessMemberKind, Require, Solver, SolverMemberKind, Table, TolSign, Type, TypeKind, UnOp,
+    UnitDecl, Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
 };
 use crate::lexer::{Comment, Span};
 use crate::parser::parse;
@@ -585,6 +585,8 @@ impl Printer<'_> {
             MemberKind::Check(c) => Line::plain(self.check(c, p)),
             MemberKind::Require(r) => Line::plain(self.require(r, p)),
             MemberKind::Solver(_) => unreachable!("handled above"),
+            MemberKind::Datum(d) => Line::plain(format!("{p}{}", self.datum(d))),
+            MemberKind::Place(pl) => Line::plain(format!("{p}{}", self.place(pl))),
             MemberKind::Error => Line::plain(m.span.slice(self.src).trim().to_owned()),
         };
         self.leaf(line, m.span, &m.trailing);
@@ -734,6 +736,7 @@ impl Printer<'_> {
                 format!("{}{q}: {}", name.name, self.ty(ty))
             }
             InterfaceMemberKind::Bound(b) => self.bound(b),
+            InterfaceMemberKind::Datum(d) => self.datum(d),
             InterfaceMemberKind::Error => m.span.slice(self.src).trim().to_owned(),
         };
         self.leaf(Line::plain(text), m.span, &[]);
@@ -773,6 +776,26 @@ impl Printer<'_> {
             }
             BoundKind::Eq { lhs, rhs } => format!("{} == {}", lhs.text(), rhs.text()),
         }
+    }
+
+    fn datum(&self, d: &Datum) -> String {
+        match &d.value {
+            Some(v) => format!("datum {} = {}", d.name.name, self.expr(v)),
+            None => format!("datum {}", d.name.name),
+        }
+    }
+
+    fn place(&self, p: &Place) -> String {
+        let mut s = format!("place {} on {}", self.expr(&p.target), self.expr(&p.on));
+        if let Some(r) = &p.each {
+            s.push_str(&format!(
+                " for {} in {}..{}",
+                r.var.name,
+                self.expr(&r.lo),
+                self.expr(&r.hi)
+            ));
+        }
+        s
     }
 
     fn part(&self, p: &Part) -> String {
@@ -1209,7 +1232,7 @@ mod tests {
     #[test]
     fn syntax_errors_and_skipped_items_are_refused() {
         // frob:tests crates/cadetta-syntax/src/format.rs::format_source kind=unit
-        let skipped = "model M {\n  datum d = origin\n}\n";
+        let skipped = "model M {\n  datum d\n}\n";
         assert!(matches!(
             format_source(skipped),
             Err(FormatError::Syntax { .. })
