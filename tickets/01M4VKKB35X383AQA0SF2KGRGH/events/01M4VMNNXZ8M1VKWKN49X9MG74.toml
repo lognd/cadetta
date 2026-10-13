@@ -1,0 +1,8 @@
+kind = "field"
+field = "labels"
+old = ["creates:bindings/python/scripts/gen_models.py"]
+new = ["creates:bindings/python/scripts/gen_models.py", "creates:grimble.lock"]
+reason = "frob-v2 advice: gen --check is the hard gate, the grimble flow documents the contract"
+at = "2026-10-13T22:03:34Z"
+actor = "lognd"
+rev = 1
