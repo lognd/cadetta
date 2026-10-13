@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the host, when it speaks JSON-RPC, then open, save and close are available for drive adapters and diagnostics reuse cadetta.diag/1 (adapters.md 5)"
-bound = false
+bound = true
 +++
