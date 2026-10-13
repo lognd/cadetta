@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:45Z"
-updated = "2026-10-13T07:57:26Z"
+updated = "2026-10-13T07:57:29Z"
 persona = "library user"
 capability = "know when a pinned dependency changed"
 labels = ["creates:crates/cadetta-obligations/src/lock_package.rs"]
@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a dependency whose content digest differs from its pinned record, when checked, then E014 fires and names `cadetta update` (packages.md 1, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the same dependency content twice, when digested, then the digest is identical regardless of checkout path (packages.md 1; ir.md 4)"
