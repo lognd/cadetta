@@ -1,0 +1,68 @@
+grimble = "2";
+part of cadetta;
+
+/// ADR: IR between source and every CAD tool.
+vmodel dec_ir {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-ir-centered-adapters.md";
+  decides req_ir;
+}
+
+/// ADR: first-class exact kinded quantities.
+vmodel dec_quantities {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-quantities-first-class.md";
+  decides req_quantities;
+}
+
+/// ADR: Rust core, polyglot adapters.
+vmodel dec_rust {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-rust-implementation.md";
+  decides req_adapters;
+}
+
+/// The adapter contract and protocol (adapters.md).
+vmodel req_adapters {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/adapters.md";
+}
+
+/// Configuration and command line (config-cli.md).
+vmodel req_cli {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/config-cli.md";
+}
+
+/// The tool-agnostic IR, `cadetta.ir/1` (ir.md).
+vmodel req_ir {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/ir.md";
+}
+
+/// The `.cdt` language and its static semantics (language.md).
+vmodel req_language {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/language.md";
+}
+
+/// The lint catalog (lints.md).
+vmodel req_lints {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/lints.md";
+}
+
+/// Quantities are exact, kinded and single-token (quantities.md).
+vmodel req_quantities {
+  kind artifact;
+  level requirements;
+  ref "docs/spec/quantities.md";
+}

@@ -1,2 +1,153 @@
 grimble = "2";
-module model;
+module cadetta;
+
+include "vmodel.grmb";
+
+/// External FreeCAD adapter process, the reference read/drive adapter.
+node adapter_freecad : authenticated {
+  kind component;
+  clearance Internal;
+  owns "adapters/freecad/**";
+  may fs.read at "adapters/freecad/**";
+  may fs.write at "adapters/freecad/**";
+}
+
+/// Adapter host: built-in emitters and the JSON-RPC client for external adapters (adapters.md).
+node adapter_host : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-adapter/**";
+  may exec at "crates/cadetta-adapter/src/external/**";
+  may fs.write at "crates/cadetta-adapter/src/builtin/**";
+}
+
+/// A CAD tool session or native file set, outside our code.
+node cad_tool : foreign {
+  kind external;
+  clearance Internal;
+}
+
+/// The `cadetta` binary: config loading and verbs (config-cli.md).
+node cli : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-cli/**";
+  may fs.read at "crates/cadetta-cli/**";
+}
+
+/// ISO 286 fit tables shipped as package data (language.md 3.2).
+node fits : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-fits/**";
+  may fs.read at "crates/cadetta-fits/**";
+}
+
+/// The `cadetta.ir/1` types, JSON schema, canonical paths and digests (ir.md).
+node ir : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-ir/**";
+}
+
+/// The rule catalog: pure functions from IR to diagnostics (lints.md).
+node lint : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-lint/**";
+}
+
+/// Name resolution, kind checking and evaluation into design IR.
+node sema : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-sema/**";
+}
+
+/// Lexer, parser and formatter for `.cdt` source (language.md).
+node syntax : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-syntax/**";
+}
+
+/// Exact rational quantities, units, kinds and tolerances (quantities.md).
+node units : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-units/**";
+}
+
+flow f_ast : syntax -> sema {
+  producer "crates/cadetta-syntax/src/**";
+  consumer "crates/cadetta-sema/src/**";
+  label Internal;
+  transport in_process;
+}
+
+flow f_design_ir : sema -> ir {
+  label Internal;
+  transport in_process;
+}
+
+flow f_diagnostics : lint -> cli {
+  label Internal;
+  transport in_process;
+}
+
+flow f_drive : adapter_freecad -> cad_tool {
+  label Internal;
+  transport ffi;
+}
+
+flow f_fit_tables : fits -> sema {
+  label Internal;
+  transport in_process;
+}
+
+flow f_ir_to_adapters : ir -> adapter_host {
+  label Internal;
+  transport in_process;
+}
+
+flow f_ir_to_lint : ir -> lint {
+  label Internal;
+  transport in_process;
+}
+
+flow f_observed_ir : adapter_host -> lint {
+  label Internal;
+  transport in_process;
+}
+
+flow f_quantities : units -> sema {
+  label Internal;
+  transport in_process;
+}
+
+flow f_read : cad_tool -> adapter_freecad {
+  label Internal;
+  transport file;
+}
+
+flow f_rpc_request : adapter_host -> adapter_freecad {
+  label Internal;
+  transport ipc;
+}
+
+flow f_rpc_response : adapter_freecad -> adapter_host {
+  label Internal;
+  transport ipc;
+}
+
+/// Only adapters touch CAD tools; the kernel never links a vendor SDK.
+claim kernel_never_touches_cad {
+  noflow sema -> cad_tool;
+  proof L1;
+}
+
+/// Lints never talk to a CAD tool directly; everything goes through the IR.
+claim lint_is_tool_agnostic {
+  noflow cad_tool -> lint;
+  proof L1;
+}
