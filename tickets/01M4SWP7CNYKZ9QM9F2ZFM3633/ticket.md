@@ -2,7 +2,8 @@
 id = "01M4SWP7CNYKZ9QM9F2ZFM3633"
 title = "Conformance fixtures for geometry"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
