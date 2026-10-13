@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:07:52Z"
+digest = "02386198cb3511179e8664468f4a9d52905392a81f8164764262e2be60560821"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1485c736-86a9-4da7-8d49-74c9aadb8944 with nextest profile: default
+    Starting 1 test across 21 binaries (571 tests skipped)
+        PASS [   0.007s] cadetta cmd::why::tests::text_is_indented_chain
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 571 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=cmd::why::tests::text_is_indented_chain)'"
+size = 541
+status = "measured"
+test_count = 1
+tests_digest = "179696b1227502e420ad5d0a828e3b116de99b4983c312b814a3f9d08208317c"
+at = "2026-10-13T09:07:52Z"
+actor = "lognd"
+rev = 1

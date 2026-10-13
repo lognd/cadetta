@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T09:07:54Z"
+digest = "8d032be8bceb15f05048245f6cb0e16382799edbea5fbc9368bc3235d910542d"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6cae6690-6b82-4ce3-9257-beb8030e4664 with nextest profile: default
+    Starting 1 test across 1 binary (68 tests skipped)
+        PASS [   0.005s] cadetta-obligations pkg_closure::tests::flip_reported_and_unchanged_library_is_quiet
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 1 test run: 1 passed, 68 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E test(=pkg_closure::tests::flip_reported_and_unchanged_library_is_quiet)"
+size = 729
+status = "measured"
+test_count = 1
+tests_digest = "27b30c709146d7191920a7e8e9a086c79bd5836695cb00feb155a5bd84e354d6"
+at = "2026-10-13T09:07:54Z"
+actor = "lognd"
+rev = 1

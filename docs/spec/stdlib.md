@@ -220,7 +220,16 @@ data; user interfaces may use them too. Screw prices are not policy:
 copy: engagement factors and tap columns from `Materials`, lengths from
 `Iso4762Len`, drills from the ISO 2306 preferred series,
 `bottom_clearance = 1mm`, `tap_lead_in = 3` (pitches, a plug tap) and
-`drill_point = 0.3` (118deg), each cited to Machinery's Handbook. A project overrides it
+`drill_point = 0.3` (118deg), each cited to Machinery's Handbook. `FastenerPolicy` and `IsoDefault` live in `std/src/fasteners/policy.cdt`,
+with `TapColumn` (`Cut75 Cut65 Form`). Decisions: a table-typed member
+takes a table by name, so `IsoDefault` points `lengths` at `Iso4762Len`
+and carries `IsoEngagement` (column `factor`, repeating
+`Materials.engagement_factor`) and `IsoTapColumns` (`Soft` takes
+`Cut75`, `Hard` takes `Cut65`, both `Form` for forming) because
+`FastenerPolicy` fixes the column names; `IsoDrills` is the union of the
+`TapDrill` sizes (derived, not transcribed from ISO 2306, and flagged
+for the citation audit). The policy figures were entered from recall.
+A project overrides it
 for a whole scope without touching call sites:
 
 A shop keeps its policy in a library package, `acme.shop`, so every

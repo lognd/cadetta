@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:07:47Z"
+digest = "06760e831c16b7d85eece959aa6a6f3bfe04af9e7b9750f7540e798afc6a7dad"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.50s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e5f5a74f-1e3d-4a33-9b6b-1f921e26e09a with nextest profile: default
+    Starting 1 test across 1 binary (68 tests skipped)
+        PASS [   0.006s] cadetta-obligations pkg_closure::tests::dependency_digest_is_in_reader_closure_only
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 68 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E test(=pkg_closure::tests::dependency_digest_is_in_reader_closure_only)"
+size = 626
+status = "measured"
+test_count = 1
+tests_digest = "2fad23dba7b0d74ef1d67a0f96847ffcd693838c779ea5b5519f9de1e6eac0f7"
+at = "2026-10-13T09:07:47Z"
+actor = "lognd"
+rev = 1

@@ -334,6 +334,15 @@ W003.
 | `cadetta lock verify` / `tidy` / `merge` | Lock maintenance (3). |
 | `cadetta cite pin NAME` | Vendor a URL citation as a local file (2.3). |
 
+`why PATH` walks the IR from PATH upstream (schema `why.json`,
+`cadetta.why/1`). A member reads its `deps`, its citation (a leaf of kind
+`citation`) and, when a solver outputs it, that solver; a solver reads its
+`deps` and inputs; a check reads every member whose path occurs in its
+expression. Children are sorted by path (citation first); a node reached a
+second time is listed with `repeated = true` and not expanded again. A path
+the IR does not define is a usage error (exit 2); an undefined dependency
+(a table, say) appears as an `unresolved` leaf.
+
 `obligations --stale` prints per row: obligation id, role, last
 attester, age, nearest changed dep, and when the verdict is unchanged
 "verdict unchanged, margin 0.012mm -> 0.010mm", so re-review is cheap.
