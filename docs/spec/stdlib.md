@@ -84,6 +84,17 @@ is the nominal s (its deviation is written on the `ots`, golden 02);
 `edge_margin` is the minimum n and untoleranced. Figures were entered
 from recall and must be verified by the std citation audit.
 
+`std::fasteners` tables (`std/src/fasteners/tables.cdt`) decisions:
+`MetricThread` is declared there with the 12 coarse sizes; `Thread`
+holds `minor_ext` d3 = d - 1.22687 P and `minor_int` D1 = d - 1.08253 P
+rounded to um; `head_height` and `Iso4032.height` are the published
+maximum with the published minimum as `[+0 -x]`; `head_dia`, `socket`
+and `width_across_flats` are the nominal (maximum) value; `TapDrill`
+sizes are the nearest ISO 2306 preferred drills. As with retaining
+rings, figures were entered from recall (least certain: counterbores for
+M1.6 to M2.5, `cut_65` and `form` drills, nut height minima) and the
+std citation audit must verify them.
+
 Values are stated as the standard publishes them. A dimension published
 as a limit is stored with that tolerance (`head_height` is
 `[+0 -x]` from its maximum; `Din472.groove_dia` and `groove_width`

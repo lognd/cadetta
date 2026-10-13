@@ -2,18 +2,19 @@
 id = "01M4SV2P8R37D8SQA4G3AQ8XV1"
 title = "Optional cadetta[pint] interop (Quantity.to_pint)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:03Z"
-updated = "2026-10-13T07:44:46Z"
+updated = "2026-10-13T07:46:02Z"
 persona = "Python user"
 capability = "convert Quantities to pint"
 outcome_text = "I can use numpy and pint workflows"
 labels = ["creates:bindings/python/python/cadetta/pint_interop.py", "creates:bindings/python/tests/test_pint.py"]
-scope = ["bindings/python/python/cadetta/pint_interop.py", "bindings/python/tests/test_pint.py"]
+scope = ["bindings/python/python/cadetta/pint_interop.py", "bindings/python/tests/test_pint.py", "bindings/python/pyproject.toml", "bindings/python/uv.lock", "docs/spec/bindings.md"]
 
 [[links]]
 kind = "blocked-by"
