@@ -1,0 +1,13 @@
++++
+id = "01M4TA3C87N60Y711163RK3GPH"
+title = "Adapter read/drift lints (R rules) not implemented"
+type = "bug"
+category = "todo"
+priority = "medium"
+reporter = "lognd"
+created = "2026-10-13T09:39:34Z"
+updated = "2026-10-13T09:39:34Z"
+scope = ["crates/cadetta-adapter"]
++++
+
+found while working ~E631Y52. check drift is an injectable hook, default no-op.
