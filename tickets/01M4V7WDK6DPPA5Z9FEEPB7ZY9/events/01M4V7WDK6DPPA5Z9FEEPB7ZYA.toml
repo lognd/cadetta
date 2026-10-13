@@ -1,0 +1,10 @@
+kind = "create"
+title = "json/csv: --assume-unit precedence, whole-number rendering, O004 open obligation without drive"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "found while working ~A4RA9PQ. See json.md 4, csv.md 4, adapters.md 2."
+at = "2026-10-13T18:20:03Z"
+actor = "lognd"
+rev = 1
