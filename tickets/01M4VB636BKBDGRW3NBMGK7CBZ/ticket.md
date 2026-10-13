@@ -8,12 +8,12 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:36:20Z"
+updated = "2026-10-13T22:38:11Z"
 persona = "design engineer"
 capability = "place parts with a verb that does not suggest contact and place arrays without index plumbing"
 outcome_text = "placements read the way parts sit"
 idempotency_key = "d15:place-at"
-scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/point.rs", "crates/cadetta-geometry/src/**", "crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/geometry.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/golden/**", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/**", "crates/cadetta-syntax/tests/**"]
+scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/point.rs", "crates/cadetta-geometry/src/**", "crates/cadetta-ir/src/path.rs", "crates/cadetta-ir/src/geometry.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/golden/**", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/**", "crates/cadetta-syntax/tests/**", "README.md", "bindings/python/python/cadetta/models/ir.py"]
 
 [[links]]
 kind = "blocked-by"
