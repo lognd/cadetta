@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T12:53:53Z"
+updated = "2026-10-13T12:53:54Z"
 persona = "design engineer"
 capability = "get lints for the Q family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `5 mm`, when linted, then Q007 is reported with a fix-it and cannot be waived (lints.md Q)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given codes Q001-Q003, Q007, Q009, Q010 and Q011, when severity is overridden, then the override is ignored because they are fixed (lints.md 1, Q)"
