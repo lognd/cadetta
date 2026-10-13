@@ -2,18 +2,18 @@
 id = "01M4SPWQH44JWFXZDNTGEBMMNX"
 title = "Lower evaluated program to design IR"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:05:27Z"
+updated = "2026-10-13T08:50:28Z"
 persona = "cadetta contributor"
 capability = "lower sema output into design IR with provenance, deps and spans"
 outcome_text = "lints and emitters consume a single structure"
-labels = ["creates:crates/cadetta-ir/src/lower.rs"]
-scope = ["crates/cadetta-ir/src/lower.rs"]
+labels = ["creates:crates/cadetta-ir/src/lower.rs", "creates:crates/cadetta-sema/src/lower.rs"]
+scope = ["crates/cadetta-ir/src/lower.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/ir.md", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/eval.rs"]
 
 [[links]]
 kind = "blocks"

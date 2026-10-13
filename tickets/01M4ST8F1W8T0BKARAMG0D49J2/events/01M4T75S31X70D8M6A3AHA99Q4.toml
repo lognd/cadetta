@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:48:20Z"
+digest = "3a749a896e46d0f62afe5acfefa8afaa5e38a1f4534f95fc2783d36c7ead1ff4"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.79s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID da72c321-a4b5-47a6-a1d7-3e7b7122ac9c with nextest profile: default
+    Starting 1 test across 20 binaries (514 tests skipped)
+        PASS [   0.008s] cadetta cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 514 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing)"
+size = 636
+status = "measured"
+test_count = 1
+tests_digest = "ec9264e6f5814c8f650adcdd3e8f3d9a70b439707a87e013692af010d50f77dc"
+at = "2026-10-13T08:48:20Z"
+actor = "lognd"
+rev = 1
