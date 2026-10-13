@@ -1,0 +1,32 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:30:33Z"
+digest = "03ef18a27ddd75ec11702c3e9f939a246e4af80ad9b2760bea779b4e04afc9c5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f9d0c6a9-1180-4464-848d-b5c52b76d007 with nextest profile: default
+    Starting 2 tests across 1 binary (96 tests skipped)
+        PASS [   0.006s] cadetta-sema parts::tests::count_of_four_is_a_count_and_bad_sizes_are_rejected
+        PASS [   0.006s] cadetta-sema parts::tests::indexed_read_is_an_instance_and_out_of_range_errors
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 2 tests run: 2 passed, 96 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=parts::tests::count_of_four_is_a_count_and_bad_sizes_are_rejected) | test(=parts::tests::indexed_read_is_an_instance_and_out_of_range_errors)'"
+size = 1141
+status = "measured"
+test_count = 2
+tests_digest = "9e43cbd431a9ea90c6e1cf2c6f1cec7e5a9e19a875e0836a62db88f5f6b8a7f5"
+at = "2026-10-13T08:30:33Z"
+actor = "lognd"
+rev = 1

@@ -452,6 +452,22 @@ nominal that is not a whole number of nanometres has no table row (F002).
   A name suggests a feature when a `_`-separated word is one of `hole
   bore boss pin slot post pocket shaft stud standoff peg cutout rib`.
 
+Arrays and points (decisions, cadetta-sema `array.rs`, `point.rs`): an
+array literal holds elements of one kind (one dimension, one point
+arity, one enum) or it is an error; a declared `[T; N]` checks the
+length against N (a whole number) and a `Point2`/`Point3` element type
+checks the arity. Until datum typing lands (geometry epic) points and
+vectors share one value: `Point2(x, y)`, `Vec2(x, y)` and the 3D forms
+take Length components, `p + q`, `p - q` and `p * s` (or `p / s`, `s *
+p`; `s` dimensionless) each give a point, `.x .y .z` read a component,
+and an array combined with a point (either order, `+ -`) applies the
+point to every element. Array with array is an error. Pattern points
+are exact when the angle is a special one (`circle_pattern(4, 10mm,
+0deg)`) and carry an inexact interval otherwise (Q006); `distance` is
+exact when the sum of squares is a perfect square. A component that
+carries a tolerance keeps it, so `rect_pattern(2, 2, 30mm [+-0.05mm],
+40mm)` shifts the points with the pitch.
+
 Evaluation of these (decisions): function bodies and `let` values are
 analysis values, evaluated over the full tolerance of their operands;
 only a parameter stores a design tolerance, and a pure reference is an

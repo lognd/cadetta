@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:34:06Z"
+digest = "fa45f61cc5ef8627518b6fb836bd67fc67e95ccd544dcb0ab4c91328b4bd1363"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID deb246b5-d5ba-47c4-b4bb-d797ccca0a00 with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.011s] cadetta-sema affine::tests::each_instance_parameter_is_independent
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::each_instance_parameter_is_independent)'"
+size = 975
+status = "measured"
+test_count = 1
+tests_digest = "8adeafce8a211c804967f054a7ae92f683dd48609807fdefef997b86c03ec80e"
+at = "2026-10-13T08:34:06Z"
+actor = "lognd"
+rev = 1

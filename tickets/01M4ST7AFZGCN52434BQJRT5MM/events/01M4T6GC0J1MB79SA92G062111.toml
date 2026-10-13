@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:35:41Z"
+digest = "beea0f2660b918870055e4bd798606795bc4325eac4970e8d8c7ca48de2dd755"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 01s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 424e0a70-87da-4004-9518-1e002744cda1 with nextest profile: default
+    Starting 1 test across 20 binaries (489 tests skipped)
+        PASS [   0.037s] cadetta-sema eval::point::tests::fixed_arrays_hold_n_elements_of_one_kind
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.086s] 1 test run: 1 passed, 489 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=eval::point::tests::fixed_arrays_hold_n_elements_of_one_kind)"
+size = 892
+status = "measured"
+test_count = 1
+tests_digest = "a0378d2785066755e8d684acbddd1de17f72e7fc9304b4a8bb64cba17de37fdd"
+at = "2026-10-13T08:35:41Z"
+actor = "lognd"
+rev = 1

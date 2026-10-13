@@ -87,6 +87,14 @@ plane and z is its normal.
   5.1) and makes every coordinate carried through it conservative
   (quantities.md 5.4); the exactness rule applies to the untoleranced
   nominal only.
+  Decided in the transform: only whole multiples of 90deg are exact, so
+  60deg or 30deg are inexact although their sine is rational; an
+  untoleranced inexact angle roots Q006 at sin or cos; a toleranced
+  angle's entries are conservative intervals and carry a Q006 root only
+  when the nominal is not a multiple of 90deg. Offsets stay exact affine
+  forms (a tolerance is a source variable through exact rotations), and a
+  coordinate carried through an inexact or toleranced rotation becomes an
+  inexact interval.
 - A datum is built only from `origin` or a datum declared earlier in the
   same component, so datum chains cannot cycle. The first operation of a
   kind in a chain has the path `Rail.site.offset.x`; the n-th (n > 0)

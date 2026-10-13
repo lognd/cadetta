@@ -2,6 +2,7 @@
 //!
 //! Specification: `docs/spec/language.md`.
 
+pub mod affine;
 pub mod attrs;
 pub mod cite;
 pub mod deps;

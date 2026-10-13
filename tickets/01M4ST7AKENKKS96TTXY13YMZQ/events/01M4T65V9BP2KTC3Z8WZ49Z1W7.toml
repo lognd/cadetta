@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T08:30:45Z"
+digest = "a1e4275498b9bfd9d616de03a61788ce6011c2acf1ce456e81361e74114e64b5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.31s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 03ec673d-51d0-497e-972c-13ed4bd55426 with nextest profile: default
+    Starting 2 tests across 1 binary (96 tests skipped)
+        PASS [   0.008s] cadetta-sema parts::tests::named_override_and_argument_errors
+        PASS [   0.008s] cadetta-sema parts::tests::defaults_apply_and_bare_enum_variants_bind_positionally
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 2 tests run: 2 passed, 96 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=parts::tests::defaults_apply_and_bare_enum_variants_bind_positionally) | test(=parts::tests::named_override_and_argument_errors)'"
+size = 715
+status = "measured"
+test_count = 2
+tests_digest = "f5e517b0db624f1d851801b789fa7db9887a4408f362d301c80b9adab996ef58"
+at = "2026-10-13T08:30:45Z"
+actor = "lognd"
+rev = 1
