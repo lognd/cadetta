@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:05:21Z"
+updated = "2026-10-13T05:05:22Z"
 persona = "design engineer"
 capability = "import std modules like any other package"
 idempotency_key = "replan13:std packaging as ordinary .cdt"
@@ -26,6 +26,10 @@ target = "01M4STAP0CCQTR0MM7TAMWC9E8"
 [[links]]
 kind = "blocks"
 target = "01M4STAP388RZR0PTDBKBV6JM5"
+
+[[links]]
+kind = "blocks"
+target = "01M4STAPK7FN8DM11MV7GWXE3Z"
 
 [[acceptance]]
 text = "Given `use std.fits`, when resolved, then std is found as an ordinary package with no special-casing (stdlib.md 1)"
