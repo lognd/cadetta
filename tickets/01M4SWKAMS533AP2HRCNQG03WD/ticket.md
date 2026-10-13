@@ -19,6 +19,10 @@ scope = ["crates/cadetta-lint/src/rules/o004_w005.rs", "tests/lints/O004/**", "t
 kind = "blocked-by"
 target = "01M4SPWQM289M7Q58CSS6F029F"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4STCCZ58C875BTMQ9E54BMT"
+
 [[acceptance]]
 text = "Given a stale sync obligation, when linted, then O004 is info by default and gated by [obligations.kinds.sync] required_for (lints.md 3 O; obligations.md 2.3)"
 bound = false
