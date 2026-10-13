@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T07:18:29Z"
+updated = "2026-10-13T07:18:57Z"
 persona = "design engineer"
 capability = "address any node by path"
 idempotency_key = "replan14:ir-paths"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given [*], when it appears outside bindings, then it is rejected; in bindings it is accepted (ir.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given datum paths Type.<datum>.offset.x and .rotate.x and generator members holes.pitch_x, when parsed, then they resolve to Members (ir.md 2)"
