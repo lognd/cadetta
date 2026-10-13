@@ -19,6 +19,10 @@ scope = ["crates/cadetta-adapter/src/classify.rs"]
 kind = "blocked-by"
 target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4ST8EPKBWRWHF51Y5NV3VK0"
+
 [[acceptance]]
 text = "Given base (lock), design and CAD values, when classified, then each of push, skip, converged, drift (R001) and conflict follows the adapters.md 2 table row for row"
 bound = false
