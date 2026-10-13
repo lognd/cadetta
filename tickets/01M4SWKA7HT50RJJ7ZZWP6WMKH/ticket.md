@@ -2,7 +2,8 @@
 id = "01M4SWKA7HT50RJJ7ZZWP6WMKH"
 title = "check --watch with newline-delimited cadetta.diag/1"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
