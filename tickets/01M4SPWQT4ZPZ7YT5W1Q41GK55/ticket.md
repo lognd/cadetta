@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:01:35Z"
+updated = "2026-10-13T13:01:40Z"
 persona = "design engineer"
 capability = "get lints for the N family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `diameter_mm`, when linted, then N003 is reported"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given component `my_axle`, when linted, then N001 is reported"
