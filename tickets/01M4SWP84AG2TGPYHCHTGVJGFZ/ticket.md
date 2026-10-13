@@ -17,6 +17,10 @@ scope = ["crates/cadetta-sema/src/defaults.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWSTRG1FFAJ0XM89ETBBN"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4STAP93AYTZDJYWCCAS1TRH"
 
 [[acceptance]]
