@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:40:53Z"
-updated = "2026-10-13T18:19:28Z"
+updated = "2026-10-13T20:26:01Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/lints.md", "docs/spec/adapters.md", "docs/spec/config-cli.md", "docs/spec/README.md", "crates/cadetta-lint/src/engine.rs", "tests/conformance/emitters/csv/**", "tests/conformance/emitters/json/**"]
 
 [[acceptance]]
