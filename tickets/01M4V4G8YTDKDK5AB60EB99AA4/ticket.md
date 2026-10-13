@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gap
 
 [[acceptance]]
 text = "run_corpus discovers fixtures in nested doc directories such as emitters/sw-equations and runs their check entries"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "tests/conformance/known-gaps.toml lists every newly discovered check fixture that fails, each with a ticket"
