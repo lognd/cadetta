@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given solve, emit, sync, import_ and ack, when called, then each returns Result[Model, CadettaError] with the verb's JSON schema model (bindings.md 3.2)", "Given init, cite pin and lock verbs, when looked up, then they are CLI-only (bindings.md 3.2)"]
+new = ["Given solve, emit, sync, import_ and ack, when called, then each returns Result[Model, CadettaError] with the verb's JSON schema model (bindings.md 3.2)", "Given init, cite pin and lock verbs, when looked up, then they are CLI-only (bindings.md 3.2)", "Given project.update(name=None), when called, then it runs `update [NAME]` and returns the update.json model as a Result (bindings.md 3.2)"]
+moved = [1, 2]
+at = "2026-10-13T06:04:47Z"
+actor = "lognd"
+rev = 1

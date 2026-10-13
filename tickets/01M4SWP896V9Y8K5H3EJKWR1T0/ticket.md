@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:14Z"
+updated = "2026-10-13T06:04:47Z"
 persona = "design engineer"
 capability = "script the whole workflow"
 idempotency_key = "replan14:py-mut"
@@ -29,5 +29,9 @@ bound = false
 
 [[acceptance]]
 text = "Given init, cite pin and lock verbs, when looked up, then they are CLI-only (bindings.md 3.2)"
+bound = false
+
+[[acceptance]]
+text = "Given project.update(name=None), when called, then it runs `update [NAME]` and returns the update.json model as a Result (bindings.md 3.2)"
 bound = false
 +++
