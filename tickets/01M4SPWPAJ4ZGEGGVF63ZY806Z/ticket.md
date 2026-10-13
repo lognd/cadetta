@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:43:14Z"
+updated = "2026-10-13T06:45:19Z"
 persona = "design engineer"
 capability = "run a formatter that produces one canonical layout"
 outcome_text = "layout never causes review noise or IR changes"
 labels = ["creates:crates/cadetta-syntax/src/format.rs"]
-scope = ["crates/cadetta-syntax/src/format.rs"]
+scope = ["crates/cadetta-syntax/src/format.rs", "crates/cadetta-syntax/src/lib.rs", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
