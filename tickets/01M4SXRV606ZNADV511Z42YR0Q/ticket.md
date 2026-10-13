@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T08:18:44Z"
+updated = "2026-10-13T08:18:45Z"
 persona = "product engineer"
 capability = "import shop policy and parts by name"
 labels = ["creates:crates/cadetta-sema/src/imports.rs"]
@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `pub use self::fasteners::{ScrewJoint, MetricThread}` in lib.cdt, when a dependent writes acme.shop::ScrewJoint, then it resolves to the definition and its canonical path is still the definition path (packages.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fully qualified path with no use, when resolved, then it is legal anywhere (packages.md 4)"
