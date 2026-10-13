@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T13:36:54Z"
+updated = "2026-10-13T13:37:34Z"
 persona = "design engineer"
 capability = "script against stable JSON"
 idempotency_key = "replan14:cli-schemas"
 labels = ["creates:docs/schemas/*.json"]
-scope = ["docs/schemas/*.json", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/obligations.rs"]
+scope = ["docs/schemas/*.json", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/cmd/impact_swap.rs"]
 
 [[links]]
 kind = "blocked-by"
