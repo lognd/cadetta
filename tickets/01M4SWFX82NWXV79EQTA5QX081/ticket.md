@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T09:28:43Z"
+updated = "2026-10-13T09:28:44Z"
 persona = "design engineer"
 capability = "keep positions in their datum"
 idempotency_key = "replan14:geo-points"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given arithmetic across datums or array + point, when evaluated, then G001 is raised and nothing converts silently (geometry.md 3, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given each hand-listed coordinate, when lowered, then it is a Member with a canonical path such as Bracket.holes[1].x (geometry.md 3)"
