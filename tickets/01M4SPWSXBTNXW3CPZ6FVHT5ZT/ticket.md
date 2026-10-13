@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given stdout is not a terminal, when run, then json is the default format"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --format text|short|github|sarif|json or CADETTA_FORMAT, --cwd and --config, when run, then they behave as config-cli.md 4, 5; text is always the default"
