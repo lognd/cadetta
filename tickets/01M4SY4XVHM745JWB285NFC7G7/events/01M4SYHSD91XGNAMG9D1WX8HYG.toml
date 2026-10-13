@@ -1,0 +1,41 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:17:41Z"
+digest = "899fd37deefbb8ac420a9005a0527a075b2bf9e4000962571d1c1480c633967c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.90s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f7d5a8e6-b831-4b91-a5e4-31b00fecc165 with nextest profile: default
+    Starting 17 tests across 3 binaries (2 tests skipped)
+        PASS [   0.009s] cadetta-log init::tests::second_init_is_an_error_not_a_panic
+        PASS [   0.009s] cadetta-log init::tests::valid_spec_is_honoured
+        PASS [   0.009s] cadetta-log init::tests::empty_spec_uses_default
+        PASS [   0.011s] cadetta-log init::tests::verbosity_maps_to_levels
+        PASS [   0.014s] cadetta tests::verbosity_flags_are_split_off
+        PASS [   0.015s] cadetta-log init::tests::invalid_spec_is_an_error
+        PASS [   0.016s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.009s] cadetta-log testing::tests::filter_limits_events_to_matching_target_and_level
+        PASS [   0.020s] cadetta-log init::tests::invalid_spec_never_installs_or_panics
+        PASS [   0.005s] cadetta-log testing::tests::plain_level_filter_admits_everything_at_or_above
+        PASS [   0.030s] cadetta-log redact::tests::bearer_token
+        PASS [   0.025s] cadetta-log redact::tests::transcript_with_github_and_aws_masks_only_secrets
+        PASS [   0.034s] cadetta-log redact::tests::aws_key
+        PASS [   0.035s] cadetta-log redact::tests::key_value_pairs
+        PASS [   0.027s] cadetta-log redact::tests::ordinary_text_is_unchanged_and_borrowed
+        PASS [   0.026s] cadetta-log redact::tests::url_userinfo_keeps_scheme_and_host
+        PASS [   0.036s] cadetta-log redact::tests::github_tokens
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.037s] 17 tests run: 17 passed, 2 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-log -E '(package(=cadetta) & (test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::verbosity_flags_are_split_off))) | (package(=cadetta-log) & (test(=init::tests::empty_spec_uses_default) | test(=init::tests::invalid_spec_is_an_error) | test(=init::tests::invalid_spec_never_installs_or_panics) | test(=init::tests::second_init_is_an_error_not_a_panic) | test(=init::tests::valid_spec_is_honoured) | test(=init::tests::verbosity_maps_to_levels) | test(=redact::tests::aws_key) | test(=redact::tests::bearer_token) | test(=redact::tests::github_tokens) | test(=redact::tests::key_value_pairs) | test(=redact::tests::ordinary_text_is_unchanged_and_borrowed) | test(=redact::tests::transcript_with_github_and_aws_masks_only_secrets) | test(=redact::tests::url_userinfo_keeps_scheme_and_host) | test(=testing::tests::filter_limits_events_to_matching_target_and_level) | test(=testing::tests::plain_level_filter_admits_everything_at_or_above)))'"
+size = 1958
+status = "measured"
+test_count = 17
+tests_digest = "aede104c490cfd3ac5d3485195145ef56ef04d5a7b178c2a76b672be8db4331c"
+at = "2026-10-13T06:17:41Z"
+actor = "lognd"
+rev = 1

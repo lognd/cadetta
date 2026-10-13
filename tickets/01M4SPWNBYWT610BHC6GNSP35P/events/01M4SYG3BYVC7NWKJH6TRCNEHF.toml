@@ -1,0 +1,8 @@
+kind = "land"
+base_ref = "refs/heads/main"
+commit = "969a3a3e032cb2db236b4e8b426af6e9bcd2f4f4"
+branch = "ticket/GNSP35P"
+pushed = false
+at = "2026-10-13T06:16:42Z"
+actor = "lognd"
+rev = 1

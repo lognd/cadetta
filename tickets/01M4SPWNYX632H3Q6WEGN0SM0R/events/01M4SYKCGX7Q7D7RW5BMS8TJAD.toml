@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:18:35Z"
+digest = "aaa597d5669c91e16523b4ab4169a57382dd5c409de6bb9d545eeb31a97a322f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 66215a57-0633-4374-b5b5-47e813d2cdc0 with nextest profile: default
+    Starting 1 test across 1 binary (8 tests skipped)
+        PASS [   0.004s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 8 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=lexer::tests::leading_and_trailing_dot_are_lex_errors)'"
+size = 555
+status = "measured"
+test_count = 1
+tests_digest = "53b60d654871cff39615875d70f3887efa4e1b9e0ad107f19f971ff759b516dd"
+at = "2026-10-13T06:18:35Z"
+actor = "lognd"
+rev = 1

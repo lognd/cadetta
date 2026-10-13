@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax/src/lexer.rs"]
+new = ["crates/cadetta-syntax/src/lexer.rs", "crates/cadetta-syntax/src/lib.rs"]
+at = "2026-10-13T06:18:00Z"
+actor = "lognd"
+rev = 1

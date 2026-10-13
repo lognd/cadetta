@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-13T06:17:47Z"
+digest = "cde4152f1195cfef057c0cddca98cb6b740e008d6110f7ddbeac2de6482bb63a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5de5219e-3c78-4cea-9caf-b4d8f8cb313e with nextest profile: default
+    Starting 7 tests across 3 binaries (12 tests skipped)
+        PASS [   0.005s] cadetta-log init::tests::invalid_spec_never_installs_or_panics
+        PASS [   0.005s] cadetta-log init::tests::invalid_spec_is_an_error
+        PASS [   0.005s] cadetta-log init::tests::verbosity_maps_to_levels
+        PASS [   0.005s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.007s] cadetta-log init::tests::second_init_is_an_error_not_a_panic
+        PASS [   0.007s] cadetta-log init::tests::valid_spec_is_honoured
+        PASS [   0.008s] cadetta tests::verbosity_flags_are_split_off
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 7 tests run: 7 passed, 12 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-log -p cadetta -E 'test(invalid_spec) | test(valid_spec) | test(verbosity) | test(second_init) | test(run_with_logging)'"
+size = 1014
+status = "measured"
+test_count = 7
+tests_digest = "2a002314bd7e426919ed211ee4e96e7bca70123fa10a9cc37b96a6146a12fc65"
+at = "2026-10-13T06:17:47Z"
+actor = "lognd"
+rev = 1

@@ -8,7 +8,11 @@ use pyo3::prelude::*;
 #[pyfunction]
 fn run_cli(argv: Vec<String>) -> u8 {
     tracing::debug!(?argv, "run_cli from Python");
-    cadetta::run(&argv, &mut std::io::stdout().lock())
+    cadetta::run_with_logging(
+        &argv,
+        &mut std::io::stdout().lock(),
+        &mut std::io::stderr().lock(),
+    )
 }
 
 /// The version of the Rust core, e.g. `cadetta 0.1.0`.
