@@ -357,6 +357,23 @@ mod tests {
         assert!(matches!(err, ManifestError::RegistryUnsupported { .. }));
     }
 
+    // frob:ticket 01M4STANV9T55FV8529E2RPFB1
+    // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::PackageManifest
+    #[test]
+    fn std_ships_as_an_ordinary_package_at_0_1_0() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../std");
+        let text = std::fs::read_to_string(root.join("cadetta.toml")).unwrap();
+        let value: toml::Value = toml::from_str(&text).unwrap();
+        let package = value.get("package").and_then(|p| p.as_table()).unwrap();
+        assert_eq!(package["name"].as_str(), Some(STD_NAME));
+        assert_eq!(package["version"].as_str(), Some("0.1.0"));
+        let src = package["src"].as_str().unwrap();
+        assert!(root.join(src).join("lib.cdt").is_file());
+        assert!(value.get("dependencies").is_none());
+        // The same name stays reserved for user packages.
+        assert!(parse(&text).is_err());
+    }
+
     // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::PackageManifest
     #[test]
     fn std_is_reserved_and_implicit() {

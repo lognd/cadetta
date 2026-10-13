@@ -92,6 +92,15 @@ line as files change; that is the 0.1.0 editor integration (problem
 matchers). `cadetta lsp` (diagnostics, hover as `why`, code lens as
 `impact`) is deferred to a later release and tracked as a ticket.
 
+Text rendering rules: the output is ASCII and carries no color codes.
+The excerpt shows the first line of the span, underlined to the span
+end (to the end of the line for a multi-line span); `alt` is the label
+after the carets. When the source line is unavailable, the excerpt is
+omitted and `-->` remains. A native location points at `file:1:1`, a
+lock location at `cadetta.lock:LINE:1`. A note with a location appends
+`(file:line:col)`. Each fix contributes one `= help:` line from its
+title. Order is `note`, `help`, `path`.
+
 ## 2. Suppression
 
 ### 2.1 Waivers

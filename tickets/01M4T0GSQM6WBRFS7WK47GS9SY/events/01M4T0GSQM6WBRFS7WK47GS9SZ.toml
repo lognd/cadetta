@@ -1,0 +1,10 @@
+kind = "create"
+title = "Consolidate CLI Diagnostic types onto cadetta-lint diag and render"
+type = "chore"
+category = "todo"
+priority = "medium"
+points = 3
+scope = ["crates/cadetta-cli/src/output.rs"]
+at = "2026-10-13T06:52:08Z"
+actor = "lognd"
+rev = 1

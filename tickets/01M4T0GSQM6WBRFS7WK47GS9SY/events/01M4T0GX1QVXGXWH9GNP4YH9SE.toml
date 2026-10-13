@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "cadetta-cli output.rs defines its own Diagnostic/Location/Position/Note/Waived and private render_text, duplicating cadetta_lint::diag and cadetta_lint::render::text. Make output.rs consume the lint types and renderer; delete the duplicates. Found by the MZMDBM4 implementer."
+at = "2026-10-13T06:52:11Z"
+actor = "lognd"
+rev = 1

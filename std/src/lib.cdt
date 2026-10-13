@@ -1,0 +1,8 @@
+// std: the cadetta standard library, package root (stdlib.md 1).
+//
+// Written in ordinary .cdt. Every module is a file under this directory
+// (packages.md 2), added by its own story: fits, materials, fasteners,
+// retaining, commercial. Per-standard `pub cite` exports (iso273, iso286,
+// din471, din472, ...) live at this root once the syntax and the
+// standards' figures land. Nothing is declared here yet on purpose: no
+// value may appear in std without a citation (S001).
