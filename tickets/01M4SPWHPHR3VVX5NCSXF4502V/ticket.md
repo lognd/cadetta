@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T04:03:47Z"
-updated = "2026-10-13T04:03:56Z"
+updated = "2026-10-13T04:03:57Z"
 persona = "cadetta contributor"
 capability = "build a Cargo workspace containing cadetta-syntax, -units, -fits, -sema, -ir, -lint, -adapter, -cli and adapters/freecad"
 outcome_text = "every epic has a crate to land code in"
@@ -18,6 +18,10 @@ scope = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/lib.rs", "adapters/f
 [[links]]
 kind = "blocks"
 target = "01M4SPWHRZF9R1KGA3GV2AZF30"
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWNYX632H3Q6WEGN0SM0R"
 
 [[acceptance]]
 text = "Given a clean checkout, when `cargo build --workspace` runs, then all eight crates compile"
