@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T21:53:57Z"
+updated = "2026-10-13T21:54:25Z"
 persona = "design engineer"
 capability = "link a dimension in CAD without restating it in a bindings file"
 outcome_text = "nothing is said twice"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an implicit locator recorded by a sync that is later missing, when synced, then R003; an expression-driven dimension is R002; two instances naming one part are R013 (adapters.md 3.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = """Given [[adapter]] bind = "scope", when emitting, then every in-scope expressible path has a created global, never a let, another package's member or an inexpressible Text path (adapters.md 3.5)"""
