@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T06:50:22Z"
+updated = "2026-10-13T06:51:17Z"
 persona = "design engineer"
 capability = "read diagnostics like rustc output"
 idempotency_key = "replan14:lint-text"
@@ -21,9 +21,9 @@ target = "01M4SWK9V5CYNNVTAS3PE4EC23"
 
 [[acceptance]]
 text = "Given a diagnostic with source span, notes, fixes and path, when rendered as text, then it prints severity[CODE], --> file:line:col, an excerpt with carets and = note:, = help:, = path: lines (lints.md 1.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given no terminal, when rendering, then text is still the default (lints.md 1.2; config-cli.md 5)"
-bound = false
+bound = true
 +++
