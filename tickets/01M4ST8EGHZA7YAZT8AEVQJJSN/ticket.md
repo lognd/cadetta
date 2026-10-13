@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:03:51Z"
+updated = "2026-10-13T08:05:18Z"
 persona = "design engineer"
 capability = "see when a primary reaches end of life and which alternate can replace it"
 idempotency_key = "replan13:Lifecycle attribute and replacement candidates"
 labels = ["creates:crates/cadetta-variants/src/lifecycle.rs"]
-scope = ["crates/cadetta-variants/src/lifecycle.rs"]
+scope = ["crates/cadetta-variants/src/lifecycle.rs", "crates/cadetta-variants/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
