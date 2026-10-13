@@ -2,7 +2,8 @@
 id = "01M4ST7B09TGN6VSXJBZ8FDVCN"
 title = "Observed IR flavour and expression capture"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
