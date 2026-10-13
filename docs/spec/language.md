@@ -609,10 +609,19 @@ Formatting never changes the IR digest.
 
 Formatter decisions (cadetta-syntax `format`):
 
-- A file with any syntax error is refused, never formatted away. Items
-  the parser skips with E001 (`process`, `table`, `enum`, `fn`, `solver`,
-  `waive`, `unit`, `kind` items; `datum`, `place`, `solver` members) are
-  therefore not formattable yet, and neither is the golden corpus.
+- A file with any syntax error is refused, never formatted away. Only
+  `datum` and `place` members (and `datum` in interfaces) are still
+  skipped with E001, so files using them cannot be formatted yet, nor can
+  the golden corpus.
+- `enum`, `fn`, `waive`, `unit` and `kind` items print on one line
+  (`enum G { A, B }`, `waive C on GLOB { because "x" }`); `unit` and
+  `kind` definitions align their `=` with neighbours. `process`,
+  `table` and `solver` (item or member) print as blocks: process
+  parameters like component parameters; a table prints `key`, then
+  `cols`, then one row per line with `=>` aligned in a group (key-only
+  rows that shared a line are split); solver bodies print `in`, `out`,
+  `deps` one per line. Kind expressions print as `A / B^2`, and a
+  member `solver` keeps its trailing attributes after the closing `}`.
 - LF newlines, one final newline, no line wrapping: multi-line
   expressions collapse to one line (`{ let a = 1; a + b }`,
   `match s { A => 1, _ => 2 }`). Blank lines survive, at most one in a row,

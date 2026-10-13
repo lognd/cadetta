@@ -16,9 +16,10 @@ use std::fmt;
 use crate::ast::{
     Arg, Attr, AttrArg, BinOp, Block, Bound, BoundKind, Check, Citation, Cite, CiteName,
     CiteTarget, CmpOp, Component, ComponentClass, Ctor, Doc, Expr, ExprKind, File, FileEntry, Fit,
-    FitSpec, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind, Let, Member,
-    MemberKind, Param, Part, Path, Pattern, Require, TolSign, Type, TypeKind, UnOp, Use, UseKind,
-    UsePath, UseRoot, UseTree, UseTreeKind, Vis,
+    FitSpec, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind, KindOp, Let, Member,
+    MemberKind, Param, ParamDecl, Part, Path, Pattern, Process, ProcessMemberKind, Require, Solver,
+    SolverMemberKind, Table, TolSign, Type, TypeKind, UnOp, UnitDecl, Use, UseKind, UsePath,
+    UseRoot, UseTree, UseTreeKind, Vis,
 };
 use crate::lexer::{Comment, Span};
 use crate::parser::parse;
@@ -130,6 +131,8 @@ struct Line {
     lhs: String,
     /// What follows ` = `, when the statement has an aligned `=`.
     rest: Option<String>,
+    /// The separator before `rest`: ` = ` or ` => `.
+    sep: &'static str,
     /// Trailing attributes, `#[a, b]`.
     attrs: String,
     /// A trailing `//` comment.
@@ -142,6 +145,7 @@ impl Line {
             indent: 0,
             lhs,
             rest: None,
+            sep: " = ",
             attrs: String::new(),
             comment: String::new(),
         }
@@ -151,6 +155,13 @@ impl Line {
         Self {
             rest: Some(rest),
             ..Self::plain(lhs)
+        }
+    }
+
+    fn arrow(lhs: String, rest: String) -> Self {
+        Self {
+            sep: " => ",
+            ..Self::eq(lhs, rest)
         }
     }
 }
@@ -196,7 +207,7 @@ impl Printer<'_> {
             .max()
             .unwrap_or(0);
         let body = |l: &Line| match &l.rest {
-            Some(r) => format!("{} = {r}", pad(&l.lhs, eq_w)),
+            Some(r) => format!("{}{}{r}", pad(&l.lhs, eq_w), l.sep),
             None => l.lhs.clone(),
         };
         let bodies: Vec<String> = lines.iter().map(body).collect();
@@ -418,6 +429,66 @@ impl Printer<'_> {
                 self.preamble(first, leaf_upto, &item.docs, &item.attrs);
                 self.leaf(Line::plain(self.check(c, &vis)), item.span, &[]);
             }
+            ItemKind::Process(p) => {
+                self.preamble(first, item.span.start, &item.docs, &item.attrs);
+                self.process(p, item, &vis);
+            }
+            ItemKind::Table(t) => {
+                self.preamble(first, item.span.start, &item.docs, &item.attrs);
+                self.table(t, item, &vis);
+            }
+            ItemKind::Solver(sv) => {
+                self.preamble(first, item.span.start, &item.docs, &item.attrs);
+                self.solver(sv, item.span, &vis, "");
+            }
+            ItemKind::Enum(e) => {
+                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
+                let vs: Vec<&str> = e.variants.iter().map(|v| v.name.as_str()).collect();
+                let text = format!("{vis}enum {} {{ {} }}", e.name.name, vs.join(", "));
+                self.leaf(Line::plain(text), item.span, &[]);
+            }
+            ItemKind::Fn(f) => {
+                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
+                let ps: Vec<String> = f.params.iter().map(|p| self.pdecl(p)).collect();
+                let text = format!(
+                    "{vis}fn {}({}) -> {} {}",
+                    f.name.name,
+                    ps.join(", "),
+                    self.ty(&f.ret),
+                    self.block(&f.body)
+                );
+                self.leaf(Line::plain(text), item.span, &[]);
+            }
+            ItemKind::Waive(w) => {
+                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
+                let mut text = format!("{vis}waive {} on {}", w.code.name, w.glob.text);
+                if let Some(a) = &w.for_alt {
+                    text.push_str(&format!(" for alt {} = {}", a.slot.text, a.alt.text));
+                }
+                text.push_str(&format!(" {{ because {}", quote(&w.because)));
+                if let Some(d) = &w.expires {
+                    text.push_str(&format!(" expires {}", d.text));
+                }
+                text.push_str(" }");
+                self.leaf(Line::plain(text), item.span, &[]);
+            }
+            ItemKind::Unit(u) => {
+                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
+                let line = match u {
+                    UnitDecl::Define { name, value } => {
+                        Line::eq(format!("{vis}unit {}", name.name), self.expr(value))
+                    }
+                    UnitDecl::Default { kind, unit } => {
+                        Line::plain(format!("{vis}unit {} {}", kind.name, unit.name))
+                    }
+                };
+                self.leaf(line, item.span, &[]);
+            }
+            ItemKind::Kind(k) => {
+                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
+                let line = Line::eq(format!("{vis}kind {}", k.name.name), self.ty(&k.def));
+                self.leaf(line, item.span, &[]);
+            }
             ItemKind::Error => {
                 // Unreachable for an error-free parse; keep the text rather than lose it.
                 self.preamble(first, leaf_upto, &item.docs, &item.attrs);
@@ -431,12 +502,12 @@ impl Printer<'_> {
     }
 
     /// Closes a `{ ... }` body: leftover comments, the `}` line and its trailing comment.
-    fn close_block(&mut self, item_span: Span, outer: usize) {
+    fn close_block(&mut self, item_span: Span, outer: usize, suffix: &str) {
         let close = item_span.start + item_span.slice(self.src).rfind('}').unwrap_or(0);
         self.drain_comments(close, outer + INDENT);
         self.flush_group();
         self.indent = outer;
-        let mut text = "}".to_owned();
+        let mut text = format!("}}{suffix}");
         if let Some(c) = self.trailing_comment(close + 1) {
             text.push_str(GAP);
             text.push_str(&c);
@@ -453,17 +524,7 @@ impl Printer<'_> {
         };
         let mut head = format!("{vis}{class} {}", c.name.name);
         if !c.params.is_empty() {
-            let ps: Vec<String> = c
-                .params
-                .iter()
-                .map(|p| {
-                    let mut s = format!("{}: {}", p.name.name, self.ty(&p.ty));
-                    if let Some(d) = &p.default {
-                        s.push_str(&format!(" = {}", self.expr(d)));
-                    }
-                    s
-                })
-                .collect();
+            let ps: Vec<String> = c.params.iter().map(|p| self.pdecl(p)).collect();
             head.push_str(&format!("({})", ps.join(", ")));
         }
         if !c.implements.is_empty() {
@@ -499,12 +560,22 @@ impl Printer<'_> {
                 Body::Member(m) => self.member(m),
             }
         }
-        self.close_block(item.span, outer);
+        self.close_block(item.span, outer, "");
     }
 
     fn member(&mut self, m: &Member) {
-        self.preamble(member_first_start(m), m.span.end, &m.docs, &m.attrs);
         let p = if m.private { "priv " } else { "" };
+        if let MemberKind::Solver(sv) = &m.kind {
+            self.preamble(member_first_start(m), m.span.start, &m.docs, &m.attrs);
+            let suffix = if m.trailing.is_empty() {
+                String::new()
+            } else {
+                format!("  {}", self.attr_group(&m.trailing))
+            };
+            self.solver(sv, m.span, p, &suffix);
+            return;
+        }
+        self.preamble(member_first_start(m), m.span.end, &m.docs, &m.attrs);
         let line = match &m.kind {
             MemberKind::Param(x) => self.param_line(x, p),
             MemberKind::Let(l) => self.let_line(l, p),
@@ -513,9 +584,124 @@ impl Printer<'_> {
             MemberKind::Fit(f) => self.fit_line(f, p),
             MemberKind::Check(c) => Line::plain(self.check(c, p)),
             MemberKind::Require(r) => Line::plain(self.require(r, p)),
+            MemberKind::Solver(_) => unreachable!("handled above"),
             MemberKind::Error => Line::plain(m.span.slice(self.src).trim().to_owned()),
         };
         self.leaf(line, m.span, &m.trailing);
+    }
+
+    /// Opens a `{` body: prints the header and indents; returns the outer indent.
+    fn open_block(&mut self, head: &str) -> usize {
+        let outer = self.indent;
+        self.raw_line(outer, &format!("{head} {{"));
+        self.last_end = None;
+        self.indent = outer + INDENT;
+        outer
+    }
+
+    fn cite_suffix(&self, c: &Option<Citation>) -> String {
+        c.as_ref()
+            .map_or_else(String::new, |c| format!(" {}", self.citation(c)))
+    }
+
+    fn process(&mut self, p: &Process, item: &Item, vis: &str) {
+        let head = format!(
+            "{vis}process {}{}",
+            p.name.name,
+            self.cite_suffix(&p.citation)
+        );
+        let outer = self.open_block(&head);
+        for m in &p.members {
+            let first = m
+                .docs
+                .first()
+                .map(|d| d.span.start)
+                .or_else(|| m.attrs.first().map(|a| a.span.start))
+                .unwrap_or(m.span.start);
+            self.preamble(first, m.span.end, &m.docs, &m.attrs);
+            let line = match &m.kind {
+                ProcessMemberKind::Param(x) => self.param_line(x, ""),
+                ProcessMemberKind::Rule(r) => Line::plain(format!(
+                    "rule {}({}) -> {} = {}",
+                    r.name.name,
+                    self.pdecl(&r.param),
+                    self.ty(&r.ret),
+                    self.expr(&r.body)
+                )),
+                ProcessMemberKind::Error => Line::plain(m.span.slice(self.src).trim().to_owned()),
+            };
+            self.leaf(line, m.span, &[]);
+        }
+        self.close_block(item.span, outer, "");
+    }
+
+    fn table(&mut self, t: &Table, item: &Item, vis: &str) {
+        let head = format!(
+            "{vis}table {}{}",
+            t.name.name,
+            self.cite_suffix(&t.citation)
+        );
+        let outer = self.open_block(&head);
+        if let Some(k) = &t.key {
+            self.preamble(k.span.start, k.span.end, &[], &[]);
+            self.leaf(Line::plain(format!("key {}", self.pdecl(k))), k.span, &[]);
+        }
+        if let (Some(first), Some(last)) = (t.cols.first(), t.cols.last()) {
+            self.preamble(first.span.start, last.span.end, &[], &[]);
+            let cols: Vec<String> = t.cols.iter().map(|c| self.pdecl(c)).collect();
+            let span = Span::new(first.span.start, last.span.end);
+            self.leaf(Line::plain(format!("cols {}", cols.join(", "))), span, &[]);
+        }
+        for r in &t.rows {
+            let first = r.docs.first().map_or(r.span.start, |d| d.span.start);
+            self.preamble(first, r.span.end, &r.docs, &[]);
+            let key = self.expr(&r.key);
+            let line = match &r.values {
+                Some(vs) => {
+                    let vs: Vec<String> = vs.iter().map(|v| self.expr(v)).collect();
+                    Line::arrow(key, vs.join(", "))
+                }
+                None => Line::plain(key),
+            };
+            self.leaf(line, r.span, &[]);
+        }
+        self.close_block(item.span, outer, "");
+    }
+
+    fn solver(&mut self, sv: &Solver, span: Span, prefix: &str, suffix: &str) {
+        let head = format!(
+            "{prefix}solver {} {}",
+            sv.name.name,
+            self.citation(&sv.citation)
+        );
+        let outer = self.open_block(&head);
+        for m in &sv.members {
+            self.preamble(m.span.start, m.span.end, &[], &[]);
+            let text = match &m.kind {
+                SolverMemberKind::In(binds) => {
+                    let bs: Vec<String> = binds
+                        .iter()
+                        .map(|b| format!("{} = {}", b.name.name, self.expr(&b.value)))
+                        .collect();
+                    format!("in {}", bs.join(", "))
+                }
+                SolverMemberKind::Out { name, ty } => {
+                    format!("out {}: {}", name.name, self.ty(ty))
+                }
+                SolverMemberKind::Deps(f) => format!("deps {}", quote(f)),
+                SolverMemberKind::Error => m.span.slice(self.src).trim().to_owned(),
+            };
+            self.leaf(Line::plain(text), m.span, &[]);
+        }
+        self.close_block(span, outer, suffix);
+    }
+
+    fn pdecl(&self, p: &ParamDecl) -> String {
+        let mut s = format!("{}: {}", p.name.name, self.ty(&p.ty));
+        if let Some(d) = &p.default {
+            s.push_str(&format!(" = {}", self.expr(d)));
+        }
+        s
     }
 
     fn interface(&mut self, i: &Interface, item: &Item, vis: &str) {
@@ -531,7 +717,7 @@ impl Printer<'_> {
         for m in &i.members {
             self.interface_member(m);
         }
-        self.close_block(item.span, outer);
+        self.close_block(item.span, outer, "");
     }
 
     fn interface_member(&mut self, m: &InterfaceMember) {
@@ -725,6 +911,19 @@ impl Printer<'_> {
             TypeKind::OnDatum { base, datum } => format!("{} on {}", base.text(), datum.text()),
             TypeKind::Array { elem, len } => format!("[{}; {}]", self.ty(elem), self.expr(len)),
             TypeKind::Table(k) => format!("Table<{}>", self.ty(k)),
+            TypeKind::KindExpr(k) => {
+                let mut s = String::new();
+                for (i, t) in k.terms.iter().enumerate() {
+                    if i > 0 {
+                        s.push_str(if t.op == KindOp::Div { " / " } else { " * " });
+                    }
+                    s.push_str(&t.name.text());
+                    if let Some(e) = t.exp {
+                        s.push_str(&format!("^{e}"));
+                    }
+                }
+                s
+            }
         }
     }
 
@@ -1035,5 +1234,31 @@ mod tests {
         let src = "model M {\n  a = if x < 1mm { let t = 2mm; t } else { 3mm }\n  b = match k { A => 1mm, _ => 2mm }\n  c = f?(1mm, n = 2mm)[0].g ^ 2\n  d = not (p and q) or r\n  e = [1mm, 2mm] as Foo\n  f = a <= b <= c\n  g = x in 1..2\n  h = -x\n}\n";
         let out = fmt(src);
         assert_eq!(fmt(&out), out);
+    }
+
+    const DECLS: &str = "// decls\nenum Grade { A,B,\n  C }\nkind Flow=Volume/Time\nkind Press = Pressure / VolumeFlow^2\nunit kip=1000lbf\nunit Stress   MPa\npub fn half(x: Length, y: Length = 2mm) -> Length { let t = x + y; t / 2 }\nwaive L001 on pkg::Bracket.*  for alt a.slot=Vendor::B {because \"fine\"   expires 2027-06-30}\nwaive L002 on **{ because \"x\" }\ntable Bolts @\"ISO 4762\" {\n  key dia: Length\n  cols  len: Length, mass: Mass = 1g\n  3mm => 10mm,1g\n  /// four\n  4mm   =>   12mm, 2g\n  5mm\n}\nprocess Print @\"cal\" {\n  hole_comp=0.2mm [+-0.05mm]\n  rule drill(d: Length) -> Length = d + 0.1mm\n}\nsolver Beam @\"beam.py\" {\n  in load = 1kN, span=2m\n  // out\n  out defl: Length / Force\n  deps \"a.csv\"\n}\nmodel M {\n  #[x] solver S @\"s.py\" {\n   in a = 1mm\n  } #[t]\n  priv solver T @\"t.py\" {\n  }\n  q: Volume / Time = 1m\n}\n";
+
+    #[test]
+    fn new_item_kinds_are_idempotent_and_shape_preserving() {
+        // frob:tests crates/cadetta-syntax/src/format.rs::format_source kind=unit
+        let out = fmt(DECLS);
+        assert_eq!(fmt(&out), out, "second pass changed:\n{out}");
+        assert!(out.contains("enum Grade { A, B, C }\n"), "{out}");
+        assert!(
+            out.contains("kind Press = Pressure / VolumeFlow^2\n"),
+            "{out}"
+        );
+        assert!(out.contains("  3mm => 10mm, 1g\n"), "{out}");
+        assert!(out.contains("  /// four\n  4mm => 12mm, 2g\n"), "{out}");
+        assert!(
+            out.contains("waive L002 on ** { because \"x\" }\n"),
+            "{out}"
+        );
+        assert!(
+            out.contains("for alt a.slot = Vendor::B { because \"fine\" expires 2027-06-30 }"),
+            "{out}"
+        );
+        assert!(out.contains("  }  #[t]\n"), "{out}");
+        assert!(out.contains("kind Flow  = Volume / Time\n"), "{out}");
     }
 }
