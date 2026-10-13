@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a subassembly, when placed, then its parts come along and instance paths compose as Mount/sub/bracket.holes[1] (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given variants, when a placement member differs per alternate, then it is re-evaluated like any member (geometry.md 4)"
