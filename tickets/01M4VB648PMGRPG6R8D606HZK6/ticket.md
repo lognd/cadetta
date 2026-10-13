@@ -8,12 +8,12 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T22:10:56Z"
+updated = "2026-10-13T22:17:00Z"
 persona = "design engineer"
 capability = "have drawing tolerances come from the design"
 outcome_text = "tolerances are not retyped on drawings"
 idempotency_key = "d15:dim-tolerances"
-scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/rpc/**", "crates/cadetta-adapter/src/locator.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/adapters/**"]
+scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/rpc/**", "crates/cadetta-adapter/src/locator.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/adapters/**", "crates/cadetta-cli/src/config.rs"]
 
 [[links]]
 kind = "blocked-by"
