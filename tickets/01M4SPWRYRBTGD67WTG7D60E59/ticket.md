@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:47:14Z"
+updated = "2026-10-13T09:48:43Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
 labels = ["creates:crates/cadetta-adapter/src/bindings.rs"]
-scope = ["crates/cadetta-adapter/src/bindings.rs"]
+scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml"]
 
 [[links]]
 kind = "blocks"
