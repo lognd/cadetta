@@ -245,7 +245,12 @@ interface only, so:
   5). `#[lifecycle(active|nrnd|eol|obsolete, "date")]` feeds L001/L002;
   the date is when the status takes effect (for `eol`, the last-time
   buy), and L001 becomes an error after it. For `active` the date is
-  when the status was last verified.
+  when the status was last verified and never raises L001/L002. A
+  `YYYY-MM` date covers its whole month: it has passed only once
+  `--as-of` is in a later month; `YYYY-MM-DD` has passed the day after.
+  An `eol` or `obsolete` primary is not L001 when some approved
+  alternate is viable and is not itself `eol` or `obsolete`; the viable
+  alternates are listed as its replacement candidates.
 
 ### 3.3 Parameters
 
