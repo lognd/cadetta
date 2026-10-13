@@ -2,7 +2,8 @@
 id = "01M4SWFX82NWXV79EQTA5QX081"
 title = "Datum-typed Point2/Point3, Vec2/Vec3 arithmetic and G001"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
