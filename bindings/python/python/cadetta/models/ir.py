@@ -382,16 +382,9 @@ class Op2(BaseModel):
     rotate: Annotated[Rotate, Field(description="Rotate arguments.")]
 
 
-class Op4(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    at: Path
-
-
-class Op(RootModel[Op1 | Op2 | Op3 | Op4]):
+class Op(RootModel[Op1 | Op2 | Op3]):
     root: Annotated[
-        Op1 | Op2 | Op3 | Op4,
+        Op1 | Op2 | Op3,
         Field(description="A frame operation shared by Datum and Placement."),
     ]
 
@@ -412,12 +405,13 @@ class Placement(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    at: Path
     closure: Digest | None = None
     datum: Path
     digest: Digest | None = None
-    on: Path
     ops: list[Op]
     part: Path
+    path: Path
     variants: dict[str, list[Op]] | None = None
 
 
