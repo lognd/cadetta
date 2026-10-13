@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Result files keyed by input digest"
+new = "Result files <stem>.out.json keyed by input digest"
+at = "2026-10-13T06:04:57Z"
+actor = "lognd"
+rev = 1
