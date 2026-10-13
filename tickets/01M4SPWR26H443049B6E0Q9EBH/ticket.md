@@ -2,7 +2,8 @@
 id = "01M4SPWR26H443049B6E0Q9EBH"
 title = "Lint family Fit rules F001-F004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
