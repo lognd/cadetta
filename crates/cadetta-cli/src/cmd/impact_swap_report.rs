@@ -665,6 +665,7 @@ mod tests {
             config: None,
             sign: None,
             component: component.map(Into::into),
+            implicit: None,
         }
     }
 
