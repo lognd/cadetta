@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:57:26Z"
+digest = "d1059654cc98d61f675d3b11f749bd7490ab120c4f89e164b41e6bf6f674f722"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fc0e0f8a-e515-4900-9bb5-5d678c42daad with nextest profile: default
+    Starting 1 test across 1 binary (53 tests skipped)
+        PASS [   0.006s] cadetta-obligations lock_package::tests::pin_writes_package_line_and_replaces
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 53 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E 'test(=lock_package::tests::pin_writes_package_line_and_replaces)'"
+size = 708
+status = "measured"
+test_count = 1
+tests_digest = "88ece45887d34d2671ecc4007a5936b447a3f6fde55ea8af9fed41bad4d52afa"
+at = "2026-10-13T07:57:26Z"
+actor = "lognd"
+rev = 1

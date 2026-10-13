@@ -28,7 +28,7 @@ target = "01M4SXQWGAYJDGMGKNBMHASNBA"
 
 [[acceptance]]
 text = "Given a resolved dependency, when the lock is written, then a line `package NAME version=V source=S digest=HEX` is stored, keyed by NAME and sorted with the other records (obligations.md 3; packages.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a dependency whose content digest differs from its pinned record, when checked, then E014 fires and names `cadetta update` (packages.md 1, 7)"
