@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T16:53:20Z"
+updated = "2026-10-13T17:03:10Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for solvers"
 labels = ["creates:tests/conformance/solvers/**"]
-scope = ["tests/conformance/solvers/**", "tests/conformance/known-gaps.toml"]
+scope = ["tests/conformance/solvers/**", "tests/conformance/known-gaps.toml", "docs/spec/solvers.md"]
 
 [[links]]
 kind = "blocks"
