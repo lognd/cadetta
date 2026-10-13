@@ -2,7 +2,8 @@
 id = "01M4STAQW43GNNDD63BGDYVJ8R"
 title = "Conformance fixtures for stdlib"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
