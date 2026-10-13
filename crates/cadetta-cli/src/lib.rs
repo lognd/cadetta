@@ -281,21 +281,15 @@ mod tests {
     // frob:tests crates/cadetta-cli/src/lib.rs::parse_globals
     #[test]
     fn cwd_and_config_are_validated() {
-        let dir = std::env::temp_dir().join(format!("cadetta-cli-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("cadetta.toml"), "").unwrap();
+        let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let d = dir.to_str().unwrap();
-        let (g, rest) = parse_globals(
-            &strings(&["--cwd", d, "--config", "cadetta.toml", "x"]),
-            None,
-        )
-        .unwrap();
+        let (g, rest) =
+            parse_globals(&strings(&["--cwd", d, "--config", "Cargo.toml", "x"]), None).unwrap();
         assert_eq!(g.cwd.as_deref(), Some(dir.as_path()));
-        assert_eq!(g.config, Some(dir.join("cadetta.toml")));
+        assert_eq!(g.config, Some(dir.join("Cargo.toml")));
         assert_eq!(rest, strings(&["x"]));
         assert!(parse_globals(&strings(&["--cwd", "/no/such/dir"]), None).is_err());
         assert!(parse_globals(&strings(&["--config", "/no/such.toml"]), None).is_err());
-        std::fs::remove_dir_all(&dir).unwrap();
     }
 
     // frob:tests crates/cadetta-cli/src/lib.rs::run_with_env

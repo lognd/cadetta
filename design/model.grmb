@@ -42,6 +42,7 @@ node cli : trusted {
   clearance Internal;
   owns "crates/cadetta-cli/**";
   may fs.read at "crates/cadetta-cli/**";
+  may process.env at "crates/cadetta-cli/src/**";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
