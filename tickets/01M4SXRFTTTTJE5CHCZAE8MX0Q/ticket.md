@@ -2,7 +2,8 @@
 id = "01M4SXRFTTTTJE5CHCZAE8MX0Q"
 title = "File-tree modules, canonical paths and E015"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
