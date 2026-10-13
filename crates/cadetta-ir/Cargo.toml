@@ -17,6 +17,10 @@ categories = ["science", "development-tools"]
 tracing.workspace = true
 thiserror.workspace = true
 cadetta-units.workspace = true
+serde.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
 
 [lints]
 workspace = true
