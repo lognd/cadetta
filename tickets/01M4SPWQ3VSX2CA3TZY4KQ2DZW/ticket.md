@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a Value, when built, then it holds nominal (Exact or Inexact), angle, optional Affine tol, conservative, optional designed and authored (ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given a Member, when built, then it carries the analysis flag, deps, optional variants keyed "slot=alternate", digest and closure (ir.md 3)'
