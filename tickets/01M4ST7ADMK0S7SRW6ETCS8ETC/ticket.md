@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:01:36Z"
+updated = "2026-10-13T08:01:50Z"
 persona = "design engineer"
 capability = "look values up in cited tables by key, nearest or at-least"
 idempotency_key = "replan13:Tables, lookups and Table<K> parameters"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a key-only table such as Iso4762Len, when `.at_least(x).key` is read, then it works and column reads are rejected (language.md 3.6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a parameter of type `Table<K>`, when a column the reader uses is missing in the table passed, then an error is reported at the use site (language.md 3.3)"
