@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an angle quantity, when stored, then the integer angle exponent is tracked beside the dimension and does not change the magnitude (quantities.md 1, 4.3)"
-bound = false
+bound = true
 +++
