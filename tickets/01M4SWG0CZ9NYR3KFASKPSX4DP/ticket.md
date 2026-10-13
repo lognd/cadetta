@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T06:27:43Z"
+updated = "2026-10-13T06:27:51Z"
 persona = "design engineer"
 capability = "get defined radial distances"
 idempotency_key = "replan14:geo-square"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given x * y of two distinct forms, when evaluated, then the ordinary conservative interval applies (quantities.md 5.4)"
-bound = false
+bound = true
 +++
