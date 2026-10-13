@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the file production, when parsed, then it is `{ use | item }` with no namespace header or mod declaration, and `use` follows packages.md 4 (language.md 3; packages.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `use std::fasteners::{MetricThread, ScrewJoint}` and `as` renames, when parsed, then the imports are recorded (language.md 3; packages.md 4)"
