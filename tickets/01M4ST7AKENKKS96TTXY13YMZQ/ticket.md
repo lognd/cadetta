@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:30:40Z"
+updated = "2026-10-13T08:30:45Z"
 persona = "design engineer"
 capability = "sum mass, cost and lead time over every part instance"
 idempotency_key = "replan13:Part arrays, count and roll-ups"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given parameterized components with defaults, when instantiated, then optional arguments apply and enum arguments may be bare variants (language.md 3.1)"
-bound = false
+bound = true
 +++
