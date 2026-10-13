@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:46:22Z"
+updated = "2026-10-13T05:46:30Z"
 persona = "design engineer"
 capability = "get lints for the M family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
-labels = ["creates:crates/cadetta-lint/src/rules/m.rs", "creates:tests/lints/M*/**"]
-scope = ["crates/cadetta-lint/src/rules/m.rs", "tests/lints/M*/**"]
+labels = ["creates:crates/cadetta-lint/src/rules/m.rs", "creates:tests/conformance/lints/M*/**"]
+scope = ["crates/cadetta-lint/src/rules/m.rs", "tests/conformance/lints/M*/**"]
 
 [[acceptance]]
 text = "Given `12.012mm` in a model with no tolerance, fit, table lookup or allow, when linted, then M001 is reported; a citation or doc comment does not explain it (lints.md M)"
