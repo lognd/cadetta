@@ -2,18 +2,18 @@
 id = "01M4SPWSTRG1FFAJ0XM89ETBBN"
 title = "cadetta.toml configuration model"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T06:04:57Z"
+updated = "2026-10-13T06:21:21Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
 labels = ["creates:crates/cadetta-cli/src/config.rs"]
-scope = ["crates/cadetta-cli/src/config.rs"]
+scope = ["crates/cadetta-cli/src/config.rs", "Cargo.toml", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md", "Cargo.lock"]
 
 [[links]]
 kind = "blocks"
