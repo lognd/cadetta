@@ -42,6 +42,16 @@ src = "src"                  # module root (default "src")
   enumeration order. It enters the closure digest of every reader as the
   own digest of the node `package:NAME`. `cadetta update` replaces the
   record outright.
+- `cadetta update` (0.1.0 rules): with no argument it re-resolves every
+  dependency of every package in scope, rewrites each `package` record and
+  drops records of packages that left the dependency closure. With `NAME`
+  it rewrites only that record (exit 2 when `NAME` is not in the closure).
+  The lock `source` is `path:RELATIVE` (relative to the lock's directory,
+  `/` separators, `..` steps allowed) or `git:URL#KIND=REF` with KIND one of
+  `tag`, `rev`, `branch`, `default`. Git dependencies are checked out under
+  `build/deps/`. The content digest covers every file of the package
+  directory except `.git/` and the package root's `build/`. E012 or E013
+  exit 1 and the lock is not written.
 - A **workspace** is a directory whose `cadetta.toml` has `[workspace]
   members = ["rover", "crawler", "shop"]`. Members share one lock and
   one `build/`, and depend on each other by path. A product line with a
