@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/fasteners/screw.cdt"]
+new = ["std/src/fasteners/screw.cdt"]
+at = "2026-10-13T06:05:15Z"
+actor = "lognd"
+rev = 1
