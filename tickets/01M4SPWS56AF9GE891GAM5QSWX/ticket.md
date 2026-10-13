@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T12:50:01Z"
+updated = "2026-10-13T12:50:32Z"
 persona = "design engineer"
 capability = "emit and read cadetta.ir/1 JSON"
 outcome_text = "I can diff and consume the IR from scripts"
 labels = ["creates:crates/cadetta-adapter/src/builtin/json.rs"]
-scope = ["crates/cadetta-adapter/src/builtin/json.rs"]
+scope = ["crates/cadetta-adapter/src/builtin/json.rs", "crates/cadetta-adapter/Cargo.toml", "crates/cadetta-adapter/src/builtin/mod.rs", "crates/cadetta-adapter/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
