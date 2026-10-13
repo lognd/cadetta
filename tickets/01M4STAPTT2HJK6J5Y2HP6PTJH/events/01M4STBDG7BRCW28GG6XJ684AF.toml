@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the inch fastener and insert scope in stdlib.md, when added, then each value is cited and the 0.2.0 version is set (stdlib.md 7)"]
+new = ["Given the inch fastener and insert scope in stdlib.md, when added, then each value is cited and the 0.2.0 version is set (stdlib.md 1)"]
+moved = [0]
+at = "2026-10-13T05:04:20Z"
+actor = "lognd"
+rev = 1
