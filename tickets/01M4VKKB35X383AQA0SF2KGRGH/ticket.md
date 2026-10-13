@@ -2,13 +2,13 @@
 id = "01M4VKKB35X383AQA0SF2KGRGH"
 title = "Record the Python model codegen and fail CI when models drift from docs/schemas"
 type = "chore"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T21:44:48Z"
-updated = "2026-10-13T22:03:34Z"
+updated = "2026-10-13T22:06:09Z"
 idempotency_key = "d15:py-models-check"
 labels = ["creates:bindings/python/scripts/gen_models.py", "creates:grimble.lock"]
 scope = ["bindings/python/python/cadetta/models/**", ".github/workflows/ci.yml", "bindings/python/README.md", "bindings/python/scripts/gen_models.py", "design/model.grmb", "grimble.lock"]
