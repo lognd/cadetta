@@ -250,6 +250,7 @@ cannot be resolved or evaluated.
 | S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only `file` citations are drift-detected; `cadetta cite pin` vendors a URL. |
 | S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
 | S006 | solver-unsolved-variant | warning | | A variant changes a solver's inputs and no result exists for them; dependent verdicts are undecided (solvers.md 4.1). |
+| S007 | solver-input-not-quantity | error | yes | A solver `in` expression is not a quantity-valued expression, or an `out` has no kind (solvers.md 1). |
 
 ### C: checks
 
