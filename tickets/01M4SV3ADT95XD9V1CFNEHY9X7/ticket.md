@@ -18,6 +18,10 @@ scope = ["adapters/solidworks/SMOKE.md"]
 kind = "blocked-by"
 target = "01M4SV2TKZD26CK9FFA1EJXSV4"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2TR8ENTA87J1DDKCF816"
+
 [[acceptance]]
 text = "Given a licensed Windows machine, when the cadetta sync loop runs on the pilot r3-05 part, then emit, read, push, regen round trip passes and the result is recorded in adapters/solidworks/SMOKE.md (adapters.md 6)"
 bound = false
