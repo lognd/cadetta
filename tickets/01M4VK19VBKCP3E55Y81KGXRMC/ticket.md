@@ -2,13 +2,13 @@
 id = "01M4VK19VBKCP3E55Y81KGXRMC"
 title = "Python binding IR models are stale after typed citations (CI red)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 2
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T21:34:57Z"
-updated = "2026-10-13T21:34:57Z"
+updated = "2026-10-13T21:38:13Z"
 idempotency_key = "d15:py-models-citeref"
 scope = ["bindings/python/python/**", "bindings/python/tests/**"]
 
