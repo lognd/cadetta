@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T12:58:30Z"
+updated = "2026-10-13T12:59:22Z"
 persona = "design engineer"
 capability = "emit and read name,value,unit rows"
 outcome_text = "spreadsheets can consume parameters"
 labels = ["creates:crates/cadetta-adapter/src/builtin/csv.rs"]
-scope = ["crates/cadetta-adapter/src/builtin/csv.rs"]
+scope = ["crates/cadetta-adapter/src/builtin/csv.rs", "crates/cadetta-adapter/src/builtin/mod.rs"]
 
 [[links]]
 kind = "blocks"
