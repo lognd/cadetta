@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:14Z"
-updated = "2026-10-13T09:09:15Z"
+updated = "2026-10-13T09:10:42Z"
 persona = "library author"
 capability = "move a file or item without breaking bindings, waivers or attestations"
 labels = ["creates:crates/cadetta-sema/src/renames.rs"]
-scope = ["crates/cadetta-sema/src/renames.rs"]
+scope = ["crates/cadetta-sema/src/renames.rs", "crates/cadetta-sema/src/deps.rs", "crates/cadetta-sema/src/visibility.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/packages.md", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocked-by"

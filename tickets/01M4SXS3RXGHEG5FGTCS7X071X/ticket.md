@@ -2,7 +2,8 @@
 id = "01M4SXS3RXGHEG5FGTCS7X071X"
 title = "Dependency digests in closures and upgrade verdict flips"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
