@@ -16,6 +16,10 @@ scope = ["adapters/solidworks/tests/**", ".github/workflows/solidworks.yml"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4ST7B6MNGRQ6967DAWQA5YK"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 
 [[acceptance]]
