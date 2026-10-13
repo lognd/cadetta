@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:49:41Z"
+updated = "2026-10-13T09:49:50Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
@@ -21,7 +21,7 @@ target = "01M4SPWSABPXKK62B5V0SMJ8FD"
 
 [[acceptance]]
 text = "Given `bindings/<adapter>.toml` with one table per canonical path and several locators, when loaded, then each locator keeps kind (global|dimension|property), mode and native_unit (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a dimension locator with `ref_to`, when resolved, then it points at that global; else at the first global locator of the same path in file order; else at the global of its referent if a pure alias; else at the path own mangled global (adapters.md 3)"
