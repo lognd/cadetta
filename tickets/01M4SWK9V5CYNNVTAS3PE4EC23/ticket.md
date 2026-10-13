@@ -2,7 +2,8 @@
 id = "01M4SWK9V5CYNNVTAS3PE4EC23"
 title = "cadetta.diag/1 record, schema and deterministic order"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
