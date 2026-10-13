@@ -2,7 +2,8 @@
 id = "01M4SPWHRZF9R1KGA3GV2AZF30"
 title = "CI pipeline and frob check gates"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
