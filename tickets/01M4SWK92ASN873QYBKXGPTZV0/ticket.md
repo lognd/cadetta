@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T07:37:34Z"
+updated = "2026-10-13T07:38:03Z"
 persona = "design engineer"
 capability = "build quantities from the IR alone"
 idempotency_key = "replan14:ir-dim"
 labels = ["creates:crates/cadetta-ir/src/dim.rs"]
-scope = ["crates/cadetta-ir/src/dim.rs"]
+scope = ["crates/cadetta-ir/src/dim.rs", "crates/cadetta-ir/Cargo.toml", "crates/cadetta-ir/src/lib.rs", "Cargo.lock"]
 
 [[links]]
 kind = "blocked-by"
