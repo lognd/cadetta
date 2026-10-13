@@ -2,7 +2,8 @@
 id = "01M4ST8EC6HVWM52PEHS43F430"
 title = "Variant evaluation engine (slot at a time)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
