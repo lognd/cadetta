@@ -1,0 +1,16 @@
+kind = "create"
+title = "lock tidy"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "keep the lock small"
+idempotency_key = "replan14:ob-tidy"
+labels = ["creates:crates/cadetta-obligations/src/lock_tidy.rs"]
+scope = ["crates/cadetta-obligations/src/lock_tidy.rs"]
+acceptance = ["Given superseded records, when tidy runs, then they are dropped and live records are untouched (obligations.md 3; config-cli.md 3)"]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
