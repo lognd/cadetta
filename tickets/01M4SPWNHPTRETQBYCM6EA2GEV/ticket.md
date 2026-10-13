@@ -65,5 +65,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the five angle worked cases (1500rpm*8mm/rev to Velocity clean; 1500rpm*8mm Q008; torque over lead clean; torque over a Length lead Q008; 50N*9mm to Torque clean by the lever-arm exception), when checked, then each yields the stated diagnostic (quantities.md 4.3)"
-bound = false
+bound = true
 +++
