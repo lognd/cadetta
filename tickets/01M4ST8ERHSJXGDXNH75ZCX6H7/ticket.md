@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T07:56:31Z"
+updated = "2026-10-13T07:56:32Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
@@ -65,7 +65,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a require evaluating holds with an attestation configured, when classified, then it is discharged only with a current attestation (obligations.md 2, 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an as-built obligation, when classified, then it is stale if the design changed after the inspection (obligations.md 2, OQ-13)"
