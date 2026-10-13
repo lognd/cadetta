@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T13:43:18Z"
+updated = "2026-10-13T13:45:56Z"
 persona = "design engineer"
 capability = "compare positions across parts"
 idempotency_key = "replan14:geo-in"
@@ -29,7 +29,7 @@ target = "01M4SWFXC2K6D3S93F3ER0GZZA"
 
 [[acceptance]]
 text = "Given p in D inside a part, when evaluated, then p is carried through the component's own datums (geometry.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an assembly, when p in D crosses parts, then it composes the placements on the path (geometry.md 3, 4)"
