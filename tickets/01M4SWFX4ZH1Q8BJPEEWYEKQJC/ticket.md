@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:31:50Z"
+updated = "2026-10-13T08:31:51Z"
 persona = "design engineer"
 capability = "compose datum transforms exactly"
 idempotency_key = "replan14:geo-transform"
@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given offsets with tolerances, when composed, then they remain source variables of the affine form (geometry.md 2; quantities.md 5.4)"
-bound = false
+bound = true
 +++
