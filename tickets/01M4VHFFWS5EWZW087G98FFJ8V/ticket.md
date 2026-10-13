@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:07:45Z"
-updated = "2026-10-13T21:08:21Z"
+updated = "2026-10-13T21:20:54Z"
 persona = "design engineer"
 capability = "edit .cdt files with highlighting and inline diagnostics in my editor"
 outcome_text = "cadetta feels like a real language from day one"
@@ -22,7 +22,7 @@ bound = false
 
 [[acceptance]]
 text = "Given crates/cadetta-cli/tests/editors_keywords.rs, when cargo test runs, then the reserved keywords in editors/grammar/cadetta.toml equal cadetta_syntax::lexer::KEYWORDS"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given editors/vscode, when installed per its README (VSIX via npx @vscode/vsce package, or a copy into the extensions folder), then .cdt files get the language id cadetta, highlighting, comment toggling, bracket pairs and a $cadetta problem matcher plus a cadetta check task using --format short"
