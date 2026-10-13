@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T13:42:10Z"
+updated = "2026-10-13T13:43:18Z"
 persona = "design engineer"
 capability = "compare positions across parts"
 idempotency_key = "replan14:geo-in"
 labels = ["creates:crates/cadetta-geometry/src/reexpress.rs"]
-scope = ["crates/cadetta-geometry/src/reexpress.rs"]
+scope = ["crates/cadetta-geometry/src/reexpress.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"
