@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T09:26:35Z"
+updated = "2026-10-13T09:40:14Z"
 persona = "design engineer"
 capability = "run `cadetta check`"
 outcome_text = "I get lint diagnostics and CI gating in one command"
@@ -25,7 +25,7 @@ target = "01M4STCFQMGTXQAYPANNCHWEN4"
 
 [[acceptance]]
 text = "Given an Axle with Q001, when checked, then exit code is 1 and the diagnostic has code, path and span"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given adapters with read, when checked, then drift lints also run"
