@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T08:18:45Z"
+updated = "2026-10-13T08:18:46Z"
 persona = "product engineer"
 capability = "import shop policy and parts by name"
 labels = ["creates:crates/cadetta-sema/src/imports.rs"]
@@ -40,7 +40,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the prelude units and kinds, when no use is written, then they resolve and nothing else from std is in scope (language.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given declaration order reversed, when resolved, then results are identical (language.md 4)"
