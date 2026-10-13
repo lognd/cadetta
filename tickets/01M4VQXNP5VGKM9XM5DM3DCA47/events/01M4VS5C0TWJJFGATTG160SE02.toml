@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Coordinator decision (spec ambiguity, not design intent): [[adapter]] modules uses the same prefix form as --module (config-cli.md 3 Scoping): a module path relative to the package (drive, drive::motor) or fully qualified (acme.gear::drive), compared segment-wise; a dotted package name matches on dot boundaries (acme.gear matches packages acme.gear and acme.gear.sub, not acme.gearbox). adapters.md 3.2 should say so and point at config-cli.md 3. Module files stay snake_case (E015); fixtures must use packages or real submodule directories (src/gear/sub.cdt), never src/gear.sub.cdt."
+at = "2026-10-13T23:22:02Z"
+actor = "lognd"
+rev = 1
