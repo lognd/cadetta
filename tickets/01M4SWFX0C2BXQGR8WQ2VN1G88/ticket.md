@@ -2,7 +2,8 @@
 id = "01M4SWFX0C2BXQGR8WQ2VN1G88"
 title = "Parse datum, 'on', 'in' and place statements"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
