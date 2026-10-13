@@ -19,6 +19,10 @@ scope = ["crates/cadetta-ir/src/dim.rs"]
 kind = "blocked-by"
 target = "01M4SPWHVJVHRD0KWP8ESJD81M"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
+
 [[acceptance]]
 text = "Given a Value, when serialized, then dim holds integer exponents for m, kg, s, A, K, mol, cd, angle and a currency map keyed by ISO code (ir.md 3)"
 bound = false
