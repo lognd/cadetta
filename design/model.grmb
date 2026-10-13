@@ -82,7 +82,7 @@ node py_binding : trusted {
   owns "bindings/python/**";
   may fs.read at "bindings/python/python/cadetta/logging/**";
   may fs.read at "bindings/python/tests/**";
-  may process.spawn at "bindings/python/tests/**";
+  may exec at "bindings/python/tests/**";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
