@@ -2,7 +2,8 @@
 id = "01M4SPWQWV4J8DF3B1RF4PFYCT"
 title = "Lint family Duplication rules D001-D003"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
