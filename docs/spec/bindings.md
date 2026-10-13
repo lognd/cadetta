@@ -107,7 +107,9 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 - `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax and
   returns a `Result`.
 - Interop: `.to_pint(registry)` with the optional `cadetta[pint]`
-  extra; floats for numpy via `to_float(unit)`.
+  extra (implemented as `cadetta.pint_interop.to_pint(q, registry)`,
+  returning a `Result`; SI coherent units, nominal only, tolerance
+  dropped, currency dimensions rejected); floats for numpy via `to_float(unit)`.
 
 ### 3.2 Surface
 
