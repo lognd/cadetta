@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given --as-of or [project] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"]
+new = ["Given --as-of or [package] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"]
+moved = [0]
+at = "2026-10-13T06:04:57Z"
+actor = "lognd"
+rev = 1

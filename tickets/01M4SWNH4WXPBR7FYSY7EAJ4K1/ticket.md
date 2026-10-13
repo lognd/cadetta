@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:49Z"
-updated = "2026-10-13T05:44:49Z"
+updated = "2026-10-13T06:04:57Z"
 persona = "design engineer"
 capability = "reproduce a historic result"
 idempotency_key = "replan14:ob-asof"
@@ -20,6 +20,6 @@ kind = "blocked-by"
 target = "01M4SPWSTRG1FFAJ0XM89ETBBN"
 
 [[acceptance]]
-text = "Given --as-of or [project] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"
+text = "Given --as-of or [package] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"
 bound = false
 +++
