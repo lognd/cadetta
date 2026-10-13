@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a use of the old path, when resolved, then it resolves and N004 is emitted (packages.md 5; lints.md N004)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a library that removes or renames a pub item or non-priv member without was, changes the kind of either, or changes a value a dependent verdict reads, when compared with the previous version, then it is reported as a semver-major change (packages.md 5)"
