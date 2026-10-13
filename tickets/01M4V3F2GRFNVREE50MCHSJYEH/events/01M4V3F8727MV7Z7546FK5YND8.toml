@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["solvers.md 3: the S005 message says whether a previous result stays in use (fixture solvers/s005-failed-keeps-previous; found while working ~KBYTYF0)"]
+moved = []
+at = "2026-10-13T17:02:57Z"
+actor = "lognd"
+rev = 1
