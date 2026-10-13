@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given check, emit, sync or solve with --namespace NS or canonical-path globs, when run, then only matching nodes are processed (config-cli.md 3)"]
+new = ["Given check, emit, sync or solve with --module PATH (a module path prefix such as drive) or canonical-path globs, when run, then only matching nodes are processed (config-cli.md 3)"]
+moved = [0]
+at = "2026-10-13T06:04:36Z"
+actor = "lognd"
+rev = 1
