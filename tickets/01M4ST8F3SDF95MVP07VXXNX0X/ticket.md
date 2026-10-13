@@ -8,7 +8,7 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:44:39Z"
 persona = "design engineer"
 capability = "see the design to-do list of open and stale obligations"
 idempotency_key = "replan13:cadetta obligations"
@@ -21,5 +21,9 @@ bound = false
 
 [[acceptance]]
 text = "Given `--format json`, when run, then the output is machine-readable (obligations.md 5)"
+bound = false
+
+[[acceptance]]
+text = "Given --stale, when run, then only stale rows print and exit 1 follows required_for (config-cli.md 3)"
 bound = false
 +++
