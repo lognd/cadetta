@@ -1,0 +1,5 @@
+["acme.demo::Gasket.width"]
+locators = [
+  { locator = "D1@Sk@Plate.SLDPRT", kind = "dimension", mode = "ref" },
+  { locator = "Gasket__width", kind = "global", mode = "value", native_unit = "mm" },
+]

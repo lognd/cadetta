@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 2",
+  "rule": "order",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "globals in bindings-file order, then dimensions in bindings-file order, regardless of how the bindings file interleaves them",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"W2\"",
+      "\"W1\"",
+      "\"D1@S@P.SLDPRT\""
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"W2\"",
+      "\"W1\"",
+      "\"D1@S@P.SLDPRT\""
+    ]
+  }
+}

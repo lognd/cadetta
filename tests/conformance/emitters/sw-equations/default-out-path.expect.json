@@ -1,0 +1,23 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md (intro)",
+  "rule": "default-out",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "with no out key the file is build/solidworks/<id>.txt; with one, that path",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/solidworks/sw-equations.txt"
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/eq.txt"
+    ]
+  }
+}

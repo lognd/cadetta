@@ -1,0 +1,4 @@
+{
+  "existing": "' cadetta emit sw-equations 0.1.0 ir=blake3:aa bindings=blake3:bb\n\"W\" = 10mm\n",
+  "emitted": "' cadetta emit sw-equations 0.1.0 ir=blake3:cc bindings=blake3:dd\n\"W\" = 10mm\n"
+}

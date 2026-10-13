@@ -1,0 +1,5 @@
+{
+  "file": "build/eq.txt",
+  "text": "\"B\" = 5mm\n",
+  "assume_unit": "in"
+}

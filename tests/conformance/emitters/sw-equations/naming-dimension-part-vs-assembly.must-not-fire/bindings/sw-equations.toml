@@ -1,0 +1,4 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "D1@Distance1@Frame.SLDASM", kind = "dimension", mode = "value", native_unit = "mm" },
+]

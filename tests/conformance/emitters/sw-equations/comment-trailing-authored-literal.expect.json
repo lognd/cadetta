@@ -1,0 +1,36 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 1",
+  "rule": "trailing-literal",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "the authored text is repeated only when it differs from the written value's text",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"Plate_Thk\" = 6.35mm  ' 1/4in"
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"Plate_Thk\" = 5mm"
+        ],
+        "excludes": [
+          "'",
+          "5mm  '"
+        ]
+      }
+    }
+  }
+}

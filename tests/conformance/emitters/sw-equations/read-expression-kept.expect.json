@@ -1,0 +1,36 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 3",
+  "rule": "read-expressions",
+  "kind": "binding",
+  "entry": "read",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "A": {
+        "kind": "expression",
+        "text": "\"B\" * 2",
+        "exact": true
+      },
+      "B": {
+        "kind": "value",
+        "value": "5mm"
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "B": {
+        "kind": "value",
+        "value": "5mm"
+      }
+    },
+    "excludes": [
+      "A"
+    ]
+  }
+}

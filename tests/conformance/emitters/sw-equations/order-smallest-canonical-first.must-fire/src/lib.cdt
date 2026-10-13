@@ -1,0 +1,4 @@
+model Part {
+  b = 1mm
+  a = 2mm
+}

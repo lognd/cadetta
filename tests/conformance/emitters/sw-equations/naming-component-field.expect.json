@@ -1,0 +1,33 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 4",
+  "rule": "component",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "a binding on one instance path addresses the component named by component; a [*] binding without component addresses the part file itself. Both keep the .SLDPRT spelling in the file",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"D1@Bore@Wheel.SLDPRT\" = 10mm"
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"D1@Bore@Wheel.SLDPRT\" = 10mm"
+        ],
+        "excludes": []
+      }
+    }
+  }
+}

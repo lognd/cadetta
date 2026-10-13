@@ -1,0 +1,25 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 2",
+  "rule": "order",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "dependencies count transitively through lets and unemitted paths",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"Z\"",
+      "\"A\""
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"A\"",
+      "\"Z\""
+    ]
+  }
+}

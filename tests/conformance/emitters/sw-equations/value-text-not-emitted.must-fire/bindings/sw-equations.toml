@@ -1,0 +1,10 @@
+["acme.demo::Part.note"]
+locators = [
+  { locator = "Note", kind = "global", mode = "value", native_unit = "" },
+]
+
+["acme.demo::Part.width"]
+locators = [
+  { locator = "W", kind = "global", mode = "value", native_unit = "mm" },
+]
+

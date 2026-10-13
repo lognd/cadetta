@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 1",
+  "rule": "text-not-emitted",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "a Text parameter, even bound, has no place in an equations file",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"W\" = 10mm"
+        ],
+        "excludes": [
+          "\"Note\"",
+          "anodize"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"W\" = 10mm"
+        ],
+        "excludes": [
+          "\"Note\""
+        ]
+      }
+    }
+  }
+}

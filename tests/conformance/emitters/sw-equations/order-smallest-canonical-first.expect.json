@@ -1,0 +1,25 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 2",
+  "rule": "order",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "independent paths sort by byte order of the canonical path, not source or bindings-file order",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"A\"",
+      "\"B\""
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "order": [
+      "\"A\"",
+      "\"B\""
+    ]
+  }
+}

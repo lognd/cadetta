@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 1",
+  "rule": "header-noop",
+  "kind": "binding",
+  "entry": "sync",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": []
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/eq.txt"
+    ]
+  }
+}

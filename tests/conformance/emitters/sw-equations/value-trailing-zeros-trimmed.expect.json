@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 1",
+  "rule": "value-precision",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "default precision is 6 decimals; zeros are trimmed so 12.5 never prints as 12.500000",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"W\" = 12.5mm"
+        ],
+        "excludes": [
+          "12.500000",
+          "12.50mm"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"W\" = 12.5mm"
+        ],
+        "excludes": [
+          "12.500000"
+        ]
+      }
+    }
+  }
+}

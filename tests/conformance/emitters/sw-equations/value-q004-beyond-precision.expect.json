@@ -1,0 +1,30 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/sw-equations",
+  "section": "emitters/sw-equations.md 1",
+  "rule": "Q004",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "with [[adapter]] precision = 2, 0.125mm is not representable: Q004, never rounded",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q004",
+        "severity": "error"
+      }
+    ],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"W\" = 0.12mm"
+        ],
+        "excludes": []
+      }
+    }
+  }
+}

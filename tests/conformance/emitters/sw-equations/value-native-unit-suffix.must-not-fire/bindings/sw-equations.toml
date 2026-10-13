@@ -1,0 +1,4 @@
+["acme.demo::Part.thk"]
+locators = [
+  { locator = "T", kind = "global", mode = "value", native_unit = "mm" },
+]

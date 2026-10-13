@@ -1,0 +1,5 @@
+model Part {
+  /// Stock thickness.
+  /// 1/4 in nominal.
+  width = 10mm
+}

@@ -1,0 +1,4 @@
+model Part {
+  num_bolts: Count = 4
+  ratio: Ratio = 0.5
+}

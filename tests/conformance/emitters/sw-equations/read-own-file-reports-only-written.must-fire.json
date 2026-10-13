@@ -1,0 +1,4 @@
+{
+  "file": "build/eq.txt",
+  "text": "' cadetta emit sw-equations 0.1.0 ir=blake3:00 bindings=blake3:00\n\"W\" = 10mm\n"
+}

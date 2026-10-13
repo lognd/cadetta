@@ -1,0 +1,5 @@
+model Part {
+  a = t + 1mm
+  let t = 1mm
+  z = 1mm
+}
