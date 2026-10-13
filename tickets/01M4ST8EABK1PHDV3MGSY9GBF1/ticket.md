@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `default(Iface = Impl)`, when a component parameter of that interface type is unset, then the scoped default fills it (language.md 3.11, stdlib.md 4)"
-bound = false
+bound = true
 +++
