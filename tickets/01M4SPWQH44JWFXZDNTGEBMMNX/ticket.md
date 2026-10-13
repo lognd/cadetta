@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:54:40Z"
+updated = "2026-10-13T08:54:41Z"
 persona = "cadetta contributor"
 capability = "lower sema output into design IR with provenance, deps and spans"
 outcome_text = "lints and emitters consume a single structure"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given a variant evaluation, when lowered, then each member stores only the values differing from the primary under "slot=alternate" (ir.md 3, language.md 3.2)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a process-compensated member, when lowered, then `designed` holds the value before compensation and `nominal` the drawn value (ir.md 3, language.md 3.8)"
