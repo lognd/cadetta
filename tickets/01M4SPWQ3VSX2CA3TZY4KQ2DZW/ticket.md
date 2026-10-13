@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:43:35Z"
+updated = "2026-10-13T06:04:57Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -57,5 +57,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a Locator, when serialized, then it carries kind global|dimension|property|frame, mode, native_unit, ref_to, for, config, sign and component (ir.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given Project, when built, then it holds package {name, version}, a sorted modules[] of every module path and dependencies[] (name, version, source, digest), and items in src/lib.cdt sit at the package root (ir.md 3, 4; packages.md 2)"
 bound = false
 +++
