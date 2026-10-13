@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `fit insert = hole / Insert.od`, when evaluated, then both sides are paths with their own tolerances (language.md 3.7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a required range `[-0.4mm .. -0.1mm]`, when the clearance lies entirely outside it, then F004 violates; when it overlaps only partly then C002 undecided (language.md 3.7)"
