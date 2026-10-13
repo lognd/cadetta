@@ -2,18 +2,19 @@
 id = "01M4SPWQPYYT8Y5N3P5ZSG20Z9"
 title = "Lint family Quantity rules Q001-Q011"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T12:54:24Z"
+updated = "2026-10-13T12:55:53Z"
 persona = "design engineer"
 capability = "get lints for the Q family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/q.rs", "creates:tests/conformance/lints/Q*/**"]
-scope = ["crates/cadetta-lint/src/rules/q.rs", "tests/conformance/lints/Q*/**"]
+scope = ["crates/cadetta-lint/src/rules/q.rs", "tests/conformance/lints/Q*/**", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given `x: Length = 5`, when linted, then Q001 error is reported (lints.md Q)"
