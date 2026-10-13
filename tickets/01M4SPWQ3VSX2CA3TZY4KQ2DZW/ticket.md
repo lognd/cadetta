@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given a Member, when built, then it carries the analysis flag, deps, optional variants keyed "slot=alternate", digest and closure (ir.md 3)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Binding, when built, then it holds a list of locators each with kind (global|dimension|property), mode (value|ref) and native_unit (ir.md 3, adapters.md 3)"
