@@ -27,6 +27,10 @@ target = "01M4SPWT3FP4SN4RTCHE631Y52"
 kind = "blocks"
 target = "01M4SPWT6N1HY3MHN544GZJYS9"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWTA1PQV15S63741V30XT"
+
 [[acceptance]]
 text = "Given diagnostics at or above fail_on, when a command finishes, then exit code is 1"
 bound = false
