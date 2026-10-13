@@ -2,7 +2,8 @@
 id = "01M4VB63B9FS1JDEH7V08K12NH"
 title = "Pattern count members count_x, count_y and count"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
