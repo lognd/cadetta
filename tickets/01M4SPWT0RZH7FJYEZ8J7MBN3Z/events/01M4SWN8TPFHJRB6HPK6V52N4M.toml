@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an existing project, when init repeats, then nothing is overwritten", "Given unformatted source, when `fmt --check` runs, then exit code is 1"]
+new = ["Given an existing project, when init repeats, then nothing is overwritten", "Given unformatted source, when `fmt --check` runs, then exit code is 1", "Given init --adapter and --bare, when run, then missing files only are created, skipped files print an info line and the namespace is echoed (config-cli.md 3.2)"]
+moved = [1, 2]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
