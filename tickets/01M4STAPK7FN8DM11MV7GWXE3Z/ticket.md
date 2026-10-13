@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T07:38:14Z"
+updated = "2026-10-13T07:39:19Z"
 persona = "design engineer"
 capability = "use standard retaining rings"
 idempotency_key = "replan13:std.retaining (Din471, Din472)"
@@ -21,9 +21,9 @@ target = "01M4STAPPJR0478N5B1E751RZY"
 
 [[acceptance]]
 text = "Given Din471 and Din472 tables, when loaded, then every value is as published and cited (stdlib.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a groove and ring, when checked, then fit rules in stdlib.md 5 apply (stdlib.md 2)"
-bound = false
+bound = true
 +++
