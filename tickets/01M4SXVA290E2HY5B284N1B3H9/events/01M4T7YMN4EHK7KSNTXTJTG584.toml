@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:01:57Z"
+digest = "925c14504d8c4f90eacf0c15beae5e53f0736862a7d1b8f1b4780497ebcbaf66"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.73s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 14d9ba25-b217-4b3e-9a88-51879756bfa4 with nextest profile: default
+    Starting 2 tests across 9 binaries (75 tests skipped)
+        PASS [   0.007s] cadetta-syntax::std_lib_root root_parses_clean_and_only_cites
+        PASS [   0.008s] cadetta-syntax::std_lib_root root_exports_each_standard
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 2 tests run: 2 passed, 75 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=root_exports_each_standard) | test(=root_parses_clean_and_only_cites)'"
+size = 705
+status = "measured"
+test_count = 2
+tests_digest = "e5213f56bd27ab222db7a976984dcb9a08545c08c007d94b6a5fdb12de6a809e"
+at = "2026-10-13T09:01:57Z"
+actor = "lognd"
+rev = 1

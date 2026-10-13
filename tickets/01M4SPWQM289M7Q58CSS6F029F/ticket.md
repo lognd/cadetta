@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T09:00:39Z"
+updated = "2026-10-13T09:01:55Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
 labels = ["creates:crates/cadetta-lint/src/engine.rs"]
-scope = ["crates/cadetta-lint/src/engine.rs"]
+scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/lib.rs", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocks"
@@ -89,17 +89,17 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `cadetta explain CODE` data, when queried, then each code exposes name, default severity, fixed flag and meaning from one catalog table (lints.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fixed code, required_for floor, [lint] severity and waive/allow, when diagnostics are gated, then precedence is exactly lints.md 1 and fail_on = never makes diagnostics informational (lints.md 1; config-cli.md 2)"
-bound = false
+bound = true
 +++
