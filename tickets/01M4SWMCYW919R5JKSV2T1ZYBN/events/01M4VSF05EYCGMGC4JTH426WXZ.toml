@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/conformance/adapters/**", "crates/cadetta-adapter/src/geometry_bind.rs"]
+new = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/conformance/adapters/**", "crates/cadetta-adapter/src/geometry_bind.rs", "crates/cadetta-cli/src/config.rs", "crates/cadetta-adapter/src/rpc/types.rs", "crates/cadetta-adapter/src/lib.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/known-gaps.toml", "docs/spec/adapters.md", "bindings/python/python/cadetta/_models.py"]
+at = "2026-10-13T23:27:17Z"
+actor = "lognd"
+rev = 1

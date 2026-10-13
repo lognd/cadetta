@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T23:22:15Z"
+updated = "2026-10-13T23:27:17Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
 labels = ["creates:crates/cadetta-adapter/src/geometry_bind.rs"]
-scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/conformance/adapters/**", "crates/cadetta-adapter/src/geometry_bind.rs"]
+scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "tests/conformance/adapters/**", "crates/cadetta-adapter/src/geometry_bind.rs", "crates/cadetta-cli/src/config.rs", "crates/cadetta-adapter/src/rpc/types.rs", "crates/cadetta-adapter/src/lib.rs", "docs/schemas/adapter-protocol.json", "tests/conformance/known-gaps.toml", "docs/spec/adapters.md", "bindings/python/python/cadetta/_models.py"]
 
 [[links]]
 kind = "blocked-by"
