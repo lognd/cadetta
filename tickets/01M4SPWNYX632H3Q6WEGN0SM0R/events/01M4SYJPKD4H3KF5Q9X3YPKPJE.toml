@@ -1,0 +1,43 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:18:08Z"
+digest = "12dbc64413965b065367e881a2b189f0bd25f7ea77ccb35325951c8600143d18"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.85s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID eea896a0-4079-4d0f-a8f7-f9ca0adf60c2 with nextest profile: default
+    Starting 17 tests across 3 binaries (6 tests skipped)
+        PASS [   0.006s] cadetta-syntax lexer::tests::fractions_need_no_whitespace_and_a_unit
+        PASS [   0.007s] cadetta-syntax lexer::tests::strings_attributes_and_punctuation
+        PASS [   0.007s] cadetta-syntax lexer::tests::split_literal_is_q007_with_fixit
+        PASS [   0.007s] cadetta-syntax lexer::tests::exponent_compound_unit_and_percent_are_single_quantities
+        PASS [   0.012s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.004s] cadetta-units dimension::tests::length_plus_mass_is_an_error_value
+        PASS [   0.012s] cadetta-syntax lexer::tests::line_and_doc_comments_are_distinguished
+        PASS [   0.004s] cadetta-units rational::tests::one_inch_is_exactly_127_over_5000_metres
+        PASS [   0.012s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+        PASS [   0.004s] cadetta-units rational::tests::degrees_ratio_cancels_pi_exactly
+        PASS [   0.005s] cadetta-units dimension::tests::currency_is_its_own_base_dimension
+        PASS [   0.011s] cadetta-obligations graph::tests::bad_edges_rejected_and_duplicates_ignored
+        PASS [   0.013s] cadetta-units dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude
+        PASS [   0.013s] cadetta-obligations graph::tests::all_ten_edges_buildable
+        PASS [   0.012s] cadetta-syntax lexer::tests::reserved_words_lex_as_keywords
+        PASS [   0.014s] cadetta-syntax lexer::tests::compound_literals_are_one_token
+        PASS [   0.005s] cadetta-units rational::tests::powers_and_decimals_are_exact
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 17 tests run: 17 passed, 6 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -p cadetta-syntax -p cadetta-units -E '(package(=cadetta-obligations) & (test(=graph::tests::all_ten_edges_buildable) | test(=graph::tests::bad_edges_rejected_and_duplicates_ignored))) | (package(=cadetta-syntax) & (test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::leading_and_trailing_dot_are_lex_errors) | test(=lexer::tests::line_and_doc_comments_are_distinguished) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::reserved_words_lex_as_keywords) | test(=lexer::tests::split_literal_is_q007_with_fixit) | test(=lexer::tests::strings_attributes_and_punctuation))) | (package(=cadetta-units) & (test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=dimension::tests::currency_is_its_own_base_dimension) | test(=dimension::tests::length_plus_mass_is_an_error_value) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact)))'"
+size = 2342
+status = "measured"
+test_count = 17
+tests_digest = "0104ce150cbcf7372817087021cb037674d3b7361f43b66cedbddabe2cd4273d"
+at = "2026-10-13T06:18:08Z"
+actor = "lognd"
+rev = 1
