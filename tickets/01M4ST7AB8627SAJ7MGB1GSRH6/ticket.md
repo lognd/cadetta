@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a check reading an arithmetic parameter with no tolerance of its own whose inputs are toleranced, when analysed, then the C004 fact is recorded (quantities.md 5.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a nonlinear operation, when evaluated, then the result falls back to interval bounds and is marked conservative (quantities.md 5.4)"
