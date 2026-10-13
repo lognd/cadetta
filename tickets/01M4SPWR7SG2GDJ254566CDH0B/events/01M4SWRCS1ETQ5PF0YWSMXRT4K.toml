@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a check violated across the tolerance, when linted, then C001 error", "Given an undecided check, when linted, then C002 warning", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/", "Given `a == b` on toleranced operands, when linted, then C003 warning suggests `.nominal` accessors (quantities.md 5.8)", "Given a check reading an arithmetic parameter with toleranced inputs and no tolerance of its own, when linted, then C004 info suggests `let` (quantities.md 5.3)", "Given a violation under an alternate, when linted, then C001 names `for alt NAME` (language.md 3.2)"]
+new = ["Given a check violated across the tolerance, when linted, then C001 error", "Given an undecided check, when linted, then C002 warning", "Given `a == b` on toleranced operands, when linted, then C003 warning suggests `.nominal` accessors (quantities.md 5.8)", "Given a check reading an arithmetic parameter with toleranced inputs and no tolerance of its own, when linted, then C004 info suggests `let` (quantities.md 5.3)", "Given a violation under an alternate, when linted, then C001 names `for alt NAME` (language.md 3.2)", "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"]
+moved = [1, 2, 0, 3, 4, 5]
+at = "2026-10-13T05:46:22Z"
+actor = "lognd"
+rev = 1
