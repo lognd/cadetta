@@ -23,6 +23,10 @@ target = "01M4ST8EEGK712KZT44DEDBSEG"
 kind = "blocks"
 target = "01M4ST8F91FHYFC01TN6018BAM"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST8FCNN3GZKZNRK2X3Q55S"
+
 [[acceptance]]
 text = "Given a slot with alternate A, when evaluated, then A replaces the primary in every instance of the slot, all other slots keep their primaries, and derived values, part arguments, fits, checks, requires and roll-ups are re-evaluated (language.md 3.2)"
 bound = false
