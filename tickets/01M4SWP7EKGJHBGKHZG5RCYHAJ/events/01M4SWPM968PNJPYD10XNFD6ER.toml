@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given docs/spec/json.md, when fixtures are written, then every normative rule and every diagnostic code has a must-fire and a must-not-fire fixture under tests/conformance/emitters/json/ (json.md)", "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"]
+new = ["Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)", "Given docs/spec/emitters/json.md, when fixtures are written, then every normative rule and every diagnostic code has a must-fire and a must-not-fire fixture under tests/conformance/emitters/json/ (emitters/json.md)"]
+moved = [0, 1]
+at = "2026-10-13T05:45:25Z"
+actor = "lognd"
+rev = 1
