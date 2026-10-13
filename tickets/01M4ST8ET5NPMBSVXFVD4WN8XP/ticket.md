@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = 'Given a literal citation `@"ASTM A276"`, when checked, then no digest or reachability check applies (language.md 3.9)'
-bound = false
+bound = true
 +++
