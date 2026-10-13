@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T20:47:20Z"
+digest = "e103ae9ae8fddf377f64ec513f5beee4082bb2b64877745a109760c1d62f25a0"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 059d99df-12fc-48b7-bee0-d9deb5659610 with nextest profile: default
+    Starting 3 tests across 27 binaries (927 tests skipped)
+        PASS [   0.009s] cadetta-adapter bindings::tests::bindings_mangle_collision_r013
+        PASS [   0.030s] cadetta cmd::emit::tests::native_name_collision_exits_one
+        PASS [   0.031s] cadetta cmd::emit::tests::explicit_binding_resolves_name_collision
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.036s] 3 tests run: 3 passed, 927 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "bindings_mangle_collision_r013 | explicit_binding_resolves_name_collision | native_name_collision_exits_one"
+size = 734
+status = "measured"
+test_count = 3
+tests_digest = "e3875c916cb90c8412da5ef37e76b66077ebf992e6e6d6286b2e7882d23cfa12"
+at = "2026-10-13T20:47:20Z"
+actor = "lognd"
+rev = 1
