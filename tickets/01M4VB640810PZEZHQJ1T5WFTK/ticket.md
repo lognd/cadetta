@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T21:52:30Z"
+updated = "2026-10-13T21:53:57Z"
 persona = "design engineer"
 capability = "link a dimension in CAD without restating it in a bindings file"
 outcome_text = "nothing is said twice"
@@ -25,7 +25,7 @@ target = "01M4VB63WJ5XBJ360151Y6D9TH"
 
 [[acceptance]]
 text = "Given observed IR with a global named by an in-scope path's created name (or a was name), a dimension whose equation is exactly that global, a frame named by a datum's created name, or an instance whose reference property names a part, when bound, then the implicit locator of adapters.md 3.5 exists with Locator.implicit set and nothing is written to the bindings file"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an implicit locator recorded by a sync that is later missing, when synced, then R003; an expression-driven dimension is R002; two instances naming one part are R013 (adapters.md 3.5)"
