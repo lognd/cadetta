@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:22:13Z"
+updated = "2026-10-13T07:22:20Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
@@ -40,7 +40,7 @@ bound = true
 
 [[acceptance]]
 text = "Given matches under src, when compiled, then files are sorted by path so digests are deterministic; a component defined twice in one module is E003 with both spans (config-cli.md 1.3, 1.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a path to a bindings, solver script or cited file, when resolved, then it is relative to the package directory, not src (packages.md 2)"
