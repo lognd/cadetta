@@ -2,7 +2,8 @@
 id = "01M4T11K0VARSN3813NG812VAE"
 title = "Wire short and github formats into the CLI output"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
