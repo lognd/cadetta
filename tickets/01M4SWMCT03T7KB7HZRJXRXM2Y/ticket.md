@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:14Z"
 persona = "design engineer"
 capability = "adopt without re-typing"
 idempotency_key = "replan14:ad-imp-acc"
 labels = ["creates:crates/cadetta-adapter/src/import/accept.rs"]
 scope = ["crates/cadetta-adapter/src/import/accept.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMCQF9HTJKW2Y7JR3ZKRA"
 
 [[acceptance]]
 text = "Given a proposal, when --accept runs, then bindings/ and cad/imported/ are written and an adopted lock record is added (adapters.md 7.4)"
