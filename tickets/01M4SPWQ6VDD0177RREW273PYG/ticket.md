@@ -2,7 +2,8 @@
 id = "01M4SPWQ6VDD0177RREW273PYG"
 title = "JSON serialization with string rationals"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
