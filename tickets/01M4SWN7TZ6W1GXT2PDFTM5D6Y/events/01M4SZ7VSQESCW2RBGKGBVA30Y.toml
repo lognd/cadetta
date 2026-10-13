@@ -1,0 +1,35 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:29:37Z"
+digest = "c8a0017fdb867309de3d1540feb31a3bd8f5d627835638ea90813bca7d494584"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.77s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 475df98e-b9ea-46dc-a099-4d2c6e1463ea with nextest profile: default
+    Starting 10 tests across 2 binaries (15 tests skipped)
+        PASS [   0.010s] cadetta-syntax lexer::tests::compound_literals_are_one_token
+        PASS [   0.020s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+        PASS [   0.023s] cadetta-syntax lexer::tests::fractions_need_no_whitespace_and_a_unit
+        PASS [   0.019s] cadetta-syntax lexer::tests::reserved_words_lex_as_keywords
+        PASS [   0.027s] cadetta-obligations kinds::tests::required_for_gates_sync_and_solver
+        PASS [   0.031s] cadetta-syntax lexer::tests::exponent_compound_unit_and_percent_are_single_quantities
+        PASS [   0.028s] cadetta-obligations kinds::tests::equations_emission_never_discharges_sync
+        PASS [   0.032s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.042s] cadetta-syntax lexer::tests::strings_attributes_and_punctuation
+        PASS [   0.051s] cadetta-obligations kinds::tests::set_rejects_bad_input
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.052s] 10 tests run: 10 passed, 15 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -p cadetta-syntax -E '(package(=cadetta-obligations) & (test(=kinds::tests::equations_emission_never_discharges_sync) | test(=kinds::tests::required_for_gates_sync_and_solver) | test(=kinds::tests::set_rejects_bad_input))) | (package(=cadetta-syntax) & (test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::leading_and_trailing_dot_are_lex_errors) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::reserved_words_lex_as_keywords) | test(=lexer::tests::strings_attributes_and_punctuation)))'"
+size = 1617
+status = "measured"
+test_count = 10
+tests_digest = "78a7d01f4efe7c3a746610ee9c4d261be4c0c7b71073b4931c55ca13bda24107"
+at = "2026-10-13T06:29:37Z"
+actor = "lognd"
+rev = 1
