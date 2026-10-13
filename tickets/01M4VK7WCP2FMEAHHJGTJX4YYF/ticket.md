@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:38:33Z"
-updated = "2026-10-13T22:34:20Z"
+updated = "2026-10-13T22:35:43Z"
 persona = "design engineer"
 capability = "get diagnostics and formatting through one standard LSP setup"
 outcome_text = "no per-editor bridge configuration is needed"
 idempotency_key = "d15:editors-lsp"
-scope = ["editors/**"]
+scope = ["editors/**", ".github/workflows/ci.yml"]
 
 [[links]]
 kind = "blocked-by"
