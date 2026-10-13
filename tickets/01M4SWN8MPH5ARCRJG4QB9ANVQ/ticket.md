@@ -17,6 +17,10 @@ scope = ["crates/cadetta-cli/src/cmd/lsp.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SWK9V5CYNNVTAS3PE4EC23"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWKA7HT50RJJ7ZZWP6WMKH"
 
 [[acceptance]]
