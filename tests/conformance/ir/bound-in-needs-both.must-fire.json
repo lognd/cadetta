@@ -1,0 +1,98 @@
+{
+  "schema": "cadetta.ir/1",
+  "flavour": "design",
+  "package": {
+    "name": "acme.demo",
+    "version": "0.1.0"
+  },
+  "modules": [],
+  "dependencies": [],
+  "components": [
+    {
+      "attrs": {},
+      "class": "model",
+      "fits": [],
+      "implements": [],
+      "members": [
+        {
+          "analysis": false,
+          "attrs": {},
+          "deps": [],
+          "kind": "param",
+          "path": "acme.demo::Axle.d",
+          "priv": false,
+          "provenance": "authored",
+          "was": [],
+          "value": {
+            "angle": 0,
+            "authored": "10mm",
+            "conservative": false,
+            "dim": {
+              "A": 0,
+              "K": 0,
+              "angle": 0,
+              "cd": 0,
+              "currency": {},
+              "kg": 0,
+              "m": 1,
+              "mol": 0,
+              "s": 0
+            },
+            "exact": true,
+            "nominal": {
+              "pi": 0,
+              "r": "1/100"
+            }
+          },
+          "bound": {
+            "op": "in",
+            "lo": {
+              "pi": 0,
+              "r": "0/1"
+            }
+          }
+        },
+        {
+          "analysis": false,
+          "attrs": {},
+          "deps": [
+            "acme.demo::Axle.d"
+          ],
+          "kind": "param",
+          "path": "acme.demo::Axle.r",
+          "priv": false,
+          "provenance": "derived",
+          "was": [],
+          "value": {
+            "angle": 0,
+            "authored": "d / 2",
+            "conservative": false,
+            "dim": {
+              "A": 0,
+              "K": 0,
+              "angle": 0,
+              "cd": 0,
+              "currency": {},
+              "kg": 0,
+              "m": 1,
+              "mol": 0,
+              "s": 0
+            },
+            "exact": true,
+            "nominal": {
+              "pi": 0,
+              "r": "1/200"
+            }
+          },
+          "expr": "d / 2"
+        }
+      ],
+      "parts": [],
+      "path": "acme.demo::Axle"
+    }
+  ],
+  "citations": [],
+  "checks": [],
+  "solvers": [],
+  "bindings": []
+}

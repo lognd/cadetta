@@ -1,0 +1,82 @@
+{
+  "schema": "cadetta.ir/1",
+  "flavour": "design",
+  "package": {
+    "name": "acme.demo",
+    "version": "0.1.0"
+  },
+  "modules": [],
+  "dependencies": [],
+  "components": [
+    {
+      "attrs": {},
+      "class": "assembly",
+      "fits": [],
+      "implements": [],
+      "members": [
+        {
+          "analysis": false,
+          "attrs": {},
+          "deps": [],
+          "kind": "param",
+          "path": "acme.demo::Rover.top.offset.x",
+          "priv": false,
+          "provenance": "authored",
+          "was": [],
+          "value": {
+            "angle": 0,
+            "authored": "0mm",
+            "conservative": false,
+            "dim": {
+              "A": 0,
+              "K": 0,
+              "angle": 0,
+              "cd": 0,
+              "currency": {},
+              "kg": 0,
+              "m": 1,
+              "mol": 0,
+              "s": 0
+            },
+            "exact": true,
+            "nominal": {
+              "pi": 0,
+              "r": "0/1"
+            }
+          }
+        }
+      ],
+      "parts": [],
+      "path": "acme.demo::Rover",
+      "datums": [
+        {
+          "path": "acme.demo::Rover.top",
+          "parent": "origin",
+          "ops": [
+            {
+              "flip": "x"
+            }
+          ]
+        }
+      ],
+      "placements": [
+        {
+          "part": "acme.demo::Rover/feet[i]",
+          "datum": "acme.demo::Rover.top",
+          "on": "acme.demo::Rover.top",
+          "ops": [
+            {
+              "offset": {
+                "x": "acme.demo::Rover.top.offset.x"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "citations": [],
+  "checks": [],
+  "solvers": [],
+  "bindings": []
+}

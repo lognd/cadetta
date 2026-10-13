@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "ir",
+  "section": "ir.md 2",
+  "rule": "E011",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      { "code": "E011", "severity": "error" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

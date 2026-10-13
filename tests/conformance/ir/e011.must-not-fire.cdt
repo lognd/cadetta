@@ -1,0 +1,9 @@
+/// A parameterized component: end_diameter depends on d, pitch does not.
+model Axle(d: Length) {
+  end_diameter = d
+  pitch = 5mm
+}
+
+model Probe {
+  a = Axle.pitch
+}
