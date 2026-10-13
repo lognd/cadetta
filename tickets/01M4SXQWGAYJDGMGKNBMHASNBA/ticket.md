@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:34Z"
-updated = "2026-10-13T06:36:31Z"
+updated = "2026-10-13T06:36:41Z"
 persona = "library author"
 capability = "declare a package with dependencies, or group packages in a workspace"
 labels = ["creates:crates/cadetta-cli/src/pkg/manifest.rs"]
@@ -20,7 +20,7 @@ target = "01M4SPWSTRG1FFAJ0XM89ETBBN"
 
 [[acceptance]]
 text = 'Given a cadetta.toml with [package] name, version and src, when loaded, then name must be lower.dotted (N001), version is semver, src defaults to "src" and the package root is src/lib.cdt (packages.md 1, 2; config-cli.md 2)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given [dependencies] entries with path, or git plus tag, rev or branch, when loaded, then each is typed; a registry source is rejected as unsupported (packages.md 1; OQ-19)"
