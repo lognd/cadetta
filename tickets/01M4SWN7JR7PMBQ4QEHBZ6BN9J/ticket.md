@@ -17,6 +17,10 @@ scope = ["crates/cadetta-obligations/src/swap.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4ST8EPKBWRWHF51Y5NV3VK0"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4ST8F91FHYFC01TN6018BAM"
 
 [[acceptance]]
