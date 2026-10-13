@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:01:26Z"
+updated = "2026-10-13T07:01:52Z"
 persona = "design engineer"
 capability = "write datum, point and placement syntax"
 idempotency_key = "replan14:geo-parse"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given 'for i in 0..N' versus 'IDENT in EXPR', when parsed, then 'IDENT in' starts a bound only when the right side is a range (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a member named origin, when parsed, then it is an error because origin is reserved (geometry.md 2)"
