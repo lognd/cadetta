@@ -1,0 +1,29 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:10:05Z"
+digest = "18763c5b5ec48a633a624381073d5522847f8a39c9434f508a011cc58fc7b860"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.95s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID af44b9cd-d962-4736-9a84-eda4eeac0607 with nextest profile: default
+    Starting 6 tests across 1 binary
+        PASS [   0.010s] cadetta-obligations graph::tests::bad_edges_rejected_and_duplicates_ignored
+        PASS [   0.011s] cadetta-obligations graph::tests::classify_attested_kinds
+        PASS [   0.011s] cadetta-obligations graph::tests::require_never_waived
+        PASS [   0.011s] cadetta-obligations graph::tests::all_ten_edges_buildable
+        PASS [   0.014s] cadetta-obligations graph::tests::ids_roundtrip_and_include_waiver
+        PASS [   0.017s] cadetta-obligations graph::tests::recomputed_kinds_never_stale
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 6 tests run: 6 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E '(package(=cadetta-obligations) & (test(=graph::tests::all_ten_edges_buildable) | test(=graph::tests::bad_edges_rejected_and_duplicates_ignored) | test(=graph::tests::classify_attested_kinds) | test(=graph::tests::ids_roundtrip_and_include_waiver) | test(=graph::tests::recomputed_kinds_never_stale) | test(=graph::tests::require_never_waived)))'"
+size = 1026
+status = "measured"
+test_count = 6
+tests_digest = "5522fc2a23215d037b2409a03ebb7645ec449bdc49122cf6c6a726526d07523b"
+at = "2026-10-13T06:10:05Z"
+actor = "lognd"
+rev = 1
