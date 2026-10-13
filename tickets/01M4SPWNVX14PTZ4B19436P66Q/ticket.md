@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given sin/cos/tan of exact multiples of 90deg and the matching multiples of 30deg and 45deg, when evaluated, then the result is exact; atan2(3in, 3in) == 45deg holds (quantities.md 4.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `round_to`, `ceil_to` and `floor_to` of an exact value, when evaluated, then the result is an exact rational multiple of step, ties away from zero, deviations kept (quantities.md 5.5)"
