@@ -6,8 +6,8 @@ category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T22:34:33Z"
-updated = "2026-10-13T23:09:00Z"
-scope = ["crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-adapter/src/bindings.rs"]
+updated = "2026-10-13T23:09:31Z"
+scope = ["crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-adapter/src/bindings.rs", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
