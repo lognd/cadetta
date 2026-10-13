@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:46:22Z"
 persona = "design engineer"
 capability = "get lints for the D family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -40,6 +40,6 @@ text = "Given a cycle between members, when linted, then D003 is an error and ca
 bound = false
 
 [[acceptance]]
-text = "Given each code, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
+text = "Given each code, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
 bound = false
 +++
