@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:19:57Z"
+digest = "cba52c599586a2deb81d4b5a8c24158d5c6e2497f861de769010bf0a53ebe7b0"
+provider = "file"
+ref = "grimble.lock"
+size = 1424
+status = "measured"
+at = "2026-10-13T22:19:57Z"
+actor = "lognd"
+rev = 1

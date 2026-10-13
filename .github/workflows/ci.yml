@@ -85,9 +85,11 @@ jobs:
       - name: uv sync (builds the extension)
         run: uv sync --python 3.11
       - name: ruff check
-        run: uv run ruff check python tests
+        run: uv run ruff check python tests scripts
       - name: ruff format --check
-        run: uv run ruff format --check python tests
+        run: uv run ruff format --check python tests scripts
+      - name: generated models match docs/schemas
+        run: uv run scripts/gen_models.py --check
       - name: pytest
         run: uv run pytest
       - name: Wheel builds and the console script runs
