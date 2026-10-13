@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:28:08Z"
+updated = "2026-10-13T07:28:09Z"
 persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given changed inputs, when evaluated, then the output is stale but still evaluates until re-solved (solvers.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a solve run, when stored, then `<stem>.out.json` beside the script (drive_torque.py writes drive_torque.out.json) has schema `cadetta.solve-result/1` with results[] of solver, input_digest, script_digest, dep_digests, version?, variant?, inputs, outputs and diagnostics, sorted by solver path then variant (solvers.md 4)"
