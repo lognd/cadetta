@@ -7,8 +7,11 @@ Nothing in `std` needs a language feature user code cannot use; if it
 did, that feature would be missing from the language. Every value in
 `std` is cited to its standard or handbook (S001 applies to `std` too).
 `std` exports one `cite` per standard at its root (`std::iso273`,
-`std::iso286`, `std::din472`, ...), so user code cites a standard with
-`cite din472 = std::din472`. Library intermediates are `priv` members
+`std::iso286`, `std::din472`, ...), each a typed `standard` or `book`
+citation (language.md 3.9) with `organization`, `number`, `title` and
+`date` or `edition`, so `cadetta cite list` prints them in full. User
+code cites a standard as `@std::din472`, or `use std::din472` and then
+`@din472`; it never re-declares one. Library intermediates are `priv` members
 (packages.md 3): `ScrewJoint`'s public members are the ones listed in
 section 3, and its other values are `priv`.
 
@@ -141,7 +144,7 @@ straight to the hole features in each part's CAD file:
 | `grip` | `clamp` minus `counterbore_depth` when counterbored: the material actually under the head |
 | `screw_length` | `Iso4762Len.at_least(grip + min_engagement).key` |
 | `part screw[count(at)]` | `Iso4762(thread, screw_length)`, one per hole, so the BOM and mass roll-ups count one screw per hole (cost: section 4); `count` instead of `count(at)` when there is no pattern |
-| `float` | `Length`: the allowance the joint's `aligned` check uses (geometry.md 5.2); a non-locating joint carries it into the placement it implies |
+| `float` | `Length`: the allowance the joint's `aligned` check uses (geometry.md 5.2); a non-locating joint carries it, with a rotation bound, into the placement edge between its two parts |
 | `tap_drill` | `TapDrill[thread]` column chosen by `Materials[into].tap_class` and `tap` (`Cut` or `Form`): hard materials get the larger 65% drill |
 | `thread_depth` | tip penetration `screw_length - grip` plus the policy's bottom clearance |
 | `drill_depth` | `thread_depth` plus `tap_lead_in * thread.pitch` and `drill_point * tap_drill` |
@@ -177,10 +180,12 @@ grip`), `grip_positive`, `depth_ok` (only with `depth_available`) and
   pattern. A joint with `at` and `onto` takes its count from `count(at)`
   (G004 when `count(onto)` differs); `count` is then not allowed.
 - `locating: Bool` (default false): true when a pilot, dowel or fit
-  locates the clamped part. Otherwise a part placed on its host's
-  pattern datum gets an implicit `[+-float]` on x and y (one source
-  variable pair per joint), and G005 warns when a check tighter than
-  the float reads through it (geometry.md 5.2).
+  locates the clamped part. Otherwise, when the clamped part and the
+  host are placement parent and child, that edge gets an implicit
+  `[+-float]` on x and y and a rotation bound about the pattern's
+  centroid (geometry.md 5.2); G005 warns when a check tighter than the
+  float reads through it, and G008 when a one-point pattern leaves the
+  rotation free.
 
 A joint is one part per hole pattern, never one per hole: `part
 screws[4]: ScrewJoint(..., at = holes)` is E006 (argument mismatch),

@@ -34,8 +34,8 @@ model Bracket {
 assembly Mount {
   part rail: Rail
   part bracket: Bracket
-  place rail.origin on origin
-  place bracket.base on rail.site
+  place rail.origin at origin
+  place bracket.base at rail.site
   part screws: ScrewJoint(thread = M5, clamp = bracket.thickness, host = rail,
                           at = bracket.holes, onto = rail.tapped)
 }
@@ -73,10 +73,17 @@ plane and z is its normal.
   (language.md 2) and every component class may declare datums
   (language.md 3.1); S001 applies to datum offsets in an `ots`.
 - `datum NAME = EXPR` declares another, built from a datum of the same
-  component: `origin.offset(x = .., y = .., z = ..)`, `.rotate(x | y | z =
-  ANGLE)` and `.flip(x | y)`. Operations apply left to right, each in
-  the frame built so far. `.flip(x)` is sugar for `.rotate(x = 180deg)`
-  and reverses the normal.
+  component: `origin.offset(x = .., y = .., z = ..)`, `.offset(POINT)`
+  (section 4), `.rotate(x | y | z = ANGLE)` and `.flip(x | y)`.
+  Operations apply left to right, each in the frame built so far.
+  `.flip(x)` is sugar for `.rotate(x = 180deg)` and reverses the normal.
+- A datum is a frame, not a face. Convention for mounting datums: z
+  points along the stack, out of the host and into the part mounted on
+  it. A part modelled up from its base gets that for free (`datum base
+  = origin`), and a host's mounting face points outward (`datum top =
+  origin.offset(z = height)`), so `place bracket.base at rail.top`
+  needs no flip. A datum that faces the other way (a motor hung under
+  a plate) says so once, with `.flip(x)` in its declaration.
 - Offsets are Lengths and may carry tolerances, which become source
   variables like any parameter. Each offset and rotation argument is a
   Member with a canonical path (`Rail.site.offset.x`; ir.md 2), so it is
@@ -139,8 +146,8 @@ plane and z is its normal.
   (section 4). It never types a literal. `in` maps over arrays. A `Point2
   on d` becomes the `Point3` at z = 0 of `d`. Re-expressing a part's
   positions in a model that holds a different part (a swapped part's
-  pattern, `motor.mount_holes as Point2 on motor_face`) is valid only
-  where the model has both the part and its placement, otherwise G003.
+  pattern, `motor.mount_holes in motor_face`) is valid only where the
+  model has both the part and its placement, otherwise G003.
 - Members: `.x .y .z`; `distance(p, q)` after both are in one datum; it
   includes the axial component, so hole alignment uses `aligned` and
   axes use `radial` (section 5).
@@ -158,9 +165,11 @@ plane and z is its normal.
 - Each hand-listed coordinate is a parameter with a canonical path
   (`Bracket.holes[1].x`). A pattern produced by a generator is a value
   with named members (`holes.pitch_x`, `holes.pitch_y`, `holes.radius`,
-  `holes.start`, `holes.rotation`); those bind and emit, and the derived
+  `holes.start`, `holes.rotation`, and the counts `holes.count_x`,
+  `holes.count_y`, `holes.count`); those bind and emit, and the derived
   coordinates are analysis-only, never emitted, unless the points are
-  hand-listed.
+  hand-listed. A count member emits to a native pattern's instance
+  count, so the count is written once.
 - Re-expression evaluation (reexpress.rs): `p in D` carries `p` out of its
   datum into the root frame and back into `D`, composing the placements
   on the path. Inside a part the root is the part's `origin`; in an
@@ -176,17 +185,67 @@ plane and z is its normal.
   otherwise); a toleranced generator member shares one source variable
   across the points it moves; a tolerance after a pattern adds one fresh
   variable per coordinate; an omitted `rotation` has no member; a point
-  count of zero is an error. The counts (`nx`, `ny`, `n`) are structural,
-  not members.
+  count of zero is an error. The counts (`nx`, `ny`, `n`) are structural:
+  they must be exact whole numbers known before evaluation (a literal,
+  or a parameter-free constant), and they fix the array length. They are
+  also Count members (`count_x`, `count_y` for `rect_pattern`, `count`
+  for `circle_pattern`) that bind and emit like any member.
+
+### 3.1 Position tolerance
+
+Drawings usually tolerance a hole pattern by true position: each hole
+must lie within a circle of a given diameter centred on its true
+position. Cadetta writes that as a tolerance bracket on a `Point2` value
+or array:
+
+```
+holes: [Point2 on base; 4] = rect_pattern(2, 2, 40mm, 30mm) [position 0.2mm]
+pin: Point2 on base = Point2(10mm, 5mm) [position 0.1mm]
+```
+
+- The length after `position` is the zone diameter, as the drawing's
+  feature control frame states it, regardless of feature size. Material
+  condition modifiers (the MMC bonus) are OQ-17.
+- Each point gets one independent disc source variable: its true
+  position plus a displacement of at most half the diameter, in any
+  direction in its datum's xy plane. The points of a pattern vary
+  independently; the generator's members are the drawing's basic
+  dimensions. Tolerancing a generator member as well is E006 (a pattern
+  is toleranced one way), as is combining `position` with a coordinate
+  tolerance on one value.
+- `position` applies to `Point2` values and arrays only. On a `Point3`
+  it is E006 in 0.1.0: a cylindrical zone needs an axis direction, which
+  a point does not carry.
+- Evaluation (quantities.md 5.4): the disc `(u, v)`, `u^2 + v^2 <= 1`,
+  adds `(d/2) u` to x and `(d/2) v` to y. An exact rotation maps a disc
+  to a disc of the same size, so re-expression through placements keeps
+  it exact. `.x` or `.y` alone ranges over `[-d/2, d/2]` about nominal,
+  exactly; a scalar that mixes both coordinates of one disc (after an
+  off-90deg rotation) is bounded by the Euclidean norm of the pair,
+  inexact unless one coefficient is zero.
+- `distance`, `radial` and `aligned` treat disc terms exactly when the
+  discs lie in the plane being measured: the farthest a sum of discs
+  reaches is the sum of their radii. A disc tilted out of that plane is
+  bounded by its radius, which is sound and marked conservative. With
+  `[position 0.1mm]` on both patterns of section 1, each pair's worst
+  offset is 0.05mm + 0.05mm = 0.1mm, against 0.1414mm for the
+  coordinate box `[+-0.05mm]`. The result is conservative only when the
+  chain has an inexact rotation or other nonlinear terms.
+- A position zone is not a dimension. It is not emitted or bound; the
+  nominal coordinates and the generator members are.
 
 ## 4. Placement
 
-In an assembly, `place A on B` makes datum `A` of one part coincide with
-datum `B`: the frames are equal, z directions included, so a face
-mating against a face needs a `flip` in one datum. `B` is the assembly's
-own datum or another part's, optionally built further: `place bracket.base
-on rail.top.offset(x = 40mm).rotate(z = 90deg)`.
+In an assembly, `place A at B` makes datum `A` of one part coincide with
+frame `B`: the origins are equal and so are all three axes. `B` is the
+assembly's own datum or another part's, optionally built further:
+`place bracket.base at rail.top.offset(x = 40mm).rotate(z = 90deg)`.
 
+- `at` never flips anything, because a datum is a frame, not a face
+  (section 2). With the stacking convention a placement reads the way
+  the parts sit; a part that hangs the other way says so once in its
+  own datum, and an interface states its datums' directions as datum
+  bounds, so every implementer is checked.
 - Placements form a tree rooted at the assembly's `origin`: each part
   is placed at most once and no chain returns to itself. A cycle is G002.
   Because of the tree, placing parts is composition of transforms and
@@ -197,56 +256,57 @@ on rail.top.offset(x = 40mm).rotate(z = 90deg)`.
   answered, and a check answers it three-valued.
 - Idiom: place a bolted part on a datum of its host that is the centre
   of the host's pattern (section 1), so the nominal position is never
-  restated.
+  restated. More generally, put every offset in a datum of the host and
+  place op-free: the CAD side is then a coincident coordinate-system
+  mate with no number in it (section 6), and nothing about the
+  placement is bound by hand.
 - An unplaced part's positions are usable only inside the part.
   Converting them out of it is G003.
 - A subassembly placed in an assembly brings its placed parts along;
   instance paths compose (`Mount/sub/bracket.holes[1]`).
-- Each instance of a part array is placed separately. The Count-range
-  form places all of them: `place PART[i].d on EXPR for i in
-  0..count(PART)`, where `i` is an index. `D.at(point)` is datum `D`
-  offset to the point's x and y (and z for a `Point3`), so a point is
-  never split into two Lengths:
-  `place feet[i].top on base.underside.at(base.foot_sites[i]) for i in
-  0..count(feet)`. `IDENT in` starts a bound only when its right side
-  is a range (language.md 5), which is how `for i in 0..N` reads.
-- A part placed twice (two places, or overlapping `for` ranges) is
-  G006; a placed array that a `for` leaves with an instance unplaced is
+- **Point offsets.** `D.offset(p)`, with `p` a point typed on `D`, is
+  `D.offset(x = p.x, y = p.y)` (and `z` for a `Point3`), so a point is
+  never split into two Lengths in the source. It must be the first
+  operation after the named datum, because `p` is measured in `D`; a
+  point on another datum is G001. Its arguments are Members whose
+  expression is the point.
+- **Arrays place elementwise.** `place feet.top at
+  base.underside.offset(base.foot_sites)` places instance i of `feet`
+  at point i of `base.foot_sites`. A `place` whose target names an
+  unindexed part array is evaluated once per instance, and every
+  array-valued operand of the anchor (a point array, a datum of an
+  unindexed part array) is indexed with the same i. Each must have the
+  part array's count, else G004. An anchor with no array operand would
+  put every instance in one frame and is G004 as well. An indexed
+  target (`feet[2].top`) places that one instance, and its anchor must
+  be single-valued (G004).
+- A part or instance placed twice (two placements, or an array
+  placement and an indexed one of the same instance) is G006. A part
+  array whose instances are placed one by one and not all of them is
   G007.
 - Each placement op argument is a Member with the canonical path
-  `Assembly/part.place.<op index>.<axis>` (`Drive/plate.place.0.x`;
-  `Assembly/part[i].place...` for a for-placement); ir.md 2.
+  `Assembly/part.place.<op>.<axis>`, numbered like datum ops (section
+  2): the first `offset` is `Drive/plate.place.offset.x`, the second
+  `place.offset[1].x`, a rotation `place.rotate.z`. An array placement
+  has one Member per op argument at `Assembly/feet[i].place.offset.x`
+  (ir.md 2), bound per instance or with `[*]`.
 - Variants (language.md 3.2) re-evaluate placements like any member.
 
 Evaluation rules (placement.rs):
 
-- A part's frame is the anchor's frame, then the `on` operations, then
-  the inverse of the placed datum (its operations reversed and
+- A part's frame is the anchor's frame, then the anchor's operations,
+  then the inverse of the placed datum (its operations reversed and
   negated). This is composition only; it never solves.
 - A subassembly is a node whose datums are its own; its parts are
   placed relative to its `origin`, and instance paths join with `/`.
 - Placing on a part that is itself never placed is G003.
-- A `for` placement carries the `[*]` index in its canonical path
-  (`Assembly/part[*].place.0.x`); an unindexed target covers every
-  instance, so it overlaps any other placement of that part (G006).
-- In the IR (op_members.rs) the `[*]` becomes the range variable
-  (`Assembly/part[i].place.0.x`), since `[*]` is valid only in bindings;
+- Instance i of an array placement is evaluated with the index bound to
+  i; instance paths read `Assembly/feet[i]`. In the IR (op_members.rs)
   each argument is a `Place` Member with provenance `authored` and its
   expression text and span.
-
-For-placements and `.at` (placement_for.rs):
-
-- `.at(point)` must be the last operation of the anchor chain and takes
-  one positional point. It is `.offset(x, y)` with the point's
-  coordinates (also z for a `Point3`); its three arguments are
-  Members whose expression is the point, so a point is never split
-  into two Lengths in the source.
-- Instance `i` of a for-placement is evaluated with the range variable
-  bound to `i`; instance paths read `Assembly/feet[i]`.
-- G007 is judged per array node that has at least one placement: any
-  instance in `0..count` covered by no placement is listed in the
-  diagnostic. A whole-array placement covers every instance; a range
-  running past the count is not G007.
+- G007 is judged per part array that has at least one indexed
+  placement and no array placement: the instances in 0 to count - 1
+  that no placement covers are listed in the diagnostic.
 
 ## 5. Checking positions
 
@@ -290,23 +350,40 @@ sign-straddling tolerance (quantities.md 5.4).
 ### 5.2 Bolt float
 
 A bolted part in clearance holes is not located exactly: it can sit up to
-the joint's float off nominal. Ignoring this would answer "holds" for
-loops that can physically fail, so the float enters the placement.
+the joint's float off nominal, and turn within the clearances. Ignoring
+this would answer "holds" for loops that can physically fail, so the
+float enters the placement.
 
 - `ScrewJoint` exports `float: Length`, the allowance its `aligned`
   check uses, and takes `locating: Bool = false` (stdlib.md 3). It is
   `true` when a pilot, dowel or fit locates the part.
-- The float applies to one placement edge: that of the clamped part
-  (the part `at` belongs to) when its `place` target is built from the
-  datum `onto` is declared on, so the joint is what holds the part to
-  its placement parent. That edge then carries an implicit `[+-float]`
-  on the x and y axes of `onto`'s datum: one source-variable pair per
-  edge. If several non-locating joints hold the part to the same parent,
-  the smallest float applies, because the part sits within the tightest
-  pattern. If any joint on the edge is `locating`, there is no float.
-  A joint between parts that are not placement parent and child adds no
-  float; it is a loop closure, and its `aligned` check reads through the
-  floats already on the tree.
+- A non-locating joint whose two parts (the part `at` belongs to and
+  the part `onto` belongs to) are placement parent and child, in either
+  order, puts its float on that edge, whatever datums the placement
+  names: every datum of a part moves with the part. The edge then
+  carries, in the frame of `onto`'s datum:
+  - a translation `[+-float]` on x and on y (one source-variable pair
+    per edge);
+  - a rotation about the z axis through the centroid of `onto`'s
+    nominal points, by `[+-theta]` with `theta = 2 * asin(float / s)`,
+    where `s` is the largest distance between two `onto` points, and
+    `theta = 180deg` when `float >= s` (one source variable per edge).
+
+  Both bounds are sound: each hole can move at most `float`, so the
+  pattern's centroid moves at most `float` and its widest pair turns at
+  most `theta`. `asin` is inexact, so coordinates carried through the
+  rotation are conservative intervals (section 2).
+- A one-point pattern does not fix rotation: `theta` is 180deg, any
+  check whose value depends on that rotation is undecided, and the joint
+  is G008 (warning). Fix it with a second fastener, a locating feature
+  and `locating = true`, or accept it with a waiver.
+- If several non-locating joints hold one edge, the smallest
+  translation and the smallest `theta` apply, because each joint alone
+  bounds the motion. If any joint on the edge is `locating`, the edge
+  has no float.
+- A joint between parts that are not placement parent and child adds
+  no float; it is a loop closure, and its `aligned` check reads through
+  the floats already on the tree.
 - A joint's own `aligned` check reads its edge without that edge's float
   (the float is the slack that check proves); every other path through
   the edge reads it.
@@ -320,42 +397,49 @@ loops that can physically fail, so the float enters the placement.
 - The IR holds each datum with its parent and ops, each point with its
   datum, and each placement as an edge of the part tree; datums and
   placements carry `variants` like members, share one `Op` form
-  (`offset | rotate | flip | at`), and the composed transform is derived,
-  not stored (ir.md, Datum and Placement). Digests cover all three
-  (ir.md 4), so a moved datum makes everything that reads through it
-  stale.
-- CAD gets numbers, as everywhere else. Point coordinates bind to sketch
-  dimensions measured from the datum (`D3@Sketch2@Bracket.SLDPRT`),
-  datum offsets to reference geometry, and placement offsets to mate
-  dimensions (`D1@Distance2@Mount.SLDASM`). The CAD tool keeps owning
-  shapes and mates; cadetta drives their values and reads them back.
-- Bindable forms: an offset term binds to a mate distance; a rotate by
-  a non-90deg angle binds to an angle mate; `flip` and exact 90deg
-  rotations are verified-only (read reports a drift note, never a push);
-  a for-placement over a pattern binds to the native component
-  pattern's generator members (`holes.pitch_x`, ...). A binding may set
-  `sign = -1` for a coordinate whose native dimension is a magnitude.
-- A datum binds to a native frame with the locator kind `frame` (a
-  SOLIDWORKS coordinate-system or plane feature, e.g. `frame =
-  "Plane1@Rail.SLDPRT"`); the datum's offsets bind to that plane's
-  dimensions, and R007 compares a sketch's plane reference with the
-  frame. Drift in the frame itself is then readable (adapters.md 3).
-- Cadetta never reconstructs geometry from a CAD file. Where an adapter
-  can see that a bound coordinate's sketch is not on the plane of its
-  datum, or its dimension is not measured from the sketch origin, it
-  reports R007.
+  (`offset | rotate | flip`; the point form of `offset` lowers to
+  `offset` with Members whose expression is the point), and the
+  composed transform is derived, not stored (ir.md, Datum and
+  Placement). Digests cover all three (ir.md 4), so a moved datum makes
+  everything that reads through it stale.
+- CAD gets numbers, and positions are checked by transform. Cadetta
+  never reconstructs geometry; reading a frame's or a component's
+  transform is reading numbers the tool exposes. The mapping
+  (adapters.md 3.4, solidworks.md 4):
+
+  | Source | Native counterpart | Driven by | Verified by |
+  |---|---|---|---|
+  | datum | a frame (SOLIDWORKS coordinate system) | its composed transform, or bound dimensions of the feature defining it | comparing the frame's transform with the composed one (R001) |
+  | hand-listed point | a sketch point | sketch dimensions measured from the datum | the bound dimensions (R001); R007 |
+  | pattern generator member (pitch, radius, count) | the native pattern's dimensions and instance count | the bound locators | the bound locators (R001) |
+  | placement | the component instance | bound mate distance or angle dimensions, when the placement has ops | comparing the component's transform with the composed placement (R001) |
+  | array placement over a pattern | a pattern-driven component pattern | the part's pattern (nothing to bind) | transform per instance (R001) |
+
+- `flip` and exact 90deg rotations are never pushed; the transform
+  comparison verifies them. A binding may set `sign = -1` for a
+  coordinate whose native dimension is a magnitude.
+- The idiom that removes duplication: datums carry every number, CAD
+  frames are created and driven from them (`[[adapter]] datums =
+  "create"`), and parts are mated coordinate system to coordinate
+  system with no number in the mate. Then a moved datum moves the CAD
+  frame on the next `sync`, the mate follows, and the transform check
+  confirms it.
+- Where an adapter can see that a bound coordinate's sketch is not on
+  the plane of its datum, or its dimension is not measured from the
+  sketch origin, it reports R007.
 
 ## 7. Diagnostics
 
 | Code | Name | Default | Meaning |
 |---|---|---|---|
-| G001 | datum-mismatch | error, fixed | Arithmetic or comparison between positions in different datums without `in`; also array + point. |
+| G001 | datum-mismatch | error, fixed | Arithmetic or comparison between positions in different datums without `in`; also array + point, and a point offset whose point is not on the datum it offsets. |
 | G002 | placement-cycle | error, fixed | A placement chain returns to a part already placed; write the closing connection as a check. |
 | G003 | unplaced-part | error, fixed | A position is converted out of a part that has no placement, or re-typed where the model lacks the part or its placement. |
-| G004 | pattern-count-mismatch | error | `aligned` or a joint's `at`/`onto` pair patterns of different counts. |
+| G004 | pattern-count-mismatch | error | `aligned` or a joint's `at`/`onto` pair patterns of different counts; an array placement's operands do not have the part array's count, or an indexed placement's anchor is array-valued. |
 | G005 | bolted-float-unlocated | warning | A check tighter than a joint's float reads through a placement carrying that float (section 5.2). |
 | G006 | double-placement | error, fixed | A part or instance is placed more than once. |
-| G007 | unplaced-instance | warning | A placed array leaves an instance without a placement. |
+| G007 | unplaced-instance | warning | A part array placed instance by instance leaves an instance without a placement. |
+| G008 | rotation-unconstrained | warning | A non-locating joint with a one-point pattern carries float onto a placement edge, so the part may turn freely about the screw (section 5.2). |
 | R007 | binding-datum-mismatch | warning | A bound coordinate's native sketch is not on its datum's plane, or its dimension is not measured from the sketch origin (adapters that can see it). |
 
 lints.md is the catalog; this table must agree with it.
@@ -385,10 +469,11 @@ sections above were silent (decided 2026-10-13, pending owner review):
 - OQ-10 (closed 2026-10-13, geometry.md): positions are typed by
   datum, placements are a tree and loops are checks; frames and mate
   solving stay in CAD.
-- OQ-17: True position (GD&T positional tolerance with material
-  condition) as an alternative to coordinate tolerances? It would make
-  `aligned` exact for round zones. Recommendation: after 0.1.0, as a
-  tolerance form on points (`position 0.2mm at mmc`).
+- OQ-17 (narrowed 2026-10-13, draft 1.5 ADR): true position regardless
+  of feature size is in 0.1.0 (section 3.1). Open: material condition
+  modifiers, where the zone grows as the hole departs from MMC
+  (`[position 0.2mm at mmc]`), which couples a point's zone to its
+  hole's size. Recommendation: after 0.1.0.
 - OQ-18: Placements over a range of motion (`offset(x in 0mm..100mm)`)
   checked at their extremes, for slides and hinges? Recommendation:
   yes, after 0.1.0. The three-valued checks already handle ranges.

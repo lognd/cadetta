@@ -9,7 +9,7 @@ opaque native locators held in bindings.
 | Flavour | Produced by | Contains |
 |---|---|---|
 | Design IR | the compiler, from `.cdt` source | everything: values, expressions, dependencies, citations, interfaces, parts and alternates, fits, checks, requires, solvers, waivers |
-| Observed IR | an adapter `read`, from CAD files or inspection data | parameters with values, native names and locators; expressions when the native format exposes them (SOLIDWORKS equations, FreeCAD spreadsheet formulas) |
+| Observed IR | an adapter `read`, from CAD files or inspection data | parameters with values, native names and locators; expressions when the native format exposes them (SOLIDWORKS equations, FreeCAD spreadsheet formulas); native frames and component instances with their transforms |
 
 Both serialize to `cadetta.ir/1` JSON. Value lints (D001, M001, N, Q)
 run on either flavour; structural lints (D002, F, C, I, L) on design IR;
@@ -21,7 +21,16 @@ path-safe (non-alphanumerics become `_`, collisions get `_2`, `_3`); the
 member carries `provenance = imported` with the true native name, the
 native expression in `expr` when exposed (`deps` stays empty: native
 expression syntax is the adapter's), and one binding with the locator.
-Citations, parts, fits, checks and solvers are empty.
+Citations, parts, fits, checks and solvers are empty. Two lists carry
+what geometry verification needs (geometry.md 6, adapters.md 3.4):
+`frames[]`, one `{ name, document, transform }` per native frame read
+(a SOLIDWORKS coordinate system), and `instances[]`, one `{ component,
+document, reference?, transform }` per component instance of an
+assembly, where `reference` is the instance's free-text reference
+property when the tool has one. A transform is a 3x4 matrix of `Value`s
+in the document's frame (rotation columns, then translation in the
+adapter's native unit), read like any native number: a binary64 that is
+not a short decimal is `exact: false` with its reason.
 
 Observed IR makes adoption incremental: `cadetta import` reads existing
 CAD files, lints them at once, and scaffolds `.cdt` source.
@@ -39,8 +48,10 @@ example     acme.rover::Axle.end_diameter
             acme.rover::Bracket.holes[1].x         (index on a member)
             acme.rover::Bracket.top.offset.x       (datum offset)
             acme.rover::Bracket.top.rotate.z       (datum rotation)
-            acme.rover::Rover/bracket.place.0.x    (placement, op 0, axis x)
-            acme.rover::Rover/feet[i].place.0.x    (placement over a range)
+            acme.rover::Rover/bracket.place.offset.x     (placement, first offset, axis x)
+            acme.rover::Rover/bracket.place.offset[1].x  (second offset)
+            acme.rover::Rover/feet[i].place.offset.x     (array placement, instance i)
+            acme.rover::refs::sunon25              (a cite item; see below)
             acme.rover::drive::motor::Gm42A.rated_torque   (item in module drive::motor)
 ```
 
@@ -72,20 +83,27 @@ path. Under a process, `PATH.drawn` names the drawn value (language.md
 reordering; they change only by rename or move, which `was` records.
 
 - Parsing (`cadetta-ir` `path.rs`): an index is an integer, a for-range
-  variable (`feet[i]`) or `*`; a bare integer is a valid member segment
-  (`place.0.x`); the item name starts uppercase; only the full form
+  variable (`feet[i]`) or `*`; the item name starts uppercase; only the full form
   parses, and sema expands abbreviations first. Reading a
   parameter-dependent member by a definition path (no `/` step) is E011.
+- A cite item's path is `PKG { "::" module } "::" name`: its last
+  segment is the snake_case item name, so it is read as an item path
+  only where the schema says so (`Citation.path`, `CiteRef.cite`,
+  `attest citation:` records), never inferred from its shape.
 - Datum offsets are `Type.<datum>.offset.x|y|z` and rotations
-  `.rotate.x|y|z`; placement op arguments are
-  `Assembly/part.place.<op index>.<axis>` (`Assembly/part[i].place...`
-  for a for-placement), one per op axis (geometry.md 2, 4). Each is a
+  `.rotate.x|y|z`, the n-th op of a kind (n > 0) indexed
+  (`.offset[1].x`); placement op arguments use the same scheme under
+  `Assembly/part.place` (`Assembly/part.place.offset.x`,
+  `Assembly/feet[i].place.rotate.z` for an array placement), one per op
+  axis (geometry.md 2, 4). The placement itself is the node
+  `Assembly/part.place`, which an `instance` locator binds. Each is a
   Member with provenance `authored`, so bindings, R001, waivers and
   `why` attach to it.
 - Pattern generators (`rect_pattern`, `circle_pattern`) are values with
   named members (`holes.pitch_x`, `holes.pitch_y`, `holes.radius`,
-  `holes.start`, `holes.rotation`) that bind; the derived coordinates
-  are analysis-only unless the points are hand-listed.
+  `holes.start`, `holes.rotation`, `holes.count_x`, `holes.count_y`,
+  `holes.count`) that bind; the derived coordinates are analysis-only
+  unless the points are hand-listed.
 - Parameterized components exist only as instances (language.md 3.1):
   their parameter-dependent members have instance paths only. A binding
   may name one instance or all of them with
@@ -105,10 +123,10 @@ Project    { schema, flavour, package, modules[], dependencies[], components[],
              interfaces[], tables[], solvers[], checks[], requires[], waivers[],
              citations[], digest }
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
-             citation?, attrs, members[], parts[], fits[], datums[], points[],
+             citation?: CiteRef, attrs, members[], parts[], fits[], datums[], points[],
              placements[], span?, digest }
 Member     { path, kind, analysis: bool, priv: bool, value?: Value, bound?: Bound, expr?,
-             deps[], role?, citation?, was[], attrs, provenance, doc?, span?,
+             deps[], role?, citation?: CiteRef, was[], attrs, provenance, doc?, span?,
              variants?: { "<slot>=<alternate>": Value }, digest, closure }
 Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,
              conservative: bool, drawn?: Exact, exact: bool, reason?: string,
@@ -119,27 +137,29 @@ Inexact    { f64, root: path }                       // root inexact operation
 Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
 Interface  { path, members[], bounds[], datums[] }
-Table      { path, key, cols[], rows[], citation? }
+Table      { path, key, cols[], rows[], citation?: CiteRef }
 Waiver     { code, glob, because, expires?, for_alt?: "<slot>=<alternate>",
              targets_closure }
 Process    { path, params[], rules: [ { role, expr } ] }
 Part       { path, type, count?, primary, alternates[], args }
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
 Op         = offset{x,y,z: member ref} | rotate{axis, angle: member ref}
-             | flip{axis} | at{point: path}              // shared by Datum and Placement
+             | flip{axis}                                // shared by Datum and Placement
 Datum      { path, parent: path, ops: [Op], variants?, digest, closure }  // geometry.md 2
-Point      { path, datum: path, coords: [Value] }        // each coord also a Member
-Placement  { part: path, datum: path, on: path, ops: [Op], variants?, digest, closure }
+Point      { path, datum: path, coords: [Value], position?: Exact }   // each coord also a Member; position: zone diameter
+Placement  { path, part: path, datum: path, at: path, ops: [Op], variants?, digest, closure }
 Check      { path, expr, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
              conservative, waived_for[] }
-Solver     { path, script, inputs{}, outputs{}, deps[], result_digest?, stale }
-Citation   { name, target, locator?, kind: url|file|standard|measured|assumed|estimate,
-             file_digest? }
+Solver     { path, script, citation?: CiteRef, inputs{}, outputs{}, deps[], result_digest?, stale }
+Citation   { path, type: standard|datasheet|drawing|catalog|book|article|web|quote|document,
+             fields{}, file_digest?, digest }                  // language.md 3.9
+CiteRef    { cite?: path, builtin?: note|measured|assumed|estimate, text?, locator? }
 Provenance = authored | derived | imported { adapter, file, native_name }
 Binding    { path, adapter, locators: [ Locator ] }
-Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, native_unit,
-             ref_to?: path, for?: "<alternate>", config?: string, sign?: 1|-1,
-             component?: string }
+Locator    { locator, kind: global|dimension|property|frame|instance, mode: value|ref,
+             native_unit, ref_to?: path, for?: "<alternate>", config?: string, sign?: 1|-1,
+             component?: string, implicit?: global|link|frame|reference,
+             tolerance?: drive|ignore }
 ```
 
 - Magnitudes are never JSON floats: `Exact` is a reduced fraction string
@@ -151,10 +171,24 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
   from the ops.
 - Wire form of `Op` (`cadetta-ir` `geometry.rs`): a one-key object,
   `{"offset": {"x"?: path, "y"?: path, "z"?: path}}`,
-  `{"rotate": {"axis": "x|y|z", "angle": path}}`, `{"flip": "x|y"}` or
-  `{"at": path}`; arguments are the paths of their Members. In
+  `{"rotate": {"axis": "x|y|z", "angle": path}}` or `{"flip": "x|y"}`;
+  arguments are the paths of their Members. A point offset
+  (`.offset(p)`) is an `offset` whose Members' expressions read `p`. In
   `Datum.variants` and `Placement.variants` a value is the whole op
   chain for that alternate (`{"<slot>=<alternate>": [Op]}`).
+- Citations (language.md 3.9): `Project.citations[]` holds every `cite`
+  item the design reaches, sorted by path; `fields` maps field names to
+  strings (`author` to a list). A `CiteRef` has exactly one of `cite` (a
+  cite item's path) and `builtin`; `text` is a note's text, `locator`
+  the string after `:`. `Citation.digest` hashes the type, the fields in
+  name order and `file_digest`; a citing node's own digest includes the
+  `CiteRef` and the cited item's digest (section 4).
+- `Locator.implicit` records why a binding exists without a bindings
+  file entry (adapters.md 3.5): `global` (a native global with the
+  path's mangled name, or `bind = "scope"`), `link` (a dimension whose
+  equation references such a global), `frame` (a coordinate system
+  with a datum's mangled name), `reference` (an instance whose reference
+  property names the part). Explicit locators omit it.
 - `nominal` is always the designed value (the part as made, what fits,
   checks and reads see). `drawn?` exists only when a process rule
   applied and holds the compensated value that is emitted (language.md
@@ -233,9 +267,11 @@ Locator    { locator, kind: global|dimension|property|frame, mode: value|ref, na
 Every node has two digests, both BLAKE3:
 
 - `digest` (own): over the node's canonical encoding (path, kind, value,
-  normalized expression text, citation, semantic attrs, and for parts
+  normalized expression text, `CiteRef` plus the cited item's digest,
+  semantic attrs, and for parts
   the primary, alternates and arguments). It changes when the node's own
-  text does.
+  text does, or when the citation it names changes (a field or the
+  pinned file).
 - `closure` (Merkle): over the own digest plus the closure digests of
   its `deps`, sorted by path. It changes when anything the node reads,
   transitively, changes, including a cited file's digest and a solver

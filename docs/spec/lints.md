@@ -190,7 +190,7 @@ cannot be resolved or evaluated.
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
 | E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |
 | E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml` (packages.md 1). |
-| E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind). |
+| E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind); also a `cite` with an unknown type or field, a malformed date or URL, or a value of the wrong shape (language.md 3.9), and a `position` tolerance where it is not allowed (geometry.md 3.1). |
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
 | E009 | non-exhaustive-match | error | yes | A `match` leaves some case unhandled. |
@@ -318,12 +318,13 @@ message. T001 and P001 use the configured severity.
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. |
-| S002 | citation-unreachable | info | | A local-file citation path does not exist. Literal and URL citations are never checked (`cadetta cite pin` makes a URL checkable). |
+| S002 | citation-unreachable | info | | A citation's `file` does not exist. URLs are never fetched by `check` (`cadetta cite pin` makes a URL checkable). |
 | S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
-| S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only `file` citations are drift-detected; `cadetta cite pin` vendors a URL. |
+| S004 | citation-changed | warning | | A citation's digest (its fields and, with `file`, the file's digest) differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only a `file` is drift-detected on disk; `cadetta cite pin` vendors a URL. |
 | S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
 | S006 | solver-unsolved-variant | warning | | A variant changes a solver's inputs and no result exists for them; dependent verdicts are undecided (solvers.md 4.1). |
 | S007 | solver-input-not-quantity | error | yes | A solver `in` expression is not a quantity-valued expression, or an `out` has no kind (solvers.md 1). |
+| S008 | citation-incomplete | warning | | A `cite` lacks a field its type needs to find the source again, or has a `url` with neither `file` nor `accessed`; or an `ots` value's only citation is an inline `@"note"` (language.md 3.9). Pseudo-citations are never S008. |
 
 ### C: checks
 
@@ -364,13 +365,14 @@ Defined with their semantics in geometry.md 7.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| G001 | datum-mismatch | error | yes | Arithmetic or comparison between positions in different datums without `in`; also array + point. |
+| G001 | datum-mismatch | error | yes | Arithmetic or comparison between positions in different datums without `in`; also array + point, and a point offset whose point is not on the datum it offsets. |
 | G002 | placement-cycle | error | yes | A placement chain returns to a part already placed; the closing connection is a check. |
 | G003 | unplaced-part | error | yes | A position is converted out of a part that has no placement, or re-typed where the model lacks the part or its placement. |
-| G004 | pattern-count-mismatch | error | | `aligned` or a joint's `at`/`onto` pair patterns of different counts. |
+| G004 | pattern-count-mismatch | error | | `aligned` or a joint's `at`/`onto` pair patterns of different counts; an array placement's operands do not have the part array's count, or an indexed placement's anchor is array-valued (geometry.md 4). |
 | G005 | bolted-float-unlocated | warning | | A check tighter than a joint's float reads through a placement carrying that float (geometry.md 5.2). |
 | G006 | double-placement | error | yes | A part or instance is placed more than once. |
-| G007 | unplaced-instance | warning | | A placed array leaves an instance without a placement. |
+| G007 | unplaced-instance | warning | | A part array placed instance by instance leaves an instance without a placement. |
+| G008 | rotation-unconstrained | warning | | A non-locating joint with a one-point pattern carries float onto a placement edge, so the part may turn about the screw (geometry.md 5.2). |
 
 ### R: read-back and drift
 
@@ -380,9 +382,9 @@ come from the adapter's responses and are passed through unchanged
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal; the base is the lock `synced` record). Says which side moved: cad, design or both. `sync --force-design` pushes over it. |
+| R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal; the base is the lock `synced` record). Says which side moved: cad, design or both. `sync --force-design` pushes over it. Also a dimension tolerance that differs (adapters.md 3.6), and a frame or component transform that differs from the composed datum or placement (adapters.md 3.4); a placement is verify-only, so it has no base. |
 | R002 | unbound-native | warning | | Native parameter has no binding. (A `csv` file reports an unbound row as R016 instead.) |
-| R003 | missing-native | error | | Bound path not found in the native file. |
+| R003 | missing-native | error | | Bound path not found in the native file, including a native link (adapters.md 3.5) that a sync recorded and that is gone. |
 | R004 | regen-failed | error | | The CAD tool failed to rebuild after a push; affected documents are restored from their snapshot. |
 | R005 | orphan-binding | warning | | A binding's path matches no IR path and no `was` path. |
 | R006 | native-structure-replaced | warning | | A push replaces a native expression or driving equation on a bound locator (cadetta owns the dependency structure); lists the old expression. For an equation-driven dimension the equation is removed, then the value set, reported and shown first by `--dry-run`. Also fires on the first sync after import when the emitted value differs from the legacy value (the `adopted` record). |
@@ -392,7 +394,7 @@ come from the adapter's responses and are passed through unchanged
 | R010 | push-rejected | error | | Push to a driven or suppressed dimension, an equation conflict or a unit conflict. |
 | R011 | component-mismatch | warning | | The file instantiated in an assembly is not the file bound to the slot's primary (for example after a manual swap). |
 | R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
-| R013 | name-collision | error | yes | Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md). |
+| R013 | name-collision | error | yes | Two in-scope paths would create the same native name; bind one explicitly (adapters.md 3.1). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
 | R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
 | R016 | unbound-row | error | yes | A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (emitters/csv.md 3). The file is user-supplied and carries no path, so an unbound row is an error rather than the native-discovery warning R002; no observed IR is produced for the file. (`json` entries carry their own `path`.) |

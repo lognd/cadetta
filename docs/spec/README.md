@@ -1,6 +1,6 @@
 # Cadetta specification
 
-Status: draft 1.4 (2026-10-13), revised after the pilot rounds and the final review round (`docs/history/`). Normative unless a section says otherwise.
+Status: draft 1.5 (2026-10-13), revised after the pilot rounds, the final review round (`docs/history/`) and the owner's citation, placement and SOLIDWORKS revision (`docs/decisions/2026-10-13-draft-1-5-decisions.md`). Normative unless a section says otherwise.
 
 Cadetta is the single source of truth for the parameters of a CAD design.
 Engineers author parameters once, as typed quantities with provenance and
@@ -34,6 +34,7 @@ dimension by hand.
 | [config-cli.md](config-cli.md) | `cadetta.toml` and the `cadetta` command line. |
 | [geometry.md](geometry.md) | Positions and datums: datum-typed points, placement trees, alignment checks. |
 | [bindings.md](bindings.md) | Language bindings: the JSON catch-all, the per-language layout, and the Python package. |
+| [solidworks.md](solidworks.md) | The SOLIDWORKS adapter and add-in: workflow, linking by selection, native mapping, testing. |
 
 Decisions are recorded in `docs/decisions/`; architecture is modeled in
 `design/model.grmb` (grimble) and work is tracked as frob tickets.
@@ -45,11 +46,12 @@ Decisions are recorded in `docs/decisions/`; architecture is modeled in
 | Duplication: one OTS dimension drives many parts | Values are referenced, never restated; derived values are expressions over their sources | D001-D003, E001-E011 |
 | Naming: "diameter" everywhere, uncanonical prefixes | Names are scoped by canonical paths (`pkg::module::Component.param`); case and form are linted; adapters map native names to canonical ones | N001-N006 |
 | Magic numbers: is 12.012mm a mistake or a fit? | Tolerances and ISO 286 fits are values, not comments; unexplained precision is flagged | M001-M003, F001-F004 |
-| Manual retyping into CAD | Adapters emit, read and drive CAD tools; drift is linted | R001-R016 |
+| Where did this number come from, and can I find it again? | Typed IEEE-style citations with revisions and pinned files; a changed source flags every value cited to it (S004); `cite list` prints the reference list | S001, S002, S004, S008 |
+| Manual retyping into CAD | Adapters emit, read and drive CAD tools, links made in CAD count as bindings, tolerances are written too; drift is linted | R001-R016 |
 | Changing a part (cost, lead time, end of life, performance) | Interfaces, approved alternates verified continuously, swap previews | I, L, `impact --swap` |
 | Copying a shop policy or parts library between projects | Packages with `pub` APIs, versioned dependencies, lock-pinned digests | packages.md |
 | Hand-computing holes, tap drills and screw lengths | `std::fasteners::ScrewJoint` derives them from thread, clamp and material | stdlib.md 3 |
-| Where features sit, and whether holes line up across parts | Datum-typed positions, placement trees, `aligned`, joint float | G001-G007 |
+| Where features sit, and whether holes line up across parts | Datum-typed positions, true position zones, placement trees verified against CAD transforms, `aligned`, joint float | G001-G008 |
 | Knowing what a change invalidates | The obligation graph pins every claim to digests | O001-O004, S003, S004 |
 
 ## Open questions
@@ -74,7 +76,7 @@ Each `OQ-n` lives at the end of its document. Status as of this draft.
 | OQ-14 | stdlib.md | open |
 | OQ-15 | stdlib.md | closed 2026-10-13 (draft 1.3 decisions) |
 | OQ-16 | bindings.md | closed 2026-10-13 (bindings.md 3.1) |
-| OQ-17 | geometry.md | open |
+| OQ-17 | geometry.md | narrowed 2026-10-13 (geometry.md 3.1); MMC open |
 | OQ-18 | geometry.md | open |
 | OQ-19 | packages.md | open |
 | OQ-20 | packages.md | closed 2026-10-13 (packages.md 3) |
@@ -88,12 +90,14 @@ library (stdlib.md 1),
 the IR and its JSON schema, the obligation graph and lock file, the
 solver protocol, the lint catalog, built-in file emitters (JSON, CSV,
 SOLIDWORKS linked-equations file), the adapter protocol, the SOLIDWORKS
-adapter (read and drive, the primary target), the FreeCAD adapter (the
-CI reference), and the Python binding (bindings.md).
+adapter and add-in (C#, read and drive, the primary target;
+solidworks.md), the FreeCAD adapter (the CI reference), and the Python
+binding (bindings.md).
 
 Out (each recorded as a dropped or deferred ticket with its reason):
 tolerance stack analysis (RSS or statistical), constraint solving,
-geometry kernels and mate solving, GD&T tolerance zones (OQ-17), CAD
+geometry kernels and mate solving, GD&T beyond true position regardless
+of feature size (OQ-17), CAD
 configurations / design-table variants, electrical CAD (KiCad), a GUI,
 and a package registry (OQ-19).
 

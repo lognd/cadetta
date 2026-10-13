@@ -27,6 +27,11 @@ pilot r2-05.
   emitter create this global (adapters.md 3); it is a global line of the
   path, takes the dimension locator's `native_unit` (else the adapter's
   declared native unit) and carries the path's value in that unit.
+  Under `[[adapter]] bind = "scope"` (adapters.md 3.5) every in-scope
+  path the format can express has a global line under its created
+  name, so dimensions can be linked to it inside SOLIDWORKS
+  (solidworks.md 2.4); this emitter cannot read parts, so it discovers
+  no native links.
 - **Dimension lines**, `"Dn@Feature@File" = REF-OR-VALUE`, for each
   `dimension` locator: `"GLOBAL"` in `ref` mode (which global:
   adapters.md 3), a value in `value` mode.

@@ -136,8 +136,10 @@ variable `"Axle_end_diameter"` or to the dimension
   for one tool (sw-equations and solidworks) share one. A path may bind
   several native locators (a legacy file often drives one value through
   a global and a dimension, or two globals); each locator has a `kind`
-  (`global`, `dimension`, `property`, `frame`). `#[native(adapter, "locator")]`
-  in source pins one inline. The file spelling:
+  (`global`, `dimension`, `property`, `frame`, `instance`).
+  `#[native(adapter, "locator")]` in source pins one inline. The file
+  holds only what the native documents cannot say themselves: native
+  links (3.5) bind without an entry. The file spelling:
 
   ```toml
   ["acme.gearbox::CoverPlate.thickness"]
@@ -153,7 +155,7 @@ variable `"Axle_end_diameter"` or to the dimension
   | Field | Meaning |
   |---|---|
   | `locator` | the native name or dimension spelling |
-  | `kind` | `global`, `dimension`, `property`, `frame` (a SOLIDWORKS coordinate system or plane feature) |
+  | `kind` | `global`, `dimension`, `property`, `frame` (a SOLIDWORKS coordinate system or plane feature), `instance` (a component instance in an assembly, for a placement) |
   | `mode` | `ref` or `value` (below) |
   | `native_unit` | unit of the native number |
   | `ref_to` | for a `ref` dimension, the global it links to |
@@ -161,12 +163,14 @@ variable `"Axle_end_diameter"` or to the dimension
   | `config` | the configuration the locator belongs to; import records the active one (7.3) |
   | `sign` | `-1` negates a coordinate on write and read (geometry.md 6) |
   | `component` | in-assembly instance (`"wheel<2>"`, emitters/sw-equations.md 4) |
+  | `tolerance` | `drive` or `ignore`: whether a `dimension` locator's tolerance is written (3.6); default `[[adapter]] tolerances` |
 
 - Locator validation (`cadetta-adapter` `locator.rs`): `locator` is non-empty;
   `ref_to` needs a `dimension` locator in `ref` mode; `sign` does not apply to
   a `property`; `for` and `config` are non-empty when present; `component` has
-  the form `name<N>`. Native names are namespace-qualified by kind
-  (`global:`, `dimension:`, `property:`, `frame:`), so one name in two
+  the form `name<N>`; `tolerance` applies to a `dimension` only.
+  Native names are namespace-qualified by kind
+  (`global:`, `dimension:`, `property:`, `frame:`, `instance:`), so one name in two
   namespaces is not R013; the same qualified name from two paths in one
   configuration and component is.
 
@@ -180,14 +184,17 @@ variable `"Axle_end_diameter"` or to the dimension
   instance 0. If any instance's emitted value differs from instance 0
   the binding is R012 (error); the user then binds the instances
   separately.
-- Only bound paths are emitted; an unbound parameter is not written.
+- Only bound paths are emitted, explicitly or through a native link or
+  `bind = "scope"` (3.5); an unbound parameter is not written.
   `let` values are never emitted (quantities.md 5.3).
 - Emitted values are values (the emit point, quantities.md 5.6), never
   expressions: the dependency structure lives in cadetta, and CAD tools
   receive numbers or links to cadetta-emitted globals (2.1).
 - Unbound native parameters are R002; bound paths missing natively are
-  R003; bindings matching no path are R005. `was` paths carry bindings
-  forward across renames and moves.
+  R003 (including a native link that has a lock base and is no longer
+  found, so deleting a global in CAD is never silent); bindings matching
+  no path are R005. `was` paths carry bindings forward across renames
+  and moves.
 - A locator's `mode` is `ref` (default where the target supports
   references: the native side keeps a live link to a cadetta-emitted
   global) or `value` (a flat number). A `ref` dimension points at its
@@ -224,18 +231,29 @@ a dimension's own global) is derived from the canonical path:
 3. replace `[i]` with `_i`; a `[*]` segment is dropped.
 
 `Rover/axle[1].end_diameter` becomes `Rover__axle_1__end_diameter`;
-`Rover/axle[*].end_diameter` becomes `Rover__axle__end_diameter`. The
-rule is the same for every adapter and every target, whether or not the
-target allows dots, so switching adapters never renames a global.
-`[[adapter]] prefix` optionally prepends a string to every created name.
+`Rover/axle[*].end_diameter` becomes `Rover__axle__end_diameter`; the
+datum `Rail.site` becomes `Rail__site` and its offset
+`Rail__site__offset__x`; the placement op `Mount/bracket.place.offset[1].x`
+becomes `Mount__bracket__place__offset_1__x`. The rule is the same for
+every adapter and every target, whether or not the target allows dots,
+so switching adapters never renames a global. `[[adapter]] prefix`
+optionally prepends a string to every created name.
 
-The rule is not injective on its own. If two emitted paths of one
-adapter would create the same name, both are qualified with the
-module path (`drive__motor__Gm42A__rated_torque`). If that still
-collides, both are further qualified with the package
-(`acme_rover__drive__motor__Gm42A__rated_torque`: package dots become
-`_`). A collision that remains is R013. Read maps native names to paths only
-through bindings, never by demangling.
+The name is a pure function of the path and the prefix. Adding,
+removing or renaming any other path never changes it, so a link made in
+the CAD tool today survives every later edit except a rename of the path
+itself, and that is covered by `was` (3.5). `cadetta names` prints the
+name of every in-scope path (config-cli.md 3); tools never reimplement
+the rule.
+
+The rule is not injective, because it drops the package and module. Two
+in-scope paths of one adapter with the same created name are R013, a
+hard failure before any write; the user resolves it by binding one of
+them explicitly (`#[native(adapter, "Name")]` or the bindings file),
+which takes it out of the created names. Nothing is qualified
+automatically, since that would rename an existing global when an
+unrelated path is added. Read maps native names to paths through
+bindings and the forward table of 3.5, never by demangling.
 
 ### 3.2 Adapter identity and scope
 
@@ -268,22 +286,110 @@ file instantiated is not the file bound to the slot's primary.
 
 ### 3.4 Geometry bindings
 
-Geometry is bound through members, not through derived coordinates
-(geometry.md 6):
+Geometry is bound through members and frames, never through derived
+coordinates, and positions are verified by transform (geometry.md 6):
 
-| Source form | Binds to |
-|---|---|
-| datum or point (frame) | a `frame` locator: a coordinate system or plane feature |
-| placement offset term (`place.x` ...) | the mate distance dimension |
-| placement `rotate` other than an exact 90 degrees | the angle mate dimension |
-| placement `flip`, exact 90 degree `rotate` | verified only: `read` reports a drift note, `push` never writes them |
-| `for`-placement over a pattern | the native component pattern's generator |
-| pattern generator members (`holes.pitch_x` ...) | the pattern's dimensions; these are what bind |
+| Source form | Native counterpart | Binding | Verified by |
+|---|---|---|---|
+| datum | a frame: coordinate system (preferred) or plane feature | `frame` locator, explicit or by name (3.5) | the frame's transform against the composed datum |
+| datum offset or rotation Member | a dimension of the feature that defines the frame | `dimension` locator | the dimension (R001) |
+| hand-listed point coordinate | a sketch dimension measured from the datum | `dimension` locator, `sign` when the native value is a magnitude | the dimension; R007 |
+| pattern generator member (pitch, radius, start, rotation, count) | the native pattern's dimension or instance count | `dimension` locator (a count is a Count) | the dimension |
+| placement | the component instance | `instance` locator: the instance name, or by reference property (3.5) | the instance's transform against the composed placement |
+| placement offset or non-90deg rotation Member | a mate distance or angle dimension | `dimension` locator | the dimension |
+| `flip`, exact 90deg `rotate` | none | none | the transform comparison only; never pushed |
+| array placement over a pattern | a pattern-driven component pattern | none (it follows the part's pattern) | each instance's transform |
 
-Coordinates derived from a generator are analysis-only unless the user
-lists them in the bindings by hand. `sign = -1` (3) applies to
-coordinate locators. R007 covers a dimension not measured from the
-sketch origin.
+- Transform comparison. `read` reports frames and instances with their
+  transforms (ir.md 1). A datum's frame transform is compared with its
+  composed transform at the emit point. A placement is compared as the
+  placed datum's frame in the assembly (the instance transform times
+  the part's datum frame, read when the part's datum is bound, else
+  composed) against the anchor's composed frame. Translations compare
+  at the adapter's precision in its native unit, rotation entries at
+  the same number of decimals. A mismatch is R001 on the datum or
+  placement path, showing both transforms.
+- A placement is verify-only: it is never pushed, so any mismatch is
+  R001 whatever the base (move the part in CAD, or change the design).
+- A datum is verify-only under `[[adapter]] datums = "verify"` (the
+  default). Under `"create"` the adapter creates a missing coordinate
+  system named by the datum's mangled path in the datum's component
+  document, defined by numeric values relative to the document origin,
+  and `sync` pushes the composed transform into it like a value, with
+  a lock `synced` record. Then the datum's offsets need no dimension
+  bindings at all.
+- Coordinates derived from a generator are analysis-only unless the user
+  lists them in the bindings by hand. R007 covers a dimension not
+  measured from the sketch origin.
+
+### 3.5 Native links
+
+A bindings-file entry that restates what the native document already
+says is duplication. Four native facts are therefore bindings by
+themselves. The host records them with `implicit` on the locator (ir.md
+3) and never writes them to the bindings file:
+
+| Native fact | Binds | Locator |
+|---|---|---|
+| a global whose name is the created name (3.1) of an in-scope path | that path | `global`, `value`, implicit `global` |
+| a dimension whose native equation is exactly a reference to such a global (`"D1@Boss-Extrude1" = "Bracket__thickness"`) | the same path | `dimension`, `ref` with `ref_to` that global, implicit `link` |
+| a frame whose name is the created name of an in-scope datum (`Rail__site`) | that datum | `frame`, implicit `frame` |
+| a component instance whose reference property is a part's instance path relative to its assembly (`bracket`, `feet[2]`, `sub/bracket`) | that part's placement node (`Mount/bracket.place`) | `instance`, implicit `reference` |
+
+- Discovery runs during `read` over the adapter's `files`. The host
+  builds the forward table of created names for the in-scope paths and
+  their `was` paths and looks native names up in it; it never parses a
+  native name back into a path. An adapter that cannot read
+  (`sw-equations`, `json`, `csv`) discovers nothing.
+- A native name matching a `was` path binds the current path. Where the
+  adapter can rename a global and its references (`initialize` feature
+  `rename_globals`), `sync` renames it to the current created name and
+  reports R006; otherwise it keeps writing the old name.
+- An explicit locator of the same kind and native name replaces the
+  implicit one; an explicit locator naming a different native item adds
+  to it (multi-locator, 3).
+- A dimension whose equation is anything other than a bare reference
+  (`= 2 * "X"`, `= "X" + 1mm`) is not a link; it is R002 like any
+  unbound native item, with the expression in the message.
+- Implicit locators take part in the three-way sync and in lock records
+  exactly like explicit ones. They are never R005; one that disappears
+  after a sync recorded it is R003 (3).
+- `[[adapter]] bind = "scope"` also binds every in-scope path whose
+  kind the adapter can express to its created global (implicit
+  `global`), whether or not the global exists yet, so `emit` and `sync`
+  create it. That is how an equations-file user gets globals to link
+  dimensions to inside the CAD tool. The default, `"explicit"`, binds
+  only bindings-file entries, pins and discovered links. Scope binding
+  covers parameters, datum and placement op Members, hand-listed
+  coordinates and generator members of the adapter's own scope
+  (`modules`, `paths`); never a `let`, never another package's member,
+  and never a `Text` path for an adapter that cannot express `Text`
+  (R014 stays a rule about explicit bindings).
+
+### 3.6 Dimension tolerances
+
+The tolerance on a drawing belongs to the number cadetta owns, so it is
+written from the design instead of retyped. A `dimension` locator's
+`tolerance` is `drive` or `ignore`, defaulting to `[[adapter]]
+tolerances` (`"drive"`). It has effect only in adapters whose
+`initialize` reports the feature `tolerances`.
+
+- With `drive`, `push` writes the path's design tolerance together with
+  the value: `[+-t]` as a symmetric tolerance, an asymmetric bracket as
+  bilateral deviations, an interval value as limits, and an ISO 286
+  class (`12mm H7`, a fit side) as the tool's fit tolerance naming the
+  class, or as bilateral deviations where the tool has none. An
+  untoleranced path writes no tolerance.
+- When the emit point is not `nominal` (quantities.md 5.6), the value
+  written is not the class's basic size, so the tolerance is written as
+  limits (`.min`, `.max`) instead of a class or deviations.
+- A dimension in `ref` mode takes its tolerance on the dimension, never
+  on the global (globals carry none).
+- `read` reports a dimension's tolerance, and `sync` compares it in the
+  same three-way record as the value: a tolerance edited in CAD is R001
+  like an edited value.
+- A position zone (geometry.md 3.1) is not a dimension tolerance and is
+  never written.
 
 ## 3a. What every emitter spec states
 
@@ -329,13 +435,13 @@ nominal.
 ## 5. Protocol
 
 Built-in adapters run in process (Rust). External adapters are separate
-executables, written in whatever language reaches the CAD API (Python
-with pywin32 for SOLIDWORKS COM, Python for FreeCAD and Fusion),
-speaking JSON-RPC 2.0 over stdio:
+executables, written in whatever language reaches the CAD API (C# for
+SOLIDWORKS COM, Python for FreeCAD and Fusion), speaking JSON-RPC 2.0
+over stdio:
 
 | Method | Params | Result |
 |---|---|---|
-| `initialize` | protocol version, client info | name, version, capabilities, native units, precision (the emitter spec's default, overridable by `[[adapter]] precision`), platforms |
+| `initialize` | protocol version, client info | name, version, capabilities, features, native units, precision (the emitter spec's default, overridable by `[[adapter]] precision`), platforms |
 | `emit` | IR (design), bindings, policy | files written (paths, digests), diagnostics |
 | `open` | files | `session` (handle, per-file dirty/readonly state), diagnostics |
 | `read` | file paths, or a `session` | observed IR, diagnostics |
@@ -365,8 +471,12 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
   `id` from the adapter is a notification and is ignored.
 - `initialize` params are `{protocol: "cadetta.adapter/1", client:
   {name, version}}`; `capabilities` is a list of `emit`, `read`,
-  `drive`; `precision` is the number of fractional decimal digits of
-  the native number format.
+  `drive`; `features` is a list (possibly empty) of `frames` (reads
+  frame transforms), `instances` (reads component transforms and
+  reference properties), `create_frames` (creates and drives coordinate
+  systems, 3.4), `tolerances` (reads and writes dimension tolerances,
+  3.6) and `rename_globals` (3.5); `precision` is the number of
+  fractional decimal digits of the native number format.
 - `read` takes `{source: {files: [...]}}` or `{source: {session:
   handle}}`. `regen` per-target status is `ok` or `failed`.
 - The host refuses `open`, `save`, `close`, `push` and `regen` unless
@@ -393,7 +503,7 @@ built-in `sw-equations` row.
 | CSV | built-in | 0.1.0 | 0.1.0 | - | name, value, unit rows (emitters/csv.md) |
 | SOLIDWORKS equations file | built-in | 0.1.0 | 0.1.0 | - | text file the part links via "Link to external file" |
 | FreeCAD | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | Spreadsheet aliases; headless `freecadcmd` for CI |
-| SOLIDWORKS | external, Python | - | 0.1.0 | 0.1.0 | COM API through pywin32: global variables, dimensions, custom properties, rebuild (push covers emit); Windows only |
+| SOLIDWORKS | external, C# | - | 0.1.0 | 0.1.0 | COM API from .NET: global variables, dimensions and their tolerances, custom properties, coordinate systems, component transforms, rebuild (push covers emit); plus an add-in for linking by selection (solidworks.md); Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
 | Fusion | external, Python | - | later | later | user parameters API |
 | Inventor | external | - | later | later | parameters API |
@@ -401,12 +511,15 @@ built-in `sw-equations` row.
 | KiCad | - | out | out | out | electrical CAD is out of 0.1.0 |
 
 SOLIDWORKS is the primary target: it is what the first users design
-in. Its adapter is Python (pywin32 COM) on the `cadetta.adapter` base
-(bindings.md 3.4), so one adapter SDK serves every Python-reachable
-tool. CI cannot run SOLIDWORKS, so its tests replay recorded COM
-transcripts against a fake, and a release requires a manual smoke run
-on a licensed machine (the `sync` loop on the pilot r3-05 part). The
-built-in equations-file emitter remains the zero-install path.
+in. Its adapter is one C# solution, a protocol executable and a
+SOLIDWORKS add-in sharing one library, because an in-process add-in
+must be .NET and two code bases against one COM API would duplicate
+each other (solidworks.md). The Python `cadetta.adapter` base
+(bindings.md 3.4) serves FreeCAD and other Python-reachable tools. CI
+cannot run SOLIDWORKS, so its tests replay recorded COM transcripts
+against a fake, and a release requires a manual smoke run on a licensed
+machine (the `sync` loop on the pilot r3-05 part). The built-in
+equations-file emitter remains the zero-install path.
 
 FreeCAD is the reference external adapter for CI: it is the only target
 that exercises `read` and `drive` without a license or Windows, so the
@@ -456,6 +569,16 @@ overwritten.
 - Imported positions and distances are scalars. Converting a set of them
   to a `Point2` array is a manual refactor that keeps the existing
   locators by re-keying the bindings (geometry.md 6).
+- Frames and instances are derived, not retyped. An adapter with
+  `frames` proposes each coordinate system as a `datum` built from
+  `origin` by one `offset` and the fewest `rotate`s (whole multiples of
+  90deg are recognised and written exactly; any other rotation is
+  written as read and flagged). An adapter with `instances` proposes a
+  `place` per component instance, anchored at the parent's `origin` with
+  the read transform as its ops, and flags it for the user to re-anchor
+  on a real datum. `--accept` binds them with explicit `frame` and
+  `instance` locators naming the native items as they are, so no CAD
+  file is touched (contract 4.5).
 
 ### 7.3 Configurations and properties
 

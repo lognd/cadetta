@@ -6,8 +6,8 @@
    directory holding a `cadetta.toml` with a `[package]` or a
    `[workspace]` table. A package has one `cadetta.lock`, one `build/`
    and one set of adapters; workspace members share one lock and one
-   `build/` (packages.md 1). Relative paths in `cadetta.toml`, in
-   citations (`@"file"`), in solver scripts and in bindings resolve
+   `build/` (packages.md 1). Relative paths in `cadetta.toml`, in a
+   citation's `file`, in solver scripts and in bindings resolve
    against the package directory.
 2. A file's module is its path under the package's `src` (packages.md
    2). The IR holds the package, its
@@ -96,6 +96,7 @@ bindings = "bindings/rover-sw.toml"   # default bindings/<id>.toml
 modules = ["drive"]              # module path prefixes; default all
 paths = []                       # canonical-path globs; default all
 prefix = ""                      # prepended to created native names
+bind = "explicit"                # explicit | scope: also bind every in-scope path to its created global (adapters.md 3.5)
 native_unit = "mm"               # unit for unitless native values (adapters.md 3)
 precision = 6                    # decimals; default from the emitter spec (adapters.md 5)
 
@@ -105,6 +106,8 @@ command = ["cadetta-solidworks"]
 version = "0.1"
 files = ["**/*.SLDPRT", "**/*.SLDASM"]
 save = "after-sync"              # after-sync | never (adapters.md 2.2)
+datums = "verify"                # verify | create: create and drive datum coordinate systems (adapters.md 3.4)
+tolerances = "drive"             # drive | ignore: write dimension tolerances (adapters.md 3.6)
 native_unit = "mm"
 ```
 
@@ -119,6 +122,9 @@ Key notes:
   diagnostic; `[lint] severity` can only raise it.
 - `command`, `version` and `files` are for external adapters; built-ins
   take `out`. `version` must match `initialize` (adapters.md 5).
+- `bind` applies to every adapter. `datums` and `tolerances` apply to
+  adapters whose `initialize` features include `create_frames` and
+  `tolerances`; elsewhere they are accepted and have no effect.
 - Solvers are keyed by qualified path. Several solvers may share one
   script; `<stem>.out.json` then holds one entry per solver path
   (solvers.md 4).
@@ -158,7 +164,10 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations. | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
 | `ack SELECTOR --role R --reason "..." [--baseline] [--release] [--dry-run] [--as EMAIL]` | Attest at current digests; `--baseline` records reason `baseline` (obligations.md 4); `waiver:GLOB` records reviewed waivers' digests. | writes `cadetta.lock` | never | `ack.json` |
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
-| `cite pin NAME` | Download a URL citation into `cites/` and rewrite the `cite` to the local path. | writes `cites/`, source | never (errors exit 2) | - |
+| `cite pin NAME` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |
+| `cite list [--format ieee\|bibtex\|json] [--module PATH] [GLOB...]` | The reference list of the citations the scoped design reaches (language.md 3.9.1). | reads | never | `cite-list.json` |
+| `names [ADAPTER-ID] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with a `read` adapter, reads CAD | R013 | `names.json` |
+| `bind PATH --adapter ID --locator L --kind K [--mode M] [--native-unit U] [--for ALT] [--config C] [--sign -1] [--component C] [--tolerance drive\|ignore]` / `bind --remove PATH --adapter ID --locator L` | Add or remove one explicit locator in `bindings/<id>.toml`, validated and written in canonical order. | writes the bindings file | never (errors exit 2) | `bind.json` |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
 | `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013, R014, R015 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
@@ -234,8 +243,8 @@ configured `[[adapter]]` (by `name` or `id`, else exit 2) and prints the
 Creates missing files only; it never rewrites an existing file, prints
 one info line per skipped file and exits 0. `--adapter solidworks`
 writes the `[[adapter]]` block (command, `files` globs, `save`,
-`native_unit`) and prints the install line
-(`pip install "cadetta[solidworks]"`, run in the Windows interpreter).
+`native_unit`) and prints where to get the SOLIDWORKS adapter and
+add-in installer (solidworks.md 1).
 `--bare` omits the hello-world item in `src/lib.cdt`. `init` writes
 `[package]` and `src/lib.cdt`; the package name defaults to the
 directory name, normalised, and is echoed.
@@ -246,7 +255,9 @@ nothing, prints `would reformat FILE` per differing file and exits 1. A
 file with syntax errors cannot be formatted: it is reported on stderr and
 the run exits 2. `init --adapter freecad` writes an external
 `cadetta-freecad` block (`files = ["**/*.FCStd"]`); `sw-equations`
-writes the built-in block with `out = "build/solidworks/equations.txt"`.
+writes the built-in block with `out = "build/solidworks/equations.txt"`
+and `bind = "scope"`, since an equations file is useful only with
+globals to link (solidworks.md 2.4).
 The hello-world item is `model Hello { size: Length = 10mm }`.
 
 ### 3.3 Selectors
@@ -255,11 +266,23 @@ The hello-world item is `model Hello { size: Length = 10mm }`.
 (`<kind>:<canonical path>`, obligations.md 4). A selector matching
 nothing is exit 2.
 
-Decided (0.1.0): `cite pin NAME` accepts only a `http(s)` string
-citation declared once in the scoped packages. It stores the bytes as
-`cites/<first 16 hex of blake3>-<file name>` (package-relative; same
-bytes, same path) and rewrites the `cite` string to that path. A path,
-a standard or an unknown or ambiguous NAME is a usage error (exit 2).
+Decided (0.1.0): `cite pin NAME` takes a `cite` item's path (relative
+or qualified) declared in the scoped packages, which must have a `url`.
+It stores the bytes as `cites/<first 16 hex of blake3>-<file name>`
+(package-relative; same bytes, same path), sets the item's `file` field
+to that path (replacing an earlier pinned path), keeps `url`, and adds
+`accessed` with the run's date (`--as-of`, else today) when the item has
+none. An item without `url`, or an unknown or ambiguous NAME, is a usage
+error (exit 2).
+
+`names` and `bind` are what tools use instead of reimplementing the
+mangling rule or the bindings file format (solidworks.md 3). `names`
+lists paths sorted by canonical path; the binding state of a path is
+`explicit` (bindings file or pin), `implicit` with the reason of ir.md 3
+(`global`, `link`, `frame`, `reference`; discovered only when the
+adapter can read), or `unbound`. `bind` refuses a locator that fails the
+validation of adapters.md 3 and is idempotent: binding an identical
+locator again changes nothing.
 
 ### 3.4 `ack` details
 
@@ -375,7 +398,7 @@ Schemas are generated from the Rust types and committed in
 |---|---|---|---|
 | `cadetta.toml` | package or workspace root | `init`, by hand | yes |
 | `cadetta.lock` | package or workspace root | `ack`, `sync`, `import --accept`, `lock` | yes; `.gitattributes`: `cadetta.lock merge=cadetta` |
-| bindings | `bindings/<id>.toml` (or `[[adapter]] bindings`) | `import --accept`, by hand | yes |
+| bindings | `bindings/<id>.toml` (or `[[adapter]] bindings`) | `import --accept`, `bind`, by hand | yes |
 | solver results | `<stem>.out.json`, beside the script | `solve` | yes |
 | imported scaffold | `cad/imported/<File>.cdt` | `import --accept` | yes |
 | pinned citations | `cites/` | `cite pin` | yes (or LFS) |

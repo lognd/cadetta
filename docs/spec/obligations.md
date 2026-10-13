@@ -61,7 +61,7 @@ An obligation id is `<kind>:<canonical path>`. Kinds:
 | `check` | sign-off of a check's result | check |
 | `require` | sign-off of a `require` that holds | `require` |
 | `solver` | solver result is current | solver |
-| `citation` | a cited file is unchanged since acknowledged | file citation |
+| `citation` | a cited source is unchanged since acknowledged | `cite` item |
 | `sync` | CAD file reflects design | native file bound by an adapter |
 | `waiver` | a waiver was reviewed against its targets' current digests | `waive` declaration |
 
@@ -92,7 +92,7 @@ errors (exit 2).
 | requirement is met | a `require` evaluating `holds` (verdict), plus its sign-off if configured | the require or anything it reads changed | C001; O003 for sign-off |
 | solver result is current | `cadetta solve` | input, script or dep digest changed | S003 |
 | CAD file reflects design | `cadetta sync` | a bound param's emitted value changed | O004 |
-| value matches its citation | `cadetta ack ots:PATH --role source` | the cited local file's digest changed, or the citation text changed | S004 |
+| value matches its citation | `cadetta ack ots:PATH --role source` | the citation's digest changed: a field (a new `rev`, `date` or `url`) or its `file`'s content | S004 |
 | review / sign-off | `cadetta ack SELECTOR --role NAME` | any node in the attested set changed digest | O001 (stale), O002 (open) |
 
 Diagnostic rules:
@@ -104,17 +104,19 @@ Diagnostic rules:
 - `[obligations.kinds.<kind>] required_for = "check" | "release"`
   makes `sync` and `solver` obligations gating, as for roles (4).
   Severity precedence is in lints.md 1.
-- Only `file` citations are drift-detected. URL and literal citations
-  are acknowledged at the text level and cannot go stale on their own;
-  `cadetta cite pin NAME` downloads a URL citation into `cites/`
-  (content-addressed) and rewrites the `cite` to that local path so it
-  can. Whole-file granularity is the 0.1.0 behaviour.
-- Decided (0.1.0): `cadetta ack ots:PATH --role source` records, per
-  file citation, an `attest citation:<cited path>` with role `source`
-  whose digest hashes the cited file's digest together with the
-  citation text (target and locator). Either changing makes the
-  obligation stale and records S004. Literal, URL and pseudo-citations
-  have no file digest and no check.
+- A citation goes stale when its record changes (language.md 3.9): a
+  new `rev` or `date` is a new source, so the values cited to it need
+  another look. Only a `file` is drift-detected on disk; a URL's
+  content cannot be, and `cadetta cite pin NAME` downloads it into
+  `cites/` (content-addressed) and adds the `file` field so it can.
+  Whole-file granularity is the 0.1.0 behaviour.
+- `cadetta ack ots:PATH --role source` records, per `cite` item the
+  `ots` reaches, an `attest citation:<cite path>` with role `source`
+  whose digest is the citation's digest (its type, fields and file
+  digest). Any change makes the obligation stale and records S004. A
+  changed locator is an edit of the citing member, so it stales the
+  `ots:` attestation itself (O001), not the citation. Notes and
+  pseudo-citations have no record and no check.
 - The `sw-equations` adapter never discharges `sync`: the state stays
   `open` with reason "unverifiable without drive" (adapters.md).
 - Decided (0.1.0): only `sync` and `solver` accept a kind-level
@@ -239,8 +241,9 @@ Text format (normative for 0.1.0):
 - `at` is `YYYY-MM-DD`; digests are lowercase hex; `verdict` is
   `holds`, `violated` or `undecided`; `margin` is the quantity text;
   `deps` is the sorted, unique, comma-joined list (empty allowed).
-- Cited-file acknowledgements are `attest citation:PATH` records; there
-  is no separate citation record. Loading tolerates unsorted or
+- Citation acknowledgements are `attest citation:PATH` records, PATH
+  being the `cite` item's canonical path; there is no separate citation
+  record. Loading tolerates unsorted or
   duplicate lines (the tie rule applies); `lock verify` flags any file
   that is not byte-identical to its canonical rendering.
 - Writing is atomic (temp file then rename) and skipped when the bytes

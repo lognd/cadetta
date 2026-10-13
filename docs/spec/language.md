@@ -14,10 +14,17 @@ recursion, traits or closures.
 use std::fits::iso286
 use std::fasteners::{MetricThread, ScrewJoint}
 use std::materials::Material
+use self::refs::{colson, customer}          // the package bibliography, src/refs.cdt
 
-cite colson   = "https://colson.example/2-series.pdf"
-cite customer = "docs/requirements.md"
-cite vendor   = "https://vendor.example/4471-B.pdf"
+cite vendor: datasheet {
+  organization = "Vendor Wheels Inc."
+  title        = "4471-B polyurethane caster"
+  number       = "4471-B"
+  rev          = "D"
+  date         = "2025-11"
+  url          = "https://vendor.example/4471-B.pdf"
+  accessed     = "2026-09-14"
+}
 
 /// What the rover needs from a caster wheel, whoever makes it.
 interface Caster {
@@ -98,6 +105,11 @@ assembly Rover {
 - Quantity literals: quantities.md 2. Strings `"..."` with `\"`, `\\`.
 - `@` introduces a citation (3.9). `#[...]` and `#![...]` are attributes
   (3.11). A `:` directly after a citation starts its locator string.
+- Contextual keywords, reserved only where the grammar expects them and
+  ordinary identifiers elsewhere: `at` after a `place` target, `script`
+  first in a `solver` body, `position` first inside a tolerance bracket
+  (geometry.md 3.1). `at` stays usable as an argument name
+  (`ScrewJoint(at = ...)`).
 
 ## 3. Items
 
@@ -119,8 +131,7 @@ member    = { doc } { attr } [ "priv" ] ( param | let | bound | part | fit | che
             | require | solver | datum | place ) [ citation ] [ trailing_attr ]
                                                      // "priv": usable only in its package (packages.md 3)
 datum     = "datum" IDENT [ "=" expr ]               // geometry.md 2; no "=" in an interface
-place     = "place" path "on" expr [ "for" IDENT "in" "0" ".." "count" "(" path ")" ]
-                                                     // geometry.md 4; the range form indexes PART[i]
+place     = "place" postfix "at" expr               // geometry.md 4; an unindexed part array places elementwise
 type      = IDENT | "Datum" | ( "Point2" | "Point3" ) "on" path
             | "[" type ";" expr "]" | "Table" "<" type ">"   // Vec2, Vec3, Point2, Point3: geometry.md 3
 let       = "let" IDENT [ ":" type ] "=" expr        // analysis value (quantities.md 5.3)
@@ -135,7 +146,8 @@ process   = "process" IDENT [ citation ] "{" { param | rule } "}"
 rule      = "rule" IDENT "(" pdecl ")" "->" type "=" expr
 table     = "table" IDENT [ citation ] "{" "key" pdecl [ "cols" pdecl { "," pdecl } ]
             { expr [ "=>" expr { "," expr } ] } "}"   // no "=>": a key-only row
-cite      = "cite" IDENT "=" ( STRING | path )   // path: a standard, `std::iso273`
+cite      = "cite" IDENT ":" IDENT "{" { IDENT "=" field } "}"   // 3.9: type, then fields
+field     = STRING | "[" STRING { "," STRING } "]"
 interface = "interface" IDENT [ ":" iface_list ] "{" { doc | bound | IDENT [ "?" ] ":" type | datum } "}"
                                                      // ":" extends; "?" marks an optional member
 enum      = "enum" IDENT "{" IDENT { "," IDENT } [ "," ] "}"
@@ -144,14 +156,14 @@ fn        = "fn" IDENT "(" [ pdecl { "," pdecl } ] ")" "->" type
 fit       = "fit" IDENT "=" fitspec [ "on" path ] [ "[" expr ".." expr "]" ]
 fitspec   = CLASS [ "/" CLASS ] | path "/" path    // CLASS: H7, p6; 3.7
 require   = "require" IDENT ":" expr [ STRING ] [ citation ]
-solver    = "solver" IDENT citation "{" { "in" bind { "," bind }
-            | "out" IDENT ":" type | "deps" STRING | check } "}"
+solver    = "solver" IDENT [ citation ] "{" "script" STRING { "in" bind { "," bind }
+            | "out" IDENT ":" type | "deps" STRING | check } "}"   // solvers.md 1
 bind      = IDENT "=" expr
 waive     = "waive" CODE "on" GLOB [ "for" "alt" SLOT "=" ALT ]
             "{" "because" STRING [ "expires" DATE ] "}"
 unit      = "unit" IDENT "=" expr | "unit" IDENT IDENT   // definition | default unit of a kind
 kind      = "kind" IDENT "=" kindexpr             // kindexpr: quantities.md 2
-citation  = "@" ( IDENT | STRING ) [ ":" STRING ]
+citation  = "@" ( path | STRING ) [ ":" STRING ]     // path: a cite item or measured | assumed | estimate
 ```
 
 `GLOB` is the path-glob grammar of obligations.md 4, `SLOT` a canonical
@@ -325,7 +337,7 @@ array literal of mixed kinds) carry the internal evaluation code `EVAL`
 
 `N` must be an exact, dimensionless, non-negative whole number. An
 unindexed read of an array whose `N` is 0 is an error, as is an index
-outside `0..N`. `max` and `min` compare nominals and return the whole
+other than 0 to N - 1. `max` and `min` compare nominals and return the whole
 toleranced value of the winner; a roll-up over values of different
 dimensions is an error, and so is one with no contributing part.
 
@@ -416,7 +428,7 @@ nominal that is not a whole number of nanometres has no table row (F002).
   scales a vector by a dimensionless `s`. `Point3(...) on D` is the
   typing form of a literal (both point types); `p in D` applied to a
   typed point is re-expression only, and `in` maps over arrays.
-  `D.at(point)` is datum `D` offset to the point's x and y (z).
+  `D.offset(point)` is datum `D` offset to the point's x and y (z).
   `rect_pattern(nx: Count, ny: Count, dx: Length, dy: Length, rotation:
   Angle = 0deg) -> [Point2; nx * ny]` is centred on the origin; dx and
   dy are pitches (centre to centre); points are ordered row by row, x
@@ -497,23 +509,133 @@ variant and a missing variant without `_` is E009.
 
 ### 3.9 Citations
 
-`@name`, `@"literal"`, and an optional locator `@name:"p.2, table 1"`.
-`cite name = "url-or-path"` names one (only `file` citations are
-drift-detected, S004); `cite name = std::iso273` cites a
-standard. Built-in pseudo-citations: `@measured`, `@assumed`,
-`@estimate`, each taking a locator for who and when. A component's
-citation is inherited by its members unless they carry their own. Local
-file citations are digest-pinned (obligations.md 3). A literal citation
-(`@"ASTM A276"`) is text, not a path: it is never checked for
-reachability (S002).
+A citation says where a value comes from, precisely enough that someone
+else can find the source again. A `cite` is an item: it has a canonical
+path, takes `pub`, and is imported with `use` like any other item, so a
+package keeps its bibliography in one module (`src/refs.cdt` by
+convention) and `std` exports one per standard (stdlib.md). Its type and
+fields follow the IEEE reference style.
 
-Citation kinds in the IR: a `cite` string starting `http://` or `https://`
-is `url`, any other string is `file` (a path relative to the package
-directory, digest recorded when the file exists), a `std::...` path or a
-literal is `standard`, and `@measured`, `@assumed`, `@estimate` are their
-own kinds with the locator carrying who and when. A member with no
-citation of its own inherits the component's; a member citation replaces
-it, it is never merged.
+```
+pub cite sunon25: datasheet {
+  organization = "Sunon"
+  title        = "MF80251V1-1000U-A99 DC brushless fan"
+  number       = "MF80251V1-1000U-A99"
+  rev          = "A"
+  date         = "2024-03"
+  url          = "https://sunon.example/mf80251v1.pdf"
+  accessed     = "2026-09-30"
+  file         = "datasheets/sunon-mf80251v1-1000u-a99.pdf"
+}
+
+ots SunonMf80251: AxialFan80 @sunon25 {
+  width       = 80mm [+-0.5mm]   @sunon25:"p. 2, outline drawing"
+  mount_hole  = 4.3mm [+0.1mm -0] @sunon25:"p. 2"
+  unit_cost   = 6.85USD          @"quote Q-2026-0412, qty 500"
+  mass        = 85g              @measured:"scale, J. Doe, 2026-09-30"
+}
+```
+
+Using a citation:
+
+- `@PATH` cites an item: `@sunon25`, `@refs::sunon25`, `@std::iso273`
+  (a full path needs no `use`). An optional locator string follows
+  `:` and points inside the source, as an IEEE in-text `[3, p. 2]`
+  does: `@sunon25:"p. 2, table 1"`.
+- `@"text"` is an inline note, kind `note`: free text with no fields,
+  for quick provenance. Where a citation is required (S001) a note
+  satisfies it but is S008, because nobody can look it up.
+- `@measured`, `@assumed` and `@estimate` are prelude pseudo-citations;
+  their locator says who, how and when. They state provenance rather
+  than point at a source, so they are never S008.
+- A citation may follow any member statement, constructor argument,
+  component header, table, process, solver or `require` (5a). A
+  component's citation is inherited by its members unless they carry
+  their own; a member citation replaces it, it is never merged.
+
+Declaring a citation: `cite NAME: TYPE { FIELD = VALUE ... }`, one field
+per line (or `;`-separated). Every value is a string, except `author`,
+which is a string or a list of strings written as the source prints
+them (`["J. Doe", "A. Smith"]`). Fields:
+
+| Field | Meaning |
+|---|---|
+| `author` | person or people, as printed (`"J. Doe"`) |
+| `organization` | the company, standards body or institution that issues the source |
+| `title` | the title as printed |
+| `number` | the identifying number: standard (`"ISO 273:1979"`), part, drawing, document or quotation number |
+| `rev` | revision as printed (`"A"`, `"03"`) |
+| `edition` | edition (`"31st"`, `"2025"`) |
+| `date` | issue date: `YYYY`, `YYYY-MM` or `YYYY-MM-DD` |
+| `publisher`, `location` | book publisher and its city |
+| `journal`, `volume`, `issue`, `pages` | article fields |
+| `doi`, `isbn` | persistent identifiers |
+| `url` | `http://` or `https://` address |
+| `accessed` | date the URL was read, same forms as `date` |
+| `file` | a package-relative path to a local copy; digest-pinned (obligations.md 2.3) |
+| `note` | anything else a reader needs |
+
+Each type names the fields that make its source findable; a missing one
+is S008 (warning). A citation with a `url` and no `file` also needs
+`accessed`, because web content moves. Any field may appear on any type.
+
+| Type | For | Required |
+|---|---|---|
+| `standard` | a published standard | `number`, `title` |
+| `datasheet` | a manufacturer's data sheet or manual | `organization`, `number`, and `rev` or `date` |
+| `drawing` | an engineering drawing | `organization`, `number`, `rev` |
+| `catalog` | a product catalog | `organization`, `title`, and `edition` or `date` |
+| `book` | a book or handbook | `title`, `publisher`, and `edition` or `date` |
+| `article` | a journal or conference paper | `author`, `title`, `journal`, `date` |
+| `web` | a web page | `title`, `url`, `accessed` |
+| `quote` | a supplier quotation | `organization`, `number`, `date` |
+| `document` | any other document (requirements, test reports, memos) | `title`, and `number` or `date` |
+
+Static errors: an unknown type or field, a malformed date or URL, or a
+value of the wrong shape is E006; a field given twice is E003; a
+pseudo-citation name used as a `cite` name is E003. The removed draft
+1.4 forms `cite x = "..."` and `cite x = std::...` are E001 with a
+message showing the typed form or `@std::...`.
+
+In the IR a citation is `{path, type, fields, file_digest?, digest}`
+(ir.md 3), and a citing node records the citation's path and its
+locator. `type` is the declared type, or `note`, `measured`, `assumed`,
+`estimate`. The citation's own digest covers its type and fields and,
+when `file` names an existing file, that file's digest; a citing node's
+digest includes it, so editing a citation (a new `rev`) or its file
+makes every value cited to it stale (S004, obligations.md 2.3).
+
+#### 3.9.1 Reference list
+
+`cadetta cite list` (config-cli.md 3) prints the citations the scoped
+design actually reaches, numbered `[1]`, `[2]`, ... in order of first
+use: citing nodes are visited in canonical-path byte order, and a
+citation takes the next number when first met. The default rendering is
+IEEE, in plain text (no italics), each part present only when its
+fields are:
+
+| Type | Rendering |
+|---|---|
+| `book` | `AUTHORS, TITLE, EDITION ed. LOCATION: PUBLISHER, YEAR.` |
+| `article` | `AUTHORS, "TITLE," JOURNAL, vol. VOLUME, no. ISSUE, pp. PAGES, DATE, doi: DOI.` |
+| any other | `WHO, "TITLE," LABEL NUMBER, Rev. REV, EDITION ed., PUBLISHER, DATE. [Online]. Available: URL. Accessed: ACCESSED.` |
+
+- WHO is the authors, else the organization. AUTHORS join as IEEE
+  does: `A`, `A and B`, `A, B, and C`; more than six print as the first
+  followed by `et al.`
+- LABEL is `Datasheet`, `Drawing`, `Catalog` or `Quotation` for those
+  types and empty for `standard` (its number names the body, `ISO
+  273:1979`), `web` and `document`.
+- Dates print as `Mar. 2024` or `Sep. 30, 2026` with IEEE month
+  abbreviations (`Jan. Feb. Mar. Apr. May Jun. Jul. Aug. Sep. Oct. Nov.
+  Dec.`); YEAR is the year of `date`. `[Online]. Available:` and
+  `Accessed:` appear only with a `url`.
+- `--format bibtex` writes BibLaTeX entries keyed by the citation's
+  canonical path: `@standard`, `@manual` (datasheet, catalog), `@book`,
+  `@article`, `@online` (web) and `@misc` (drawing, quote, document,
+  note), with fields mapped by name (`organization` to `organization`,
+  `rev` to `version`, `accessed` to `urldate`). `--format json` writes
+  the IR citations with their numbers.
 
 ### 3.10 Units and kinds
 
@@ -674,12 +796,16 @@ Rules the grammar left open, fixed by the reference parser:
   datum or interface field named `origin` is E001 with a message pointing
   at geometry.md 2.
 - `datum NAME = expr` needs its value in a component and forbids it in an
-  interface. `place TARGET on expr [for i in lo..hi]` takes a postfix
-  expression as TARGET (`rail.origin`, `feet[i].top`); the `for` range is
-  `lo..hi` with any additive bounds, and the semantic check that it is
-  `0..count(PART)` is sema's. `p in D` is the ordinary `in` expression
+  interface. `place TARGET at expr` takes a postfix expression as TARGET
+  (`rail.origin`, `feet[2].top`, `feet.top`); the checks that TARGET is
+  a part's datum and that counts agree are sema's. `place a.b on c` is
+  E001 with a message pointing at `at` (draft 1.4 spelling), and so is a
+  trailing `for` clause. `p in D` is the ordinary `in` expression
   (section 5); at member level `IDENT in` is a bound, so it must be
   followed by a range (`w in D` alone is E001).
+- A `cite` body is one `IDENT = field` per line or `;`; its type is an
+  identifier checked by sema (E006), so new types need no grammar
+  change.
 - Kind expressions (`Volume / Time`, `Pressure / VolumeFlow^2`) are a
   left-to-right product or quotient of kind paths, each with an optional
   integer exponent (`^2`, `^-1`); no parentheses and no rational
@@ -691,9 +817,10 @@ Rules the grammar left open, fixed by the reference parser:
 - A `process` body holds parameters and `rule NAME(p: Kind) -> Kind =
   expr` (exactly one parameter). An `enum` needs at least one variant;
   commas and newlines separate variants, a trailing comma is allowed.
-- A `solver` (item or component member) requires a citation naming its
-  script; its body holds `in a = expr, ...`, `out NAME: kind` and
-  `deps STRING`.
+- A `solver` (item or component member) starts its body with `script
+  STRING` (a missing `script` is E001); the body then holds `in a =
+  expr, ...`, `out NAME: kind` and `deps STRING`. A citation after the
+  name is optional and cites the method, not the script.
 - `waive CODE on GLOB [for alt SLOT = ALT] { because STRING [expires
   DATE] }`: the glob, slot and alternate are kept as raw text made of
   adjacent tokens (no whitespace; `*`, `**`, `[*]`, `::`, `.`, `/`
@@ -748,8 +875,9 @@ Formatter decisions (cadetta-syntax `format`):
 
 - A file with any syntax error is refused, never formatted away.
   `datum` and `place` members (and `datum` in interfaces) print on one
-  line (`datum top = origin.offset(z = height)`, `place a.b on c for i in
-  0..count(P)`) and take no part in `=` alignment.
+  line (`datum top = origin.offset(z = height)`, `place a.b at c`) and
+  take no part in `=` alignment. A `cite` prints as a block, one field
+  per line in the order of the field table in 3.9, with `=` aligned.
 - `enum`, `fn`, `waive`, `unit` and `kind` items print on one line
   (`enum G { A, B }`, `waive C on GLOB { because "x" }`); `unit` and
   `kind` definitions align their `=` with neighbours. `process`,

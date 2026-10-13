@@ -9,7 +9,8 @@ through the obligation graph.
 ## 1. Declaration
 
 ```
-solver wall_sizing @"analysis/wall_sizing.py" {
+solver wall_sizing @roark {               // optional: cites the method, not the script
+  script "analysis/wall_sizing.py"
   in  load = Frame.max_load, span = Frame.span
   out min_wall: Length                   // any kind or kind expression: `out q: Volume / Time`
   deps "analysis/material_db.csv"
@@ -23,13 +24,16 @@ model Frame {
 }
 ```
 
-- `in` binds named inputs to expressions; `out` declares outputs with
-  kinds; `deps` lists extra files whose digests count as inputs.
+- `script` (first in the body, required) names the program; `in` binds
+  named inputs to expressions; `out` declares outputs with kinds; `deps`
+  lists extra files whose digests count as inputs.
 - Input expressions resolve where the solver is declared. At file
   scope they name components (`Frame.span`); a solver declared as a
   member of an assembly resolves like any member, so instances and
   roll-ups are in scope (`motor.stall_torque`, `mass?(self)`).
-- The citation names the script; its digest is an input.
+- The script's digest is an input. A citation on the solver is
+  provenance for the method (a handbook, a paper) like any citation; it
+  is not an input.
 - An `in` expression must be quantity-valued: quantity literals, name
   paths and field reads, calls, indexing, unary minus, `+ - * / ^`, `as`
   and tolerances. A bare number as the whole input (or an operand of

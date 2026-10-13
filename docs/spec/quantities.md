@@ -248,10 +248,13 @@ round_to(x, 1/32in) [+- Extrusion.cut_tol]   // any expression, any operand
 20mm H7      20mm g6             // ISO 286 class, bare postfix
 Bearing.bore.nominal j5          // class on any untoleranced expression
 9.98mm..10.05mm                  // interval value; nominal is the midpoint
+holes [position 0.2mm]           // true position zone on Point2 values (geometry.md 3.1)
 ```
 
 A bracket whose content begins with `+` or `-` is a tolerance; array
-indexing never does (indices are non-negative). Deviations must match the
+indexing never does (indices are non-negative). A bracket beginning with
+the contextual keyword `position` is a position tolerance, legal only on
+`Point2` values (geometry.md 3.1). Deviations must match the
 nominal's dimension; units may differ (`1in [+-0.1mm]`). ISO 286 classes
 resolve through `std::fits::iso286`; uppercase letters are holes, lowercase
 shafts. F002 when the size is outside the table.
@@ -353,6 +356,16 @@ domain error.
 `x ^ 2` and `x * x` of the same affine form use a square-aware
 interval: the result is never negative, so `sqrt(x^2 + y^2)` (and
 `radial`, language.md 3.8) stays defined when x straddles zero.
+
+A position tolerance (geometry.md 3.1) adds a disc source variable: a
+pair `(u, v)` constrained by `u^2 + v^2 <= 1` rather than each in
+`[-1, 1]`, entering a point's x and y with coefficients `d/2`. The pair
+appears in forms as two terms that share the variable's path with the
+suffixes `.u` and `.v`. A bound over a form groups a disc's two terms
+and adds `sqrt(a^2 + b^2)` for the coefficients `a` of `u` and `b` of
+`v`, instead of `|a| + |b|`; the square root is exact when either coefficient is
+zero and otherwise outward-widened and conservative. Treating the pair
+as two independent terms is never unsound, only looser.
 
 Decided in implementation: "the same affine form" means structurally
 equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`

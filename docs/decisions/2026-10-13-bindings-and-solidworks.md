@@ -35,7 +35,9 @@ catch-all, and named SOLIDWORKS as the CAD tool they use most. Draft
    here.
 5. SOLIDWORKS is the primary 0.1.0 target for emit, read and drive. Its
    adapter is Python on pywin32 COM, built on the adapter base. FreeCAD
-   stays the CI reference for protocol conformance.
+   stays the CI reference for protocol conformance. (Superseded
+   2026-10-13 by the draft 1.5 ADR, decision 13: the SOLIDWORKS adapter
+   is C#, sharing a library with the add-in.)
 
 ## Consequences
 

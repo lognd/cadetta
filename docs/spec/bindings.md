@@ -68,7 +68,8 @@ d = m.value                                  # Quantity
 d.nominal.to_exact("mm")   # Fraction(12, 1): exact, or None when inexact
 d.max.to_float("mm")       # upper limit after tolerance, as a float
 d.mid.to_float("in")       # a float only when asked for
-m.kind, m.citation         # "param" (the IR member kind), the source
+m.kind, m.citation         # "param" (the IR member kind), its CiteRef (ir.md 3)
+design.citation(m.citation.cite).unwrap().fields["rev"]   # Result[Citation, PathNotFound]
 d.kind                     # "Length" (the quantity kind)
 m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 ```
@@ -162,6 +163,9 @@ so a binding returns exactly what the CLI's JSON returns.
 | `project.import_(adapter, files, accept=False, update=False, write=False)` | `import` | `import.json` |
 | `project.ack(selector, role, reason, baseline=False, release=False, dry_run=False, as_=None)` | `ack` | `ack.json` |
 | `project.explain(code)` | `explain` | `explain.json` |
+| `project.cite_list(format="json", module=None)` | `cite list` | `cite-list.json` |
+| `project.names(adapter=None, module=None)` | `names` | `names.json` |
+| `project.bind(path, adapter, locator, kind, **fields)` / `project.unbind(path, adapter, locator)` | `bind` / `bind --remove` | `bind.json` |
 | `cadetta.units(kind=None)` | `units` | `units.json` |
 | `cadetta.format_source(text)` | `fmt` | `str` |
 
