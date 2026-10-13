@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:43:35Z"
-updated = "2026-10-13T08:27:14Z"
+updated = "2026-10-13T08:27:40Z"
 persona = "design engineer"
 capability = "see positions in the IR"
 idempotency_key = "replan14:ir-geo"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given Op = offset | rotate | flip | at, when serialized, then Datum and Placement share one form and the composed transform is derived, not stored (ir.md 3)"
-bound = false
+bound = true
 +++
