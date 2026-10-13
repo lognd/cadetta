@@ -2,7 +2,8 @@
 id = "01M4SPWQH44JWFXZDNTGEBMMNX"
 title = "Lower evaluated program to design IR"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
