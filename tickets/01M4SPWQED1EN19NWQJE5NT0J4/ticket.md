@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:43:13Z"
+updated = "2026-10-13T07:43:14Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a node, when its closure is computed, then it is over its own digest plus the sorted closure digests of its deps, including cited file digests and solver result digests (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an instance path such as Rover/wheel[2].hub_bore, when its closure is computed, then it includes only the part arguments the member reads, transitively (ir.md 4)"
