@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a fit side, when evaluated, then it has the hole or shaft role (quantities.md 5.6)"
-bound = false
+bound = true
 +++
