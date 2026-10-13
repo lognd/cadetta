@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "exchange inputs and outputs with a solver in a defined format"
 idempotency_key = "replan13:cadetta.solve/1 request and response protocol"
 labels = ["creates:crates/cadetta-solvers/src/protocol.rs"]
-scope = ["crates/cadetta-solvers/src/protocol.rs", "crates/cadetta-solve/src/protocol.rs", "crates/cadetta-solve/src/lib.rs"]
+scope = ["crates/cadetta-solvers/src/protocol.rs", "crates/cadetta-solve/src/protocol.rs", "crates/cadetta-solve/src/lib.rs", "crates/cadetta-solve/Cargo.toml"]
 
 [[links]]
 kind = "blocks"
