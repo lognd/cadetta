@@ -357,7 +357,7 @@ mod tests {
         assert!(matches!(err, ManifestError::RegistryUnsupported { .. }));
     }
 
-    // frob:ticket ~E2RPFB1
+    // frob:ticket 01M4STANV9T55FV8529E2RPFB1
     // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::PackageManifest
     #[test]
     fn std_ships_as_an_ordinary_package_at_0_1_0() {
