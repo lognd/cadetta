@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a literal tolerance and a derived affine form, when lowered, then Value.tol holds an Affine of source-variable terms (ir.md 3)"
-bound = false
+bound = true
 +++
