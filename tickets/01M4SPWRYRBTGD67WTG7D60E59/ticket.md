@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `Axle.end_diameter` and a target forbidding dots, when mangled, then the name is `Axle__end_diameter`; array instances mangle to `Rover__wheel_2__hub_bore`; mangling is injective (adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a parameter with `was`, when renamed, then its binding carries forward (adapters.md 3)"
