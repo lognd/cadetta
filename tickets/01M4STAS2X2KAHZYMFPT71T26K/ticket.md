@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:59Z"
-updated = "2026-10-13T16:26:37Z"
+updated = "2026-10-13T16:47:50Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for lints"
 labels = ["creates:tests/conformance/lints/**"]
-scope = ["tests/conformance/lints/**"]
+scope = ["tests/conformance/lints/**", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocks"
