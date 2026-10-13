@@ -2,18 +2,18 @@
 id = "01M4ST8F91FHYFC01TN6018BAM"
 title = "impact --swap: verdict, changed values, flips and suggested edit"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:18Z"
+updated = "2026-10-13T13:28:11Z"
 persona = "design engineer"
 capability = "preview a part swap before editing"
 idempotency_key = "replan13:impact --swap: verdict, changed values, flips and suggested edit"
 labels = ["creates:crates/cadetta-cli/src/cmd/impact_swap.rs"]
-scope = ["crates/cadetta-cli/src/cmd/impact_swap.rs"]
+scope = ["crates/cadetta-cli/src/cmd/impact_swap.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
