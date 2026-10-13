@@ -1,0 +1,1125 @@
+{
+  "$defs": {
+    "Affine": {
+      "additionalProperties": false,
+      "description": "An affine tolerance form.",
+      "properties": {
+        "terms": {
+          "items": {
+            "$ref": "#/$defs/AffineTerm"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "terms"
+      ],
+      "type": "object"
+    },
+    "AffineTerm": {
+      "additionalProperties": false,
+      "description": "One tolerance source variable.",
+      "properties": {
+        "hi": {
+          "$ref": "#/$defs/Exact"
+        },
+        "lo": {
+          "$ref": "#/$defs/Exact"
+        },
+        "var": {
+          "$ref": "#/$defs/Path"
+        }
+      },
+      "required": [
+        "hi",
+        "lo",
+        "var"
+      ],
+      "type": "object"
+    },
+    "Binding": {
+      "additionalProperties": false,
+      "description": "The adapter locators of one member.",
+      "properties": {
+        "adapter": {
+          "type": "string"
+        },
+        "locators": {
+          "items": {
+            "$ref": "#/$defs/Locator"
+          },
+          "type": "array"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        }
+      },
+      "required": [
+        "adapter",
+        "locators",
+        "path"
+      ],
+      "type": "object"
+    },
+    "Bound": {
+      "additionalProperties": false,
+      "description": "A bound member limit.",
+      "properties": {
+        "hi": {
+          "$ref": "#/$defs/Exact"
+        },
+        "lo": {
+          "$ref": "#/$defs/Exact"
+        },
+        "op": {
+          "$ref": "#/$defs/BoundOp"
+        }
+      },
+      "required": [
+        "op"
+      ],
+      "type": "object"
+    },
+    "BoundOp": {
+      "description": "A bound comparison.",
+      "enum": [
+        "<=",
+        ">=",
+        "in"
+      ],
+      "type": "string"
+    },
+    "Cell": {
+      "description": "A quantity, or an enum variant name.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Value"
+        },
+        {
+          "additionalProperties": false,
+          "description": "An enum variant.",
+          "properties": {
+            "variant": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "variant"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Check": {
+      "additionalProperties": false,
+      "description": "A check and its verdicts.",
+      "properties": {
+        "conservative": {
+          "type": "boolean"
+        },
+        "expr": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "verdicts": {
+          "$ref": "#/$defs/Verdicts"
+        },
+        "waived_for": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "conservative",
+        "expr",
+        "path",
+        "verdicts",
+        "waived_for"
+      ],
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "description": "A named source for a value.",
+      "properties": {
+        "file_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "kind": {
+          "$ref": "#/$defs/CitationKind"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "target"
+      ],
+      "type": "object"
+    },
+    "CitationKind": {
+      "description": "A citation kind.",
+      "enum": [
+        "url",
+        "file",
+        "standard",
+        "measured",
+        "assumed",
+        "estimate"
+      ],
+      "type": "string"
+    },
+    "Component": {
+      "additionalProperties": false,
+      "description": "A component definition.",
+      "properties": {
+        "attrs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        },
+        "class": {
+          "$ref": "#/$defs/ComponentClass"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "fits": {
+          "items": {
+            "$ref": "#/$defs/Fit"
+          },
+          "type": "array"
+        },
+        "implements": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "type": "array"
+        },
+        "params_sig": {
+          "type": "string"
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/Part"
+          },
+          "type": "array"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "span": {
+          "$ref": "#/$defs/SpanRef"
+        }
+      },
+      "required": [
+        "attrs",
+        "class",
+        "fits",
+        "implements",
+        "members",
+        "parts",
+        "path"
+      ],
+      "type": "object"
+    },
+    "ComponentClass": {
+      "description": "The class of a component.",
+      "enum": [
+        "ots",
+        "model",
+        "assembly",
+        "process"
+      ],
+      "type": "string"
+    },
+    "ComponentPath": {
+      "description": "Canonical item path text (no member tail).",
+      "type": "string"
+    },
+    "Dependency": {
+      "additionalProperties": false,
+      "description": "A resolved dependency.",
+      "properties": {
+        "digest": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "digest",
+        "name",
+        "source",
+        "version"
+      ],
+      "type": "object"
+    },
+    "Digest": {
+      "description": "BLAKE3 digest, lowercase hex.",
+      "pattern": "^[0-9a-f]+$",
+      "type": "string"
+    },
+    "Dim": {
+      "additionalProperties": false,
+      "description": "A dimension vector: SI base exponents, angle, and a currency exponent map.",
+      "properties": {
+        "A": {
+          "type": "integer"
+        },
+        "K": {
+          "type": "integer"
+        },
+        "angle": {
+          "type": "integer"
+        },
+        "cd": {
+          "type": "integer"
+        },
+        "currency": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "type": "object"
+        },
+        "kg": {
+          "type": "integer"
+        },
+        "m": {
+          "type": "integer"
+        },
+        "mol": {
+          "type": "integer"
+        },
+        "s": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "A",
+        "K",
+        "angle",
+        "cd",
+        "currency",
+        "kg",
+        "m",
+        "mol",
+        "s"
+      ],
+      "type": "object"
+    },
+    "Exact": {
+      "additionalProperties": false,
+      "description": "An exact magnitude `r * pi^pi` in SI base units; `r` is a reduced `num/den` with den > 0.",
+      "properties": {
+        "pi": {
+          "type": "integer"
+        },
+        "r": {
+          "pattern": "^-?[0-9]+/[1-9][0-9]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pi",
+        "r"
+      ],
+      "type": "object"
+    },
+    "Fit": {
+      "additionalProperties": false,
+      "description": "A fit between a hole and a shaft member.",
+      "properties": {
+        "clearance": {
+          "$ref": "#/$defs/Value"
+        },
+        "hole": {
+          "$ref": "#/$defs/Path"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "required": {
+          "$ref": "#/$defs/Bound"
+        },
+        "shaft": {
+          "$ref": "#/$defs/Path"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "clearance",
+        "hole",
+        "path",
+        "shaft",
+        "type"
+      ],
+      "type": "object"
+    },
+    "Flavour": {
+      "description": "Which producer built the IR.",
+      "enum": [
+        "design",
+        "observed"
+      ],
+      "type": "string"
+    },
+    "Inexact": {
+      "additionalProperties": false,
+      "description": "A float result of an inexact operation; the only float in the IR.",
+      "properties": {
+        "f64": {
+          "type": "number"
+        },
+        "root": {
+          "$ref": "#/$defs/Path"
+        }
+      },
+      "required": [
+        "f64",
+        "root"
+      ],
+      "type": "object"
+    },
+    "Interface": {
+      "additionalProperties": false,
+      "description": "An interface definition.",
+      "properties": {
+        "bounds": {
+          "items": {
+            "$ref": "#/$defs/InterfaceBound"
+          },
+          "type": "array"
+        },
+        "datums": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "members": {
+          "items": {
+            "$ref": "#/$defs/InterfaceMember"
+          },
+          "type": "array"
+        },
+        "path": {
+          "$ref": "#/$defs/ComponentPath"
+        }
+      },
+      "required": [
+        "bounds",
+        "datums",
+        "members",
+        "path"
+      ],
+      "type": "object"
+    },
+    "InterfaceBound": {
+      "additionalProperties": false,
+      "description": "An interface bound requirement.",
+      "properties": {
+        "bound": {
+          "$ref": "#/$defs/Bound"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bound",
+        "name"
+      ],
+      "type": "object"
+    },
+    "InterfaceMember": {
+      "additionalProperties": false,
+      "description": "An interface member requirement.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "optional",
+        "type"
+      ],
+      "type": "object"
+    },
+    "Locator": {
+      "additionalProperties": false,
+      "description": "A native locator; `for` selects a slot binding's alternate.",
+      "properties": {
+        "component": {
+          "type": "string"
+        },
+        "config": {
+          "type": "string"
+        },
+        "for": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/LocatorKind"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "mode": {
+          "$ref": "#/$defs/LocatorMode"
+        },
+        "native_unit": {
+          "type": "string"
+        },
+        "ref_to": {
+          "type": "string"
+        },
+        "sign": {
+          "description": "1, or -1 to negate a coordinate.",
+          "enum": [
+            1,
+            -1
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "locator",
+        "mode",
+        "native_unit"
+      ],
+      "type": "object"
+    },
+    "LocatorKind": {
+      "description": "A native locator kind.",
+      "enum": [
+        "global",
+        "dimension",
+        "property",
+        "frame"
+      ],
+      "type": "string"
+    },
+    "LocatorMode": {
+      "description": "Whether a locator holds the value or links to it.",
+      "enum": [
+        "value",
+        "ref"
+      ],
+      "type": "string"
+    },
+    "Member": {
+      "additionalProperties": false,
+      "description": "A parameter, let, bound or generated member; `priv` is the private flag.",
+      "properties": {
+        "analysis": {
+          "type": "boolean"
+        },
+        "attrs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "bound": {
+          "$ref": "#/$defs/Bound"
+        },
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        },
+        "closure": {
+          "$ref": "#/$defs/Digest"
+        },
+        "deps": {
+          "items": {
+            "$ref": "#/$defs/Path"
+          },
+          "type": "array"
+        },
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "doc": {
+          "type": "string"
+        },
+        "expr": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/MemberKind"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "priv": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "role": {
+          "type": "string"
+        },
+        "span": {
+          "$ref": "#/$defs/SpanRef"
+        },
+        "value": {
+          "$ref": "#/$defs/Value"
+        },
+        "variants": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Value"
+          },
+          "type": "object"
+        },
+        "was": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "analysis",
+        "attrs",
+        "deps",
+        "kind",
+        "path",
+        "priv",
+        "provenance",
+        "was"
+      ],
+      "type": "object"
+    },
+    "MemberKind": {
+      "description": "What a member declares.",
+      "enum": [
+        "param",
+        "let",
+        "bound",
+        "datum",
+        "place"
+      ],
+      "type": "string"
+    },
+    "Nominal": {
+      "description": "Exact unless an inexact operation produced it.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Exact"
+        },
+        {
+          "$ref": "#/$defs/Inexact"
+        }
+      ]
+    },
+    "PackageId": {
+      "additionalProperties": false,
+      "description": "A package name and version.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ],
+      "type": "object"
+    },
+    "Part": {
+      "additionalProperties": false,
+      "description": "A part slot in a component.",
+      "properties": {
+        "alternates": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "args": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "primary": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "alternates",
+        "args",
+        "path",
+        "primary",
+        "type"
+      ],
+      "type": "object"
+    },
+    "Path": {
+      "description": "Canonical member or instance path text.",
+      "type": "string"
+    },
+    "Process": {
+      "additionalProperties": false,
+      "description": "A manufacturing process.",
+      "properties": {
+        "params": {
+          "items": {
+            "$ref": "#/$defs/Member"
+          },
+          "type": "array"
+        },
+        "path": {
+          "$ref": "#/$defs/ComponentPath"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/ProcessRule"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "params",
+        "path",
+        "rules"
+      ],
+      "type": "object"
+    },
+    "ProcessRule": {
+      "additionalProperties": false,
+      "description": "One compensation rule of a process.",
+      "properties": {
+        "expr": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "expr",
+        "role"
+      ],
+      "type": "object"
+    },
+    "Provenance": {
+      "description": "How a member came to exist.",
+      "oneOf": [
+        {
+          "enum": [
+            "authored",
+            "derived"
+          ],
+          "type": "string"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Read from a CAD tool.",
+          "properties": {
+            "imported": {
+              "additionalProperties": false,
+              "description": "The import source.",
+              "properties": {
+                "adapter": {
+                  "type": "string"
+                },
+                "file": {
+                  "type": "string"
+                },
+                "native_name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "adapter",
+                "file",
+                "native_name"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "imported"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Solver": {
+      "additionalProperties": false,
+      "description": "A solver script with its declared inputs and outputs.",
+      "properties": {
+        "deps": {
+          "items": {
+            "$ref": "#/$defs/Path"
+          },
+          "type": "array"
+        },
+        "inputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "outputs": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "result_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "script": {
+          "type": "string"
+        },
+        "stale": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "deps",
+        "inputs",
+        "outputs",
+        "path",
+        "script",
+        "stale"
+      ],
+      "type": "object"
+    },
+    "SpanRef": {
+      "additionalProperties": false,
+      "description": "A source location.",
+      "properties": {
+        "end": {
+          "type": "integer"
+        },
+        "file": {
+          "type": "string"
+        },
+        "start": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "end",
+        "file",
+        "start"
+      ],
+      "type": "object"
+    },
+    "Table": {
+      "additionalProperties": false,
+      "description": "A table of constants.",
+      "properties": {
+        "citation": {
+          "$ref": "#/$defs/Citation"
+        },
+        "cols": {
+          "items": {
+            "$ref": "#/$defs/TableCol"
+          },
+          "type": "array"
+        },
+        "key": {
+          "$ref": "#/$defs/TableCol"
+        },
+        "path": {
+          "$ref": "#/$defs/ComponentPath"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/TableRow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "cols",
+        "key",
+        "path",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "TableCol": {
+      "additionalProperties": false,
+      "description": "A table key or column.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "type": "object"
+    },
+    "TableRow": {
+      "additionalProperties": false,
+      "description": "A table row; a key-only row has no cells.",
+      "properties": {
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/Cell"
+          },
+          "type": "array"
+        },
+        "key": {
+          "$ref": "#/$defs/Cell"
+        }
+      },
+      "required": [
+        "cells",
+        "key"
+      ],
+      "type": "object"
+    },
+    "Value": {
+      "additionalProperties": false,
+      "description": "An evaluated quantity; `nominal` is always the designed value.",
+      "properties": {
+        "angle": {
+          "type": "integer"
+        },
+        "authored": {
+          "type": "string"
+        },
+        "conservative": {
+          "type": "boolean"
+        },
+        "dim": {
+          "$ref": "#/$defs/Dim"
+        },
+        "drawn": {
+          "$ref": "#/$defs/Exact"
+        },
+        "exact": {
+          "type": "boolean"
+        },
+        "nominal": {
+          "$ref": "#/$defs/Nominal"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "tol": {
+          "$ref": "#/$defs/Affine"
+        },
+        "unit_assumed": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "angle",
+        "authored",
+        "conservative",
+        "dim",
+        "exact",
+        "nominal"
+      ],
+      "type": "object"
+    },
+    "VariantName": {
+      "description": "Full-form `SLOT=ALT` key text.",
+      "type": "string"
+    },
+    "VerdictState": {
+      "description": "A check verdict.",
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "Verdicts": {
+      "additionalProperties": false,
+      "description": "Primary and per-alternate verdicts, keyed `SLOT=ALT`.",
+      "properties": {
+        "per_alternate": {
+          "additionalProperties": {
+            "$ref": "#/$defs/VerdictState"
+          },
+          "type": "object"
+        },
+        "primary": {
+          "$ref": "#/$defs/VerdictState"
+        }
+      },
+      "required": [
+        "per_alternate"
+      ],
+      "type": "object"
+    },
+    "Waiver": {
+      "additionalProperties": false,
+      "description": "A suppression of one code on a path glob.",
+      "properties": {
+        "because": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "expires": {
+          "type": "string"
+        },
+        "for_alt": {
+          "$ref": "#/$defs/VariantName"
+        },
+        "glob": {
+          "type": "string"
+        },
+        "targets_closure": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Digest"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "because",
+        "code",
+        "glob",
+        "targets_closure"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://cadetta.dev/schemas/cadetta.ir/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A `cadetta.ir/1` document.",
+  "properties": {
+    "bindings": {
+      "items": {
+        "$ref": "#/$defs/Binding"
+      },
+      "type": "array"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/Check"
+      },
+      "type": "array"
+    },
+    "citations": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "type": "array"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/Component"
+      },
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "$ref": "#/$defs/Dependency"
+      },
+      "type": "array"
+    },
+    "digest": {
+      "$ref": "#/$defs/Digest"
+    },
+    "flavour": {
+      "$ref": "#/$defs/Flavour"
+    },
+    "modules": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "package": {
+      "$ref": "#/$defs/PackageId"
+    },
+    "schema": {
+      "const": "cadetta.ir/1",
+      "description": "Always `cadetta.ir/1`."
+    },
+    "solvers": {
+      "items": {
+        "$ref": "#/$defs/Solver"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "bindings",
+    "checks",
+    "citations",
+    "components",
+    "dependencies",
+    "flavour",
+    "modules",
+    "package",
+    "schema",
+    "solvers"
+  ],
+  "title": "Project",
+  "type": "object"
+}
