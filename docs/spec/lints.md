@@ -22,6 +22,18 @@ Severity precedence, highest first:
    2 it can only raise the floor, never lower it.
 4. `waive` and `allow` then suppress the result (section 2).
 
+Engine decisions (0.1.0): `fail_on = never` leaves severities as
+computed and only makes the exit code 0. A `[lint] severity` entry for a
+fixed code is ignored (logged), an unknown code or severity is a
+configuration error. Q004 and R008 default to warning and info under
+`check` and to error under `sync`. A waiver is expired when `--as-of` is
+strictly after its `expires`, stale when any recorded target digest
+differs from the current closure; both stop suppressing. An unscoped
+waiver applies under every alternate; `for alt` applies to that variant
+only. Fixed codes and diagnostics on a `require` path are never
+suppressed. Suppressed diagnostics stay in the run with `waived` set and
+do not count toward `fail_on`.
+
 Date-dependent rules (W001, W005, L001) read `--as-of` (obligations.md
 5), so a result is reproducible.
 
