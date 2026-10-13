@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T23:33:22Z"
+updated = "2026-10-13T23:34:35Z"
 persona = "design engineer"
 capability = "declare a screw joint and have it checked"
 idempotency_key = "replan13:ScrewJoint arguments and checks"
 labels = ["creates:std/src/fasteners/screwjoint_checks.cdt"]
-scope = ["std/src/fasteners/screwjoint_checks.cdt", "std/src/fasteners/screwjoint.cdt", "std/src/fasteners/screw.cdt", "crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/std_fasteners_screw*.rs", "crates/cadetta-sema/src/parts.rs", "crates/cadetta-sema/tests/std_screwjoint.rs", "tests/conformance/stdlib/**", "docs/spec/stdlib.md", "docs/spec/language.md"]
+scope = ["std/src/fasteners/screwjoint_checks.cdt", "std/src/fasteners/screwjoint.cdt", "std/src/fasteners/screw.cdt", "crates/cadetta-syntax/src/**", "crates/cadetta-syntax/tests/std_fasteners_screw*.rs", "crates/cadetta-sema/src/parts.rs", "crates/cadetta-sema/tests/std_screwjoint.rs", "tests/conformance/stdlib/**", "docs/spec/stdlib.md", "docs/spec/language.md", "crates/cadetta-syntax/tests/optional_params.rs"]
 
 [[links]]
 kind = "blocks"
