@@ -178,6 +178,8 @@ enum Command {
     Explain(Vec<String>),
     Units(Vec<String>),
     Update(Vec<String>),
+    /// `swap SLOT ALT --reason`.
+    Swap(Vec<String>),
     Unknown(String),
 }
 
@@ -199,6 +201,7 @@ fn parse(args: &[String]) -> Command {
         Some("explain") => Command::Explain(args[1..].to_vec()),
         Some("units") => Command::Units(args[1..].to_vec()),
         Some("update") => Command::Update(args[1..].to_vec()),
+        Some("swap") => Command::Swap(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -249,6 +252,7 @@ pub fn run_with_env(
         Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
         Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
         Command::Update(rest) => cmd::run_update(&rest, &globals, out, err),
+        Command::Swap(rest) => cmd::run_swap(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE
