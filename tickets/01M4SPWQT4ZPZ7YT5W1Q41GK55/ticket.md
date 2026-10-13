@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:01:43Z"
+updated = "2026-10-13T13:01:44Z"
 persona = "design engineer"
 capability = "get lints for the N family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a name containing `__`, when linted, then N005 is an error and cannot be waived (lints.md N)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `Type.member` in an assembly that has a `part` of that type, when linted, then N006 suggests the instance (language.md 3.1)"
