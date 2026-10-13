@@ -2,7 +2,8 @@
 id = "01M4SPWHVJVHRD0KWP8ESJD81M"
 title = "Exact magnitudes r*pi^k and dimension vectors"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
