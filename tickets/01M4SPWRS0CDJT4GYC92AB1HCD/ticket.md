@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:13:44Z"
+updated = "2026-10-13T13:14:13Z"
 persona = "cadetta contributor"
 capability = "drive external adapters over stdio with initialize, emit, read, push, regen, shutdown"
 outcome_text = "adapters can be written in any language"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a mock adapter, when the full method sequence runs, then each result validates against the protocol schema"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a version in cadetta.toml not matching initialize, when connecting, then it refuses (OQ-7)"
