@@ -7,7 +7,7 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T16:14:06Z"
-updated = "2026-10-13T16:18:01Z"
+updated = "2026-10-13T16:18:13Z"
 idempotency_key = "conformance-runner"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a fixture whose expectation is not met, when the runner runs, then it fails naming the fixture, doc and missing or extra diagnostic code"
-bound = false
+bound = true
 +++
 
 Runner for the conformance corpus (tests/conformance/README.md). Handles kind source (.cdt files and package directories); ir and binding kinds are skipped with a logged note until their entry points exist. Fixtures not yet passing because the implementation lags the spec are listed in a checked-in allowlist file with a ticket handle each, so the runner stays green.
