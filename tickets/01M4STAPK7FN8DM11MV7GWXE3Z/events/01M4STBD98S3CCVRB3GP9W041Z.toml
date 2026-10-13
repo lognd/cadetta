@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given Din471 and Din472 tables, when loaded, then every value is as published and cited (stdlib.md 5)", "Given a groove and ring, when checked, then fit rules in stdlib.md 5 apply (stdlib.md 5)"]
+new = ["Given Din471 and Din472 tables, when loaded, then every value is as published and cited (stdlib.md 2)", "Given a groove and ring, when checked, then fit rules in stdlib.md 5 apply (stdlib.md 2)"]
+moved = [0, 0]
+at = "2026-10-13T05:04:20Z"
+actor = "lognd"
+rev = 1
