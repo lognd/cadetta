@@ -11,7 +11,7 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::config::{Config, ConfigError, Dependency, Workspace};
+use crate::config::{Config, ConfigError, Dependency, Workspace, normalise_package_name};
 
 /// The module root file inside `src` (packages.md 2).
 pub const ROOT_MODULE: &str = "lib.cdt";
@@ -244,26 +244,36 @@ pub fn parse(text: &str) -> Result<Manifest, ManifestError> {
 /// Load `<dir>/cadetta.toml`; for a workspace, also load every member's
 /// manifest, where a member without one is E005.
 pub fn load(dir: &Path) -> Result<Manifest, ManifestError> {
+    load_with(dir, &|path| std::fs::read_to_string(path).ok())
+}
+
+/// [`load`] over an injected reader: `read` returns a file's text, or
+/// `None` when it is absent or unreadable.
+pub fn load_with(
+    dir: &Path,
+    read: &dyn Fn(&Path) -> Option<String>,
+) -> Result<Manifest, ManifestError> {
     let path = dir.join("cadetta.toml");
     tracing::info!(path = %path.display(), "loading manifest");
-    let text = std::fs::read_to_string(&path).map_err(|source| ConfigError::Read {
+    let text = read(&path).ok_or_else(|| ConfigError::Read {
         path: path.clone(),
-        source,
+        source: std::io::Error::from(std::io::ErrorKind::NotFound),
     })?;
     reject_registry(&text)?;
     let mut config = Config::parse(&text)?;
     if let Some(ws) = config.workspace.take() {
         let mut members = Vec::with_capacity(ws.members.len());
         for member in ws.members {
-            let member_toml = dir.join(&member).join("cadetta.toml");
-            if !member_toml.is_file() {
+            let member_dir = dir.join(&member);
+            let member_toml = member_dir.join("cadetta.toml");
+            if read(&member_toml).is_none() {
                 tracing::error!(%member, path = %member_toml.display(), "E005 workspace member has no cadetta.toml");
                 return Err(ManifestError::MissingMember {
                     member,
                     path: member_toml,
                 });
             }
-            match load(&dir.join(&member))? {
+            match load_with(&member_dir, read)? {
                 Manifest::Package(package) => members.push(Member {
                     dir: member,
                     package,
@@ -281,10 +291,17 @@ pub fn load(dir: &Path) -> Result<Manifest, ManifestError> {
     }
     let mut package = PackageManifest::from_config(&config).ok_or(ConfigError::NoProject)?;
     if package.name.is_empty() {
-        let loaded = Config::load(&path)?;
-        package.name = loaded.package.and_then(|p| p.name).unwrap_or_default();
+        let name = default_name(dir);
+        tracing::info!(%name, "package name defaults to the directory name");
+        package.name = name;
     }
     Ok(Manifest::Package(package))
+}
+
+/// The normalised directory name used when `[package] name` is absent.
+fn default_name(dir: &Path) -> String {
+    let dir = std::fs::canonicalize(dir).unwrap_or_else(|_| dir.to_owned());
+    normalise_package_name(dir.file_name().and_then(|n| n.to_str()).unwrap_or(""))
 }
 
 #[cfg(test)]
@@ -296,14 +313,6 @@ mod tests {
             Manifest::Package(p) => p,
             Manifest::Workspace(_) => panic!("expected a package"),
         }
-    }
-
-    fn scratch(tag: &str) -> PathBuf {
-        let dir =
-            std::env::temp_dir().join(format!("cadetta-manifest-{tag}-{}", std::process::id()));
-        let _ = std::fs::remove_dir_all(&dir);
-        std::fs::create_dir_all(&dir).expect("mkdir");
-        dir
     }
 
     // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::parse
@@ -361,30 +370,23 @@ mod tests {
         );
     }
 
-    // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::load
+    // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::load_with
     #[test]
     fn workspace_members_load_and_missing_member_is_e005() {
-        let dir = scratch("ws");
-        std::fs::write(
-            dir.join("cadetta.toml"),
-            "[workspace]\nmembers = [\"rover\", \"shop\"]\n",
-        )
-        .expect("write");
-        for (m, extra) in [
+        let mut files: std::collections::BTreeMap<PathBuf, String> = [
+            ("ws/cadetta.toml", "[workspace]\nmembers = [\"rover\", \"shop\"]\n"),
             (
-                "rover",
-                "[dependencies]\n\"acme.shop\" = { path = \"../shop\" }\n",
+                "ws/rover/cadetta.toml",
+                "[package]\nname = \"acme.rover\"\n[dependencies]\n\"acme.shop\" = { path = \"../shop\" }\n",
             ),
-            ("shop", ""),
-        ] {
-            std::fs::create_dir_all(dir.join(m)).expect("mkdir");
-            std::fs::write(
-                dir.join(m).join("cadetta.toml"),
-                format!("[package]\nname = \"acme.{m}\"\n{extra}"),
-            )
-            .expect("write");
-        }
-        let Manifest::Workspace(ws) = load(&dir).expect("loads") else {
+            ("ws/shop/cadetta.toml", "[package]\nname = \"acme.shop\"\n"),
+        ]
+        .into_iter()
+        .map(|(p, t)| (PathBuf::from(p), t.to_owned()))
+        .collect();
+        let dir = Path::new("ws");
+        let Manifest::Workspace(ws) = load_with(dir, &|p| files.get(p).cloned()).expect("loads")
+        else {
             panic!("expected workspace");
         };
         assert_eq!(ws.members.len(), 2);
@@ -392,11 +394,10 @@ mod tests {
         assert_eq!(ws.lock_path(), dir.join("cadetta.lock"));
         assert_eq!(ws.build_dir(), dir.join("build"));
 
-        std::fs::remove_file(dir.join("shop").join("cadetta.toml")).expect("rm");
-        let err = load(&dir).unwrap_err();
+        files.remove(Path::new("ws/shop/cadetta.toml"));
+        let err = load_with(dir, &|p| files.get(p).cloned()).unwrap_err();
         assert!(matches!(err, ManifestError::MissingMember { .. }));
         assert!(err.to_string().contains("E005"));
-        let _ = std::fs::remove_dir_all(&dir);
     }
 
     // frob:tests crates/cadetta-cli/src/pkg/manifest.rs::Dep
