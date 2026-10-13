@@ -1,0 +1,16 @@
+kind = "create"
+title = "Project model, root discovery and namespaces"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+persona = "design engineer"
+capability = "run from any subdirectory"
+idempotency_key = "replan14:cli-project"
+labels = ["creates:crates/cadetta-cli/src/project.rs"]
+scope = ["crates/cadetta-cli/src/project.rs"]
+acceptance = ["Given --cwd or --config, when run, then root discovery walks up to cadetta.toml and exits 2 if none (config-cli.md 1.7)", "Given sources globs, when expanded, then matches are sorted, may use .., and a glob matching nothing is E005; a duplicate component name is E003 (config-cli.md 1)"]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
