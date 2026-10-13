@@ -1,0 +1,10 @@
+kind = "create"
+title = "Conformance form for digest rules (ir.md 4) and schema classify"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/**"]
+body = "found while working ~99NMCBG: ir.md 4 digest rules (formatting never changes a digest, semantic vs presentational attrs, closure Merkle, swap staleness) and 5 classify(old,new) need two-input comparisons that the expect.json contract cannot express. Add an entry (digest compare of two fixtures) to tests/conformance/README.md."
+at = "2026-10-13T16:19:54Z"
+actor = "lognd"
+rev = 1
