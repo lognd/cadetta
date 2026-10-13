@@ -185,7 +185,9 @@ variable `"Axle_end_diameter"` or to the dimension
   the binding is R012 (error); the user then binds the instances
   separately.
 - Only bound paths are emitted, explicitly or through a native link or
-  `bind = "scope"` (3.5); an unbound parameter is not written.
+  `bind = "scope"` (3.5); an unbound parameter is not written. An
+  adapter that cannot read discovers no links, so it emits explicit
+  bindings and `bind = "scope"` globals only.
   `let` values are never emitted (quantities.md 5.3).
 - Emitted values are values (the emit point, quantities.md 5.6), never
   expressions: the dependency structure lives in cadetta, and CAD tools
@@ -305,10 +307,11 @@ coordinates, and positions are verified by transform (geometry.md 6):
   composed transform at the emit point. A placement is compared as the
   placed datum's frame in the assembly (the instance transform times
   the part's datum frame, read when the part's datum is bound, else
-  composed) against the anchor's composed frame. Translations compare
-  at the adapter's precision in its native unit, rotation entries at
-  the same number of decimals. A mismatch is R001 on the datum or
-  placement path, showing both transforms.
+  composed) against the anchor's composed frame. An entry matches when
+  `|design - read| <= 0.5 * 10^-p`, `p` being the adapter's precision: translations in the native unit,
+  rotation entries as plain numbers; an inexact design entry uses its
+  nominal. A mismatch is R001 on the datum or placement path, showing
+  both transforms.
 - A placement is verify-only: it is never pushed, so any mismatch is
   R001 whatever the base (move the part in CAD, or change the design).
 - A datum is verify-only under `[[adapter]] datums = "verify"` (the
@@ -347,7 +350,14 @@ themselves. The host records them with `implicit` on the locator (ir.md
   reports R006; otherwise it keeps writing the old name.
 - An explicit locator of the same kind and native name replaces the
   implicit one; an explicit locator naming a different native item adds
-  to it (multi-locator, 3).
+  to it (multi-locator, 3). Several implicit locators for one path are
+  normal (a global in each document, many dimensions linked to one
+  global) and all are active. Two instances whose reference property
+  names the same part are R013.
+- When native names match both a path's created name and a `was` name
+  of it in one document, the current name binds and the old one is R002.
+- The created names, and so R013 for them, depend only on the source;
+  discovery adds locators but never creates a name.
 - A dimension whose equation is anything other than a bare reference
   (`= 2 * "X"`, `= "X" + 1mm`) is not a link; it is R002 like any
   unbound native item, with the expression in the message.

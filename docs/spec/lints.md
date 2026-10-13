@@ -354,7 +354,7 @@ S004 and of a solver S003 (no double firing; obligations.md 2.3).
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| O001 | obligation-stale | warning | | An attestation's digest set changed (error if its role is `required_for = "check"`). Not raised for a node already reported as S004. |
+| O001 | obligation-stale | warning | | An attestation's digest set changed (error if its role is `required_for = "check"`). A citing node's digest never includes the cited source's digest (ir.md 4), so a changed citation is S004 alone. |
 | O002 | obligation-open | warning | | A required attestation was never given. |
 | O003 | requirement-unattested | error | | A `require` that holds lacks the sign-off its role requires for release. |
 | O004 | sync-stale | info | | The "CAD file reflects design" obligation is stale. Info by default because CI cannot read CAD; gating by `[obligations.kinds.sync] required_for`. |
@@ -394,7 +394,7 @@ come from the adapter's responses and are passed through unchanged
 | R010 | push-rejected | error | | Push to a driven or suppressed dimension, an equation conflict or a unit conflict. |
 | R011 | component-mismatch | warning | | The file instantiated in an assembly is not the file bound to the slot's primary (for example after a manual swap). |
 | R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
-| R013 | name-collision | error | yes | Two in-scope paths would create the same native name; bind one explicitly (adapters.md 3.1). |
+| R013 | name-collision | error | yes | Two in-scope paths would create the same native name, bind one explicitly (adapters.md 3.1); or two component instances name the same part in their reference property (adapters.md 3.5). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
 | R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
 | R016 | unbound-row | error | yes | A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (emitters/csv.md 3). The file is user-supplied and carries no path, so an unbound row is an error rather than the native-discovery warning R002; no observed IR is produced for the file. (`json` entries carry their own `path`.) |

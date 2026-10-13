@@ -50,7 +50,7 @@ example     acme.rover::Axle.end_diameter
             acme.rover::Bracket.top.rotate.z       (datum rotation)
             acme.rover::Rover/bracket.place.offset.x     (placement, first offset, axis x)
             acme.rover::Rover/bracket.place.offset[1].x  (second offset)
-            acme.rover::Rover/feet[i].place.offset.x     (array placement, instance i)
+            acme.rover::Rover/feet[2].place.offset.x     (array placement, instance 2)
             acme.rover::refs::sunon25              (a cite item; see below)
             acme.rover::drive::motor::Gm42A.rated_torque   (item in module drive::motor)
 ```
@@ -82,8 +82,8 @@ path. Under a process, `PATH.drawn` names the drawn value (language.md
 3.8). Paths survive formatting and
 reordering; they change only by rename or move, which `was` records.
 
-- Parsing (`cadetta-ir` `path.rs`): an index is an integer, a for-range
-  variable (`feet[i]`) or `*`; the item name starts uppercase; only the full form
+- Parsing (`cadetta-ir` `path.rs`): an index is an integer or `*`; the
+  item name starts uppercase; only the full form
   parses, and sema expands abbreviations first. Reading a
   parameter-dependent member by a definition path (no `/` step) is E011.
 - A cite item's path is `PKG { "::" module } "::" name`: its last
@@ -94,7 +94,7 @@ reordering; they change only by rename or move, which `was` records.
   `.rotate.x|y|z`, the n-th op of a kind (n > 0) indexed
   (`.offset[1].x`); placement op arguments use the same scheme under
   `Assembly/part.place` (`Assembly/part.place.offset.x`,
-  `Assembly/feet[i].place.rotate.z` for an array placement), one per op
+  `Assembly/feet[2].place.rotate.z` for instance 2 of an array placement), one per op
   axis (geometry.md 2, 4). The placement itself is the node
   `Assembly/part.place`, which an `instance` locator binds. Each is a
   Member with provenance `authored`, so bindings, R001, waivers and
@@ -121,7 +121,7 @@ reordering; they change only by rename or move, which `was` records.
 ```
 Project    { schema, flavour, package, modules[], dependencies[], components[],
              interfaces[], tables[], solvers[], checks[], requires[], waivers[],
-             citations[], digest }
+             citations[], frames[], instances[], digest }
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
              citation?: CiteRef, attrs, members[], parts[], fits[], datums[], points[],
              placements[], span?, digest }
@@ -134,7 +134,7 @@ Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,
 Dim        { m, kg, s, A, K, mol, cd: int, angle: int, currency: { "<ISO>": int } }
 Exact      { r: "num/den", pi: int }                 // magnitude = r * pi^pi, SI base
 Inexact    { f64, root: path }                       // root inexact operation
-Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }
+Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }   // a disc: paired .u/.v terms
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
 Interface  { path, members[], bounds[], datums[] }
 Table      { path, key, cols[], rows[], citation?: CiteRef }
@@ -162,6 +162,13 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
              tolerance?: drive|ignore }
 ```
 
+- A disc source variable (geometry.md 3.1, quantities.md 5.4) appears
+  as two `Affine` terms whose `var` paths share a stem and end in `.u`
+  and `.v`; the pair ranges over the disc `u^2 + v^2 <= 1`, not the box.
+- Observed flavour only: `Project.frames[]` holds `{ name, document,
+  transform }` and `Project.instances[]` holds `{ component, document,
+  reference?, transform }` (section 1); a transform is a 3x4 array of
+  `Value`. Both are empty in design IR.
 - Magnitudes are never JSON floats: `Exact` is a reduced fraction string
   plus a pi exponent. `Inexact.f64` is the only float, and names its root.
 - `Datum.variants` and `Placement.variants` are keyed like
@@ -181,8 +188,9 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
   strings (`author` to a list). A `CiteRef` has exactly one of `cite` (a
   cite item's path) and `builtin`; `text` is a note's text, `locator`
   the string after `:`. `Citation.digest` hashes the type, the fields in
-  name order and `file_digest`; a citing node's own digest includes the
-  `CiteRef` and the cited item's digest (section 4).
+  name order and `file_digest` (the marker `absent` for a missing file);
+  a citing node's own digest includes its `CiteRef`, never the cited
+  item's digest, so citation drift is S004 alone (section 4).
 - `Locator.implicit` records why a binding exists without a bindings
   file entry (adapters.md 3.5): `global` (a native global with the
   path's mangled name, or `bind = "scope"`), `link` (a dimension whose
@@ -267,15 +275,14 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
 Every node has two digests, both BLAKE3:
 
 - `digest` (own): over the node's canonical encoding (path, kind, value,
-  normalized expression text, `CiteRef` plus the cited item's digest,
-  semantic attrs, and for parts
+  normalized expression text, `CiteRef` (path and locator), semantic
+  attrs, and for parts
   the primary, alternates and arguments). It changes when the node's own
-  text does, or when the citation it names changes (a field or the
-  pinned file).
+  text does; a change inside the cited source is the citation's own
+  digest and S004 (obligations.md 2.3).
 - `closure` (Merkle): over the own digest plus the closure digests of
   its `deps`, sorted by path. It changes when anything the node reads,
-  transitively, changes, including a cited file's digest and a solver
-  result's digest.
+  transitively, changes, including a solver result's digest.
 
 Granularity is the member of a component definition; an instance path
 (`Rover/wheel[2].hub_bore`) has the closure of its member plus the
@@ -353,14 +360,17 @@ normatively in sections 1-4; this list is the checkable set, and
   both (decided here; section 3 listed the fields without saying which
   operator needs which).
 - Paths: full form only; the item name starts uppercase; a component
-  path has no member tail; `[*]` never appears in the IR (a for-range
-  uses its variable, `feet[i]`); variant keys are full-form `SLOT=ALT`
+  path has no member tail; indexes are integers and `[*]` never appears
+  in the IR (an array placement lowers per instance); variant keys are full-form `SLOT=ALT`
   whose slot side carries a `/slot` step.
 - Geometry: an `Op` is a one-key object; `flip` takes `x` or `y`;
   `rotate` takes `x|y|z` and an angle member path; a variant value of a
   datum or placement is the whole op chain, an array.
 - Project: `modules` is sorted; `dependencies` is sorted by name.
-- Observed flavour: one component `<package>::Observed`; every member is
+- Affine: a `var` ending `.u` has a partner ending `.v` with the same
+  stem in the same form, with equal `lo` and `hi`.
+- Observed flavour: `frames[]` and `instances[]` may be non-empty (design
+  IR has none); each transform is 3x4. One component `<package>::Observed`; every member is
   `imported`, has empty `deps`, a path-safe name (collisions `_2`,
   `_3`) and one binding with its locator; no citations, parts, fits,
   checks or solvers.

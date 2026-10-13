@@ -189,7 +189,9 @@ plane and z is its normal.
   they must be exact whole numbers known before evaluation (a literal,
   or a parameter-free constant), and they fix the array length. They are
   also Count members (`count_x`, `count_y` for `rect_pattern`, `count`
-  for `circle_pattern`) that bind and emit like any member.
+  for `circle_pattern`) that bind, push and drift like any member; a
+  count changed in CAD is R001, and `import --update` rewrites its
+  literal.
 
 ### 3.1 Position tolerance
 
@@ -288,8 +290,9 @@ assembly's own datum or another part's, optionally built further:
   `Assembly/part.place.<op>.<axis>`, numbered like datum ops (section
   2): the first `offset` is `Drive/plate.place.offset.x`, the second
   `place.offset[1].x`, a rotation `place.rotate.z`. An array placement
-  has one Member per op argument at `Assembly/feet[i].place.offset.x`
-  (ir.md 2), bound per instance or with `[*]`.
+  lowers to one placement per instance, with integer indexes
+  (`Assembly/feet[2].place.offset.x`, ir.md 2); its Members share the
+  source expression and span, and bind per instance or with `[*]`.
 - Variants (language.md 3.2) re-evaluate placements like any member.
 
 Evaluation rules (placement.rs):
@@ -300,10 +303,10 @@ Evaluation rules (placement.rs):
 - A subassembly is a node whose datums are its own; its parts are
   placed relative to its `origin`, and instance paths join with `/`.
 - Placing on a part that is itself never placed is G003.
-- Instance i of an array placement is evaluated with the index bound to
-  i; instance paths read `Assembly/feet[i]`. In the IR (op_members.rs)
-  each argument is a `Place` Member with provenance `authored` and its
-  expression text and span.
+- Instance i of an array placement is evaluated with every array
+  operand indexed by i; instance paths read `Assembly/feet[2]`. In the
+  IR (op_members.rs) each argument is a `Place` Member with provenance
+  `authored` and its expression text and span.
 - G007 is judged per part array that has at least one indexed
   placement and no array placement: the instances in 0 to count - 1
   that no placement covers are listed in the diagnostic.
@@ -373,14 +376,19 @@ float enters the placement.
   pattern's centroid moves at most `float` and its widest pair turns at
   most `theta`. `asin` is inexact, so coordinates carried through the
   rotation are conservative intervals (section 2).
-- A one-point pattern does not fix rotation: `theta` is 180deg, any
-  check whose value depends on that rotation is undecided, and the joint
-  is G008 (warning). Fix it with a second fastener, a locating feature
-  and `locating = true`, or accept it with a waiver.
-- If several non-locating joints hold one edge, the smallest
-  translation and the smallest `theta` apply, because each joint alone
-  bounds the motion. If any joint on the edge is `locating`, the edge
-  has no float.
+- `s` is measured on `onto` (for a through bolt with `nut = true`
+  too). A one-point pattern, or one whose points all coincide (`s =
+  0`), does not fix rotation: `theta` is 180deg, any check whose value
+  depends on that rotation is undecided, and the joint is G008
+  (warning). Fix it with a second fastener, a locating feature and
+  `locating = true`, or accept it with a waiver.
+- If several non-locating joints hold one edge, each alone bounds the
+  motion, so the edge takes one joint's whole bound (translation,
+  `theta`, centroid and frame together): the joint with the smallest
+  `theta`, then the smallest `float`, then the first in canonical-path
+  byte order. Bounds from different joints are never mixed, because
+  rotations about different centres are different motions. If any
+  joint on the edge is `locating`, the edge has no float.
 - A joint between parts that are not placement parent and child adds
   no float; it is a loop closure, and its `aligned` check reads through
   the floats already on the tree.

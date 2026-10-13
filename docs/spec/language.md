@@ -146,7 +146,7 @@ process   = "process" IDENT [ citation ] "{" { param | rule } "}"
 rule      = "rule" IDENT "(" pdecl ")" "->" type "=" expr
 table     = "table" IDENT [ citation ] "{" "key" pdecl [ "cols" pdecl { "," pdecl } ]
             { expr [ "=>" expr { "," expr } ] } "}"   // no "=>": a key-only row
-cite      = "cite" IDENT ":" IDENT "{" { IDENT "=" field } "}"   // 3.9: type, then fields
+cite      = "cite" IDENT ":" IDENT "{" { IDENT "=" field } "}"   // 3.9: type (an unknown one is E006), then fields
 field     = STRING | "[" STRING { "," STRING } "]"
 interface = "interface" IDENT [ ":" iface_list ] "{" { doc | bound | IDENT [ "?" ] ":" type | datum } "}"
                                                      // ":" extends; "?" marks an optional member
@@ -600,10 +600,13 @@ message showing the typed form or `@std::...`.
 In the IR a citation is `{path, type, fields, file_digest?, digest}`
 (ir.md 3), and a citing node records the citation's path and its
 locator. `type` is the declared type, or `note`, `measured`, `assumed`,
-`estimate`. The citation's own digest covers its type and fields and,
-when `file` names an existing file, that file's digest; a citing node's
-digest includes it, so editing a citation (a new `rev`) or its file
-makes every value cited to it stale (S004, obligations.md 2.3).
+`estimate`. The citation's digest covers its type and fields and, when
+it has a `file`, that file's digest, or the fixed marker `absent` while
+the file is missing (S002). A citing node's digest covers its `CiteRef`
+(the path and locator), not the citation's digest, so editing a
+citation (a new `rev`) or its file changes no value and stales no review
+of the values; it makes the citation's acknowledgement stale, and S004
+lists every value cited to it (obligations.md 2.3).
 
 #### 3.9.1 Reference list
 
@@ -630,6 +633,15 @@ fields are:
   abbreviations (`Jan. Feb. Mar. Apr. May Jun. Jul. Aug. Sep. Oct. Nov.
   Dec.`); YEAR is the year of `date`. `[Online]. Available:` and
   `Accessed:` appear only with a `url`.
+- Each part is written, with its own punctuation, only when its fields
+  are present; adjacent separators collapse to one and the entry ends
+  with exactly one period. EDITION is followed by ` ed.` and comes
+  before PUBLISHER. A partial date prints at the precision given
+  (`2026` or `Sep. 2026`), for `date` and `accessed` alike.
+- Numbering: citing nodes (members, components, tables, processes,
+  solvers, requires) are visited in canonical-path byte order, each
+  node's own citation before those of what it reads; a citation reached
+  only through `std` items is numbered when first reached the same way.
 - `--format bibtex` writes BibLaTeX entries keyed by the citation's
   canonical path: `@standard`, `@manual` (datasheet, catalog), `@book`,
   `@article`, `@online` (web) and `@misc` (drawing, quote, document,
@@ -777,7 +789,10 @@ Rules the grammar left open, fixed by the reference parser:
 - `part name: Type(args)` without `= ...` is allowed (a part whose type
   is constructed directly, as `part axle[2]: Axle(wheel = ...)`).
 - A postfix `[` followed by `+` or `-` opens a tolerance bracket
-  (`12mm [+0.018mm -0]`, `[+-0.1mm]`); any other `[` is an index. Each
+  (`12mm [+0.018mm -0]`, `[+-0.1mm]`); a postfix `[` followed by the
+  identifier `position` and then a token other than `]` opens a position
+  tolerance (`[position 0.2mm]`, geometry.md 3.1), so `holes[position]`
+  stays an index; any other `[` is an index. Each
   tolerance term is a sign (`+`, `-`, or `+-` with no space) and a
   product-level expression.
 - An ISO class (`H8`, `p6`, `js6`: one or two letters then one or two

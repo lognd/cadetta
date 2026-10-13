@@ -279,8 +279,9 @@ error (exit 2).
 mangling rule or the bindings file format (solidworks.md 3). `names`
 lists paths sorted by canonical path; the binding state of a path is
 `explicit` (bindings file or pin), `implicit` with the reason of ir.md 3
-(`global`, `link`, `frame`, `reference`; discovered only when the
-adapter can read), or `unbound`. `bind` refuses a locator that fails the
+(`global`, `link`, `frame`, `reference`), `unbound`, or `unknown` when
+the adapter could not read the CAD files on this machine (an emit-only
+adapter, or R008), so the output never guesses. `bind` refuses a locator that fails the
 validation of adapters.md 3 and is idempotent: binding an identical
 locator again changes nothing.
 

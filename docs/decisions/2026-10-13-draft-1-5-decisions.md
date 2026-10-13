@@ -52,10 +52,12 @@ into its mangled name. An audit of draft 1.4 found:
    findable again; a missing one is S008. The short `cite x = "..."`
    and `cite x = std::...` forms are removed: a standard is cited as
    `@std::iso273` or imported with `use`, a note is an inline
-   `@"text"` (kind `note`). A citation's digest covers its fields, so
-   bumping a datasheet's `rev` makes every value cited to it stale
-   (S004). `cadetta cite list` renders an IEEE reference list (or
-   BibTeX, CSL-JSON); `cite pin` keeps the URL and adds `file`.
+   `@"text"` (kind `note`). A citation's digest covers its fields and
+   file, so bumping a datasheet's `rev` makes its acknowledgement stale
+   and S004 lists every value cited to it; values themselves keep their
+   digests, so no review fires twice. `cadetta cite list` renders an
+   IEEE reference list (or BibLaTeX, or JSON); `cite pin` keeps the URL
+   and adds `file`.
 2. **Solver scripts are inputs, not citations**: `solver NAME { script
    "path" ... }` (solvers.md 1).
 3. **`place A at B` makes datum A's frame equal B's.** The verb no
@@ -117,6 +119,8 @@ into its mangled name. An audit of draft 1.4 found:
 
 ## Consequences
 
+- Array placements lower to one placement per instance with integer
+  indexes; the IR no longer has range variables.
 - The parser, sema, IR, digests, lints (S001, S002, S004, S008, G004,
   G006, G007, G008, R001, R013), `cite pin`, mangling, and the geometry
   crate change; the std citations, the golden corpus and the citation
