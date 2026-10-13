@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T21:44:45Z"
+digest = "645cf9a6049ebac78712041dc051b902d92530184d7554b9f07dcde6d1be3396"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2b5c9bda-fa68-4a18-a846-c9585e692d75 with nextest profile: default
+    Starting 8 tests across 28 binaries (935 tests skipped)
+        PASS [   0.013s] cadetta-fits tests::golden_values
+        PASS [   0.019s] cadetta-adapter builtin::csv::tests::emit_is_rfc4180_golden
+        PASS [   0.019s] cadetta-adapter builtin::sw_equations::tests::emit_is_byte_identical_golden
+        PASS [   0.020s] cadetta-syntax::std_fasteners_tables golden_assumed_values_match_the_tables
+        PASS [   0.020s] cadetta-syntax::std_retaining groove_tolerance_classes_and_golden_row_lookup
+        PASS [   0.026s] cadetta-adapter builtin::json::tests::emit_is_byte_identical_golden
+        PASS [   0.031s] cadetta-syntax::golden_parse golden_sources_parse_without_syntax_errors
+        PASS [  12.920s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  12.925s] 8 tests run: 8 passed, 935 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(conformance_corpus_matches) | test(golden)'"
+size = 1190
+status = "measured"
+test_count = 8
+tests_digest = "fa4c8ecfa985ce7b40acb423105ee091a61b5ecc08e7ee8c1675b7f49eea4ebb"
+at = "2026-10-13T21:44:45Z"
+actor = "lognd"
+rev = 1

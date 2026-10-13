@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:00:51Z"
+digest = "4e2123802a599a9bf8d722faa34599dfba7b6acef7e028a6613e1442fcbbd455"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5ebd8fc0-b3b4-48cc-8b22-8c35e3adad51 with nextest profile: default
+    Starting 2 tests across 1 binary (2 tests skipped)
+        PASS [   0.023s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.091s] cadetta::lsp save_publishes_package_lint_and_clears
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.092s] 2 tests run: 2 passed, 2 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test lsp syntax_error_then_format_refused save_publishes_package_lint_and_clears"
+size = 715
+status = "measured"
+test_count = 2
+tests_digest = "770b5e9f92a2d459b1a60708cb8e2bcf6ef01208f7d885a52d0d9aced01aae04"
+at = "2026-10-13T22:00:51Z"
+actor = "lognd"
+rev = 1

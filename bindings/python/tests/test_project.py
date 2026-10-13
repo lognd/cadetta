@@ -75,8 +75,8 @@ def test_member_matches_cli_json(tmp_path: Path) -> None:
     assert q.mid.to_exact("mm") == Fraction(12)
     cited = design.get("acme.rover::Axle.od").unwrap()
     assert cited.citation is not None
-    assert cited.citation.kind.value == "measured"
-    assert member_json(doc, "acme.rover::Axle.od")["citation"]["kind"] == "measured"
+    raw_cite = member_json(doc, "acme.rover::Axle.od")["citation"]
+    assert cited.citation.model_dump(exclude_none=True, mode="json") == raw_cite
 
 
 def test_unknown_path_is_err_not_keyerror(tmp_path: Path) -> None:

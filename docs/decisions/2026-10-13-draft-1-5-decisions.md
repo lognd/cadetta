@@ -117,6 +117,14 @@ into its mangled name. An audit of draft 1.4 found:
     format have one implementation (solidworks.md). This supersedes
     decision 5 of the bindings-and-solidworks ADR (Python on pywin32).
 
+14. **`cadetta lsp` is in 0.1.0**, diagnostics and formatting only
+    (config-cli.md 3.8). The draft 1.4 review deferred it while the
+    diagnostic record and `check --watch` were unbuilt; both now exist,
+    so a server that maps `cadetta.diag/1` onto LSP is small, and it
+    replaces a per-editor bridge configuration with one standard
+    client setup in every editor. Hover (`why`) and code lens
+    (`impact`) wait for the query verbs to settle.
+
 ## Consequences
 
 - Array placements lower to one placement per instance with integer

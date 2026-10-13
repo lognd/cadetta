@@ -1,0 +1,16 @@
+kind = "create"
+title = "editors/: use cadetta lsp in every editor config"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+persona = "design engineer"
+capability = "get diagnostics and formatting through one standard LSP setup"
+outcome_text = "no per-editor bridge configuration is needed"
+idempotency_key = "d15:editors-lsp"
+scope = ["editors/**"]
+acceptance = ["Given editors/vscode, when installed, then a minimal language client (vscode-languageclient) starts cadetta lsp for .cdt files, with a setting for the cadetta path, and the task/problem matcher stays as a fallback", "Given editors/README.md and each editor README, when read, then Neovim (vim.lsp.config), Helix (languages.toml), Emacs (eglot), Sublime (LSP package), Vim (vim-lsp or ALE LSP) and JetBrains (LSP4IJ) start cadetta lsp, and the bridge recipes are kept only as a fallback (config-cli.md 3.8)"]
+at = "2026-10-13T21:38:33Z"
+actor = "lognd"
+rev = 1

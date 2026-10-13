@@ -1,0 +1,60 @@
+kind = "evidence"
+captured_at = "2026-10-13T21:57:36Z"
+digest = "e9a869c711c4cbec94c205f987ef34468acf89d1f8883bb876d78808395dddd2"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 27s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 25225009-8837-4860-b20c-b0ae6ed7c3e6 with nextest profile: default
+    Starting 34 tests across 5 binaries (153 tests skipped)
+        PASS [   0.029s] cadetta cmd::ack::tests::repeat_at_same_digest_changes_nothing
+        PASS [   0.028s] cadetta cmd::ack::tests::ack_attests_at_current_closure_digest
+        PASS [   0.046s] cadetta cmd::lsp::tests::utf16_counts_astral_as_two_units
+        PASS [   0.045s] cadetta cmd::lsp::tests::buffer_errors_are_e001_in_the_negotiated_encoding
+        PASS [   0.017s] cadetta cmd::lsp::tests::utf32_is_chosen_only_when_offered
+        PASS [   0.058s] cadetta cmd::ack::tests::waiver_records_target_digest_without_a_reason
+        PASS [   0.052s] cadetta cmd::lsp::tests::mapping_follows_the_spec
+        PASS [   0.073s] cadetta cmd::lsp::tests::end_position_measures_last_line
+        PASS [   0.073s] cadetta cmd::lsp::tests::utf32_columns_are_characters
+        PASS [   0.038s] cadetta tests::format_flag_beats_env_and_both_validate
+        PASS [   0.074s] cadetta cmd::lsp::tests::column_past_line_end_counts_one_unit_each
+        PASS [   0.074s] cadetta cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested
+        PASS [   0.075s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.131s] cadetta cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing
+        PASS [   0.059s] cadetta tests::text_is_the_default_format_regardless_of_terminal
+        PASS [   0.113s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.080s] cadetta tests::verbosity_flags_are_split_off
+        PASS [   0.080s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.120s] cadetta tests::cwd_and_config_are_validated
+        PASS [   0.137s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.156s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.129s] cadetta::lsp capabilities_and_exit_codes
+        PASS [   0.166s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.110s] cadetta::lsp format_returns_one_whole_document_edit
+        PASS [   0.272s] cadetta universe::tests::ack_records_an_attestation_for_the_check
+        PASS [   0.354s] cadetta cmd::ack::tests::selector_matching_nothing_exits_two
+        PASS [   0.160s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.476s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.504s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.619s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [   0.866s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.698s] cadetta::lsp save_publishes_package_lint_and_clears
+        PASS [   0.848s] cadetta universe::tests::why_stale_names_the_changed_node_after_an_edit
+        PASS [  24.430s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  24.576s] 34 tests run: 34 passed, 153 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=capabilities_and_exit_codes) | test(=cmd::ack::tests::ack_attests_at_current_closure_digest) | test(=cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested) | test(=cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing) | test(=cmd::ack::tests::repeat_at_same_digest_changes_nothing) | test(=cmd::ack::tests::selector_matching_nothing_exits_two) | test(=cmd::ack::tests::waiver_records_target_digest_without_a_reason) | test(=cmd::lsp::tests::buffer_errors_are_e001_in_the_negotiated_encoding) | test(=cmd::lsp::tests::column_past_line_end_counts_one_unit_each) | test(=cmd::lsp::tests::end_position_measures_last_line) | test(=cmd::lsp::tests::mapping_follows_the_spec) | test(=cmd::lsp::tests::utf16_counts_astral_as_two_units) | test(=cmd::lsp::tests::utf32_columns_are_characters) | test(=cmd::lsp::tests::utf32_is_chosen_only_when_offered) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=format_returns_one_whole_document_edit) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=save_publishes_package_lint_and_clears) | test(=syntax_error_then_format_refused) | test(=tests::cwd_and_config_are_validated) | test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::text_is_the_default_format_regardless_of_terminal) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=tests::verbosity_flags_are_split_off) | test(=universe::tests::ack_records_an_attestation_for_the_check) | test(=universe::tests::why_stale_names_the_changed_node_after_an_edit) | test(=unmet_expectation_fails_naming_fixture_doc_and_code)))'"
+size = 3622
+status = "measured"
+test_count = 34
+tests_digest = "0f3b46331da8f1539d0df6a4d0945c5954d192d8d0c0511fd091f8ba3cb4c8cf"
+at = "2026-10-13T21:57:36Z"
+actor = "lognd"
+rev = 1
