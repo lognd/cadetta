@@ -1,0 +1,16 @@
+kind = "create"
+title = "Conformance run for lints"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+persona = "maintainer"
+capability = "know the implementation matches the spec"
+idempotency_key = "replan13:Conformance run for lints"
+labels = ["creates:tests/conformance_lints.rs"]
+scope = ["tests/conformance_lints.rs"]
+acceptance = ["Given tests/conformance/lints/ fixtures, when the harness runs, then every must-fire fixture produces its expected diagnostic and every must-not-fire fixture produces none (docs/spec/lints.md)"]
+at = "2026-10-13T05:04:55Z"
+actor = "lognd"
+rev = 1
