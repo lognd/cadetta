@@ -1,0 +1,4 @@
+model Part {
+  bore = 300mm
+  fit seat = H7/p6 on bore
+}

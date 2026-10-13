@@ -1,0 +1,6 @@
+model Axle(span: Length) {
+  length = 4mm
+}
+model Rig {
+  x = Axle.span
+}

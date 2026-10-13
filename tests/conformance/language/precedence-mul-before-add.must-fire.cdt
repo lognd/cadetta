@@ -1,0 +1,4 @@
+model Part {
+  x = 3mm
+  check c: 1mm + 2 * 3mm == 9mm
+}

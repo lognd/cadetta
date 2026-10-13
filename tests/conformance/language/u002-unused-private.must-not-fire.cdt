@@ -1,0 +1,6 @@
+model Axle(span: Length) {
+  length = span
+}
+assembly Rig {
+  part a: Axle(span = 3mm)
+}

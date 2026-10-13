@@ -1,0 +1,2 @@
+model Hello { size: Length = }
+model Other { y: Length = undefined_name }

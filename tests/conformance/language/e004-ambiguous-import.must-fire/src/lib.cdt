@@ -1,0 +1,5 @@
+use package::a::Thing
+use package::b::Thing
+model Part {
+  width = Thing.size
+}

@@ -1,0 +1,7 @@
+model Plate {
+  thickness = 4mm
+}
+assembly Rig {
+  part plate: Plate
+  total = plate.thickness
+}

@@ -1,0 +1,5 @@
+table Pitch {
+  key d: Length
+  cols p: Length
+  5mm => 0.8mm
+}

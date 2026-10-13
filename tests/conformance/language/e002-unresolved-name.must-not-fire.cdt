@@ -1,0 +1,4 @@
+model Part {
+  depth = 3mm
+  width = depth
+}

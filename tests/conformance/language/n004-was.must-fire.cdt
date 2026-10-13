@@ -1,0 +1,6 @@
+model Part {
+  thickness = 3mm  was Old.thk
+}
+model Other {
+  t = Old.thk
+}
