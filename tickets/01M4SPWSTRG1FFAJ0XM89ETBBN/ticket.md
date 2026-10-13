@@ -4,11 +4,11 @@ title = "cadetta.toml configuration model"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 3
+points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T05:01:25Z"
+updated = "2026-10-13T05:44:40Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -41,5 +41,9 @@ bound = false
 
 [[acceptance]]
 text = "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)"
+bound = false
+
+[[acceptance]]
+text = "Given cadetta.toml, when parsed, then [defaults], [units], [emit], [lint], [obligations], [solvers] and [[adapter]] keys have the types and defaults of config-cli.md 2"
 bound = false
 +++

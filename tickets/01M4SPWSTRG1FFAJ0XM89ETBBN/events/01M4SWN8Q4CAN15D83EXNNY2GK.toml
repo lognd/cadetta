@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the config-cli.md sample, when loaded, then all sections parse", "Given an unknown key, when loaded, then a diagnostic names it", "Given `[lint] severity`, `d001_min_digits`, `common_values` and `precision`, when loaded, then each is typed and validated (config-cli.md 1)", "Given `[obligations.roles.X]` with covers and required_for, when loaded, then roles are modelled (obligations.md 4)", "Given `[solvers.NAME]` and `[[adapter]]` tables, when loaded, then command, transport, native_unit, version and files parse (config-cli.md 1)", "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)"]
+new = ["Given the config-cli.md sample, when loaded, then all sections parse", "Given an unknown key, when loaded, then a diagnostic names it", "Given `[lint] severity`, `d001_min_digits`, `common_values` and `precision`, when loaded, then each is typed and validated (config-cli.md 1)", "Given `[obligations.roles.X]` with covers and required_for, when loaded, then roles are modelled (obligations.md 4)", "Given `[solvers.NAME]` and `[[adapter]]` tables, when loaded, then command, transport, native_unit, version and files parse (config-cli.md 1)", "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)", "Given cadetta.toml, when parsed, then [defaults], [units], [emit], [lint], [obligations], [solvers] and [[adapter]] keys have the types and defaults of config-cli.md 2"]
+moved = [1, 2, 3, 4, 5, 6]
+at = "2026-10-13T05:44:40Z"
+actor = "lognd"
+rev = 1
