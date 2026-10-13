@@ -3,6 +3,8 @@
 
 use pyo3::prelude::*;
 
+mod quantity;
+
 /// Run the `cadetta` command line with `argv` (arguments after the
 /// program name); returns the exit code. Backs the `cadetta` console script.
 #[pyfunction]
@@ -26,5 +28,6 @@ fn core_version() -> &'static str {
 fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_cli, m)?)?;
     m.add_function(wrap_pyfunction!(core_version, m)?)?;
+    quantity::register(m)?;
     Ok(())
 }

@@ -100,6 +100,8 @@ name = "cadetta-py"
 version = "0.0.0"
 dependencies = [
  "cadetta",
+ "cadetta-syntax",
+ "cadetta-units",
  "pyo3",
  "tracing",
 ]
