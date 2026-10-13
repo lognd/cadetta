@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T06:50:05Z"
+updated = "2026-10-13T06:50:22Z"
 persona = "design engineer"
 capability = "read diagnostics like rustc output"
 idempotency_key = "replan14:lint-text"
 labels = ["creates:crates/cadetta-lint/src/render/text.rs"]
-scope = ["crates/cadetta-lint/src/render/text.rs"]
+scope = ["crates/cadetta-lint/src/render/text.rs", "crates/cadetta-lint/src/lib.rs", "crates/cadetta-lint/src/render/mod.rs", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocked-by"
