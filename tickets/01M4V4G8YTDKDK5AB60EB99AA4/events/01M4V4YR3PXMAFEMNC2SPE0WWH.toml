@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["run_corpus discovers fixtures in nested doc directories such as emitters/sw-equations and runs their check entries", "tests/conformance/known-gaps.toml lists every newly discovered check fixture that fails, each with a ticket"]
+moved = []
+at = "2026-10-13T17:28:54Z"
+actor = "lognd"
+rev = 1
