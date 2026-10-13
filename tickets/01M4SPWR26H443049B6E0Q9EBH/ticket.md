@@ -17,7 +17,7 @@ scope = ["crates/cadetta-lint/src/rules/f.rs", "tests/conformance/lints/F*/**"]
 
 [[acceptance]]
 text = "Given class Z99, when linted, then F001 is reported and cannot be waived"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a fitted parameter whose tolerance disagrees with the hole side, when linted, then F003 is reported"
