@@ -1,0 +1,6 @@
+kind = "criterion"
+op = "add"
+text = "The Python binding wheel imports cadetta and replays the conformance corpus"
+at = "2026-10-13T21:02:51Z"
+actor = "lognd"
+rev = 1

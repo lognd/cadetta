@@ -38,4 +38,8 @@ bound = false
 [[criteria]]
 text = "Positions, place-at placements, RFS true position and the bolt float evaluate per geometry.md; the golden corpus is confirmed at spec 1.5"
 bound = false
+
+[[criteria]]
+text = "The Python binding wheel imports cadetta and replays the conformance corpus"
+bound = false
 +++
