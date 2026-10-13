@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the golden corpus and geometry fixtures, when run, then they use place at and pass"
-bound = false
+bound = true
 +++
