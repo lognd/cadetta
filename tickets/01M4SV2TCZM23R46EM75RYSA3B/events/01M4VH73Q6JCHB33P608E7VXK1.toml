@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "C# SOLIDWORKS adapter and add-in (solidworks.md; draft 1.5 ADR decision 13). Needs a Windows machine with a licensed SOLIDWORKS; start with ~Z9SWC8W (bootstrap and API confirmation)."
+at = "2026-10-13T21:03:11Z"
+actor = "lognd"
+rev = 1

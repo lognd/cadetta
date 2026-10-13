@@ -3,7 +3,7 @@
 //! `bindings/<id>.toml` maps canonical paths to native locators, one table per
 //! path with a `locators` array. `#[native(adapter, "locator")]` pins one inline
 //! and overrides the file entry. Names the adapter creates itself are derived
-//! deterministically from the path by [`mangle`] / [`mangle_all`].
+//! purely from the path and prefix by [`mangle`] / [`mangle_all`].
 // frob:ticket 01M4SPWRYRBTGD67WTG7D60E59
 
 use std::collections::{BTreeMap, HashMap};
@@ -51,7 +51,7 @@ pub enum BindingsError {
         /// Why it failed.
         reason: String,
     },
-    /// Two paths still create one native name after full qualification (R013).
+    /// Two paths create one native name (R013).
     NameCollision {
         /// The colliding name.
         name: String,
@@ -386,14 +386,6 @@ fn path_matches(b: &Path, k: &Path) -> bool {
     steps && members
 }
 
-/// Qualification level of a mangled name (adapters.md 3.1).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-enum Level {
-    Plain,
-    Module,
-    Package,
-}
-
 fn index_text(i: &Index) -> Option<String> {
     match i {
         Index::Int(n) => Some(n.to_string()),
@@ -409,15 +401,12 @@ fn with_index(name: &str, idx: Option<&Index>) -> String {
     }
 }
 
-fn mangle_at(path: &Path, prefix: &str, level: Level) -> String {
-    let mut parts: Vec<String> = Vec::new();
-    if level >= Level::Package {
-        parts.push(path.package.replace('.', "_"));
-    }
-    if level >= Level::Module {
-        parts.extend(path.modules.iter().cloned());
-    }
-    parts.push(path.item.clone());
+/// The created native name for `path`: package and modules dropped, `.` and `/` become `__`,
+/// `[i]` becomes `_i`, `[*]` is dropped; `prefix` is prepended (adapters.md 3.1).
+///
+/// A pure function of the path and the prefix; nothing else ever changes the result.
+pub fn mangle(path: &Path, prefix: &str) -> String {
+    let mut parts: Vec<String> = vec![path.item.clone()];
     for s in &path.steps {
         parts.push(with_index(&s.name, s.index.as_ref()));
     }
@@ -436,16 +425,12 @@ fn mangle_at(path: &Path, prefix: &str, level: Level) -> String {
     format!("{prefix}{}", parts.join("__"))
 }
 
-/// The default native name for `path`: package and modules dropped, `.` and `/` become `__`,
-/// `[i]` becomes `_i`, `[*]` is dropped; `prefix` is prepended (adapters.md 3.1).
-pub fn mangle(path: &Path, prefix: &str) -> String {
-    mangle_at(path, prefix, Level::Plain)
-}
-
-/// Mangles every path, qualifying colliding names with the module path and then the package.
+/// Mangles every path with [`mangle`]; two distinct paths sharing a name are R013.
 ///
-/// Returns [`BindingsError::NameCollision`] (R013) if a collision survives; the mapping is
-/// injective on success.
+/// Callers pass only the paths whose names the adapter creates: a path bound explicitly
+/// (bindings file or `#[native]` pin) is left out, which resolves a collision. Nothing is
+/// qualified automatically (adapters.md 3.1). Returns [`BindingsError::NameCollision`] on
+/// a shared name; the mapping is injective on success.
 pub fn mangle_all(paths: &[Path], prefix: &str) -> Result<Vec<(Path, String)>, BindingsError> {
     let mut uniq: Vec<&Path> = Vec::new();
     for p in paths {
@@ -453,39 +438,20 @@ pub fn mangle_all(paths: &[Path], prefix: &str) -> Result<Vec<(Path, String)>, B
             uniq.push(p);
         }
     }
-    let mut levels = vec![Level::Plain; uniq.len()];
-    loop {
-        let names: Vec<String> = uniq
-            .iter()
-            .zip(&levels)
-            .map(|(p, l)| mangle_at(p, prefix, *l))
-            .collect();
-        let mut groups: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
-        for (i, n) in names.iter().enumerate() {
-            groups.entry(n.as_str()).or_default().push(i);
-        }
-        let mut changed = false;
-        for (name, idxs) in groups.iter().filter(|(_, v)| v.len() > 1) {
-            for &i in idxs {
-                match levels[i] {
-                    Level::Plain => levels[i] = Level::Module,
-                    Level::Module => levels[i] = Level::Package,
-                    Level::Package => {
-                        tracing::error!(name, "bindings: name collision (R013)");
-                        return Err(BindingsError::NameCollision {
-                            name: (*name).to_owned(),
-                            paths: idxs.iter().map(|&j| uniq[j].to_string()).collect(),
-                        });
-                    }
-                }
-                changed = true;
-            }
-        }
-        if !changed {
-            tracing::debug!(n = names.len(), "bindings: names mangled");
-            return Ok(uniq.into_iter().cloned().zip(names).collect());
-        }
+    let names: Vec<String> = uniq.iter().map(|p| mangle(p, prefix)).collect();
+    let mut groups: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+    for (i, n) in names.iter().enumerate() {
+        groups.entry(n.as_str()).or_default().push(i);
     }
+    if let Some((name, idxs)) = groups.iter().find(|(_, v)| v.len() > 1) {
+        tracing::error!(name, "bindings: name collision (R013)");
+        return Err(BindingsError::NameCollision {
+            name: (*name).to_owned(),
+            paths: idxs.iter().map(|&j| uniq[j].to_string()).collect(),
+        });
+    }
+    tracing::debug!(n = names.len(), "bindings: names mangled");
+    Ok(uniq.into_iter().cloned().zip(names).collect())
 }
 
 #[cfg(test)]
@@ -578,20 +544,40 @@ locators = [
         );
     }
 
-    // frob:tests bindings_mangle_injective
+    // frob:tests bindings_mangle_pure_per_path
     #[test]
-    fn bindings_mangle_injective() {
+    fn bindings_mangle_pure_per_path() {
+        assert_eq!(mangle(&p("acme.rover::m::A.v"), ""), "A__v");
+        assert_eq!(mangle(&p("other.pkg::n::A.v"), ""), "A__v");
+        assert_eq!(
+            mangle(&p("acme.rail::Rail.site.offset.x"), ""),
+            "Rail__site__offset__x"
+        );
+        assert_eq!(
+            mangle(&p("acme.m::Mount/bracket.place.offset[1].x"), ""),
+            "Mount__bracket__place__offset_1__x"
+        );
+        let a = p("acme.rover::drive::motor::Gm42A.rated_torque");
+        let b = p("acme.rover::Gm42A.other");
+        let alone = mangle_all(std::slice::from_ref(&a), "").expect("ok");
+        let with = mangle_all(&[a.clone(), b], "").expect("ok");
+        assert_eq!(alone[0].1, "Gm42A__rated_torque");
+        assert_eq!(with[0].1, alone[0].1);
+    }
+
+    // frob:tests bindings_mangle_collision_r013
+    #[test]
+    fn bindings_mangle_collision_r013() {
         let a = p("acme.rover::drive::motor::Gm42A.rated_torque");
         let b = p("acme.rover::drive::other::Gm42A.rated_torque");
-        let out = mangle_all(&[a, b], "").expect("ok");
-        assert_eq!(out[0].1, "drive__motor__Gm42A__rated_torque");
-        assert_eq!(out[1].1, "drive__other__Gm42A__rated_torque");
-        assert_ne!(out[0].1, out[1].1);
-        let x = p("acme.rover::m::A.v");
-        let y = p("other.pkg::m::A.v");
-        let out = mangle_all(&[x, y], "").expect("ok");
-        assert_eq!(out[0].1, "acme_rover__m__A__v");
-        assert_eq!(out[1].1, "other_pkg__m__A__v");
+        let err = mangle_all(&[a.clone(), b.clone()], "").expect_err("collision");
+        assert!(matches!(err, BindingsError::NameCollision { .. }));
+        assert!(err.to_string().contains(R013));
+        // Binding one explicitly leaves it out of the created names.
+        let out = mangle_all(&[a], "").expect("resolved");
+        assert_eq!(out[0].1, "Gm42A__rated_torque");
+        // The same path twice is not a collision.
+        assert!(mangle_all(&[b.clone(), b], "").is_ok());
     }
 
     // frob:tests bindings_was_carry_forward

@@ -1,0 +1,136 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T21:24:35Z"
+digest = "a02089201300056bbed6dc0ef64455da23923053f775f5669cdc773d218f35bc"
+exit_code = 101
+inline = """
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+error[E0432]: unresolved imports `cadetta_ir::model::CitationType`, `cadetta_ir::model::CiteBuiltin`, `cadetta_ir::model::CiteField`, `cadetta_ir::model::CiteRef`
+ --> crates/cadetta-sema/src/cite.rs:9:35
+  |
+9 | use cadetta_ir::model::{Citation, CitationType, CiteBuiltin, CiteField, CiteRef};
+  |                                   ^^^^^^^^^^^^  ^^^^^^^^^^^  ^^^^^^^^^  ^^^^^^^ no `CiteRef` in `model`
+  |                                   |             |            |
+  |                                   |             |            no `CiteField` in `model`
+  |                                   |             no `CiteBuiltin` in `model`
+  |                                   no `CitationType` in `model`
+  |
+help: a similar name exists in the module
+  |
+9 - use cadetta_ir::model::{Citation, CitationType, CiteBuiltin, CiteField, CiteRef};
+9 + use cadetta_ir::model::{Citation, CitationKind, CiteBuiltin, CiteField, CiteRef};
+  |
+
+error[E0599]: no associated function or constant named `new` found for struct `cadetta_ir::model::Citation` in the current scope
+   --> crates/cadetta-sema/src/cite.rs:317:24
+    |
+317 |         Some(Citation::new(path, ty, fields, file_digest))
+    |                        ^^^ associated function or constant not found in `cadetta_ir::model::Citation`
+    |
+help: there is a method `ne` with a similar name, but with different arguments
+   --> ~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/cmp.rs:263:5
+    |
+263 |     fn ne(&self, other: &Rhs) -> bool {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0609]: no field `ty` on type `cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/cite.rs:445:22
+    |
+445 |         assert_eq!(c.ty, CitationType::Web);
+    |                      ^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0599]: no method named `text` found for struct `cadetta_ir::model::Citation` in the current scope
+   --> crates/cadetta-sema/src/cite.rs:446:22
+    |
+446 |         assert_eq!(c.text("title"), Some("t"));
+    |                      ^^^^ method not found in `cadetta_ir::model::Citation`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:520:75
+    |
+520 |                         cited.extend(mem.citation.iter().filter_map(|r| r.cite.clone()));
+    |                                                                           ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:532:68
+    |
+532 |                 cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
+    |                                                                    ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `path` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:855:24
+    |
+855 |             .map(|c| c.path.as_str())
+    |                        ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:860:45
+    |
+860 |             comp.citation.as_ref().unwrap().cite.as_deref(),
+    |                                             ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:864:22
+    |
+864 |         assert_eq!(a.cite.as_deref(), Some("p::alpha"));
+    |                      ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:868:30
+    |
+868 |         assert_eq!(inherited.cite.as_deref(), Some("p::zeta"));
+    |                              ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `text` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:870:22
+    |
+870 |         assert_eq!(c.text.as_deref(), Some("note"));
+    |                      ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `cite` on type `&cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:871:19
+    |
+871 |         assert!(c.cite.is_none());
+    |                   ^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+error[E0609]: no field `digest` on type `cadetta_ir::model::Citation`
+   --> crates/cadetta-sema/src/lower.rs:881:52
+    |
+881 |         let d = |b: &Built| b.project.citations[0].digest.clone();
+    |                                                    ^^^^^^ unknown field
+    |
+    = note: available fields are: `name`, `target`, `locator`, `kind`, `file_digest`
+
+Some errors have detailed explanations: E0432, E0599, E0609.
+For more information about an error, try `rustc --explain E0432`.
+error: could not compile `cadetta-sema` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `cadetta-sema` (lib test) due to 13 previous errors
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-E 'test(/cite::tests/) | test(conformance_corpus_matches)'"
+size = 5859
+status = "measured"
+at = "2026-10-13T21:24:35Z"
+actor = "lognd"
+rev = 1

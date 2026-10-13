@@ -1,0 +1,6 @@
+{
+    "cmd": ["cadetta", "check", "--format", "short"],
+    "working_dir": "$project_path",
+    "file_regex": "^(.+?):(\\d+):(\\d+): ",
+    "selector": "source.cadetta"
+}

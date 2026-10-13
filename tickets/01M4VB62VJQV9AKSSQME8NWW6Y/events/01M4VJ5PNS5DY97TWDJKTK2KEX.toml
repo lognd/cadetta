@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T21:19:52Z"
+digest = "e4074b8304d9ef2e3ec046aa499a95f0145aa4607af31185eabe22d8e5fd4a70"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d9542b15-0565-40fa-900a-04963198f5e4 with nextest profile: default
+    Starting 3 tests across 27 binaries (926 tests skipped)
+        PASS [   0.009s] cadetta-obligations citation::tests::literal_citation_is_not_checked
+        PASS [   0.010s] cadetta-obligations citation::tests::file_or_text_change_is_s004
+        PASS [   0.015s] cadetta-obligations citation::tests::ack_records_file_digest
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 3 tests run: 3 passed, 926 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(editing_a_cite) | test(/citation::tests/)'"
+size = 740
+status = "measured"
+test_count = 3
+tests_digest = "e275549e17db31d04f3bc40022e574ec178f0128a706a040be00f3df7179ef52"
+at = "2026-10-13T21:19:52Z"
+actor = "lognd"
+rev = 1

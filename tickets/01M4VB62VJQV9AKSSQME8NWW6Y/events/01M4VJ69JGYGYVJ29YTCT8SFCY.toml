@@ -1,0 +1,134 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T21:19:53Z"
+digest = "5828361f169844c5400129895357182882947ee1937b011fab10168449eda7f9"
+exit_code = 100
+failed_tests = ["golden_sources_parse_without_syntax_errors", "conformance_corpus_matches_the_spec"]
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 09a1df6c-0b99-444a-9f98-2ceb56fa4ae0 with nextest profile: default
+    Starting 2 tests across 27 binaries (927 tests skipped)
+        FAIL [   0.046s] cadetta-syntax::golden_parse golden_sources_parse_without_syntax_errors
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'golden_sources_parse_without_syntax_errors' (1038417) panicked at crates/cadetta-syntax/tests/golden_parse.rs:41:5:
+
+    02-bearing-housing/src/vendor.cdt:9: E001 expected `=`, found `:`
+    03-pcb-enclosure/src/lib.cdt:5: E001 expected `=`, found `:`
+    03-pcb-enclosure/src/lib.cdt:10: E001 expected `=`, found `:`
+    04-linear-actuator/src/lib.cdt:12: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/bearings.cdt:3: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/bearings.cdt:10: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:6: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:11: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:17: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:21: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:27: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:31: E001 expected `=`, found `:`
+    04-linear-actuator/src/parts/motion.cdt:34: E001 expected `=`, found `:`
+    06-extrusion-frame/src/lib.cdt:5: E001 expected `=`, found `:`
+    07-part-swap/src/lib.cdt:13: E001 expected `=`, found `:`
+    07-part-swap/src/lib.cdt:18: E001 expected `=`, found `:`
+    07-part-swap/src/lib.cdt:23: E001 expected `=`, found `:`
+    07-part-swap/src/lib.cdt:28: E001 expected `=`, found `:`
+    07-part-swap/src/lib.cdt:33: E001 expected `=`, found `:`
+    08-gearmotor-module/src/lib.cdt:10: E001 expected `=`, found `:`
+    08-gearmotor-module/src/lib.cdt:14: E001 expected `=`, found `:`
+    08-gearmotor-module/src/lib.cdt:18: E001 expected `=`, found `:`
+    08-gearmotor-module/src/lib.cdt:22: E001 expected `=`, found `:`
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test golden_sources_parse_without_syntax_errors ... FAILED
+
+    failures:
+
+    failures:
+        golden_sources_parse_without_syntax_errors
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.02s
+
+
+  Cancelling due to test failure: 1 test still running
+        FAIL [  18.164s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'conformance_corpus_matches_the_spec' (1038416) panicked at crates/cadetta-cli/tests/conformance.rs:38:5:
+    47 conformance failure(s):
+    language/e001-cite-std-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-std-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-string-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-not-fire: extra E001 (error)
+    language/e001-cite-string-form [language]: must-not-fire: exit status 1, expected 0
+    language/e002-cite-path-unknown [language]: must-fire: missing E002 (error)
+    language/e002-cite-path-unknown [language]: must-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: exit status 1, expected 0
+    language/e003-cite-repeated-field [language]: must-fire: missing E003 (error)
+    language/e003-cite-repeated-field [language]: must-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-date [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-date [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-url [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-url [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-field [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-field [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-type [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-type [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-wrong-shape [language]: must-fire: missing E006 (error)
+    language/e006-cite-wrong-shape [language]: must-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-fire: missing S001 (warning) at acme.demo::Pin.dia
+    language/s001-member-citation [language]: must-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-not-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-not-fire: exit status 1, expected 0
+    language/s001-uncited [language]: must-not-fire: extra E001 (error)
+    language/s001-uncited [language]: must-not-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-fire: missing S002 (info)
+    lints/s002-missing-citation-file [lints]: must-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-not-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-not-fire: exit status 1, expected 0
+    stdlib/s001-std-cite-export [stdlib]: must-not-fire: extra S001 (warning) at acme.demo::Ring.groove_width
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 18.15s
+
+
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  18.196s] 2 tests run: 0 passed, 2 failed, 927 skipped
+        FAIL [  18.164s] cadetta::conformance conformance_corpus_matches_the_spec
+        FAIL [   0.046s] cadetta-syntax::golden_parse golden_sources_parse_without_syntax_errors
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-E 'test(/std_lib_root/) | test(golden_sources_parse) | test(conformance_corpus_matches)'"
+size = 7437
+status = "measured"
+test_count = 2
+tests_digest = "092b8e6245f90fc3a7464e67f9132c3d5672848aa89a637c7caadaf18e585152"
+at = "2026-10-13T21:19:53Z"
+actor = "lognd"
+rev = 1

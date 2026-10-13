@@ -1,0 +1,41 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.1",
+  "rule": "R013",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "note": "two modules of one package with Part.width both create Part__width: R013 before any write; nothing is module-qualified; binding one path with a global locator removes it from the created names (must-not-fire)",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R013",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "output": {
+      "build/eq.txt": {
+        "contains": [],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"Part__width\""
+        ],
+        "excludes": [
+          "acme_demo__",
+          "acme_other__",
+          "a__Part",
+          "b__Part"
+        ]
+      }
+    }
+  }
+}

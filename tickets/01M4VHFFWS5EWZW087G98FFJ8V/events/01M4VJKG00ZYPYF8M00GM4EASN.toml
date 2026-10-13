@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 9c976662fa26 (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38467657488/job/115538475490): base red only from the typed-citation drift (language.md example parser test and cite fixtures), fixed by ~E8NWW6Y"
+at = "2026-10-13T21:26:26Z"
+actor = "lognd"
+rev = 1

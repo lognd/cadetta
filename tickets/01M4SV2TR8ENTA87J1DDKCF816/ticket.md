@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T19:19:06Z"
+updated = "2026-10-13T21:03:05Z"
 persona = "design engineer"
 capability = "write cadetta values into SOLIDWORKS and keep dimensions linked"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**"]
@@ -33,6 +33,10 @@ target = "01M4SV3AAC44Q1DCE44GG3XB6W"
 [[links]]
 kind = "blocked-by"
 target = "01M4VB648PMGRPG6R8D606HZK6"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VH6XQF4GRQM20G0Z9SWC8W"
 
 [[acceptance]]
 text = "Given a path bound to several locators, when emitted, then each global, dimension and property is written (adapters.md 3)"

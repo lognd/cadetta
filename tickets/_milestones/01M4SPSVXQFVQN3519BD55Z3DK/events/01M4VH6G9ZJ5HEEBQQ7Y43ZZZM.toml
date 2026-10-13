@@ -1,0 +1,6 @@
+kind = "criterion"
+op = "add"
+text = "SOLIDWORKS adapter (C#) reads, drives and verifies frames and placements on a licensed machine, recorded as replayable transcripts"
+at = "2026-10-13T21:02:51Z"
+actor = "lognd"
+rev = 1

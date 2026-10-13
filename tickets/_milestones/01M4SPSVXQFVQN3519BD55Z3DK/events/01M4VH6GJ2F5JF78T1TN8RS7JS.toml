@@ -1,0 +1,6 @@
+kind = "criterion"
+op = "add"
+text = "Typed IEEE citations compile, S008 flags incomplete ones, and cadetta cite list prints the reference list"
+at = "2026-10-13T21:02:51Z"
+actor = "lognd"
+rev = 1

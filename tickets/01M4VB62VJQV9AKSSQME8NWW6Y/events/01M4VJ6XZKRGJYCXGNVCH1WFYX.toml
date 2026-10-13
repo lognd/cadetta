@@ -1,0 +1,92 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T21:20:13Z"
+digest = "388783f6f9dc9c423184bba3ab66057ea4ea36f62e3b79af043caddbe3914407"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 53732879-1461-4403-9e9a-98076f5f8d71 with nextest profile: default
+    Starting 1 test across 27 binaries (928 tests skipped)
+        FAIL [  19.474s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'conformance_corpus_matches_the_spec' (1042483) panicked at crates/cadetta-cli/tests/conformance.rs:38:5:
+    47 conformance failure(s):
+    language/e001-cite-std-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-std-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-fire: missing E001 (error)
+    language/e001-cite-string-form [language]: must-fire: exit status 0, expected nonzero
+    language/e001-cite-string-form [language]: must-not-fire: extra E001 (error)
+    language/e001-cite-string-form [language]: must-not-fire: exit status 1, expected 0
+    language/e002-cite-path-unknown [language]: must-fire: missing E002 (error)
+    language/e002-cite-path-unknown [language]: must-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: extra E001 (error)
+    language/e002-cite-path-unknown [language]: must-not-fire: exit status 1, expected 0
+    language/e003-cite-repeated-field [language]: must-fire: missing E003 (error)
+    language/e003-cite-repeated-field [language]: must-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: extra E001 (error)
+    language/e003-cite-repeated-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-date [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-date [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-date [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-bad-url [language]: must-fire: missing E006 (error)
+    language/e006-cite-bad-url [language]: must-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-bad-url [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-field [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-field [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-field [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-unknown-type [language]: must-fire: missing E006 (error)
+    language/e006-cite-unknown-type [language]: must-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-unknown-type [language]: must-not-fire: exit status 1, expected 0
+    language/e006-cite-wrong-shape [language]: must-fire: missing E006 (error)
+    language/e006-cite-wrong-shape [language]: must-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: extra E001 (error)
+    language/e006-cite-wrong-shape [language]: must-not-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-fire: missing S001 (warning) at acme.demo::Pin.dia
+    language/s001-member-citation [language]: must-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-fire: exit status 1, expected 0
+    language/s001-member-citation [language]: must-not-fire: extra E001 (error)
+    language/s001-member-citation [language]: must-not-fire: exit status 1, expected 0
+    language/s001-uncited [language]: must-not-fire: extra E001 (error)
+    language/s001-uncited [language]: must-not-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-fire: missing S002 (info)
+    lints/s002-missing-citation-file [lints]: must-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-fire: exit status 1, expected 0
+    lints/s002-missing-citation-file [lints]: must-not-fire: extra E001 (error)
+    lints/s002-missing-citation-file [lints]: must-not-fire: exit status 1, expected 0
+    stdlib/s001-std-cite-export [stdlib]: must-not-fire: extra S001 (warning) at acme.demo::Ring.groove_width
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 6 filtered out; finished in 19.46s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  19.485s] 1 test run: 0 passed, 1 failed, 928 skipped
+        FAIL [  19.474s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-E 'test(conformance_corpus_matches)'"
+size = 5089
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-13T21:20:13Z"
+actor = "lognd"
+rev = 1

@@ -330,7 +330,16 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         .collect();
     tracing::debug!(adapter = %job.adapter.id(), members = members.len(), "emit: bound members selected");
 
-    let paths: Vec<Path> = members.iter().map(|m| m.path.clone()).collect();
+    let paths: Vec<Path> = members
+        .iter()
+        .filter(|m| {
+            // A path bound to an explicit global creates no name (adapters.md 3.1).
+            job.set
+                .get(&m.path)
+                .is_none_or(|b| !b.locators.iter().any(|l| l.kind == LocatorKind::Global))
+        })
+        .map(|m| m.path.clone())
+        .collect();
     let mangled: HashMap<Path, String> = match mangle_all(&paths, &job.adapter.prefix) {
         Ok(pairs) => pairs.into_iter().collect(),
         Err(e) => {
@@ -777,13 +786,26 @@ mod tests {
     fn native_name_collision_exits_one() {
         let dir = project(
             "model X {\n  a__b: Length = 1mm\n}\nmodel X__a {\n  b: Length = 2mm\n}\n",
-            "[\"acme.plate::X.a__b\"]\nlocators = [ { locator = \"P\", kind = \"global\", native_unit = \"mm\" } ]\n\n[\"acme.plate::X__a.b\"]\nlocators = [ { locator = \"Q\", kind = \"global\", native_unit = \"mm\" } ]\n",
+            "[\"acme.plate::X.a__b\"]\nlocators = [ { locator = \"D1@S\", kind = \"dimension\", native_unit = \"mm\" } ]\n\n[\"acme.plate::X__a.b\"]\nlocators = [ { locator = \"D2@S\", kind = \"dimension\", native_unit = \"mm\" } ]\n",
             "",
         );
         let (code, out, _) = run(&dir, &[]);
         assert_eq!(code, EXIT_FAIL, "{out}");
         assert!(out.contains("R013"), "{out}");
         assert!(!dir.0.join("build/solidworks/equations.txt").exists());
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit
+    #[test]
+    fn explicit_binding_resolves_name_collision() {
+        let dir = project(
+            "model X {\n  a__b: Length = 1mm\n}\nmodel X__a {\n  b: Length = 2mm\n}\n",
+            "[\"acme.plate::X.a__b\"]\nlocators = [ { locator = \"P\", kind = \"global\", native_unit = \"mm\" }, { locator = \"D1@S\", kind = \"dimension\", native_unit = \"mm\" } ]\n\n[\"acme.plate::X__a.b\"]\nlocators = [ { locator = \"D2@S\", kind = \"dimension\", native_unit = \"mm\" } ]\n",
+            "",
+        );
+        let (code, out, _) = run(&dir, &[]);
+        assert_eq!(code, 0, "{out}");
+        assert!(!out.contains("R013"), "{out}");
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit

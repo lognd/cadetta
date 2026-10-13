@@ -1,5 +1,0 @@
-["acme.demo::Part.width"]
-locators = [
-  { locator = "D@S@P.SLDPRT", kind = "dimension" },
-
-]

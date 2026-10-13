@@ -1,0 +1,36 @@
+kind = "evidence"
+captured_at = "2026-10-13T20:47:23Z"
+digest = "66d3bd4f24b14055f16ef8c2bde534c46195535b1955bc013e854fff5ad37e01"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8f90d29c-9483-4cca-aaa2-25f2c6af59b2 with nextest profile: default
+    Starting 14 tests across 4 binaries (250 tests skipped)
+        PASS [   0.019s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.019s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.023s] cadetta-adapter bindings::tests::bindings_mangle_collision_r013
+        PASS [   0.031s] cadetta cmd::emit::tests::usage_errors_exit_two
+        PASS [   0.015s] cadetta-adapter bindings::tests::bindings_mangle_pure_per_path
+        PASS [   0.047s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.016s] cadetta-adapter bindings::tests::bindings_mangle_rules
+        PASS [   0.054s] cadetta cmd::emit::tests::native_name_collision_exits_one
+        PASS [   0.053s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.057s] cadetta cmd::emit::tests::explicit_binding_resolves_name_collision
+        PASS [   0.061s] cadetta cmd::emit::tests::honours_out_and_adapter_selection
+        PASS [   0.062s] cadetta cmd::emit::tests::unrepresentable_value_exits_one
+        PASS [   0.076s] cadetta cmd::emit::tests::writes_equations_for_bound_members_only
+        PASS [   0.103s] cadetta cmd::emit::tests::json_validates_against_emit_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.104s] 14 tests run: 14 passed, 250 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E '(package(=cadetta) & (test(=cmd::emit::tests::explicit_binding_resolves_name_collision) | test(=cmd::emit::tests::honours_out_and_adapter_selection) | test(=cmd::emit::tests::json_validates_against_emit_schema) | test(=cmd::emit::tests::native_name_collision_exits_one) | test(=cmd::emit::tests::unrepresentable_value_exits_one) | test(=cmd::emit::tests::usage_errors_exit_two) | test(=cmd::emit::tests::writes_equations_for_bound_members_only) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::usage_errors_exit_two_with_message))) | (package(=cadetta-adapter) & (test(=bindings::tests::bindings_mangle_collision_r013) | test(=bindings::tests::bindings_mangle_pure_per_path) | test(=bindings::tests::bindings_mangle_rules)))'"
+size = 1673
+status = "measured"
+test_count = 14
+tests_digest = "f9225ee466c9c41289450988cba19ae52256e328158a858a717a31d7d64002f3"
+at = "2026-10-13T20:47:23Z"
+actor = "lognd"
+rev = 1
