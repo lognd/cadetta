@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given an array, when mapped with in, then every element is converted; a Point2 on d becomes a Point3 at z = 0 of d (geometry.md 3)"
-bound = false
+bound = true
 +++
