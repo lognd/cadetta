@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/impact.rs"]
+new = ["crates/cadetta-cli/src/cmd/impact.rs", "docs/schemas/impact.json", "docs/spec/obligations.md", "docs/spec/config-cli.md"]
+at = "2026-10-13T09:17:18Z"
+actor = "lognd"
+rev = 1
