@@ -8,12 +8,16 @@ points = 3
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:24Z"
 persona = "design engineer"
 capability = "see when a primary reaches end of life and which alternate can replace it"
 idempotency_key = "replan13:Lifecycle attribute and replacement candidates"
 labels = ["creates:crates/cadetta-variants/src/lifecycle.rs"]
 scope = ["crates/cadetta-variants/src/lifecycle.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STCCQD6C55WEN7HFEBPEYV"
 
 [[acceptance]]
 text = 'Given `#[lifecycle(eol, "2027-06")]`, when parsed, then status active|nrnd|eol|obsolete and the date are recorded (language.md 3.2)'
