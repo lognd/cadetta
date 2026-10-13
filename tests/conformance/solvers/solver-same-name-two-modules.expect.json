@@ -1,0 +1,25 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 1",
+  "rule": "solver-identity",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/a.out.json": {
+        "exists": true
+      },
+      "analysis/b.out.json": {
+        "exists": true
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 2,
+    "why": "the second solver has no table: tables are keyed by qualified path, so one table never serves two solvers"
+  }
+}

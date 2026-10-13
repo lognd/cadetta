@@ -78,8 +78,8 @@ Request (`cadetta.solve/1`):
 ```json
 { "schema": "cadetta.solve/1",
   "solver": "acme.rover::wall_sizing",
-  "inputs": { "load": {"lit": "1200N",  "si": 1200.0},
-              "span": {"lit": "300mm", "si": 0.3, "min": 0.2995, "max": 0.3005} } }
+  "inputs": { "load": {"lit": "1200m*kg/s^2", "si": 1200.0},
+              "span": {"lit": "0.3m", "si": 0.3, "min": 0.2995, "max": 0.3005} } }
 ```
 
 Response:
@@ -91,13 +91,15 @@ Response:
   "diagnostics": [ {"severity": "info", "message": "converged in 14 iterations"} ] }
 ```
 
-- `lit` is exact; `si` is a convenience float in SI base units. A
+- `lit` is exact and is written in SI base units (section 4); `si` is a
+  convenience float in the same units. A
   toleranced input (`frame.span = 300mm [+-0.5mm]`) keeps `lit` as the
   nominal literal and adds `min` and `max` in SI base units; an
   untoleranced input has neither. `{lit, si, min, max}` is the whole
   field set.
-- `version` is optional in the response; when present it enters the
-  result digest (section 4).
+- `version` is optional in the response; when present it is recorded
+  in the result entry. It is not part of any staleness digest (section 4),
+  so a solver upgrade alone never fires S003.
 - Outputs MUST be literals with units; a bare number is Q001 against the
   solver. A decimal literal is exact; there is no other float path.
   The Python decorator writes decimal strings rounded to `significant`
@@ -145,7 +147,7 @@ evaluate, marked stale, so the rest of the design keeps checking.
 
 `cadetta solve` evaluates each solver's `in` expressions in the solver's
 scope (the enclosing component for a member solver) and builds the request
-from them. `lit` is the nominal in SI base units (`kg*m/s^2`, `m`, ...) as
+from them. `lit` is the nominal in SI base units (`m*kg/s^2` for a force, `m`, ...; base units are written in the order m, kg, s, A, K, mol, cd) as
 an exact decimal; when that cannot be rendered exactly (a pi factor, a
 dimensionless value) it is the float text of `si`. A solver whose result is
 fresh is not run (the command prints `fresh PATH` and exits 0); a stale or

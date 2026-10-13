@@ -1,0 +1,21 @@
+{
+  "schema": "cadetta.solve-result/1",
+  "results": [
+    {
+      "solver": "acme.demo::Rover.sizing",
+      "input_digest": "blake3:e69c1d88834ec73e485f40a34f912ab620b70cc4533b80d686f0a40aa8f1387f",
+      "script_digest": "blake3:dbc4deb71f89d858eb2d283377b724f94e79e64cd19ca2deaa6f32e70155fadb",
+      "dep_digests": {},
+      "inputs": {
+        "load": {
+          "lit": "500m*kg/s^2",
+          "si": 500.0
+        }
+      },
+      "outputs": {
+        "min_wall": "1mm"
+      },
+      "diagnostics": []
+    }
+  ]
+}

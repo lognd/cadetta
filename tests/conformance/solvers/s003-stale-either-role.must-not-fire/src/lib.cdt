@@ -1,0 +1,12 @@
+model Frame {
+  wall = 3mm
+  span = 300mm
+  max_load = 1200N
+  solver wall_sizing @"analysis/wall_sizing.sh" {
+    in  load = max_load, span = span
+    out min_wall: Length
+    deps "analysis/material_db.csv"
+  }
+  derived = wall_sizing.min_wall * 2
+  check derived_ok: derived >= 1mm "derived from the solver output"
+}

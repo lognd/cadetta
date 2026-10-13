@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 3",
+  "rule": "request-schema",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "request.json": {
+        "contains": [
+          "\"schema\":\"cadetta.solve/1\"",
+          "\"solver\":\"acme.demo::Frame.wall_sizing\"",
+          "\"inputs\":{\"load\":",
+          "\"span\":"
+        ]
+      }
+    },
+    "args": []
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "request.json": {
+        "exists": false
+      }
+    },
+    "args": [
+      "acme.nothing::*"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  load_rating: Force
+}
+pub ots Good: Caster @src {
+  diameter = 5in
+  load_rating = 500N
+}
+pub ots Heavy: Caster @src {
+  diameter = 5in
+  load_rating = 450N
+}
+pub ots Heavy2: Caster @src {
+  diameter = 5in
+  load_rating = 450N
+}
+pub ots Same: Caster @src {
+  diameter = 5in
+  load_rating = 500N
+}
+pub assembly Rover {
+  part wheel[4]: Caster = Good alt [Heavy, Heavy2]
+  solver sizing @"analysis/sizing.sh" {
+    in load = wheel.load_rating
+    out min_wall: Length
+  }
+  check wall_ok: 1mm >= sizing.min_wall "wall at least solver minimum"
+}

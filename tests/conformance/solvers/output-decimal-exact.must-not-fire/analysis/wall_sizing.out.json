@@ -1,0 +1,25 @@
+{
+  "schema": "cadetta.solve-result/1",
+  "results": [
+    {
+      "solver": "acme.demo::Frame.wall_sizing",
+      "input_digest": "blake3:5a4cbdeece481f89d14210e0fd4c60d9506d0dfe32461effcb86a90ef594e779",
+      "script_digest": "blake3:16530701d520fc1ede1f73b67ad8203f095d27833cf5d80df29047dae2bc0b30",
+      "dep_digests": {},
+      "inputs": {
+        "load": {
+          "lit": "1200m*kg/s^2",
+          "si": 1200.0
+        },
+        "span": {
+          "lit": "0.3m",
+          "si": 0.3
+        }
+      },
+      "outputs": {
+        "min_wall": "0.3mm"
+      },
+      "diagnostics": []
+    }
+  ]
+}

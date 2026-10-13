@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 3",
+  "rule": "output-exact",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Frame.wall_sizing.min_wall",
+        "nominal": "1/10mm"
+      }
+    ],
+    "note": "decimal text is parsed as an exact rational"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Frame.wall_sizing.min_wall",
+        "nominal": "1/10mm"
+      }
+    ]
+  }
+}

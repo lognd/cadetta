@@ -1,0 +1,31 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 3",
+  "rule": "S005",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "S005",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "exists": false
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "exists": true
+      }
+    }
+  }
+}

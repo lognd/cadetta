@@ -1,0 +1,9 @@
+model Frame {
+  span = 300mm
+  max_load = 1200N
+  solver wall_sizing @"analysis/wall_sizing.sh" {
+    in  load = max_load, span = span
+    out min_wall: Length
+  }
+  wall = round_to(wall_sizing.min_wall, 0.5mm)
+}

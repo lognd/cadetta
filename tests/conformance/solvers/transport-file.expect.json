@@ -1,0 +1,36 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 3",
+  "rule": "transport-file",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "request.json": {
+        "contains": [
+          "\"schema\":\"cadetta.solve/1\""
+        ]
+      },
+      "analysis/wall_sizing.out.json": {
+        "exists": true
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "S005",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "exists": false
+      }
+    }
+  }
+}

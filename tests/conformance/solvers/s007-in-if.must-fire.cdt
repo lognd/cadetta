@@ -1,0 +1,7 @@
+model Frame {
+  span = 300mm
+}
+solver sizing @"analysis/sizing.py" {
+  in x = if true { 1mm } else { 2mm }
+  out wall: Length
+}

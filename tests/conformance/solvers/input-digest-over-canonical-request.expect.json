@@ -1,0 +1,32 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 4",
+  "rule": "input-digest",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "contains": [
+          "\"input_digest\": \"blake3:5a4cbdeece481f89d14210e0fd4c60d9506d0dfe32461effcb86a90ef594e779\"",
+          "\"script_digest\": \"blake3:13e6d43b24cd39a14daa49c6bfc1c3b92573115369dc05a2be763f66660a9b0b\""
+        ]
+      }
+    },
+    "note": "digest = blake3 of the canonical request JSON; script digest = blake3 of the script bytes"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "contains": [
+          "\"input_digest\""
+        ]
+      }
+    }
+  }
+}

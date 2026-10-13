@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 5",
+  "rule": "trust-checks-on-outputs",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

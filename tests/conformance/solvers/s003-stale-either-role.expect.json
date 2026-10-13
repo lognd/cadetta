@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 2",
+  "rule": "S003",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "S003",
+        "severity": "warning"
+      }
+    ],
+    "exit": 0
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

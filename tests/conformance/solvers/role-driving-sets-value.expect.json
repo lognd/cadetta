@@ -1,0 +1,28 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 2",
+  "rule": "driving-role",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Frame.wall",
+        "nominal": "3.5mm"
+      }
+    ],
+    "note": "round_to(3.3mm, 0.5mm) = 3.5mm"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Frame.wall",
+        "nominal": "3mm"
+      }
+    ],
+    "note": "a bound check does not set the value"
+  }
+}

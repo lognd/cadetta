@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "solvers",
+  "section": "solvers.md 4",
+  "rule": "result-identity",
+  "kind": "source",
+  "entry": "solve",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "contains": [
+          "\"solver\": \"acme.demo::Frame.b_sizing\"",
+          "\"solver\": \"acme.demo::Frame.wall_sizing\""
+        ]
+      }
+    },
+    "results_order": [
+      "acme.demo::Frame.b_sizing",
+      "acme.demo::Frame.wall_sizing"
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "analysis/wall_sizing.out.json": {
+        "excludes": [
+          "b_sizing"
+        ]
+      }
+    }
+  }
+}
