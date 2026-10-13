@@ -228,6 +228,10 @@ interface only, so:
   an error (lints.md 1). An evaluation error under a variant (E007
   lookup miss, a failed `as`) also makes that alternate non-viable, with
   the error as the reason; it never fails the run.
+  A value that cannot be determined under a variant (a solver output
+  with no result for the changed inputs) is unknown there, never borrowed
+  from the primary, and counts as a difference. The engine is
+  `cadetta-variants` `evaluate.rs`: one evaluation per alternate.
 - **Viable** means no check, fit, bound or require violates under the
   variant. Undecided results leave it viable with I003. A non-viable
   alternate stays listed (I002); a waiver may be scoped to one

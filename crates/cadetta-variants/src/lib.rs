@@ -2,6 +2,7 @@
 //!
 //! Specification: `docs/spec/ir.md`.
 
+pub mod evaluate;
 pub mod interface;
 pub mod lifecycle;
 pub mod slot;

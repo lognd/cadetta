@@ -292,6 +292,15 @@ the newest commit that changed any covered node.
 `release` ones. `required_for` sets a severity floor (error); see
 lints.md 1 for precedence with `[lint] severity`.
 
+Decided (0.1.0): a role gates an obligation when one of its `covers`
+selectors matches the id and the obligation is `stale` or `open`; the
+first matching role with a gating `required_for` is reported, and a
+kind-level `required_for` (2.3) gates independently. `ack` rejects an
+attestation whose role does not cover the obligation, whose `by` is not
+in `members`, or (with `distinct_from_author`) equals the author; an
+unknown author fails closed. A `require` can only be signed off by a
+current attestation; a waiver request without one is refused.
+
 Adoption: `cadetta ack --baseline SELECTOR --role R` discharges every
 matching open obligation at current digests with reason `baseline`, so
 a large existing library does not start red. `obligations` lists them
