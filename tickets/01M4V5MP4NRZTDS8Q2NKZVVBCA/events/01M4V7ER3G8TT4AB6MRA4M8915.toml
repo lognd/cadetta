@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/KZVVBCA; scope: docs/spec/emitters/csv.md, docs/spec/emitters/json.md, docs/spec/adapters.md, tests/conformance/emitters/csv/**; ttl 7200s"
+at = "2026-10-13T18:12:34Z"
+actor = "lognd"
+rev = 1
