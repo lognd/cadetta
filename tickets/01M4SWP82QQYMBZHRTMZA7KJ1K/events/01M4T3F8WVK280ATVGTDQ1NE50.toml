@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/src/commercial.cdt", "crates/cadetta-syntax/tests/std_commercial.rs"]
+new = ["std/src/commercial.cdt", "crates/cadetta-syntax/tests/std_commercial.rs", "docs/spec/stdlib.md"]
+at = "2026-10-13T07:43:43Z"
+actor = "lognd"
+rev = 1

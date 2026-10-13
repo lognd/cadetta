@@ -2,6 +2,7 @@
 //!
 //! Specification: `docs/spec/ir.md`.
 
+pub mod digest;
 pub mod dim;
 pub mod model;
 pub mod path;
