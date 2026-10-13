@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a native file, when `cadetta import freecad f.FCStd` runs, then bindings and a scaffolded .cdt are proposed, not written until accepted"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given emit and import flags, when run, then exit codes and outputs follow config-cli.md 3 (Q004, R013 give exit 1)"
