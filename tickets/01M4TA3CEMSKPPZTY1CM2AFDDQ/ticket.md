@@ -2,7 +2,8 @@
 id = "01M4TA3CEMSKPPZTY1CM2AFDDQ"
 title = "Switch why/impact/ir/ack/obligations verbs to pipeline::analyze"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
