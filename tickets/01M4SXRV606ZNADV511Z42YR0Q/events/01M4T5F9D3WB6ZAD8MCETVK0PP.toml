@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T08:18:35Z"
+digest = "b053345255bff8e36a24514f4586bf1c06e9dc36d1ede4eacdf2554c8cb0d37e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.39s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fa7ca2fc-54f4-4c01-8df4-11fd34f39596 with nextest profile: default
+    Starting 2 tests across 1 binary (82 tests skipped)
+        PASS [   0.007s] cadetta-sema imports::tests::explicit_use_beats_glob
+        PASS [   0.007s] cadetta-sema imports::tests::order_own_then_module_then_use_then_glob_then_prelude
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 2 tests run: 2 passed, 82 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(=imports::tests::order_own_then_module_then_use_then_glob_then_prelude) + test(=imports::tests::explicit_use_beats_glob)'"
+size = 771
+status = "measured"
+test_count = 2
+tests_digest = "cd0d2ccf4640059719bc7afd7b5a4d3ab55b127d8a71ddb0878958ab57b75169"
+at = "2026-10-13T08:18:35Z"
+actor = "lognd"
+rev = 1
