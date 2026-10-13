@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a reserved keyword as an identifier, when parsed, then a parse error is reported (language.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `part wheel[4]: Caster = Vendor4471B alt [Colson2Series]`, when parsed, then the part has a primary and one alternate (language.md 3)"
