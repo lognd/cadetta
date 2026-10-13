@@ -23,6 +23,7 @@ path = "src/main.rs"
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true
+cadetta-log.workspace = true
 cadetta-lint.workspace = true
 cadetta-obligations.workspace = true
 cadetta-sema.workspace = true
@@ -30,7 +31,6 @@ cadetta-solve.workspace = true
 cadetta-syntax.workspace = true
 cadetta-units.workspace = true
 tracing.workspace = true
-tracing-subscriber.workspace = true
 
 [lints]
 workspace = true

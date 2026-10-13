@@ -23,6 +23,7 @@ cadetta-adapter = { path = "crates/cadetta-adapter", version = "0.0.0" }
 cadetta-fits = { path = "crates/cadetta-fits", version = "0.0.0" }
 cadetta-geometry = { path = "crates/cadetta-geometry", version = "0.0.0" }
 cadetta-ir = { path = "crates/cadetta-ir", version = "0.0.0" }
+cadetta-log = { path = "crates/cadetta-log", version = "0.0.0" }
 cadetta-lint = { path = "crates/cadetta-lint", version = "0.0.0" }
 cadetta-obligations = { path = "crates/cadetta-obligations", version = "0.0.0" }
 cadetta-sema = { path = "crates/cadetta-sema", version = "0.0.0" }
@@ -40,5 +41,5 @@ missing_docs = "warn"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
-print_stdout = "warn"
-print_stderr = "warn"
+print_stdout = "deny"
+print_stderr = "deny"

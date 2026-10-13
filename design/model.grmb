@@ -66,6 +66,17 @@ node lint : trusted {
   owns "crates/cadetta-lint/**";
 }
 
+/// The one owner of tracing subscriber setup, `CADETTA_LOG` filtering and secret redaction.
+node log : trusted {
+  kind component;
+  clearance Internal;
+  owns "crates/cadetta-log/Cargo.toml";
+  owns "crates/cadetta-log/src/init.rs";
+  owns "crates/cadetta-log/src/lib.rs";
+  owns "crates/cadetta-log/src/redact.rs";
+  owns "crates/cadetta-log/src/testing.rs";
+}
+
 /// The obligation graph, digests, staleness and `cadetta.lock` (obligations.md).
 node obligations : trusted {
   kind component;
@@ -163,6 +174,11 @@ flow f_ir_to_lint : ir -> lint {
 }
 
 flow f_ir_to_obligations : ir -> obligations {
+  label Internal;
+  transport in_process;
+}
+
+flow f_logging : cli -> log {
   label Internal;
   transport in_process;
 }

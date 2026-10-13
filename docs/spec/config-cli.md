@@ -196,7 +196,7 @@ nothing is exit 2.
 | Flag | Meaning |
 |---|---|
 | `--format text\|short\|github\|sarif\|json` | Output format (5); env `CADETTA_FORMAT`. |
-| `-v` / `-vv` | More logging (stderr). |
+| `-v` / `-vv` / `-vvv` | More logging on stderr: info, debug, trace (warn at 0); env `CADETTA_LOG` (tracing env-filter directives) overrides it, and an invalid filter is a usage error (exit 2). |
 | `--cwd DIR` | Start root discovery here (1). |
 | `--config FILE` | Use this `cadetta.toml`. |
 
@@ -206,7 +206,7 @@ the JSON report header records it so a historic result is reproducible.
 
 ## 5. Output formats
 
-stdout carries the command's output; stderr carries logs. The default is
+stdout carries the command's output; stderr carries logs. The `cadetta-log` crate is the only owner of subscriber setup (frob.toml `[invariants]` and clippy `print_stdout`/`print_stderr` enforce it). The default is
 `text` everywhere, whether or not stdout is a terminal; JSON is chosen
 only by `--format json` or `CADETTA_FORMAT`.
 
