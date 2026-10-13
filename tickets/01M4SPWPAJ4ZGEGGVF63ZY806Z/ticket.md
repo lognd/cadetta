@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `cadetta fmt --check` on unformatted source, when run, then it reports the files and changes none (config-cli.md 2)"
-bound = false
+bound = true
 +++
