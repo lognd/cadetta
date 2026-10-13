@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Bindings files and default name mangling"
+new = "Bindings files, multi-locator bindings and name mangling"
+at = "2026-10-13T05:01:25Z"
+actor = "lognd"
+rev = 1
