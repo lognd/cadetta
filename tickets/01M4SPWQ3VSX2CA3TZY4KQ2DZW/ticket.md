@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:36:29Z"
+updated = "2026-10-13T07:36:30Z"
 persona = "cadetta contributor"
 capability = "define Project, Component, Param, Value, Fit, Check, Waiver, Binding and Provenance"
 outcome_text = "every lint and adapter shares one model"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the entity list in ir.md 3, when modelled, then Project, Component, Member, Value, Exact, Inexact, Affine, Bound, Part, Fit, Check, Solver, Citation, Provenance and Binding exist with the listed fields"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Value, when built, then it holds nominal (Exact or Inexact), angle, optional Affine tol, conservative, optional designed and authored (ir.md 3)"
