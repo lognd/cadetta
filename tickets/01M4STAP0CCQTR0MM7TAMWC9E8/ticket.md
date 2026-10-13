@@ -2,7 +2,8 @@
 id = "01M4STAP0CCQTR0MM7TAMWC9E8"
 title = "std.materials (14 variants and Materials table)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
