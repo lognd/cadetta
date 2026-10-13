@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["editors/README.md"]
+new = ["crates/cadetta-cli/tests/editors_keywords.rs"]
+at = "2026-10-13T22:50:52Z"
+actor = "lognd"
+rev = 1

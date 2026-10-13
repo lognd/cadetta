@@ -481,6 +481,13 @@ fn defs() -> Map<String, J> {
         ),
     ));
     d.push((
+        "TolerancePolicy",
+        en(
+            "Whether a dimension locator's design tolerance is written (adapters.md 3.6).",
+            &["drive", "ignore"],
+        ),
+    ));
+    d.push((
         "ObservedFrame",
         obj(
             "A frame seen in a native document (observed flavour).",
@@ -511,6 +518,7 @@ fn defs() -> Map<String, J> {
             ("ref_to", s()), ("for", s()), ("config", s()),
             ("sign", json!({"description": "1, or -1 to negate a coordinate.", "type": "integer", "enum": [1, -1]})),
             ("component", s()), ("implicit", r("Implicit")),
+            ("tolerance", r("TolerancePolicy")),
         ],
     )));
     d.push((
@@ -964,6 +972,7 @@ mod tests {
             sign: Some(sign),
             component: Some("wheel<2>".into()),
             implicit: Some(crate::model::Implicit::Link),
+            tolerance: Some(crate::model::TolerancePolicy::Drive),
         };
         pr.bindings.push(Binding {
             path: p("a.b::C.d"),

@@ -1,0 +1,9 @@
+cite iso286: standard {
+  organization = "ISO"
+  number = "ISO 286-1"
+  title = "Geometrical product specifications (GPS)"
+  date = "2010-11"
+}
+model M {
+  a: Length = 5mm @iso286
+}

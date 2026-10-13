@@ -164,6 +164,7 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
         sign,
         component: text("component"),
         implicit,
+        tolerance: None,
     })
 }
 

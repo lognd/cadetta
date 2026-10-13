@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T22:56:08Z"
+digest = "273d515207f444dbcf1705713af76be319edb970f7bd74e6213791e3ae701235"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 09445b37-9f6e-4529-9738-2e7f30e71e8b with nextest profile: default
+    Starting 6 tests across 29 binaries (1003 tests skipped)
+        PASS [   0.030s] cadetta cmd::cite::tests::pin_rejects_missing_url_unknown_non_http_and_failed_downloads
+        PASS [   0.030s] cadetta cmd::cite::tests::pin_edits_a_single_line_body_and_unformatted_source_in_place
+        PASS [   0.030s] cadetta cmd::cite::tests::pin_stores_bytes_sets_file_keeps_url_and_adds_accessed
+        PASS [   0.030s] cadetta cmd::cite::tests::same_name_in_two_modules_is_ambiguous_unless_qualified
+        PASS [   0.032s] cadetta cmd::cite::tests::pin_replaces_an_earlier_file_and_keeps_an_existing_accessed
+        PASS [   0.032s] cadetta cmd::cite::tests::pin_matches_bare_relative_and_qualified_names
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.039s] 6 tests run: 6 passed, 1003 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cmd::cite::tests::pin_ cmd::cite::tests::same_name"
+size = 1117
+status = "measured"
+test_count = 6
+tests_digest = "1d60d8a13d9acf06ccb20edea46e6f16d2f7be14e064474404cf94893ac2921d"
+at = "2026-10-13T22:56:08Z"
+actor = "lognd"
+rev = 1

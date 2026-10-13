@@ -156,6 +156,7 @@ fn build_locator(a: &BindArgs) -> Result<Locator, String> {
         sign,
         component: a.component.clone(),
         implicit: None,
+        tolerance: None,
     })
 }
 

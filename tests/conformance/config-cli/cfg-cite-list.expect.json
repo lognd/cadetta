@@ -1,0 +1,17 @@
+{
+  "spec": "1.5",
+  "doc": "config-cli",
+  "section": "config-cli.md 3 (cite list)",
+  "rule": "cfg-cite-list",
+  "kind": "source",
+  "entry": "cite list --format ieee",
+  "note": "cite list numbers and renders the reached citations; a syntax error stops analysis with exit 2 (must-fire), a valid design lists with exit 0",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 2
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

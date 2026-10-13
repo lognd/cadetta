@@ -118,12 +118,15 @@ fn other_editors_are_present() {
 }
 
 // frob:ticket 01M4VHFFWS5EWZW087G98FFJ8V
-/// editors/README.md names the LSP deferral and the bridges, and the root README links it.
+/// editors/README.md leads with `cadetta lsp`, names what it lacks and keeps the bridges
+/// as a fallback, and the root README links it.
 #[test]
 fn editors_readme_indexes_and_root_links_it() {
     let r = read("editors/README.md");
     for needle in [
-        "QB9ANVQ",
+        "cadetta lsp",
+        "config-cli.md 3.8",
+        "0CXQ6EZ",
         "nvim-lint",
         "efm-langserver",
         "ALE",

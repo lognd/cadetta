@@ -1,6 +1,6 @@
 # Adapters conformance fixtures
 
-Fixtures for `docs/spec/adapters.md` (draft 1.4). Layout and the
+Fixtures for `docs/spec/adapters.md` (draft 1.5). Layout and the
 `expect.json` format are in `../README.md`; this file lists what is
 specific to this directory.
 

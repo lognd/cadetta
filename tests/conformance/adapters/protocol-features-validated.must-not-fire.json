@@ -1,0 +1,12 @@
+{
+  "initialize_result": {
+    "adapter": "fake",
+    "version": "1.0.0",
+    "capabilities": [
+      "drive"
+    ],
+    "features": [
+      "bogus"
+    ]
+  }
+}

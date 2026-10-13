@@ -128,7 +128,10 @@ pub fn parse_globals(
     let mut rest = Vec::new();
     let mut i = 0;
     while i < args.len() {
-        if let Some(v) = flag_value(args, &mut i, "--format")? {
+        // frob:ticket 01M4VB63RTQENVNZ4DMXBFGJX3
+        // `cite list` owns a `--format ieee|bibtex|json` of its own; leave it for the verb.
+        let cite_list = rest.len() >= 2 && rest[0] == "cite" && rest[1] == "list";
+        if !cite_list && let Some(v) = flag_value(args, &mut i, "--format")? {
             format = Some(v.parse::<Format>()?);
         } else if let Some(v) = flag_value(args, &mut i, "--cwd")? {
             if !std::path::Path::new(&v).is_dir() {
@@ -354,6 +357,19 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-cli/src/lib.rs::parse_globals
+    // frob:ticket 01M4VB63RTQENVNZ4DMXBFGJX3
+    #[test]
+    fn cite_list_keeps_its_own_format_flag() {
+        let (g, rest) =
+            parse_globals(&strings(&["cite", "list", "--format", "bibtex"]), None).unwrap();
+        assert_eq!(g.format, Format::Text);
+        assert_eq!(rest, strings(&["cite", "list", "--format", "bibtex"]));
+        let (g, rest) =
+            parse_globals(&strings(&["--format", "json", "cite", "list"]), None).unwrap();
+        assert_eq!(g.format, Format::Json);
+        assert_eq!(rest, strings(&["cite", "list"]));
+    }
+
     #[test]
     fn cwd_and_config_are_validated() {
         let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));

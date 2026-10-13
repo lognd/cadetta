@@ -62,26 +62,58 @@ pub fn run_impact(
     }
 }
 
-/// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.
+/// Run `cite pin NAME [--as-of DATE]` or `cite list [--format F] [--module PATH] [GLOB...]`.
+// frob:ticket 01M4VB63RTQENVNZ4DMXBFGJX3
 pub fn run_cite(
     args: &[String],
     globals: &Globals,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> u8 {
-    let [verb, name] = args else {
-        tracing::error!("usage: cadetta cite pin NAME");
-        let _ = writeln!(err, "error: usage: cadetta cite pin NAME");
-        return EXIT_USAGE;
+    const USAGE: &str = "usage: cadetta cite pin NAME [--as-of DATE] | cite list [--format ieee|bibtex|json] [--module PATH] [GLOB...]";
+    let result = match args.split_first() {
+        Some((verb, rest)) if verb == "pin" => cite_pin(rest, globals, out),
+        Some((verb, rest)) if verb == "list" => cite_list(rest, globals, out),
+        Some((verb, _)) => Err(format!("unknown cite verb `{verb}`; {USAGE}")),
+        None => Err(USAGE.to_owned()),
     };
-    if verb != "pin" {
-        tracing::error!(%verb, "unknown cite verb");
-        let _ = writeln!(
-            err,
-            "error: unknown cite verb `{verb}`; usage: cadetta cite pin NAME"
-        );
-        return EXIT_USAGE;
+    match result {
+        Ok(()) => EXIT_OK,
+        Err(message) => {
+            tracing::error!(%message, "cite failed");
+            let _ = writeln!(err, "error: {message}");
+            EXIT_USAGE
+        }
     }
+}
+
+/// `cite pin NAME [--as-of DATE]`: download the cited url and record it in the source.
+fn cite_pin(args: &[String], globals: &Globals, out: &mut dyn Write) -> Result<(), String> {
+    let mut name = None;
+    let mut as_of = None;
+    let mut i = 0;
+    while i < args.len() {
+        let arg = &args[i];
+        if let Some(v) = arg.strip_prefix("--as-of=") {
+            as_of = Some(v.to_owned());
+        } else if arg == "--as-of" {
+            i += 1;
+            as_of = Some(args.get(i).cloned().ok_or("--as-of needs a date")?);
+        } else if arg.starts_with("--") || name.is_some() {
+            return Err(format!(
+                "unexpected argument `{arg}`; usage: cadetta cite pin NAME [--as-of DATE]"
+            ));
+        } else {
+            name = Some(arg.clone());
+        }
+        i += 1;
+    }
+    let name = name.ok_or("usage: cadetta cite pin NAME [--as-of DATE]")?;
+    let today = match as_of {
+        Some(text) => cadetta_obligations::as_of::Date::parse(&text)
+            .map_err(|e| format!("--as-of {text}: {e}"))?,
+        None => cadetta_obligations::as_of::Date::today(),
+    };
     let fetch = |url: &str| -> Result<Vec<u8>, String> {
         let mut response = ureq::get(url).call().map_err(|e| e.to_string())?;
         response.body_mut().read_to_vec().map_err(|e| e.to_string())
@@ -96,24 +128,51 @@ pub fn run_cite(
         fetch: &fetch,
         write: &write,
     };
-    let result = Project::open(globals.cwd.as_deref(), globals.config.as_deref())
-        .map_err(|e| e.to_string())
-        .and_then(|(project, scope)| {
-            cite::pin(&project, &scope, name, &io).map_err(|e| e.to_string())
-        });
-    match result {
-        Ok(pinned) => {
-            let _ = writeln!(
-                out,
-                "pinned {name}: {} -> {} (blake3:{})",
-                pinned.url, pinned.local, pinned.digest
+    let (project, scope) = Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+        .map_err(|e| e.to_string())?;
+    let pinned = cite::pin(&project, &scope, &name, today, &io).map_err(|e| e.to_string())?;
+    let _ = writeln!(
+        out,
+        "pinned {name}: {} -> {} (blake3:{})",
+        pinned.url, pinned.local, pinned.digest
+    );
+    Ok(())
+}
+
+/// `cite list [--format F] [--module PATH] [GLOB...]`: the numbered reference list.
+fn cite_list(args: &[String], globals: &Globals, out: &mut dyn Write) -> Result<(), String> {
+    let mut format = None;
+    let mut rest = Vec::new();
+    let mut i = 0;
+    while i < args.len() {
+        if let Some(v) = args[i].strip_prefix("--format=") {
+            format = Some(v.to_owned());
+        } else if args[i] == "--format" {
+            i += 1;
+            format = Some(
+                args.get(i)
+                    .cloned()
+                    .ok_or("--format needs ieee, bibtex or json")?,
             );
-            EXIT_OK
+        } else {
+            rest.push(args[i].clone());
         }
-        Err(message) => {
-            tracing::error!(%message, "cite pin failed");
-            let _ = writeln!(err, "error: {message}");
-            EXIT_USAGE
-        }
+        i += 1;
     }
+    let format = match format {
+        Some(text) => text.parse::<cite::ListFormat>()?,
+        None if globals.format == crate::Format::Json => cite::ListFormat::Json,
+        None => cite::ListFormat::Ieee,
+    };
+    let parsed = emit::parse_args(&rest)?;
+    if !parsed.adapters.is_empty() {
+        return Err("cite list takes no adapter id".to_owned());
+    }
+    let run_scope =
+        crate::scope::Scope::new(&parsed.modules, &parsed.globs).map_err(|e| e.to_string())?;
+    let (project, scope) = Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+        .map_err(|e| e.to_string())?;
+    let text = cite::list(&project, &scope, &run_scope, format)?;
+    let _ = write!(out, "{text}");
+    Ok(())
 }

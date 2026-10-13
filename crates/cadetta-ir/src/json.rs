@@ -55,6 +55,7 @@ use crate::model::{
     Sign,
     Solver,
     SpanRef,
+    TolerancePolicy,
     Value,
     VerdictState,
     Verdicts,
@@ -119,6 +120,9 @@ str_enum!(LocatorKind {
 str_enum!(Implicit {
     Implicit::Global => "global", Implicit::Link => "link",
     Implicit::Frame => "frame", Implicit::Reference => "reference",
+});
+str_enum!(TolerancePolicy {
+    TolerancePolicy::Drive => "drive", TolerancePolicy::Ignore => "ignore",
 });
 str_enum!(LocatorMode { LocatorMode::Value => "value", LocatorMode::Ref => "ref" });
 
@@ -433,6 +437,7 @@ impl Serialize for Locator {
         opt(&mut m, "sign", &self.sign)?;
         opt(&mut m, "component", &self.component)?;
         opt(&mut m, "implicit", &self.implicit)?;
+        opt(&mut m, "tolerance", &self.tolerance)?;
         m.end()
     }
 }

@@ -11,6 +11,7 @@ use std::fmt;
 
 use cadetta_ir::model::{
     Binding, Implicit, Locator, LocatorKind, LocatorMode, MemberKind, Project, Sign,
+    TolerancePolicy,
 };
 use cadetta_ir::path::{Index, Path, PathContext, Seg};
 use serde::Deserialize;
@@ -119,6 +120,14 @@ struct RawLocator {
     config: Option<String>,
     sign: Option<i64>,
     component: Option<String>,
+    tolerance: Option<RawTolerance>,
+}
+
+#[derive(Deserialize, Clone, Copy)]
+#[serde(rename_all = "lowercase")]
+enum RawTolerance {
+    Drive,
+    Ignore,
 }
 
 #[derive(Deserialize, Clone, Copy)]
@@ -454,6 +463,7 @@ impl BindingSet {
                 sign: None,
                 component: None,
                 implicit: None,
+                tolerance: None,
             };
             if let Some(b) = self.entries.iter_mut().find(|b| b.path == pin.path) {
                 if replaced.contains(&pin.path) {
@@ -605,6 +615,10 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
         sign,
         component: l.component,
         implicit: None,
+        tolerance: l.tolerance.map(|t| match t {
+            RawTolerance::Drive => TolerancePolicy::Drive,
+            RawTolerance::Ignore => TolerancePolicy::Ignore,
+        }),
     };
     crate::locator::validate(&loc).map_err(|e| BindingsError::BadLocator {
         path: key.to_owned(),
@@ -761,6 +775,7 @@ fn implicit_locator(name: String, kind: LocatorKind, why: Implicit) -> Locator {
         sign: None,
         component: None,
         implicit: Some(why),
+        tolerance: None,
     }
 }
 
@@ -1237,6 +1252,7 @@ locators = [
                 sign: None,
                 component: None,
                 implicit: None,
+                tolerance: None,
             },
             nominal: Nominal::Exact(Exact(Magnitude::new(Rational::new(5, 1).unwrap(), 0))),
             dim: Dim::default(),
@@ -1566,6 +1582,7 @@ locators = [
             sign: Some(Sign::Minus),
             component: None,
             implicit: None,
+            tolerance: None,
         };
         assert_eq!(s.bind(&path, loc.clone()), Ok(true));
         assert_eq!(s.bind(&path, loc.clone()), Ok(false));

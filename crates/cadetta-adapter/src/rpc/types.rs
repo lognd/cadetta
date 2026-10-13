@@ -59,6 +59,65 @@ pub enum CapabilityName {
     Drive,
 }
 
+/// An optional adapter feature declared at `initialize` (adapters.md 5).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum Feature {
+    /// Reads frame transforms.
+    Frames,
+    /// Reads component transforms and reference properties.
+    Instances,
+    /// Creates and drives coordinate systems.
+    CreateFrames,
+    /// Reads and writes dimension tolerances (adapters.md 3.6).
+    Tolerances,
+    /// Renames globals in place.
+    RenameGlobals,
+}
+
+/// A dimension tolerance on the wire, as native-unit literals (adapters.md 3.6).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "form", rename_all = "snake_case", deny_unknown_fields)]
+pub enum DimTolerance {
+    /// `[+-t]`: the value plus or minus `t`.
+    Symmetric {
+        /// Half-width `t`.
+        t: String,
+    },
+    /// Asymmetric deviations from the value.
+    Bilateral {
+        /// Upper deviation (signed).
+        upper: String,
+        /// Lower deviation (signed).
+        lower: String,
+    },
+    /// Absolute limits (`.min`, `.max`); also the form when the emit point is not nominal.
+    Limits {
+        /// Lower limit.
+        min: String,
+        /// Upper limit.
+        max: String,
+    },
+    /// An ISO 286 class the tool names itself.
+    Fit {
+        /// The class, e.g. `H7`.
+        class: String,
+    },
+}
+
+impl std::fmt::Display for DimTolerance {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Symmetric { t } => write!(f, "+-{t}"),
+            Self::Bilateral { upper, lower } => write!(f, "+{upper}/{lower}"),
+            Self::Limits { min, max } => write!(f, "[{min}, {max}]"),
+            Self::Fit { class } => f.write_str(class),
+        }
+    }
+}
+
 /// Name and version of the calling host.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -95,6 +154,10 @@ pub struct InitializeResult {
     pub precision: u32,
     /// Platforms the adapter runs on (`linux`, `macos`, `windows`).
     pub platforms: Vec<String>,
+    /// Optional features (adapters.md 5); absent means none.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    #[serde(default)]
+    pub features: Vec<Feature>,
 }
 
 /// A file path with the digest of its bytes.
@@ -187,12 +250,27 @@ pub struct ReadParams {
     pub source: ReadSource,
 }
 
+/// The tolerance read back from one dimension locator (adapters.md 3.6).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ObservedTolerance {
+    /// The dimension locator.
+    pub locator: String,
+    /// Its tolerance; `None` when the dimension is untoleranced.
+    pub tolerance: Option<DimTolerance>,
+}
+
 /// Result of `read`.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ReadResult {
     /// The observed IR.
     pub observed: Value,
+    /// Dimension tolerances, only from adapters reporting `tolerances`.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub tolerances: Vec<ObservedTolerance>,
     /// Diagnostics.
     pub diagnostics: Vec<DiagRecord>,
 }
@@ -222,6 +300,10 @@ pub struct ChangedParam {
     /// Link target when `mode` is `ref`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ref_to: Option<String>,
+    /// The design tolerance to write with the value (adapters.md 3.6); only to `tolerances` adapters.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tolerance: Option<DimTolerance>,
 }
 
 /// Params of `push`.
@@ -262,6 +344,10 @@ pub struct LocatorStatus {
     pub old: Option<Value>,
     /// Value after the push, if known.
     pub new: Option<Value>,
+    /// Tolerance read back after the push, for adapters reporting `tolerances`.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tolerance: Option<DimTolerance>,
 }
 
 /// Result of `push`.

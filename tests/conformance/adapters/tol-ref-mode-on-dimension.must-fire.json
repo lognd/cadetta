@@ -1,0 +1,24 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ],
+    "features": [
+      "tolerances"
+    ],
+    "native_unit": "mm"
+  },
+  "design": {
+    "p.x": "12mm +-0.1mm"
+  },
+  "locators": {
+    "p.x": {
+      "kind": "dimension",
+      "locator": "D1@Sketch1",
+      "mode": "ref",
+      "ref_to": "W"
+    }
+  }
+}

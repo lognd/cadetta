@@ -164,7 +164,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations. | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
 | `ack SELECTOR --role R --reason "..." [--baseline] [--release] [--dry-run] [--as EMAIL]` | Attest at current digests; `--baseline` records reason `baseline` (obligations.md 4); `waiver:GLOB` records reviewed waivers' digests. | writes `cadetta.lock` | never | `ack.json` |
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
-| `cite pin NAME` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |
+| `cite pin NAME [--as-of DATE]` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |
 | `cite list [--format ieee\|bibtex\|json] [--module PATH] [GLOB...]` | The reference list of the citations the scoped design reaches (language.md 3.9.1). | reads | never | `cite-list.json` |
 | `names [ADAPTER-ID] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with a `read` adapter, reads CAD | R013 | `names.json` |
 | `bind PATH --adapter ID --locator L --kind K [--mode M] [--native-unit U] [--for ALT] [--config C] [--sign -1] [--component C] [--tolerance drive\|ignore]` / `bind --remove PATH --adapter ID --locator L` | Add or remove one explicit locator in `bindings/<id>.toml`, validated and written in canonical order. | writes the bindings file | never (errors exit 2) | `bind.json` |
@@ -275,6 +275,15 @@ to that path (replacing an earlier pinned path), keeps `url`, and adds
 `accessed` with the run's date (`--as-of`, else today) when the item has
 none. An item without `url`, or an unknown or ambiguous NAME, is a usage
 error (exit 2).
+
+Decided (0.1.0): `cite list` has its own `--format ieee|bibtex|json`,
+which is not the global `--format text|json`. Written after `cite list`,
+the flag is the verb's; written before the verb, `--format json` is the
+global flag and selects the json list. With neither, the list is IEEE
+plain text. The reference list covers the citations the scoped design
+reaches through the lowered IR (components and their members, and what
+they read); citations used only by tables or processes are listed once
+those are lowered.
 
 `names` and `bind` are what tools use instead of reimplementing the
 mangling rule or the bindings file format (solidworks.md 3). `names`

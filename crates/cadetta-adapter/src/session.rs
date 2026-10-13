@@ -241,6 +241,7 @@ mod tests {
             locator: "Sketch.d1".into(),
             mode: PushMode::Value,
             ref_to: None,
+            tolerance: None,
         }
     }
 

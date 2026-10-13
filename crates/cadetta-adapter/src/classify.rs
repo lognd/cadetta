@@ -129,6 +129,21 @@ mod tests {
         assert_eq!(Class::Push.r001_message(), None);
     }
 
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_is_part_of_the_compared_record
+    #[test]
+    fn tolerance_is_part_of_the_compared_record() {
+        use crate::rpc::DimTolerance;
+        use crate::sync::record_literal;
+        let t = |s: &str| DimTolerance::Symmetric { t: s.into() };
+        let base = record_literal("12mm", Some(&t("0.1mm")));
+        let same = record_literal("12mm", Some(&t("0.1mm")));
+        let edited = record_literal("12mm", Some(&t("0.3mm")));
+        assert_eq!(classify(Some(&base), &same, &same), Class::NoOp);
+        assert_eq!(classify(Some(&base), &same, &edited), Class::CadMoved);
+        assert!(classify(Some(&base), &same, &edited).is_r001());
+    }
+
     #[test]
     fn force_design_pushes_over_r001() {
         assert_eq!(Class::CadMoved.action(true), Action::Push);

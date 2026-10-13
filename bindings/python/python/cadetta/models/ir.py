@@ -240,6 +240,11 @@ class TableCol(BaseModel):
     type: str
 
 
+class TolerancePolicy(StrEnum):
+    drive = "drive"
+    ignore = "ignore"
+
+
 class VariantName(RootModel[str]):
     root: Annotated[str, Field(description="Full-form `SLOT=ALT` key text.")]
 
@@ -342,6 +347,7 @@ class Locator(BaseModel):
     sign: Annotated[
         Sign | None, Field(description="1, or -1 to negate a coordinate.")
     ] = None
+    tolerance: TolerancePolicy | None = None
 
 
 class Nominal(RootModel[Exact | Inexact]):

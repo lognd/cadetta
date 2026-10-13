@@ -7,8 +7,8 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-13T22:38:29Z"
-scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
+updated = "2026-10-13T23:01:53Z"
+scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md", "tests/conformance/obligations/**", "tests/conformance/adapters/**", "tests/conformance/emitters/**"]
 
 [[acceptance]]
 text = "Given the conformance corpus, when the runner executes, then every fixture kind (check, emit, emit-twice, emit-read, read, classify, sync, push-plan, protocol, import, impact-swap, binary and any other kind present) runs against the real CLI or adapter host and is compared with its expect.json; none is skipped silently"

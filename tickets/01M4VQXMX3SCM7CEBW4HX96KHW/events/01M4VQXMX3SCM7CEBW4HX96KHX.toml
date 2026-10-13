@@ -1,0 +1,13 @@
+kind = "create"
+title = "Conformance runner: executor for quantities binding check entries"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
+scope = ["crates/cadetta-cli/tests/**"]
+acceptance = ["Those fixtures execute and are compared; known-gaps.toml entries removed."]
+body = "found while working ~6BCVN48: quantities/ has 10 kind=binding entry=check fixtures needing the display formatter and emit point observable (see ~K2NMWYA, ~ZV526KN); no executor exists."
+at = "2026-10-13T23:00:20Z"
+actor = "lognd"
+rev = 1

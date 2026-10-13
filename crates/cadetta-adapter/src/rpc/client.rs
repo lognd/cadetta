@@ -137,6 +137,7 @@ impl<R: BufRead, W: Write> Client<R, W> {
                 native_units: String::new(),
                 precision: 0,
                 platforms: Vec::new(),
+                features: Vec::new(),
             },
             child,
         };
@@ -263,7 +264,24 @@ impl<R: BufRead, W: Write> Client<R, W> {
     /// Pushes changed parameters into a session; requires `drive`.
     pub fn push(&mut self, params: &PushParams) -> Result<PushResult, RpcError> {
         self.require(CapabilityName::Drive, "push")?;
+        // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+        if !self.has_feature(Feature::Tolerances)
+            && params.params.iter().any(|p| p.tolerance.is_some())
+        {
+            tracing::info!("adapter lacks the tolerances feature; tolerances not sent");
+            let mut stripped = params.clone();
+            for p in &mut stripped.params {
+                p.tolerance = None;
+            }
+            return self.call("push", &stripped);
+        }
         self.call("push", params)
+    }
+
+    /// Whether the adapter reported `feature` at `initialize`.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    pub fn has_feature(&self, feature: Feature) -> bool {
+        self.info.features.contains(&feature)
     }
 
     /// Regenerates targets in a session; requires `drive`.
@@ -330,6 +348,68 @@ mod tests {
             out.push('\n');
         }
         Cursor::new(out.into_bytes())
+    }
+
+    fn init_features(features: Value) -> Value {
+        let mut v = init("1.0.0", &["drive"]);
+        v["features"] = features;
+        v
+    }
+
+    fn tol_push() -> PushParams {
+        PushParams {
+            session: "s1".into(),
+            file: "a.FCStd".into(),
+            params: vec![ChangedParam {
+                path: "p.x".into(),
+                value: json!("12 mm"),
+                locator: "D1@Sketch".into(),
+                mode: PushMode::Value,
+                ref_to: None,
+                tolerance: Some(DimTolerance::Symmetric { t: "0.1 mm".into() }),
+            }],
+        }
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests initialize_features_accepted_and_validated
+    #[test]
+    fn initialize_features_accepted_and_validated() {
+        let c = Client::connect(
+            script(&[init_features(json!(["frames", "tolerances"]))]),
+            Vec::new(),
+            None,
+        )
+        .unwrap();
+        assert!(c.has_feature(Feature::Tolerances));
+        assert!(c.has_feature(Feature::Frames));
+        assert!(!c.has_feature(Feature::RenameGlobals));
+        let bare = Client::connect(script(&[init("1.0.0", &["drive"])]), Vec::new(), None).unwrap();
+        assert!(!bare.has_feature(Feature::Tolerances));
+        assert!(
+            Client::connect(script(&[init_features(json!(["bogus"]))]), Vec::new(), None).is_err()
+        );
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_sent_only_with_feature
+    #[test]
+    fn tolerance_sent_only_with_feature() {
+        let pushed = json!({"statuses": [], "diagnostics": []});
+        let sent = |features: Value| {
+            let mut out = Vec::new();
+            let mut c = Client::connect(
+                script(&[init_features(features), pushed.clone()]),
+                &mut out,
+                None,
+            )
+            .unwrap();
+            c.push(&tol_push()).unwrap();
+            drop(c);
+            String::from_utf8(out).unwrap().contains("\"tolerance\"")
+        };
+        assert!(sent(json!(["tolerances"])));
+        assert!(!sent(json!([])));
     }
 
     // frob:ticket 01M4SPWRS0CDJT4GYC92AB1HCD
@@ -402,6 +482,7 @@ mod tests {
                     locator: "Sketch.d1".into(),
                     mode: PushMode::Value,
                     ref_to: None,
+                    tolerance: None,
                 }],
             })
             .unwrap();
