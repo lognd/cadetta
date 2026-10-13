@@ -431,6 +431,28 @@ one key per section, in order: `verdict`, `values_changed`,
 `attestations_invalidated`, `commercial_deltas`. The schemas (above) are generated with the implementation;
 until then this section is normative.
 
+Implementation rules for sections 5 to 7 (decided, frob ticket C8VKPXW):
+
+- **File of a locator**: the text after its last `@` when that has a file
+  extension (`Rover.SLDPRT`); otherwise the adapter's globals, printed
+  `(<adapter> globals)`.
+- **Stale**: a bound path is stale when it is in the values-changed set,
+  or it has a locator `for = "NEW"`. A `for` locator for another
+  alternate is inactive and never makes a file stale. Replace actions
+  come from locators carrying a `component` instance, and name the first
+  `for = "NEW"` locator without a `component` as the new file.
+- **Attestations**: an attestation on a check is listed when its covered
+  closure (the check and every transitive dependency) meets the changed
+  values, the flipped checks and the slot itself; the count is the size of
+  that intersection.
+- **Roll-ups** walk the parts of the assembly with `NEW` replacing the
+  slot's primary, multiplying counts through sub-assemblies. A component
+  that declares the member supplies it (its variant value for the swap
+  when present) and stops the descent; one that lacks it but has parts is
+  descended into; otherwise the part is listed as lacking a value. Inexact
+  terms are skipped with a warning. Mass prints in kg, lead time in days.
+  The percent change is shown only when the old value is non-zero.
+
 `compare IFACE` is the same evaluation for every implementer of the
 interface in every slot typed by it, as a table. Its commercial columns
 are the members of `std::commercial::Sourced`.

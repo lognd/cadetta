@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T13:57:47Z"
+updated = "2026-10-13T14:06:32Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
 labels = ["creates:bindings/python/python/cadetta/project.py", "creates:bindings/python/python/cadetta/models/**", "creates:bindings/python/tests/test_project.py"]
-scope = ["bindings/python/python/cadetta/project.py", "bindings/python/python/cadetta/models/**", "bindings/python/tests/test_project.py"]
+scope = ["bindings/python/python/cadetta/project.py", "bindings/python/python/cadetta/models/**", "bindings/python/tests/test_project.py", "bindings/python/src/quantity.rs", "bindings/python/Cargo.toml", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "docs/spec/bindings.md", "Cargo.lock"]
 
 [[links]]
 kind = "blocked-by"
