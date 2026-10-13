@@ -763,6 +763,16 @@ ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
 
 [[gap]]
+fixture = "geometry/aligned-tolerance-range"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet; the computation is cadetta_geometry::aligned"
+
+[[gap]]
+fixture = "geometry/distance-axial-component"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet; the computation is cadetta_geometry::aligned"
+
+[[gap]]
 fixture = "geometry/aligned-xy-plane-only"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"

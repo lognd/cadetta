@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Geometry diagnostics G001-G007 not emitted"
+new = "Geometry diagnostics G001-G008 emitted by check"
+at = "2026-10-13T23:29:30Z"
+actor = "lognd"
+rev = 1

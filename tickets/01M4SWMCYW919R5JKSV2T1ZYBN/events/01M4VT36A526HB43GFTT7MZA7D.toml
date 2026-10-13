@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T23:38:19Z"
+digest = "ebf96ada0386c6b3acc75b10a36fe2d7b20cdd6ec02f0029139a74255ed29302"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e1cc819e-09a4-4c2d-98bb-ec25b9c571c5 with nextest profile: default
+    Starting 4 tests across 29 binaries (1031 tests skipped)
+        PASS [   0.005s] cadetta-ir observed::tests::observed_transform_must_be_three_by_four
+        PASS [   0.005s] cadetta-ir observed::tests::observed_frames_and_instances_round_trip
+        PASS [   0.006s] cadetta-adapter rpc::types::tests::schema_file_matches_types
+        PASS [   0.007s] cadetta-ir schema::tests::schema_file_matches_types
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 4 tests run: 4 passed, 1031 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(observed_frames_and_instances_round_trip) | test(observed_transform_must_be_three_by_four) | test(schema_file_matches_types)'"
+size = 823
+status = "measured"
+test_count = 4
+tests_digest = "fbb2444cc89f85a1d578d30e169236f1a7f1e8dc354e8015b4d99a2da55f87b2"
+at = "2026-10-13T23:38:19Z"
+actor = "lognd"
+rev = 1

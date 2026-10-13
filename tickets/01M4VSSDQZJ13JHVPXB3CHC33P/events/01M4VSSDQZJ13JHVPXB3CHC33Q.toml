@@ -1,0 +1,10 @@
+kind = "create"
+title = "Counterbore data for ButtonHead and FlatHead (ISO 7380, ISO 10642)"
+type = "story"
+category = "todo"
+priority = "medium"
+scope = ["std/src/fasteners/**"]
+body = "found while working ~XCK8EGP: head argument accepts ButtonHead/FlatHead but only Iso4762Head has counterbore data; counterbore = true with them is undiagnosed."
+at = "2026-10-13T23:32:59Z"
+actor = "lognd"
+rev = 1

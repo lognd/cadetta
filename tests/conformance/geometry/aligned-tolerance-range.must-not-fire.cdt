@@ -1,0 +1,18 @@
+model Rail {
+  datum top = origin.offset(z = 30mm)
+  datum site = top.offset(x = 40mm)
+  tapped: [Point2 on site; 2] = [Point2(-25mm, 0mm), Point2(25mm, 0mm)] [+-0.05mm]
+}
+
+model Bracket {
+  datum base = origin
+  holes: [Point2 on base; 2] = [Point2(-25mm, 0mm), Point2(25mm, 0mm)] [+-0.05mm]
+}
+
+assembly Mount {
+  part rail: Rail
+  part bracket: Bracket
+  place rail.origin at origin
+  place bracket.base at rail.site
+  check al: aligned(bracket.holes, rail.tapped, 0.25mm) "holes line up"
+}

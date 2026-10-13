@@ -1,0 +1,6 @@
+model M {
+  datum top = origin.offset(z = 0.3mm)
+  a: Point2 on origin = Point2(0mm, 0mm)
+  b: Point2 on top = Point2(0mm, 0mm)
+  check near: distance(a in top, b in top) <= 0.25mm "points close"
+}
