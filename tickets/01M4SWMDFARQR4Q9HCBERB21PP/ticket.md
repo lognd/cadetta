@@ -19,6 +19,10 @@ scope = ["adapters/solidworks/src/session.py"]
 kind = "blocked-by"
 target = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SV3AAC44Q1DCE44GG3XB6W"
+
 [[acceptance]]
 text = "Given a running SOLIDWORKS, when open runs, then the adapter attaches; otherwise it starts one hidden (adapters.md 2.2)"
 bound = false
