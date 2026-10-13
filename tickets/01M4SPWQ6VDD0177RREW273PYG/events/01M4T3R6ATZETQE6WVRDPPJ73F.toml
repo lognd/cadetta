@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:48:35Z"
+digest = "614927ded8a21ac4f005127615c91e5b02d4c1862ff4d25d234e2360a1889180"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1a6e4389-eb02-490c-9588-fa22f15bd601 with nextest profile: default
+    Starting 1 test across 1 binary (29 tests skipped)
+        PASS [   0.011s] cadetta-ir json::tests::json_no_magnitude_float
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 29 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir -E test(=json::tests::json_no_magnitude_float)"
+size = 640
+status = "measured"
+test_count = 1
+tests_digest = "aab1a43b764d7d6966147242b237946ad8067f5d8b898f8e157916b288de2cc1"
+at = "2026-10-13T07:48:35Z"
+actor = "lognd"
+rev = 1
