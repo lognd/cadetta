@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given two requirements on one package that no single version meets, when resolved, then E013 fires and no second copy is loaded (packages.md 1, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given transitive dependencies, when resolved, then the whole project has exactly one version of each package, deterministically ordered (packages.md 1)"
