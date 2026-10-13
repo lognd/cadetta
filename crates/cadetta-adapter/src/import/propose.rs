@@ -189,7 +189,8 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
 
 /// Renders the `.cdt` scaffold: one `model` per file with its accepted items.
 pub fn render_cdt(p: &Proposal) -> String {
-    let mut out = String::from("// Import scaffold; edit proposal.toml, then run `import --accept`.\n");
+    let mut out =
+        String::from("// Import scaffold; edit proposal.toml, then run `import --accept`.\n");
     let mut files: Vec<&str> = p.items.iter().map(|i| i.file.as_str()).collect();
     files.dedup();
     for file in files {
@@ -220,8 +221,7 @@ pub fn render_cdt(p: &Proposal) -> String {
 pub fn write_proposal(root: &FsPath, p: &Proposal) -> Result<Vec<PathBuf>, ProposeError> {
     let dir = root.join(PROPOSAL_DIR);
     fs::create_dir_all(&dir).map_err(|e| ProposeError::Io(dir.clone(), e))?;
-    let toml_text =
-        toml::to_string(p).map_err(|e| ProposeError::Serialize(e.to_string()))?;
+    let toml_text = toml::to_string(p).map_err(|e| ProposeError::Serialize(e.to_string()))?;
     let files = [
         (dir.join(PROPOSAL_TOML), toml_text),
         (dir.join(PROPOSAL_CDT), render_cdt(p)),
@@ -271,9 +271,12 @@ mod tests {
             version: "0.0.0".into(),
         };
         let mut b = ObservedBuilder::new(pkg, "solidworks", "cover_plate.SLDPRT").unwrap();
-        b.push(param("B", 5, unit_assumed, LocatorMode::Value)).unwrap();
-        b.push(param("A", 10, unit_assumed, LocatorMode::Value)).unwrap();
-        b.push(param("D1", 3, unit_assumed, LocatorMode::Ref)).unwrap();
+        b.push(param("B", 5, unit_assumed, LocatorMode::Value))
+            .unwrap();
+        b.push(param("A", 10, unit_assumed, LocatorMode::Value))
+            .unwrap();
+        b.push(param("D1", 3, unit_assumed, LocatorMode::Ref))
+            .unwrap();
         b.build()
     }
 
