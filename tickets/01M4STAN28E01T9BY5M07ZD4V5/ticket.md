@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:16:06Z"
+updated = "2026-10-13T07:18:14Z"
 persona = "design engineer"
 capability = "run solvers over stdio or files with a configured command"
 idempotency_key = "replan13:Solver transports and command template"
 labels = ["creates:crates/cadetta-solvers/src/transport.rs"]
-scope = ["crates/cadetta-solvers/src/transport.rs"]
+scope = ["crates/cadetta-solvers/src/transport.rs", "crates/cadetta-solve/src/transport.rs", "crates/cadetta-solve/src/lib.rs", "docs/spec/solvers.md", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocks"
