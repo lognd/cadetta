@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T13:34:28Z"
+updated = "2026-10-13T13:34:29Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given paths, when ordered, then dependency order with ties by canonical path, globals then dimensions in bindings-file order (emitters/sw-equations.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a file with expressions, functions or IIF, when read, then expressions become observed-IR expressions and unparseable lines are kept with exact:false and the raw text (emitters/sw-equations.md 3)"
