@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T06:21:21Z"
+updated = "2026-10-13T06:23:17Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -21,7 +21,7 @@ target = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 
 [[acceptance]]
 text = "Given the config-cli.md sample, when loaded, then all sections parse"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unknown key, when loaded, then a diagnostic names it"
