@@ -1,0 +1,7 @@
+kind = "field"
+field = "labels"
+old = ["creates:crates/cadetta-lint/src/rules/s.rs", "creates:tests/lints/S*/**"]
+new = ["creates:crates/cadetta-lint/src/rules/s.rs", "creates:tests/conformance/lints/S*/**"]
+at = "2026-10-13T05:46:30Z"
+actor = "lognd"
+rev = 1
