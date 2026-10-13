@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T07:57:30Z"
+digest = "7de53bd055f8dd89bd7002aba895780e120160fee9b3fd3cb92fefc8caadf7f3"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a409fd33-408e-4adc-a8da-5b9f7e3dbb54 with nextest profile: default
+    Starting 1 test across 1 binary (53 tests skipped)
+        PASS [   0.005s] cadetta-obligations lock_package::tests::digest_ignores_order_and_separator_not_content
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 53 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E 'test(=lock_package::tests::digest_ignores_order_and_separator_not_content)'"
+size = 576
+status = "measured"
+test_count = 1
+tests_digest = "026d69fb5e3508ca78ab6941a91b20baf707c0521e0de5406eb899375e22ae9d"
+at = "2026-10-13T07:57:30Z"
+actor = "lognd"
+rev = 1

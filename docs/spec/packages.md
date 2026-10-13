@@ -36,6 +36,12 @@ src = "src"                  # module root (default "src")
   name, version, source, and the digest of its content
   (obligations.md 3). `cadetta update [NAME]` re-resolves. A dependency
   whose content no longer matches its pinned digest is E014.
+  The content digest is BLAKE3 over the package's files sorted by path
+  relative to the package root (`/` separators), each path and file
+  length-prefixed, so it is independent of checkout location and file
+  enumeration order. It enters the closure digest of every reader as the
+  own digest of the node `package:NAME`. `cadetta update` replaces the
+  record outright.
 - A **workspace** is a directory whose `cadetta.toml` has `[workspace]
   members = ["rover", "crawler", "shop"]`. Members share one lock and
   one `build/`, and depend on each other by path. A product line with a
