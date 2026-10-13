@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:50:16Z"
+updated = "2026-10-13T09:50:19Z"
 persona = "design engineer"
 capability = "get lints for the C family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `a == b` on toleranced operands, when linted, then C003 warning suggests `.nominal` accessors (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check reading an arithmetic parameter with toleranced inputs and no tolerance of its own, when linted, then C004 info suggests `let` (quantities.md 5.3)"
