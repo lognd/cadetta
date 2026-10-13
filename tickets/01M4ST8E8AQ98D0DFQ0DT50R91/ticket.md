@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T07:26:00Z"
+updated = "2026-10-13T07:26:01Z"
 persona = "design engineer"
 capability = "declare what a design needs from a part and have implementers checked against it"
 idempotency_key = "replan13:Interface declarations and implementation checking"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a component `: Caster` lacking a member, when checked, then I001 is raised and cannot be waived (language.md 3.2, lints.md I)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an implementer violating an interface bound, when checked, then C001 is raised against that implementer (language.md 3.2)"
