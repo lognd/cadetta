@@ -77,6 +77,13 @@ Engagement and tap class are shop policy, not published constants.
 `CastIron` (ASTM A48 class 30) has no yield point, so its
 `yield_strength` holds the minimum tensile strength as a stand-in.
 
+`Din471`/`Din472` decisions: keyed by nominal shaft/bore d1 in mm (Din471
+3 to 75, Din472 8 to 75, preferred sizes only); `groove_dia` carries `h10`
+(shaft) or `H11` (bore) and `groove_width` carries `H13`; `ring_thickness`
+is the nominal s (its deviation is written on the `ots`, golden 02);
+`edge_margin` is the minimum n and untoleranced. Figures were entered
+from recall and must be verified by the std citation audit.
+
 Values are stated as the standard publishes them. A dimension published
 as a limit is stored with that tolerance (`head_height` is
 `[+0 -x]` from its maximum; `Din472.groove_dia` and `groove_width`
