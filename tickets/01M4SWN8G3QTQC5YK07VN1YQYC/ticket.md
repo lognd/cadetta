@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T05:44:44Z"
+updated = "2026-10-13T05:44:45Z"
 persona = "design engineer"
 capability = "script against stable JSON"
 idempotency_key = "replan14:cli-schemas"
 labels = ["creates:docs/schemas/*.json"]
 scope = ["docs/schemas/*.json"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWQANZ48Y8HG2X84RNK2D"
 
 [[links]]
 kind = "blocked-by"
