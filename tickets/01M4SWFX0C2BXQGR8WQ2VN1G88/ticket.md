@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:01:52Z"
+updated = "2026-10-13T07:01:55Z"
 persona = "design engineer"
 capability = "write datum, point and placement syntax"
 idempotency_key = "replan14:geo-parse"
@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a member named origin, when parsed, then it is an error because origin is reserved (geometry.md 2)"
-bound = false
+bound = true
 +++
