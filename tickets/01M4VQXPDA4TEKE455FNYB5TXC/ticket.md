@@ -2,13 +2,13 @@
 id = "01M4VQXPDA4TEKE455FNYB5TXC"
 title = "Geometry in check: evaluate datums, points, patterns and placements through cadetta-geometry and lower them to the IR"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-13T23:29:29Z"
+updated = "2026-10-13T23:46:50Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**"]
 
 [[acceptance]]
