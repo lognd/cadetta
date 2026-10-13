@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:10Z"
-updated = "2026-10-13T09:31:33Z"
+updated = "2026-10-13T09:31:34Z"
 persona = "design engineer"
 capability = "know what a sync will do"
 idempotency_key = "replan14:ad-classify"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the emit-point header, when computing no-op, then it is excluded; with --force-design a CAD-moved value is pushed instead of R001 (adapters.md 2)"
-bound = false
+bound = true
 +++
