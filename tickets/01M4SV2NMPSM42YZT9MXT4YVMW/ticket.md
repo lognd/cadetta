@@ -8,12 +8,16 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T05:17:02Z"
+updated = "2026-10-13T05:17:03Z"
 persona = "Python user"
 capability = "open a project and read the evaluated design"
 outcome_text = "I can script against values without parsing JSON"
 labels = ["creates:bindings/python/python/cadetta/project.py", "creates:bindings/python/python/cadetta/models/**", "creates:bindings/python/tests/test_project.py"]
 scope = ["bindings/python/python/cadetta/project.py", "bindings/python/python/cadetta/models/**", "bindings/python/tests/test_project.py"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
 [[acceptance]]
 text = "Given a project path, when Project.open then evaluate run, then a typani Result wraps the design IR as pydantic models generated from the IR JSON schema (bindings.md 3.1, 3.2)"
