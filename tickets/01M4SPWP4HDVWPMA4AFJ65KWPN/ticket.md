@@ -2,7 +2,8 @@
 id = "01M4SPWP4HDVWPMA4AFJ65KWPN"
 title = "Expression grammar with tolerance, ISO class, attributes and citations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
