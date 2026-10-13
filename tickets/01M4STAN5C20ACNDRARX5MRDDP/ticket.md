@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:26:43Z"
+updated = "2026-10-13T07:26:44Z"
 persona = "design engineer"
 capability = "keep solver results in the repo keyed by their inputs"
 idempotency_key = "replan13:Result files keyed by input digest"
 labels = ["creates:crates/cadetta-solvers/src/results.rs"]
-scope = ["crates/cadetta-solvers/src/results.rs", "crates/cadetta-solve/src/results.rs", "crates/cadetta-solve/src/lib.rs", "crates/cadetta-solve/Cargo.toml"]
+scope = ["crates/cadetta-solvers/src/results.rs", "crates/cadetta-solve/src/results.rs", "crates/cadetta-solve/src/lib.rs", "crates/cadetta-solve/Cargo.toml", "Cargo.lock"]
 
 [[links]]
 kind = "blocks"
