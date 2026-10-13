@@ -828,6 +828,7 @@ impl Parser<'_> {
     fn pdecl(&mut self) -> PResult<ParamDecl> {
         let start = self.start();
         let name = self.expect_ident()?;
+        let optional = self.eat_p(Punct::Question);
         self.expect_p(Punct::Colon)?;
         let ty = self.ty()?;
         let default = if self.eat_p(Punct::Eq) {
@@ -839,6 +840,7 @@ impl Parser<'_> {
             name,
             ty,
             default,
+            optional,
             span: self.span_from(start),
         })
     }

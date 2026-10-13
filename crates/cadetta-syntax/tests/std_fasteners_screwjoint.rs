@@ -98,7 +98,7 @@ fn public_members_are_exactly_the_spec_list() {
     want.sort();
     assert_eq!(public, want);
     assert!(!private.is_empty());
-    for p in ["major", "pitch", "head", "column", "drill_nominal"] {
+    for p in ["major", "pitch", "head_data", "column", "drill_nominal"] {
         assert!(private.contains(&p.to_owned()), "{p}");
     }
 }
@@ -107,17 +107,17 @@ fn public_members_are_exactly_the_spec_list() {
 #[test]
 fn derived_formulas_match_the_spec() {
     for line in [
-        "min_engagement = policy.engagement[into].factor * major",
+        "min_engagement = policy.engagement[material].factor * major",
         "grip = clamp - counterbore_depth",
         "screw_length = policy.lengths.at_least(grip + min_engagement).key",
-        "part screw[count]: Iso4762(thread, screw_length)",
+        "part screw[n]: Iso4762(thread, screw_length, screw_cost)",
         "float = (clearance_hole - major) / 2",
         "tap_drill = policy.drills.at_least(drill_nominal).key",
         "thread_depth = screw_length - grip + policy.bottom_clearance",
         "drill_depth = thread_depth + policy.tap_lead_in * pitch + policy.drill_point * tap_drill",
-        "callout = fmt(\"{} - 6H, {} DP; drill {} DP {}\", thread, thread_depth, tap_drill, drill_depth)",
+        "fmt(\"{} - 6H, {} DP; drill {} DP {}\", thread, thread_depth, tap_drill, drill_depth)",
         "Iso273[thread].medium",
-        "head.counterbore_depth",
+        "head_data.counterbore_depth",
     ] {
         assert!(SRC.contains(line), "{line}");
     }

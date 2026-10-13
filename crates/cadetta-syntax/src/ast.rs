@@ -384,7 +384,7 @@ pub enum ComponentClass {
     Assembly,
 }
 
-/// A parameter declaration `name: Type [= default]`.
+/// A parameter declaration `name[?]: Type [= default]`; `?` marks an optional argument (language.md 3.3).
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct ParamDecl {
     /// The parameter name.
@@ -393,6 +393,8 @@ pub struct ParamDecl {
     pub ty: Type,
     /// The default, when given.
     pub default: Option<Expr>,
+    /// True for `name?: Type`: the argument may be omitted and is then absent.
+    pub optional: bool,
     /// Where it is.
     pub span: Span,
 }

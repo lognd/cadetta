@@ -106,7 +106,7 @@ margins. Sizes we make (`Iso273` holes, `counterbore_dia`, tap drills)
 are nominal and untoleranced: the hole's tolerance is the user's (a
 class, or the CAD default), and M003 applies when it is a fit side.
 
-Part families read these: `std::fasteners::Iso4762(thread, length)` has
+Part families read these: `std::fasteners::Iso4762(thread, length, unit_cost?)` has
 members `thread major pitch length head_dia head_height mass` and
 implements `std::fasteners::Screw`. It accepts any length; preferred
 lengths only constrain what `ScrewJoint` picks.
@@ -198,16 +198,38 @@ A heat-set insert in 0.1.0 is `tap = Vendor` with `into = Brass360` and
 member reads itself (D003 is per member, language.md 4).
 
 `ScrewJoint` lives in `std/src/fasteners/screwjoint.cdt` with the enums
-`ClearanceClass` (`Fine Medium Coarse`) and `TapKind` (`Cut Form`). Decisions:
+`ClearanceClass` (`Fine Medium Coarse`), `TapKind` (`Cut Form Vendor`) and
+`HeadKind` (`SocketHead ButtonHead FlatHead`). Decisions:
 members are public unless written `priv`, so the public members are exactly
-the table above and the intermediates (`major`, `pitch`, `head`, `column`,
-`drill_nominal`) are `priv`; the shop numbers (engagement factor, tap
+the table above plus the arguments and the intermediates (`major`, `pitch`,
+`head_data`, `column`, `drill_nominal`, `material`, `n`, `depth_needed`)
+are `priv`; the shop numbers (engagement factor, tap
 column, preferred lengths, drills, depth allowances) are read from the
 `policy` argument; without `counterbore` the pocket members are `0mm`, so
 `grip` is `clamp`; `float` is the fixed-fastener allowance `(clearance_hole
 - major) / 2`; the tap drill is the policy's column rounded `at_least` into
-`policy.drills`. The `tap = Vendor` form, the `head`, `at`, `onto`, `host`
-and `nut` arguments and the checks arrive with the arguments-and-checks story.
+`policy.drills`.
+
+Arguments without a neutral value are optional parameters, written
+`name?: Type` (language.md 3.3): `into`, `host`, `count`, `depth_available`,
+`screw_cost`, `at` and `onto`. An omitted optional argument is absent, and
+`given(name)` tests for it. The joint's `material` is `into` when given,
+else `host.material`; the screw count `n` is `count(at)`, else `count`,
+else 1. Presence rules are attributes (language.md 3.11): `#[when(cond)]`
+on a member or check makes it exist only while `cond` holds (reading an
+absent member is E002), and `#![requires(arg, when = cond)]` makes an
+argument mandatory under a condition (E006 when missing). So `tap_drill`,
+`drill_depth`, `column` and `drill_nominal` carry `#[when(tap !=
+TapKind::Vendor)]`, `depth_ok` carries `#[when(given(depth_available))]`,
+`aligned` carries `#[when(given(at) and given(onto))]`, and `tap = Vendor`
+requires `depth_available`. `head` is an argument, so the internal head
+table row is `head_data`. `Iso4762` takes an optional `unit_cost`, which
+the joint fills from `screw_cost`. The `engaged` check is
+`screw_length - grip >= min_engagement`; the other checks are as listed
+above. `aligned` uses the fixed allowance only; the `nut` floating
+allowance, `locating` and the placement float arrive with the geometry
+tickets. `ButtonHead` and `FlatHead` have no counterbore data yet, so
+`counterbore = true` is only meaningful for `SocketHead`.
 
 Change `into = base.material` from aluminium to stainless and the tap
 drill, engagement, screw length, thread and drill depths and callout all
@@ -231,7 +253,7 @@ interface FastenerPolicy {
 
 Table-typed members (language.md 3.3) are how `std` passes rules as
 data; user interfaces may use them too. Screw prices are not policy:
-`Iso4762` has no `unit_cost`, so screws are listed as missing by
+`Iso4762` takes an optional `unit_cost`, so screws are listed as missing by
 `sum?(self, unit_cost)` until the joint is given `screw_cost`.
 `std::fasteners::IsoDefault` is the cited default and the template to
 copy: engagement factors and tap columns from `Materials`, lengths from

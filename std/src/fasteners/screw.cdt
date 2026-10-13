@@ -37,8 +37,8 @@ pub interface Screw {
   mass: Mass
 }
 
-/// ISO 4762 hexagon socket head cap screw of any thread size and length.
-pub ots Iso4762(thread: MetricThread, length: Length): Screw @iso4762 {
+/// ISO 4762 hexagon socket head cap screw of any thread size and length; unit_cost is optional (a joint's screw_cost).
+pub ots Iso4762(thread: MetricThread, length: Length, unit_cost?: Money): Screw @iso4762 {
   major       = Thread[thread].major
   pitch       = Thread[thread].pitch
   head_dia    = Iso4762Head[thread].head_dia

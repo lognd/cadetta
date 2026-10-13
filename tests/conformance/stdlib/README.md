@@ -5,4 +5,6 @@ are `check` (runs today) or `eval` (value fixtures; the runner cannot
 execute non-check entries yet, ticket ~6BCVN48). Failing `check`
 fixtures are listed in `../known-gaps.toml` against ~N8G7AVG, ~6K58FR1
 and ~PGR0M75. The `engaged` joint check has no must-fire fixture (see
-stdlib.md, Conformance decisions).
+stdlib.md, Conformance decisions): `check-engaged` holds the same clean
+joint in both files because the runner needs a pair; both expect no
+diagnostics.

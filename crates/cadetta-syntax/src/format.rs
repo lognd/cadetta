@@ -764,7 +764,8 @@ impl Printer<'_> {
     }
 
     fn pdecl(&self, p: &ParamDecl) -> String {
-        let mut s = format!("{}: {}", p.name.name, self.ty(&p.ty));
+        let q = if p.optional { "?" } else { "" };
+        let mut s = format!("{}{q}: {}", p.name.name, self.ty(&p.ty));
         if let Some(d) = &p.default {
             s.push_str(&format!(" = {}", self.expr(d)));
         }

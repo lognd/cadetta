@@ -1,6 +1,7 @@
 //! ScrewJoint visibility over the real std source: priv intermediates are E016 cross-package (packages.md 3).
 
 // frob:ticket 01M4STAPCEF5EPEYX0MZDSBA7J
+// frob:ticket 01M4STAPFPQ9GV8XJB4XCK8EGP
 
 use cadetta_sema::resolve::{Ctx, ModuleSrc, PackageSrc, Resolver};
 use cadetta_sema::visibility::VisibilityChecker;
@@ -61,7 +62,17 @@ fn read(member: &str) -> Result<(), &'static str> {
 // frob:tests crates/cadetta-sema/tests/std_screwjoint.rs::priv_intermediates_are_e016_and_public_members_read kind=unit
 #[test]
 fn priv_intermediates_are_e016_and_public_members_read() {
-    for m in ["major", "pitch", "head", "column", "drill_nominal"] {
+    for m in [
+        "major",
+        "pitch",
+        "head_data",
+        "column",
+        "drill_nominal",
+        "material",
+        "n",
+        "engagement",
+        "depth_needed",
+    ] {
         assert_eq!(read(m), Err("E016"), "{m}");
     }
     for m in [
@@ -72,6 +83,7 @@ fn priv_intermediates_are_e016_and_public_members_read() {
         "drill_depth",
         "callout",
         "float",
+        "head",
     ] {
         assert_eq!(read(m), Ok(()), "{m}");
     }

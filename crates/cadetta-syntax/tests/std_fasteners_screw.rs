@@ -37,7 +37,12 @@ fn iso4762_implements_screw() {
     assert_eq!(c.implements.len(), 1);
     assert!(format!("{:?}", c.implements[0]).contains("Screw"));
     let params: Vec<&str> = c.params.iter().map(|p| p.name.name.as_str()).collect();
-    assert_eq!(params, ["thread", "length"]);
+    assert_eq!(params, ["thread", "length", "unit_cost"]);
+    // The price is optional: a joint fills it from screw_cost (stdlib.md 3).
+    assert_eq!(
+        c.params.iter().map(|p| p.optional).collect::<Vec<_>>(),
+        [false, false, true]
+    );
     assert!(c.citation.is_some());
 }
 

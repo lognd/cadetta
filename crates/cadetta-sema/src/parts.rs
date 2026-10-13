@@ -145,6 +145,8 @@ pub enum ArgSource<'a> {
     Given(&'a Expr, Span),
     /// The parameter's declared default.
     Default(&'a Expr),
+    /// An optional (`name?: Type`) parameter that was not given: absent (language.md 3.3).
+    Absent,
 }
 
 /// One parameter bound to its value expression.
@@ -202,6 +204,10 @@ pub fn bind_args<'a>(
             (None, Some(d)) => {
                 debug!(component, param = %p.name.name, "default argument applied");
                 ArgSource::Default(d)
+            }
+            (None, None) if p.optional => {
+                debug!(component, param = %p.name.name, "optional argument absent");
+                ArgSource::Absent
             }
             (None, None) => return Err(PartsError::MissingArg(p.name.name.clone())),
         };
@@ -307,6 +313,20 @@ mod tests {
         let variants = vec!["M4".to_owned(), "M5".to_owned()];
         assert_eq!(bare_variant(&variants, "M5"), Some("M5"));
         assert_eq!(bare_variant(&variants, "M6"), None);
+    }
+
+    // frob:ticket 01M4STAPFPQ9GV8XJB4XCK8EGP
+    // frob:tests crates/cadetta-sema/src/parts.rs::bind_args kind=unit
+    #[test]
+    fn optional_argument_is_absent_when_omitted() {
+        let ps = params("ots J(thread: MetricThread, depth?: Length, host?: Part) {}");
+        let none = call_args("(M5)");
+        let bound = bind_args("J", &ps, &none).unwrap();
+        assert!(matches!(bound[1].source, ArgSource::Absent));
+        let given = call_args("(M5, depth = 5mm)");
+        let bound = bind_args("J", &ps, &given).unwrap();
+        assert!(matches!(bound[1].source, ArgSource::Given(..)));
+        assert!(matches!(bound[2].source, ArgSource::Absent));
     }
 
     // frob:tests crates/cadetta-sema/src/parts.rs::bind_args kind=unit

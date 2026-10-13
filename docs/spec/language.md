@@ -126,7 +126,7 @@ item      = { doc } { attr } vis ( cite | interface | component | process | tabl
 component = ( "ots" | "model" | "assembly" ) IDENT [ params ] [ ":" iface_list ]
             [ citation ] "{" { inner_attr } { member } "}"
 params    = "(" pdecl { "," pdecl } ")"
-pdecl     = IDENT ":" type [ "=" expr ]              // a default makes the argument optional
+pdecl     = IDENT [ "?" ] ":" type [ "=" expr ]      // a default or "?" makes the argument optional; "?" omitted means absent, tested with given(x)
 member    = { doc } { attr } [ "priv" ] ( param | let | bound | part | fit | check
             | require | solver | datum | place ) [ citation ] [ trailing_attr ]
                                                      // "priv": usable only in its package (packages.md 3)
@@ -280,6 +280,9 @@ interface only, so:
   kept with its full analysis tolerance, never emitted or bound
   (quantities.md 5.3). Stack-ups and other quantities nobody makes are
   `let`.
+- `name?: Kind` declares an optional argument with no default: omitted, it
+  is absent (not zero), `given(name)` tests for it, and reading it while
+  absent is E002. Use it where no neutral value exists (a host part, a price).
 - A trailing citation records provenance (3.9).
 - `was path` records a rename or move (`was Globals.plate_thk`).
   References to the old path resolve with N004; bindings follow it.
@@ -670,6 +673,8 @@ member applies to that member.
 | `lifecycle(status, "date")` | Feeds L001/L002 (3.2). |
 | `native(adapter, "locator")` | Binds the member to a CAD locator inline, instead of in `bindings/<id>.toml` (adapters.md 3). |
 | `allow(CODE, "because")` | A waiver for one member: the reason is required, it has no expiry, W004 checks it suppresses something, and W002 does not apply to it (lints.md 2). |
+| `when(cond)` | On a member or check: it exists only while `cond` holds (`cond` may use `given(x)`); an absent member read is E002 and an absent check has no verdict. |
+| `requires(arg, when = cond)` | `#![...]` on a component: `arg` must be given whenever `cond` holds, else E006. |
 | `default(Iface = Impl)` | Sets the default implementer for every component parameter of that interface type in scope. |
 
 Default precedence, highest first: the enclosing component's

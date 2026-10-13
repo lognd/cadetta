@@ -7,10 +7,17 @@
 // engagement factor, which TapDrill column a tap uses, the preferred lengths,
 // the drills on the shelf and the depth allowances.
 //
-// This file carries the arguments the derived members need (thread, clamp,
-// into, policy, clearance, counterbore, tap, count). The remaining arguments
-// (head, at, onto, host, depth_available, nut, locating, screw_cost, tap =
-// Vendor) and the joint's checks belong to the arguments-and-checks story.
+// Arguments (stdlib.md 3): thread, clamp, policy, head, clearance,
+// counterbore, tap (Cut, Form or Vendor), count, and the optional ones
+// into, host, depth_available, screw_cost, at and onto (`name?: Type`,
+// language.md 3.3: omitted means absent, tested with `given(name)`). `nut`
+// and `locating` arrive with the at/onto and placement stories.
+//
+// Presence rules are written as `#[when(cond)]` on a member or check: it
+// exists only while cond holds. `into` defaults to `host.material`. Under
+// `tap = Vendor` the tap drill members are absent and `depth_available` is
+// required (`#![requires(...)]`, E006 when missing). The checks are the
+// named verdicts of stdlib.md 3 (`Mount/screws.engaged`).
 //
 // Decisions: without a counterbore the pocket members are zero (no pocket,
 // no depth), so `grip` is simply `clamp`. `float` is the fixed-fastener
@@ -28,27 +35,41 @@ use super::tables::{Iso273, Iso4762Head, MetricThread, TapDrill, Thread}
 /// ISO 273 clearance hole series: fine, medium (default) or coarse.
 pub enum ClearanceClass { Fine, Medium, Coarse }
 
-/// How the threaded hole is made: a cutting tap or a forming (roll) tap.
-pub enum TapKind { Cut, Form }
+/// The screw head: socket (default), button or flat; only socket has counterbore data in 0.1.0.
+pub enum HeadKind { SocketHead, ButtonHead, FlatHead }
+
+/// How the threaded hole is made: a cutting tap, a forming tap, or a hole that already exists.
+pub enum TapKind { Cut, Form, Vendor }
 
 /// A screw joint: clearance hole, counterbore, screw length, tap drill, depths and callout.
 pub assembly ScrewJoint(
   thread: MetricThread,
   clamp: Length,
-  into: Material,
   policy: FastenerPolicy,
+  into?: Material,
+  host?: Part,
+  head: HeadKind = HeadKind::SocketHead,
   clearance: ClearanceClass = ClearanceClass::Medium,
   counterbore: Bool = false,
   tap: TapKind = TapKind::Cut,
-  count: Count = 1
+  count?: Count,
+  depth_available?: Length,
+  screw_cost?: Money,
+  at?: Pattern2,
+  onto?: Pattern2
 ) {
+  #![requires(depth_available, when = tap == TapKind::Vendor)]
+  priv material = if given(into) { into } else { host.material }
   priv major = Thread[thread].major
   priv pitch = Thread[thread].pitch
-  priv head = Iso4762Head[thread]
+  priv head_data = Iso4762Head[thread]
+  #[when(tap != TapKind::Vendor)]
   priv column = match tap {
-    TapKind::Cut => policy.tap_columns[Materials[into].tap_class].cut,
-    TapKind::Form => policy.tap_columns[Materials[into].tap_class].form,
+    TapKind::Cut => policy.tap_columns[Materials[material].tap_class].cut,
+    TapKind::Form => policy.tap_columns[Materials[material].tap_class].form,
+    TapKind::Vendor => policy.tap_columns[Materials[material].tap_class].cut,
   }
+  #[when(tap != TapKind::Vendor)]
   priv drill_nominal = match column {
     TapColumn::Cut75 => TapDrill[thread].cut_75,
     TapColumn::Cut65 => TapDrill[thread].cut_65,
@@ -62,25 +83,47 @@ pub assembly ScrewJoint(
     ClearanceClass::Coarse => Iso273[thread].coarse,
   }
   /// Counterbore diameter from ISO 4762 (zero without a counterbore).
-  counterbore_dia = if counterbore { head.counterbore_dia } else { 0mm }
+  counterbore_dia = if counterbore { head_data.counterbore_dia } else { 0mm }
   /// Counterbore depth from ISO 4762 (zero without a counterbore).
-  counterbore_depth = if counterbore { head.counterbore_depth } else { 0mm }
+  counterbore_depth = if counterbore { head_data.counterbore_depth } else { 0mm }
   /// Least thread engagement: the policy factor for the host material times the thread major.
-  min_engagement = policy.engagement[into].factor * major
+  min_engagement = policy.engagement[material].factor * major
   /// Material under the head: clamp less any counterbore depth.
   grip = clamp - counterbore_depth
   /// Shortest preferred screw length that reaches grip plus minimum engagement.
   screw_length = policy.lengths.at_least(grip + min_engagement).key
-  /// The joint's screws, one per hole, so roll-ups count every screw.
-  part screw[count]: Iso4762(thread, screw_length)
+  /// Screws in the joint: one per hole of the pattern, else the count argument, else one.
+  priv n = if given(at) { count(at) } else if given(count) { count } else { 1 }
+  /// The joint's screws, one per hole, so roll-ups count every screw; priced by screw_cost.
+  part screw[n]: Iso4762(thread, screw_length, screw_cost)
   /// Allowance for a screw in its clearance hole: half the clearance over the thread major.
   float = (clearance_hole - major) / 2
-  /// Tap drill: the policy's column for the host material, rounded up to a drill on the shelf.
+  /// Tap drill: the policy's column for the host material, rounded up to a drill on the shelf (absent under Vendor).
+  #[when(tap != TapKind::Vendor)]
   tap_drill = policy.drills.at_least(drill_nominal).key
   /// Threaded depth: tip penetration past the grip plus the policy's bottom clearance.
   thread_depth = screw_length - grip + policy.bottom_clearance
-  /// Drilled depth: thread depth plus the tap lead-in and the drill point.
+  /// Drilled depth: thread depth plus the tap lead-in and the drill point (absent under Vendor).
+  #[when(tap != TapKind::Vendor)]
   drill_depth = thread_depth + policy.tap_lead_in * pitch + policy.drill_point * tap_drill
   /// Drawing callout for the threaded hole.
-  callout = fmt("{} - 6H, {} DP; drill {} DP {}", thread, thread_depth, tap_drill, drill_depth)
+  callout = if tap == TapKind::Vendor {
+    fmt("{} - 6H, {} DP", thread, thread_depth)
+  } else {
+    fmt("{} - 6H, {} DP; drill {} DP {}", thread, thread_depth, tap_drill, drill_depth)
+  }
+
+  /// Thread engagement actually reached: the screw tip's penetration past the grip.
+  priv engagement = screw_length - grip
+  /// Depth the hole must offer: the thread depth for a vendor hole, else the drill depth.
+  #[when(given(depth_available))]
+  priv depth_needed = if tap == TapKind::Vendor { thread_depth } else { drill_depth }
+
+  check engaged: engagement >= min_engagement "thread engagement reaches the minimum"
+  check not_bottomed: thread_depth > screw_length - grip "the screw tip must not bottom out in the hole"
+  check grip_positive: grip > 0mm "the counterbore must leave material under the head"
+  #[when(given(depth_available))]
+  check depth_ok: depth_needed <= depth_available "the hole must be deep enough"
+  #[when(given(at) and given(onto))]
+  check aligned: aligned(at, onto, float) "clearance holes line up with the threaded holes"
 }
