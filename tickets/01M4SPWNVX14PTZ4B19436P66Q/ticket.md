@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:24:45Z"
+updated = "2026-10-13T06:24:46Z"
 persona = "design engineer"
 capability = "use sqrt, sin, cos, tan, atan2 and non-integer powers"
 outcome_text = "inexactness is flagged and propagates visibly"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an inexact value within 1e-9 relative of a tie or step boundary, when rounded, then Q010 ambiguous-rounding is returned (quantities.md 5.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a step of a different dimension, when rounding, then an error value is returned (quantities.md 5.5)"
