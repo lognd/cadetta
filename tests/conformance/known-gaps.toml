@@ -6,3 +6,218 @@
 # fixture = "quantities/q006"   # <doc>/<NAME>
 # ticket = "~ABCDEFG"           # ticket that closes the gap
 # reason = "Q006 not emitted for inexact pi products yet"
+
+[[gap]]
+fixture = "language/c001-bound-violated"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/c002-bound-undecided"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/c002-fit-undecided"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/e002-use-target"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/e003-duplicate-type"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/e006-argument-mismatch"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/e007-lookup-miss"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/e008-at-least-enum-key"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/e008-key-only-column"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/e008-missing-column"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/e016-private-item"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/e017-private-in-public"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/f001-it-grade"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f001-j-grade"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f001-mixed-case"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f001-unknown-letter"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f002-size-range"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f002-sub-nanometre"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f002-upper-bound"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f003-fit-tolerance-conflict"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/f004-range-violated"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/fit-clearance-member"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/g001-array-plus-point"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i001-fixed"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i001-missing-member"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i001-optional-member"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i001-wrong-kind"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i002-alternate-not-viable"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i002-never-cross-product"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i003-alternate-undecided"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/i004-root-not-evaluated"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/if-else-expression"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/l001-date-passed"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/l001-eol-no-alternate"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/l001-month-grain"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/l002-nrnd"
+ticket = "~J4802RH"
+reason = "lint does not evaluate this check yet"
+
+[[gap]]
+fixture = "language/n001-case"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/n004-was"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/n006-type-read-beside-instance"
+ticket = "~8WN9V3R"
+reason = "sema does not emit the spec diagnostic yet"
+
+[[gap]]
+fixture = "language/p001-missing-role"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/process-drawn-value"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/t001-not-in-table"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"
+
+[[gap]]
+fixture = "language/u002-unused-private"
+ticket = "~0N41BNX"
+reason = "table/fit/variant pipeline not implemented yet"

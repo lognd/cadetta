@@ -1,0 +1,4 @@
+model Part {
+  x = 6mm // / 2
+  check c: x == 6mm
+}
