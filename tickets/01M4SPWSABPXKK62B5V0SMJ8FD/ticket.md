@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T05:05:27Z"
+updated = "2026-10-13T05:44:12Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
@@ -53,5 +53,9 @@ bound = false
 
 [[acceptance]]
 text = "Given the same inputs twice, when emitted, then the bytes are identical (golden file) (adapters.md 4 rule 2)"
+bound = false
+
+[[acceptance]]
+text = "Given the equations emitter, when run, then comments, ordering and SOLIDWORKS naming follow emitters/sw-equations.md 4 (component<2> forms, prefix)"
 bound = false
 +++
