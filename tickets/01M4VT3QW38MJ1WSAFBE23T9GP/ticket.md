@@ -2,7 +2,8 @@
 id = "01M4VT3QW38MJ1WSAFBE23T9GP"
 title = "obligations ack fixtures depend on the developer's git email (CI red)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 1
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
