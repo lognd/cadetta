@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T22:36:07Z"
+digest = "28ac12a868d9bd484857aec4a2f5438dbda1cc1b1cf21d02d21d9fb65d7fd117"
+exit_code = 0
+inline = '''
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.59s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9699763d-a8c5-4d9c-b024-ced531eb4060 with nextest profile: default
+    Starting 3 tests across 1 binary (46 tests skipped)
+        PASS [   0.008s] cadetta-ir path::tests::indexed_and_placement_paths_round_trip
+        PASS [   0.023s] cadetta-ir schema::tests::schema_file_matches_types
+        PASS [   0.023s] cadetta-ir geometry::tests::datum_and_placement_share_op_form
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.031s] 3 tests run: 3 passed, 46 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-ir datum_and_placement_share_op_form schema_file_matches_types indexed_and_placement_paths_round_trip"
+size = 874
+status = "measured"
+test_count = 3
+tests_digest = "cd91c4bef70a9310994547b49be921e8f7e7d15c4698302a957ef9a1efff0a2a"
+at = "2026-10-13T22:36:07Z"
+actor = "lognd"
+rev = 1

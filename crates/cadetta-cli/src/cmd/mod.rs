@@ -2,6 +2,7 @@
 //! Command implementations (config-cli.md 3), one module per verb family.
 
 pub mod ack;
+pub mod bind;
 pub mod check;
 pub mod check_watch;
 pub mod cite;
@@ -15,6 +16,7 @@ pub mod import;
 pub mod init;
 pub mod ir;
 pub mod lsp;
+pub mod names;
 pub mod obligations;
 pub mod solve;
 pub mod swap;
@@ -28,6 +30,7 @@ use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 pub use ack::run_ack;
+pub use bind::run_bind;
 pub use check::run_check;
 pub use compare::run_compare;
 pub use emit::run_emit;
@@ -37,6 +40,7 @@ pub use import::run_import;
 pub use init::run_init;
 pub use ir::run_ir;
 pub use lsp::run_lsp;
+pub use names::run_names;
 pub use obligations::run_obligations;
 pub use solve::run_solve;
 pub use swap::run_swap;

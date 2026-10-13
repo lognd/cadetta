@@ -286,6 +286,18 @@ adapter, or R008), so the output never guesses. `bind` refuses a locator that fa
 validation of adapters.md 3 and is idempotent: binding an identical
 locator again changes nothing.
 
+Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y: `names` never
+launches CAD, so a path without a locator is `unknown`, not `unbound`,
+until a read adapter feeds it (follow-up ticket). A locator is
+identified by kind, locator text, `--for`, `--config` and `--component`;
+`bind` of an existing identity with other fields is a conflict (exit 2:
+remove it first), and `bind --remove` of an absent locator is a no-op.
+`bind` also refuses a locator whose native name another path already
+uses (R013 rule, exit 2). The file is rewritten in canonical order
+(entries by path, one inline table per locator), which drops comments.
+`--tolerance` is accepted in the grammar but exits 2 until bindings carry
+a tolerance field. `names` takes at most one ADAPTER-ID.
+
 ### 3.4 `ack` details
 
 Decided (0.1.0), frob:ticket 01M4ST8F1W8T0BKARAMG0D49J2:

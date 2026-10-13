@@ -1,7 +1,7 @@
 {
   "name": "cadetta",
   "displayName": "Cadetta",
-  "description": "Syntax highlighting and a check task for Cadetta (.cdt) design-parameter files.",
+  "description": "Syntax highlighting, a cadetta language server client and a check task for Cadetta (.cdt) design-parameter files.",
   "version": "0.1.0",
   "publisher": "cadetta",
   "license": "MIT OR Apache-2.0",
@@ -10,7 +10,7 @@
     "url": "https://github.com/lognd/cadetta"
   },
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.91.0"
   },
   "categories": [
     "Programming Languages"
@@ -19,8 +19,13 @@
     "languages": [
       {
         "id": "cadetta",
-        "aliases": ["Cadetta", "cadetta"],
-        "extensions": [".cdt"],
+        "aliases": [
+          "Cadetta",
+          "cadetta"
+        ],
+        "extensions": [
+          ".cdt"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -35,7 +40,10 @@
       {
         "name": "cadetta",
         "owner": "cadetta",
-        "fileLocation": ["relative", "${workspaceFolder}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
         "source": "cadetta",
         "pattern": {
           "regexp": "^(.+?):(\\d+):(\\d+): (error|warning|info)\\[([A-Za-z0-9]+)\\]: (.*)$",
@@ -51,15 +59,53 @@
     "taskDefinitions": [
       {
         "type": "cadetta",
-        "required": ["command"],
+        "required": [
+          "command"
+        ],
         "properties": {
           "command": {
             "type": "string",
-            "enum": ["check"],
+            "enum": [
+              "check"
+            ],
             "description": "The cadetta command to run."
           }
         }
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Cadetta",
+      "properties": {
+        "cadetta.path": {
+          "type": "string",
+          "default": "cadetta",
+          "description": "Path to the cadetta executable (started as `cadetta lsp`)."
+        },
+        "cadetta.lsp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the cadetta language server for .cdt files. Disable to fall back to the check task only."
+        }
+      }
+    }
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:cadetta"
+  ],
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run compile"
+  },
+  "dependencies": {
+    "vscode-languageclient": "10.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/vscode": "1.91.0",
+    "@vscode/vsce": "4.0.0",
+    "typescript": "5.9.3"
   }
 }

@@ -16,6 +16,12 @@ Sublime's `Packages` directory (Preferences > Browse Packages):
 Open a `.cdt` file; Sublime picks the syntax by the `file_extensions` entry.
 Choose Tools > Build System > Cadetta and press Ctrl+B to check.
 
+## Language server
+
+Primary setup is the LSP package with `cadetta lsp`; see `editors/README.md`.
+Hover and code lens are not yet provided (ticket ~0CXQ6EZ). The build system
+above is the fallback.
+
 ## Limits
 
 The ISO tolerance-class highlight after a quantity is heuristic, and

@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:34:06Z"
+digest = "5f3b8348cb41bf943e9b35c1c6dec74bdae2ac73a7bf9e7b04494ed1747ad653"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 715d4d7f-afcc-4666-810e-2cf2c8141cc9 with nextest profile: default
+    Starting 7 tests across 5 binaries (197 tests skipped)
+        PASS [   0.011s] cadetta cmd::names::tests::unbound_only_when_the_adapter_could_read
+        PASS [   0.022s] cadetta cmd::names::tests::usage_errors_exit_2
+        PASS [   0.044s] cadetta cmd::names::tests::scope_binding_is_implicit_global
+        PASS [   0.043s] cadetta cmd::names::tests::text_output_and_glob_filter
+        PASS [   0.044s] cadetta cmd::names::tests::colliding_created_names_raise_r013
+        PASS [   0.043s] cadetta cmd::names::tests::lists_sorted_paths_with_explicit_and_unknown_states
+        PASS [   0.086s] cadetta cmd::names::tests::json_validates_against_names_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.087s] 7 tests run: 7 passed, 197 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'package(=cadetta) & (test(~cmd::names::tests) | test(~tests::state_of))'"
+size = 1078
+status = "measured"
+test_count = 7
+tests_digest = "81b00c49371739b96ca9c284a5ecec8401ba468c08b8d6edcb81c7f4f70f4c53"
+at = "2026-10-13T22:34:06Z"
+actor = "lognd"
+rev = 1

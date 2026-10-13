@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:34:20Z"
+digest = "ffcecd2f5d92add7d16f66b498041d65d00f6698b92e0dfd921dd8200a02b46c"
+provider = "file"
+ref = "editors/vscode/src/extension.ts"
+size = 2159
+status = "measured"
+at = "2026-10-13T22:34:20Z"
+actor = "lognd"
+rev = 1

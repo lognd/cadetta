@@ -28,8 +28,12 @@ Neovim uses `~/.local/share/nvim/site/pack/cadetta/start/cadetta` instead.
 
 ## Use
 
-Open a `.cdt` file and run `:make` then `:copen`. For live diagnostics see
-`editors/README.md` (nvim-lint, ALE, efm-langserver).
+Primary: start `cadetta lsp` (Neovim `vim.lsp.config`, or vim-lsp / ALE in
+Vim); recipes in `editors/README.md`. Diagnostics and formatting only; hover
+and code lens are not yet provided (ticket ~0CXQ6EZ).
+
+Fallback: open a `.cdt` file and run `:make` then `:copen`; other bridges
+(nvim-lint, efm-langserver) are in `editors/README.md`.
 
 ## Limits
 
