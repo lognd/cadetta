@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given editors/README.md and each editor README, when read, then Neovim (vim.lsp.config), Helix (languages.toml), Emacs (eglot), Sublime (LSP package), Vim (vim-lsp or ALE LSP) and JetBrains (LSP4IJ) start cadetta lsp, and the bridge recipes are kept only as a fallback (config-cli.md 3.8)"
-bound = false
+bound = true
 +++
