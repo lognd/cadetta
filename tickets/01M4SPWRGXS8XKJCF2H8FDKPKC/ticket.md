@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T04:03:54Z"
+updated = "2026-10-13T04:04:02Z"
 persona = "cadetta contributor"
 capability = "implement an adapter declaring emit, read and drive capabilities"
 outcome_text = "new CAD targets never touch lints"
 labels = ["creates:crates/cadetta-adapter/src/lib.rs"]
 scope = ["crates/cadetta-adapter/src/lib.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 
 [[acceptance]]
 text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
