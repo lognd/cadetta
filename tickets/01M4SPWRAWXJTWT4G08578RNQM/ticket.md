@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T15:56:06Z"
+updated = "2026-10-13T15:56:18Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a native parameter with no binding, when linted, then R002 warning"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a bound path absent natively, when linted, then R003 error"
