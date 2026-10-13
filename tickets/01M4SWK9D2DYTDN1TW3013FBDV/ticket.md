@@ -2,7 +2,8 @@
 id = "01M4SWK9D2DYTDN1TW3013FBDV"
 title = "Canonical path grammar with indexes, [*] and placement paths"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
