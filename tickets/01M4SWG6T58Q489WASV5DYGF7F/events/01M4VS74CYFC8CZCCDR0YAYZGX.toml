@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T23:22:59Z"
+digest = "466e337863a6f8c765f73fa81ff15855b24c41bfd85fe175638608d280308210"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e77cc90c-3256-4d1c-bcaa-afa8c60e1d18 with nextest profile: default
+    Starting 3 tests across 29 binaries (1032 tests skipped)
+        PASS [   0.006s] cadetta-geometry aligned::tests::section_one_wide_tolerance_is_c002_not_violation
+        PASS [   0.006s] cadetta-geometry aligned::tests::section_one_holds_within_tolerance
+        PASS [   0.006s] cadetta-geometry aligned::tests::aligned_reports_c002_for_an_undecided_pair
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 3 tests run: 3 passed, 1032 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "section_one_holds_within_tolerance section_one_wide_tolerance_is_c002_not_violation aligned_reports_c002_for_an_undecided_pair"
+size = 773
+status = "measured"
+test_count = 3
+tests_digest = "81e55b0410318c3ff89e96faa995ca6babd74882612920e8f7f2a3e02a6df9e9"
+at = "2026-10-13T23:22:59Z"
+actor = "lognd"
+rev = 1
