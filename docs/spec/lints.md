@@ -148,7 +148,7 @@ cannot be resolved or evaluated.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| E001 | syntax-error | error | yes | The source does not parse (language.md 2, 3). |
+| E001 | syntax-error | error | yes | The source does not lex or parse (language.md 2, 3); lexical errors (quantities.md 2: leading or trailing `.`, `5"abc"`, bad compound literals) are E001 with a lexical message. |
 | E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
 | E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |

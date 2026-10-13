@@ -83,3 +83,23 @@ ref = "refs/heads/main"
 branch = "frob-tickets"
 # `trunk` commits to `ref`; `branch` commits to the checked-out branch; `orphan` commits to the ticket branch `branch` in the ticket-branch layout and keeps `ref` as the code base.
 ref_mode = "trunk"
+
+[invariants]
+# One observability story: only cadetta-log may touch tracing_subscriber (everything else logs through `tracing`
+# macros; print/eprint macros are banned workspace-wide by clippy print_stdout/print_stderr in Cargo.toml).
+# `from` is a glob with no negation, so each non-log crate is listed; add new crates here.
+forbid_imports = [
+  { from = 'crates/cadetta-adapter/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-cli/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-fits/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-geometry/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-ir/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-lint/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-obligations/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-sema/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-solve/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-syntax/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-units/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'crates/cadetta-variants/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+  { from = 'bindings/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
+]
