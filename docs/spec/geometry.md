@@ -102,6 +102,11 @@ plane and z is its normal.
   implementer on violation, like any interface bound),
   so a swap to an implementer with the opposite convention is an error,
   not a flipped placement that still evaluates.
+  A datum bound compares axis directions exactly: it holds only when the
+  implementer's frames, built from untoleranced whole multiples of 90deg,
+  agree; a violation is C001 and any other rotation or a toleranced angle
+  makes it undecided, C002. An implementer that omits a declared datum is
+  I001, which no waiver suppresses.
 - `Datum` is a type: a function or builtin parameter of type `Datum`
   takes a datum name (section 5). The type grammar is language.md 3.
 
