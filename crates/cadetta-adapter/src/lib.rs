@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/adapters.md`.
 
 pub mod bindings;
+pub mod builtin;
 pub mod classify;
 pub mod import;
 pub mod policy;
