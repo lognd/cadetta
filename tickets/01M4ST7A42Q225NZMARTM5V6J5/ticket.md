@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:05Z"
-updated = "2026-10-13T06:42:19Z"
+updated = "2026-10-13T06:42:20Z"
 persona = "design engineer"
 capability = "read nominal, min, max, mid, mmc and lmc of any quantity, give it a hole or shaft role, and state one- or two-sided bounds"
 idempotency_key = "replan13:Accessors, roles and bounds"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a pure reference, when its role is queried, then it inherits its referent role (quantities.md 5.6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `head_dia <= 8.5mm`, `x >= 9.6mm` and `x in 4mm..6mm`, when constructed, then each is a Bound with min/max limits that is never emitted (quantities.md 5.7)"
