@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:28:14Z"
+updated = "2026-10-13T07:28:16Z"
 persona = "design engineer"
 capability = "evaluate every parameter to a quantity"
 outcome_text = "derived values are exact and usable by lints and emitters"
@@ -77,5 +77,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the example `cb = head_dia.max + 1mm`, when evaluated, then an untoleranced 9.5mm is stored (quantities.md 5.3)"
-bound = false
+bound = true
 +++
