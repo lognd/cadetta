@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the same native name in two namespaces, when emitting, then names are namespace-qualified (adapters.md 3)"
-bound = false
+bound = true
 +++
