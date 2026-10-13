@@ -303,6 +303,14 @@ alternate, and only when the primary does not itself fail that check
 skips private components (U002) and components some part names as its
 type, primary or alternate.
 
+L, T and P rule implementation notes (0.1.0): the facts are decided
+upstream (lifecycle analysis in cadetta-variants, the table evaluator and
+the process pass in cadetta-sema) and handed to `cadetta-lint`
+`rules::lifecycle`, which lifts them to diagnostics. L001 is a warning
+before its date and an error once the date has passed `--as-of`
+whatever the configured severity; L002 lists viable alternates in its
+message. T001 and P001 use the configured severity.
+
 ### S: sources and solvers
 
 | Code | Name | Default | Fixed | Meaning |

@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T13:32:05Z"
+digest = "353de3016130f5904a016aafd279ec0b1a3329ae5e74a3435cbe7081d484a7a7"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.32s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 47d67cff-d2d2-480c-afbd-5bc61b7c08b1 with nextest profile: default
+    Starting 1 test across 1 binary (102 tests skipped)
+        PASS [   0.014s] cadetta-lint rules::lifecycle::tests::l001_warns_before_and_errors_after_the_date
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 1 test run: 1 passed, 102 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::lifecycle::tests::l001_warns_before_and_errors_after_the_date)'"
+size = 639
+status = "measured"
+test_count = 1
+tests_digest = "12b40889551da9d4c521d8179c0e350708c1a9ffd1c0352b46bd3af4f56033c2"
+at = "2026-10-13T13:32:05Z"
+actor = "lognd"
+rev = 1
