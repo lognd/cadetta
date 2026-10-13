@@ -4,6 +4,7 @@
 
 pub mod bindings;
 pub mod classify;
+pub mod import;
 pub mod policy;
 pub mod read_units;
 pub mod scope;

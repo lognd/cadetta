@@ -135,6 +135,7 @@ name = "cadetta-adapter"
 version = "0.0.0"
 dependencies = [
  "cadetta-ir",
+ "cadetta-units",
  "serde",
  "toml",
  "tracing",
