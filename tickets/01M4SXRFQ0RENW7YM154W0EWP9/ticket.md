@@ -2,7 +2,8 @@
 id = "01M4SXRFQ0RENW7YM154W0EWP9"
 title = "cadetta update"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
