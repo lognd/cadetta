@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T09:02:18Z"
+updated = "2026-10-13T09:02:19Z"
 persona = "design engineer"
 capability = "set project-wide fastener policy once"
 idempotency_key = "replan13:FastenerPolicy, IsoDefault and the default attribute"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given precedence of a component #![default], module #![default], package [defaults], then the std default IsoDefault, when no override exists, then IsoDefault applies and no lint fires on the fallback (stdlib.md 4)"
-bound = false
+bound = true
 +++
