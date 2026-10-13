@@ -2,7 +2,8 @@
 id = "01M4VB62VJQV9AKSSQME8NWW6Y"
 title = "Typed IEEE citations: syntax, sema, IR, digests, std and golden port"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
