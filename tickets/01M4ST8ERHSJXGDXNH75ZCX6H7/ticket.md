@@ -8,12 +8,12 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T07:53:43Z"
+updated = "2026-10-13T07:54:10Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
 labels = ["creates:crates/cadetta-obligations/src/staleness.rs"]
-scope = ["crates/cadetta-obligations/src/staleness.rs"]
+scope = ["crates/cadetta-obligations/src/staleness.rs", "crates/cadetta-obligations/src/lib.rs", "crates/cadetta-ir/src/digest.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocks"

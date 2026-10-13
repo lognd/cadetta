@@ -161,6 +161,12 @@ difference makes it stale (S003) and its outputs still evaluate. A result is
 identified by (solver path, variant); storing replaces the entry with the
 same key, and the file is rewritten sorted.
 
+S003 names what changed (`inputs`, `script` or a dep path) in notes and
+carries the variant as `alt`. S005 is raised for a failed run whose code is S005
+(a protocol failure with another code, such as Q001, keeps that code) and says
+whether a previous result stays in use. S006 fires only for a variant whose own
+result is missing; a missing primary result is an unsolved output, not S006.
+
 Solver result digests live only here: the lock file does not record
 them (obligations.md 3), so the committed `.out.json` is the single
 home of a solver's staleness evidence.
