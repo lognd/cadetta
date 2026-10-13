@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-13T05:44:15Z"
+updated = "2026-10-13T19:18:42Z"
 persona = "design engineer"
 capability = "drive sketches from datums"
 idempotency_key = "replan14:sw-frame"
-labels = ["creates:adapters/solidworks/src/frames.py"]
-scope = ["adapters/solidworks/src/frames.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Frames/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Frames/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Frames/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Frames/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Frames/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Frames/**"]
 
 [[links]]
 kind = "blocked-by"
