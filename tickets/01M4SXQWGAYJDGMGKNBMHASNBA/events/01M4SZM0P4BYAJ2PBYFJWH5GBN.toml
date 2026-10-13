@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:36:24Z"
+digest = "dac3ebfb5590df129e4b7ef932d5e5479494a5d1826fec3a8681db8c9826a746"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6b4c8366-1f9b-460e-9656-28554f79fde9 with nextest profile: default
+    Starting 5 tests across 2 binaries (15 tests skipped)
+        PASS [   0.005s] cadetta pkg::manifest::tests::package_fields_default_and_root_module
+        PASS [   0.006s] cadetta pkg::manifest::tests::std_is_reserved_and_implicit
+        PASS [   0.006s] cadetta pkg::manifest::tests::trust_roles_are_parsed
+        PASS [   0.006s] cadetta pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected
+        PASS [   0.007s] cadetta pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 5 tests run: 5 passed, 15 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected) | test(=pkg::manifest::tests::package_fields_default_and_root_module) | test(=pkg::manifest::tests::std_is_reserved_and_implicit) | test(=pkg::manifest::tests::trust_roles_are_parsed) | test(=pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005)))'"
+size = 934
+status = "measured"
+test_count = 5
+tests_digest = "3402aefc7fb99aca9ad5eee865f8b03350556649f636dcf52b36e79d82f84e7d"
+at = "2026-10-13T06:36:24Z"
+actor = "lognd"
+rev = 1
