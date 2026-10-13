@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-13T05:44:15Z"
+updated = "2026-10-13T19:18:42Z"
 persona = "design engineer"
 capability = "persist pushed values"
 idempotency_key = "replan14:sw-save"
-labels = ["creates:adapters/solidworks/src/save.py"]
-scope = ["adapters/solidworks/src/save.py"]
+labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Save/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Save/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Save/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Save/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Save/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Save/**"]
 
 [[links]]
 kind = "blocked-by"
