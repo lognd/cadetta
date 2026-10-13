@@ -1,0 +1,16 @@
+kind = "create"
+title = "ScrewJoint derived members"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 8
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+persona = "design engineer"
+capability = "read derived joint geometry"
+idempotency_key = "replan13:ScrewJoint derived members"
+labels = ["creates:std/fasteners/screwjoint.cdt"]
+scope = ["std/fasteners/screwjoint.cdt"]
+acceptance = ["Given a ScrewJoint, when evaluated, then each derived member in stdlib.md 4 matches its formula (stdlib.md 4)", "Given a hand-computed M5 case, when evaluated, then results match exactly (stdlib.md 4)"]
+at = "2026-10-13T05:03:56Z"
+actor = "lognd"
+rev = 1
