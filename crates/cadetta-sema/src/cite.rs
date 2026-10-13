@@ -131,7 +131,7 @@ mod tests {
     use cadetta_syntax::ast::{FileEntry, ItemKind, MemberKind};
     use cadetta_syntax::parser::parse;
 
-    const SRC: &str = "cite web = \"https://example.com/d.pdf\"\ncite spec = \"docs/spec.txt\"\ncite iso = std::iso273\nots P @web:\"p.2\" {\n  a = 1mm\n  b = 2mm @spec\n  c = 3mm @\"ASTM A276\"\n  d = 4mm @measured:\"ana, 2026-10\"\n  e = 5mm @iso:\"table 1\"\n}\n";
+    const SRC: &str = "cite web = \"https://example.com/d.pdf\"\ncite spec = \"Cargo.toml\"\ncite iso = std::iso273\nots P @web:\"p.2\" {\n  a = 1mm\n  b = 2mm @spec\n  c = 3mm @\"ASTM A276\"\n  d = 4mm @measured:\"ana, 2026-10\"\n  e = 5mm @iso:\"table 1\"\n}\n";
 
     fn setup() -> (ast::File, CiteTable) {
         let p = parse(SRC);
@@ -167,7 +167,7 @@ mod tests {
             .collect()
     }
 
-    // frob:tests crates/cadetta-sema/src/cite.rs::CiteTable::resolve kind=unit
+    // frob:tests crates/cadetta-sema/src/cite.rs::CiteTable.resolve kind=unit
     #[test]
     fn kinds_resolve() {
         let (f, t) = setup();
@@ -213,31 +213,38 @@ mod tests {
         assert_eq!(err.unwrap_err().name, "nope");
     }
 
-    // frob:tests crates/cadetta-sema/src/cite.rs::CiteTable::resolve kind=unit
+    // frob:tests crates/cadetta-sema/src/cite.rs::CiteTable.resolve kind=unit
     #[test]
     fn local_file_digest_recorded_literal_not_checked() {
         let (f, t) = setup();
-        let dir = std::env::temp_dir().join(format!("cdt-cite-{}", std::process::id()));
-        std::fs::create_dir_all(dir.join("docs")).expect("mkdir");
-        std::fs::write(dir.join("docs/spec.txt"), b"hello").expect("write");
+        let dir = Path::new(env!("CARGO_MANIFEST_DIR"));
         let ms = member_cites(&f);
         let file = t
-            .resolve(Some(&dir), ms[1].as_ref().expect("b"))
+            .resolve(Some(dir), ms[1].as_ref().expect("b"))
             .expect("file");
         assert_eq!(file.kind, CitationKind::File);
-        assert_eq!(file.file_digest, Some(digest_bytes(b"hello")));
-        // a literal never reads the disk, even if a file of that name exists
-        std::fs::write(dir.join("ASTM A276"), b"x").expect("write");
+        let bytes = std::fs::read(dir.join("Cargo.toml")).expect("read");
+        assert_eq!(file.file_digest, Some(digest_bytes(&bytes)));
+        // a literal never reads the disk
         let lit = t
-            .resolve(Some(&dir), ms[2].as_ref().expect("c"))
+            .resolve(Some(dir), ms[2].as_ref().expect("c"))
             .expect("lit");
         assert_eq!(lit.file_digest, None);
         // a missing file is not an error here (S002 reports it)
-        let _ = std::fs::remove_file(dir.join("docs/spec.txt"));
-        let gone = t
-            .resolve(Some(&dir), ms[1].as_ref().expect("b"))
+        let p = parse("cite gone = \"nope/missing.txt\"\nots P { a = 1mm @gone }\n");
+        let t2 = CiteTable::new(p.file.entries.iter().filter_map(|e| match e {
+            FileEntry::Item(i) => match &i.kind {
+                ItemKind::Cite(c) => Some(c),
+                _ => None,
+            },
+            _ => None,
+        }));
+        let MemberKind::Param(pr) = &p.file.components().next().expect("c").members[0].kind else {
+            panic!("param")
+        };
+        let gone = t2
+            .resolve(Some(dir), pr.citation.as_ref().expect("cite"))
             .expect("gone");
         assert_eq!(gone.file_digest, None);
-        let _ = std::fs::remove_dir_all(&dir);
     }
 }
