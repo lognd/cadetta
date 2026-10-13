@@ -1,0 +1,37 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:42:05Z"
+digest = "6e6354b98bc6e4ed57296c7795bdbea7fcc7abd249b7021843fa27923cb0aa6a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1f522974-a69f-440f-a102-eec95275e916 with nextest profile: default
+    Starting 15 tests across 1 binary (60 tests skipped)
+        PASS [   0.009s] cadetta-units accessors::tests::toleranced_accessors_are_plain
+        PASS [   0.009s] cadetta-units accessors::tests::untoleranced_accessors_all_equal_value
+        PASS [   0.009s] cadetta-units bound::tests::at_least_has_only_min
+        PASS [   0.010s] cadetta-units accessors::tests::mmc_lmc_follow_role
+        PASS [   0.011s] cadetta-units bound::tests::at_most_has_only_max
+        PASS [   0.011s] cadetta-units accessors::tests::mmc_lmc_without_role_is_e010
+        PASS [   0.013s] cadetta-units bound::tests::range_has_both_limits_and_rejects_inversion
+        PASS [   0.012s] cadetta-units display::tests::precedence_order
+        PASS [   0.005s] cadetta-units role::tests::attribute_gives_role
+        PASS [   0.005s] cadetta-units role::tests::class_letter_case_gives_role
+        PASS [   0.005s] cadetta-units role::tests::reference_inherits_referent_role
+        PASS [   0.021s] cadetta-units display::tests::money_and_percent
+        PASS [   0.023s] cadetta-units display::tests::plain_units
+        PASS [   0.030s] cadetta-units display::tests::feet_inches
+        PASS [   0.035s] cadetta-units display::tests::inch_fraction
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.036s] 15 tests run: 15 passed, 60 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E '(package(=cadetta-units) & (test(=accessors::tests::mmc_lmc_follow_role) | test(=accessors::tests::mmc_lmc_without_role_is_e010) | test(=accessors::tests::toleranced_accessors_are_plain) | test(=accessors::tests::untoleranced_accessors_all_equal_value) | test(=bound::tests::at_least_has_only_min) | test(=bound::tests::at_most_has_only_max) | test(=bound::tests::range_has_both_limits_and_rejects_inversion) | test(=display::tests::feet_inches) | test(=display::tests::inch_fraction) | test(=display::tests::money_and_percent) | test(=display::tests::plain_units) | test(=display::tests::precedence_order) | test(=role::tests::attribute_gives_role) | test(=role::tests::class_letter_case_gives_role) | test(=role::tests::reference_inherits_referent_role)))'"
+size = 1648
+status = "measured"
+test_count = 15
+tests_digest = "fc7a790ca018ece7bd8549f8b83b79f67b5637e09d16491839e117dafd6f8dd7"
+at = "2026-10-13T06:42:05Z"
+actor = "lognd"
+rev = 1
