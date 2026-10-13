@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T07:26:01Z"
+updated = "2026-10-13T07:26:02Z"
 persona = "design engineer"
 capability = "declare what a design needs from a part and have implementers checked against it"
 idempotency_key = "replan13:Interface declarations and implementation checking"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given code reading `wheel.hub_bore`, when resolved, then it depends on the interface only (language.md 3.2)"
-bound = false
+bound = true
 +++
