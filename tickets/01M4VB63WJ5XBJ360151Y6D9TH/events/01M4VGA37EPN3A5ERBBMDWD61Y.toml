@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T20:47:15Z"
+digest = "b32511c389ac65a2b44625089f51bbd7845064f9ba057dc9ca2c9de90df9b85b"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 75fb7550-f6fa-42cb-94f1-3ba92a8dcee9 with nextest profile: default
+    Starting 1 test across 27 binaries (929 tests skipped)
+        PASS [   0.010s] cadetta-adapter bindings::tests::bindings_mangle_pure_per_path
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.033s] 1 test run: 1 passed, 929 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "bindings_mangle_pure_per_path"
+size = 610
+status = "measured"
+test_count = 1
+tests_digest = "1451979401d644d855b5aa21256b1ebaab2cd2f82e83861ab74e3bd898e0c149"
+at = "2026-10-13T20:47:15Z"
+actor = "lognd"
+rev = 1
