@@ -1,0 +1,28 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:15:00Z"
+digest = "1e9f228ff1412f4988c56c349a23ed88682550873a9bbe0adf7a3280ed41081f"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5335e755-182b-4b58-909a-302e1389e660 with nextest profile: default
+    Starting 4 tests across 1 binary (8 tests skipped)
+        PASS [   0.007s] cadetta-units affine::tests::affine_units_reject_multiply
+        PASS [   0.008s] cadetta-units affine::tests::temperature_difference_is_delta
+        PASS [   0.008s] cadetta-units affine::tests::delta_units_parse_without_offset
+        PASS [   0.010s] cadetta-units affine::tests::offsets_apply_exactly
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 4 tests run: 4 passed, 8 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E '(package(=cadetta-units) & (test(=affine::tests::affine_units_reject_multiply) | test(=affine::tests::delta_units_parse_without_offset) | test(=affine::tests::offsets_apply_exactly) | test(=affine::tests::temperature_difference_is_delta)))'"
+size = 917
+status = "measured"
+test_count = 4
+tests_digest = "bc66ed7489153875c8301b96b2d7fe48de00c2c517cf5c371781a88c31cb4f14"
+at = "2026-10-13T06:15:00Z"
+actor = "lognd"
+rev = 1
