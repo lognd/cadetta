@@ -60,6 +60,13 @@ Solver outputs are plain values; their use decides their role.
   supported. Every re-solve that changes the output creates a sync
   obligation for every bound CAD file downstream.
 
+Evaluation rules (cadetta-solve `outputs`): a bound use is only compared
+and never drives a value or changes the output's role; a driving use
+marks the output `driving` and every value derived from it cites the
+solver and output name. A stale result (section 4) still evaluates in
+either role, carrying the S003 fact that names what changed (`inputs`,
+`script`, or a dep path). An output with no recorded value is unsolved.
+
 ## 3. Protocol
 
 No library is needed in any language: inputs and outputs are JSON, and
