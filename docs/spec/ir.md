@@ -53,6 +53,14 @@ prefix and the assembly may be omitted wherever they are unambiguous
 (`wheel=Colson2Series`); IR keys and lock records always use the full
 form.
 
+- Variant names (`cadetta-ir` `variant_name.rs`): the full form splits
+  at the single `=` into a slot instance path (must carry a `/slot`
+  step) and a bare component path. A short alternate (`Colson2Series`,
+  or module-qualified `b::Colson`) resolves against the components
+  visible in the current module: exactly one match by item name (and
+  module suffix) is required, none is unknown, several is ambiguous
+  and must be qualified.
+
 An evaluated value has the path of the instance it belongs to
 (`acme.rover::Rover/axle[0].end_diameter`); a definition path
 (`acme.rover::Axle.end_diameter`) names the declaration, which is what
