@@ -2,7 +2,8 @@
 id = "01M4SWN8DY2SQYR5GCTQQM16Z9"
 title = "cite pin"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
