@@ -2,7 +2,8 @@
 id = "01M4TQJJK40BJQTA59SMC5WD33"
 title = "Wire lint rule families (D, F, L, M, N, S, T, P, W, Q, O) into the check driver"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
