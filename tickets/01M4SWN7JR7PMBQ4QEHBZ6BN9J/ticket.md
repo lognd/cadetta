@@ -8,12 +8,12 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T14:18:30Z"
+updated = "2026-10-13T14:18:34Z"
 persona = "design engineer"
 capability = "swap a part safely"
 idempotency_key = "replan14:ob-swap"
 labels = ["creates:crates/cadetta-obligations/src/swap.rs"]
-scope = ["crates/cadetta-obligations/src/swap.rs", "crates/cadetta-cli/src/cmd/swap.rs"]
+scope = ["crates/cadetta-obligations/src/swap.rs", "crates/cadetta-cli/src/cmd/swap.rs", "crates/cadetta-cli/src/cmd/ack.rs"]
 
 [[links]]
 kind = "blocked-by"
