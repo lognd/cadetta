@@ -529,4 +529,19 @@ mod tests {
             "part wheel[4]: pkg::Caster = pkg::Colson alt [pkg::Other, pkg::Vendor]"
         );
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/impact_swap.rs::render
+    #[test]
+    fn json_validates_against_swap_schema() {
+        let schema: Json =
+            serde_json::from_str(include_str!("../../../../docs/schemas/swap.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let s = preview(&ir(&["pkg::Colson"]), "wheel", "pkg::Colson").unwrap();
+        let mut out = Vec::new();
+        render(&s, Format::Json, &mut out);
+        let v: Json = serde_json::from_slice(&out).unwrap();
+        assert_eq!(v["schema"], SCHEMA);
+        assert!(validator.is_valid(&v), "{v}");
+    }
 }

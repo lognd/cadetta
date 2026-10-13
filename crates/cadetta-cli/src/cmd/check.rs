@@ -495,4 +495,23 @@ mod tests {
             (vec!["m".to_owned()], vec!["g*".to_owned()])
         );
     }
+
+    // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn json_validates_against_check_and_diag_schemas() {
+        let load = |text: &str| -> Value { serde_json::from_str(text).unwrap() };
+        let check_schema = load(include_str!("../../../../docs/schemas/check.json"));
+        let diag_schema = load(include_str!("../../../../docs/schemas/diag.json"));
+        let check_validator = jsonschema::validator_for(&check_schema).unwrap();
+        let diag_validator = jsonschema::validator_for(&diag_schema).unwrap();
+        let dir = project(AXLE_BAD, "");
+        let (_, json, _) = run(&dir, &[]);
+        assert!(check_validator.is_valid(&json), "{json}");
+        let diags = json["diagnostics"].as_array().unwrap();
+        assert!(!diags.is_empty());
+        for d in diags {
+            assert!(diag_validator.is_valid(d), "{d}");
+        }
+    }
 }

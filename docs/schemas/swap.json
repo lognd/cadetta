@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Swap",
+  "description": "A `cadetta.swap/1` report: the preview of `cadetta impact --swap PART NEW`.",
+  "type": "object",
+  "required": ["schema", "swap", "verdict", "values_changed", "verdicts_flipped", "suggested_edit"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "cadetta.swap/1" },
+    "swap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slot", "alternate", "approved"],
+      "properties": {
+        "slot": { "description": "Canonical path of the part slot.", "type": "string" },
+        "alternate": { "description": "The replacement component.", "type": "string" },
+        "approved": { "description": "True when the replacement is in the slot's alt list.", "type": "boolean" }
+      }
+    },
+    "verdict": { "enum": ["ok", "ok with warnings", "blocked"] },
+    "values_changed": {
+      "description": "Direct values first, then derived, each sorted by path.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "old", "new", "class"],
+        "properties": {
+          "path": { "type": "string" },
+          "old": { "description": "Value under the primary, as authored; null when the member had none.", "type": ["string", "null"] },
+          "new": { "type": "string" },
+          "class": { "enum": ["direct", "derived"] }
+        }
+      }
+    },
+    "verdicts_flipped": {
+      "description": "Checks whose verdict differs under the swap, sorted by path.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "old", "new"],
+        "properties": {
+          "path": { "type": "string" },
+          "old": { "$ref": "#/$defs/Verdict" },
+          "new": { "$ref": "#/$defs/Verdict" }
+        }
+      }
+    },
+    "suggested_edit": { "description": "The new `part` line.", "type": "string" }
+  },
+  "$defs": {
+    "Verdict": { "enum": ["pass", "fail", "unknown", "not evaluated"] }
+  }
+}
