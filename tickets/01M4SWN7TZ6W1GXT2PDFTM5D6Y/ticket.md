@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T06:29:37Z"
+updated = "2026-10-13T06:29:51Z"
 persona = "design engineer"
 capability = "gate releases on real sync"
 idempotency_key = "replan14:ob-kinds"
 labels = ["creates:crates/cadetta-obligations/src/kinds.rs"]
-scope = ["crates/cadetta-obligations/src/kinds.rs"]
+scope = ["crates/cadetta-obligations/src/kinds.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"
