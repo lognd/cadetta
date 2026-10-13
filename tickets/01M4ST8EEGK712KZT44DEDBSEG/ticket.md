@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:24Z"
+updated = "2026-10-13T05:43:37Z"
 persona = "design engineer"
 capability = "know which alternates are safe to swap in"
 idempotency_key = "replan13:Viability, undecided results and alternate waivers"
@@ -41,5 +41,9 @@ bound = false
 
 [[acceptance]]
 text = "Given promoting an alternate, when the primary changes, then the old primary stays approved only if the edit puts it in the list (language.md 3.2)"
+bound = false
+
+[[acceptance]]
+text = "Given a failing alternate, when evaluated, then C001/C002 are not raised for it and I002 names each failing check, fit, bound or require (language.md 3.2; obligations.md 2.3)"
 bound = false
 +++
