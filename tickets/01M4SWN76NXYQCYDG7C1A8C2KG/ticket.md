@@ -2,7 +2,8 @@
 id = "01M4SWN76NXYQCYDG7C1A8C2KG"
 title = "Waiver obligation kind and lock waiver record"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
