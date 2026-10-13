@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:17Z"
 persona = "design engineer"
 capability = "commit attestations and digests so the graph is rebuildable at any commit"
 idempotency_key = "replan13:cadetta.lock format and persistence"
 labels = ["creates:crates/cadetta-obligations/src/lock.rs"]
 scope = ["crates/cadetta-obligations/src/lock.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8ERHSJXGDXNH75ZCX6H7"
 
 [[acceptance]]
 text = "Given attestations, cited file digests, solver result digests and last-sync digests per adapter and file, when written, then entries are sorted and line-oriented (obligations.md 3)"
