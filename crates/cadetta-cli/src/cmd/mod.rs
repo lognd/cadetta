@@ -4,6 +4,7 @@
 pub mod cite;
 pub mod fmt;
 pub mod init;
+pub mod obligations;
 pub mod solve;
 
 use std::io::Write;
@@ -13,6 +14,7 @@ use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 pub use fmt::run_fmt;
 pub use init::run_init;
+pub use obligations::run_obligations;
 pub use solve::run_solve;
 
 /// Run `cite pin NAME`; `args` are the words after `cite`. Returns the exit code.
