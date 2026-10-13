@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:02:10Z"
+updated = "2026-10-13T08:02:33Z"
 persona = "design engineer"
 capability = "look values up in cited tables by key, nearest or at-least"
 idempotency_key = "replan13:Tables, lookups and Table<K> parameters"
 labels = ["creates:crates/cadetta-sema/src/tables.rs"]
-scope = ["crates/cadetta-sema/src/tables.rs"]
+scope = ["crates/cadetta-sema/src/tables.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given `Iso273[thread].medium`, when evaluated, then the exact-match row column is read (language.md 3.6)"
