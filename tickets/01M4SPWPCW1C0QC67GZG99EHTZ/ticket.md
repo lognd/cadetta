@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:49:08Z"
+updated = "2026-10-13T06:49:09Z"
 persona = "design engineer"
 capability = "reference parameters as `Other.param` or `part.param`"
 outcome_text = "every value has one canonical path such as acme.rover::Axle.end_diameter"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a parameterless component read by type name, when resolved, then it is one implicit instance shared by every read in the project (language.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a bare enum variant where the parameter type is known, when resolved, then it is accepted; elsewhere it must be qualified (language.md 3.1)"
