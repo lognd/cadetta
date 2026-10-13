@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T13:06:00Z"
+updated = "2026-10-13T13:06:02Z"
 persona = "design engineer"
 capability = "get lints for the D family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given two ots parameters with equal values, when linted, then D001 does not fire (lints.md D)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `12.009mm` equal to `seat.shaft.mid`, when linted, then D002 is reported (lints.md D)"
