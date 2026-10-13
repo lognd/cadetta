@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given project.check, impact, impact_swap, compare and why, when called, then each returns pydantic models generated from the CLI schemas (impact.json, compare.json, diagnostic) (bindings.md 3.2)", "Given a diagnostic, when read, then code, severity, path, span and message are present (bindings.md 3.2)"]
+new = ["Given project.check, impact, impact_swap, compare and why, when called, then each returns pydantic models generated from the CLI schemas (impact.json, compare.json, diagnostic) (bindings.md 3.2)", "Given a diagnostic, when read, then code, severity, path, span and message are present (bindings.md 3.2)", "Given why_stale, impact_since, obligations, swap and impact_swap, when called, then each returns its schema model (bindings.md 3.2)"]
+moved = [1, 2]
+at = "2026-10-13T05:45:13Z"
+actor = "lognd"
+rev = 1
