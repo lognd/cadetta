@@ -1,0 +1,13 @@
+kind = "create"
+title = "Wire lint rule families (D, F, L, M, N, S, T, P, W, Q, O) into the check driver"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 8
+idempotency_key = "wire-lints"
+scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
+acceptance = ["cadetta check runs every implemented lint family over the analyzed IR and reports their diagnostics", "L/T/P/Q/N004 lifts are fed from sema and variants facts", "waivers and allows are applied through the engine, W rules reported"]
+body = "Rule modules exist as standalone APIs and are only unit-tested; nothing in the CLI calls them (see agents' reports on ~FEBPEYV, ~F4PFYCT, ~Q41GK55, ~ZSG20Z9, ~E0Q9EBH)."
+at = "2026-10-13T13:35:03Z"
+actor = "lognd"
+rev = 1
