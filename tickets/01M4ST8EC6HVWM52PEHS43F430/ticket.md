@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a solver whose inputs change under a variant, when evaluated, then the variant reads its own result or is unknown (solvers.md 4.1)"
-bound = false
+bound = true
 +++
