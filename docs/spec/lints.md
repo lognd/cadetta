@@ -414,3 +414,10 @@ negative fixtures (a must-fire and a must-not-fire) under
 `tests/conformance/lints/<code>/`, part of the conformance corpus
 (`tests/conformance/<doc>/` for every other spec document). A rule is documented here
 before it ships; its code links back with `frob:doc`.
+
+A *literal* for D001, D002 and M001-M003 is an authored parameter that reads
+nothing and whose expression text is absent or equal to its authored token
+(lowering records a literal's source text as `expr`). `cadetta check` runs the
+IR-only families (D001, D002, F004, M, N, Q006, S) with the catalog
+severities, then applies `[lint]` overrides, `waive` declarations and the W
+rules through the engine.

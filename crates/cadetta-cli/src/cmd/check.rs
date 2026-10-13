@@ -8,6 +8,7 @@ use std::io::Write;
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply};
+use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::graph::ObligationState;
 use cadetta_obligations::lock::Lock;
@@ -232,7 +233,14 @@ pub fn run_check_with(
     if !scope.is_all() {
         raw.retain(|d| d.path.as_deref().is_some_and(|p| scope.contains(p)));
     }
-    let mut outcome = apply(raw, &cfg, &Suppressions::default());
+    let sup = Suppressions {
+        as_of: Some(as_of.date.to_string()),
+        ..analysis.suppressions.clone()
+    };
+    let mut outcome = apply(raw, &cfg, &sup);
+    // W001-W004 describe the waivers themselves, so they follow the engine run.
+    let waiver_diags = w::check(&outcome, &sup, &cfg);
+    outcome.diagnostics.extend(waiver_diags);
     for d in &mut outcome.diagnostics {
         if (d.code == "O001" || d.code == "O002")
             && gating_keys.contains(&(d.code.clone(), d.path.clone()))
@@ -406,6 +414,44 @@ mod tests {
             .unwrap();
         assert_eq!(o["severity"], "error");
         assert_eq!(o["path"], "acme.axle::Axle.bore_ok");
+    }
+
+    const AXLE_M001: &str = "model Axle {\n  od: Length = 20.1234mm\n}\n";
+
+    // frob:ticket 01M4TQJJK40BJQTA59SMC5WD33
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn ir_lint_families_run_in_check() {
+        let dir = project(AXLE_M001, "");
+        let (_, json, _) = run(&dir, &[]);
+        let c = codes(&json);
+        assert!(c.contains(&"M001".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4TQJJK40BJQTA59SMC5WD33
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn waive_suppresses_through_the_engine_and_unused_waiver_is_w004() {
+        let waived = format!(
+            "{AXLE_M001}waive M001 on acme.axle::Axle.od {{ because \"measured to the micron\" }}\n"
+        );
+        let dir = project(&waived, "");
+        let (_, json, _) = run(&dir, &[]);
+        let m = json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == "M001")
+            .expect("M001 listed in json as waived");
+        assert!(m["waived"].is_object(), "{json}");
+        assert!(!codes(&json).contains(&"W004".to_owned()), "{json}");
+
+        let unused = format!(
+            "{AXLE_OK}waive M001 on acme.axle::Axle.od {{ because \"nothing to waive\" }}\n"
+        );
+        let dir = project(&unused, "");
+        let (_, json, _) = run(&dir, &[]);
+        assert!(codes(&json).contains(&"W004".to_owned()), "{json}");
     }
 
     fn attest(dir: &Dir, digest: &str) {
