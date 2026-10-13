@@ -4,11 +4,11 @@ title = "cadetta.lock format and persistence"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 5
+points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:05:17Z"
+updated = "2026-10-13T05:44:39Z"
 persona = "design engineer"
 capability = "commit attestations and digests so the graph is rebuildable at any commit"
 idempotency_key = "replan13:cadetta.lock format and persistence"
@@ -33,5 +33,9 @@ bound = false
 
 [[acceptance]]
 text = "Given an attestation, when stored, then it holds who, role, when, reason and the digest set (obligations.md 3)"
+bound = false
+
+[[acceptance]]
+text = "Given the lock, when written, then it holds the six record kinds, sorted, with the tie rule and by/at fields (obligations.md 3)"
 bound = false
 +++

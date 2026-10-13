@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given attestations, cited file digests, solver result digests and last-sync digests per adapter and file, when written, then entries are sorted and line-oriented (obligations.md 3)", "Given the same state twice, when written, then the bytes are identical and merges of independent attestations do not conflict (obligations.md 3)", "Given source plus the lock file at any commit, when loaded, then the obligation graph is rebuilt; nothing else writes state (obligations.md 2, 3)", "Given an attestation, when stored, then it holds who, role, when, reason and the digest set (obligations.md 3)"]
+new = ["Given attestations, cited file digests, solver result digests and last-sync digests per adapter and file, when written, then entries are sorted and line-oriented (obligations.md 3)", "Given the same state twice, when written, then the bytes are identical and merges of independent attestations do not conflict (obligations.md 3)", "Given source plus the lock file at any commit, when loaded, then the obligation graph is rebuilt; nothing else writes state (obligations.md 2, 3)", "Given an attestation, when stored, then it holds who, role, when, reason and the digest set (obligations.md 3)", "Given the lock, when written, then it holds the six record kinds, sorted, with the tie rule and by/at fields (obligations.md 3)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:44:39Z"
+actor = "lognd"
+rev = 1
