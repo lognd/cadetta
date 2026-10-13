@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:01:23Z"
+updated = "2026-10-13T06:04:47Z"
 persona = "design engineer"
 capability = "reference parameters as `Other.param` or `part.param`"
 outcome_text = "every value has one canonical path such as acme.rover::Axle.end_diameter"
@@ -28,15 +28,7 @@ text = "Given a bare name in a component, when resolved, then it is the componen
 bound = false
 
 [[acceptance]]
-text = "Given `Other.param`, when resolved, then the same namespace is searched before imported namespaces"
-bound = false
-
-[[acceptance]]
 text = "Given declaration order reversed, when resolved, then results are identical"
-bound = false
-
-[[acceptance]]
-text = "Given `use std.fits::iso286` and `use a.b::{X, Y as Z}`, when resolved, then imports bring names into scope (language.md 3, 4)"
 bound = false
 
 [[acceptance]]
@@ -53,5 +45,13 @@ bound = false
 
 [[acceptance]]
 text = "Given a canonical path with `/part[index]` segments, when resolved, then it matches ir.md 2"
+bound = false
+
+[[acceptance]]
+text = "Given `Other.param`, when resolved, then the same module is searched before imported names (packages.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given a canonical path package::module::Item.member, when resolved, then it matches ir.md 2 and packages.md 2"
 bound = false
 +++
