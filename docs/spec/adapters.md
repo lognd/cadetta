@@ -192,7 +192,10 @@ variable `"Axle_end_diameter"` or to the dimension
   `ref_to` global if given, else the first global locator bound to the
   same path (bindings-file order); if the path has none, at the
   global of its referent when the path is a pure alias; otherwise the
-  emitter creates the path's own mangled global (3.1).
+  emitter creates the path's own mangled global (3.1). That created
+  global is a `value` global whose unit is the dimension locator's
+  `native_unit`, or the adapter's declared native unit when the locator
+  has none; it is written before the path's dimension lines.
 - File defaults (`cadetta-adapter` `bindings.rs`): `mode` defaults to
   `ref` for a `dimension` locator and `value` otherwise; an omitted
   `native_unit` means the adapter's declared native unit. A

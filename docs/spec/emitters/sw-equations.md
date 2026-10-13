@@ -22,7 +22,11 @@ pilot r2-05.
 - **Global lines**, `"NAME" = VALUE`, for each `global` locator. NAME is
   the bound locator, or for an unbound-name global created by the
   emitter, the mangled path (`"Gasket__width"`, adapters.md 3.1); the
-  emitter never writes dots in names it creates.
+  emitter never writes dots in names it creates. A `ref` dimension with
+  no `ref_to`, no bound global and no pure-alias referent makes the
+  emitter create this global (adapters.md 3); it is a global line of the
+  path, takes the dimension locator's `native_unit` (else the adapter's
+  declared native unit) and carries the path's value in that unit.
 - **Dimension lines**, `"Dn@Feature@File" = REF-OR-VALUE`, for each
   `dimension` locator: `"GLOBAL"` in `ref` mode (which global:
   adapters.md 3), a value in `value` mode.
