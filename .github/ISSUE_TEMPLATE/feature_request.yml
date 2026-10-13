@@ -1,0 +1,19 @@
+name: Feature request
+description: Propose a new capability
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      description: 'Form: "As a <persona>, I want <capability> so that <outcome>".'
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: 'Observable checks, e.g. "Given X, when Y, then Z".'
+    validations:
+      required: true

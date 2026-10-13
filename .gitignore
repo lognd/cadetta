@@ -22,3 +22,4 @@ coverage.xml
 .grimble/
 FROBLEMS.md
 .env
+.claude/scheduled_tasks.lock

@@ -1,0 +1,40 @@
+name: Spec question / ambiguity
+description: Ask about, or point out a gap, contradiction or ambiguity in, the specification
+title: "spec: "
+labels: ["spec"]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: Spec location
+      description: 'File and section under `docs/spec`, and the draft version (e.g. 1.3).'
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Question
+        - Ambiguity (two readings possible)
+        - Contradiction (two places disagree)
+        - Gap (behavior not specified)
+        - Pilot or conformance case disagrees with the spec
+    validations:
+      required: true
+  - type: textarea
+    id: text
+    attributes:
+      label: What is unclear
+      description: Quote the passage and explain the readings you see.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example
+      description: A small cadetta snippet where the answer matters, and what you expected.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed resolution

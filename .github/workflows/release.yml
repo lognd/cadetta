@@ -1,0 +1,213 @@
+name: release
+
+# Tag `v*` publishes:
+#   - the workspace crates to crates.io (protected `crates-io` environment,
+#     trusted publishing via rust-lang/crates-io-auth-action);
+#   - the `cadetta` package wheels and sdist (maturin, bindings/python: the
+#     importable package plus the `cadetta` console script) and the
+#     `cadetta-freecad` adapter (uv build, adapters/freecad) to PyPI
+#     (protected `pypi` environment, trusted publishing).
+#
+# Owner setup, once:
+#   - crates.io: add this repository and workflow `release.yml` (environment
+#     `crates-io`) as a trusted publisher on each crate. A crate's FIRST
+#     publish cannot use trusted publishing: put a scoped CARGO_REGISTRY_TOKEN
+#     secret in the `crates-io` environment, publish, then delete it; the job
+#     falls back to OIDC when the secret is absent.
+#   - PyPI: add a trusted publisher (owner lognd, repo cadetta, workflow
+#     release.yml, environment `pypi`) to the `cadetta` and `cadetta-freecad`
+#     projects (a pending publisher for the first upload).
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: {}
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  crates:
+    name: crates (crates.io publish in dependency order)
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: crates-io
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - name: Tag matches the workspace version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json,sys; print(next(p["version"] for p in json.load(sys.stdin)["packages"] if p["name"] == "cadetta"))')
+          [ "$TAG" = "v$version" ] || { echo "tag $TAG does not match version $version" >&2; exit 1; }
+      # A secret cannot appear in an `if`, so turn "is a token set" into an output.
+      - name: Detect a first-publish registry token in the crates-io environment
+        id: mode
+        env:
+          FIRST_PUBLISH_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          if [ -n "$FIRST_PUBLISH_TOKEN" ]; then
+            echo "token=true" >> "$GITHUB_OUTPUT"
+            echo "publishing with the environment's CARGO_REGISTRY_TOKEN (first publish)"
+          else
+            echo "token=false" >> "$GITHUB_OUTPUT"
+            echo "no stored token; using trusted publishing (OIDC)"
+          fi
+      - name: Exchange the OIDC token for a short-lived crates.io token
+        id: auth
+        if: ${{ steps.mode.outputs.token != 'true' }}
+        uses: rust-lang/crates-io-auth-action@c6f97d42243bad5fab37ca0427f495c86d5b1a18 # v1.0.5
+      # Explicit dependency order (each crate only depends on earlier ones);
+      # resumable: versions already on the index are skipped.
+      - name: Publish in dependency order
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN || steps.auth.outputs.token }}
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json,sys; print(next(p["version"] for p in json.load(sys.stdin)["packages"] if p["name"] == "cadetta"))')
+          for crate in cadetta-units cadetta-syntax cadetta-fits cadetta-ir cadetta-solve \
+                       cadetta-obligations cadetta-adapter cadetta-sema cadetta-lint cadetta; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "https://crates.io/api/v1/crates/$crate/$version")
+            if [ "$code" = "200" ]; then
+              echo "$crate $version already published; skipping"
+              continue
+            fi
+            echo "publishing $crate $version"
+            cargo publish -p "$crate"
+          done
+
+  wheels:
+    name: wheel (${{ matrix.name }})
+    needs: ci
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: linux-x86_64, os: ubuntu-latest, target: x86_64-unknown-linux-gnu, manylinux: "2_28", smoke: true }
+          - { name: linux-aarch64, os: ubuntu-latest, target: aarch64-unknown-linux-gnu, manylinux: "2_28", smoke: false }
+          - { name: macos-arm64, os: macos-latest, target: aarch64-apple-darwin, manylinux: "off", smoke: true }
+          - { name: macos-x86_64, os: macos-latest, target: x86_64-apple-darwin, manylinux: "off", smoke: false }
+          - { name: windows-x86_64, os: windows-latest, target: x86_64-pc-windows-msvc, manylinux: "off", smoke: true }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Build wheel
+        uses: PyO3/maturin-action@3e2bdf6ba6453a61e649744019b8a2d906c7eb38 # v1.51.0
+        with:
+          working-directory: bindings/python
+          target: ${{ matrix.target }}
+          manylinux: ${{ matrix.manylinux }}
+          args: --release --out dist
+      - name: Smoke the wheel (cadetta --version, import cadetta)
+        if: ${{ matrix.smoke }}
+        shell: bash
+        run: |
+          pip install --find-links bindings/python/dist cadetta
+          cadetta --version
+          python -c "import cadetta; print(cadetta.core_version())"
+      # Cross-built targets (aarch64 linux, x86_64 macos) cannot run on the
+      # runner, so they are exempt from the smoke.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-cadetta-${{ matrix.name }}
+          path: bindings/python/dist/*.whl
+          if-no-files-found: error
+
+  sdist:
+    name: sdist (cadetta)
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Build sdist
+        uses: PyO3/maturin-action@3e2bdf6ba6453a61e649744019b8a2d906c7eb38 # v1.51.0
+        with:
+          working-directory: bindings/python
+          command: sdist
+          args: --out dist
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-cadetta-sdist
+          path: bindings/python/dist/*.tar.gz
+          if-no-files-found: error
+
+  freecad:
+    name: build (cadetta-freecad)
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: uv build
+        working-directory: adapters/freecad
+        run: uv build --out-dir dist
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-cadetta-freecad
+          path: adapters/freecad/dist/*
+          if-no-files-found: error
+
+  # Trusted publishing (OIDC, no stored token) from the protected `pypi`
+  # environment. Uploads exactly what the build jobs produced; skip-existing
+  # makes a re-run after a partial upload resume.
+  pypi:
+    name: pypi (cadetta and cadetta-freecad)
+    needs: [wheels, sdist, freecad]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: dist-*
+          path: dist
+          merge-multiple: true
+      - name: Expected distributions are present
+        run: |
+          [ "$(find dist -maxdepth 1 -name 'cadetta-*.whl' | wc -l)" -eq 5 ] || { echo "expected 5 cadetta wheels" >&2; ls dist >&2; exit 1; }
+          [ "$(find dist -maxdepth 1 -name 'cadetta-*.tar.gz' | wc -l)" -eq 1 ] || { echo "expected 1 cadetta sdist" >&2; ls dist >&2; exit 1; }
+          ls dist
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist
+          skip-existing: true

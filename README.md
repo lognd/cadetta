@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/lognd/cadetta/main/docs/assets/cadetta-banner.svg" alt="cadetta: typed, toleranced design parameters, linted once and emitted to every CAD tool." width="100%"/>
+</p>
+
+<p align="center">
+  <a href="https://github.com/lognd/cadetta/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/lognd/cadetta/actions/workflows/ci.yml"><img src="https://github.com/lognd/cadetta/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/status-spec%20draft%201.3-orange.svg" alt="Status: spec draft 1.3">
+</p>
+
 # Cadetta
 
 Cadetta is the single source of truth for the parameters of a CAD design.
@@ -9,7 +19,7 @@ It starts with mechanical CAD (SOLIDWORKS, FreeCAD, Onshape, Fusion,
 Inventor) and is designed to extend to other kinds of CAD, such as
 electrical design in KiCad.
 
-Status: specification draft. See [docs/spec/](docs/spec/README.md).
+Status: specification draft. See [docs/spec/](https://github.com/lognd/cadetta/blob/main/docs/spec/README.md).
 
 ---
 
@@ -113,6 +123,20 @@ assembly Rover {
 }
 ```
 
+## Install
+
+The core is Rust. The `cadetta` command ships on crates.io and on PyPI;
+the PyPI package is also importable (`import cadetta`) for Python
+interop:
+
+```sh
+cargo install cadetta      # or
+pip install cadetta        # or: uv tool install cadetta
+```
+
+The FreeCAD adapter is the Python package `cadetta-freecad`. Releases
+are placeholders until 0.1.0.
+
 ## Quickstart (planned)
 
 ```sh
@@ -131,5 +155,14 @@ cadetta why Axle.end_diameter               # where a value comes from
 | `docs/spec/` | The specification: quantities, language, IR, obligations, solvers, adapters, lints, config and CLI |
 | `pilots/` | Syntax pilots: realistic designs written against the spec, with friction reports |
 | `docs/decisions/` | Architecture decision records |
+| `crates/` | The Rust workspace: units, syntax, sema, fits, ir, lint, obligations, solve, adapter, and the `cadetta` binary |
+| `adapters/freecad/` | The FreeCAD reference adapter (Python, JSON-RPC on stdio) |
+| `bindings/` | Language bindings over the Rust core, one directory per language (`bindings/python`: the importable `cadetta` package); any other language uses the JSON interfaces |
 | `design/` | The grimble architecture model |
 | `tickets/` | The frob ticket ledger (do not edit by hand) |
+
+## Contributing and license
+
+See [CONTRIBUTING.md](https://github.com/lognd/cadetta/blob/main/CONTRIBUTING.md)
+and [SECURITY.md](https://github.com/lognd/cadetta/blob/main/SECURITY.md).
+MIT licensed; see [LICENSE](https://github.com/lognd/cadetta/blob/main/LICENSE).

@@ -1,0 +1,25 @@
+[package]
+name = "cadetta-sema"
+description = "Name resolution, kind checking and evaluation into design IR."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "lint"]
+categories = ["science", "development-tools"]
+
+[dependencies]
+cadetta-syntax.workspace = true
+cadetta-units.workspace = true
+cadetta-fits.workspace = true
+cadetta-ir.workspace = true
+cadetta-solve.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

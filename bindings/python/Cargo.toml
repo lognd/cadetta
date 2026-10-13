@@ -1,0 +1,28 @@
+[package]
+name = "cadetta-py"
+description = "Python bindings for cadetta: the importable `cadetta` package and its CLI entry point."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "python"]
+categories = ["science", "development-tools"]
+# Shipped through PyPI (packaging/pypi), not crates.io.
+publish = false
+
+[lib]
+name = "_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cadetta.workspace = true
+pyo3.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

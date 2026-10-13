@@ -1,0 +1,3 @@
+//! Runs external solvers over cadetta.solve/1 and caches results.
+//!
+//! Specification: `docs/spec/solvers.md`.

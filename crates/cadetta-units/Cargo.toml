@@ -1,0 +1,20 @@
+[package]
+name = "cadetta-units"
+description = "Exact rational quantities, units, kinds and tolerances."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "lint"]
+categories = ["science", "development-tools"]
+
+[dependencies]
+tracing.workspace = true
+
+[lints]
+workspace = true

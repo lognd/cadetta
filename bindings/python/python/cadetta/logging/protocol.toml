@@ -1,0 +1,18 @@
+# Protocol mode: stdout carries JSON-RPC or cadetta.solve/1 messages, and a
+# stray log line would corrupt it, so every record goes to stderr.
+version = 1
+disable_existing_loggers = false
+
+[formatters.stderr_fmt]
+"()" = "cadetta.logging.formatter.MalmbergFormatter"
+show_level = true
+
+[handlers.stderr]
+class = "logging.StreamHandler"
+formatter = "stderr_fmt"
+stream = "ext://sys.stderr"
+level = "INFO"
+
+[root]
+level = "DEBUG"
+handlers = ["stderr"]

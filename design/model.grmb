@@ -21,6 +21,15 @@ node adapter_host : trusted {
   may fs.write at "crates/cadetta-adapter/src/builtin/**";
 }
 
+/// External SOLIDWORKS adapter (Python, pywin32 COM), the primary drive target.
+node adapter_solidworks : authenticated {
+  kind component;
+  clearance Internal;
+  owns "adapters/solidworks/**";
+  may fs.read at "adapters/solidworks/**";
+  may fs.write at "adapters/solidworks/**";
+}
+
 /// A CAD tool session or native file set, outside our code.
 node cad_tool : foreign {
   kind external;
@@ -64,6 +73,16 @@ node obligations : trusted {
   owns "crates/cadetta-obligations/**";
   may fs.read at "cadetta.lock";
   may fs.write at "cadetta.lock";
+}
+
+/// The Python binding: PyO3 extension and pydantic layer, the importable `cadetta` (bindings.md).
+node py_binding : trusted {
+  kind component;
+  clearance Internal;
+  owns "bindings/python/**";
+  may fs.read at "bindings/python/python/cadetta/logging/**";
+  may fs.read at "bindings/python/tests/**";
+  may process.spawn at "bindings/python/tests/**";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
@@ -123,6 +142,11 @@ flow f_drive : adapter_freecad -> cad_tool {
   transport ffi;
 }
 
+flow f_drive_sw : adapter_solidworks -> cad_tool {
+  label Internal;
+  transport ffi;
+}
+
 flow f_fit_tables : fits -> sema {
   label Internal;
   transport in_process;
@@ -153,6 +177,16 @@ flow f_observed_ir : adapter_host -> lint {
   transport in_process;
 }
 
+flow f_py_cli : cli -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
+flow f_py_ir : ir -> py_binding {
+  label Internal;
+  transport in_process;
+}
+
 flow f_quantities : units -> sema {
   label Internal;
   transport in_process;
@@ -163,12 +197,27 @@ flow f_read : cad_tool -> adapter_freecad {
   transport file;
 }
 
+flow f_read_sw : cad_tool -> adapter_solidworks {
+  label Internal;
+  transport ipc;
+}
+
 flow f_rpc_request : adapter_host -> adapter_freecad {
   label Internal;
   transport ipc;
 }
 
+flow f_rpc_request_sw : adapter_host -> adapter_solidworks {
+  label Internal;
+  transport ipc;
+}
+
 flow f_rpc_response : adapter_freecad -> adapter_host {
+  label Internal;
+  transport ipc;
+}
+
+flow f_rpc_response_sw : adapter_solidworks -> adapter_host {
   label Internal;
   transport ipc;
 }

@@ -1,0 +1,36 @@
+[package]
+name = "cadetta"
+description = "Typed, toleranced design parameters for CAD: one source of truth, linted, emitted to every CAD tool."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "lint"]
+categories = ["science", "development-tools", "command-line-utilities"]
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "cadetta"
+path = "src/main.rs"
+
+[dependencies]
+cadetta-adapter.workspace = true
+cadetta-ir.workspace = true
+cadetta-lint.workspace = true
+cadetta-obligations.workspace = true
+cadetta-sema.workspace = true
+cadetta-solve.workspace = true
+cadetta-syntax.workspace = true
+cadetta-units.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[lints]
+workspace = true

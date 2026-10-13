@@ -1,0 +1,116 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  rust:
+    name: rust (fmt, clippy, test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal --component rustfmt --component clippy
+          rustup default 1.98.0
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      - name: cargo fmt
+        run: cargo fmt --all --check
+      - name: cargo clippy
+        run: cargo clippy --workspace --exclude cadetta-py --all-targets -- -D warnings
+      - name: cargo test
+        run: cargo test --workspace --exclude cadetta-py
+
+  python-adapter:
+    name: python adapter (ruff, pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: adapters/freecad
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      # The adapter depends on the cadetta package, built from bindings/python.
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: uv sync
+        run: uv sync
+      - name: ruff check
+        run: uv run ruff check
+      - name: ruff format --check
+        run: uv run ruff format --check
+      - name: pytest
+        run: uv run pytest
+
+  # The Python binding (bindings/python): builds the extension with maturin
+  # through uv, then lints and tests it. Each future binding gets its own job
+  # like this one (bindings/README.md); the Rust jobs exclude bindings.
+  python-binding:
+    name: binding (python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: bindings/python
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: uv sync (builds the extension)
+        run: uv sync --python 3.11
+      - name: ruff check
+        run: uv run ruff check python tests
+      - name: ruff format --check
+        run: uv run ruff format --check python tests
+      - name: pytest
+        run: uv run pytest
+      - name: Wheel builds and the console script runs
+        run: |
+          uvx maturin build --release --out "$RUNNER_TEMP/wheels"
+          uv venv --python 3.11 "$RUNNER_TEMP/smoke"
+          uv pip install --python "$RUNNER_TEMP/smoke" --find-links "$RUNNER_TEMP/wheels" cadetta
+          "$RUNNER_TEMP/smoke/bin/cadetta" --version
+          "$RUNNER_TEMP/smoke/bin/python" -c "import cadetta; print(cadetta.core_version())"
+
+  # frob is on PyPI, so the repository gate runs in CI from the published
+  # release. Pin a version here once cadetta's frob.toml needs one.
+  frob:
+    name: frob check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Install frob
+        run: uv tool install frob
+      - name: frob check
+        run: frob check

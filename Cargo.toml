@@ -1,0 +1,42 @@
+# Cadetta workspace: one crate per component in design/model.grmb.
+[workspace]
+resolver = "3"
+members = ["crates/*", "bindings/*"]
+# Language bindings need their language's toolchain, so the Rust gates
+# exclude them (`--exclude cadetta-py`) and each binding's own job builds
+# and tests it (bindings/README.md).
+default-members = ["crates/*"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.98"
+license = "MIT"
+authors = ["Logan Dapp"]
+repository = "https://github.com/lognd/cadetta"
+homepage = "https://github.com/lognd/cadetta"
+documentation = "https://github.com/lognd/cadetta/tree/main/docs/spec"
+
+[workspace.dependencies]
+cadetta = { path = "crates/cadetta-cli", version = "0.0.0" }
+cadetta-adapter = { path = "crates/cadetta-adapter", version = "0.0.0" }
+cadetta-fits = { path = "crates/cadetta-fits", version = "0.0.0" }
+cadetta-ir = { path = "crates/cadetta-ir", version = "0.0.0" }
+cadetta-lint = { path = "crates/cadetta-lint", version = "0.0.0" }
+cadetta-obligations = { path = "crates/cadetta-obligations", version = "0.0.0" }
+cadetta-sema = { path = "crates/cadetta-sema", version = "0.0.0" }
+cadetta-solve = { path = "crates/cadetta-solve", version = "0.0.0" }
+cadetta-syntax = { path = "crates/cadetta-syntax", version = "0.0.0" }
+cadetta-units = { path = "crates/cadetta-units", version = "0.0.0" }
+pyo3 = { version = "0.29", features = ["abi3-py311"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+print_stdout = "warn"
+print_stderr = "warn"

@@ -1,0 +1,23 @@
+[package]
+name = "cadetta-lint"
+description = "The rule catalog: pure functions from IR to diagnostics."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "lint"]
+categories = ["science", "development-tools"]
+
+[dependencies]
+cadetta-ir.workspace = true
+cadetta-obligations.workspace = true
+cadetta-adapter.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true

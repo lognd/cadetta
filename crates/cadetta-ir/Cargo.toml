@@ -1,0 +1,20 @@
+[package]
+name = "cadetta-ir"
+description = "The cadetta.ir/1 types, JSON schema, canonical paths and digests."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "../../README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "lint"]
+categories = ["science", "development-tools"]
+
+[dependencies]
+tracing.workspace = true
+
+[lints]
+workspace = true

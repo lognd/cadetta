@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="cadetta: typed, toleranced design parameters, linted once and emitted to every CAD tool">
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#7fb0e6" stroke-opacity="0.10" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="320" fill="#0f2b4f"/>
+  <rect width="1200" height="320" fill="url(#grid)"/>
+
+  <!-- logo mark (same as cadetta-logo.svg, scaled) -->
+  <g transform="translate(250 64) scale(1.2)">
+    <rect x="4" y="4" width="152" height="152" rx="34" fill="#13355f" stroke="#2c5a8f" stroke-width="2"/>
+    <path d="M112.4 52.6 A40 40 0 1 0 112.4 107.4" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+    <!-- construction lines: centre to the base of each end cap -->
+    <g stroke="#e5484d" stroke-width="1.8" stroke-dasharray="4 3.5" stroke-linecap="butt">
+      <line x1="80" y1="80" x2="117.54" y2="48.50"/>
+      <line x1="80" y1="80" x2="117.54" y2="111.50"/>
+    </g>
+    <!-- centre mark at the bore centre -->
+    <line x1="70" y1="80" x2="90" y2="80" stroke="#7fb0e6" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- diameter dimension between the inner walls -->
+    <line x1="80" y1="60" x2="80" y2="100" stroke="#ffc94d" stroke-width="5" stroke-linecap="round"/>
+    <path d="M80 49 L72 62 L88 62 Z" fill="#ffc94d"/>
+    <path d="M80 111 L72 98 L88 98 Z" fill="#ffc94d"/>
+  </g>
+
+  <!-- wordmark and tagline -->
+  <text x="480" y="172" fill="#ffffff" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="96" font-weight="700" letter-spacing="-2">cadetta</text>
+  <text x="484" y="216" fill="#cfe2f7" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24">typed, toleranced design parameters</text>
+  <text x="484" y="248" fill="#cfe2f7" fill-opacity="0.75" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24">linted once, emitted to every CAD tool</text>
+</svg>
