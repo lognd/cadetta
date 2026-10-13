@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T09:46:26Z"
+updated = "2026-10-13T09:46:27Z"
 persona = "product engineer"
 capability = "re-resolve dependencies on demand"
 labels = ["creates:crates/cadetta-cli/src/cmd/update.rs"]
@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a conflict or unmet version, when run, then E012 or E013 gives exit 1 and the lock is unchanged (config-cli.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a run, when finished, then update.json is emitted and registered in the output schemas (config-cli.md 3)"
