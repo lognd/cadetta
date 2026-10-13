@@ -268,8 +268,17 @@ reads and syncs, so two products can each link their own equations
 file. `sync`, `emit` and `check` accept `--module PATH` and path globs
 with the same effect for one run.
 
-A `modules` prefix matches on a segment boundary (`acme.gear` matches
-`acme.gear::X.y` and `acme.gear.sub::X.y`, not `acme.gearbox::X.y`). In
+A `modules` entry uses the same prefix form as `--module`
+(config-cli.md 3, "Scoping"): a module path relative to the package
+(`gear`, `gear::sub`) or fully qualified (`acme.demo::gear`), compared
+segment-wise, so `gear` covers `acme.demo::gear::X.y` and
+`acme.demo::gear::sub::X.y`, not `acme.demo::gearbox::X.y`. A bare
+package name is a package prefix and matches on dot boundaries
+(`acme.gear` covers packages `acme.gear` and `acme.gear.sub`, not
+`acme.gearbox`). Module paths follow the file tree (packages.md 2), so
+`gear::sub` is `src/gear/sub.cdt`; module files stay `snake_case`
+(E015) and a dotted file name is never a module path.
+In
 `paths` globs, `*` matches any run of characters without a `:` (it stays
 inside one module or item segment) and `**` matches any run. A path
 reaches the adapter only if it passes both filters (an empty list means

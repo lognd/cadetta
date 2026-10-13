@@ -189,7 +189,10 @@ Scoping (decided, 0.1.0): a node is in scope when it matches any
 everything is. A module prefix is compared segment-wise against the
 canonical path, relative to the package or fully qualified, and accepts
 `/` or `::` (`drive` matches `acme.rover::drive::motor::X` but not
-`acme.rover::driveline::X`). Globs use the obligations.md 2.2 grammar.
+`acme.rover::driveline::X`). A dotted package name matches on dot
+boundaries (`acme.gear` matches packages `acme.gear` and `acme.gear.sub`,
+not `acme.gearbox`). The `[[adapter]] modules` list (adapters.md 3.2)
+uses this same form. Globs use the obligations.md 2.2 grammar.
 
 `check` pipeline and exit rules (decided, 0.1.0): `check` parses every
 module (a lexical error E001 stops the run before evaluation, so later

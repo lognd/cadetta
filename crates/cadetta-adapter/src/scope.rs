@@ -119,11 +119,41 @@ impl Narrowed<'_> {
     }
 }
 
-/// A module prefix matches on a segment boundary (`.` or `::`) of the path.
+/// Reports whether the module prefix `prefix` covers the canonical path.
+///
+/// The one rule of config-cli.md 3: the prefix is a module path relative to
+/// the package (`drive`, `drive::motor`) or fully qualified (`acme.gear`,
+/// `acme.gear::drive`), compared segment-wise (`/` also separates). A
+/// leading package part matches on dot boundaries (`acme.gear` covers
+/// packages `acme.gear` and `acme.gear.sub`, not `acme.gearbox`).
 fn module_prefix_matches(prefix: &str, canonical: &str) -> bool {
-    match canonical.strip_prefix(prefix) {
+    let want: Vec<&str> = prefix
+        .split("::")
+        .flat_map(|p| p.split('/'))
+        .filter(|s| !s.is_empty())
+        .collect();
+    let mut have = canonical.split("::");
+    let (Some(pkg), true) = (have.next(), !want.is_empty()) else {
+        return false;
+    };
+    // Module segments sit between the package and the item (the last part).
+    let mut mods: Vec<&str> = have.collect();
+    mods.pop();
+    let relative = want.len() <= mods.len() && want.iter().zip(&mods).all(|(w, m)| w == m);
+    let qualified = package_prefix_matches(want[0], pkg)
+        && if want[0] == pkg {
+            want.len() - 1 <= mods.len() && want[1..].iter().zip(&mods).all(|(w, m)| w == m)
+        } else {
+            want.len() == 1
+        };
+    relative || qualified
+}
+
+/// A dotted package prefix matches the package or a dotted descendant of it.
+fn package_prefix_matches(prefix: &str, pkg: &str) -> bool {
+    match pkg.strip_prefix(prefix) {
         Some("") => true,
-        Some(rest) => rest.starts_with('.') || rest.starts_with("::"),
+        Some(rest) => rest.starts_with('.'),
         None => false,
     }
 }
@@ -189,6 +219,25 @@ mod tests {
         assert!(!sc.accepts("acme.gearboxes::CoverPlate.thickness"));
         assert!(!sc.accepts("acme.other::CoverPlate.thickness"));
         assert!(Scope::default().accepts("anything::At.all"));
+    }
+
+    #[test]
+    fn module_prefix_forms() {
+        let sc = |m: &str| Scope::new(s(&[m]), vec![]);
+        // Relative to the package, segment-wise.
+        assert!(sc("gear").accepts("acme.demo::gear::X.w"));
+        assert!(sc("gear").accepts("acme.demo::gear::sub::X.w"));
+        assert!(!sc("gear").accepts("acme.demo::gearbox::X.w"));
+        assert!(sc("gear::sub").accepts("acme.demo::gear::sub::X.w"));
+        assert!(!sc("gear::sub").accepts("acme.demo::gear::X.w"));
+        // Fully qualified.
+        assert!(sc("acme.demo::gear").accepts("acme.demo::gear::sub::X.w"));
+        assert!(!sc("acme.demo::gear").accepts("acme.demo::gearbox::X.w"));
+        assert!(!sc("acme.demo::gear").accepts("acme.demo.sub::gear::X.w"));
+        // Package prefixes match on dot boundaries.
+        assert!(sc("acme.gear").accepts("acme.gear::X.w"));
+        assert!(sc("acme.gear").accepts("acme.gear.sub::X.w"));
+        assert!(!sc("acme.gear").accepts("acme.gearbox::X.w"));
     }
 
     #[test]

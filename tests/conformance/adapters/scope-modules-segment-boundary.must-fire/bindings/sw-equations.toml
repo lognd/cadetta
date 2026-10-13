@@ -1,9 +1,9 @@
-["acme.demo.gear::X.width"]
+["acme.demo::gear::X.width"]
 locators = [
   { locator = "GW", kind = "global", mode = "value", native_unit = "mm" },
 
 ]
-["acme.demo.gearbox::X.width"]
+["acme.demo::gearbox::X.width"]
 locators = [
   { locator = "GBW", kind = "global", mode = "value", native_unit = "mm" },
 
