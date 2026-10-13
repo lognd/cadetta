@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:57:23Z"
+updated = "2026-10-13T08:00:51Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -25,7 +25,7 @@ target = "01M4STCDGQMN86JQJXKAQ2FX25"
 
 [[acceptance]]
 text = "Given a check false for every value in tolerance, when evaluated, then verdict is violates (C001) (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check true for some values only, when evaluated, then verdict is undecided (C002) (quantities.md 5.8)"
