@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:35:03Z"
-updated = "2026-10-13T13:52:45Z"
+updated = "2026-10-13T13:52:50Z"
 idempotency_key = "wire-lints"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
 
@@ -17,10 +17,6 @@ bound = false
 
 [[acceptance]]
 text = "waive declarations are collected from the in-scope modules and applied through the lint engine; W001-W004 are reported"
-bound = false
-
-[[acceptance]]
-text = "N004 is fed from the sema rename graph (already emitted by the dependency stage; verified, no extra wiring)"
 bound = false
 +++
 
