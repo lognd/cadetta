@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given project.package and project.modules, when read, then they return the [package] name and version and the sorted module paths under src per package, matching the IR package and modules[] (bindings.md 3.2; ir.md 4)"
-bound = false
+bound = true
 +++
