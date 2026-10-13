@@ -23,6 +23,10 @@ target = "01M4SPWQANZ48Y8HG2X84RNK2D"
 kind = "blocked-by"
 target = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWK9V5CYNNVTAS3PE4EC23"
+
 [[acceptance]]
 text = "Given each command in config-cli.md 3, when run with --format json, then output validates against its generated schema in docs/schemas (config-cli.md 5)"
 bound = false
