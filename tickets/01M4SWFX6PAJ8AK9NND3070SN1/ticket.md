@@ -33,5 +33,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a swap to an alternate, when a placement uses mount, then the alternate's own mount is used (geometry.md 2)"
-bound = false
+bound = true
 +++
