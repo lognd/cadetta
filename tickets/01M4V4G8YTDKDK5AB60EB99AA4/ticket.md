@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:20:59Z"
-updated = "2026-10-13T17:28:58Z"
-scope = ["crates/cadetta-cli/tests/conformance/**"]
+updated = "2026-10-13T17:29:10Z"
+scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "run_corpus discovers fixtures in nested doc directories such as emitters/sw-equations and runs their check entries"
