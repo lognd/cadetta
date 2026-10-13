@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T21:45:10Z"
+updated = "2026-10-13T21:56:16Z"
 persona = "design engineer"
 capability = "see problems in any editor"
 idempotency_key = "replan14:cli-lsp"
 labels = ["deferred", "creates:crates/cadetta-cli/src/cmd/lsp.rs"]
-scope = ["crates/cadetta-cli/src/cmd/lsp.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/tests/**", "crates/cadetta-cli/Cargo.toml", "Cargo.lock"]
+scope = ["crates/cadetta-cli/src/cmd/lsp.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/tests/**", "crates/cadetta-cli/Cargo.toml", "Cargo.lock", "crates/cadetta-cli/src/main.rs"]
 
 [[links]]
 kind = "blocked-by"
