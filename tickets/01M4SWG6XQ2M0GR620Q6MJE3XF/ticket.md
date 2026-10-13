@@ -17,6 +17,10 @@ scope = ["std/fasteners/screwjoint_position.cdt"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4STAPFPQ9GV8XJB4XCK8EGP"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWG6T58Q489WASV5DYGF7F"
 
 [[acceptance]]
