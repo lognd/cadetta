@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given parts lacking a value, when printed, then they are listed (obligations.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given money, percentages and quantities, when printed, then money uses the currency minor unit and percentages one decimal half away from zero (obligations.md 5.1)"
