@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "Decisions: preview reads only IR variant data (Member.variants, Check.verdicts.per_alternate); pipeline.rs passes empty variants so sections 2-3 are empty on real projects until wired. Unapproved NEW is validated for existence and interface and shown as 'not yet approved'. Direct vs derived: direct when owning component is NEW or old primary. Any Fail => blocked; any Unknown => ok with warnings; waivers never lift a block. Flips cover checks only. JSON schema tag cadetta.swap/1; docs/schemas/swap.json not yet written (~VN1YQYC)."
+at = "2026-10-13T13:36:47Z"
+actor = "lognd"
+rev = 1

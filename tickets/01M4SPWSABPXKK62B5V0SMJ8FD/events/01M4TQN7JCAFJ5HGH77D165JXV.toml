@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/builtin/sw_equations.rs"]
+new = ["crates/cadetta-adapter/src/builtin/sw_equations.rs", "crates/cadetta-adapter/src/builtin/mod.rs"]
+at = "2026-10-13T13:36:29Z"
+actor = "lognd"
+rev = 1
