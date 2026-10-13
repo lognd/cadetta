@@ -2,7 +2,8 @@
 id = "01M4SXR720K3VGM1K7DWZ0VJ7Z"
 title = "Lock package records with content digests and E014"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
