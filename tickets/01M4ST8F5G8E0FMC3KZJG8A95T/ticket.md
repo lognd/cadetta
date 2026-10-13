@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given why PATH, when run, then output validates against why.json (config-cli.md 3)"
-bound = false
+bound = true
 +++
