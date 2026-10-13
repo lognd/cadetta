@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:46:42Z"
+updated = "2026-10-13T08:46:43Z"
 persona = "design engineer"
 capability = "place parts in a tree"
 idempotency_key = "replan14:geo-place"
@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given variants, when a placement member differs per alternate, then it is re-evaluated like any member (geometry.md 4)"
-bound = false
+bound = true
 +++
