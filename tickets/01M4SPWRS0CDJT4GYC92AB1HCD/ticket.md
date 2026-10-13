@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T12:58:31Z"
+updated = "2026-10-13T13:13:40Z"
 persona = "cadetta contributor"
 capability = "drive external adapters over stdio with initialize, emit, read, push, regen, shutdown"
 outcome_text = "adapters can be written in any language"
 labels = ["creates:crates/cadetta-adapter/src/rpc/**", "creates:docs/schemas/adapter-protocol.json"]
-scope = ["crates/cadetta-adapter/src/rpc/**", "docs/schemas/adapter-protocol.json"]
+scope = ["crates/cadetta-adapter/src/rpc/**", "docs/schemas/adapter-protocol.json", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml", "Cargo.lock", "docs/spec/adapters.md"]
 
 [[links]]
 kind = "blocks"
