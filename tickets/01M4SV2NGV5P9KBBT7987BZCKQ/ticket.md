@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T06:39:27Z"
+updated = "2026-10-13T06:39:28Z"
 persona = "Python user"
 capability = "work with exact Quantities and parse source syntax"
 outcome_text = "results never silently become floats"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given arithmetic that violates a kind rule, when evaluated, then a Result error carries the same Q-code the compiler reports (bindings.md 3.1, quantities.md)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Quantity, when used, then nominal, min, max, mid, mmc and lmc are computed in Rust, to_exact returns None for inexact and there is no .to (bindings.md 3.1)"

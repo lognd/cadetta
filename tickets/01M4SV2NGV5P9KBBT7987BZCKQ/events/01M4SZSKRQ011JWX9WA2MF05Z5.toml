@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:39:28Z"
+digest = "33e1a83324320342da280ca16ac7a3e384c7154b5342e81ef51452279a758e73"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 2 items
+
+bindings/python/tests/test_quantity.py ..                                [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-3458452-0.xml --------------
+============================== 2 passed in 0.06s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_quantity.py::test_kind_rule_violations_carry_q_codes bindings/python/tests/test_quantity.py::test_named_kinds_do_not_mix_implicitly"
+size = 467
+status = "measured"
+test_count = 2
+tests_digest = "654e55bf1247f4d92d0959ea210cea6a93ca376358fcc8607ab8d8e42d2bb14c"
+at = "2026-10-13T06:39:28Z"
+actor = "lognd"
+rev = 1
