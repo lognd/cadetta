@@ -19,6 +19,10 @@ scope = ["crates/cadetta-geometry/src/axes.rs"]
 kind = "blocked-by"
 target = "01M4SWG0CZ9NYR3KFASKPSX4DP"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG6N6DT76DRYYJHFB4656"
+
 [[acceptance]]
 text = "Given radial(p), when evaluated, then it is sqrt(x^2 + y^2) with the square-aware interval (geometry.md 5.1)"
 bound = false
