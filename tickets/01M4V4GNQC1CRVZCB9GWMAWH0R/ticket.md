@@ -2,7 +2,7 @@
 id = "01M4V4GNQC1CRVZCB9GWMAWH0R"
 title = "Spec: sw-equations behaviour when a Text parameter is bound"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
