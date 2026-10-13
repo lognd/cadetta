@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:51:34Z"
+updated = "2026-10-13T22:56:06Z"
 persona = "design engineer"
 capability = "print the design's reference list and vendor a web source"
 outcome_text = "a design review has a bibliography and a URL can be drift-checked"
@@ -22,7 +22,7 @@ target = "01M4VB62VJQV9AKSSQME8NWW6Y"
 
 [[acceptance]]
 text = "Given a design, when cadetta cite list runs, then reached citations are numbered by the language.md 3.9.1 walk and rendered in IEEE plain text per type, with separators collapsed and partial dates at their precision (language.md 3.9.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --format bibtex or json, when run, then BibLaTeX entries keyed by canonical path, or cite-list.json validated against its schema, are written (language.md 3.9.1; config-cli.md 3)"
