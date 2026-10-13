@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T21:58:20Z"
+digest = "474585100f594e95a9de79487e78058ad8f69cfb7c1604c2e3b54c29ec00e890"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 54.56s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e5cb8428-2aba-469e-8610-b7008ea3bcfa with nextest profile: default
+    Starting 2 tests across 4 binaries (177 tests skipped)
+        PASS [   0.060s] cadetta config::tests::bind_mode_defaults_explicit_and_is_strict
+        PASS [   0.078s] cadetta cmd::init::tests::adapter_blocks_load_and_solidworks_prints_install_line
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.080s] 2 tests run: 2 passed, 177 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(/adapter_blocks_load|bind_mode_defaults/)'"
+size = 720
+status = "measured"
+test_count = 2
+tests_digest = "f3e89dd5bf24f206d3cb2248246bf917b79963e96e9e726a3b54fd897849d62a"
+at = "2026-10-13T21:58:20Z"
+actor = "lognd"
+rev = 1
