@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T04:03:51Z"
+updated = "2026-10-13T04:03:57Z"
 persona = "design engineer"
 capability = 'write literals like `5in`, `12.7mm`, `3.2N*m` and `5"`'
 outcome_text = "units are unambiguous in source"
 labels = ["creates:crates/cadetta-syntax/src/lexer.rs"]
 scope = ["crates/cadetta-syntax/src/lexer.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWP1JK8XH8EKXK71P7EFH"
 
 [[acceptance]]
 text = "Given `5 mm`, when lexed, then Q007 quantity-literal-split is reported with a fix-it"
