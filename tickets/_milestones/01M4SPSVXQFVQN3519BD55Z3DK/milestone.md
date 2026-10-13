@@ -26,4 +26,8 @@ bound = false
 [[criteria]]
 text = "SOLIDWORKS adapter (C#) reads, drives and verifies frames and placements on a licensed machine, recorded as replayable transcripts"
 bound = false
+
+[[criteria]]
+text = "SOLIDWORKS add-in links a dimension, a pattern count and a tolerance by selection, creates datum frames and assigns parts, with no bindings-file entry for native links"
+bound = false
 +++
