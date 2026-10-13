@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:05:22Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "declare a screw joint and have it checked"
 idempotency_key = "replan13:ScrewJoint arguments and checks"
-labels = ["creates:std/fasteners/screwjoint_checks.cdt"]
-scope = ["std/fasteners/screwjoint_checks.cdt"]
+labels = ["creates:std/src/fasteners/screwjoint_checks.cdt"]
+scope = ["std/src/fasteners/screwjoint_checks.cdt"]
 
 [[links]]
 kind = "blocks"
