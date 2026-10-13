@@ -1,0 +1,76 @@
+namespace acme.bearing_housing
+
+use acme.vendor::{Skf608, Din472Circlip22}
+
+// Two 608-2RS1 bearings on a stepped shaft in a through-bored housing.
+// Left end: housing shoulder and shaft shoulder. Right end: DIN 472 circlip.
+// A spacer ring sets the bearing spacing. Inner-ring axial retention on the
+// shaft is out of scope for this pilot.
+
+/// Design intent shared by the machined parts.
+model Layout {
+  bearing_spacing = 30mm              // centre to centre
+  end_wall        = 3mm               // housing shoulder thickness
+  end_margin      = 3mm               // housing material beyond the groove
+  left_overhang   = 22mm              // shaft end to shoulder face
+  right_overhang  = 8mm               // beyond bearing B outer face
+  ring_support_dia = 19mm [+-0.1mm]
+}
+
+/// Stationary outer ring: SKF guidance H7 housing. One-sided fit: the shaft
+/// side is the vendor OD with its own deviations.
+model Housing(bearing: Skf608, ring: Din472Circlip22) {
+  fit housing_seat = H7 on bearing.outer_dia
+
+  bore_dia     = housing_seat.hole                 #[emit(mmc)]
+  outer_dia    = 36mm
+  shoulder_dia = Layout.ring_support_dia           // alias: keeps +-0.1, shares its variable
+  groove_dia   = ring.groove_dia                   #[emit(mmc)]
+  groove_width = ring.groove_width                 #[emit(mmc)]
+  /// End-wall face to near groove edge; authored, so the axial stack is a real check.
+  groove_pos   = 40mm [+-0.05mm]
+  end_margin   = Layout.end_margin
+  length       = groove_pos + groove_width + end_margin    // feature: nominal 44.1mm, not checked
+  wall_thickness = (outer_dia - bore_dia) / 2              // feature: nominal only
+}
+
+/// Stepped shaft. SKF: j5 for a rotating inner ring, normal load, d <= 17 mm.
+model Shaft(bearing: Skf608) {
+  fit bearing_seat = j5 on bearing.bore
+
+  seat_dia       = bearing_seat.shaft              #[emit(mmc)]
+  shoulder_dia   = 11mm h11                        #[emit(mmc)]
+  left_overhang  = Layout.left_overhang
+  right_overhang = Layout.right_overhang
+  length = left_overhang + Layout.bearing_spacing + bearing.width.nominal + right_overhang
+}
+
+/// Spacer between the two outer rings; its own drawing tolerance, not the bearing's.
+model Spacer(bearing: Skf608) {
+  length    = (Layout.bearing_spacing - bearing.width.nominal) [+-0.05mm]
+  outer_dia = Layout.ring_support_dia
+  bore_dia  = 16mm [+0.2mm -0]                     #[role(hole), emit(mmc)]
+}
+
+assembly BearingUnit {
+  part bearing[2]: Skf608
+  part ring: Din472Circlip22
+  part housing: Housing(bearing = bearing[0], ring = ring)
+  part shaft: Shaft(bearing = bearing[0])
+  part spacer: Spacer(bearing = bearing[0])
+
+  /// Axial gap at the circlip, worst case over every upstream tolerance.
+  let groove_side = housing.groove_pos + housing.groove_width - ring.thickness
+  let stack_side  = Layout.end_wall + spacer.length + bearing[0].width + bearing[1].width
+  let axial_play  = groove_side - stack_side
+
+  check seat_creep for b in bearing: b.bore - shaft.seat_dia < 0um   "inner ring must not creep"
+  check seat_squeeze for b in bearing: 4 * (shaft.seat_dia - b.bore) / 5 <= b.radial_clearance.min   "clearance lost to interference (about 80 percent)"
+  check housing_not_pinched for b in bearing: housing.bore_dia - b.outer_dia >= 0mm   "outer ring must not be pressed"
+  check shoulder_supports_ring for b in bearing: shaft.shoulder_dia satisfies b.shaft_abutment_dia
+  check shoulder_clears_seal for b in bearing: shaft.shoulder_dia < b.inner_ring_land_dia
+  check housing_shoulder_ok for b in bearing: housing.shoulder_dia satisfies b.housing_abutment_dia
+  check ring_size_ok: ring.bore_nominal == housing.bore_dia.nominal   "DIN 472 size matches bore"
+  check groove_edge_ok: housing.end_margin satisfies ring.groove_edge_dist
+  check axial_play_ok: 0mm <= axial_play <= 0.5mm   "no squeeze, limit rattle"
+}

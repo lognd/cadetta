@@ -1,0 +1,9 @@
+# Sketch of adapters.md 3 bindings; one table per canonical path.
+["acme.cooling::FanBracket.cutout_dia"]
+locators = [{ locator = "cad/freecad/fan_bracket.FCStd#Params.cutout_dia", kind = "global" }]
+["acme.cooling::FanBracket.guard_ring_id"]
+locators = [{ locator = "cad/freecad/fan_guard.FCStd#Params.guard_ring_id", kind = "global" }]
+["acme.cooling::CoolingModule/fan.depth"]
+locators = [{ locator = "cad/freecad/cooling_module.FCStd#Params.fan_depth", kind = "global" }]
+["acme.cooling::CoolingModule/screws[0].length"]
+locators = [{ locator = "cad/freecad/cooling_module.FCStd#Params.screw_length", kind = "global" }]

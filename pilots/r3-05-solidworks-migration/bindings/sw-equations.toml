@@ -1,0 +1,103 @@
+# Accepted import of ../05-solidworks-migration/legacy-equations.txt (adapter sw-equations).
+# Keys are final canonical paths; `was` in cleaned.cdt maps the import-time names.
+# adapters.md 3: a path may bind several locators, each with kind, mode, native_unit.
+# PROPOSED: TOML spelling of several locators per path; ir.md 3 shows the list but no file syntax.
+# PROPOSED: `ref_to` names which global a ref dimension points at when the path has two globals
+#   (CoverPlate.thickness); adapters.md 3 says "the global locator bound to the same path".
+# Alias paths (all of Gasket but thickness) bind only a dimension: it points at the referent's global.
+
+["acme.gearbox::CoverPlate.length"]
+locators = [
+  { locator = "PlateL", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D1@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.width"]
+locators = [
+  { locator = "PlateW", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D2@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.corner_radius"]
+locators = [
+  { locator = "CornerR", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D3@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.bolt_pitch_x"]
+locators = [
+  { locator = "BoltSpacingX", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D4@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.bolt_pitch_y"]
+locators = [
+  { locator = "BoltSpacingY", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D5@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.hole_dia"]
+locators = [
+  { locator = "Dia", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D6@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.pilot_bore"]
+locators = [
+  { locator = "PilotBore", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D7@Sketch1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.thickness"]
+locators = [
+  { locator = "Plate_Thk", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "plate thickness", kind = "global", mode = "value", native_unit = "in" },
+  { locator = "D1@Boss-Extrude1@CoverPlate.SLDPRT", kind = "dimension", mode = "ref", ref_to = "Plate_Thk", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.cbore_dia"]
+locators = [
+  { locator = "D1@Sketch2@CoverPlate.SLDPRT", kind = "dimension", mode = "value", native_unit = "mm" },
+]
+["acme.gearbox::CoverPlate.cbore_depth"]
+locators = [
+  { locator = "D1@Cut-Extrude1@CoverPlate.SLDPRT", kind = "dimension", mode = "value", native_unit = "mm" },
+]
+
+["acme.gearbox::Gasket.length"]
+locators = [{ locator = "D1@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.width"]
+locators = [{ locator = "D2@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.corner_radius"]
+locators = [{ locator = "D3@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.bolt_pitch_x"]
+locators = [{ locator = "D4@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.bolt_pitch_y"]
+locators = [{ locator = "D5@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.hole_dia"]
+locators = [{ locator = "D6@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.pilot_bore"]
+locators = [{ locator = "D7@Sketch1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" }]
+["acme.gearbox::Gasket.thickness"]
+locators = [
+  { locator = "GasketThk", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D1@Boss-Extrude1@Gasket.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+
+["acme.gearbox::Bolt.shank_dia"]
+locators = [
+  { locator = "BoltDia_mm", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D1@Sketch1@Bolt.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::Bolt.head_dia"]
+locators = [
+  { locator = "BoltHeadDia", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D2@Sketch1@Bolt.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::Bolt.head_height"]
+locators = [
+  { locator = "BoltHeadH", kind = "global", mode = "value", native_unit = "mm" },
+  { locator = "D1@Boss-Extrude1@Bolt.SLDPRT", kind = "dimension", mode = "ref", native_unit = "mm" },
+]
+["acme.gearbox::Bolt.length"]
+locators = [
+  { locator = "BoltLen_in", kind = "global", mode = "value", native_unit = "in" },
+  { locator = "D1@Boss-Extrude2@Bolt.SLDPRT", kind = "dimension", mode = "ref", native_unit = "in" },
+]
+["acme.gearbox::Bolt.thread_depth"]
+locators = [{ locator = "D1@Sketch3@Bolt.SLDPRT", kind = "dimension", mode = "value", native_unit = "mm" }]
+
+["acme.gearbox::GearboxCover.bolt_count"]
+locators = [{ locator = "NumBolts", kind = "global", mode = "value", native_unit = "mm" }]  # unit unused: Count is written bare

@@ -1,0 +1,91 @@
+namespace acme.bracket
+
+use std.fits::iso286
+use std.fasteners::{MetricThread, ScrewJoint}
+use std.materials::Material
+
+// ---------------------------------------------------------------------
+// Off-the-shelf facts
+// ---------------------------------------------------------------------
+// Screws, clearance holes, tap drills and counterbores come from
+// std.fasteners::ScrewJoint (Iso4762, Iso273, TapDrill, Iso4762Head);
+// the bracket alloy is std.materials Material::Al6061T6. Nothing is
+// hand-copied from a standard any more.
+
+/// 20 mm OD aluminium tube to be clamped.
+ots Tube @"supplier drawing TUBE-20x2 rev A (hypothetical vendor)" {
+  od   = 20mm h11
+  wall = 2mm
+}
+
+// ---------------------------------------------------------------------
+// The machined bracket
+// ---------------------------------------------------------------------
+
+/// Machined (bend-free) L-bracket: wall leg with two counterbored M5
+/// holes, shelf leg carrying an integral split clamp for the tube.
+model Bracket {
+  material = Material::Al6061T6
+
+  /// Hole class: bore sized H11 against the tube's own (shaft) tolerance.
+  fit tube_seat = H11 on Tube.od
+
+  // --- plate -------------------------------------------------------
+  thickness: Length = 10mm       // both legs
+  width: Length = 56mm [+-0.1mm]
+  wall_leg_height = 70mm
+  shelf_depth = 50mm
+  fillet_radius = thickness / 2  // internal corner between legs, corner-radius cutter
+
+  // --- wall mounting holes (diameters, counterbores: see WallTubeMount joints)
+  mount_spacing = 32mm [+-0.1mm] // matches the wall anchor pattern
+  top_edge_distance = 15mm
+  mount_hole_z = wall_leg_height - top_edge_distance
+  mount_hole_count: Count = 2
+  let edge_distance = (width - mount_spacing) / 2   // analysis value: keeps both tolerances
+
+  // --- tube clamp --------------------------------------------------
+  clamp_bore = tube_seat.hole
+  clamp_web = 4mm
+  clamp_block_width = 52mm
+  clamp_cap_depth = 8mm          // clamp-ear thickness above the slit
+  slit_width = 1.5mm
+
+  check bore_fits_tube: tube_seat.clearance >= 0mm "bore passes the tube"
+}
+
+// ---------------------------------------------------------------------
+// Assembly
+// ---------------------------------------------------------------------
+
+/// Bracket on a wall, holding a tube.
+assembly WallTubeMount(wall_material: Material) {
+  part bracket: Bracket
+  part tube: Tube
+
+  // "Screw here": clearance hole, counterbore, tap drill, length, engagement.
+  part mount_screws[bracket.mount_hole_count]: ScrewJoint(
+    thread = M5, clamp = bracket.thickness, into = wall_material, counterbore = true)
+  // PROPOSED: host = wall   // tapped hole belongs to a part we do not model; tap_drill/callout bind to nothing
+
+  // The screw crosses the slit, so the slit counts toward the clamped stack.
+  part clamp_screws[2]: ScrewJoint(
+    thread = M4, clamp = bracket.clamp_cap_depth + bracket.slit_width,
+    into = bracket.material, counterbore = true)
+
+  // Features of the bracket sized by joint outputs (a model cannot read an
+  // assembly's parts), so they live here and bind to the bracket's CAD file.
+  clamp_bolt_offset = bracket.clamp_bore / 2 + clamp_screws[0].clearance_hole / 2 + bracket.clamp_web
+  let clamp_edge_distance = (bracket.clamp_block_width - 2 * clamp_bolt_offset) / 2
+
+  // --- layout checks, on the joint outputs ---------------------------
+  check mount_edge_distance: bracket.edge_distance >= 2 * mount_screws[0].clearance_hole "edge distance >= 2d"
+  check mount_cb_edge: bracket.edge_distance > mount_screws[0].counterbore_dia / 2 "counterbore must not break out of the side"
+  check mount_cb_overlap: bracket.mount_spacing > mount_screws[0].counterbore_dia "counterbores must not overlap"
+  check mount_hole_clears_fillet: bracket.mount_hole_z - mount_screws[0].counterbore_dia / 2 >= bracket.thickness + bracket.fillet_radius "counterbore clear of the fillet"
+  check clamp_edge: clamp_edge_distance >= 2 * clamp_screws[0].clearance_hole "edge distance >= 2d"
+
+  // Engagement, grip and bottoming-out are checked inside each ScrewJoint.
+  // Roll-ups over the joints' screws (cost is missing until a project prices them).
+  let screw_mass = mass?(self)
+}

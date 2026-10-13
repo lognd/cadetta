@@ -1,0 +1,17 @@
+// Shared library: the 608 is one physical part, stated once, imported anywhere.
+namespace acme.parts.bearings
+
+cite iso492 = "ISO 492:2014 table 4, normal (P0) class"
+cite skf608 = "https://www.skf.com/608-product-sheet"
+
+/// 608 deep-groove ball bearing, 8x22x7, ZZ shields, P0 tolerance.
+ots Bearing608 @skf608 {
+  bore            = 8mm [+0 -0.008mm]     @iso492:"d = 6..10 mm"   #[role(hole)]
+  outer_diameter  = 22mm [+0 -0.009mm]    @iso492:"D = 18..30 mm"  #[role(shaft)]
+  width           = 7mm [+0 -0.12mm]      @iso492
+  min_chamfer     = 0.3mm
+  dynamic_load    = 3.45kN
+  static_load     = 1.37kN
+  limiting_speed  = 28000rpm
+  mass            = 12g
+}

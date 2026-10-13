@@ -48,3 +48,21 @@ length, engagement, tap drills and thread callouts. This motivated
   Unit cost would be -21%.
 - **EOL and performance swap** (Noctua): viable. One connector-fit
   check is undecided.
+
+## Pilot 08 (gearmotor module, against draft 1.1)
+
+Draft 1.1 expressed the design with 5 PROPOSED lines. Variant evaluation
+produced per-alternate bores, threads, drills and screw lengths; the
+`let` stack-up holds for the primary and is undecided for the alternate.
+Responses (draft 1.2):
+
+| Finding | Severity | Draft 1.2 |
+|---|---|---|
+| Solver inputs change under a variant; the primary's result would be reused | blocker | per-input-set results, `solve --variants`, S006 undecided (solvers.md 4.1) |
+| Counterbored joint sizes the screw from the full plate | awkward | `grip` member (stdlib.md 3) |
+| No hole-class one-sided fit | awkward | `H7 on x`, letter case picks the side (language.md 3.7) |
+| FastenerPolicy shape unspecified | awkward | interface listed; `Table<K>` members (stdlib.md 4, language.md 3.3) |
+| Solver input scope in assemblies | awkward | solvers.md 1 |
+| No max roll-up | nit | `max(self, p)`, `min(self, p)` |
+| Screw cost source | nit | not policy; missing until a project prices it |
+| Negative-both tolerance, Material variants | nit | example added; variants listed |
