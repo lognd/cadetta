@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:35:47Z"
-updated = "2026-10-13T18:10:40Z"
+updated = "2026-10-13T18:10:58Z"
 scope = ["docs/spec/emitters/json.md", "docs/spec/emitters/csv.md", "docs/spec/adapters.md", "tests/conformance/emitters/json/**", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a unitless value read by json or csv with both --assume-unit and a locator native_unit, when read runs, then the spec says --assume-unit wins, then native_unit, then the adapter default"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given json and csv with no drive, when sync runs, then the spec says the obligation CAD file reflects design stays open with reason unverifiable without drive and is reported as O004, and a binding fixture pair for each adapter covers it"
