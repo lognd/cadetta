@@ -2,7 +2,8 @@
 id = "01M4SPWQPYYT8Y5N3P5ZSG20Z9"
 title = "Lint family Quantity rules Q001-Q011"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
