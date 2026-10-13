@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:14Z"
-updated = "2026-10-13T09:14:14Z"
+updated = "2026-10-13T09:14:15Z"
 persona = "library author"
 capability = "move a file or item without breaking bindings, waivers or attestations"
 labels = ["creates:crates/cadetta-sema/src/renames.rs"]
@@ -36,5 +36,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a library that removes or renames a pub item or non-priv member without was, changes the kind of either, or changes a value a dependent verdict reads, when compared with the previous version, then it is reported as a semver-major change (packages.md 5)"
-bound = false
+bound = true
 +++
