@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:59:00Z"
+digest = "c6745efb45f7f85dee67c414c049d07edf49ed392b8f3755d3af5acffb04156a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 16b7ba89-1161-4d4e-bee7-2a95749d770b with nextest profile: default
+    Starting 3 tests across 14 binaries (231 tests skipped)
+        PASS [   0.012s] cadetta output::tests::short_github_sarif_and_json_shapes
+        PASS [   0.030s] cadetta-log redact::tests::transcript_with_github_and_aws_masks_only_secrets
+        PASS [   0.031s] cadetta-log redact::tests::github_tokens
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.032s] 3 tests run: 3 passed, 231 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(github)'"
+size = 721
+status = "measured"
+test_count = 3
+tests_digest = "49ddf577bb32a36f8b5f8c745d7a6888a78e60236fd35ab53dd547d13069a26a"
+at = "2026-10-13T06:59:00Z"
+actor = "lognd"
+rev = 1
