@@ -8,11 +8,11 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T09:22:56Z"
+updated = "2026-10-13T09:24:43Z"
 persona = "library author"
 capability = "find dead private items"
 labels = ["creates:crates/cadetta-lint/src/rules/u002.rs"]
-scope = ["crates/cadetta-lint/src/rules/u002.rs"]
+scope = ["crates/cadetta-lint/src/rules/u002.rs", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[links]]
 kind = "blocked-by"
