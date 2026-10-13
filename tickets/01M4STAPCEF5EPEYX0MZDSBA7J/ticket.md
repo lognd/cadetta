@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T13:47:15Z"
+updated = "2026-10-13T13:47:33Z"
 persona = "design engineer"
 capability = "read derived joint geometry"
 idempotency_key = "replan13:ScrewJoint derived members"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a hand-computed M5 case, when evaluated, then results match exactly (stdlib.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given ScrewJoint, when its members are listed from another package, then the public members are exactly those in stdlib.md 3 and its other intermediate values are priv, still evaluated and shown by why and impact (stdlib.md intro; packages.md 3)"
