@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T12:53:55Z"
+updated = "2026-10-13T12:53:56Z"
 persona = "design engineer"
 capability = "get lints for the Q family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -33,5 +33,5 @@ bound = false
 
 [[acceptance]]
 text = "Given Q005, when queried, then it is listed as retired and never emitted (lints.md Q)"
-bound = false
+bound = true
 +++
