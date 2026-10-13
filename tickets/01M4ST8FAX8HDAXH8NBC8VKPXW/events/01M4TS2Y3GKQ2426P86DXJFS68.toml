@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T14:01:27Z"
+digest = "70f65c3c28cce65fb91e8323567dfbaef4c6e5372ad022108f6a3ea0c1d3524b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f436ce56-350f-4414-964c-96ca35283c3c with nextest profile: default
+    Starting 1 test across 2 binaries (134 tests skipped)
+        PASS [   0.012s] cadetta cmd::impact_swap::report::tests::assembly_replace_action_and_alternate_locators
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 134 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::impact_swap::report::tests::assembly_replace_action_and_alternate_locators)'"
+size = 580
+status = "measured"
+test_count = 1
+tests_digest = "b2d29d460025c16d6e7ec86d2291dec0ea7bf1f8252032f065ba8e349a5af0d0"
+at = "2026-10-13T14:01:27Z"
+actor = "lognd"
+rev = 1
