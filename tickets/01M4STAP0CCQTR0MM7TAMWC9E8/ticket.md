@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T07:35:57Z"
+updated = "2026-10-13T07:36:02Z"
 persona = "design engineer"
 capability = "pick a material and read cited properties"
 idempotency_key = "replan13:std.materials (14 variants and Materials table)"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the Materials table, when looked up by key, then the matching row is returned (stdlib.md 2)"
-bound = false
+bound = true
 +++
