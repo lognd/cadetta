@@ -1,0 +1,13 @@
++++
+id = "01M4V6BZ0MPYS6XXSC1992PZ41"
+title = "check does not load dependencies: E012, E013, E014 and cross-package use unimplemented"
+type = "bug"
+category = "todo"
+priority = "medium"
+reporter = "lognd"
+created = "2026-10-13T17:53:35Z"
+updated = "2026-10-13T17:53:35Z"
+scope = ["crates/cadetta-cli/**"]
++++
+
+Found while working ~JKTB9TF. check never resolves [dependencies]: version requirements (E012, E013), lock digests (E014) are not checked and 'use acme.shop::X' gives E002 unknown package, so cross-package visibility (E016/E017 across packages) and pub use re-exports are untestable. Fixtures: packages/e012-*, e013-*, e014-*, e016-*-dependency, pub-use-*. Spec: packages.md 1, 3, 4.
