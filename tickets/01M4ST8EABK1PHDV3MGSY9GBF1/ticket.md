@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an alternate that does not implement the interface, when resolved, then an error names it (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the slot, when its instance paths are built, then every instance of the slot shares the primary and alternates (language.md 3.2)"
