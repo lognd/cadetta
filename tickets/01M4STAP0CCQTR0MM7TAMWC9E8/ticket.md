@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:04:18Z"
+updated = "2026-10-13T05:05:22Z"
 persona = "design engineer"
 capability = "pick a material and read cited properties"
 idempotency_key = "replan13:std.materials (14 variants and Materials table)"
 labels = ["creates:std/materials.cdt"]
 scope = ["std/materials.cdt"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STAPCEF5EPEYX0MZDSBA7J"
 
 [[acceptance]]
 text = "Given the 14 Material variants in stdlib.md 3, when loaded, then each has its properties and a citation (stdlib.md 2)"
