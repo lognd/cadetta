@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:42:11Z"
+updated = "2026-10-13T06:42:21Z"
 persona = "design engineer"
 capability = "write expressions, @emit/@display/@native attributes, `was` and `source`"
 outcome_text = "derived values and renames are first-class"
@@ -29,7 +29,7 @@ target = "01M4ST7A8ZG0BS11X26BB84S84"
 
 [[acceptance]]
 text = "Given `2 * Wheel.hub_width + Frame.span`, when parsed, then precedence is multiplication before addition (language.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the precedence list in language.md 5, when parsed, then postfix > unary - > ^ > * / > + - > .. > as > comparisons"
