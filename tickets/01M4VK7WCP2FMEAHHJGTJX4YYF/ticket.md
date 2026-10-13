@@ -2,7 +2,8 @@
 id = "01M4VK7WCP2FMEAHHJGTJX4YYF"
 title = "editors/: use cadetta lsp in every editor config"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
