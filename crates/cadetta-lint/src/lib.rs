@@ -3,4 +3,5 @@
 //! Specification: `docs/spec/lints.md`.
 
 pub mod diag;
+pub mod engine;
 pub mod render;
