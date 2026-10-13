@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:10:32Z"
+digest = "8262cb285fb97d57fa66fe2ef9d373a42b020cc026253f1b16a687fce8496f37"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 988d14f6-5e0b-4282-a65a-992ebc379633 with nextest profile: default
+    Starting 1 test across 1 binary (7 tests skipped)
+        PASS [   0.008s] cadetta-units rational::tests::add_across_pi_exponents_is_inexact_unless_zero
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 7 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units -E 'test(add_across)'"
+size = 564
+status = "measured"
+test_count = 1
+tests_digest = "a90a0f94b969a6b7076de7d1f0cc8959a9e184117d354e54a933d254995d76f6"
+at = "2026-10-13T06:10:32Z"
+actor = "lognd"
+rev = 1
