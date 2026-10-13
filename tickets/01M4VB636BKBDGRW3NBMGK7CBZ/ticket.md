@@ -2,7 +2,8 @@
 id = "01M4VB636BKBDGRW3NBMGK7CBZ"
 title = "Placement: place A at B, point offsets, elementwise arrays, unified op paths"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
