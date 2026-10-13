@@ -199,8 +199,9 @@ per configured adapter that can read (an external adapter with a
 `command`); emit-only built-ins are skipped. The exit code is 1 when an
 unwaived diagnostic reaches `[lint] fail_on` and 0 otherwise, so
 `fail_on = "never"` always exits 0; a malformed flag, scope or `--as-of`
-is a usage error (2). `--watch` is the ndjson loop of section 5; until
-that lands the flag is accepted and runs one pass.
+is a usage error (2). `--watch` is the ndjson loop of section 5 (it requires
+`--format json`; the first run emits every record, later runs emit only
+records not in the previous run, so an unchanged run prints nothing).
 A scope matching no node is not an error for these commands.
 
 ### 3.1 `sync` output

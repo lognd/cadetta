@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T14:01:31Z"
+digest = "91bccd29c8a9cb19729e2cf2cf20d5b3368569b4d1001d9d488ebfd0ccf8a905"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ce02bff0-1e46-4b6f-b9a2-7e3146fb1d88 with nextest profile: default
+    Starting 1 test across 2 binaries (134 tests skipped)
+        PASS [   0.017s] cadetta cmd::impact_swap::report::tests::commercial_deltas_count_every_instance_and_list_missing_parts
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 1 test run: 1 passed, 134 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::impact_swap::report::tests::commercial_deltas_count_every_instance_and_list_missing_parts)'"
+size = 595
+status = "measured"
+test_count = 1
+tests_digest = "b351316f380129371110cca254b09e9481b4b17690cdae9d2534f1a846a84dc7"
+at = "2026-10-13T14:01:31Z"
+actor = "lognd"
+rev = 1

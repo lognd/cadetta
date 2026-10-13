@@ -2,18 +2,18 @@
 id = "01M4SWMCDEH4NF2SBVCRGE5VV9"
 title = "Locator fields, [*] bindings, collisions R012 and R013"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:13Z"
+updated = "2026-10-13T14:10:57Z"
 persona = "design engineer"
 capability = "bind every instance safely"
 idempotency_key = "replan14:ad-loc"
 labels = ["creates:crates/cadetta-adapter/src/locator.rs"]
-scope = ["crates/cadetta-adapter/src/locator.rs"]
+scope = ["crates/cadetta-adapter/src/locator.rs", "crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
