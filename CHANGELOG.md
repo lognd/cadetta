@@ -13,10 +13,15 @@ folded into this file when a release is cut.
 
 ### Added
 
-- Language and linter specification, draft 1.3, under `docs/spec`.
-- Cargo workspace scaffold: ten `cadetta-*` crates under `crates/`
-  (units, syntax, fits, ir, solve, obligations, adapter, sema, lint,
-  cli) and the `cadetta` binary in `cadetta-cli`.
+- Language and linter specification, draft 1.4, under `docs/spec`,
+  including positions and datums, Rust-style packages and modules, and
+  the Python binding.
+- Cargo workspace scaffold: ten crates under `crates/` (units, syntax,
+  fits, ir, solve, obligations, adapter, sema, lint, and the `cadetta`
+  binary in `cadetta-cli`).
+- The Python binding under `bindings/python` (`import cadetta` and the
+  `cadetta` console script).
 - `cadetta-freecad`, a Python external adapter for FreeCAD, under
   `adapters/freecad`.
-- Pilot projects under `pilots/` used to exercise the specification.
+- The golden corpus under `tests/golden`: eight realistic designs with
+  hand-evaluated expected values, verdicts, diagnostics and artifacts.

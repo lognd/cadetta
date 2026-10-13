@@ -82,10 +82,10 @@ the reasons for them, and the checks on them.
 ## A short tour
 
 ```text
-namespace acme.rover
+// src/lib.cdt of package acme.rover
 
-use std.fasteners::ScrewJoint
-use std.materials::Material
+use std::fasteners::ScrewJoint
+use std::materials::Material
 
 cite vendor = "https://vendor.example/4471-B.pdf"
 
@@ -229,6 +229,15 @@ build.
 - `why --stale` names the upstream edit that made a sign-off stale.
 - Role-based sign-offs live in a mergeable `cadetta.lock`.
 
+**Packages.**
+- Shared shop policies and parts libraries are packages, depended on
+  by version; a product line is a workspace.
+- Modules come from the file tree, and a library's API is its `pub`
+  items (`pub use` re-exports a curated surface).
+- Dependencies are pinned in `cadetta.lock` by digest, and
+  `cadetta update` re-resolves them. A library update shows up in the
+  obligation graph as exactly the checks and sign-offs it makes stale.
+
 **External analysis.**
 - Values from a Python or MATLAB script come in through a small JSON
   protocol.
@@ -262,6 +271,7 @@ build.
 | Review | `cadetta ack check:**/seat* --role tolerance_review` | Records sign-off against the exact digests reviewed |
 | Change | `cadetta impact --since HEAD` before committing | Lists changed values, flipped verdicts, stale sign-offs and CAD files to re-sync |
 | Re-source | `cadetta impact --swap acme.rover::Rover/wheel acme.rover::Colson2Series`, then `swap` | Previews and applies the swap, with commercial deltas |
+| Update | `cadetta update acme.shop`, then `cadetta impact --worktree` | Re-resolves a dependency, rewrites the lock, and lists the verdicts and sign-offs it flips |
 | Release | `cadetta check --release` in CI | Fails on anything violated, undecided past policy, stale or unsigned |
 
 ## What it is not
@@ -288,10 +298,11 @@ adapter with 0.1.0). Releases are placeholders until 0.1.0.
 ## Quickstart (planned)
 
 ```sh
-cadetta init --adapter solidworks          # cadetta.toml and a starter design
+cadetta init --adapter solidworks          # cadetta.toml, src/lib.cdt
 cadetta import solidworks Bracket.SLDPRT   # propose names and bindings
 cadetta import --accept                    # write bindings and .cdt
 cadetta check                              # compile, lint, check
+cadetta update                             # re-resolve dependencies, write the lock
 cadetta sync --dry-run                     # what a sync would change
 cadetta sync                               # push, rebuild, read back
 cadetta why acme.rover::Rover/axle[0].end_diameter
@@ -312,7 +323,8 @@ cadetta why acme.rover::Rover/axle[0].end_diameter
 | [Config and CLI](https://github.com/lognd/cadetta/blob/main/docs/spec/config-cli.md) | `cadetta.toml` and every command |
 | [Bindings](https://github.com/lognd/cadetta/blob/main/docs/spec/bindings.md) | Python and the JSON catch-all |
 | [Decisions](https://github.com/lognd/cadetta/tree/main/docs/decisions) | Why things are the way they are |
-| [Pilots](https://github.com/lognd/cadetta/tree/main/pilots) | Realistic designs written against each draft, with friction reports |
+| [Golden corpus](https://github.com/lognd/cadetta/tree/main/tests/golden) | Realistic designs with hand-evaluated expected results |
+| [History](https://github.com/lognd/cadetta/tree/main/docs/history) | How the spec evolved |
 
 ## Project layout
 
@@ -320,7 +332,8 @@ cadetta why acme.rover::Rover/axle[0].end_diameter
 |---|---|
 | `docs/spec/` | The specification |
 | `docs/decisions/` | Architecture decision records |
-| `pilots/` | Pilot designs, friction reports and review rounds |
+| `tests/golden/` | Golden corpus: realistic designs with hand-evaluated expected results |
+| `docs/history/` | How the spec evolved: pilot rounds and review reports |
 | `crates/` | The Rust workspace: units, syntax, sema, fits, ir, lint, obligations, solve, adapter, and the `cadetta` binary |
 | `bindings/` | Language bindings, one directory per language (`bindings/python` is the importable `cadetta`); other languages use the JSON interfaces |
 | `adapters/` | External CAD adapters (`adapters/freecad`; SOLIDWORKS to come) |

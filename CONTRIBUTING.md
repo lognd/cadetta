@@ -9,8 +9,9 @@ grimble. Thanks for considering a contribution.
 ## Spec first
 
 The specification under `docs/spec` is the product right now. Any change
-to behavior updates `docs/spec` in the same change, and the pilots under
-`pilots/` and the conformance corpus must keep agreeing with it. If you
+to behavior updates `docs/spec` in the same change, and the golden corpus
+(`tests/golden`) and conformance corpus (`tests/conformance`) must
+keep agreeing with it. If you
 find an ambiguity, contradiction or gap, open a "Spec question /
 ambiguity" issue before writing code. Do not edit `design/` or `tickets/`
 by hand; tickets are written only through `frob ticket ...`.
