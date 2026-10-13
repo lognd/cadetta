@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:40Z"
-updated = "2026-10-13T06:58:13Z"
+updated = "2026-10-13T06:59:25Z"
 persona = "product engineer"
 capability = "depend on a shop library by path or git and get one resolved version"
 labels = ["creates:crates/cadetta-cli/src/pkg/resolve.rs"]
@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a resolved package whose version fails the `version` semver requirement, when resolved, then E012 fires (packages.md 1, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given two requirements on one package that no single version meets, when resolved, then E013 fires and no second copy is loaded (packages.md 1, 7)"
