@@ -3,6 +3,7 @@
 
 pub mod ack;
 pub mod check;
+pub mod check_watch;
 pub mod cite;
 pub mod compare;
 pub mod explain;
