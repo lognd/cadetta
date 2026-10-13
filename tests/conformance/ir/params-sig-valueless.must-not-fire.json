@@ -1,0 +1,50 @@
+{
+  "schema": "cadetta.ir/1",
+  "flavour": "design",
+  "package": {
+    "name": "acme.demo",
+    "version": "0.1.0"
+  },
+  "modules": [],
+  "dependencies": [],
+  "components": [
+    {
+      "attrs": {},
+      "class": "model",
+      "fits": [],
+      "implements": [],
+      "members": [
+        {
+          "analysis": false,
+          "attrs": {},
+          "deps": [],
+          "kind": "param",
+          "path": "acme.demo::Axle.d",
+          "priv": false,
+          "provenance": "authored",
+          "was": []
+        },
+        {
+          "analysis": false,
+          "attrs": {},
+          "deps": [
+            "acme.demo::Axle.d"
+          ],
+          "kind": "param",
+          "path": "acme.demo::Axle.r",
+          "priv": false,
+          "provenance": "derived",
+          "was": [],
+          "expr": "d / 2"
+        }
+      ],
+      "parts": [],
+      "path": "acme.demo::Axle",
+      "params_sig": "d: Length"
+    }
+  ],
+  "citations": [],
+  "checks": [],
+  "solvers": [],
+  "bindings": []
+}

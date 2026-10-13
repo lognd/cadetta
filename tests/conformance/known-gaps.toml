@@ -1,0 +1,8 @@
+# Fixtures whose implementation lags the spec. The runner tolerates a listed
+# fixture's failure, and fails when a listed fixture starts passing (remove
+# the entry then). Every entry needs a ticket handle and a reason.
+#
+# [[gap]]
+# fixture = "quantities/q006"   # <doc>/<NAME>
+# ticket = "~ABCDEFG"           # ticket that closes the gap
+# reason = "Q006 not emitted for inexact pi products yet"

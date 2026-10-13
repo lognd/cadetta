@@ -288,3 +288,44 @@ retyped property, a new required property, a changed enum or a removed
 definition is breaking and bumps `cadetta.ir/N`. The committed file is
 exactly `schema_json()`; the test does no file or environment access
 (CAP001), so a stale file is replaced by that output.
+
+## 6. Validation (`ir-validate`)
+
+`cadetta.ir/1` documents are validated by the committed JSON Schema plus
+the invariants below; the conformance entry `ir-validate FILE` loads a
+document and exits 0 when it is valid, 2 when it is not (no diagnostic
+code: an invalid document is not a design). Each invariant is stated
+normatively in sections 1-4; this list is the checkable set, and
+`tests/conformance/ir/` holds a must-fire (invalid) and must-not-fire
+(valid) fixture for each:
+
+- Exact: `r` is `num/den`, reduced, `den > 0`, integers as `n/1`; a
+  magnitude is never a bare float; an `Inexact` names its `root`;
+  `exact = false` carries a `reason`.
+- Value: no `designed` field; `Dim` has every exponent as an integer and
+  `currency` keys are uppercase ISO codes with integer exponents.
+- Wire form: absent optionals are omitted (never `null`); enums are
+  lowercase; wire names are `priv`, `type`, `for`; `sign` is the integer
+  1 or -1; `imported` provenance is an object; digests are lowercase
+  hex; `schema` is exactly `cadetta.ir/1`.
+- Members: `provenance` is `derived` exactly when `deps` is non-empty
+  (design flavour); `analysis` is true exactly for a `let`; a derived
+  member has no `tol`; a parameterized component's members have no
+  `value`; a `variants` value differs from the primary value; a `tol`
+  term has `lo <= hi` and a canonical path as `var`.
+- Bound: `<=` carries `hi` only, `>=` carries `lo` only, `in` carries
+  both (decided here; section 3 listed the fields without saying which
+  operator needs which).
+- Paths: full form only; the item name starts uppercase; a component
+  path has no member tail; `[*]` never appears in the IR (a for-range
+  uses its variable, `feet[i]`); variant keys are full-form `SLOT=ALT`
+  whose slot side carries a `/slot` step.
+- Geometry: an `Op` is a one-key object; `flip` takes `x` or `y`;
+  `rotate` takes `x|y|z` and an angle member path; a variant value of a
+  datum or placement is the whole op chain, an array.
+- Project: `modules` is sorted; `dependencies` is sorted by name.
+- Observed flavour: one component `<package>::Observed`; every member is
+  `imported`, has empty `deps`, a path-safe name (collisions `_2`,
+  `_3`) and one binding with its locator; no citations, parts, fits,
+  checks or solvers.
+- Acyclic `deps` is D003 (a diagnostic, run through `lint`).

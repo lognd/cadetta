@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "ir",
+  "section": "ir.md 3",
+  "rule": "D003",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      { "code": "D003", "severity": "error" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

@@ -86,7 +86,19 @@ Matching rules:
 
 ## Runner contract
 
-A runner takes each `NAME.expect.json`, runs the `entry` command on each
-fixture, and compares the result with the matching block. Every spec
-rule must have a pair; a rule without one is a corpus gap, reported by
-the runner. The runner is built by the golden-corpus-runner ticket.
+The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
+`cargo test -p cadetta --test conformance`). It takes each
+`NAME.expect.json`, runs the `entry` command on each fixture through the
+`cadetta` library, and compares the result with the matching block.
+
+- Single `.cdt` fixtures are staged as the package `acme.demo`
+  (`src/lib.cdt`, `fail_on = "error"`); a `NAME.must-fire/` directory is
+  copied as a whole package.
+- Only `kind = "source"` with `entry` `check` runs today; other kinds and
+  entries are skipped with a logged note until their entry points exist.
+- Failures name the fixture (`<doc>/<NAME>`), the doc and the missing or
+  extra code.
+- `known-gaps.toml` lists fixtures whose implementation lags the spec
+  (`fixture`, `ticket`, `reason`). A listed fixture may fail; a listed
+  fixture that passes is a failure (stale entry).
+- Every spec rule must have a pair; a rule without one is a corpus gap.
