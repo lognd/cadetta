@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:18:44Z"
+digest = "bd650382bda2832f9112645f7ace7de58719eafcc7f088866ecc6c6632133ef0"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d7cea12b-1e68-41dd-a16d-a4738e661265 with nextest profile: default
+    Starting 1 test across 1 binary (7 tests skipped)
+        PASS [   0.006s] cadetta-variants lifecycle::tests::nrnd_is_l002_with_candidates
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 7 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-variants -E test(=lifecycle::tests::nrnd_is_l002_with_candidates)"
+size = 550
+status = "measured"
+test_count = 1
+tests_digest = "1488781f3c64f8d6c09e2b6896ab316dc4f4751d8fe21fea8682e9e2c6dd322c"
+at = "2026-10-13T08:18:44Z"
+actor = "lognd"
+rev = 1

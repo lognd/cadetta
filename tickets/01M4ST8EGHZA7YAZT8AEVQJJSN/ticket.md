@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a primary with status nrnd, when analysed, then the L002 fact is recorded (lints.md L)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given status active, when recorded, then the date means last verified (language.md 3.2)"
