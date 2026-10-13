@@ -1,0 +1,16 @@
+kind = "create"
+title = "Bridge Rust tracing to Python logging"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SV2NDDVYW3WN79XN9C707C"
+persona = "Python user"
+capability = "see cadetta core logs through the logging module"
+outcome_text = "diagnostics integrate with my application"
+labels = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py"]
+scope = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py"]
+acceptance = ["Given a Python logger configured at DEBUG, when a core call runs, then tracing events arrive as logging records with level and target preserved (bindings.md 3)"]
+at = "2026-10-13T05:17:02Z"
+actor = "lognd"
+rev = 1
