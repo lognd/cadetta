@@ -21,7 +21,8 @@ pub ots Same: Caster @src {
 }
 pub assembly Rover {
   part wheel[4]: Caster = Good alt [Same]
-  solver sizing @"analysis/sizing.sh" {
+  solver sizing {
+    script "analysis/sizing.sh"
     in load = wheel.load_rating
     out min_wall: Length
   }

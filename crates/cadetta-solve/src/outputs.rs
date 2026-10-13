@@ -190,6 +190,7 @@ mod tests {
         SolverDecl {
             path: "p::wall_sizing".into(),
             script: "w.py".into(),
+            citation: None,
             inputs: BTreeMap::new(),
             outputs: BTreeMap::from([(
                 "min_wall".to_string(),

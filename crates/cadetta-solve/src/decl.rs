@@ -57,13 +57,29 @@ pub struct SolverClosure {
     pub files: Vec<String>,
 }
 
+// frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+/// A solver's method citation as written, resolved to a `CiteRef` when the IR is assembled.
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+pub struct DeclCitation {
+    /// The cited path text, or the literal text.
+    pub name: String,
+    /// True for an `@"literal"` citation.
+    pub literal: bool,
+    /// The locator string, when given.
+    pub locator: Option<String>,
+}
+
 /// The IR `Solver` record before results are attached (ir.md 2).
 #[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub struct SolverDecl {
     /// The canonical path, such as `acme.rover::wall_sizing`.
     pub path: String,
-    /// The script path named by the citation.
+    /// The script path from the `script` statement (its digest is an input).
     pub script: String,
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    /// The method citation, when written; provenance only, never an input.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub citation: Option<DeclCitation>,
     /// Inputs by name.
     pub inputs: BTreeMap<String, SolverInput>,
     /// Outputs by name.
@@ -233,11 +249,16 @@ fn render_expr(e: &Expr) -> String {
 pub fn lower_solver(s: &Solver, path: &str) -> Result<SolverDecl, Vec<SolverDeclError>> {
     debug!(path, "lowering solver declaration");
     let mut errs = Vec::new();
-    let script = match &s.citation.name {
-        CiteName::Literal(t) => t.clone(),
-        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-        CiteName::Named(i) => i.text(),
-    };
+    let script = s.script.clone();
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    let citation = s.citation.as_ref().map(|c| DeclCitation {
+        name: match &c.name {
+            CiteName::Literal(t) => t.clone(),
+            CiteName::Named(p) => p.text(),
+        },
+        literal: matches!(c.name, CiteName::Literal(_)),
+        locator: c.locator.clone(),
+    });
     let mut inputs = BTreeMap::new();
     let mut outputs = BTreeMap::new();
     let mut deps = Vec::new();
@@ -311,6 +332,7 @@ pub fn lower_solver(s: &Solver, path: &str) -> Result<SolverDecl, Vec<SolverDecl
     Ok(SolverDecl {
         path: path.to_string(),
         script,
+        citation,
         inputs,
         outputs,
         deps,
@@ -343,7 +365,24 @@ mod tests {
             .expect("solver")
     }
 
-    const OK: &str = "solver wall_sizing @\"analysis/wall_sizing.py\" {\n  in load = Frame.max_load, span = Frame.span\n  out min_wall: Length\n  out q: Volume / Time\n  deps \"analysis/material_db.csv\"\n}\n";
+    const OK: &str = "solver wall_sizing {\n  script \"analysis/wall_sizing.py\"\n  in load = Frame.max_load, span = Frame.span\n  out min_wall: Length\n  out q: Volume / Time\n  deps \"analysis/material_db.csv\"\n}\n";
+
+    // frob:ticket 01M4VB630NZKXA6Q9D7253FATR
+    // frob:tests crates/cadetta-solve/src/decl.rs::lower_solver kind=unit
+    #[test]
+    fn citation_is_provenance_and_not_an_input() {
+        let d = lower_solver(
+            &solver("solver s @roark:\"eq 3\" {\n  script \"s.py\"\n  out o: Length\n}\n"),
+            "p::s",
+        )
+        .unwrap();
+        let c = d.citation.expect("citation");
+        assert_eq!((c.name.as_str(), c.literal), ("roark", false));
+        assert_eq!(c.locator.as_deref(), Some("eq 3"));
+        assert_eq!(d.closure.files, vec!["s.py".to_string()]);
+        let d = lower_solver(&solver("solver s {\n  script \"s.py\"\n}\n"), "p::s").unwrap();
+        assert!(d.citation.is_none());
+    }
 
     // frob:tests crates/cadetta-solve/src/decl.rs::lower_solver kind=unit
     #[test]
@@ -370,11 +409,11 @@ mod tests {
             ("a = [1mm, 2mm]", "S007"),
             ("a = 1mm < 2mm", "S007"),
         ] {
-            let text = format!("solver s @\"s.py\" {{\n  in {src}\n  out o: Length\n}}\n");
+            let text = format!("solver s {{\n  script \"s.py\"\n  in {src}\n  out o: Length\n}}\n");
             let errs = lower_solver(&solver(&text), "p::s").expect_err(src);
             assert_eq!(errs[0].code, code, "{src}");
         }
-        let ok = "solver s @\"s.py\" {\n  in a = 2 * x.y + 1mm [+-0.1mm], b = f(z.w)\n  out o: Length\n}\n";
+        let ok = "solver s {\n  script \"s.py\"\n  in a = 2 * x.y + 1mm [+-0.1mm], b = f(z.w)\n  out o: Length\n}\n";
         assert!(lower_solver(&solver(ok), "p::s").is_ok());
     }
 
@@ -392,8 +431,7 @@ mod tests {
     // frob:tests crates/cadetta-solve/src/decl.rs::lower_solver kind=unit
     #[test]
     fn duplicates_are_e003() {
-        let t =
-            "solver s @\"s.py\" {\n  in a = 1mm, a = 2mm\n  out o: Length\n  out o: Length\n}\n";
+        let t = "solver s {\n  script \"s.py\"\n  in a = 1mm, a = 2mm\n  out o: Length\n  out o: Length\n}\n";
         let errs = lower_solver(&solver(t), "p::s").expect_err("dup");
         assert_eq!(errs.len(), 2);
         assert!(errs.iter().all(|e| e.code == "E003"));

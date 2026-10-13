@@ -1,7 +1,8 @@
 model Frame {
   span = 300mm
 }
-solver sizing @"analysis/sizing.py" {
+solver sizing {
+  script "analysis/sizing.py"
   in a = 2mm, b = Frame.span, c = -Frame.span, d = Frame.span + 1mm,
      e = 2 * Frame.span, f = Frame.span / 2, g = Frame.span ^ 2,
      h = max(Frame.span, 1mm), i = Frame.span as mm, j = 300mm [+-0.5mm]

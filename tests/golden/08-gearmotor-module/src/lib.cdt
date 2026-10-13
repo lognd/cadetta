@@ -190,7 +190,8 @@ assembly DriveModule {
 
   // Solver as an assembly member: instances and roll-ups are in scope (solvers.md 1).
   // Under variant evaluation robot_mass changes, so each variant needs `cadetta solve --variants` (solvers.md 4.1).
-  solver drive_torque @"analysis/drive_torque.py" {
+  solver drive_torque {
+    script "analysis/drive_torque.py"
     in  robot_mass = robot_mass, wheel_radius = hub.tire_radius
     out torque_per_motor: Torque
   }

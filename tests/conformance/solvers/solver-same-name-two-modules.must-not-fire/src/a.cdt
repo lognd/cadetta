@@ -1,6 +1,7 @@
 model A {
   span = 300mm
-  solver sz @"analysis/a.sh" {
+  solver sz {
+    script "analysis/a.sh"
     in span = span
     out w: Length
   }

@@ -1,0 +1,4 @@
+solver sizing @"analysis/sizing.py" {
+  script "analysis/sizing.py"
+  out wall: Length
+}
