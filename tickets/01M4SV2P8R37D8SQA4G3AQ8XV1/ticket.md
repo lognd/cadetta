@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:03Z"
-updated = "2026-10-13T07:44:46Z"
+updated = "2026-10-13T07:46:01Z"
 persona = "Python user"
 capability = "convert Quantities to pint"
 outcome_text = "I can use numpy and pint workflows"
 labels = ["creates:bindings/python/python/cadetta/pint_interop.py", "creates:bindings/python/tests/test_pint.py"]
-scope = ["bindings/python/python/cadetta/pint_interop.py", "bindings/python/tests/test_pint.py"]
+scope = ["bindings/python/python/cadetta/pint_interop.py", "bindings/python/tests/test_pint.py", "bindings/python/pyproject.toml", "bindings/python/uv.lock", "docs/spec/bindings.md"]
 
 [[links]]
 kind = "blocked-by"
