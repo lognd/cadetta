@@ -1,0 +1,16 @@
+kind = "create"
+title = "ScrewJoint float, locating and the implicit placement float"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
+persona = "design engineer"
+capability = "avoid false 'holds' answers"
+idempotency_key = "replan14:geo-float"
+labels = ["creates:std/fasteners/screwjoint_float.cdt", "creates:crates/cadetta-geometry/src/float.rs"]
+scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs"]
+acceptance = ["Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)", "Given at/onto, a clamped part placed on its host's pattern datum and locating = false, when evaluated, then the placement carries [+-float] on x and y as one source-variable pair per joint (geometry.md 5.2)", "Given the joint's own aligned check, when evaluated, then it reads the placement without the float (geometry.md 5.2)", "Given locating = true, when evaluated, then no float is added (geometry.md 5.2; stdlib.md 3)"]
+at = "2026-10-13T05:41:54Z"
+actor = "lognd"
+rev = 1
