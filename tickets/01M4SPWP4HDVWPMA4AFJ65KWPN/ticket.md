@@ -57,7 +57,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `was Globals.plate_thk` and `@vendor:"p.2, table 1"`, when parsed, then the rename and the citation with locator are recorded (language.md 3.3, 3.9)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `sum?(self, unit_cost)`, `Iso273[thread].medium` and `T.at_least(x).key`, when parsed, then the calls and lookups parse (language.md 3.5, 3.6)"
