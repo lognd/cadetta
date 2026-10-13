@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 2",
+  "rule": "Q006",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q006",
+        "severity": "info"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "only whole multiples of 90deg are exact; an untoleranced inexact angle roots Q006"
+}

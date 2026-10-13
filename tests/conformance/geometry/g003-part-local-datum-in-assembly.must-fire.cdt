@@ -1,0 +1,10 @@
+model P {
+  datum top = origin.offset(z = 5mm)
+  pt: Point2 on origin = Point2(1mm, 1mm)
+}
+
+assembly A {
+  part a: P
+  place a.origin on origin
+  check c: (a.pt in top).z >= 0mm "converted"
+}

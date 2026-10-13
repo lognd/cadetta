@@ -1,0 +1,9 @@
+model P {
+  height = 10mm
+  datum top = origin.offset(z = height)
+  p: Point2 on top = Point2(1mm, 2mm)
+  q = p in origin
+  qx = q.x
+  qy = q.y
+  qz = q.z
+}

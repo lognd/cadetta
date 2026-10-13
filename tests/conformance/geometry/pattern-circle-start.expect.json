@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "circle-pattern",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.p1x",
+        "nominal": "0mm"
+      },
+      {
+        "path": "acme.demo::P.p1y",
+        "nominal": "10mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.p1x",
+        "nominal": "0mm"
+      },
+      {
+        "path": "acme.demo::P.p1y",
+        "nominal": "20mm"
+      }
+    ]
+  },
+  "note": "circle_pattern(n, r, start): point 1 of 4 sits a quarter turn on from start"
+}

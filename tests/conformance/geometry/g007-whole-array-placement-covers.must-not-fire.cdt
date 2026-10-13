@@ -1,0 +1,14 @@
+model Foot {
+  datum top = origin
+}
+
+model Base {
+  datum underside = origin
+}
+
+assembly Frame {
+  part base: Base
+  part feet[3]: Foot
+  place base.origin on origin
+  place feet.top on base.underside
+}

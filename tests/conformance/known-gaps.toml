@@ -761,3 +761,218 @@ reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 
 fixture = "solvers/unsolved-output-no-result"
 ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+
+[[gap]]
+fixture = "geometry/aligned-pairs-by-index"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/aligned-xy-plane-only"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/angle-between-axes"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/coaxial-offset"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/coaxial-tilt-included"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/datum-bound-inexact-rotation-undecided"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-bound-reversed-normal"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-bound-toleranced-angle-undecided"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-built-from-earlier"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-flip-z"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-ots-needs-citation"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-unknown-of-placed-part"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-zero-count-pattern"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/g001-array-plus-point"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-compare-across-datums"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-distance-across-datums"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-fixed-vector-other-datum"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-point-minus-point"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g002-three-part-cycle"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g002-two-part-cycle"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g003-convert-unplaced-part"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g003-part-local-datum-in-assembly"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g003-place-on-unplaced-part"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g003-retype-unplaced-part"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g004-aligned-count"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g004-joint-at-onto-count"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g005-check-looser-than-float"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g005-locating-joint-no-float"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g006-for-ranges-overlap"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g006-part-placed-twice"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g006-unindexed-overlaps-for"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g007-range-past-count"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g007-unplaced-instance"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g007-whole-array-placement-covers"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/i001-interface-datum-omitted"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/joint-undecided-when-loosened"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/joint-violated-over-allowance"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/parallel-ignores-offset"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/q006-circle-pattern-angle"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/q006-inexact-rotation"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/q006-toleranced-angle-at-90"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/tolerance-after-array-per-coordinate"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"
+
+[[gap]]
+fixture = "geometry/tolerance-on-generator-member"
+ticket = "~MCJWA2D"
+reason = "geometry expression is not evaluated by this stage yet"

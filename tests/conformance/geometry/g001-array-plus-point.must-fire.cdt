@@ -1,0 +1,5 @@
+model M {
+  holes: [Point2 on origin; 4] = rect_pattern(2, 2, 40mm, 20mm)
+  p: Point2 on origin = Point2(1mm, 1mm)
+  shifted = holes + p
+}

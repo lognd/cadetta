@@ -1,0 +1,6 @@
+model M {
+  datum top = origin.offset(z = 5mm)
+  a: Point2 on origin = Point2(1mm, 1mm)
+  b: Point2 on top = Point2(1mm, 2mm)
+  check same_x: a.x == b.x "same x"
+}

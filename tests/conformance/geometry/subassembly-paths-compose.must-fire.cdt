@@ -1,0 +1,14 @@
+model Bracket {
+  holes: [Point2 on origin; 2] = [Point2(-25mm, 0mm), Point2(25mm, 0mm)]
+}
+
+assembly Sub {
+  part bracket: Bracket
+  place bracket.origin on origin.offset(x = 10mm)
+}
+
+assembly Mount {
+  part sub: Sub
+  place sub.origin on origin.offset(x = 100mm)
+  hx = (sub.bracket.holes[1] in origin).x
+}

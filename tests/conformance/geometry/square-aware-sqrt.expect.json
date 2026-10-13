@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 5.1",
+  "rule": "square-aware",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.r",
+        "nominal": "0mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.r",
+        "nominal": "5mm"
+      }
+    ]
+  },
+  "note": "sqrt of a sum of squares never fails on a sign-straddling tolerance"
+}

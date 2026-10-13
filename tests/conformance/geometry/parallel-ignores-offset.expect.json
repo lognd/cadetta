@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 5.1",
+  "rule": "parallel",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "parallel measures direction only; a lateral offset of the axis is not a deviation"
+}

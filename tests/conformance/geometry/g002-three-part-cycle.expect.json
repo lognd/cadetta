@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 4",
+  "rule": "G002",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "G002",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

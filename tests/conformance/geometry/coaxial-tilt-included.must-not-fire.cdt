@@ -1,0 +1,15 @@
+model A {
+  datum ax = origin.rotate(z = 90deg)
+}
+
+model B {
+  datum ax = origin
+}
+
+assembly S {
+  part a: A
+  part b: B
+  place a.origin on origin
+  place b.origin on origin
+  check c: coaxial(a.ax, b.ax, 0.5mm, 20mm) "axes"
+}

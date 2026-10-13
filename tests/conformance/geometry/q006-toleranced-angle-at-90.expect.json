@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 2",
+  "rule": "Q006",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q006",
+        "severity": "info"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "a toleranced angle carries a Q006 root only when the nominal is not a multiple of 90deg"
+}

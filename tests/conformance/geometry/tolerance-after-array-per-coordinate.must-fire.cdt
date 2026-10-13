@@ -1,0 +1,4 @@
+model Bracket {
+  holes: [Point2 on origin; 2] = [Point2(-25mm, 0mm), Point2(25mm, 0mm)] [+-0.05mm]
+  check pitch_ok: holes[1].x - holes[0].x <= 50.08mm "pitch"
+}

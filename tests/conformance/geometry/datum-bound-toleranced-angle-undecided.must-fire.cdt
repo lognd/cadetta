@@ -1,0 +1,10 @@
+interface Mount {
+  datum mount
+  datum shaft
+  shaft.z == mount.z
+}
+
+model Flange: Mount {
+  datum mount = origin
+  datum shaft = origin.rotate(x = 0deg [+-1deg])
+}

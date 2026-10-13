@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "G003",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "G003",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "a part-local datum met in an assembly is G003; the placed part's datum is named part.datum"
+}

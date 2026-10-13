@@ -1,0 +1,43 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 2",
+  "rule": "op-member-path",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Rail.site.offset.x",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::Rail.site.offset[1].y",
+        "nominal": "3mm"
+      },
+      {
+        "path": "acme.demo::Rail.site.offset[2].x",
+        "nominal": "7mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Rail.site.offset.x",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::Rail.site.offset[1].y",
+        "nominal": "3mm"
+      },
+      {
+        "path": "acme.demo::Rail.site.offset[2].x",
+        "nominal": "8mm"
+      }
+    ]
+  },
+  "note": "the first operation of a kind has no index; the n-th carries [n]"
+}

@@ -1,0 +1,4 @@
+model P {
+  p: Point3 on origin = Point3(3mm, 4mm, 10mm)
+  r = radial(p)
+}

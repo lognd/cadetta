@@ -1,0 +1,8 @@
+model Plate {
+  datum top = origin.offset(z = 2mm)
+}
+
+assembly Drive {
+  part plate: Plate
+  place plate.origin on origin.offset(x = 14mm)
+}

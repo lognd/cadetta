@@ -1,0 +1,51 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "rect-pattern-order",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.p1x",
+        "nominal": "15mm"
+      },
+      {
+        "path": "acme.demo::P.p1y",
+        "nominal": "-20mm"
+      },
+      {
+        "path": "acme.demo::P.p2x",
+        "nominal": "-15mm"
+      },
+      {
+        "path": "acme.demo::P.p2y",
+        "nominal": "20mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.p1x",
+        "nominal": "20mm"
+      },
+      {
+        "path": "acme.demo::P.p1y",
+        "nominal": "15mm"
+      },
+      {
+        "path": "acme.demo::P.p2x",
+        "nominal": "-20mm"
+      },
+      {
+        "path": "acme.demo::P.p2y",
+        "nominal": "-15mm"
+      }
+    ]
+  },
+  "note": "row by row, x fastest, centred on the datum origin; the nf rotation is exact (90deg)"
+}

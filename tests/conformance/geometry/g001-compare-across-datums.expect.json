@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "G001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "G001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "comparison of points in different datums; comparing their Length members is fine"
+}

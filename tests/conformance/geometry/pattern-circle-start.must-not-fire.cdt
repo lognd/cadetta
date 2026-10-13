@@ -1,0 +1,5 @@
+model P {
+  pts: [Point2 on origin; 4] = circle_pattern(4, 20mm, 0deg)
+  p1x = pts[1].x
+  p1y = pts[1].y
+}

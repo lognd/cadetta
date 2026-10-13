@@ -360,6 +360,26 @@ loops that can physically fail, so the float enters the placement.
 
 lints.md is the catalog; this table must agree with it.
 
+## 8. Conformance decisions
+
+Rules the fixtures under `tests/conformance/geometry/` pin where the
+sections above were silent (decided 2026-10-13, pending owner review):
+
+- `flip(z)` is an error (E006): `flip` takes `x` or `y` only, because
+  flipping the normal is `flip(x)` or `flip(y)` and the third axis
+  would be a no-op on the frame.
+- A datum whose definition names a datum declared later, or one that
+  does not exist, is E002 (not a reference); datums are built from
+  earlier datums only.
+- A pattern generator with a zero point count is E006.
+- A datum name that the placed part does not declare (`bracket.nope`)
+  is E002, the same as any unknown member.
+- `circle_pattern` numbers its points counter-clockwise starting at
+  `+x` of its datum: point 0 is at `(r, 0)`.
+- `aligned`, `coaxial`, `parallel` and `angle_between` are boolean
+  or angle functions usable directly as a check condition, in addition
+  to comparisons and `x satisfies P` (language.md 6).
+
 ## Open questions
 
 - OQ-10 (closed 2026-10-13, geometry.md): positions are typed by

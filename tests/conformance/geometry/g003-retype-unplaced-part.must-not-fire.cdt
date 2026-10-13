@@ -1,0 +1,16 @@
+model Motor {
+  datum face = origin
+  mount_holes: [Point2 on face; 2] = rect_pattern(2, 1, 20mm, 0mm)
+}
+
+model Plate {
+  datum face = origin.offset(z = 3mm)
+}
+
+assembly A {
+  part motor: Motor
+  part plate: Plate
+  place plate.origin on origin
+  place motor.face on plate.face
+  moved = motor.mount_holes as Point2 on plate.face
+}

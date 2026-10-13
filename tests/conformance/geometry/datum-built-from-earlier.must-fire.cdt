@@ -1,0 +1,4 @@
+model Part {
+  datum a = b.offset(x = 1mm)
+  datum b = origin.offset(x = 2mm)
+}

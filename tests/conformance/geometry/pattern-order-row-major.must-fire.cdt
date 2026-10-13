@@ -1,0 +1,7 @@
+model P {
+  pts: [Point2 on origin; 4] = rect_pattern(2, 2, 30mm, 40mm)
+  p1x = pts[1].x
+  p1y = pts[1].y
+  p2x = pts[2].x
+  p2y = pts[2].y
+}

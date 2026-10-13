@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 4",
+  "rule": "place-member-path",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Drive/plate.place.0.x",
+        "nominal": "12mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Drive/plate.place.0.x",
+        "nominal": "14mm"
+      }
+    ]
+  },
+  "note": "each placement op argument is a Member at Assembly/part.place.<op index>.<axis>"
+}

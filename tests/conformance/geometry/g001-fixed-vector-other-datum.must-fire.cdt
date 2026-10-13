@@ -1,0 +1,8 @@
+model M {
+  datum top = origin.offset(z = 5mm)
+  a: Point2 on origin = Point2(1mm, 1mm)
+  b: Point2 on origin = Point2(3mm, 1mm)
+  c: Point2 on top = Point2(0mm, 0mm)
+  fixed = a - b
+  moved = c + fixed
+}

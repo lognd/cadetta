@@ -1,0 +1,9 @@
+model P {
+  pt: Point2 on origin = Point2(1mm, 1mm)
+}
+
+assembly A {
+  part a: P
+  place a.origin on origin
+  check c: (a.pt in a.nothing).z >= 0mm "unknown datum"
+}

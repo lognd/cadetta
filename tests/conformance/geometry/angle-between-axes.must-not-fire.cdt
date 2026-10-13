@@ -1,0 +1,15 @@
+model A {
+  datum ax = origin.offset(x = 5mm)
+}
+
+model B {
+  datum ax = origin
+}
+
+assembly S {
+  part a: A
+  part b: B
+  place a.origin on origin
+  place b.origin on origin
+  check c: angle_between(a.ax, b.ax) <= 1deg "axes"
+}

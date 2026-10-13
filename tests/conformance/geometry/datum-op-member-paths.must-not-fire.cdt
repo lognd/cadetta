@@ -1,0 +1,3 @@
+model Rail {
+  datum site = origin.offset(x = 5mm).offset(y = 3mm).offset(x = 8mm)
+}

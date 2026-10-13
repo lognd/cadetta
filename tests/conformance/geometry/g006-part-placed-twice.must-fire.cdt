@@ -1,0 +1,11 @@
+model P {
+  datum top = origin.offset(z = 5mm)
+}
+
+assembly A {
+  part a: P
+  part b: P
+  place a.origin on origin
+  place b.origin on a.top
+  place b.origin on origin
+}

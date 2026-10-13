@@ -1,0 +1,43 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 3",
+  "rule": "reexpress",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.qx",
+        "nominal": "1mm"
+      },
+      {
+        "path": "acme.demo::P.qy",
+        "nominal": "2mm"
+      },
+      {
+        "path": "acme.demo::P.qz",
+        "nominal": "30mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.qx",
+        "nominal": "1mm"
+      },
+      {
+        "path": "acme.demo::P.qy",
+        "nominal": "2mm"
+      },
+      {
+        "path": "acme.demo::P.qz",
+        "nominal": "10mm"
+      }
+    ]
+  },
+  "note": "a Point2 on d becomes the Point3 at z = 0 of d"
+}

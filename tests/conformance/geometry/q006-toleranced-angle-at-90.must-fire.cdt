@@ -1,0 +1,7 @@
+model P {
+  datum d = origin.rotate(z = 30deg [+-1deg])
+  p: Point2 on d = Point2(10mm, 0mm)
+  q = p in origin
+  qx = q.x
+  qy = q.y
+}

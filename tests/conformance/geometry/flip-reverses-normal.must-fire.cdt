@@ -1,0 +1,7 @@
+model P {
+  datum d = origin.flip(x)
+  p: Point3 on d = Point3(0mm, 0mm, 5mm)
+  q = p in origin
+  qy = q.y
+  qz = q.z
+}

@@ -1,0 +1,4 @@
+model P {
+  pts: [Point2 on origin; 4] = rect_pattern(2, 2, 30mm [+-0.05mm], 40mm)
+  check pitch_ok: pts[1].x - pts[0].x <= 30.06mm "pitch"
+}

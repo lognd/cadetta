@@ -1,0 +1,16 @@
+model Lid {
+  holes: [Point2 on origin; 2] = rect_pattern(2, 1, 30mm, 0mm)
+}
+
+model Base {
+  datum top = origin.offset(z = 10mm)
+  tapped: [Point2 on origin; 2] = rect_pattern(2, 1, 30mm, 0mm)
+}
+
+assembly Box {
+  part lid: Lid
+  part base: Base
+  place base.origin on origin
+  place lid.origin on base.top
+  check al: aligned(lid.holes, base.tapped, 0.1mm) "holes line up"
+}

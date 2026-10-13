@@ -1,0 +1,9 @@
+interface Mount {
+  datum mount
+  datum shaft
+}
+
+model Flange: Mount {
+  datum mount = origin
+  datum shaft = origin
+}

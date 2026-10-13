@@ -1,0 +1,5 @@
+model P {
+  x = 3mm [+-0.1mm]
+  y = 4mm [+-0.1mm]
+  r = sqrt(x ^ 2 + y ^ 2)
+}
