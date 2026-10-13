@@ -3,16 +3,18 @@
 //! Propose mode turns observed IR into one `[[item]]` per native item, sorted by
 //! `file` then `locator`, plus a `.cdt` scaffold. It writes those two files and
 //! nothing else, and never touches `.cdt` or bindings outside `build/import/`.
-//! Naming here is the minimal placeholder (observed member name, UpperCamel file
-//! stem); the full 7.2 rules belong to the naming ticket.
+//! Component names come from [`super::naming::component_name`] (7.2).
 // frob:ticket 01M4SWMCMY3QH9282ZJ07XBBB7
 
+use std::collections::BTreeMap;
 use std::fmt;
 use std::fs;
 use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_ir::model::{LocatorKind, LocatorMode, Project, Provenance};
 use serde::{Deserialize, Serialize};
+
+use super::naming::{MemberNames, component_name};
 
 /// Directory of the proposal files, relative to the package root.
 pub const PROPOSAL_DIR: &str = "build/import";
@@ -97,28 +99,6 @@ impl fmt::Display for ProposeError {
 
 impl std::error::Error for ProposeError {}
 
-/// Upper-camel component name from a file stem (`cover_plate.SLDPRT` -> `CoverPlate`).
-fn upper_camel(file: &str) -> String {
-    let stem = FsPath::new(file)
-        .file_stem()
-        .and_then(|s| s.to_str())
-        .unwrap_or(file);
-    let s: String = stem
-        .split(|c: char| !c.is_ascii_alphanumeric())
-        .filter(|w| !w.is_empty())
-        .map(|w| {
-            let mut cs = w.chars();
-            let first = cs.next().map(|c| c.to_ascii_uppercase());
-            first.into_iter().chain(cs).collect::<String>()
-        })
-        .collect();
-    if s.is_empty() || s.starts_with(|c: char| c.is_ascii_digit()) {
-        format!("C{s}")
-    } else {
-        s
-    }
-}
-
 fn kind_name(k: LocatorKind) -> &'static str {
     match k {
         LocatorKind::Global => "global",
@@ -131,6 +111,7 @@ fn kind_name(k: LocatorKind) -> &'static str {
 /// Builds a proposal from observed IR, one project per native file (adapters.md 7.1).
 pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
     let mut items = Vec::new();
+    let mut names: BTreeMap<String, MemberNames> = BTreeMap::new();
     for project in observed {
         for comp in &project.components {
             for m in &comp.members {
@@ -145,11 +126,23 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                     tracing::warn!(native = %native_name, "import: member has no binding; skipped");
                     continue;
                 };
+                let allocated = names
+                    .entry(component_name(file))
+                    .or_default()
+                    .allocate(native_name);
+                if allocated.collided {
+                    tracing::warn!(native = %native_name, name = %allocated.name, "import: member name collided; suffixed");
+                }
                 for loc in &binding.locators {
                     let (status, reason) = if loc.mode == LocatorMode::Ref {
                         (
                             Status::Skip,
                             Some("driven (reference) dimension".to_string()),
+                        )
+                    } else if allocated.collided {
+                        (
+                            Status::Accept,
+                            Some("name collided with an earlier member; suffixed".to_string()),
                         )
                     } else {
                         (Status::Accept, None)
@@ -159,8 +152,6 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                         .unit_assumed
                         .clone()
                         .or_else(|| Some(loc.native_unit.clone()).filter(|u| !u.is_empty()));
-                    let path = m.path.to_string();
-                    let name = path.rsplit('.').next().unwrap_or(&path).to_string();
                     items.push(Item {
                         file: file.clone(),
                         locator: loc.locator.clone(),
@@ -170,8 +161,8 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                         value: value.authored.clone(),
                         unit,
                         unit_assumed,
-                        path: name,
-                        component: upper_camel(file),
+                        path: allocated.name.clone(),
+                        component: component_name(file),
                         status,
                         reason,
                     });
@@ -202,18 +193,25 @@ pub fn render_cdt(p: &Proposal) -> String {
         if items.is_empty() {
             continue;
         }
-        out.push_str(&format!("\nmodel {} {{\n", upper_camel(file)));
-        for i in items {
-            let unit = i.unit.as_deref().unwrap_or("");
-            let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
-                i.value.clone()
-            } else {
-                format!("{}{unit}", i.value)
-            };
-            out.push_str(&format!("  {} = {lit}\n", i.path));
-        }
-        out.push_str("}\n");
+        out.push('\n');
+        out.push_str(&render_model(&component_name(file), &items));
     }
+    out
+}
+
+/// Renders one `model <component> { ... }` block for the given items.
+pub fn render_model(component: &str, items: &[&Item]) -> String {
+    let mut out = format!("model {component} {{\n");
+    for i in items {
+        let unit = i.unit.as_deref().unwrap_or("");
+        let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
+            i.value.clone()
+        } else {
+            format!("{}{unit}", i.value)
+        };
+        out.push_str(&format!("  {} = {lit}\n", i.path));
+    }
+    out.push_str("}\n");
     out
 }
 
