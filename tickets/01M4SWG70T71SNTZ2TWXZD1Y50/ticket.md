@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:54Z"
+updated = "2026-10-13T05:41:55Z"
 persona = "design engineer"
 capability = "see when a tight check ignores bolt float"
 idempotency_key = "replan14:geo-g005"
 labels = ["creates:crates/cadetta-lint/src/rules/g005.rs", "creates:tests/lints/G005/**"]
 scope = ["crates/cadetta-lint/src/rules/g005.rs", "tests/lints/G005/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG6Z6JVP5Z7H38HWJP0GQ"
 
 [[acceptance]]
 text = "Given a check tighter than a joint's float that reads through a placement carrying it, when linted, then G005 warning fires (geometry.md 5.2, 7)"
