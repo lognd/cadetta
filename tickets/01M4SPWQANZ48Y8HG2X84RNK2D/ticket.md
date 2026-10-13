@@ -2,7 +2,8 @@
 id = "01M4SPWQANZ48Y8HG2X84RNK2D"
 title = "Generated JSON Schema committed to docs/schemas"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
