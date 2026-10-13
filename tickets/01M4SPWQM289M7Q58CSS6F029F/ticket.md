@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T09:00:39Z"
+updated = "2026-10-13T09:00:40Z"
 persona = "design engineer"
 capability = "configure severities, fail_on and waive diagnostics"
 outcome_text = "CI fails only on what I decide matters"
@@ -89,7 +89,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a waiver glob and `for alt NAME`, when linted, then it applies only to that alternate variant (lints.md 2, language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a waiver, when created, then it binds the closure digests of its targets (lints.md 2, ir.md 4)"
