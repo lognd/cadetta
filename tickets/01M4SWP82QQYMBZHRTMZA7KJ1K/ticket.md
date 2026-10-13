@@ -8,12 +8,16 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:12Z"
+updated = "2026-10-13T05:45:13Z"
 persona = "design engineer"
 capability = "record where parts come from"
 idempotency_key = "replan14:sd-sourced"
 labels = ["creates:std/commercial.cdt"]
 scope = ["std/commercial.cdt"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4STANV9T55FV8529E2RPFB1"
 
 [[acceptance]]
 text = "Given Sourced, when a component uses it, then supplier, part number and price members are optional and non-emitting (stdlib.md 6)"
