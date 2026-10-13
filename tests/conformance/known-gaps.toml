@@ -636,3 +636,8 @@ reason = "unused allow is not reported"
 fixture = "lints/w005-waiver-expiring"
 ticket = "~A7FN9YF"
 reason = "expiring waiver is not reported"
+
+[[gap]]
+fixture = "lints/e010-mmc-without-role"
+ticket = "~FSJCX9G"
+reason = "#[role(hole)] not honoured"
