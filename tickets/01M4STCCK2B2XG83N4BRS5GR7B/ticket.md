@@ -2,7 +2,8 @@
 id = "01M4STCCK2B2XG83N4BRS5GR7B"
 title = "Lints I001-I004 for interfaces and alternates"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
