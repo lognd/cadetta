@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:16:28Z"
+digest = "813d7296ec623f236b8233959e23b2442a2d96c1a07d03a2756e252f89e415c1"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c4cf7d91-6f17-404a-813a-a7f25513e21e with nextest profile: default
+    Starting 1 test across 1 binary (21 tests skipped)
+        PASS [   0.080s] cadetta-sema kindcheck::tests::adding_length_and_mass_is_q002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.081s] 1 test run: 1 passed, 21 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E test(=kindcheck::tests::adding_length_and_mass_is_q002)"
+size = 550
+status = "measured"
+test_count = 1
+tests_digest = "3d0f7105d7c08fe85ac51cdce449c06b2fee0ea47e9d9487ee05f2e0696427c8"
+at = "2026-10-13T07:16:28Z"
+actor = "lognd"
+rev = 1

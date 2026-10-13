@@ -2,13 +2,13 @@
 id = "01M4SXRFTTTTJE5CHCZAE8MX0Q"
 title = "File-tree modules, canonical paths and E015"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T06:03:54Z"
+updated = "2026-10-13T07:16:08Z"
 persona = "library author"
 capability = "organise a package as files with no declarations"
 labels = ["creates:crates/cadetta-sema/src/modules.rs"]
