@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T06:42:19Z"
+digest = "5ad9bfdba55d59faa73047775e14d817ad40a0049af6fe7330bce694805da217"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 30c39f8b-9cbe-49a2-b2e0-003446cb1f34 with nextest profile: default
+    Starting 4 tests across 1 binary (71 tests skipped)
+        PASS [   0.006s] cadetta-units role::tests::attribute_gives_role
+        PASS [   0.007s] cadetta-units role::tests::class_letter_case_gives_role
+        PASS [   0.007s] cadetta-units accessors::tests::mmc_lmc_without_role_is_e010
+        PASS [   0.007s] cadetta-units accessors::tests::mmc_lmc_follow_role
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 4 tests run: 4 passed, 71 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units mmc_lmc class_letter attribute_gives_role"
+size = 782
+status = "measured"
+test_count = 4
+tests_digest = "c9a05dd010ac80a386878edeacc8918ffccf798caa0cadb06d11e037f6328541"
+at = "2026-10-13T06:42:19Z"
+actor = "lognd"
+rev = 1

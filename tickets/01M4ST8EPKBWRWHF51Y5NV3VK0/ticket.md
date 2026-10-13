@@ -2,18 +2,18 @@
 id = "01M4ST8EPKBWRWHF51Y5NV3VK0"
 title = "cadetta.lock format and persistence"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T06:04:57Z"
+updated = "2026-10-13T06:42:26Z"
 persona = "design engineer"
 capability = "commit attestations and digests so the graph is rebuildable at any commit"
 idempotency_key = "replan13:cadetta.lock format and persistence"
 labels = ["creates:crates/cadetta-obligations/src/lock.rs"]
-scope = ["crates/cadetta-obligations/src/lock.rs"]
+scope = ["crates/cadetta-obligations/src/lock.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocks"
