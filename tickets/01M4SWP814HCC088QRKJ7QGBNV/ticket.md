@@ -19,6 +19,10 @@ scope = ["std/fasteners.cdt"]
 kind = "blocked-by"
 target = "01M4STAPCEF5EPEYX0MZDSBA7J"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4STAPFPQ9GV8XJB4XCK8EGP"
+
 [[acceptance]]
 text = "Given a ScrewJoint over a pattern, when instantiated, then exactly one joint covers the whole pattern; count versus count(at) is distinguished (stdlib.md 3)"
 bound = false
