@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a Torque assigned to an Energy parameter without `as`, when checked, then Q003 is signalled; `x as Energy` is accepted (quantities.md 4.1 rules 4-5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an anonymous kind of equal dimension and angle, when assigned to a named kind, then it is accepted (quantities.md 4.1 rule 4)"
