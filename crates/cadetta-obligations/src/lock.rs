@@ -1042,18 +1042,19 @@ mod tests {
     // frob:tests crates/cadetta-obligations/src/lock.rs::Lock.save_with
     #[test]
     fn save_is_byte_exact_and_skips_unchanged() {
-        let mut disk = String::new();
+        let disk = std::cell::RefCell::new(String::new());
         let lock = sample();
         assert!(
             lock.save_with(
-                || Ok(disk.clone()),
+                || Ok(disk.borrow().clone()),
                 |b| {
-                    disk = b.to_owned();
+                    *disk.borrow_mut() = b.to_owned();
                     Ok(())
                 }
             )
             .unwrap()
         );
+        let disk = disk.into_inner();
         assert_eq!(disk, lock.render());
         let d2 = disk.clone();
         assert!(
