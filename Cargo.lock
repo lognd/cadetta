@@ -43,6 +43,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cadetta-geometry"
+version = "0.0.0"
+dependencies = [
+ "cadetta-ir",
+ "tracing",
+]
+
+[[package]]
 name = "cadetta-ir"
 version = "0.0.0"
 dependencies = [
@@ -106,6 +114,14 @@ dependencies = [
 name = "cadetta-units"
 version = "0.0.0"
 dependencies = [
+ "tracing",
+]
+
+[[package]]
+name = "cadetta-variants"
+version = "0.0.0"
+dependencies = [
+ "cadetta-ir",
  "tracing",
 ]
 
