@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T09:50:04Z"
+updated = "2026-10-13T09:50:05Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given bindings, when loaded, then multi-locator, mangling and all ir.md 3 Locator fields parse (adapters.md 3)"
-bound = false
+bound = true
 +++
