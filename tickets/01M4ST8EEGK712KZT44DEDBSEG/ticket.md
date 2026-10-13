@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:59:22Z"
+updated = "2026-10-13T08:59:23Z"
 persona = "design engineer"
 capability = "know which alternates are safe to swap in"
 idempotency_key = "replan13:Viability, undecided results and alternate waivers"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a violated `require` under a variant, when waived, then the alternate is still non-viable (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given promoting an alternate, when the primary changes, then the old primary stays approved only if the edit puts it in the list (language.md 3.2)"
