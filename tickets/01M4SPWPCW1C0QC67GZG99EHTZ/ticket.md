@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `Type.member` on a parameterized component whose member depends on no parameter, when resolved, then it reads without an instance; if it depends on a parameter an error names the parameter (language.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a parameterless component read by type name, when resolved, then it is one implicit instance shared by every read in the project (language.md 3.1)"
