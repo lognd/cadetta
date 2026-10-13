@@ -2,7 +2,8 @@
 id = "01M4SPWR7SG2GDJ254566CDH0B"
 title = "Lint family Check rules C001-C004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
