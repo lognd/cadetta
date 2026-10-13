@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:16:27Z"
+updated = "2026-10-13T06:16:28Z"
 persona = "design engineer"
 capability = "use every unit in the quantities.md table (m mm in ft deg N*m psi rpm ...)"
 outcome_text = "I can author values in the units my datasheets use"
@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a user declaration `unit kip = 1000lbf`, when registered, then it resolves like a built-in (language.md 3.10)"
-bound = false
+bound = true
 +++
