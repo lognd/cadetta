@@ -6,7 +6,7 @@ category = "in-progress"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T22:34:33Z"
-updated = "2026-10-13T23:14:14Z"
+updated = "2026-10-13T23:15:43Z"
 scope = ["crates/cadetta-cli/src/cmd/bind.rs", "crates/cadetta-adapter/src/bindings.rs", "docs/spec/config-cli.md"]
 
 [[links]]
