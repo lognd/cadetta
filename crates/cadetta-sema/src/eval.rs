@@ -362,6 +362,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Evaluates one free-standing expression (a solver `in` value) in `ctx`.
+    // frob:ticket 01M4STAN8QG3QWZQCH5XN3QHMT
+    pub fn eval_input(&mut self, ctx: Ctx, e: &Expr) -> Result<Quant, EvalDiagnostic> {
+        let mut sc = Scope {
+            ctx,
+            locals: Vec::new(),
+        };
+        match self.quant(&mut sc, e) {
+            Ok(q) => Ok(q),
+            Err(Fail::Diag(d)) => Err(d),
+            Err(Fail::Silent) => Err(EvalDiagnostic {
+                code: "EVAL",
+                severity: Severity::Error,
+                message: "a value this expression reads failed to evaluate".to_owned(),
+                span: e.span,
+            }),
+        }
+    }
+
     /// Evaluates every indexed member and returns the values and diagnostics.
     pub fn evaluate(mut self) -> Evaluation {
         let keys: Vec<CanonPath> = self.defs.keys().cloned().collect();

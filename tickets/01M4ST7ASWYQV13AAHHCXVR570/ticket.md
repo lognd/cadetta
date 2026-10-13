@@ -2,18 +2,18 @@
 id = "01M4ST7ASWYQV13AAHHCXVR570"
 title = "Functions, enums, match and standard functions"
 type = "story"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T07:56:03Z"
+updated = "2026-10-13T08:02:28Z"
 persona = "design engineer"
 capability = "write pure helper functions and exhaustive matches"
 idempotency_key = "replan13:Functions, enums, match and standard functions"
 labels = ["creates:crates/cadetta-sema/src/{func,enums}.rs"]
-scope = ["crates/cadetta-sema/src/{func,enums}.rs"]
+scope = ["crates/cadetta-sema/src/{func,enums}.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/src/lib.rs"]
 
 [[acceptance]]
 text = "Given `fn name(a: Kind) -> Kind { let x = ...; expr }`, when evaluated, then it is pure and total; recursion is rejected (language.md 3.8)"

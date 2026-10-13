@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "blocked on eval.rs lease held by XN3QHMT; releasing lib.rs for TCS8ETC; restart after"
+at = "2026-10-13T08:02:28Z"
+actor = "lognd"
+rev = 1
