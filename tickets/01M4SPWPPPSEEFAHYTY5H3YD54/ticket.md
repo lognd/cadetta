@@ -65,7 +65,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a member `let`, when evaluated, then it keeps its full analysis form, is readable as a part argument and from other components, and is flagged analysis (language.md 3.3, quantities.md 5.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a parameter assigned from arithmetic, when evaluated, then it stores the nominal and only its own written tolerance (quantities.md 5.3)"
