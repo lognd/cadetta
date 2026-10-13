@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T07:45:56Z"
+updated = "2026-10-13T07:48:21Z"
 persona = "cadetta contributor"
 capability = "serialize the IR as cadetta.ir/1 JSON"
 outcome_text = "adapters and tools exchange a stable format"
@@ -37,5 +37,5 @@ bound = false
 
 [[acceptance]]
 text = 'Given Exact, when serialized, then it is `{ r: "num/den", pi: int }` (ir.md 3)'
-bound = false
+bound = true
 +++
