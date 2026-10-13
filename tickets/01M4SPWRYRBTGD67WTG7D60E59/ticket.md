@@ -2,18 +2,18 @@
 id = "01M4SPWRYRBTGD67WTG7D60E59"
 title = "Bindings files, multi-locator bindings and name mangling"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:44:12Z"
+updated = "2026-10-13T09:48:43Z"
 persona = "design engineer"
 capability = "get bindings/<adapter>.toml and deterministic default names"
 outcome_text = "most bindings never need to be written"
 labels = ["creates:crates/cadetta-adapter/src/bindings.rs"]
-scope = ["crates/cadetta-adapter/src/bindings.rs"]
+scope = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/lib.rs", "crates/cadetta-adapter/Cargo.toml"]
 
 [[links]]
 kind = "blocks"

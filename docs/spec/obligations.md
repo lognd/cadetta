@@ -162,6 +162,14 @@ Decided (0.1.0), implemented in `cadetta-obligations` `staleness.rs`:
   for `why --stale` is the difference between the recorded and current
   sorted sets of dep own digests (added and removed); an empty
   difference means the covered node itself changed.
+- `why --stale` (`why_stale.rs`) walks the current closure breadth-first
+  from the covered nodes and reports the first dep, nearest the root,
+  whose own digest is not among the recorded dep digests: its new value
+  is its current own digest, its old value the recorded digest that
+  vanished (exact when exactly one vanished, otherwise the vanished
+  digests are listed). With no changed dep the covered node itself
+  changed. The lock stores digests only, so value text for old and new
+  comes from the CLI evaluating the IR at the attested revision.
 - An obligation covering several instance paths of differing closures
   has one covered digest: a single closure as is, otherwise the sorted,
   de-duplicated closures hashed together, so any member changing stales

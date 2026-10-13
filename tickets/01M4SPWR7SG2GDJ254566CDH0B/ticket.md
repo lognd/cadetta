@@ -2,18 +2,18 @@
 id = "01M4SPWR7SG2GDJ254566CDH0B"
 title = "Lint family Check rules C001-C004"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:46:30Z"
+updated = "2026-10-13T09:48:15Z"
 persona = "design engineer"
 capability = "get lints for the C family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
 labels = ["creates:crates/cadetta-lint/src/rules/c.rs", "creates:tests/conformance/lints/C*/**"]
-scope = ["crates/cadetta-lint/src/rules/c.rs", "tests/conformance/lints/C*/**"]
+scope = ["crates/cadetta-lint/src/rules/c.rs", "tests/conformance/lints/C*/**", "crates/cadetta-lint/Cargo.toml", "Cargo.lock", "docs/spec/lints.md", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given a check violated across the tolerance, when linted, then C001 error"
