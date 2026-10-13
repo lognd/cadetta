@@ -8,12 +8,16 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:54Z"
+updated = "2026-10-13T05:41:55Z"
 persona = "design engineer"
 capability = "check axes without a solver"
 idempotency_key = "replan14:geo-axes"
 labels = ["creates:crates/cadetta-geometry/src/axes.rs"]
 scope = ["crates/cadetta-geometry/src/axes.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG0CZ9NYR3KFASKPSX4DP"
 
 [[acceptance]]
 text = "Given radial(p), when evaluated, then it is sqrt(x^2 + y^2) with the square-aware interval (geometry.md 5.1)"
