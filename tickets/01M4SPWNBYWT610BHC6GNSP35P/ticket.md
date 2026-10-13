@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:16:28Z"
+updated = "2026-10-13T06:16:42Z"
 persona = "design engineer"
 capability = "use every unit in the quantities.md table (m mm in ft deg N*m psi rpm ...)"
 outcome_text = "I can author values in the units my datasheets use"
 labels = ["creates:crates/cadetta-units/src/units.rs"]
-scope = ["crates/cadetta-units/src/units.rs"]
+scope = ["crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/lib.rs"]
 
 [[links]]
 kind = "blocks"
