@@ -17,6 +17,10 @@ scope = ["crates/cadetta-lint/src/rules/g005.rs", "tests/lints/G005/**"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWQM289M7Q58CSS6F029F"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SWG6Z6JVP5Z7H38HWJP0GQ"
 
 [[acceptance]]
