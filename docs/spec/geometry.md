@@ -228,12 +228,20 @@ loops that can physically fail, so the float enters the placement.
 - `ScrewJoint` exports `float: Length`, the allowance its `aligned`
   check uses, and takes `locating: Bool = false` (stdlib.md 3). It is
   `true` when a pilot, dowel or fit locates the part.
-- When the clamped part of a joint with `at` and `onto` is placed on its
-  host's pattern datum and the joint is not `locating`, the placement
-  carries an implicit `[+-float]` on x and y: one source-variable pair
-  per joint. The joint's own `aligned` reads the placement without it
+- The float applies to one placement edge: that of the clamped part
+  (the part `at` belongs to) when its `place` target is built from the
+  datum `onto` is declared on, so the joint is what holds the part to
+  its placement parent. That edge then carries an implicit `[+-float]`
+  on the x and y axes of `onto`'s datum: one source-variable pair per
+  edge. If several non-locating joints hold the part to the same parent,
+  the smallest float applies, because the part sits within the tightest
+  pattern. If any joint on the edge is `locating`, there is no float.
+  A joint between parts that are not placement parent and child adds no
+  float; it is a loop closure, and its `aligned` check reads through the
+  floats already on the tree.
+- A joint's own `aligned` check reads its edge without that edge's float
   (the float is the slack that check proves); every other path through
-  the placement reads it.
+  the edge reads it.
 - A check tighter than the float that reads through such a placement is
   G005 (warning). Fix it with `locating = true` and a `fit` or dowel
   that really does locate the part, or loosen the check. Dowel pins are

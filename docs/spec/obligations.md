@@ -141,7 +141,7 @@ timestamps finer than a date, so merges are reviewable:
 |---|---|---|
 | `attest` | `attest ID role=R by=EMAIL at=DATE digest=HEX verdict=V margin=Q deps=HEX,... reason="..."` | (ID, R) |
 | `waiver` | `waiver CODE GLOB [alt=SLOT=ALT] digest=HEX` | (CODE, GLOB, alt) |
-| `synced` | `synced ADAPTER PATH locator=L value=V` | (ADAPTER, PATH) |
+| `synced` | `synced ADAPTER PATH locator=L value=V` | (ADAPTER, PATH, L) |
 | `synced` (file) | `synced ADAPTER file=FILE digest=HEX` | (ADAPTER, FILE) |
 | `adopted` | `adopted ADAPTER FILE` | (ADAPTER, FILE) |
 | `swap` | `swap SLOT from=A to=B by=EMAIL at=DATE reason="..."` | whole line |

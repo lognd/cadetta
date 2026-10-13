@@ -8,11 +8,10 @@ and every capability is reachable the first way.
 1. **JSON, the catch-all.** Any language that can run a process and
    read JSON uses cadetta today:
    - the CLI with `--format json` (config-cli.md), whose outputs have
-     schemas in `docs/schemas/`: `check.json`, `obligations.json`,
-     `ack.json`, `why.json`, `impact.json`, `swap.json`, `compare.json`,
-     `solve-report.json`, `sync.json`, `import.json`, `explain.json`,
-     `units.json`, plus the diagnostic record `cadetta.diag/1`
-     (lints.md 1.1) that several of them embed;
+     schemas in `docs/schemas/`, one per command, listed in the
+     config-cli.md 3 command table (the single list), plus the
+     diagnostic record `cadetta.diag/1` (lints.md 1.1) that several of
+     them embed;
    - the IR itself, `cadetta.ir/1` (ir.md);
    - the solver protocol `cadetta.solve/1` (solvers.md), for computing
      values;
