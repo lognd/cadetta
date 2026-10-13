@@ -2,7 +2,8 @@
 id = "01M4SWN7NS97VV30F1A5W8KAEP"
 title = "Semantic versus presentational digests"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
