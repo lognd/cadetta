@@ -40,6 +40,10 @@ change and is recorded with `was`.
 
 | Table | Key | Columns |
 |---|---|---|
+| `std::fits::ItGrade` | `hi` (upper bound of a size range, (lo, hi]) | `it1 ... it18` (tolerance width) |
+| `std::fits::ShaftUpper` | `hi` | `d e f g h` (upper deviation es) |
+| `std::fits::ShaftUpperC` | `hi` (25 finer ranges) | `c` (upper deviation es) |
+| `std::fits::ShaftLower` | `hi` | `j_5_6 j_7 k_4_7 m n p` (lower deviation ei) |
 | `std::fasteners::Iso273` | `MetricThread` | `fine medium coarse` (clearance hole diameters) |
 | `std::fasteners::Thread` | `MetricThread` | `major pitch minor_ext minor_int` |
 | `std::fasteners::TapDrill` | `MetricThread` | `cut_75 cut_65 form` (cutting tap at about 75% and 65% thread, forming tap) |
@@ -48,6 +52,13 @@ change and is recorded with `was`.
 | `std::fasteners::Iso4032` | `MetricThread` | `width_across_flats height` |
 | `std::materials::Materials` | `Material` | `density yield_strength tap_class engagement_factor` |
 | `std::retaining::Din471` / `Din472` | `Length` (shaft or bore) | `groove_dia groove_width ring_thickness edge_margin` (each with its published tolerance) |
+
+The `std::fits` tables are cited to ISO 286-1:2010 and 286-2:2010
+(`std::fits::iso286`). Decisions: sizes are keyed by the upper bound of
+their `(lo, hi]` range, so `T.at_least(size).key` selects the range;
+hole classes are not stored, they mirror the shaft of the same letter
+(EI = -es for C to H) and `JS`/`js` is exactly +-IT/2; `k` outside
+IT4 to IT7 is 0 and `j` exists for IT5 to IT7 only (language.md 3.7).
 
 `Material` variants in 0.1.0: `Al6061T6 Al7075T6 Al5052H32 Ss304 Ss316
 Steel1018 Steel4140 CastIron Brass360 Petg Pla Abs Nylon6 Pom`. Each row
