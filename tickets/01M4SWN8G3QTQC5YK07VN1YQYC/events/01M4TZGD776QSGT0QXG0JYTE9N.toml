@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/schemas/*.json", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/cmd/impact_swap.rs", "crates/cadetta-cli/src/cmd/compare.rs", "crates/cadetta-cli/src/cmd/check.rs"]
+new = ["docs/schemas/*.json", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/cmd/impact_swap.rs", "crates/cadetta-cli/src/cmd/compare.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/import.rs"]
+at = "2026-10-13T15:53:41Z"
+actor = "lognd"
+rev = 1

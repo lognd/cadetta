@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T15:56:28Z"
+digest = "32a4456a0d7be453152357615816bc56de5ac1a7c6a8f33b22192cbf68bd1241"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5c97f51e-7299-44f0-b199-a61d45846c24 with nextest profile: default
+    Starting 1 test across 2 binaries (162 tests skipped)
+        PASS [   0.042s] cadetta cmd::ack::tests::json_validates_against_ack_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.044s] 1 test run: 1 passed, 162 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=cmd::ack::tests::json_validates_against_ack_schema)'"
+size = 603
+status = "measured"
+test_count = 1
+tests_digest = "11aae3abb90f6884141a1ffb9ce7a57958031867976684f41089610dbb9caa0d"
+at = "2026-10-13T15:56:28Z"
+actor = "lognd"
+rev = 1

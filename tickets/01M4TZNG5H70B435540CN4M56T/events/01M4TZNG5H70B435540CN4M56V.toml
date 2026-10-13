@@ -1,0 +1,10 @@
+kind = "create"
+title = "Import CLI accept: use cadetta_adapter::import::accept::plan"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/import.rs"]
+body = "found while working JXRXM2Y: cmd/import.rs duplicates binding_table/quote and the planning loop now in adapter import/accept.rs. Replace with accept::plan."
+at = "2026-10-13T15:56:28Z"
+actor = "lognd"
+rev = 1
