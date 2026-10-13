@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:03:46Z"
-updated = "2026-10-13T05:05:09Z"
+updated = "2026-10-13T05:05:10Z"
 labels = ["creates:crates/cadetta-ir/**"]
 scope = ["crates/cadetta-ir/**"]
 
@@ -21,6 +21,10 @@ target = "01M4SPWH74K9QQS72Z9YMTPD72"
 [[links]]
 kind = "blocks"
 target = "01M4ST8E5XX0TX0MBND07JQME1"
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8EJWTGQM9CMVBJVBATJT"
 +++
 
 Outcome: the tool-agnostic cadetta.ir/1 data model, its committed JSON Schema and BLAKE3 digests.
