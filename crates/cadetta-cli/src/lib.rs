@@ -6,6 +6,7 @@
 //! `--config`, `-v`) are parsed here; only `--version` exists as a command so far.
 
 pub mod config;
+mod env;
 pub mod output;
 
 use std::path::PathBuf;
@@ -58,7 +59,7 @@ pub fn run_with_logging(
             return EXIT_USAGE;
         }
     }
-    let env_format = std::env::var("CADETTA_FORMAT").ok();
+    let env_format = env::format_var();
     run_with_env(&rest, env_format.as_deref(), out, err)
 }
 

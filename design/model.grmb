@@ -40,9 +40,14 @@ node cad_tool : foreign {
 node cli : trusted {
   kind component;
   clearance Internal;
-  owns "crates/cadetta-cli/**";
+  owns "crates/cadetta-cli/Cargo.toml";
+  owns "crates/cadetta-cli/src/config.rs";
+  owns "crates/cadetta-cli/src/lib.rs";
+  owns "crates/cadetta-cli/src/main.rs";
+  owns "crates/cadetta-cli/src/output.rs";
+  owns "crates/cadetta-cli/src/pkg/**";
+  owns "crates/cadetta-cli/src/project.rs";
   may fs.read at "crates/cadetta-cli/**";
-  may process.env at "crates/cadetta-cli/src/**";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
