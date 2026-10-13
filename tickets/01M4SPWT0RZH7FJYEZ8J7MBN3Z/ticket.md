@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T07:07:59Z"
+updated = "2026-10-13T07:09:24Z"
 persona = "design engineer"
 capability = "run `cadetta init` and `cadetta fmt [--check]`"
 outcome_text = "I can start a project and keep layout canonical"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-cli/src/cmd/{init,fmt}.rs", "crates/cadetta-cli/src/cmd
 
 [[acceptance]]
 text = "Given an existing project, when init repeats, then nothing is overwritten"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given unformatted source, when `fmt --check` runs, then exit code is 1"
