@@ -2,7 +2,8 @@
 id = "01M4SXSGM3WJG86VHC2JKTB9TF"
 title = "Conformance fixtures for packages"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
