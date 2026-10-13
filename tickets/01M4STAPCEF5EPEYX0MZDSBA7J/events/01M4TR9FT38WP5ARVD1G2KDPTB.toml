@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T13:47:33Z"
+digest = "d1e50eddf8e0ad5d6205204ae74b310238d4856e3a33a9dc7414a97bc5071f6f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5c0335a9-503b-4cc2-9c93-a2d11b533402 with nextest profile: default
+    Starting 1 test across 12 binaries (90 tests skipped)
+        PASS [   0.027s] cadetta-syntax::std_fasteners_screwjoint m5_hand_cases_match_exactly
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.028s] 1 test run: 1 passed, 90 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=m5_hand_cases_match_exactly)'"
+size = 560
+status = "measured"
+test_count = 1
+tests_digest = "d4e5e329da15bd90e7e549399fe989c7f32fef6d462a9308f94f72caf27a872c"
+at = "2026-10-13T13:47:33Z"
+actor = "lognd"
+rev = 1

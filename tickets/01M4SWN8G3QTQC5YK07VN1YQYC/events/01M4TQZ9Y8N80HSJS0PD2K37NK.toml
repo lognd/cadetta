@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Done so far (branch ticket/VN1YQYC, commit 60214ec7): schemas + validation tests for ack, obligations (earlier), swap (impact --swap), compare, check (wrapper over diag.json); why/impact/update/explain/units/ir already had schemas. Still missing, verbs not yet emitting JSON: solve-report, lock, emit, import, sync. Criterion NOT bound; requeued for those verbs."
+at = "2026-10-13T13:42:00Z"
+actor = "lognd"
+rev = 1

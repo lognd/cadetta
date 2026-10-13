@@ -10,6 +10,7 @@ pub mod policy;
 pub mod read_units;
 pub mod rpc;
 pub mod scope;
+pub mod session;
 pub mod testing;
 
 use std::collections::BTreeSet;
