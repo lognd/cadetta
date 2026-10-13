@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T17:35:47Z"
-updated = "2026-10-13T18:10:58Z"
+updated = "2026-10-13T18:11:06Z"
 scope = ["docs/spec/emitters/json.md", "docs/spec/emitters/csv.md", "docs/spec/adapters.md", "tests/conformance/emitters/json/**", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "Given json and csv with no drive, when sync runs, then the spec says the obligation CAD file reflects design stays open with reason unverifiable without drive and is reported as O004, and a binding fixture pair for each adapter covers it"
-bound = false
+bound = true
 +++
 
 Found while working ~5RCYHAJ. emitters/json.md 3: a missing unit takes native_unit (unit_assumed) or --assume-unit, with no precedence stated when both exist (fixtures read-missing-unit-* assume --assume-unit wins). Also 1: trailing-zero trimming of a whole number (10 vs 10.0) is decided as 10 in the fixtures but not written; and whether a Text param gets a note, and whether json carries the O004 'unverifiable without drive' obligation (adapters.md 2 names only sw-equations) are unstated.
