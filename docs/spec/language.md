@@ -505,6 +505,29 @@ Precedence, high to low: postfix (`.member`, `[index]`, call, tolerance
 Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
 `match` are expressions; `{ let a = ...; expr }` is a block expression.
 
+## 5a. Parser decisions
+
+Rules the grammar left open, fixed by the reference parser:
+
+- `part name: Type(args)` without `= ...` is allowed (a part whose type
+  is constructed directly, as `part axle[2]: Axle(wheel = ...)`).
+- A postfix `[` followed by `+` or `-` opens a tolerance bracket
+  (`12mm [+0.018mm -0]`, `[+-0.1mm]`); any other `[` is an index. Each
+  tolerance term is a sign (`+`, `-`, or `+-` with no space) and a
+  product-level expression.
+- An ISO class (`H8`, `p6`, `js6`: one or two letters then one or two
+  digits) directly after an expression on the same line is a postfix
+  class; a `fit` spec is a lone class, `class / class`, or two paths.
+- Argument lists are `[name =] expr` separated by commas; interface
+  lists after `:` are comma-separated paths.
+- A trailing `#[...]` attribute must be on the same line as its member.
+- `Table<K>` is a type; a space is needed before a following `=`
+  because `>=` lexes as one token.
+- Keywords used as names are errors (E001). Items and members of kinds
+  not yet parsed (`process`, `table`, `enum`, `fn`, `solver`, `waive`,
+  `unit`, `kind`, `datum`, `place`) produce an E001 diagnostic and are
+  skipped to the next statement.
+
 ## 6. Checks and requirements
 
 `check NAME: expr` where expr is a comparison or `x satisfies P`, with
