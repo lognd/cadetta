@@ -103,8 +103,8 @@ and `kind` declarations, language.md 3.10):
 | Count | bare integers |
 
 Every unit has an exact factor `r * pi^k` to SI; affine temperature units
-also carry an exact offset. Affine units cannot be multiplied;
-subtracting two Temperatures yields a TemperatureDelta.
+also carry an exact offset. Affine units cannot be multiplied or
+divided (Q002, decided in the conformance fixtures); subtracting two Temperatures yields a TemperatureDelta.
 
 ## 4. Kinds
 
@@ -226,7 +226,9 @@ change, 2 and 4.1-4.3.
 - `sin cos tan` take an Angle: a bare argument is Q001, any other
   dimension Q002, a wrong angle exponent Q008. They return Ratio.
 - A tolerance deviation of a dimensioned nominal must have its
-  dimension; a bare `0` is allowed.
+  dimension; a bare `0` is allowed. A bare nonzero deviation is Q001
+  (at the deviation), a deviation of another dimension Q002 (decided in
+  the conformance fixtures).
 - An unknown kind or unit name is E002 (unresolved-name).
 - Expressions that are not quantities (booleans, strings, arrays) and
   names the checker cannot type are unknown and never cascade.
@@ -462,6 +464,11 @@ Display rules (decided 2026-10-13, cadetta-units `display`):
   the currency minor unit (ISO 4217 digits: 2, but 0 for JPY and 3 for
   KWD, for example) and `%` prints one decimal, both half away from
   zero (obligations.md 5.1). Fractional specs need a length unit.
+
+Conformance surface: the display rules are exercised by `kind =
+"binding"` fixtures under `tests/conformance/quantities/`, a
+`{ "call": "display", "value", "spec" }` JSON whose expected `result` is
+the printed text, until a CLI or binding verb exposes the formatter.
 
 ## 7. Diagnostics owned by this document
 

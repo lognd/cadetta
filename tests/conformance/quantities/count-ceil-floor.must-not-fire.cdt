@@ -1,0 +1,4 @@
+model P {
+  a = ceil(2)
+  b = floor(-2)
+}

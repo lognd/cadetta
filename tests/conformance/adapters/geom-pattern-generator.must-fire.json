@@ -1,0 +1,10 @@
+{
+  "source_form": "holes.pitch_x",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

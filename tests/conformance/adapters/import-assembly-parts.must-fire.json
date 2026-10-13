@@ -1,0 +1,17 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "args": [
+    "solidworks",
+    "cad/rover.SLDASM"
+  ],
+  "assembly": "cad/rover.SLDASM",
+  "components": {
+    "wheel<1>": "cad/wheel.SLDPRT",
+    "wheel<2>": "cad/wheel.SLDPRT",
+    "axle<1>": "cad/axle.SLDPRT"
+  },
+  "items": []
+}

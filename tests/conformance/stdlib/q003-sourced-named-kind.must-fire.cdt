@@ -1,0 +1,6 @@
+use std::commercial::Sourced
+cite src = "https://x.example/a.pdf"
+pub ots A: Sourced @src {
+  r: Ratio = 0.5
+  moq = r
+}

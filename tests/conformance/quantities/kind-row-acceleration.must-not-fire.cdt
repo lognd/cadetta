@@ -1,0 +1,5 @@
+kind Sink = Acceleration
+
+model P {
+  s: Acceleration = 6m/s / 2s
+}

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "E002",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E002",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "decision": "reading an absent Vendor member is E002 (unresolved name)"
+}

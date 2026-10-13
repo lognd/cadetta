@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "M003",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "M003",
+        "severity": "warning",
+        "path": "acme.demo::Box/j.clearance_hole"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

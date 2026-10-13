@@ -1,0 +1,4 @@
+model P {
+  c = sin(31deg)
+  d = tan(46deg)
+}

@@ -1,0 +1,3 @@
+pub ots Ring {
+  groove_width = 1mm
+}

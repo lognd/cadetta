@@ -1,0 +1,6 @@
+enum M { A, B }
+
+model P {
+  m: M = M::A
+  x = match m { M::A => 1mm }
+}

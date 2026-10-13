@@ -1,0 +1,5 @@
+model P {
+  head = 8mm [+-0.1mm]
+  let cb = head + 1mm
+  spread = cb.max - cb.min
+}

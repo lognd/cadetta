@@ -1,0 +1,5 @@
+use std::commercial::Sourced
+cite src = "https://x.example/a.pdf"
+pub ots A: Sourced @src {
+  lead_time = 3mm
+}

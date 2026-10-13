@@ -1,0 +1,4 @@
+model P {
+  z = 1deg - 1deg
+  b = z + 1rad
+}

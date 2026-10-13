@@ -1,0 +1,4 @@
+model P {
+  r: Ratio = 0.5
+  n: Count = r
+}

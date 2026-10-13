@@ -1,0 +1,4 @@
+model P {
+  x = 2mm
+  a: Length = x ^ 2
+}

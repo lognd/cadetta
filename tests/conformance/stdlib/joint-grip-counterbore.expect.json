@@ -1,0 +1,42 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "grip-and-counterbore",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.counterbore_dia",
+        "nominal": "11mm"
+      },
+      {
+        "path": "acme.demo::Box/j.counterbore_depth",
+        "nominal": "6.5mm"
+      },
+      {
+        "path": "acme.demo::Box/j.grip",
+        "nominal": "3.5mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.counterbore_dia",
+        "nominal": "0mm"
+      },
+      {
+        "path": "acme.demo::Box/j.counterbore_depth",
+        "nominal": "0mm"
+      },
+      {
+        "path": "acme.demo::Box/j.grip",
+        "nominal": "10mm"
+      }
+    ]
+  }
+}

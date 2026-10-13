@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "k-zero-outside-it4-7",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.shaft_lo",
+        "nominal": "25mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.shaft_lo",
+        "nominal": "25.002mm"
+      }
+    ]
+  }
+}

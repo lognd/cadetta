@@ -1,0 +1,4 @@
+model P {
+  x = 5mm
+  check c: x >= 5
+}

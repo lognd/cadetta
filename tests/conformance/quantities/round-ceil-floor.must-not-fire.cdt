@@ -1,0 +1,4 @@
+model P {
+  a = ceil_to(1mm, 1mm)
+  b = floor_to(-1mm, 1mm)
+}

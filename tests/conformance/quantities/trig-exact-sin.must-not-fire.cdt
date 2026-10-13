@@ -1,0 +1,3 @@
+model P {
+  a = sin(91deg)
+}

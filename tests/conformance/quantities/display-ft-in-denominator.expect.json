@@ -1,0 +1,15 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 6",
+  "rule": "display-ft-in-denominator",
+  "kind": "binding",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "3'9-15/16\""
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "3'10\""
+  }
+}

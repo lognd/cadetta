@@ -1,0 +1,5 @@
+use std::fits::ItGrade
+model P {
+  bore = 25mm
+  fit s = H7/j8 on bore
+}

@@ -1,0 +1,3 @@
+model P {
+  r: Ratio = sin(30deg)
+}

@@ -1,0 +1,6 @@
+model P {
+  x = 0mm [+-1mm]
+  y = 1mm [+-2mm]
+  let e = x * y
+  r = e.min
+}

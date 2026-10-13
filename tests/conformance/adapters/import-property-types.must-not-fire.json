@@ -1,0 +1,20 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "args": [
+    "solidworks",
+    "cad/cover_plate.SLDPRT"
+  ],
+  "items": [
+    {
+      "file": "cad/cover_plate.SLDPRT",
+      "locator": "Mass",
+      "kind": "property",
+      "number": 2,
+      "unit": "kg"
+    }
+  ],
+  "existing": {}
+}

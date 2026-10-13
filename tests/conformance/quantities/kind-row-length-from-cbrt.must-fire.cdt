@@ -1,0 +1,5 @@
+kind Sink = Length
+
+model P {
+  s: Sink = cbrt(8mm^3)
+}

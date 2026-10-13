@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.4",
+  "rule": "EVAL-mixed-pi-form",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "EVAL",
+        "severity": "error",
+        "path": "acme.demo::P.a"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

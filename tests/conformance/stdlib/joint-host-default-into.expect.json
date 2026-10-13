@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "into-defaults-to-host-material",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.min_engagement",
+        "nominal": "12mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.min_engagement",
+        "nominal": "6mm"
+      }
+    ]
+  }
+}

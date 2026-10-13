@@ -1,0 +1,10 @@
+{
+  "source_form": "datum",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+use std::materials::{Material, Materials, TapClass}
+model P {
+  check light: Materials[Material::Steel1018].density < 3g/cm^3 "density is in g/cm^3"
+}

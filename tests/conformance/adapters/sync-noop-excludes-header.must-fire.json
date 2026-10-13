@@ -1,0 +1,5 @@
+{
+  "existing_file": "build/eq.txt",
+  "content": "' cadetta emit sw-equations 0.1.0 ir=blake3:aaaa bindings=blake3:b\n\"Plate_Thk\" = 10mm\n",
+  "fresh_content": "' cadetta emit sw-equations 0.1.0 ir=blake3:bbbb bindings=blake3:b\n\"Plate_Thk\" = 10mm\n"
+}

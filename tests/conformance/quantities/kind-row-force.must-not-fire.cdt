@@ -1,0 +1,5 @@
+kind Sink = Force
+
+model P {
+  s: Force = 2kg * 3m/s^2
+}

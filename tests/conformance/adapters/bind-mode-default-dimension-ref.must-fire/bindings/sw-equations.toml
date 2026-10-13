@@ -1,0 +1,5 @@
+["acme.demo::Part.width"]
+locators = [
+  { locator = "D1@Boss-Extrude1@Plate.SLDPRT", kind = "dimension" },
+
+]

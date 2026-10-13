@@ -1,0 +1,18 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.3",
+  "rule": "EVAL-recursion",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "EVAL",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

@@ -1,0 +1,6 @@
+use std::fasteners::{MetricThread, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len, Iso4032}
+model P {
+  fine = Iso273[MetricThread::M6].fine
+  medium = Iso273[MetricThread::M6].medium
+  coarse = Iso273[MetricThread::M6].coarse
+}

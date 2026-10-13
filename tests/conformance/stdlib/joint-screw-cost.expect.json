@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "screw-cost-becomes-unit-cost",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box.total",
+        "nominal": "0.4USD"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box.total",
+        "nominal": "1USD"
+      }
+    ]
+  }
+}

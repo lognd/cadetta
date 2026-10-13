@@ -1,0 +1,27 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "args": [
+    "solidworks",
+    "cad/plate.SLDPRT",
+    "--update"
+  ],
+  "items": [
+    {
+      "file": "cad/cover_plate.SLDPRT",
+      "locator": "width",
+      "kind": "global",
+      "number": 10,
+      "unit": "mm"
+    }
+  ],
+  "existing": {},
+  "lock_base": {
+    "width": "10mm"
+  },
+  "source": {
+    "width": "10mm"
+  }
+}

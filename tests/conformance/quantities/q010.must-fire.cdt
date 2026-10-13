@@ -1,0 +1,3 @@
+model P {
+  a = round_to(sqrt(0.25000000000001mm^2), 1mm)
+}

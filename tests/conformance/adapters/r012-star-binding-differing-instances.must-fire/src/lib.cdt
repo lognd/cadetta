@@ -1,0 +1,6 @@
+model Axle {
+  len: Length
+}
+model Rover {
+  axle = [Axle { len = 10mm }, Axle { len = 11mm }]
+}

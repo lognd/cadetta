@@ -1,0 +1,4 @@
+model P {
+  t = 6mm
+  h: Length = t / 2
+}

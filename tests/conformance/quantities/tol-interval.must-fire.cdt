@@ -1,0 +1,7 @@
+model P {
+  a = 9.98mm..10.05mm
+  lo = a.min
+  hi = a.max
+  md = a.mid
+  nm = a.nominal
+}

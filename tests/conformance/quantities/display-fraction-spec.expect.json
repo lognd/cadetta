@@ -1,0 +1,15 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 6",
+  "rule": "display-fraction-spec",
+  "kind": "binding",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "45-15/16in"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "45.9375in"
+  }
+}

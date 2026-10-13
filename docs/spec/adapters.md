@@ -167,6 +167,10 @@ variable `"Axle_end_diameter"` or to the dimension
   namespaces is not R013; the same qualified name from two paths in one
   configuration and component is.
 
+  A bindings file or locator that fails these rules is a configuration
+  error, not a lint: the run stops with exit 2 naming the file path and
+  the offending key, and carries no diagnostic code.
+
 - Parameterized components exist only as instances. A binding may name
   one instance (`Rover/axle[1].end_diameter`) or all of them
   (`Rover/axle[*].end_diameter`). A `[*]` binding is emitted once, at

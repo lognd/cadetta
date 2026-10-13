@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "vendor-callout-omits-drill-clause",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.callout",
+        "nominal": "\"M6 - 6H, 11mm DP\""
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.callout",
+        "nominal": "\"M6 - 6H, 11mm DP; drill 5mm DP 15.5mm\""
+      }
+    ]
+  },
+  "decision": "Vendor callout is fmt(\"{} - 6H, {} DP\", thread, thread_depth) (stdlib.md 3, decided with these fixtures)"
+}

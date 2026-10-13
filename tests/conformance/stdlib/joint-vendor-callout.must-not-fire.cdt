@@ -1,0 +1,5 @@
+use std::fasteners::ScrewJoint
+use std::materials::Material
+assembly Box {
+  part j: ScrewJoint(thread = M6, clamp = 10mm, into = Material::Brass360)
+}

@@ -1,0 +1,3 @@
+model P {
+  a = min(1N*m, 2N*m)
+}

@@ -1,0 +1,3 @@
+model P {
+  teeth: Count = floor(10mm / 3mm) + 1
+}

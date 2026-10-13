@@ -1,0 +1,58 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "change-material-everything-follows",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.tap_drill",
+        "nominal": "5.2mm"
+      },
+      {
+        "path": "acme.demo::Box/j.min_engagement",
+        "nominal": "6mm"
+      },
+      {
+        "path": "acme.demo::Box/j.screw_length",
+        "nominal": "16mm"
+      },
+      {
+        "path": "acme.demo::Box/j.thread_depth",
+        "nominal": "7mm"
+      },
+      {
+        "path": "acme.demo::Box/j.drill_depth",
+        "nominal": "11.56mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.tap_drill",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::Box/j.min_engagement",
+        "nominal": "12mm"
+      },
+      {
+        "path": "acme.demo::Box/j.screw_length",
+        "nominal": "25mm"
+      },
+      {
+        "path": "acme.demo::Box/j.thread_depth",
+        "nominal": "16mm"
+      },
+      {
+        "path": "acme.demo::Box/j.drill_depth",
+        "nominal": "20.5mm"
+      }
+    ]
+  }
+}

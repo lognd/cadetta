@@ -1,0 +1,34 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "iso4762-accepts-any-length",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box.l",
+        "nominal": "17mm"
+      },
+      {
+        "path": "acme.demo::Box.d",
+        "nominal": "10mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box.l",
+        "nominal": "25mm"
+      },
+      {
+        "path": "acme.demo::Box.d",
+        "nominal": "10mm"
+      }
+    ]
+  }
+}

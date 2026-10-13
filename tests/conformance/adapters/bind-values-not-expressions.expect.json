@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 3",
+  "rule": "values-only",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "must_fire": {
+    "diagnostics": [],
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"A\" = 50mm"
+        ],
+        "excludes": [
+          "width *",
+          "height"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"A\" = 50mm"
+        ],
+        "excludes": [
+          "= width"
+        ]
+      }
+    }
+  }
+}

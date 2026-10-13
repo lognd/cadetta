@@ -1,0 +1,3 @@
+model P {
+  a: Angle = 2deg * 3deg
+}

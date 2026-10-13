@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.6",
+  "rule": "E010",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E010",
+        "severity": "error",
+        "path": "acme.demo::P.b"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

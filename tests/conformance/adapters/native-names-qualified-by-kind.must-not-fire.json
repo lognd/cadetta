@@ -1,0 +1,14 @@
+{
+  "locators": [
+    {
+      "locator": "X",
+      "kind": "global",
+      "path": "a"
+    },
+    {
+      "locator": "X",
+      "kind": "global",
+      "path": "b"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+model P {
+  #[role(shaft)]
+  a = 10mm [+-0.1mm]
+  m = a.mmc
+  l = a.lmc
+}

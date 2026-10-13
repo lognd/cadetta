@@ -1,0 +1,13 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 4.1",
+  "rule": "4.1-rule-6-count-quotient",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": []
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

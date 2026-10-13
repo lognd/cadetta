@@ -1,0 +1,5 @@
+kind Sink = VolumeFlow
+
+model P {
+  s: Sink = 6m^3 / 2s
+}

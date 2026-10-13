@@ -1,0 +1,13 @@
+{
+  "adapter": {
+    "id": "csv",
+    "native_unit": null
+  },
+  "locator": {
+    "locator": "Plate_Thk",
+    "kind": "global"
+  },
+  "native": {
+    "number": 10
+  }
+}

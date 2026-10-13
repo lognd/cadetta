@@ -1,0 +1,14 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
+  "locator": {
+    "locator": "Plate_Thk",
+    "kind": "global"
+  },
+  "native": {
+    "number": 10,
+    "unit": "mm"
+  }
+}

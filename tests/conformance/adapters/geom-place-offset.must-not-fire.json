@@ -1,0 +1,10 @@
+{
+  "source_form": "flip",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  }
+}

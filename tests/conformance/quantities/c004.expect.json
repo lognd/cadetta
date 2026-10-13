@@ -1,0 +1,25 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.3",
+  "rule": "C004",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C004",
+        "severity": "info",
+        "path": "acme.demo::P.cb"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "C002",
+        "severity": "warning",
+        "path": "acme.demo::P.c"
+      }
+    ]
+  }
+}

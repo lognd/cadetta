@@ -1,0 +1,8 @@
+use std::fasteners::ScrewJoint
+use std::materials::Material
+cite shop = "shop price list 2026"
+assembly Box {
+  price = 0.10USD @shop
+  part j: ScrewJoint(thread = M6, clamp = 10mm, into = Material::Al6061T6, count = 4, screw_cost = price)
+  total = sum(j.screw.unit_cost)
+}

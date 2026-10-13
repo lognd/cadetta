@@ -1,0 +1,15 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 6",
+  "rule": "display-round-ties-away",
+  "kind": "binding",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "1/32in"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "0in"
+  }
+}

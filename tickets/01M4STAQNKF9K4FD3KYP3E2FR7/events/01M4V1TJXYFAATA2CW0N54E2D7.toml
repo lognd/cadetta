@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T16:34:11Z"
+digest = "f5655f6095ef00169c4fee9aeeeb4dd9b117382420ba18bf16e5ba68805e1af5"
+exit_code = 0
+inline = """
+{"verb":"ticket.show","already":false,"ok":true,"data":{"children":[],"events":null,"evidence":[],"fields":{"acceptance":[],"aliases":[],"assignee":null,"body":"obligations.md 2.3: ack require:/ots: selectors match no obligation, so O003 (require sign-off) and S004 (citation drift) and O002 on ots never fire; Citation file_digest is populated by sema but never enters an obligation. found while working ~P3E2FR7","capability":null,"category":"todo","class":"standard","created":"2026-10-13T16:29:29Z","due":null,"flavour":null,"id":"01M4V1HYN215BC5W2R6Y0NVZAF","idempotency_key":null,"labels":[],"links":[],"outcome":null,"outcome_text":null,"parent":null,"persona":null,"points":null,"priority":"medium","reporter":"lognd","scope":["crates/cadetta-cli/src/**"],"title":"CLI obligation universe omits fit, require, ots and citation obligations","type":"bug","updated":"2026-10-13T16:29:29Z"},"incoming":[],"outgoing":[],"summary":{"blocked":false,"category":"todo","class":"standard","created":"2026-10-13T16:29:29Z","due":null,"handle":"~Y0NVZAF","id":"01M4V1HYN215BC5W2R6Y0NVZAF","outcome":null,"parent":null,"points":null,"priority":"medium","title":"CLI obligation universe omits fit, require, ots and citation obligations","type":"bug","updated":"2026-10-13T16:29:29Z"},"ticket":{"body":"obligations.md 2.3: ack require:/ots: selectors match no obligation, so O003 (require sign-off) and S004 (citation drift) and O002 on ots never fire; Citation file_digest is populated by sema but never enters an obligation. found while working ~P3E2FR7","front":{"category":"todo","created":"2026-10-13T16:29:29Z","id":"01M4V1HYN215BC5W2R6Y0NVZAF","priority":"medium","reporter":"lognd","scope":["crates/cadetta-cli/src/**"],"title":"CLI obligation universe omits fit, require, ots and citation obligations","type":"bug","updated":"2026-10-13T16:29:29Z"}}},"findings":[],"warnings":["ticket ledger: reading and committing to refs/heads/main (ref_mode = trunk) while `ticket/P3E2FR7` is checked out; the working tree is not the ledger, so tickets and edits on `ticket/P3E2FR7` are invisible here until they reach refs/heads/main"],"error":null,"schema_version":1}
+"""
+passed = true
+provider = "command"
+ref = "frob ticket show ~Y0NVZAF"
+size = 2158
+status = "measured"
+at = "2026-10-13T16:34:11Z"
+actor = "lognd"
+rev = 1

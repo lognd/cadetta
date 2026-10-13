@@ -1,0 +1,5 @@
+["acme.demo::Part.area"]
+locators = [
+  { locator = "A", kind = "global", mode = "value", native_unit = "mm" },
+
+]

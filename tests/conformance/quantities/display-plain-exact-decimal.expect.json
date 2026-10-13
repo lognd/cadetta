@@ -1,0 +1,15 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 6",
+  "rule": "display-plain-exact-decimal",
+  "kind": "binding",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "250mm"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "333.333333mm"
+  }
+}

@@ -306,6 +306,21 @@ is an ordinary Q003. Every member is declared optional
 (`unit_cost?: Money`, language.md 3.2), so a component lacking one is
 not I001; the `?` roll-up forms list it as missing, never defaulted.
 
+## Conformance decisions
+
+Fixed while writing `tests/conformance/stdlib/` (ticket ~GDYVJ8R):
+
+- `count` together with `at`/`onto` is E006: the pattern fixes the count.
+- `tap = Vendor` without `depth_available` is E006 (missing argument).
+- Under `tap = Vendor`, reading `tap_drill` or `drill_depth` is E002 (the
+  members are absent). The Vendor `callout` is
+  `fmt("{} - 6H, {} DP", thread, thread_depth)`.
+- The `engaged` check guards an invariant: `screw_length` is derived with
+  `at_least`, so no source can make it fire. It has a must-not-fire
+  fixture only.
+- A roll-up (`max`, `sum`) over a misspelled member contributes nothing and
+  fails with the internal code EVAL.
+
 ## Open questions
 
 - OQ-14: Should adapters map a whole joint onto a native hole feature

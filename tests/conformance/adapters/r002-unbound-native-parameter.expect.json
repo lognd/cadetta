@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 3",
+  "rule": "R002",
+  "kind": "binding",
+  "entry": "read",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R002",
+        "severity": "warning"
+      }
+    ],
+    "exit": 0
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 4.3",
+  "rule": "atan2-exact",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "45deg"
+      },
+      {
+        "path": "acme.demo::P.b",
+        "nominal": "0deg"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "Q006",
+        "severity": "info",
+        "path": "acme.demo::P.a"
+      }
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+model P {
+  x = 5mm [+-0.1mm]
+  y = 5.05mm [+-0.1mm]
+  check c: x - y >= 0mm
+}

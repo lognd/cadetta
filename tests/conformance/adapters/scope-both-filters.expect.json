@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "adapters",
+  "section": "adapters.md 3.2",
+  "rule": "both-filters",
+  "kind": "source",
+  "entry": "emit sw-equations",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"GW\""
+        ],
+        "excludes": [
+          "\"GD\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/eq.txt": {
+        "contains": [
+          "\"GW\"",
+          "\"GD\""
+        ],
+        "excludes": []
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+model X {
+  width = 10mm
+  depth = 5mm
+}

@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "callout-text",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.callout",
+        "nominal": "\"M2.5 - 6H, 6mm DP; drill 2.05mm DP 7.965mm\""
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.callout",
+        "nominal": "\"M6 - 6H, 16mm DP; drill 5mm DP 20.5mm\""
+      }
+    ]
+  },
+  "note": "M2_5 displays as M2.5 (stdlib.md 2)"
+}

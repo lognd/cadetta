@@ -1,0 +1,5 @@
+fn f(x: Length) -> Length { f(x) }
+
+model P {
+  a = f(1mm)
+}

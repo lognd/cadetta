@@ -1,0 +1,5 @@
+model P {
+  head = 8mm [+-0.1mm]
+  cb = head.max + 1mm
+  nm = cb.nominal
+}

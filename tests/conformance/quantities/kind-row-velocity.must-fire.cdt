@@ -1,0 +1,5 @@
+kind Sink = Velocity
+
+model P {
+  s: Sink = 6mm / 2s
+}

@@ -243,9 +243,369 @@ ticket = "~AN7BAC5"
 reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
-fixture = "lints/e010-mmc-without-role"
-ticket = "~FSJCX9G"
-reason = "#[role(hole)] not honoured"
+fixture = "adapters/r008-check-adapter-unavailable"
+ticket = "~W41EHE6"
+reason = "check does not report R008 info for an unavailable external adapter"
+
+[[gap]]
+fixture = "adapters/r008-no-path-search"
+ticket = "~W41EHE6"
+reason = "check does not report R008 info for an unavailable external adapter"
+
+[[gap]]
+fixture = "obligations/o003-require-signoff-open"
+ticket = "~Y0NVZAF"
+reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
+
+[[gap]]
+fixture = "obligations/s004-citation-changed"
+ticket = "~Y0NVZAF"
+reason = "CLI obligation universe does not enumerate ots/citation obligations, so S004 never fires"
+
+[[gap]]
+fixture = "obligations/w003-waive-require"
+ticket = "~SN4G7QS"
+reason = "waive naming a require diagnostic suppresses it instead of raising W003"
+
+[[gap]]
+fixture = "obligations/w003-allow-require"
+ticket = "~SN4G7QS"
+reason = "allow on a require raises no W003, and allow does not suppress C001 on a check either"
+
+[[gap]]
+fixture = "obligations/s003-solver-stale"
+ticket = "~JET4TC0"
+reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
+
+[[gap]]
+fixture = "quantities/e001-compound-decimal"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e001-compound-dimension"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e001-compound-order"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e001-leading-dot"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e001-quote-suffix"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e002-unit"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q001-compare"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q001-operand"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q001-tolerance"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q001-tolerance-zero"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q001-trig"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q002-power-noninteger"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q002-round-step"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q002-trig"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q008-trig-exponent"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/q008-compare"
+ticket = "~4QX9B1C"
+reason = "compound units and dimensional checks not implemented in the evaluator"
+
+[[gap]]
+fixture = "quantities/e002-kind"
+ticket = "~PVAKYG1"
+reason = "kind name diagnostic missing"
+
+[[gap]]
+fixture = "quantities/q011-cbrt"
+ticket = "~FP8V54M"
+reason = "cbrt not implemented"
+
+[[gap]]
+fixture = "quantities/kind-row-length-from-cbrt"
+ticket = "~FP8V54M"
+reason = "cbrt not implemented"
+
+[[gap]]
+fixture = "quantities/f002"
+ticket = "~7078TNV"
+reason = "ISO 286 fit evaluation not implemented"
+
+[[gap]]
+fixture = "quantities/e010"
+ticket = "~7078TNV"
+reason = "ISO 286 fit evaluation not implemented"
+
+[[gap]]
+fixture = "quantities/e010-lmc"
+ticket = "~7078TNV"
+reason = "ISO 286 fit evaluation not implemented"
+
+[[gap]]
+fixture = "quantities/c004"
+ticket = "~PDC7173"
+reason = "C004 not emitted"
+
+[[gap]]
+fixture = "quantities/q002-affine-multiply"
+ticket = "~0YYT3TP"
+reason = "affine unit handling differs from spec"
+
+[[gap]]
+fixture = "quantities/q003-temperature-delta"
+ticket = "~0YYT3TP"
+reason = "affine unit handling differs from spec"
+
+[[gap]]
+fixture = "quantities/q003-package-kind"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-acceleration"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-angular-velocity"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-area-product"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-area-square"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-density"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-force"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-length-from-sqrt"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-power"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-pressure"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-velocity"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-volume-cube"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-volume-flow"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/kind-row-volume-product"
+ticket = "~Q6AFN5S"
+reason = "package kind rows not checked (Q003)"
+
+[[gap]]
+fixture = "quantities/q006-count-pi"
+ticket = "~7K6PYDX"
+reason = "angle/count pi handling differs from spec"
+
+[[gap]]
+fixture = "quantities/c002-inexact-boundary"
+ticket = "~G5NT80Z"
+reason = "C002 not raised for inexact boundary"
+
+[[gap]]
+fixture = "stdlib/check-aligned"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-aligned-nut-floating"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-depth-ok-drill"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-depth-ok-vendor"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-grip-positive"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/check-not-bottomed"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-count-with-pattern"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-joint-per-pattern"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/e006-vendor-needs-depth"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/g004-joint-pattern-count"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/g005-float-unlocated"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/vendor-tap-members-absent"
+ticket = "~N8G7AVG"
+reason = "ScrewJoint rule or check not implemented"
+
+[[gap]]
+fixture = "stdlib/commercial-misspelling-not-a-member"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/e002-module-not-shipped"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/f001-j-outside-it5-7"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-optional-members"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-wrong-kind"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/materials-density-units"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/materials-tap-class"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/q003-sourced-named-kind"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/screw-price-not-in-iso4762"
+ticket = "~6K58FR1"
+reason = "std commercial/fits/materials diagnostic not raised"
+
+[[gap]]
+fixture = "stdlib/d003-joint-reads-itself"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/e016-joint-priv-intermediate"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/m003-hole-fit-side"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
+
+[[gap]]
+fixture = "stdlib/policy-iso-default-silent"
+ticket = "~PGR0M75"
+reason = "joint-level lint not raised"
 
 [[gap]]
 fixture = "lints/q003-named-kind-package"

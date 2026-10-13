@@ -1,0 +1,15 @@
+{
+  "source_form": "frame",
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ]
+  },
+  "locator": {
+    "kind": "frame",
+    "sign": 1
+  },
+  "value": "10mm"
+}

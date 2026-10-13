@@ -1,0 +1,4 @@
+model P {
+  a = 5mm [+-0.1mm]
+  b = a.mmc
+}
