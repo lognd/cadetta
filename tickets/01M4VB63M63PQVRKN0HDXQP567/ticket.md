@@ -8,7 +8,7 @@ points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:50:47Z"
+updated = "2026-10-13T21:58:24Z"
 persona = "design engineer"
 capability = "see when a cited source is incomplete or has changed"
 outcome_text = "nobody signs off values against a superseded datasheet"
@@ -29,5 +29,5 @@ bound = false
 
 [[acceptance]]
 text = "Given cadetta ack ots:PATH --role source, when run, then one attest citation:<cite path> per reached cite item is recorded with the citation digest; a later field or file change is S004 and never O001 (obligations.md 2.3)"
-bound = false
+bound = true
 +++
