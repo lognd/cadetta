@@ -4,6 +4,7 @@
 pub mod ack;
 pub mod check;
 pub mod cite;
+pub mod compare;
 pub mod explain;
 pub mod fmt;
 pub mod impact;
@@ -21,6 +22,7 @@ use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 pub use ack::run_ack;
 pub use check::run_check;
+pub use compare::run_compare;
 pub use explain::run_explain;
 pub use fmt::run_fmt;
 pub use impact::run_impact;

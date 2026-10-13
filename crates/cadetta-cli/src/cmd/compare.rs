@@ -9,6 +9,7 @@ use cadetta_ir::model::{Bound, BoundOp, Check, Component, Exact, Project as Ir, 
 use serde_json::{Value as Json, json};
 
 use crate::output::Format;
+use crate::pipeline::analyze;
 use crate::project::Project;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
@@ -289,15 +290,6 @@ pub fn render(cmp: &Comparison, format: Format, out: &mut dyn Write) {
     }
 }
 
-/// The evaluated IR of the project (no source-to-IR pipeline is wired into the CLI yet).
-fn project_ir(project: &Project) -> Option<Ir> {
-    tracing::warn!(
-        root = %project.root.display(),
-        "compare: no IR pipeline wired into the CLI yet; nothing to compare"
-    );
-    None
-}
-
 /// Run `cadetta compare`; `args` are the words after the verb. Returns the exit code.
 pub fn run_compare(
     args: &[String],
@@ -316,20 +308,22 @@ pub fn run_compare(
     if iface.starts_with("--") {
         return fail(err, &format!("unknown flag `{iface}`; {USAGE}"));
     }
-    let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
-        Ok((project, _scope)) => project,
+    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
+    {
+        Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
-    let Some(ir) = project_ir(&project) else {
-        return fail(err, &NotFound(iface.clone()).to_string());
-    };
-    match compare(&ir, iface) {
-        Ok(cmp) => {
-            render(&cmp, globals.format, out);
-            EXIT_OK
-        }
-        Err(e) => fail(err, &e.to_string()),
+    let analysis = analyze(&project, &members);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
+    for package in &analysis.packages {
+        if let Ok(cmp) = compare(&package.ir, iface) {
+            render(&cmp, globals.format, out);
+            return EXIT_OK;
+        }
+    }
+    fail(err, &NotFound(iface.clone()).to_string())
 }
 
 #[cfg(test)]
