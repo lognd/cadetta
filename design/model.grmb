@@ -58,12 +58,15 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/check.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/check_watch.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/emit.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/import.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
   may exec at "crates/cadetta-cli/src/cmd/update.rs";
+  may exec at "crates/cadetta-cli/src/cmd/import.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -186,6 +189,11 @@ flow f_cli_ir : cli -> ir {
 }
 
 flow f_cli_obligations : cli -> obligations {
+  label Internal;
+  transport in_process;
+}
+
+flow f_cli_adapters : cli -> adapter_host {
   label Internal;
   transport in_process;
 }
