@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [6]
+captured_at = "2026-10-13T06:24:46Z"
+digest = "0ea831b1fcc7473f6194bccad228c24d415c852c0e43459f1390041c6235ed0e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 689c519d-55b1-43de-a270-fc873df84159 with nextest profile: default
+    Starting 1 test across 1 binary (48 tests skipped)
+        PASS [   0.008s] cadetta-units inexact::tests::rounding_step_errors_are_values
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 48 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units rounding_step_errors"
+size = 550
+status = "measured"
+test_count = 1
+tests_digest = "e3af0efbe6a407ef625fdd355b769b77992e719a2db2e69490ecd1a4fca4fcd7"
+at = "2026-10-13T06:24:46Z"
+actor = "lognd"
+rev = 1

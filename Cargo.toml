@@ -32,6 +32,9 @@ cadetta-syntax = { path = "crates/cadetta-syntax", version = "0.0.0" }
 cadetta-units = { path = "crates/cadetta-units", version = "0.0.0" }
 cadetta-variants = { path = "crates/cadetta-variants", version = "0.0.0" }
 pyo3 = { version = "0.29", features = ["abi3-py311"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+toml = "1"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
