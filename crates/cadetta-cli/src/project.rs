@@ -5,7 +5,7 @@
 use std::path::{Path, PathBuf};
 
 use cadetta_syntax::ast::Ident;
-use cadetta_syntax::span::Span;
+use cadetta_syntax::lexer::Span;
 
 use crate::config::{Config, ConfigError};
 
