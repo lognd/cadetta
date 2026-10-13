@@ -1,0 +1,13 @@
+kind = "field"
+field = "body"
+old = """
+Outcome: every rule in docs/spec/lints.md implemented with fixtures and waiver handling.
+
+Success metric: each code Q001..W004 has positive and negative fixtures under tests/lints/<code>/."""
+new = """
+Outcome: every rule in docs/spec/lints.md implemented with fixtures and waiver handling.
+
+Success metric: every code in the lints.md catalog has a must-fire and a must-not-fire fixture under tests/conformance/lints/<code>/, and every golden case under tests/golden/ passes."""
+at = "2026-10-13T05:46:39Z"
+actor = "lognd"
+rev = 1
