@@ -25,6 +25,9 @@ pub const VERSION: &str = concat!("cadetta ", env!("CARGO_PKG_VERSION"));
 /// Exit code for success (config-cli.md 2).
 pub const EXIT_OK: u8 = 0;
 
+/// Exit code for a failed check or emit (config-cli.md 2).
+pub const EXIT_FAIL: u8 = 1;
+
 /// Exit code for a command-line usage or I/O error (config-cli.md 2).
 pub const EXIT_USAGE: u8 = 2;
 
@@ -178,6 +181,10 @@ enum Command {
     Explain(Vec<String>),
     Units(Vec<String>),
     Update(Vec<String>),
+    /// `swap SLOT ALT --reason`.
+    Swap(Vec<String>),
+    Emit(Vec<String>),
+    Import(Vec<String>),
     Unknown(String),
 }
 
@@ -199,6 +206,9 @@ fn parse(args: &[String]) -> Command {
         Some("explain") => Command::Explain(args[1..].to_vec()),
         Some("units") => Command::Units(args[1..].to_vec()),
         Some("update") => Command::Update(args[1..].to_vec()),
+        Some("swap") => Command::Swap(args[1..].to_vec()),
+        Some("emit") => Command::Emit(args[1..].to_vec()),
+        Some("import") => Command::Import(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -249,6 +259,9 @@ pub fn run_with_env(
         Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
         Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
         Command::Update(rest) => cmd::run_update(&rest, &globals, out, err),
+        Command::Swap(rest) => cmd::run_swap(&rest, &globals, out, err),
+        Command::Emit(rest) => cmd::run_emit(&rest, &globals, out, err),
+        Command::Import(rest) => cmd::run_import(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE

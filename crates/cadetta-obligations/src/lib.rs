@@ -18,5 +18,6 @@ pub mod require;
 pub mod roles;
 pub mod selector;
 pub mod staleness;
+pub mod swap;
 pub mod waiver;
 pub mod why_stale;

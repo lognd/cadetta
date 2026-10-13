@@ -312,6 +312,30 @@ the attestation of R (default: the first covering role) and prints
 carries `state` (`open`, `current`, `stale`) and, when stale, `nearest`
 `{node,new,old,depth}`, `others` and `removed`.
 
+### 3.7 `emit` and `import` details
+
+Decided (0.1.0). `emit` words containing `*`, `::` or `.` are path globs and the rest are adapter
+ids; `--module` repeats. For each configured adapter it writes the adapter's `out` (default
+`build/solidworks/<id>.txt` for `sw-equations`) under the package directory. Only bound,
+non-`let` paths are emitted; a `[*]` binding is emitted once, at instance 0. The `sign = -1`
+negation is applied by `emit` to the written text of value and global lines (the adapter library
+leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
+to it. Q004 and R013 withhold that adapter's file and give exit 1; an unknown adapter id, a bad
+flag or a halted analysis give exit 2. Not yet run by `emit`: the `json` and `csv` built-ins and
+external adapters (those with a `command`); they are skipped with a log line.
+
+`import ADAPTER FILE...` runs the external adapter's `read` (a `command` containing `/` is
+relative to the package directory; no PATH search), builds one observed project per native file
+and writes `build/import/proposal.toml` and `proposal.cdt` only. Member names follow adapters.md
+7.2 (snake_case, trailing unit stripped, `_2` suffix on collision with the item flagged in its
+`reason`). `--assume-unit U` relabels the unit of every unitless value in the proposal. `import
+--accept` reads the reviewed proposal and writes `bindings/<id>.toml` (the configured `bindings`
+path), `cad/imported/<Component>.cdt` and an `adopted` lock record per file. It never overwrites:
+an existing `.cdt` is left alone, and bindings are appended to for paths and locators not yet
+bound; the rest are reported as `unchanged`. `skip` items are not adopted. Every import failure
+is exit 2, never 1. `--update` is parsed but not implemented yet: it reports a note and changes
+nothing.
+
 ## 4. Global flags
 
 | Flag | Meaning |

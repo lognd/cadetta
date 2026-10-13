@@ -2,18 +2,19 @@
 id = "01M4SWN7JR7PMBQ4QEHBZ6BN9J"
 title = "swap verb"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T14:26:09Z"
+updated = "2026-10-13T14:41:15Z"
 persona = "design engineer"
 capability = "swap a part safely"
 idempotency_key = "replan14:ob-swap"
 labels = ["creates:crates/cadetta-obligations/src/swap.rs"]
-scope = ["crates/cadetta-obligations/src/swap.rs", "crates/cadetta-cli/src/cmd/swap.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-obligations/src/lib.rs", "design/model.grmb"]
+scope = ["crates/cadetta-obligations/src/swap.rs", "crates/cadetta-cli/src/cmd/swap.rs", "crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-obligations/src/lib.rs", "design/model.grmb", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
