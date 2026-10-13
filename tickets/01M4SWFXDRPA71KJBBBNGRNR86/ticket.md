@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:45Z"
-updated = "2026-10-13T09:20:23Z"
+updated = "2026-10-13T09:21:28Z"
 persona = "design engineer"
 capability = "place every instance of a part array"
 idempotency_key = "replan14:geo-for"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given D.at(point), when evaluated, then D is offset to the point's x and y (and z for a Point3) (geometry.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a for range that leaves an instance unplaced, when evaluated, then G007 is raised (geometry.md 4, 7)"
