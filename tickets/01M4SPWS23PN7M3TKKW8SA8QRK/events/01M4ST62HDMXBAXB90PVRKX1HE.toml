@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ['Given `point = "mid"`, when resolved, then the midpoint of the limits is selected', "Given a rational not representable at declared precision, when converted, then Q004 is returned with the error"]
+new = ['Given `point = "mid"`, when resolved, then the midpoint of the limits is selected', "Given a rational not representable at declared precision, when converted, then Q004 is returned with the error", "Given `mmc` or `lmc` on a parameter with no role, when resolved, then an error is returned (quantities.md 5.6)", "Given `#[emit(mid)]` on a fit side and a pure alias of it, when resolved, then the alias is emitted at mid too (quantities.md 5.6)", "Given emit policy, when a request is built, then the tolerance point and unit are decided upstream and arrive in the request (adapters.md 4 rule 1)"]
+moved = [1, 2]
+at = "2026-10-13T05:01:25Z"
+actor = "lognd"
+rev = 1
