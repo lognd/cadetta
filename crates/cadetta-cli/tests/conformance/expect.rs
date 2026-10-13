@@ -1,7 +1,10 @@
 //! frob:ticket 01M4V0NSCWCW8W0P7DG628M8AP
 //! The `expect.json` model (tests/conformance/README.md).
 
+use std::collections::BTreeMap;
+
 use serde::Deserialize;
+use serde_json::Value;
 
 /// One expected diagnostic.
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -21,12 +24,15 @@ pub struct Block {
     /// The closed list of errors and warnings (plus any listed info).
     #[serde(default)]
     pub diagnostics: Vec<ExpectedDiag>,
-    /// Evaluation-rule values; not checkable until `eval` exists.
+    /// Evaluation-rule values: `{ path, nominal }` quantity literals.
     #[serde(default)]
-    pub values: Vec<serde_json::Value>,
+    pub values: Vec<Value>,
     /// Explicit exit status.
     #[serde(default)]
     pub exit: Option<i32>,
+    /// Every other key: entry-specific expectations (README "Entry expectations").
+    #[serde(flatten)]
+    pub extra: BTreeMap<String, Value>,
 }
 
 /// A parsed `NAME.expect.json`.

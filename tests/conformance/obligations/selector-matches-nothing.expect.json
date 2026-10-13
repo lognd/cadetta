@@ -7,10 +7,24 @@
   "entry": "ack",
   "must_fire": {
     "diagnostics": [],
-    "exit": 2
+    "exit": 2,
+    "args": [
+      "check:acme.demo::Part.nothing_here",
+      "--role",
+      "review",
+      "--reason",
+      "reviewed"
+    ]
   },
   "must_not_fire": {
     "diagnostics": [],
-    "exit": 0
+    "exit": 0,
+    "args": [
+      "check:acme.demo::Part.fits_limit",
+      "--role",
+      "review",
+      "--reason",
+      "reviewed"
+    ]
   }
 }
