@@ -193,6 +193,20 @@ expression it would replace (R006), and writes nothing. `--only GLOB`
 limits to matching canonical paths; `--no-regen` pushes without
 rebuilding (the lock is then not updated).
 
+### 3.3 `ir`, `explain`, `units`
+
+Decided (0.1.0): `explain CODE` takes the code case-insensitively and
+prints the lints.md 3 catalog row (code, name, default severity, fixed or
+configurable, meaning); `--format json` prints `explain.json`
+(`cadetta.explain/1`); an unknown code exits 2. `units [KIND]` prints the
+built-in kinds, each with its dimension, angle exponent, atom units (exact
+SI factor `r * pi^k`) and compound units; `units.json` is
+`cadetta.units/1`; an unknown KIND exits 2. `ir` prints one package's IR
+as pretty `cadetta.ir/1` JSON (`cadetta.ir.1.json`) and exits 2 when the
+run scopes to several workspace members; `--observed ADAPTER` names a
+configured `[[adapter]]` (by `name` or `id`, else exit 2) and prints the
+`observed` flavour; `--assume-unit U` must parse as a unit.
+
 ### 3.2 `init`
 
 Creates missing files only; it never rewrites an existing file, prints
