@@ -8,12 +8,11 @@ points = 2
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T05:05:28Z"
+updated = "2026-10-13T06:05:16Z"
 persona = "design engineer"
 capability = "trust every std value"
 idempotency_key = "replan13:std citation audit"
-labels = ["creates:std/**"]
-scope = ["std/**"]
+scope = ["std/src/**"]
 
 [[links]]
 kind = "blocks"

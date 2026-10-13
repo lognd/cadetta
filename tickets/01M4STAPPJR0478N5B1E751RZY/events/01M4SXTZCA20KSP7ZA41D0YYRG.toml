@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/**"]
+new = ["std/src/**"]
+at = "2026-10-13T06:05:16Z"
+actor = "lognd"
+rev = 1
