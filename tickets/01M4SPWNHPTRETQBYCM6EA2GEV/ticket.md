@@ -53,7 +53,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a non-integer Count, when constructed, then Q009 is signalled; floor/ceil/round of a dimensionless value yield a Count, ties away from zero (quantities.md 4.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a Count assigned to a Ratio, when checked, then it is accepted; the reverse is rejected (quantities.md 4.1 rule 4)"
