@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "note-emit-point",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "note names the emit point when it is not nominal, and not otherwise",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "emit",
+          "mmc"
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [],
+        "excludes": [
+          "emit",
+          "mmc"
+        ]
+      }
+    }
+  }
+}

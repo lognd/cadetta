@@ -1,0 +1,4 @@
+["acme.demo::Part.bore"]
+locators = [
+  { locator = "PilotBore", kind = "global", mode = "value", native_unit = "mm" },
+]

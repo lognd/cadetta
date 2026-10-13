@@ -1,0 +1,37 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "value-native-unit",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "value is in the locator's native_unit and unit names it: 1/4in under native mm is 6.35,mm; under native in it is 0.25,in",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,6.35,mm,"
+        ],
+        "excludes": [
+          "0.25,in"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,0.25,in,"
+        ],
+        "excludes": [
+          "6.35,mm"
+        ]
+      }
+    }
+  }
+}

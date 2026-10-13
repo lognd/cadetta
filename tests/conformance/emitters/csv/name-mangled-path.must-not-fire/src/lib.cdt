@@ -1,0 +1,6 @@
+model Axle {
+  end_diameter = 12mm
+}
+model Rover {
+  axle: [Axle; 2]
+}

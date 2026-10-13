@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "note-omitted",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "an empty note leaves the fourth column empty: the row ends in a bare comma, with no quotes",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,5,mm,\n"
+        ],
+        "excludes": [
+          "Plate_Thk,5,mm,\"\"",
+          "null"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,6.35,mm,1/4in\n"
+        ],
+        "excludes": [
+          "Plate_Thk,6.35,mm,\n"
+        ]
+      }
+    }
+  }
+}

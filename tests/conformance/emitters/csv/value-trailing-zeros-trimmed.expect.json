@@ -1,0 +1,39 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "value-precision",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "default precision is 6 decimals; zeros and a bare decimal point are trimmed, so 12.5 is not 12.500000 and 10 is not 10.0",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nW,12.5,mm,"
+        ],
+        "excludes": [
+          "12.500000",
+          "12.50,"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nW,10,mm,"
+        ],
+        "excludes": [
+          "10.0,",
+          "10.000000"
+        ]
+      }
+    }
+  }
+}

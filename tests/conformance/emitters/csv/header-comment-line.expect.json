@@ -1,0 +1,46 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "header",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "line 1 is the header comment: adapter version, then IR digest, then bindings digest",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "# cadetta emit csv 0.1.0 ir=blake3:",
+          " bindings=blake3:"
+        ],
+        "excludes": [],
+        "order": [
+          "# cadetta emit csv 0.1.0",
+          "ir=blake3:",
+          "bindings=blake3:"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "W,10,mm,"
+        ],
+        "excludes": [
+          "cadetta emit json",
+          "cadetta emit sw-equations"
+        ],
+        "order_not": [
+          "bindings=blake3:",
+          "ir=blake3:"
+        ]
+      }
+    }
+  }
+}

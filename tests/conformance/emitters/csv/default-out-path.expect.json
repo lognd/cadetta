@@ -1,0 +1,23 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md (intro)",
+  "rule": "default-out",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "with no out key the file is build/csv.csv (build/<id>.csv, id = adapter name); with one, that path",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/csv.csv"
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/params.csv"
+    ]
+  }
+}

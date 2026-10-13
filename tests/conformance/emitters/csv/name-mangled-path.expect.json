@@ -1,0 +1,40 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "name-mangled",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "a path with no bound name is named by its mangled path (adapters.md 3.1): __ for dots and slashes, [i] as _i, a [*] segment dropped",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nRover__axle_1__end_diameter,12,mm,"
+        ],
+        "excludes": [
+          "Rover.axle",
+          "Rover/axle",
+          "[1]"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nRover__axle__end_diameter,12,mm,"
+        ],
+        "excludes": [
+          "Rover__axle_1__end_diameter",
+          "[*]"
+        ]
+      }
+    }
+  }
+}

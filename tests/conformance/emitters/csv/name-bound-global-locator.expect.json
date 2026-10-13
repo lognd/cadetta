@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "name-bound",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "name is the bound locator of a global locator",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,10,mm,"
+        ],
+        "excludes": [
+          "Part__width",
+          "acme.demo::Part.width"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPart__width,10,mm,"
+        ],
+        "excludes": [
+          "Plate_Thk"
+        ]
+      }
+    }
+  }
+}

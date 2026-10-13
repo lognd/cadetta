@@ -1,0 +1,21 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "header-noop",
+  "kind": "binding",
+  "entry": "sync",
+  "note": "two files differing only in the header comment digests are a no-op: sync writes nothing",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": []
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "writes": [
+      "build/params.csv"
+    ]
+  }
+}

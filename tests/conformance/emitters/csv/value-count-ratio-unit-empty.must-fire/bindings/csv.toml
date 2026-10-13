@@ -1,0 +1,9 @@
+["acme.demo::Part.num_bolts"]
+locators = [
+  { locator = "NumBolts", kind = "global", mode = "value" },
+]
+
+["acme.demo::Part.ratio"]
+locators = [
+  { locator = "Ratio", kind = "global", mode = "value" },
+]

@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "note-literal",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "note carries the authored literal when its source text differs from the emitted value's text (1/4in written, 6.35 emitted)",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,6.35,mm,1/4in\n"
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nPlate_Thk,5,mm,\n"
+        ],
+        "excludes": [
+          "1/4in"
+        ]
+      }
+    }
+  }
+}

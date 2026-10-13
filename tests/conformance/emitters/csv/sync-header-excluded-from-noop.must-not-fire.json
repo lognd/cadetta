@@ -1,0 +1,4 @@
+{
+  "existing": "# cadetta emit csv 0.1.0 ir=blake3:aa bindings=blake3:bb\nname,value,unit,note\nW,10,mm,\n",
+  "emitted": "# cadetta emit csv 0.1.0 ir=blake3:cc bindings=blake3:dd\nname,value,unit,note\nW,12,mm,\n"
+}

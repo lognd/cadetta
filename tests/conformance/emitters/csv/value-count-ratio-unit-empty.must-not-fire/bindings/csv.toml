@@ -1,0 +1,4 @@
+["acme.demo::Part.num_bolts"]
+locators = [
+  { locator = "NumBolts", kind = "global", mode = "value", native_unit = "mm" },
+]

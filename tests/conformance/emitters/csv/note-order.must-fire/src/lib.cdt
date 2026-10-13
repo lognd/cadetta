@@ -1,0 +1,3 @@
+model Part {
+  thk = 1/4in #[emit(mmc)] @"ASTM B209"
+}

@@ -1,0 +1,46 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "columns",
+  "kind": "source",
+  "entry": "emit csv",
+  "note": "line 2 is the fixed column row name,value,unit,note, directly after the header comment",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "\nname,value,unit,note\n"
+        ],
+        "excludes": [],
+        "order": [
+          "# cadetta emit csv",
+          "name,value,unit,note",
+          "W,10,mm,"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.csv": {
+        "contains": [
+          "name,value,unit,note"
+        ],
+        "excludes": [
+          "Name,Value,Unit,Note",
+          "name;value;unit;note",
+          "name,value,unit\n"
+        ],
+        "order_not": [
+          "name,value,unit,note",
+          "# cadetta emit csv"
+        ]
+      }
+    }
+  }
+}

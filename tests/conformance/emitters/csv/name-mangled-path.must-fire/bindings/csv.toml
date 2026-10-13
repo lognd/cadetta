@@ -1,0 +1,4 @@
+["acme.demo::Rover/axle[1].end_diameter"]
+locators = [
+  { locator = "Rover__axle_1__end_diameter", kind = "global", mode = "value", native_unit = "mm" },
+]
