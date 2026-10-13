@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:40:52Z"
-updated = "2026-10-13T18:14:15Z"
+updated = "2026-10-13T18:14:31Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/adapters.md", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
