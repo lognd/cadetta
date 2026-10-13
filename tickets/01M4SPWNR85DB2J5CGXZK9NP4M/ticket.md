@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T05:01:22Z"
+updated = "2026-10-13T05:05:26Z"
 persona = "design engineer"
 capability = "compare toleranced quantities as holds, violates or undecided"
 outcome_text = "an undecided check is never counted as holding"
@@ -18,6 +18,10 @@ scope = ["crates/cadetta-units/src/compare.rs"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWPT5XR3QCQJ7M1XP07MP"
+
+[[links]]
+kind = "blocks"
+target = "01M4STCD6YD5DZFVD9RJDN02RY"
 
 [[acceptance]]
 text = "Given an affine form entirely above the threshold, when compared with `>`, then the verdict is holds (quantities.md 5.8)"
