@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a depends on b and b on a, when analysed, then D003 reference-cycle is reported", "Given a reference to a name listed in `was`, when resolved, then it resolves and N004 is emitted"]
+new = ["Given member a depends on b and b on a, when analysed, then D003 reference-cycle is reported (language.md 4)", "Given a model argument that comes from a joint reading another member of the same model, when analysed, then no cycle is reported because D003 is per member, not per component (language.md 4)", "Given a part count expression that reads a member depending on the part, when analysed, then D003 is reported (language.md 3.5)", "Given a reference to a name listed in `was`, when resolved, then it resolves and N004 is emitted (language.md 3.3)", "Given the dependency graph, when built, then it is known without evaluating the design (language.md intro)"]
+moved = [0, 0]
+at = "2026-10-13T05:01:23Z"
+actor = "lognd"
+rev = 1
