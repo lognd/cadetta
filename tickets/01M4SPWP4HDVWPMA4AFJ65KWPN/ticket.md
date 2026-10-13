@@ -61,5 +61,5 @@ bound = true
 
 [[acceptance]]
 text = "Given `sum?(self, unit_cost)`, `Iso273[thread].medium` and `T.at_least(x).key`, when parsed, then the calls and lookups parse (language.md 3.5, 3.6)"
-bound = false
+bound = true
 +++
