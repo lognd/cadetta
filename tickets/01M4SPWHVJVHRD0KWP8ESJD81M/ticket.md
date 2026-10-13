@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given magnitudes with different pi exponents, when added, then the result is inexact unless one is zero (quantities.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given lengths and masses, when added, then a dimension mismatch is returned as an error value, not a panic (quantities.md 1)"
