@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:43:35Z"
 persona = "cadetta contributor"
 capability = "compute canonical digests excluding spans and docs"
 outcome_text = "waiver staleness and drift attribution are exact"
@@ -41,5 +41,17 @@ bound = false
 
 [[acceptance]]
 text = "Given a part node, when its own digest is computed, then primary, alternates and arguments are included (ir.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given semantic attributes (process, role, rule roles, default), when digested, then they enter the own digest; display, emit, allow and lifecycle date text do not (ir.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given an interface-typed slot, when an instance closure is computed, then it includes the part node's own digest so a swap stales that slot only (ir.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given Datum and Placement nodes, when digested, then a moved datum changes the closure of everything that reads through it (ir.md 4; geometry.md 6)"
 bound = false
 +++
