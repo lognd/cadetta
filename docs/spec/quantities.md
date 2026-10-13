@@ -103,10 +103,30 @@ subtracting two Temperatures yields a TemperatureDelta.
    an anonymous kind of equal dimension and angle; the result is named.
 3. `*` and `/` yield an anonymous kind, except: a named kind scaled by a
    dimensionless value keeps its kind (`thickness / 2` is a Length);
-   `Count * Count` is Count; the kind algebra table names `Length^2` Area
-   and `Length^3` Volume. Force*Length is deliberately not named.
+   `Count * Count` is Count; the kind algebra table below names the
+   rest. Force*Length is deliberately not named.
+   `x ^ n` takes an integer literal `n` and multiplies the dimension by
+   it. `sqrt` and `cbrt` divide the dimension by 2 and 3; a dimension
+   that does not divide is Q011. The result kind is then looked up in
+   the table, else anonymous.
+
+   | Product or quotient | Named kind |
+   |---|---|
+   | `Length * Length`, `Length ^ 2` | Area |
+   | `Area * Length`, `Length ^ 3` | Volume |
+   | `sqrt(Area)`, `cbrt(Volume)` | Length |
+   | `Length / Time` | Velocity |
+   | `Velocity / Time` | Acceleration |
+   | `Mass * Acceleration` | Force |
+   | `Force / Area` | Pressure |
+   | `Mass / Volume` | Density |
+   | `Volume / Time` | VolumeFlow |
+   | `Energy / Time` | Power |
+   | `Angle / Time` | AngularVelocity |
+
 4. Anonymous kinds are assignable to any named kind of equal dimension
-   and angle. Named kinds never convert implicitly: Q003. Explicit
+   and angle. A Count is assignable to a Ratio (never the reverse: that
+   needs `floor`, `ceil` or `round`). Named kinds never convert implicitly: Q003. Explicit
    conversion: `x as Energy`.
 5. Assignment and `as` give the value the target kind's canonical angle
    exponent (4.3), after any Q008 the assignment raises. `as` may change the angle exponent but never the
@@ -146,7 +166,12 @@ assume; the exponent only decides whether a diagnostic fires.
   | `50N * 9mm` to Torque | 0 | clean (lever-arm exception) |
 
 - Trigonometric functions take Angle and return Ratio; `atan2(y, x)`
-  takes two quantities of equal kind and returns Angle.
+  takes two quantities of equal kind and returns Angle. They are exact
+  where the result is rational in `pi`: `sin cos tan` of exact multiples
+  of 90deg, `sin`/`cos` giving 1/2 and `tan` giving 1 at the matching
+  multiples of 30deg and 45deg, and `atan2` when an argument is zero or
+  `|y| == |x|` (so `atan2(3in, 3in) == 45deg` holds). Otherwise
+  inexact (1.).
 
 ## 5. Tolerances
 
@@ -157,6 +182,7 @@ Tolerance is a postfix operator binding tighter than any binary operator:
 ```
 10mm [+-0.05mm]                  // symmetric
 8mm [+0 -0.008mm]                // asymmetric, upper first; 0 needs no unit
+12mm [-0.006mm -0.017mm]         // both deviations below nominal (a g6 shaft written out)
 round_to(x, 1/32in) [+- Extrusion.cut_tol]   // any expression, any operand
 (a + b) [+-0.1mm]                // parenthesize to tolerance a sum
 20mm H7      20mm g6             // ISO 286 class, bare postfix

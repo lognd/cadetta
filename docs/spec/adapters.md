@@ -39,7 +39,16 @@ A binding maps a canonical path to an adapter's native locator, e.g.
   file often drives one value through a global and a dimension, or two
   globals); each locator has a `kind` (`global`, `dimension`,
   `property`). `#[native(adapter, "locator")]` in source pins one
-  inline.
+  inline. The file spelling:
+
+  ```toml
+  ["acme.gearbox::CoverPlate.thickness"]
+  locators = [
+    { locator = "Plate_Thk", kind = "global", mode = "value", native_unit = "mm" },
+    { locator = "plate thickness", kind = "global", mode = "value", native_unit = "mm" },
+    { locator = "D1@Boss-Extrude1@CoverPlate.SLDPRT", kind = "dimension", ref_to = "Plate_Thk" },
+  ]
+  ```
 - Only bound paths are emitted; an unbound parameter is not written.
   `let` values are never emitted (quantities.md 5.3).
 - Emitted values are values (the emit point, 5.6), never expressions:
@@ -57,8 +66,9 @@ A binding maps a canonical path to an adapter's native locator, e.g.
   instances mangle as `Rover__wheel_2__hub_bore`.
 - A locator's `mode` is `ref` (default where the target supports
   references: the native side keeps a live link to a cadetta-emitted
-  global) or `value` (a flat number). A `ref` dimension points at the
-  global locator bound to the same path; if the path has none, at the
+  global) or `value` (a flat number). A `ref` dimension points at its
+  `ref_to` global if given, else the first global locator bound to the
+  same path (bindings-file order); if the path has none, at the
   global of its referent when the path is a pure alias; otherwise the
   emitter creates the path's own mangled global.
 - Units at read: a native value without a unit takes the adapter's

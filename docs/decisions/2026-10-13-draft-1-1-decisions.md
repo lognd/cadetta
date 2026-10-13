@@ -51,6 +51,14 @@ user. The normative text is in `docs/spec/`.
    - read never raises Q001;
    - one format document per emitter.
 
+9. Draft 1.2 (pilot 08):
+   - solver results are keyed by input set; a variant without one is
+     undecided (S006), never given the primary's result;
+   - `ScrewJoint` sizes from `grip`, net of the counterbore;
+   - `H7 on x` is a one-sided hole fit;
+   - `FastenerPolicy` is a listed interface with `Table<K>` members;
+   - `max`/`min` roll-ups.
+
 ## Consequences
 
 - `std` is a deliverable in 0.1.0 (metric only), and doubles as the

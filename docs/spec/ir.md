@@ -84,7 +84,11 @@ Every node has two digests, both BLAKE3:
 
 Granularity is the member of a component definition; an instance path
 (`Rover/wheel[2].hub_bore`) has the closure of its member plus the
-part's argument digests. Spans and doc comments are excluded, so
+digests of only those part arguments the member reads, transitively.
+For an interface-typed slot the instance closure also includes the
+part node's own digest (primary, alternates, arguments), so a swap
+makes every instance path of the slot stale, and nothing else: a check
+reading only another part's arguments keeps its closure. Spans and doc comments are excluded, so
 formatting never changes a digest. Obligations and waivers bind closure
 digests (obligations.md 2, W002); drift attribution (R001) and
 incremental pushes use own digests of emitted values.

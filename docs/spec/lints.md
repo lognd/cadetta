@@ -45,6 +45,7 @@ drawing 1234")]`.
 | Q008 | angle-dropped | warning | | Angle exponent mismatch (quantities.md 4.3): the missing-2*pi class. |
 | Q009 | non-integer-count | error | yes | A Count that is not an integer. |
 | Q010 | ambiguous-rounding | error | yes | Rounding an inexact value that sits on a tie or step boundary. |
+| Q011 | root-of-dimension | error | yes | `sqrt` or `cbrt` of a dimension whose exponents do not divide. |
 
 ### N: naming
 
@@ -55,6 +56,7 @@ drawing 1234")]`.
 | N003 | unit-in-name | warning | | Name encodes a unit (`diameter_mm`). |
 | N004 | renamed-reference | warning | | Reference uses a `was` path. |
 | N005 | reserved-separator | error | yes | Name contains `__` (reserved for mangling). |
+| N006 | type-read-beside-instance | warning | | `Type.member` in an assembly that has a `part` of that type; suggests the instance (language.md 3.1). |
 
 ### D: duplication and single source of truth
 
@@ -79,7 +81,7 @@ drawing 1234")]`.
 | F001 | unknown-fit-class | error | yes | Class not in the ISO 286 tables. |
 | F002 | size-out-of-range | error | yes | Nominal outside the table's size range. |
 | F003 | fit-tolerance-conflict | error | | A side's own tolerance numerically differs from the class it is declared to play. |
-| F004 | fit-range-violated | error | | A fit's clearance falls outside its declared required range. |
+| F004 | fit-range-violated | error | | A fit's clearance lies entirely outside its declared required range; a partial overlap is C002. |
 
 ### I, L, T, P: interfaces, lifecycle, tables, processes
 
@@ -88,6 +90,7 @@ drawing 1234")]`.
 | I001 | missing-interface-member | error | yes | An implementer lacks an interface member. |
 | I002 | alternate-not-viable | warning | | An approved alternate violates a check, fit, bound or require under variant evaluation (names it). |
 | I003 | alternate-undecided | info | | An approved alternate is viable but leaves a check undecided that the primary decides. |
+| I004 | root-not-evaluated | info | | A root component has parameters without defaults and no instances, so its members are never evaluated. |
 | L001 | end-of-life-part | warning | | A primary is `eol` or `obsolete` and has no viable alternate. Error once its date has passed. |
 | L002 | not-recommended-part | info | | A primary is `nrnd`. |
 | T001 | not-in-table | warning | | An `ots` literal citing a table matches none of its rows. |
@@ -102,6 +105,7 @@ drawing 1234")]`.
 | S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
 | S004 | citation-changed | warning | | A cited local file's digest differs from the acknowledged one. |
 | S005 | solver-failed | error | | The last solve failed; the previous result is in use. |
+| S006 | solver-unsolved-variant | warning | | A variant changes a solver's inputs and no result exists for them; dependent verdicts are undecided (solvers.md 4.1). |
 
 ### C: checks
 

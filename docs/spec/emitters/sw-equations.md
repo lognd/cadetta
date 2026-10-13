@@ -32,14 +32,16 @@ pilot r2-05.
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
   on a global line carries, in this order and separated by spaces: the
-  authored literal with its tolerance or class when it differs from the
-  written value, the emit point when not `nominal`, and the citation.
+  authored literal with its tolerance or class when its source text
+  differs from the written value's text (`1/4in` written as `6.35mm`,
+  `12mm H7` written as `12.009mm`; `5mm` written as `5mm` gets none), the emit point when not `nominal`, and the citation.
   Nothing else is ever written in comments.
 
 ## 2. Order
 
-Paths in dependency order (a path after everything it reads), ties by
-canonical path; within one path, global lines in bindings-file order,
+Paths in dependency order (a path after everything it reads,
+transitively through `let`s and unemitted paths), ties by canonical
+path; within one path, global lines in bindings-file order,
 then dimension lines in bindings-file order. Emitted values are flat, so
 the order only makes the file read top-down; SOLIDWORKS does not need
 it.

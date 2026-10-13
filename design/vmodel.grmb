@@ -17,6 +17,14 @@ vmodel dec_draft1_1 {
   decides req_stdlib;
 }
 
+/// ADR: draft-1.3 decisions (member-level cycles, instance closures, process reads, ScrewJoint host/vendor).
+vmodel dec_draft1_3 {
+  kind decision;
+  level system_design;
+  ref "docs/decisions/2026-10-13-draft-1-3-decisions.md";
+  decides req_language;
+}
+
 /// ADR: IR between source and every CAD tool.
 vmodel dec_ir {
   kind decision;

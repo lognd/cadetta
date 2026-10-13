@@ -1,6 +1,6 @@
 # Cadetta specification
 
-Status: draft 1.1 (2026-10-13), revised after pilot rounds 1 and 2 (`pilots/SYNTHESIS.md`, `pilots/SYNTHESIS-r2.md`). Normative unless a section says otherwise.
+Status: draft 1.3 (2026-10-13), revised after pilot rounds 1-3 (`pilots/SYNTHESIS.md`, `pilots/SYNTHESIS-r2.md`, `pilots/SYNTHESIS-r3.md`). Normative unless a section says otherwise.
 
 Cadetta is the single source of truth for the parameters of a CAD design.
 Engineers author parameters once, as typed quantities with provenance and

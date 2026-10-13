@@ -23,6 +23,10 @@ model Frame {
 
 - `in` binds named inputs to expressions; `out` declares outputs with
   kinds; `deps` lists extra files whose digests count as inputs.
+- Input expressions resolve where the solver is declared. At file
+  scope they name components (`Frame.span`); a solver declared as a
+  member of an assembly resolves like any member, so instances and
+  roll-ups are in scope (`motor.stall_torque`, `mass?(self)`).
 - The citation names the script; its digest is an input.
 - The command that runs it is configured, not written in source
   (`[solvers.wall_sizing] command = ["python", "{script}"]`), so
@@ -79,6 +83,17 @@ every input value, the script and each dep. The result file is
 committed. `check` reads it; if any recorded digest differs from the
 current one, S003 (`solver-stale`) fires and the stale outputs still
 evaluate, marked stale, so the rest of the design keeps checking.
+
+### 4.1 Solvers under variant evaluation
+
+Results are keyed by the digest of their input values. When variant
+evaluation (language.md 3.2) changes a solver's inputs, the variant
+needs its own result: `cadetta solve --variants` runs the solver once
+per distinct input set and stores each result in the same file. If a
+variant's result is missing, its outputs are unknown, never borrowed
+from the primary: checks and requires reading them are `undecided`
+under that variant, with S006 (`solver-unsolved-variant`), and
+`impact --swap` says which solve to run.
 
 ## 5. Trust
 

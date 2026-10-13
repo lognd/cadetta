@@ -114,10 +114,17 @@ canonical path:
    listed as not stale.
 6. **attestations invalidated**: each attestation whose covered closure
    digests would change, with the count of covered nodes affected.
-7. **commercial deltas**: per currency, the sum of `unit_cost * count`
-   over the assembly; lead time as the maximum over parts that declare
-   it; `moq` per changed part; mass via `mass?(self)` with parts lacking
-   mass listed. Rolled up at the assembly named by `PART`'s prefix.
+7. **commercial deltas**: the diffs of `sum?(self, unit_cost)` per
+   currency, `max?(self, lead_time)` and `mass?(self)`, the same roll-ups
+   the language defines (language.md 3.5, every instance counted), at
+   the assembly named by `PART`'s prefix; `moq` per changed part. Parts
+   lacking a value are listed. A design `let` over the same roll-up
+   therefore always agrees with the preview.
+
+Numbers print by the display rules (quantities.md 6); money in the
+currency's minor unit; percentages to one decimal, half away from
+zero. The schemas (above) are generated with the implementation;
+until then this section is normative.
 
 `compare IFACE` is the same evaluation for every implementer of the
 interface in every slot typed by it, as a table.
