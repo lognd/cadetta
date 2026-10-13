@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:16:33Z"
+updated = "2026-10-13T07:16:35Z"
 persona = "design engineer"
 capability = "have expressions checked for units and kinds"
 outcome_text = "Q001, Q002, Q003 and Q005 stop wrong models"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the angle cases of quantities.md 4.3, when checked, then Q008 fires exactly on the stated rows"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a non-integer Count or a root of a non-divisible dimension, when checked, then Q009 and Q011 are reported (quantities.md 4.2, 4.1)"
