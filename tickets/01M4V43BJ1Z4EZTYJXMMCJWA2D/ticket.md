@@ -8,8 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-13T23:29:31Z"
+updated = "2026-10-13T23:29:32Z"
 scope = ["crates/cadetta-ir/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4VS6WG57MAD0T8GK956NGG9"
 +++
 
 found while working ~ZFM3633. Fixtures aligned-*, coaxial-*, parallel-*, angle-between-axes, tolerance-*, q006-*, joint-* and the value fixtures need Point2/Point3 typed positions, datum ops, aligned/coaxial/parallel/angle_between as check conditions, and Q006 for rotations/circle patterns; the binary reports EVAL errors (this operator is not evaluated by this stage).
