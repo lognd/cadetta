@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:26:30Z"
+digest = "1560cf3de650f116defb229f8ffe682fc7d113854940e9aa3c00d32da98f333e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID df2a3898-c285-42ef-b9ac-399c61565b59 with nextest profile: default
+    Starting 1 test across 3 binaries (64 tests skipped)
+        PASS [   0.008s] cadetta-syntax parser::use_decls::tests::aliases_globs_and_nested_trees_are_recorded
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 64 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=parser::use_decls::tests::aliases_globs_and_nested_trees_are_recorded)'"
+size = 575
+status = "measured"
+test_count = 1
+tests_digest = "c13a6edd9a5b546c26e7d4662b43990d739ccb9532a0a9a8fb704d37a92b55ce"
+at = "2026-10-13T07:26:30Z"
+actor = "lognd"
+rev = 1

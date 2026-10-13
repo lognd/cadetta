@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:26:29Z"
+updated = "2026-10-13T07:26:30Z"
 persona = "library author"
 capability = "write use trees, aliases, globs and pub use"
 labels = ["creates:crates/cadetta-syntax/src/parser_use.rs"]
@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `use path as alias`, `use path::*` and `use path::{A, B as C, sub::{D, *}}`, when parsed, then aliases, globs and nested trees are recorded (packages.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `pub`, `pub(package)`, `pub use` and `priv row = Iso4762Head[thread]`, when parsed, then visibility is recorded on items, uses and members (packages.md 3, 4)"
