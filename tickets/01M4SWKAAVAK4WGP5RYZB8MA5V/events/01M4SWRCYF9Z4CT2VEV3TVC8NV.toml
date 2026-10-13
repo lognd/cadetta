@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given each of E001-E011, when its trigger is present, then the code fires as a fixed error except E005 which is a fixed warning (lints.md 3 E)", "Given E004 and E011, when names resolve through two use imports or Type.member reads a parameter-dependent member, then each fires with spans (lints.md 3 E; language.md 3.1)", "Given E010, when mmc or lmc reads a tolerance with no role, then it fires (lints.md 3 E)", "Given the rules, when shipped, then must-fire and must-not-fire fixtures exist under tests/lints/E*/ (lints.md 4)"]
+new = ["Given each of E001-E011, when its trigger is present, then the code fires as a fixed error except E005 which is a fixed warning (lints.md 3 E)", "Given E004 and E011, when names resolve through two use imports or Type.member reads a parameter-dependent member, then each fires with spans (lints.md 3 E; language.md 3.1)", "Given E010, when mmc or lmc reads a tolerance with no role, then it fires (lints.md 3 E)", "Given the rules, when shipped, then must-fire and must-not-fire fixtures exist under tests/conformance/lints/E*/ (lints.md 4)"]
+moved = [1, 2, 3, 0]
+at = "2026-10-13T05:46:23Z"
+actor = "lognd"
+rev = 1
