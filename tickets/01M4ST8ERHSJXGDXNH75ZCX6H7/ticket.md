@@ -19,6 +19,10 @@ scope = ["crates/cadetta-obligations/src/staleness.rs"]
 kind = "blocks"
 target = "01M4ST8ET5NPMBSVXFVD4WN8XP"
 
+[[links]]
+kind = "blocks"
+target = "01M4ST8F01H7SYVGYX5G9PCJYT"
+
 [[acceptance]]
 text = "Given an attestation on a check, when anything the check reads changes however far upstream, then it becomes stale (obligations.md 2)"
 bound = false
