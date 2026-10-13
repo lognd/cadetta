@@ -2,7 +2,8 @@
 id = "01M4STAMZCNT7MPR1PGZ5GVZZ5"
 title = "cadetta.solve/1 request and response protocol"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
