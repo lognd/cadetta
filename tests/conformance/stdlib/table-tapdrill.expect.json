@@ -1,0 +1,42 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "tapdrill-columns",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.cut_75",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::P.cut_65",
+        "nominal": "5.2mm"
+      },
+      {
+        "path": "acme.demo::P.form",
+        "nominal": "5.55mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.cut_75",
+        "nominal": "6.8mm"
+      },
+      {
+        "path": "acme.demo::P.cut_65",
+        "nominal": "6.9mm"
+      },
+      {
+        "path": "acme.demo::P.form",
+        "nominal": "7.4mm"
+      }
+    ]
+  }
+}

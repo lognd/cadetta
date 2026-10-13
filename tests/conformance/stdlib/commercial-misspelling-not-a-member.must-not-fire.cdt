@@ -1,0 +1,9 @@
+use std::commercial::Sourced
+cite src = "https://x.example/a.pdf"
+ots Cap: Sourced @src {
+  lead_time = 2h
+}
+assembly Box {
+  part c: Cap
+  let slowest = max(self, lead_time)
+}

@@ -1,0 +1,7 @@
+use std::fits::ItGrade
+model P {
+  bore = 25mm
+  fit s = F7/h6 on bore
+  hole_lo = s.hole.min
+  shaft_lo = s.shaft.min
+}

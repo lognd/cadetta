@@ -1,0 +1,5 @@
+use std::retaining::{Din471, Din472}
+model P {
+  shaft_min = Din471[10mm].groove_dia.max
+  bore_max = Din472[10mm].groove_dia.min
+}

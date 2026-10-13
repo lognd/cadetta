@@ -1,0 +1,8 @@
+cite shop = "shop price list 2026"
+use std::fasteners::ScrewJoint
+use std::materials::Material
+assembly Box {
+  part j: ScrewJoint(thread = M6, clamp = 10mm, into = Material::Al6061T6, screw_cost = price)
+  price = 0.10USD @shop
+  let cost = sum(self, unit_cost)
+}

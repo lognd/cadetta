@@ -1,0 +1,16 @@
+use std::fasteners::ScrewJoint
+use std::materials::Material
+use std::fasteners::{FastenerPolicy, IsoEngagement, IsoTapColumns, Iso4762Len, IsoDrills}
+cite shop = "shop standard SS-104 rev C"
+ots Shop: FastenerPolicy @shop {
+  engagement       = IsoEngagement
+  tap_columns      = IsoTapColumns
+  lengths          = Iso4762Len
+  drills           = IsoDrills
+  bottom_clearance = 0mm
+  tap_lead_in      = 3
+  drill_point      = 0.3
+}
+assembly Box {
+  part j: ScrewJoint(thread = M6, clamp = 10mm, into = Material::Al6061T6, policy = Shop)
+}

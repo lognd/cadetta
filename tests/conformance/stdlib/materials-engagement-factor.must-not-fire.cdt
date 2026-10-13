@@ -1,0 +1,6 @@
+use std::materials::{Material, Materials, TapClass}
+model P {
+  steel = Materials[Material::Al6061T6].engagement_factor
+  brass = Materials[Material::Brass360].engagement_factor
+  alu = Materials[Material::Steel1018].engagement_factor
+}

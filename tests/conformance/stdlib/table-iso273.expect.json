@@ -1,0 +1,42 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "clearance-columns",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.fine",
+        "nominal": "6.4mm"
+      },
+      {
+        "path": "acme.demo::P.medium",
+        "nominal": "6.6mm"
+      },
+      {
+        "path": "acme.demo::P.coarse",
+        "nominal": "7mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.fine",
+        "nominal": "8.4mm"
+      },
+      {
+        "path": "acme.demo::P.medium",
+        "nominal": "9mm"
+      },
+      {
+        "path": "acme.demo::P.coarse",
+        "nominal": "10mm"
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "engagement-factor",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.steel",
+        "nominal": "1"
+      },
+      {
+        "path": "acme.demo::P.brass",
+        "nominal": "1.5"
+      },
+      {
+        "path": "acme.demo::P.alu",
+        "nominal": "2"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.steel",
+        "nominal": "2"
+      },
+      {
+        "path": "acme.demo::P.brass",
+        "nominal": "1.5"
+      },
+      {
+        "path": "acme.demo::P.alu",
+        "nominal": "1"
+      }
+    ]
+  }
+}

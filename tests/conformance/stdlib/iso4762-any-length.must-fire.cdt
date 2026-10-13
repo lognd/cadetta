@@ -1,0 +1,6 @@
+use std::fasteners::Iso4762
+assembly Box {
+  part s: Iso4762(thread = M6, length = 17mm)
+  l = s.length
+  d = s.head_dia
+}

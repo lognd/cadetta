@@ -1,0 +1,6 @@
+use std::fasteners::ScrewJoint
+use std::materials::Material
+assembly Box {
+  part j: ScrewJoint(thread = M6, clamp = 10mm, into = Material::Al6061T6)
+  check roomy: j.clearance_hole > 6mm "hole clears the thread"
+}

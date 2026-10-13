@@ -1,0 +1,6 @@
+use std::fasteners::{MetricThread, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len, Iso4032}
+model P {
+  cut_75 = TapDrill[MetricThread::M6].cut_75
+  cut_65 = TapDrill[MetricThread::M6].cut_65
+  form = TapDrill[MetricThread::M6].form
+}

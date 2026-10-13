@@ -1,0 +1,5 @@
+use std::fasteners::{MetricThread, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len, Iso4032}
+model P {
+  major = Thread[MetricThread::M6].major
+  pitch = Thread[MetricThread::M6].pitch
+}

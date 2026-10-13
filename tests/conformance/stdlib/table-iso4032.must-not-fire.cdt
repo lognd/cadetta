@@ -1,0 +1,5 @@
+use std::fasteners::{MetricThread, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len, Iso4032}
+model P {
+  flats = Iso4032[MetricThread::M6].width_across_flats
+  height_min = Iso4032[MetricThread::M6].height.max
+}

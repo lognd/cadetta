@@ -1,0 +1,4 @@
+use std::materials::{Material, Materials, TapClass}
+model P {
+  check steel_hard: Materials[Material::Al6061T6].tap_class == TapClass::Hard "steel is a hard tap class"
+}

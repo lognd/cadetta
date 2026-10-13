@@ -1,0 +1,50 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "head-columns-published-limits",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.head_dia",
+        "nominal": "10mm"
+      },
+      {
+        "path": "acme.demo::P.socket",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::P.height_min",
+        "nominal": "5.7mm"
+      },
+      {
+        "path": "acme.demo::P.counterbore_depth",
+        "nominal": "6.5mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.head_dia",
+        "nominal": "10mm"
+      },
+      {
+        "path": "acme.demo::P.socket",
+        "nominal": "5mm"
+      },
+      {
+        "path": "acme.demo::P.height_min",
+        "nominal": "6mm"
+      },
+      {
+        "path": "acme.demo::P.counterbore_depth",
+        "nominal": "6.5mm"
+      }
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+cite din472 = std::din472
+pub ots Ring @din472 {
+  groove_width = 1mm
+}

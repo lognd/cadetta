@@ -1,0 +1,9 @@
+use std::fasteners::ScrewJoint
+use std::materials::Material
+model Base {
+  material = Material::Steel1018
+}
+assembly Box {
+  part base: Base
+  part j: ScrewJoint(thread = M6, clamp = 10mm, host = base)
+}

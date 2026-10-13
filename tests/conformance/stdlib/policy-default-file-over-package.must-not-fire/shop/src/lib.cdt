@@ -1,0 +1,20 @@
+use std::fasteners::{FastenerPolicy, IsoEngagement, IsoTapColumns, Iso4762Len, IsoDrills}
+cite shop = "shop standard SS-104 rev C"
+pub ots AcmeShop: FastenerPolicy @shop {
+  engagement       = IsoEngagement
+  tap_columns      = IsoTapColumns
+  lengths          = Iso4762Len
+  drills           = IsoDrills
+  bottom_clearance = 2mm
+  tap_lead_in      = 3
+  drill_point      = 0.3
+}
+pub ots OtherShop: FastenerPolicy @shop {
+  engagement       = IsoEngagement
+  tap_columns      = IsoTapColumns
+  lengths          = Iso4762Len
+  drills           = IsoDrills
+  bottom_clearance = 3mm
+  tap_lead_in      = 3
+  drill_point      = 0.3
+}
