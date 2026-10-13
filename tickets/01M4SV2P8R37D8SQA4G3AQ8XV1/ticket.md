@@ -2,7 +2,8 @@
 id = "01M4SV2P8R37D8SQA4G3AQ8XV1"
 title = "Optional cadetta[pint] interop (Quantity.to_pint)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
