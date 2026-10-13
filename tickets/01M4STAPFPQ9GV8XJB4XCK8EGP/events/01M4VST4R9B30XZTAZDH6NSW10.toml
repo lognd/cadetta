@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4, 5, 6]
+captured_at = "2026-10-13T23:33:22Z"
+digest = "38c0ad350058f2dd79abd2aaa77d59a248dbefc0f2185be2f030e6b1f1f28856"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9a82da3e-0a2b-4fa9-afdd-f6949faac6b0 with nextest profile: default
+    Starting 1 test across 14 binaries (99 tests skipped)
+        PASS [   0.015s] cadetta-syntax::std_fasteners_screwjoint_checks named_checks_and_their_presence_rules
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 99 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E test(named_checks_and_their_presence_rules)"
+size = 577
+status = "measured"
+test_count = 1
+tests_digest = "da5233333cbbb6c237a9ac8ce1da493c03d34edbe4f88ea76f55935867befcd1"
+at = "2026-10-13T23:33:22Z"
+actor = "lognd"
+rev = 1
