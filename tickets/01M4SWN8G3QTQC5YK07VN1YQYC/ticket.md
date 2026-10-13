@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T05:44:40Z"
+updated = "2026-10-13T05:44:44Z"
 persona = "design engineer"
 capability = "script against stable JSON"
 idempotency_key = "replan14:cli-schemas"
 labels = ["creates:docs/schemas/*.json"]
 scope = ["docs/schemas/*.json"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 
 [[acceptance]]
 text = "Given each command in config-cli.md 3, when run with --format json, then output validates against its generated schema in docs/schemas (config-cli.md 5)"
