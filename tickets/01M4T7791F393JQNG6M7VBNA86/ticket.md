@@ -11,7 +11,7 @@ scope = ["crates/cadetta-geometry/src/placement.rs"]
 
 [[acceptance]]
 text = "cargo clippy -D warnings is clean for cadetta-geometry and placement behaviour is unchanged (placement tests pass)"
-bound = false
+bound = true
 +++
 
 found while working NPCBMPP: clippy -D warnings fails: collapsible_if at placement.rs:421 and large_enum_variant on FrameOp at :479
