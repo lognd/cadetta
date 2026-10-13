@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T13:16:37Z"
+digest = "53d8084a431591d9b7005113d54f42f65587b0e3d3967cb1e224dd34bf2e09da"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.85s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1b8fe565-6217-48e0-bb26-8b9bd0961548 with nextest profile: default
+    Starting 1 test across 1 binary (80 tests skipped)
+        PASS [   0.028s] cadetta-lint rules::w::tests::w001_expired_waiver_is_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.031s] 1 test run: 1 passed, 80 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(=rules::w::tests::w001_expired_waiver_is_error)'"
+size = 613
+status = "measured"
+test_count = 1
+tests_digest = "3040896d647f5497c935c7be6396471841ff8e91ebd763ef510880b1893cb6ad"
+at = "2026-10-13T13:16:37Z"
+actor = "lognd"
+rev = 1
