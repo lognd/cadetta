@@ -2,7 +2,8 @@
 id = "01M4VB63WJ5XBJ360151Y6D9TH"
 title = "Pure per-path mangling; R013 without module qualification"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
