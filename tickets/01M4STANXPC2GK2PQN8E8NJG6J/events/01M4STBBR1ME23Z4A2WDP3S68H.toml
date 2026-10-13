@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the iso286 fit classes in stdlib.md 2, when evaluated, then deviations match the published ISO 286 values, each cited (stdlib.md 2)", "Given a bore and shaft, when a fit is evaluated, then limits resolve to the expected clearance (stdlib.md 2)"]
+new = ["Given the iso286 fit classes in stdlib.md 2, when evaluated, then deviations match the published ISO 286 values, each cited (stdlib.md 1)", "Given a bore and shaft, when a fit is evaluated, then limits resolve to the expected clearance (stdlib.md 1)"]
+moved = [0, 0]
+at = "2026-10-13T05:04:18Z"
+actor = "lognd"
+rev = 1
