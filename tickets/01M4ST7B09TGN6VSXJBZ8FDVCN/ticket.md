@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T07:50:39Z"
+updated = "2026-10-13T07:51:36Z"
 persona = "design engineer"
 capability = "lint existing CAD files before I write any source"
 idempotency_key = "replan13:Observed IR flavour and expression capture"
 labels = ["creates:crates/cadetta-ir/src/observed.rs"]
-scope = ["crates/cadetta-ir/src/observed.rs"]
+scope = ["crates/cadetta-ir/src/observed.rs", "crates/cadetta-ir/src/lib.rs"]
 
 [[acceptance]]
 text = "Given an adapter read result, when built, then parameters carry native name, locator, unit_assumed and exact:false with a reason where not faithful (ir.md 1, adapters.md 3)"
