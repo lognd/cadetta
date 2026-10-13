@@ -2,7 +2,8 @@
 id = "01M4SWFXADMC8C5Y451JRVBYZM"
 title = "Pattern generators rect_pattern and circle_pattern with bindable members"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
