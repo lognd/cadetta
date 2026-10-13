@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given cadetta.toml, when parsed, then [defaults], [units], [emit], [lint], [obligations], [solvers] and [[adapter]] keys have the types and defaults of config-cli.md 2"
