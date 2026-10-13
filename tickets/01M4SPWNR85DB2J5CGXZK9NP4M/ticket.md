@@ -2,7 +2,8 @@
 id = "01M4SPWNR85DB2J5CGXZK9NP4M"
 title = "Three-valued comparison over affine forms"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
