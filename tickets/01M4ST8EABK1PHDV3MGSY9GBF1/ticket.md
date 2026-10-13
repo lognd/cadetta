@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T05:02:42Z"
+updated = "2026-10-13T05:05:16Z"
 persona = "design engineer"
 capability = "name a primary part and approved alternates for a slot"
 idempotency_key = "replan13:Interface-typed part slots with primary and alt list"
 labels = ["creates:crates/cadetta-variants/src/slot.rs"]
 scope = ["crates/cadetta-variants/src/slot.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8EC6HVWM52PEHS43F430"
 
 [[acceptance]]
 text = "Given `part wheel[4]: Caster = Vendor4471B alt [Colson2Series]`, when resolved, then the slot has a primary and one alternate, all implementing Caster (language.md 3.2)"
