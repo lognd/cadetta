@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T13:34:27Z"
+updated = "2026-10-13T13:34:28Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a trailing comment, when written, then it holds the authored literal if its text differs, then the emit point if not nominal, then the citation, and nothing else (emitters/sw-equations.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given doc comments, when emitted, then they become comment lines directly above the first line of the path (emitters/sw-equations.md 1)"
