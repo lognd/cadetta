@@ -44,7 +44,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a pub item whose interface member type, component parameter type, or function argument or result type is private, when checked, then E017 fires (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a member implementing an interface member that is priv, when checked, then E017 fires (packages.md 3, 7)"
