@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given std lib.cdt, when read, then it exports one pub cite per standard at the root (std::iso273, std::iso286, std::din472 and one for every standard std cites), each with its title, number and edition (stdlib.md intro)", "Given user code `cite din472 = std::din472`, when resolved and checked, then the citation resolves and no S001 fires (stdlib.md intro; packages.md 3)", "Given the exported items of std, when listed, then every one is pub and exactly the items stdlib.md lists are exported (packages.md 3)"]
+new = ["Given user code `cite din472 = std::din472`, when resolved and checked, then the citation resolves and no S001 fires (stdlib.md intro; packages.md 3)", "Given the exported items of std, when listed, then every one is pub and exactly the items stdlib.md lists are exported (packages.md 3)", "Given std lib.cdt, when read, then it exports one pub cite per standard it uses at the root (std::iso273, std::iso286, std::din472 and so on) (stdlib.md intro)"]
+moved = [0, 1, 2]
+at = "2026-10-13T06:05:29Z"
+actor = "lognd"
+rev = 1
