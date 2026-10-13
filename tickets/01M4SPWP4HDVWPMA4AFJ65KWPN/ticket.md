@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]`, `20mm H7` and `x j5`, when parsed, then tolerance and ISO class postfixes attach to the operand (quantities.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `a[0]` and `a [+-0.1mm]`, when parsed, then the first is indexing and the second a tolerance because the bracket starts with + or - (quantities.md 5.1)"
