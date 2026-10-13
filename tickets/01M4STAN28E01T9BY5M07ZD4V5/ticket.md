@@ -2,7 +2,8 @@
 id = "01M4STAN28E01T9BY5M07ZD4V5"
 title = "Solver transports and command template"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
