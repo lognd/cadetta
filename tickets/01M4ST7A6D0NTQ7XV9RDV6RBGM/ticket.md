@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:27:01Z"
+updated = "2026-10-13T06:27:08Z"
 persona = "design engineer"
 capability = "print quantities in the unit I chose, including fractional inches"
 idempotency_key = "replan13:Display unit selection and fractional formats"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `#[display(in/32)]`, when 45.9375in is printed, then it reads `45-15/16in` (quantities.md 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = """Given `#[display(ft_in)]`, when printed, then it reads `3'9-15/16"` (quantities.md 6)"""
