@@ -2,7 +2,8 @@
 id = "01M4SWN8G3QTQC5YK07VN1YQYC"
 title = "Output schemas for all commands"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
