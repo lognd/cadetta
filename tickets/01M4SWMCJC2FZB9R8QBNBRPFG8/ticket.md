@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:14Z"
 persona = "design engineer"
 capability = "split one design across several files"
 idempotency_key = "replan14:ad-scope"
 labels = ["creates:crates/cadetta-adapter/src/scope.rs"]
 scope = ["crates/cadetta-adapter/src/scope.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 
 [[acceptance]]
 text = "Given two [[adapter]] blocks with the same name, when id is missing, then it is a configuration error; id defaults to name (config-cli.md 2)"
