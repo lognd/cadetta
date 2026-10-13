@@ -2,7 +2,8 @@
 id = "01M4SV2NMPSM42YZT9MXT4YVMW"
 title = "Python Project.open, evaluate and design indexing with schema-generated IR models"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
