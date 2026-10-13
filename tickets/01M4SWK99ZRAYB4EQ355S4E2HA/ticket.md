@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a Check, when lowered, then verdicts hold primary and per_alternate keyed SLOT=ALT with conservative and waived_for (ir.md 3)"
-bound = false
+bound = true
 +++
