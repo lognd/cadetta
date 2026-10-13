@@ -8,12 +8,12 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:13Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "model a bolt pattern once"
 idempotency_key = "replan14:sd-screw"
-labels = ["creates:std/fasteners.cdt"]
-scope = ["std/fasteners.cdt"]
+labels = ["creates:std/src/fasteners.cdt"]
+scope = ["std/src/fasteners.cdt"]
 
 [[links]]
 kind = "blocked-by"
