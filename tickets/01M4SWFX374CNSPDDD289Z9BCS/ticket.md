@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:11:59Z"
+updated = "2026-10-13T07:14:20Z"
 persona = "design engineer"
 capability = "declare datums on a component"
 idempotency_key = "replan14:geo-datum"
 labels = ["creates:crates/cadetta-geometry/src/datum.rs", "creates:crates/cadetta-geometry/Cargo.toml", "creates:crates/cadetta-geometry/src/lib.rs"]
-scope = ["crates/cadetta-geometry/src/datum.rs", "crates/cadetta-geometry/Cargo.toml", "crates/cadetta-geometry/src/lib.rs"]
+scope = ["crates/cadetta-geometry/src/datum.rs", "crates/cadetta-geometry/Cargo.toml", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"
