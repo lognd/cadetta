@@ -30,4 +30,8 @@ bound = false
 [[criteria]]
 text = "SOLIDWORKS add-in links a dimension, a pattern count and a tolerance by selection, creates datum frames and assigns parts, with no bindings-file entry for native links"
 bound = false
+
+[[criteria]]
+text = "Typed IEEE citations compile, S008 flags incomplete ones, and cadetta cite list prints the reference list"
+bound = false
 +++
