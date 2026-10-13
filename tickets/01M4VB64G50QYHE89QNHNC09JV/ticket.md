@@ -8,7 +8,7 @@ points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T23:14:39Z"
+updated = "2026-10-13T23:17:47Z"
 persona = "design engineer"
 capability = "use citations, names and bindings from Python"
 outcome_text = "the binding matches the CLI"
@@ -25,5 +25,5 @@ target = "01M4VB644Y6YPK6YTBP4T5YM3Y"
 
 [[acceptance]]
 text = "Given the Python package, when design.citation, project.cite_list, project.names, project.bind and project.unbind are called, then they return the CLI's JSON models as Results (bindings.md 3.1, 3.2)"
-bound = false
+bound = true
 +++
