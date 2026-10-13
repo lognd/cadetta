@@ -2,7 +2,8 @@
 id = "01M4SPWNBYWT610BHC6GNSP35P"
 title = "Built-in unit table with exact SI factors"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
