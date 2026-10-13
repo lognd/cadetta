@@ -1,0 +1,14 @@
+kind = "create"
+title = "Adapters: protocol and built-in emitters (cadetta-adapter)"
+type = "epic"
+category = "todo"
+priority = "medium"
+labels = ["creates:crates/cadetta-adapter/**"]
+scope = ["crates/cadetta-adapter/**"]
+body = """
+Outcome: the adapter contract, JSON-RPC stdio protocol and built-in json, csv and sw-equations adapters.
+
+Success metric: golden-file tests pass for all three built-in emitters and a mock external adapter completes the protocol."""
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
