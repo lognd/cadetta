@@ -294,7 +294,8 @@ reading only another part's arguments keeps its closure. Spans and doc comments 
 formatting never changes a digest.
 
 Attributes split in two. Semantic attributes are in the digest:
-`process`, `role`, rule roles (`hole`, `boss`, ...) and `default`.
+`process`, `role`, rule roles (`hole`, `boss`, ...), `default`, and the
+presence rules `when` and `requires` (language.md 3.11).
 Presentational attributes are out of it: `display`, `emit`, `allow` and
 the date text of `lifecycle`; changing them never makes an obligation
 stale. `emit` is tracked in the sync record instead (adapters.md), so
