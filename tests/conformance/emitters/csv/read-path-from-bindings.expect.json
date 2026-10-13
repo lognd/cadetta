@@ -5,7 +5,7 @@
   "rule": "read-path",
   "kind": "binding",
   "entry": "read",
-  "note": "the path is not in the file; it is resolved through the bindings (adapters.md 3.1)",
+  "note": "the path is not in the file; it is resolved through the bindings (adapters.md 3.1), so the same row reads at whichever path the binding names",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,
@@ -19,7 +19,12 @@
   "must_not_fire": {
     "diagnostics": [],
     "exit": 0,
-    "observed": {},
+    "observed": {
+      "B": {
+        "path": "acme.demo::Part.depth",
+        "value": "5mm"
+      }
+    },
     "excludes": [
       "acme.demo::Part.width"
     ]

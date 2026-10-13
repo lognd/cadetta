@@ -1,8 +1,8 @@
 {
   "file": "build/params.csv",
-  "text": "# cadetta emit csv 0.1.0 ir=blake3:00 bindings=blake3:00\nname,value,unit,note\nQ,5,mm,\n",
+  "text": "# cadetta emit csv 0.1.0 ir=blake3:00 bindings=blake3:00\nname,value,unit,note\nB,5,mm,\n",
   "native_unit": "mm",
   "bindings": {
-    "B": "acme.demo::Part.width"
+    "B": "acme.demo::Part.depth"
   }
 }

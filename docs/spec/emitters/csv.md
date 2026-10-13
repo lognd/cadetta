@@ -16,7 +16,10 @@ NumBolts,4,,
 
 - Line 1 is the header comment (adapter version, IR digest, bindings
   digest); it is excluded from the `sync` no-op comparison
-  (adapters.md 2). Reading skips every line that begins with `#`.
+  (adapters.md 2). Reading skips every record that begins with `#`. Only
+  the first character of a record is tested: a continuation line of a
+  quoted multi-line field that begins with `#` is part of that field's
+  data, not a comment, and a `#` inside a name is data.
 - Line 2 is the fixed column row `name,value,unit,note`.
 - `name` is the bound locator (kind `global`) or the mangled path
   (adapters.md 3.1).
@@ -50,7 +53,11 @@ locators in bindings-file order.
 ## 3. Read
 
 `read` parses the same columns. The `path` is not in the file; it is
-resolved through the bindings (adapters.md 3.1). A missing `unit` takes
+resolved through the bindings (adapters.md 3.1). A row whose `name`
+matches no binding of this adapter is the error R016 (naming the row
+and the file): `read` produces no observed IR for the file and the exit
+status is 1. A row is never skipped silently and never matched by
+guessing a path. A missing `unit` takes
 `--assume-unit` when the run gives one, else the locator's `native_unit`,
 else the adapter's declared native unit; the result is recorded as
 `unit_assumed`. The explicit flag wins over the configured `native_unit`. Every

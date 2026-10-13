@@ -381,7 +381,7 @@ come from the adapter's responses and are passed through unchanged
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal; the base is the lock `synced` record). Says which side moved: cad, design or both. `sync --force-design` pushes over it. |
-| R002 | unbound-native | warning | | Native parameter has no binding. |
+| R002 | unbound-native | warning | | Native parameter has no binding. (A `csv` file reports an unbound row as R016 instead.) |
 | R003 | missing-native | error | | Bound path not found in the native file. |
 | R004 | regen-failed | error | | The CAD tool failed to rebuild after a push; affected documents are restored from their snapshot. |
 | R005 | orphan-binding | warning | | A binding's path matches no IR path and no `was` path. |
@@ -395,6 +395,7 @@ come from the adapter's responses and are passed through unchanged
 | R013 | name-collision | error | yes | Two emitted paths would create the same native name (adapters.md, emitters/sw-equations.md). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
 | R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
+| R016 | unbound-row | error | yes | A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (emitters/csv.md 3). The file is user-supplied and carries no path, so an unbound row is an error rather than the native-discovery warning R002; no observed IR is produced for the file. (`json` entries carry their own `path`.) |
 
 ### U, W
 

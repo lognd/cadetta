@@ -1,0 +1,30 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/csv",
+  "section": "emitters/csv.md 1",
+  "rule": "read-comments-record-start",
+  "kind": "binding",
+  "entry": "read",
+  "note": "only the start of a record is tested for #: a continuation line of a quoted multi-line field is data, a record outside quotes is a comment",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "B": {
+        "value": "5mm"
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "B": {
+        "value": "5mm"
+      }
+    },
+    "excludes": [
+      "second line"
+    ]
+  }
+}

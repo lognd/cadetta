@@ -647,6 +647,13 @@ pub const CATALOG: &[CodeInfo] = &[
         meaning: "An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = \"ref\"` binding, on a format with only `global` value rows (`json`, `csv`); a locator that is not emitted is never reported",
     },
     CodeInfo {
+        code: "R016",
+        name: "unbound-row",
+        default: Severity::Error,
+        fixed: true,
+        meaning: "A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (an error, unlike the native-discovery warning R002); no observed IR is produced",
+    },
+    CodeInfo {
         code: "U001",
         name: "unused-parameter",
         default: Severity::Info,
