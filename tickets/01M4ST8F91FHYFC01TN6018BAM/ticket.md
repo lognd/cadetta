@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:18Z"
 persona = "design engineer"
 capability = "preview a part swap before editing"
 idempotency_key = "replan13:impact --swap: verdict, changed values, flips and suggested edit"
 labels = ["creates:crates/cadetta-cli/src/cmd/impact_swap.rs"]
 scope = ["crates/cadetta-cli/src/cmd/impact_swap.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8FAX8HDAXH8NBC8VKPXW"
 
 [[acceptance]]
 text = "Given `impact --swap PART NEW`, when run, then it is the variant evaluation of PART=NEW diffed against the primary evaluation (obligations.md 5.1)"
