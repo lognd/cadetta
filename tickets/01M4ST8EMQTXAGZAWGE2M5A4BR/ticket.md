@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T06:10:19Z"
+updated = "2026-10-13T06:10:21Z"
 persona = "design engineer"
 capability = "see every claim as a node with typed edges"
 idempotency_key = "replan13:Obligation graph nodes, edges and states"
@@ -21,7 +21,7 @@ target = "01M4ST8EPKBWRWHF51Y5NV3VK0"
 
 [[acceptance]]
 text = "Given a lowered IR, when the graph is built, then edges derives, cites, implements, instantiates, evaluates, solves, binds, realizes, attests and waives exist as in the obligations.md 1 table"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the states discharged, stale, violated, undecided, open and waived, when an obligation is classified, then exactly one applies (obligations.md 2)"
