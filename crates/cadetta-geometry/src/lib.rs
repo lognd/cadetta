@@ -4,4 +4,5 @@
 
 pub mod datum;
 pub mod interface_datum;
+pub mod placement;
 pub mod transform;

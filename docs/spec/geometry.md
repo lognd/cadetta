@@ -199,6 +199,18 @@ on rail.top.offset(x = 40mm).rotate(z = 90deg)`.
   `Assembly/part[i].place...` for a for-placement); ir.md 2.
 - Variants (language.md 3.2) re-evaluate placements like any member.
 
+Evaluation rules (placement.rs):
+
+- A part's frame is the anchor's frame, then the `on` operations, then
+  the inverse of the placed datum (its operations reversed and
+  negated). This is composition only; it never solves.
+- A subassembly is a node whose datums are its own; its parts are
+  placed relative to its `origin`, and instance paths join with `/`.
+- Placing on a part that is itself never placed is G003.
+- A `for` placement carries the `[*]` index in its canonical path
+  (`Assembly/part[*].place.0.x`); an unindexed target covers every
+  instance, so it overlaps any other placement of that part (G006).
+
 ## 5. Checking positions
 
 - Any check may read converted positions: `check fan_clear: (fan.face in
