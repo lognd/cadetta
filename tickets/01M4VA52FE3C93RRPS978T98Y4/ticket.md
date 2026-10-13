@@ -7,9 +7,9 @@ priority = "high"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T18:59:44Z"
-updated = "2026-10-13T19:00:28Z"
+updated = "2026-10-13T19:14:24Z"
 labels = ["creates:docs/spec/solidworks.md"]
-scope = ["docs/decisions/**", "docs/spec/README.md", "docs/spec/language.md", "docs/spec/geometry.md", "docs/spec/ir.md", "docs/spec/adapters.md", "docs/spec/lints.md", "docs/spec/obligations.md", "docs/spec/config-cli.md", "docs/spec/stdlib.md", "docs/spec/bindings.md", "docs/spec/solvers.md", "docs/spec/quantities.md", "docs/spec/emitters/sw-equations.md", "docs/spec/solidworks.md"]
+scope = ["docs/decisions/**", "docs/spec/README.md", "docs/spec/language.md", "docs/spec/geometry.md", "docs/spec/ir.md", "docs/spec/adapters.md", "docs/spec/lints.md", "docs/spec/obligations.md", "docs/spec/config-cli.md", "docs/spec/stdlib.md", "docs/spec/bindings.md", "docs/spec/solvers.md", "docs/spec/quantities.md", "docs/spec/emitters/sw-equations.md", "docs/spec/solidworks.md", "design/model.grmb", "design/vmodel.grmb", "docs/decisions/2026-10-13-bindings-and-solidworks.md"]
 
 [[acceptance]]
 text = "Given docs/spec, when read, then citations are typed IEEE-style records with per-type locating fields, S008 flags an incomplete one, and solver scripts are no longer citations"
