@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T09:54:31Z"
+updated = "2026-10-13T09:54:34Z"
 persona = "design engineer"
 capability = "see stale, open and unattested obligations as diagnostics"
 idempotency_key = "replan13:Lints O001-O003 for obligations"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a current attestation, when linted, then none fires (lints.md O)"
-bound = false
+bound = true
 +++
