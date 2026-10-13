@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T09:27:32Z"
+updated = "2026-10-13T09:28:42Z"
 persona = "design engineer"
 capability = "keep positions in their datum"
 idempotency_key = "replan14:geo-points"
@@ -25,7 +25,7 @@ target = "01M4SWFX374CNSPDDD289Z9BCS"
 
 [[acceptance]]
 text = "Given 'Point2 on top' and a literal Point2(5mm, 0mm) on top, when typed, then both carry datum top (geometry.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Point - Point, Point + Vec, Vec * s and array + vector, when evaluated, then results are in the same datum (geometry.md 3)"
