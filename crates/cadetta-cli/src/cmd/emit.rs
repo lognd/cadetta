@@ -40,7 +40,7 @@ const USAGE: &str = "usage: cadetta emit [ADAPTER...] [--module PATH] [GLOB...]"
 const SW_EQUATIONS_VERSION: &str = "0.1.0";
 
 /// Native unit used when neither the locator nor the adapter declares one.
-const DEFAULT_NATIVE_UNIT: &str = "mm";
+pub(crate) const DEFAULT_NATIVE_UNIT: &str = "mm";
 
 /// The parsed command line of `cadetta emit`.
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -106,7 +106,7 @@ pub struct EmitReport {
     pub diagnostics: Vec<EmitDiag>,
 }
 
-fn diag(code: &str, message: impl Into<String>, path: Option<&Path>) -> EmitDiag {
+pub(crate) fn diag(code: &str, message: impl Into<String>, path: Option<&Path>) -> EmitDiag {
     EmitDiag {
         code: code.to_owned(),
         message: message.into(),
@@ -166,7 +166,7 @@ fn designed(value: &Value, factor: &Magnitude) -> Result<Designed, String> {
     })
 }
 
-fn config_point(p: ConfigPoint) -> PolicyPoint {
+pub(crate) fn config_point(p: ConfigPoint) -> PolicyPoint {
     match p {
         ConfigPoint::Nominal => PolicyPoint::Nominal,
         ConfigPoint::Mid => PolicyPoint::Mid,
@@ -175,7 +175,7 @@ fn config_point(p: ConfigPoint) -> PolicyPoint {
     }
 }
 
-fn attr_point(member: &Member) -> Option<PolicyPoint> {
+pub(crate) fn attr_point(member: &Member) -> Option<PolicyPoint> {
     match member.attrs.get("emit").map(String::as_str) {
         Some("nominal") => Some(PolicyPoint::Nominal),
         Some("mid") => Some(PolicyPoint::Mid),
@@ -235,7 +235,7 @@ fn wildcard(path: &str) -> (String, bool) {
 }
 
 /// The locators bound to `path`: an exact binding, or a `[*]` binding at instance 0 only.
-fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [Locator]> {
+pub(crate) fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [Locator]> {
     if let Some(b) = set.get(path) {
         return Some(&b.locators);
     }
@@ -249,7 +249,7 @@ fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [Locator]> {
         .map(|b| b.locators.as_slice())
 }
 
-fn kind_of(value: &Value) -> ValueKind {
+pub(crate) fn kind_of(value: &Value) -> ValueKind {
     if !value.dim.dimension.is_dimensionless() || value.angle != 0 || value.dim.angle != 0 {
         return ValueKind::Quantity;
     }
@@ -259,6 +259,32 @@ fn kind_of(value: &Value) -> ValueKind {
         }
         _ => ValueKind::Ratio,
     }
+}
+
+/// A member's citation as emit and names print it: display name plus locator, if any.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub(crate) fn citation_text(member: &Member) -> Option<String> {
+    member.citation.as_ref().map(|c| match &c.locator {
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        Some(l) => format!("{} {l}", c.display_name()),
+        None => c.display_name(),
+    })
+}
+
+/// The members offered to scope binding: non-analysis, valued, accepted by the adapter scope.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub(crate) fn scope_candidates(ir: &Ir, scope: &AdapterScope) -> Vec<ScopeCandidate> {
+    ir.components
+        .iter()
+        .flat_map(|c| &c.members)
+        .filter(|m| !m.analysis && m.value.is_some() && scope.accepts(&m.path.to_string()))
+        .map(|m| ScopeCandidate {
+            path: m.path.clone(),
+            kind: m.kind,
+            // sw-equations cannot express Text; such members carry no numeric value.
+            text: m.value.is_none(),
+        })
+        .collect()
 }
 
 /// Everything one adapter's emit needs from its package.
@@ -278,7 +304,7 @@ struct Built {
     diagnostics: Vec<EmitDiag>,
 }
 
-fn native_unit(adapter: &Adapter, loc: &Locator) -> String {
+pub(crate) fn native_unit(adapter: &Adapter, loc: &Locator) -> String {
     if !loc.native_unit.is_empty() {
         loc.native_unit.clone()
     } else {
@@ -371,11 +397,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         };
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], job.config_point);
-        let citation = member.citation.as_ref().map(|c| match &c.locator {
-            // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-            Some(l) => format!("{} {l}", c.display_name()),
-            None => c.display_name(),
-        });
+        let citation = citation_text(member);
         let mut own_global_written = false;
         for loc in locators {
             if loc.for_alternate.is_some() {
@@ -493,7 +515,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
 }
 
 /// The written text of one value, `Ok(None)` for a Text value, `Err((code, message))` on Q004.
-fn written_for(
+pub(crate) fn written_for(
     table: &UnitTable,
     value: &Value,
     member: &Member,
@@ -655,18 +677,7 @@ fn emit_package(
         // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
         if adapter.bind == BindMode::Scope {
             let package = pkg.config.package.as_ref().and_then(|p| p.name.as_deref());
-            let candidates: Vec<ScopeCandidate> = ir
-                .components
-                .iter()
-                .flat_map(|c| &c.members)
-                .filter(|m| !m.analysis && m.value.is_some() && scope.accepts(&m.path.to_string()))
-                .map(|m| ScopeCandidate {
-                    path: m.path.clone(),
-                    kind: m.kind,
-                    // sw-equations cannot express Text; such members carry no numeric value.
-                    text: m.value.is_none(),
-                })
-                .collect();
+            let candidates = scope_candidates(ir, &scope);
             match set.bind_scope(
                 &candidates,
                 package.unwrap_or_default(),

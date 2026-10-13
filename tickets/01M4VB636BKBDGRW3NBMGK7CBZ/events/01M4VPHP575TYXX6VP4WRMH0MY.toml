@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T22:36:20Z"
+digest = "b7e6e99781f8bc67cc83ef19e145b31b0ad16b564ed64802a53eca6f8b824aee"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4303f83a-d967-4e1e-a6b1-dc83d7de02fc with nextest profile: default
+    Starting 2 tests across 1 binary (44 tests skipped)
+        PASS [   0.035s] cadetta-geometry placement::tests::g006_on_double_and_array_plus_indexed
+        PASS [   0.042s] cadetta-geometry instances::tests::g007_partly_placed_array
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.043s] 2 tests run: 2 passed, 44 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry g006_on_double_and_array_plus_indexed g007_partly_placed_array"
+size = 648
+status = "measured"
+test_count = 2
+tests_digest = "0c0efffd3193ee211e490625927128da86ecebe2b10ebf27599b933877f847d9"
+at = "2026-10-13T22:36:20Z"
+actor = "lognd"
+rev = 1

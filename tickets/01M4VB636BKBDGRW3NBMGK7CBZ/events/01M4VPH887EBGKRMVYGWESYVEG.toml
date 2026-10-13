@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T22:36:05Z"
+digest = "fe76d860409b3de8ec19a6b49b8122de402dea1a9c8ce4d9fc98cd5544f449ce"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0147ca79-a90e-4f00-a3d8-428a42f5b610 with nextest profile: default
+    Starting 3 tests across 1 binary (43 tests skipped)
+        PASS [   0.010s] cadetta-geometry point::tests::cross_datum_and_array_plus_point_are_g001
+        PASS [   0.010s] cadetta-geometry instances::tests::point_on_another_datum_or_after_an_op_is_g001
+        PASS [   0.011s] cadetta-geometry instances::tests::point_form_equals_the_explicit_axes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 3 tests run: 3 passed, 43 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry point_form_equals_the_explicit_axes point_on_another_datum_or_after_an_op_is_g001 cross_datum_and_array_plus_point_are_g001"
+size = 765
+status = "measured"
+test_count = 3
+tests_digest = "6bacf39c37763faac07eb15b51ae29dc8408a5920520bbcc238d416bcc680ee1"
+at = "2026-10-13T22:36:05Z"
+actor = "lognd"
+rev = 1
