@@ -1,14 +1,14 @@
 +++
 id = "01M4SPWNNDNT60Z38K24AEKVAE"
-title = "Tolerances and worst-case interval arithmetic"
+title = "Tolerances as affine forms over source variables"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 5
+points = 8
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T04:03:59Z"
+updated = "2026-10-13T05:01:22Z"
 persona = "design engineer"
 capability = "attach symmetric, asymmetric, limit and fit tolerances to quantities and add them"
 outcome_text = "stacked deviations are computed exactly"
@@ -28,14 +28,30 @@ kind = "blocks"
 target = "01M4SPWPXSG1YKHGF4KV5G43BT"
 
 [[acceptance]]
-text = "Given `10mm +- 0.05mm` plus `5mm +0.1mm -0.02mm`, when added, then the deviations add (worst case)"
+text = "Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]` and `12mm [-0.006mm -0.017mm]`, when constructed, then each is a lower<=upper deviation pair on the nominal (quantities.md 5.1)"
 bound = false
 
 [[acceptance]]
-text = "Given two toleranced quantities, when multiplied, then Q005 is signalled"
+text = "Given lower > upper, or a deviation of a different dimension, when constructed, then an error value is returned (quantities.md 5.1)"
 bound = false
 
 [[acceptance]]
-text = "Given lower > upper, when constructed, then it is rejected"
+text = "Given `1in [+-0.1mm]`, when constructed, then deviation units may differ from the nominal unit (quantities.md 5.1)"
+bound = false
+
+[[acceptance]]
+text = "Given `9.98mm..10.05mm`, when constructed, then the nominal is the midpoint (quantities.md 5.1)"
+bound = false
+
+[[acceptance]]
+text = "Given `a + a` and `a - a` over one source variable, when evaluated, then repeated and cancelling terms are counted once, so `a - a` has zero tolerance (quantities.md 5.4)"
+bound = false
+
+[[acceptance]]
+text = "Given a product of two toleranced values, when evaluated, then the result falls back to interval bounds and is marked conservative; Q005 no longer exists (quantities.md 5.4)"
+bound = false
+
+[[acceptance]]
+text = "Given sqrt or trig of a toleranced value, when evaluated, then the result is conservative (quantities.md 5.4)"
 bound = false
 +++

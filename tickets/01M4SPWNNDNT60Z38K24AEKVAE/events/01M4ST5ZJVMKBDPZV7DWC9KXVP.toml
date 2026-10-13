@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `10mm +- 0.05mm` plus `5mm +0.1mm -0.02mm`, when added, then the deviations add (worst case)", "Given two toleranced quantities, when multiplied, then Q005 is signalled", "Given lower > upper, when constructed, then it is rejected"]
+new = ["Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]` and `12mm [-0.006mm -0.017mm]`, when constructed, then each is a lower<=upper deviation pair on the nominal (quantities.md 5.1)", "Given lower > upper, or a deviation of a different dimension, when constructed, then an error value is returned (quantities.md 5.1)", "Given `1in [+-0.1mm]`, when constructed, then deviation units may differ from the nominal unit (quantities.md 5.1)", "Given `9.98mm..10.05mm`, when constructed, then the nominal is the midpoint (quantities.md 5.1)", "Given `a + a` and `a - a` over one source variable, when evaluated, then repeated and cancelling terms are counted once, so `a - a` has zero tolerance (quantities.md 5.4)", "Given a product of two toleranced values, when evaluated, then the result falls back to interval bounds and is marked conservative; Q005 no longer exists (quantities.md 5.4)", "Given sqrt or trig of a toleranced value, when evaluated, then the result is conservative (quantities.md 5.4)"]
+moved = [0, 0, 0]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1

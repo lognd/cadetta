@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Tolerances and worst-case interval arithmetic"
+new = "Tolerances as affine forms over source variables"
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1
