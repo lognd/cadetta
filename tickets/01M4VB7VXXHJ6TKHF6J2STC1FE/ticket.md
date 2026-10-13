@@ -18,6 +18,10 @@ scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "adapte
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SV2TR8ENTA87J1DDKCF816"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4VB7VTPQEHBVQ8ZCR2T1G5K"
 
 [[acceptance]]
