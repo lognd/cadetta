@@ -2,13 +2,13 @@
 id = "01M4SXRV606ZNADV511Z42YR0Q"
 title = "Use resolution order, globs, re-exports and prelude"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T06:04:06Z"
+updated = "2026-10-13T08:03:43Z"
 persona = "product engineer"
 capability = "import shop policy and parts by name"
 labels = ["creates:crates/cadetta-sema/src/imports.rs"]
