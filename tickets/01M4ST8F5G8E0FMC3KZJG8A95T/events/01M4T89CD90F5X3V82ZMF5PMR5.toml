@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T09:07:53Z"
+digest = "3657479c5af5ab21015d20b8cd543479597fdef5393749be67620c01ffb19d71"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5d2c43ac-1ebd-4665-a263-4ff7a7d87c25 with nextest profile: default
+    Starting 1 test across 21 binaries (571 tests skipped)
+        PASS [   0.006s] cadetta cmd::why::tests::json_validates_against_why_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 571 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=cmd::why::tests::json_validates_against_why_schema)'"
+size = 552
+status = "measured"
+test_count = 1
+tests_digest = "2871906e8cd15295d10ddd86138bdde452b6205c6d62095c17fc30b6eb9f36e0"
+at = "2026-10-13T09:07:53Z"
+actor = "lognd"
+rev = 1
