@@ -61,7 +61,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a swap of an interface-typed slot, when computed, then attestations covering instance paths of the slot become stale and attestations on other parts do not (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a require evaluating holds with an attestation configured, when classified, then it is discharged only with a current attestation (obligations.md 2, 4)"
