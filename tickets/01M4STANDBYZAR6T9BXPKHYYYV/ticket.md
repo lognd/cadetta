@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:27:56Z"
+updated = "2026-10-13T07:34:09Z"
 persona = "design engineer"
 capability = "use solver outputs as checked values or as drivers"
 idempotency_key = "replan13:Bound versus driving outputs"
 labels = ["creates:crates/cadetta-solvers/src/outputs.rs"]
-scope = ["crates/cadetta-solvers/src/outputs.rs"]
+scope = ["crates/cadetta-solvers/src/outputs.rs", "crates/cadetta-solve/src/outputs.rs", "crates/cadetta-solve/src/lib.rs", "docs/spec/solvers.md"]
 
 [[acceptance]]
 text = "Given a bound output, when evaluated, then it is checked against the design and never drives it (solvers.md 2)"
