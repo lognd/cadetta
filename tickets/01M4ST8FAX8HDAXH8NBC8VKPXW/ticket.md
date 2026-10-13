@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-13T14:01:30Z"
+updated = "2026-10-13T14:01:31Z"
 persona = "design engineer"
 capability = "see what a swap costs and what must be re-synced and re-reviewed"
 idempotency_key = "replan13:impact --swap: CAD files, attestations and commercial deltas"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the swap, when commercial deltas are printed, then they are diffs of `sum?(self, unit_cost)` per currency, `max?(self, lead_time)` and `mass?(self)` at the assembly named by the PART prefix, plus `moq` per changed part (obligations.md 5.1 section 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given parts lacking a value, when printed, then they are listed (obligations.md 5.1)"
