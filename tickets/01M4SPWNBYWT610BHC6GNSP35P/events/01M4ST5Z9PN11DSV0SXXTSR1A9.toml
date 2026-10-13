@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given unit `in`, when looked up, then the factor is exactly 127/5000", "Given `N*m*s`, when parsed, then it yields an anonymous kind of dimension M L^2 T^-1", """Given `5"` and `2'`, when resolved, then they alias in and ft"""]
+new = ["Given unit `in`, when looked up, then the factor is exactly 127/5000 (quantities.md 3)", "Given every unit in the quantities.md 3 table, when looked up, then it has an exact factor r*pi^k and a default kind", "Given `N*m*s`, when parsed, then it yields an anonymous kind of dimension M L^2 T^-1 (quantities.md 4.1 rule 1)", """Given `5"` and `2'`, when resolved, then they alias in and ft (quantities.md 2)""", "Given `%`, when resolved, then 5% is exactly 1/20 of kind Ratio (quantities.md 2)", "Given a user declaration `unit kip = 1000lbf`, when registered, then it resolves like a built-in (language.md 3.10)"]
+moved = [0, 0, 0]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1

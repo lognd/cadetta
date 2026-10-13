@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T04:04:04Z"
+updated = "2026-10-13T05:01:22Z"
 persona = "design engineer"
 capability = "use every unit in the quantities.md table (m mm in ft deg N*m psi rpm ...)"
 outcome_text = "I can author values in the units my datasheets use"
@@ -28,14 +28,26 @@ kind = "blocks"
 target = "01M4SPWT6N1HY3MHN544GZJYS9"
 
 [[acceptance]]
-text = "Given unit `in`, when looked up, then the factor is exactly 127/5000"
+text = "Given unit `in`, when looked up, then the factor is exactly 127/5000 (quantities.md 3)"
 bound = false
 
 [[acceptance]]
-text = "Given `N*m*s`, when parsed, then it yields an anonymous kind of dimension M L^2 T^-1"
+text = "Given every unit in the quantities.md 3 table, when looked up, then it has an exact factor r*pi^k and a default kind"
 bound = false
 
 [[acceptance]]
-text = """Given `5"` and `2'`, when resolved, then they alias in and ft"""
+text = "Given `N*m*s`, when parsed, then it yields an anonymous kind of dimension M L^2 T^-1 (quantities.md 4.1 rule 1)"
+bound = false
+
+[[acceptance]]
+text = """Given `5"` and `2'`, when resolved, then they alias in and ft (quantities.md 2)"""
+bound = false
+
+[[acceptance]]
+text = "Given `%`, when resolved, then 5% is exactly 1/20 of kind Ratio (quantities.md 2)"
+bound = false
+
+[[acceptance]]
+text = "Given a user declaration `unit kip = 1000lbf`, when registered, then it resolves like a built-in (language.md 3.10)"
 bound = false
 +++
