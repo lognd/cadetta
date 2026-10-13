@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T13:32:20Z"
+updated = "2026-10-13T13:32:21Z"
 persona = "design engineer"
 capability = "be warned about lifecycle, missing table rows and process roles"
 idempotency_key = "replan13:Lints L001-L002, T001 and P001"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given T001, when an ots literal matches no row, then it fires (lints.md T)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given P001, when a feature-like parameter has no role under a process, then it fires (lints.md P)"
