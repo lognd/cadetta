@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T23:14:14Z"
+digest = "3bda817dbe82ab2fee17aff8657badabdaaf03079882b25b699152eaa92ef98e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3a6886ff-af3e-4654-9103-264401866c32 with nextest profile: default
+    Starting 3 tests across 29 binaries (1021 tests skipped)
+        PASS [   0.011s] cadetta-adapter bindings::tests::writer_writes_tolerance_canonically
+        PASS [   0.017s] cadetta cmd::bind::tests::rejects_conflicts_and_invalid_requests
+        PASS [   0.019s] cadetta cmd::bind::tests::tolerance_is_written_canonically_and_idempotent
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.026s] 3 tests run: 3 passed, 1021 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(tolerance_is_written_canonically_and_idempotent) | test(writer_writes_tolerance_canonically) | test(rejects_conflicts_and_invalid_requests)'"
+size = 755
+status = "measured"
+test_count = 3
+tests_digest = "d3b0a0f41bb7ad38aa83761735e8c821742bb0e34fd25c45ec6e47adc735a4c5"
+at = "2026-10-13T23:14:14Z"
+actor = "lognd"
+rev = 1
