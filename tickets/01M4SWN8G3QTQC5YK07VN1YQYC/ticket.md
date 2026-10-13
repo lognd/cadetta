@@ -1,0 +1,21 @@
++++
+id = "01M4SWN8G3QTQC5YK07VN1YQYC"
+title = "Output schemas for all commands"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+reporter = "lognd"
+created = "2026-10-13T05:44:40Z"
+updated = "2026-10-13T05:44:40Z"
+persona = "design engineer"
+capability = "script against stable JSON"
+idempotency_key = "replan14:cli-schemas"
+labels = ["creates:docs/schemas/*.json"]
+scope = ["docs/schemas/*.json"]
+
+[[acceptance]]
+text = "Given each command in config-cli.md 3, when run with --format json, then output validates against its generated schema in docs/schemas (config-cli.md 5)"
+bound = false
++++
