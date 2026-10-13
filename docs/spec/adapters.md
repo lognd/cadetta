@@ -221,6 +221,13 @@ reads and syncs, so two products can each link their own equations
 file. `sync`, `emit` and `check` accept `--module PATH` and path globs
 with the same effect for one run.
 
+A `modules` prefix matches on a segment boundary (`acme.gear` matches
+`acme.gear::X.y` and `acme.gear.sub::X.y`, not `acme.gearbox::X.y`). In
+`paths` globs, `*` matches any run of characters without a `:` (it stays
+inside one module or item segment) and `**` matches any run. A path
+reaches the adapter only if it passes both filters (an empty list means
+all); per-run flags narrow the adapter's scope, never widen it.
+
 ### 3.3 Interface-typed slots
 
 A binding for a path under an interface-typed slot carries

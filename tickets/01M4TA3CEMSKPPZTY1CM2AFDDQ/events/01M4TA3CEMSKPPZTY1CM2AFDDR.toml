@@ -1,0 +1,10 @@
+kind = "create"
+title = "Switch why/impact/ir/ack/obligations verbs to pipeline::analyze"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli"]
+body = "found while working ~E631Y52. project_candidates are stubs."
+at = "2026-10-13T09:39:34Z"
+actor = "lognd"
+rev = 1

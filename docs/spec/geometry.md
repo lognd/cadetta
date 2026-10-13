@@ -131,7 +131,9 @@ plane and z is its normal.
   a dimensionless `s`. An array plus a vector shifts every element
   (`holes + Vec2(5mm, 0mm)`); an array plus a point is G001. Arithmetic
   across datums is G001 and never converts silently, just as named kinds
-  never convert (Q003).
+  never convert (Q003). A vector written `Vec2(x, y)` is free and takes
+  the datum of the point or vector it meets; `Point - Point` is fixed to
+  the points' datum, and a fixed vector meeting another datum is G001.
 - `p in D` re-expresses a typed point `p` in datum `D`, through the
   component's own datums and, in an assembly, through placements
   (section 4). It never types a literal. `in` maps over arrays. A `Point2

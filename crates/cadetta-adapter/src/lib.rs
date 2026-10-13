@@ -2,7 +2,11 @@
 //!
 //! Specification: `docs/spec/adapters.md`.
 
+pub mod classify;
+pub mod policy;
 pub mod read_units;
+pub mod scope;
+pub mod testing;
 
 use std::collections::BTreeSet;
 use std::fmt;
