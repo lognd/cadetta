@@ -2,11 +2,12 @@
 id = "01M4SPX55HNGZ3BVQ8X4KDW4X2"
 title = "OQ-7: Adapter discovery and versioning"
 type = "docs"
-category = "triage"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:04:07Z"
-updated = "2026-10-13T04:04:07Z"
+updated = "2026-10-13T05:45:29Z"
 labels = ["open-question"]
 +++
 
