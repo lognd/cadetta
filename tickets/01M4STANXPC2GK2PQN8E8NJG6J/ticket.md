@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a bore and shaft, when a fit is evaluated, then limits resolve to the expected clearance (stdlib.md 1)"
-bound = false
+bound = true
 +++
