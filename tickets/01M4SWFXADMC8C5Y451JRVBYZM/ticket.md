@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T13:31:46Z"
+updated = "2026-10-13T13:31:48Z"
 persona = "design engineer"
 capability = "tolerance a hole pattern by its pitch"
 idempotency_key = "replan14:geo-pattern"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a tolerance after a pattern, when evaluated, then one independent source variable per coordinate applies; a toleranced generator member tolerances the pitch itself (geometry.md 3)"
-bound = false
+bound = true
 +++
