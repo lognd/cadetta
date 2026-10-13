@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/format.rs"]
+new = ["crates/cadetta-syntax/src/geometry.rs", "crates/cadetta-syntax/tests/geometry.rs", "crates/cadetta-syntax/src/ast.rs", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-syntax/src/format.rs", "docs/spec/language.md", "docs/spec/geometry.md", "crates/cadetta-sema/src/resolve.rs"]
+at = "2026-10-13T06:56:25Z"
+actor = "lognd"
+rev = 1
