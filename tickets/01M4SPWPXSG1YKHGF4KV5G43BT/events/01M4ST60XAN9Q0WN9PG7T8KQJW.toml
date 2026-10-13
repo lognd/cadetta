@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `20mm H7`, when resolved, then the tolerance is +0.021/0 mm per ISO 286", "Given a size outside the table range, when resolved, then F002 is signalled", "Given class `Z99`, when resolved, then F001 is signalled", "Given uppercase and lowercase letters, when resolved, then they are hole and shaft respectively"]
+new = ["Given `20mm H7`, when resolved, then the tolerance is +0.021/0 mm per ISO 286", "Given a size outside the table range, when resolved, then F002 is signalled", "Given class `Z99`, when resolved, then F001 is signalled", "Given uppercase and lowercase letters, when resolved, then they are hole and shaft respectively", "Given `Bearing.bore.nominal j5` (a class on any expression), when resolved, then the tolerance comes from std.fits.iso286 (quantities.md 5.1)"]
+moved = [1, 2, 3, 4]
+at = "2026-10-13T05:01:23Z"
+actor = "lognd"
+rev = 1
