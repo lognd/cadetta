@@ -592,7 +592,7 @@ mod tests {
         Magnitude::new(Rational::new(n, d).expect("denominator"), 0)
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::apply kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.apply kind=unit
     #[test]
     fn drawn_is_rule_on_nominal_and_designed_is_as_made() {
         let (procs, ev, out) = run(SRC);
@@ -617,7 +617,7 @@ mod tests {
         assert_eq!(out.emitted(&at("Case", "peg")), Some(&boss.drawn));
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::apply kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.apply kind=unit
     #[test]
     fn process_parameter_scatter_is_added_to_designed() {
         let (_, ev, out) = run(SRC);
@@ -638,7 +638,7 @@ mod tests {
         assert!(b.designed.form.is_exact());
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::compile kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.compile kind=unit
     #[test]
     fn member_without_role_is_not_compensated_and_p001_is_recorded() {
         let (procs, _, out) = run(SRC);
@@ -653,7 +653,7 @@ mod tests {
         assert_eq!(codes, vec![("P001", at("Case", "slot_width"))]);
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::compile kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.compile kind=unit
     #[test]
     fn roles_are_not_inherited_from_scope() {
         let src = "process P { rule hole(d: Length) -> Length = d + 1mm }\n\
@@ -662,7 +662,7 @@ mod tests {
         assert!(out.compensated.is_empty());
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::drawn_at kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.drawn_at kind=unit
     #[test]
     fn emit_applies_rule_to_chosen_point() {
         let (procs, ev, _) = run(SRC);
@@ -676,7 +676,7 @@ mod tests {
         assert!(procs.drawn_at(&key, "nope", &mid).is_err());
     }
 
-    // frob:tests crates/cadetta-sema/src/process.rs::Processes::compile kind=unit
+    // frob:tests crates/cadetta-sema/src/process.rs::Processes.compile kind=unit
     #[test]
     fn unsupported_rule_construct_is_reported() {
         let src = "process P { rule hole(d: Length) -> Length = sqrt(d) }\n";
