@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a reserved keyword from the language.md 2 list as an identifier, when lexed, then it is a keyword token (language.md 2)"
-bound = false
+bound = true
 +++
