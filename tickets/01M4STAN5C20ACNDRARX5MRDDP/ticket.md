@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a solve run, when stored, then `<stem>.out.json` beside the script (drive_torque.py writes drive_torque.out.json) has schema `cadetta.solve-result/1` with results[] of solver, input_digest, script_digest, dep_digests, version?, variant?, inputs, outputs and diagnostics, sorted by solver path then variant (solvers.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given two solvers sharing one script, when stored, then results are keyed inside the one file by canonical solver path (acme.drive::DriveModule.drive_torque for a member, acme.drive::drive_torque at file scope) and never collide (solvers.md 4)"
