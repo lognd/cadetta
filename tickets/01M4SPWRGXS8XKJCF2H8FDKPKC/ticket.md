@@ -19,6 +19,10 @@ scope = ["crates/cadetta-adapter/src/lib.rs"]
 kind = "blocks"
 target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWRYRBTGD67WTG7D60E59"
+
 [[acceptance]]
 text = "Given an adapter without drive, when sync is requested, then it degrades to emit plus instructions"
 bound = false
