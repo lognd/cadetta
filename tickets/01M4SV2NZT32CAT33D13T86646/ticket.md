@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T15:56:59Z"
+updated = "2026-10-13T15:57:01Z"
 persona = "adapter author"
 capability = "subclass Adapter and override initialize, emit, read, push, regen, shutdown"
 outcome_text = "one SDK serves every Python-reachable CAD tool"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an adapter, when observed IR is built, then it uses the same pydantic IR models (bindings.md 3.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Adapter, when subclassed, then open, save and close are overridable and logs go to stderr only (bindings.md 3.4)"
