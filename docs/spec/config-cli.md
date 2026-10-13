@@ -173,6 +173,14 @@ run. `cadetta lsp` is deferred (a
 ticket); in 0.1.0 the editor integration is `check --format json
 --watch` (5).
 
+Scoping (decided, 0.1.0): a node is in scope when it matches any
+`--module` prefix (if given) and any glob (if given); with neither,
+everything is. A module prefix is compared segment-wise against the
+canonical path, relative to the package or fully qualified, and accepts
+`/` or `::` (`drive` matches `acme.rover::drive::motor::X` but not
+`acme.rover::driveline::X`). Globs use the obligations.md 2.2 grammar.
+A scope matching no node is not an error for these commands.
+
 ### 3.1 `sync` output
 
 Text: one line per locator,
