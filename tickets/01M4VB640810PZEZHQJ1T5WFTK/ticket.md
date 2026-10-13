@@ -2,7 +2,8 @@
 id = "01M4VB640810PZEZHQJ1T5WFTK"
 title = "Native links as implicit bindings and bind = scope"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
