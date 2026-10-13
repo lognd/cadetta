@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T05:41:55Z"
+updated = "2026-10-13T05:46:30Z"
 persona = "design engineer"
 capability = "see when a tight check ignores bolt float"
 idempotency_key = "replan14:geo-g005"
-labels = ["creates:crates/cadetta-lint/src/rules/g005.rs", "creates:tests/lints/G005/**"]
-scope = ["crates/cadetta-lint/src/rules/g005.rs", "tests/lints/G005/**"]
+labels = ["creates:crates/cadetta-lint/src/rules/g005.rs", "creates:tests/conformance/lints/G005/**"]
+scope = ["crates/cadetta-lint/src/rules/g005.rs", "tests/conformance/lints/G005/**"]
 
 [[links]]
 kind = "blocked-by"
