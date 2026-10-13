@@ -2,12 +2,12 @@
 id = "01M4V5MP4NRZTDS8Q2NKZVVBCA"
 title = "csv.md: note separator and emit-point token are inconsistent"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:40:52Z"
-updated = "2026-10-13T18:12:33Z"
+updated = "2026-10-13T18:12:34Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/adapters.md", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
