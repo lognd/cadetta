@@ -2,11 +2,12 @@
 id = "01M4ST3P6KC5XGB98GNRE3BHZQ"
 title = "OQ-10: Coordinate frames for positions"
 type = "docs"
-category = "triage"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T05:00:07Z"
-updated = "2026-10-13T05:00:07Z"
+updated = "2026-10-13T05:45:33Z"
 labels = ["open-question"]
 +++
 
