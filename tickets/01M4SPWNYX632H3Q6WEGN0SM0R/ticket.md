@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `1e-3mm`, `9.81m/s^2` and `5%`, when lexed, then each is a single quantity literal (quantities.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a reserved keyword from the language.md 2 list as an identifier, when lexed, then it is a keyword token (language.md 2)"
