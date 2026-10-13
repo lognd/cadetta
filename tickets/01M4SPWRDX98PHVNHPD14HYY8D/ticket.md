@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:46:22Z"
+updated = "2026-10-13T05:46:30Z"
 persona = "design engineer"
 capability = "get lints for the W family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
-labels = ["creates:crates/cadetta-lint/src/rules/w.rs", "creates:tests/lints/W*/**"]
-scope = ["crates/cadetta-lint/src/rules/w.rs", "tests/lints/W*/**"]
+labels = ["creates:crates/cadetta-lint/src/rules/w.rs", "creates:tests/conformance/lints/W*/**"]
+scope = ["crates/cadetta-lint/src/rules/w.rs", "tests/conformance/lints/W*/**"]
 
 [[acceptance]]
 text = "Given an expired waiver, when linted, then W001 error"
