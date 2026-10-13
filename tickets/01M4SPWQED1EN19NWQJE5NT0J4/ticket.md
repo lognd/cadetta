@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an instance path such as Rover/wheel[2].hub_bore, when its closure is computed, then it includes only the part arguments the member reads, transitively (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an interface-typed slot whose primary changes, when closures are recomputed, then every instance path of the slot changes and a check reading only another part arguments does not (ir.md 4)"
