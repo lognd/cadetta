@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:51:38Z"
+digest = "52cd6b9a3b66310d897adce7c19002a7ac50e3c80eecbfb509b10217a2e8646e"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID aa89ef37-f369-422a-9601-95525703c6fb with nextest profile: default
+    Starting 1 test across 21 binaries (543 tests skipped)
+        PASS [   0.008s] cadetta cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 543 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E test(=cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing)"
+size = 582
+status = "measured"
+test_count = 1
+tests_digest = "ec9264e6f5814c8f650adcdd3e8f3d9a70b439707a87e013692af010d50f77dc"
+at = "2026-10-13T08:51:38Z"
+actor = "lognd"
+rev = 1
