@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T05:01:23Z"
+updated = "2026-10-13T05:05:27Z"
 persona = "design engineer"
 capability = 'write `check name: lhs > rhs "msg"`'
 outcome_text = "design rules are evaluated, not just commented"
@@ -18,6 +18,10 @@ scope = ["crates/cadetta-sema/src/checks.rs"]
 [[links]]
 kind = "blocks"
 target = "01M4SPWQH44JWFXZDNTGEBMMNX"
+
+[[links]]
+kind = "blocks"
+target = "01M4STCDGQMN86JQJXKAQ2FX25"
 
 [[acceptance]]
 text = "Given a check false for every value in tolerance, when evaluated, then verdict is violates (C001) (quantities.md 5.8)"
