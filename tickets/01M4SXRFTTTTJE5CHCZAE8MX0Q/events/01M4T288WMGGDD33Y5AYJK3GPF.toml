@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-13T07:22:25Z"
+digest = "e8a40235de275a73d037375db80107818594d7ff430034462890f072bcc9ec5a"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2330317e-3ac4-4244-939c-b72075591d57 with nextest profile: default
+    Starting 1 test across 1 binary (28 tests skipped)
+        PASS [   0.007s] cadetta-sema modules::tests::files_resolve_against_package_dir
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 28 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E test(=modules::tests::files_resolve_against_package_dir)"
+size = 811
+status = "measured"
+test_count = 1
+tests_digest = "19716ded039037cebd2e8dd0ff2a9145358abcfa56244b9f95a5a13d0b3a5aea"
+at = "2026-10-13T07:22:25Z"
+actor = "lognd"
+rev = 1

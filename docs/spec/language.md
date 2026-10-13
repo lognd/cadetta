@@ -203,6 +203,8 @@ and bounds every implementer must meet. A component implements it with
 `: Caster`; a missing member is I001 (error) unless the interface
 marks it optional (`unit_cost?: Money`), in which case `?` roll-ups list
 it as missing; a violated bound is C001 against that implementer.
+A member present with a different kind is also I001; an undecided bound is
+C002 against the implementer. I001 is fixed and cannot be waived.
 
 A `part` typed by an interface names a primary implementer and,
 optionally, approved alternates: `part wheel[4]: Caster = Vendor4471B
