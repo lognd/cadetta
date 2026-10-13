@@ -1,0 +1,16 @@
+kind = "create"
+title = "Solver lints S003, S005 and S006"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
+persona = "design engineer"
+capability = "be told when solver results are stale or unused"
+idempotency_key = "replan13:Solver lints S003, S005 and S006"
+labels = ["creates:crates/cadetta-solvers/src/lints.rs"]
+scope = ["crates/cadetta-solvers/src/lints.rs"]
+acceptance = ["Given a stale result, when linted, then S003 is raised (lints.md S)", "Given the S005 and S006 conditions in lints.md, when linted, then each fires and has a non-firing case (lints.md S)"]
+at = "2026-10-13T05:03:55Z"
+actor = "lognd"
+rev = 1
