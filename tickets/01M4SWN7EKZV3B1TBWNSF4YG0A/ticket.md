@@ -17,6 +17,10 @@ scope = ["crates/cadetta-obligations/src/why_stale.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4ST8ERHSJXGDXNH75ZCX6H7"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4ST8F5G8E0FMC3KZJG8A95T"
 
 [[acceptance]]
