@@ -57,7 +57,7 @@ fn row(table: &str, size_mm: i64) -> Vec<i64> {
         .1
 }
 
-// frob:tests crates/cadetta-fits/tests/std_fits.rs::tables_parse_with_expected_shape kind=unit
+// frob:tests crates/cadetta-syntax/tests/std_fits.rs::tables_parse_with_expected_shape kind=unit
 #[test]
 fn tables_parse_with_expected_shape() {
     let ts = tables();
@@ -77,7 +77,7 @@ fn tables_parse_with_expected_shape() {
     assert!(ts.iter().all(|t| t.citation.is_some()));
 }
 
-// frob:tests crates/cadetta-fits/tests/std_fits.rs::deviations_match_published_iso286 kind=unit
+// frob:tests crates/cadetta-syntax/tests/std_fits.rs::deviations_match_published_iso286 kind=unit
 #[test]
 fn deviations_match_published_iso286() {
     // IT grades (ISO 286-1 table 1), um: 18-30 and 30-50 mm columns.
@@ -115,7 +115,7 @@ fn deviations_match_published_iso286() {
     );
 }
 
-// frob:tests crates/cadetta-fits/tests/std_fits.rs::bore_and_shaft_limits_resolve_to_expected_clearance kind=unit
+// frob:tests crates/cadetta-syntax/tests/std_fits.rs::bore_and_shaft_limits_resolve_to_expected_clearance kind=unit
 #[test]
 fn bore_and_shaft_limits_resolve_to_expected_clearance() {
     // 20 mm H7/g6: H7 = [0, +21], g6 = [es - IT6, es] = [-20, -7] um.
