@@ -1,0 +1,8 @@
+process Fdm {
+  hole_comp = 0.2mm
+  rule hole(d: Length) -> Length = d + hole_comp
+}
+model Case {
+  #![process(Fdm)]
+  insert_hole = 3.4mm
+}

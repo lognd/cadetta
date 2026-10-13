@@ -1,0 +1,17 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  load_rating >= 400N
+}
+pub ots Good: Caster @src {
+  diameter = 5in
+  load_rating = 500N
+}
+#[lifecycle(nrnd, "2027-06")]
+pub ots Old: Caster @src {
+  diameter = 5in
+  load_rating = 500N
+}
+pub assembly Rover {
+  part wheel: Caster = Old
+}

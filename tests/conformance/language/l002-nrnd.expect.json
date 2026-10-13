@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.2",
+  "rule": "L002",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "L002",
+        "severity": "info"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

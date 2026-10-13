@@ -1,0 +1,3 @@
+model Part {
+  Width = 3mm
+}

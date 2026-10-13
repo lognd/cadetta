@@ -1,0 +1,8 @@
+cite src = "https://x.example/a.pdf"
+pub interface Caster {
+  diameter: Length
+  unit_cost?: Money
+}
+pub ots A: Caster @src {
+  diameter = 5in
+}

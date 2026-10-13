@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.7",
+  "rule": "F001-mixed-case",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "F001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

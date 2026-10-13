@@ -1,0 +1,6 @@
+model Inner {
+  size = 3mm
+}
+pub model Outer(i: Inner) {
+  size = i.size
+}

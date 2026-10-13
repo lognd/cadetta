@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.6",
+  "rule": "E007",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E007",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}
