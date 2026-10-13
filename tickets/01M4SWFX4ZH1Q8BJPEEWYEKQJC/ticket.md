@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:28:12Z"
+updated = "2026-10-13T08:29:20Z"
 persona = "design engineer"
 capability = "compose datum transforms exactly"
 idempotency_key = "replan14:geo-transform"
 labels = ["creates:crates/cadetta-geometry/src/transform.rs"]
-scope = ["crates/cadetta-geometry/src/transform.rs"]
+scope = ["crates/cadetta-geometry/src/transform.rs", "crates/cadetta-geometry/Cargo.toml", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"
