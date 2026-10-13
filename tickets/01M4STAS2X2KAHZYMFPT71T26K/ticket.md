@@ -2,7 +2,8 @@
 id = "01M4STAS2X2KAHZYMFPT71T26K"
 title = "Conformance fixtures for lints"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
