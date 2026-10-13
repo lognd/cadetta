@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T13:27:57Z"
+updated = "2026-10-13T13:34:09Z"
 persona = "design engineer"
 capability = "emit and read an equations text file for Link to external file"
 outcome_text = "SOLIDWORKS globals update without retyping"
@@ -25,7 +25,7 @@ target = "01M4STCF3A4JQGPYSE7BBHK4BD"
 
 [[acceptance]]
 text = "Given an IR and bindings, when emitted, then line 1 is the header `' cadetta emit sw-equations 0.1.0 ir=blake3:<hex> bindings=blake3:<hex>` (emitters/sw-equations.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given global and dimension locators, when emitted, then global lines are `"NAME" = VALUE` and dimension lines carry `"GLOBAL"` in ref mode or a value in value mode (emitters/sw-equations.md 1)'
