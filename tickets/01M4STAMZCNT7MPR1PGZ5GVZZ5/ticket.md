@@ -8,12 +8,16 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T05:03:55Z"
+updated = "2026-10-13T05:05:19Z"
 persona = "design engineer"
 capability = "exchange inputs and outputs with a solver in a defined format"
 idempotency_key = "replan13:cadetta.solve/1 request and response protocol"
 labels = ["creates:crates/cadetta-solvers/src/protocol.rs"]
 scope = ["crates/cadetta-solvers/src/protocol.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4STAN28E01T9BY5M07ZD4V5"
 
 [[acceptance]]
 text = "Given a solver run, when the request is built, then it is `cadetta.solve/1` JSON with inputs as lit or si values (solvers.md 3)"
