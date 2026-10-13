@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T06:57:16Z"
+updated = "2026-10-13T06:57:30Z"
 persona = "design engineer"
 capability = "declare an external solver with typed inputs and outputs"
 idempotency_key = "replan13:Solver declaration sema and IR"
@@ -25,7 +25,7 @@ target = "01M4STANDBYZAR6T9BXPKHYYYV"
 
 [[acceptance]]
 text = "Given a `solver` declaration with typed inputs, outputs and a script path, when lowered, then the IR carries it with its closure (solvers.md 2, ir.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an input expression that is not a literal or SI-convertible value, when checked, then an error is reported (solvers.md 1)"
