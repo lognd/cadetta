@@ -8,11 +8,11 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T06:05:26Z"
-updated = "2026-10-13T09:02:03Z"
+updated = "2026-10-13T09:02:07Z"
 persona = "design engineer"
 capability = "cite a standard with one line"
 labels = ["creates:std/src/lib.cdt"]
-scope = ["std/src/lib.cdt"]
+scope = ["std/src/lib.cdt", "crates/cadetta-syntax/tests/std_lib_root.rs"]
 
 [[links]]
 kind = "blocked-by"
