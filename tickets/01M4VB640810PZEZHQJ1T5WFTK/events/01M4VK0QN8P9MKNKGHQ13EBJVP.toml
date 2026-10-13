@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/scope.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/init.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "tests/conformance/config-cli/**", "crates/cadetta-ir/src/observed.rs,crates/cadetta-adapter/src/locator.rs,crates/cadetta-adapter/src/import/propose.rs,crates/cadetta-cli/src/cmd/import.rs,crates/cadetta-cli/src/cmd/impact_swap_report.rs"]
+new = ["crates/cadetta-adapter/src/bindings.rs", "crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/classify.rs", "crates/cadetta-adapter/src/scope.rs", "crates/cadetta-ir/src/model.rs", "crates/cadetta-ir/src/json.rs", "crates/cadetta-ir/src/schema.rs", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/cmd/init.rs", "tests/conformance/adapters/**", "tests/conformance/bindings/**", "tests/conformance/config-cli/**", "crates/cadetta-ir/src/observed.rs", "crates/cadetta-adapter/src/locator.rs", "crates/cadetta-adapter/src/import/propose.rs", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/src/cmd/impact_swap_report.rs"]
+at = "2026-10-13T21:34:38Z"
+actor = "lognd"
+rev = 1
