@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T08:59:21Z"
+updated = "2026-10-13T08:59:22Z"
 persona = "design engineer"
 capability = "know which alternates are safe to swap in"
 idempotency_key = "replan13:Viability, undecided results and alternate waivers"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a violating variant, when evaluated, then the alternate stays listed as not viable (I002) naming the failure and is reported as `C001 for alt NAME` (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `waive C002 on Rover.load_ok for alt Colson2Series`, when evaluated, then it applies to that variant only (language.md 3.2, lints.md 2)"
