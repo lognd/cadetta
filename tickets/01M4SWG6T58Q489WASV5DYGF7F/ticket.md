@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T23:22:59Z"
+updated = "2026-10-13T23:23:00Z"
 persona = "design engineer"
 capability = "prove that holes line up"
 idempotency_key = "replan14:geo-aligned"
@@ -41,5 +41,5 @@ bound = true
 
 [[acceptance]]
 text = "Given distance(p, q), when both are in one datum, then the axial component is included (geometry.md 3)"
-bound = false
+bound = true
 +++
