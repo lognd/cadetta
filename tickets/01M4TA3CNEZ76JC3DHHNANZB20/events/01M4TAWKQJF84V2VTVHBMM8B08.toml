@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T09:53:19Z"
+digest = "b93559fba7e876fff23aecaa26a5e707cde20cfe7a80d9bf8990a41940da7d9a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ebd12cf1-615f-4ae0-8c55-f1f1f638dc6b with nextest profile: default
+    Starting 7 tests across 1 binary (23 binaries skipped)
+        PASS [   0.007s] cadetta-syntax::golden_parse solver_binds_continue_after_a_comma_and_allow_checks
+        PASS [   0.008s] cadetta-syntax::golden_parse citation_after_bound_check_and_fit_statements
+        PASS [   0.015s] cadetta-syntax::golden_parse path_pair_fit_may_omit_on
+        PASS [   0.015s] cadetta-syntax::golden_parse unit_words_in_attribute_arguments
+        PASS [   0.015s] cadetta-syntax::golden_parse citation_after_named_constructor_argument
+        PASS [   0.020s] cadetta-syntax::golden_parse golden_sources_parse_without_syntax_errors
+        PASS [   0.020s] cadetta-syntax::golden_parse leading_operator_continues_the_statement
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.021s] 7 tests run: 7 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E binary_id(cadetta-syntax::golden_parse)"
+size = 1130
+status = "measured"
+test_count = 7
+tests_digest = "11767db8871939b39fb309f702a3889b7b0618f5bec29039f1dfa76abff53e5e"
+at = "2026-10-13T09:53:19Z"
+actor = "lognd"
+rev = 1
