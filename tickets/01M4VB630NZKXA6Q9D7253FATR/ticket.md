@@ -8,7 +8,7 @@ points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T21:43:51Z"
+updated = "2026-10-13T21:44:29Z"
 persona = "design engineer"
 capability = "name a solver's script as an input rather than a citation"
 outcome_text = "citations only ever mean sources"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given a solver body without script, or the draft 1.4 form solver NAME @"path", when parsed, then E001 (language.md 5a)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given golden cases 07 and 08 and the solvers fixtures, when run, then they use the script statement and pass"
