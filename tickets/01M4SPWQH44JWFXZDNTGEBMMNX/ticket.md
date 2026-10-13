@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:05:27Z"
 persona = "cadetta contributor"
 capability = "lower sema output into design IR with provenance, deps and spans"
 outcome_text = "lints and emitters consume a single structure"
@@ -26,6 +26,10 @@ target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 [[links]]
 kind = "blocks"
 target = "01M4SPWT3FP4SN4RTCHE631Y52"
+
+[[links]]
+kind = "blocks"
+target = "01M4STCEQRY59W2Q6BGZ6YE6N5"
 
 [[acceptance]]
 text = "Given a derived parameter, when lowered, then provenance=derived and deps list its canonical paths"
