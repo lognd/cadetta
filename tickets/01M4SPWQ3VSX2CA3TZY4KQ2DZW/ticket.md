@@ -2,7 +2,8 @@
 id = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
 title = "IR data model types"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
