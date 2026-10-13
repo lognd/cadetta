@@ -9,7 +9,7 @@
 # screw, drive and the made parts have no mass, so it is a list of missing).
 
 [case]
-spec = "1.4"
+spec = "1.5"
 status = "hand-evaluated"
 exercises = ["config-cli.md 1", "language.md 3.2", "language.md 3.5", "language.md 3.7", "quantities.md 4.3", "quantities.md 5.4", "stdlib.md 3", "stdlib.md 6", "geometry.md 3", "geometry.md 4", "geometry.md 5", "lints.md 2.1"]
 

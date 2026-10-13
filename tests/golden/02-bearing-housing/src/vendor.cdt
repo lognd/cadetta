@@ -6,8 +6,12 @@ use std::retaining::Din472
 // transcribed from the catalog; verify against the current SKF General
 // Catalogue before any release. Circlip sizes come from std::retaining.
 
-cite skf    = "https://www.skf.com/catalogue/608-2RS1"
-cite din472 = std::din472
+cite skf: catalog {
+  organization = "SKF"
+  title = "608-2RS1 deep groove ball bearing"
+  url = "https://www.skf.com/catalogue/608-2RS1"
+}
+use std::din472
 
 /// SKF 608-2RS1 deep-groove ball bearing, 8 x 22 x 7 mm, contact seals.
 /// Deviations are ISO 492 Normal class (individual ring deviations).

@@ -1,5 +1,5 @@
 [case]
-spec = "1.4"
+spec = "1.5"
 status = "hand-evaluated"
 exercises = ["language.md 3.2", "language.md 3.5", "stdlib.md 6", "quantities.md 5", "solvers.md 4.1", "obligations.md 4", "obligations.md 5.1", "adapters.md 3", "lints.md I002 I003 L001"]
 

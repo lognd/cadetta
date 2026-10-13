@@ -1,5 +1,4 @@
-cite src = "docs/requirements.md"
-
+cite src: document { file = "docs/requirements.md" }
 ots Plate @src {
   datum top = origin.offset(z = 5mm)
 }

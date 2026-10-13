@@ -8,11 +8,60 @@
 // frob:ticket 01M4SPWP1JK8XH8EKXK71P7EFH
 
 use crate::ast::{
-    Arg, Attr, AttrArg, BinOp, Block, Bound, BoundKind, Check, Citation, Cite, CiteName,
-    CiteTarget, CmpOp, Component, ComponentClass, Ctor, Doc, Expr, ExprKind, File, FileEntry, Fit,
-    FitSpec, Ident, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind, Let, MatchArm,
-    Member, MemberKind, Param, ParamDecl, Part, Path, PathSep, Pattern, Require, TolSign, TolTerm,
-    Type, TypeKind, UnOp, Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    Arg,
+    Attr,
+    AttrArg,
+    BinOp,
+    Block,
+    Bound,
+    BoundKind,
+    Check,
+    Citation,
+    Cite,
+    CiteFieldDecl,
+    CiteName,
+    CiteValue,
+    CmpOp,
+    Component,
+    ComponentClass,
+    Ctor,
+    Doc,
+    Expr,
+    ExprKind,
+    File,
+    FileEntry,
+    Fit,
+    FitSpec,
+    Ident,
+    Interface,
+    InterfaceMember,
+    InterfaceMemberKind,
+    Item,
+    ItemKind,
+    Let,
+    MatchArm,
+    Member,
+    MemberKind,
+    Param,
+    ParamDecl,
+    Part,
+    Path,
+    PathSep,
+    Pattern,
+    Require,
+    TolSign,
+    TolTerm,
+    Type,
+    TypeKind,
+    UnOp,
+    Use,
+    UseKind,
+    UsePath,
+    UseRoot,
+    UseTree,
+    UseTreeKind,
+    Vis,
 };
 use crate::lexer::{Comment, CommentKind, DiagCode, Diagnostic, Punct, Span, Tok, Token, lex};
 
@@ -459,17 +508,87 @@ impl Parser<'_> {
         }))))
     }
 
+    /// `cite NAME: TYPE { field = "value" ... }`; the draft 1.4 forms are E001 (language.md 3.9).
     fn cite(&mut self) -> PResult<Cite> {
         self.expect_kw("cite")?;
         let name = self.expect_ident()?;
+        if self.is_p(Punct::Eq) {
+            let msg = if matches!(self.nth_tok(1), Tok::Str(_)) {
+                format!(
+                    "the `cite {0} = \"...\"` form was removed in draft 1.5; write \
+                     `cite {0}: web {{ url = \"...\" }}` (or another type, see language.md 3.9)",
+                    name.name
+                )
+            } else {
+                format!(
+                    "the `cite {0} = path` form was removed in draft 1.5; cite the item as \
+                     `@std::NAME`, or import it with `use std::NAME`",
+                    name.name
+                )
+            };
+            tracing::debug!(cite = %name.name, "parser: removed cite form");
+            return self.err(msg);
+        }
+        self.expect_p(Punct::Colon)?;
+        let ty = self.expect_ident()?;
+        self.expect_p(Punct::LBrace)?;
+        let mut fields = Vec::new();
+        self.skip_blank();
+        while !self.is_p(Punct::RBrace) {
+            if matches!(self.tok(), Tok::Eof) {
+                return self.err("unterminated `cite` body, expected `}`");
+            }
+            fields.push(self.cite_field()?);
+            if !self.is_p(Punct::RBrace) {
+                self.end_stmt()?;
+            }
+            self.skip_blank();
+        }
+        self.expect_p(Punct::RBrace)?;
+        tracing::debug!(cite = %name.name, ty = %ty.name, fields = fields.len(), "parser: cite item");
+        Ok(Cite { name, ty, fields })
+    }
+
+    /// One `name = value` line of a `cite` body.
+    fn cite_field(&mut self) -> PResult<CiteFieldDecl> {
+        let start = self.start();
+        let name = self.attr_name()?;
         self.expect_p(Punct::Eq)?;
-        let target = if let Tok::Str(s) = self.tok().clone() {
+        let value = if let Tok::Str(s) = self.tok().clone() {
             self.bump();
-            CiteTarget::Str(s)
+            CiteValue::Text(s)
+        } else if self.eat_p(Punct::LBracket) {
+            self.nest += 1;
+            let mut items = Vec::new();
+            let mut ok = true;
+            while !self.is_p(Punct::RBracket) {
+                if let Tok::Str(s) = self.tok().clone() {
+                    self.bump();
+                    items.push(s);
+                } else {
+                    ok = false;
+                    self.expr()?;
+                }
+                if !self.eat_p(Punct::Comma) {
+                    break;
+                }
+            }
+            self.expect_p(Punct::RBracket)?;
+            self.nest -= 1;
+            if ok {
+                CiteValue::List(items)
+            } else {
+                CiteValue::Other
+            }
         } else {
-            CiteTarget::Path(self.path(false, false)?)
+            self.expr()?;
+            CiteValue::Other
         };
-        Ok(Cite { name, target })
+        Ok(CiteFieldDecl {
+            name,
+            value,
+            span: self.span_from(start),
+        })
     }
 
     // ---- attributes and citations ----
@@ -550,7 +669,7 @@ impl Parser<'_> {
             self.bump();
             CiteName::Literal(s)
         } else {
-            CiteName::Named(self.expect_ident()?)
+            CiteName::Named(self.path(false, false)?)
         };
         let mut locator = None;
         if self.is_p(Punct::Colon) && matches!(self.nth_tok(1), Tok::Str(_)) {
@@ -1657,7 +1776,7 @@ mod tests {
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn all_member_productions_accepted() {
-        let src = "use std::x\ncite c = \"d.md\"\nmodel A(n: Length = 1mm) {\n  p: Length = 2mm @c\n  q = 3\n  let t = p * 2\n  p <= 5mm\n  p >= 1mm\n  p in 1mm .. 9mm\n  a.b == c.d\n  part w: Wheel\n  fit f = H7/g6 on a.b\n  check ok: p > 0mm \"positive\"\n  require r: p < 9mm @c\n}\n";
+        let src = "use std::x\ncite c: document {\n  file = \"d.md\"\n}\nmodel A(n: Length = 1mm) {\n  p: Length = 2mm @c\n  q = 3\n  let t = p * 2\n  p <= 5mm\n  p >= 1mm\n  p in 1mm .. 9mm\n  a.b == c.d\n  part w: Wheel\n  fit f = H7/g6 on a.b\n  check ok: p > 0mm \"positive\"\n  require r: p < 9mm @c\n}\n";
         let p = clean(src);
         let c = p.file.components().next().expect("component");
         let kinds: Vec<&str> = c

@@ -2,34 +2,34 @@
 //
 // Written in ordinary .cdt. Every module is a file under this directory
 // (packages.md 2), added by its own story: fits, materials, fasteners,
-// retaining, commercial. Per-standard `pub cite` exports (iso273, iso286,
+// retaining, commercial. Per-standard `pub use` re-exports (iso273, iso286,
 // din471, din472, ...) live at this root once the syntax and the
 // standards' figures land. Nothing is declared here yet on purpose: no
 // value may appear in std without a citation (S001).
 
-// Per-standard citation exports (stdlib.md 1). Each is a path cite onto the
-// citation written beside the figures it covers, so the text lives once.
+// Per-standard citation exports (stdlib.md 1). Each re-exports the
+// cite item written beside the figures it covers, so the record lives once.
 
 /// ISO 286-1 and 286-2 limits and fits.
-pub cite iso286 = fits::iso286
+pub use self::fits::iso286
 
 /// ISO 261 and ISO 724 metric thread profile and coarse pitches.
-pub cite iso724 = fasteners::tables::iso724
+pub use self::fasteners::tables::iso724
 
 /// ISO 273 clearance holes for bolts and screws.
-pub cite iso273 = fasteners::tables::iso273
+pub use self::fasteners::tables::iso273
 
 /// ISO 2306 and Machinery's Handbook tap-drill sizes.
-pub cite tapdrill = fasteners::tables::tapdrill
+pub use self::fasteners::tables::tapdrill
 
 /// ISO 4762 hexagon socket head cap screws.
-pub cite iso4762 = fasteners::tables::iso4762
+pub use self::fasteners::tables::iso4762
 
 /// ISO 4032 hexagon regular nuts.
-pub cite iso4032 = fasteners::tables::iso4032
+pub use self::fasteners::tables::iso4032
 
 /// DIN 471 retaining rings for shafts.
-pub cite din471 = retaining::din471
+pub use self::retaining::din471
 
 /// DIN 472 retaining rings for bores.
-pub cite din472 = retaining::din472
+pub use self::retaining::din472

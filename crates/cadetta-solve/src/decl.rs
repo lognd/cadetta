@@ -235,7 +235,8 @@ pub fn lower_solver(s: &Solver, path: &str) -> Result<SolverDecl, Vec<SolverDecl
     let mut errs = Vec::new();
     let script = match &s.citation.name {
         CiteName::Literal(t) => t.clone(),
-        CiteName::Named(i) => i.name.clone(),
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        CiteName::Named(i) => i.text(),
     };
     let mut inputs = BTreeMap::new();
     let mut outputs = BTreeMap::new();

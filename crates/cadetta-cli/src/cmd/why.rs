@@ -133,16 +133,18 @@ impl<'a> Index<'a> {
             node.value = m.value.as_ref().map(|v| v.authored.clone());
             node.expr = m.expr.clone();
             if let Some(c) = &m.citation {
+                // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
                 let target = match &c.locator {
-                    Some(l) => format!("{} ({l})", c.target),
-                    None => c.target.clone(),
+                    Some(l) => format!("{} ({l})", c.display_name()),
+                    None => c.display_name(),
                 };
+                let form = if c.cite.is_some() { "cite" } else { "note" };
                 node.upstream.push(Node {
-                    path: c.name.clone(),
+                    path: c.display_name(),
                     kind: NodeKind::Citation,
                     value: None,
                     expr: None,
-                    detail: Some(format!("{target} [{:?}]", c.kind).to_lowercase()),
+                    detail: Some(format!("{target} [{form}]")),
                     repeated: false,
                     upstream: Vec::new(),
                 });
@@ -446,8 +448,7 @@ fn run_stale(
 mod tests {
     use super::*;
     use cadetta_ir::model::{
-        Citation, CitationKind, Component, ComponentClass, Flavour, MemberKind, PackageId,
-        Value as IrValue,
+        CiteRef, Component, ComponentClass, Flavour, MemberKind, PackageId, Value as IrValue,
     };
     use cadetta_ir::model::{Exact, Nominal};
     use cadetta_ir::path::{Path, PathContext};
@@ -467,13 +468,7 @@ mod tests {
             "5mm",
         ));
         if cite {
-            m.citation = Some(Citation {
-                name: "iso286".into(),
-                target: "ISO 286-1".into(),
-                locator: Some("tab 1".into()),
-                kind: CitationKind::Standard,
-                file_digest: None,
-            });
+            m.citation = Some(CiteRef::item("pkg::iso286", Some("tab 1".into())));
         }
         m
     }

@@ -14,12 +14,64 @@
 use std::fmt;
 
 use crate::ast::{
-    Arg, Attr, AttrArg, BinOp, Block, Bound, BoundKind, Check, Citation, Cite, CiteName,
-    CiteTarget, CmpOp, Component, ComponentClass, Ctor, Datum, Doc, Expr, ExprKind, File,
-    FileEntry, Fit, FitSpec, Interface, InterfaceMember, InterfaceMemberKind, Item, ItemKind,
-    KindOp, Let, Member, MemberKind, Param, ParamDecl, Part, Path, Pattern, Place, Process,
-    ProcessMemberKind, Require, Solver, SolverMemberKind, Table, TolSign, Type, TypeKind, UnOp,
-    UnitDecl, Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    Arg,
+    Attr,
+    AttrArg,
+    BinOp,
+    Block,
+    Bound,
+    BoundKind,
+    Check,
+    Citation,
+    Cite,
+    CiteName,
+    CiteValue,
+    CmpOp,
+    Component,
+    ComponentClass,
+    Ctor,
+    Datum,
+    Doc,
+    Expr,
+    ExprKind,
+    File,
+    FileEntry,
+    Fit,
+    FitSpec,
+    Interface,
+    InterfaceMember,
+    InterfaceMemberKind,
+    Item,
+    ItemKind,
+    KindOp,
+    Let,
+    Member,
+    MemberKind,
+    Param,
+    ParamDecl,
+    Part,
+    Path,
+    Pattern,
+    Place,
+    Process,
+    ProcessMemberKind,
+    Require,
+    Solver,
+    SolverMemberKind,
+    Table,
+    TolSign,
+    Type,
+    TypeKind,
+    UnOp,
+    UnitDecl,
+    Use,
+    UseKind,
+    UsePath,
+    UseRoot,
+    UseTree,
+    UseTreeKind,
+    Vis,
 };
 use crate::lexer::{Comment, Span};
 use crate::parser::parse;
@@ -413,9 +465,8 @@ impl Printer<'_> {
                 self.interface(i, item, &vis);
             }
             ItemKind::Cite(c) => {
-                self.preamble(first, leaf_upto, &item.docs, &item.attrs);
-                let line = Line::eq(format!("{vis}{}", cite_lhs(c)), self.cite_rhs(c));
-                self.leaf(line, item.span, &[]);
+                self.preamble(first, item.span.start, &item.docs, &item.attrs);
+                self.cite_item(c, item, &vis);
             }
             ItemKind::Fit(f) => {
                 self.preamble(first, leaf_upto, &item.docs, &item.attrs);
@@ -873,11 +924,26 @@ impl Printer<'_> {
         s
     }
 
-    fn cite_rhs(&self, c: &Cite) -> String {
-        match &c.target {
-            CiteTarget::Str(s) => quote(s),
-            CiteTarget::Path(p) => p.text(),
+    /// A typed `cite` as a block with one aligned `name = value` line per field.
+    fn cite_item(&mut self, c: &Cite, item: &Item, vis: &str) {
+        let head = format!("{vis}{}", cite_lhs(c));
+        let outer = self.open_block(&head);
+        for f in &c.fields {
+            self.preamble(f.span.start, f.span.end, &[], &[]);
+            let value = match &f.value {
+                CiteValue::Text(t) => quote(t),
+                CiteValue::List(l) => {
+                    let items: Vec<String> = l.iter().map(|t| quote(t)).collect();
+                    format!("[{}]", items.join(", "))
+                }
+                CiteValue::Other => f.span.slice(self.src).split_once('=').map_or_else(
+                    || f.span.slice(self.src).trim().to_owned(),
+                    |(_, v)| v.trim().to_owned(),
+                ),
+            };
+            self.leaf(Line::eq(f.name.name.clone(), value), f.span, &[]);
         }
+        self.close_block(item.span, outer, "");
     }
 
     fn use_decl(&self, u: &Use) -> String {
@@ -929,7 +995,7 @@ impl Printer<'_> {
         let text = c.span.slice(self.src).trim();
         if text.is_empty() {
             let name = match &c.name {
-                CiteName::Named(n) => format!("@{}", n.name),
+                CiteName::Named(n) => format!("@{}", n.text()),
                 CiteName::Literal(l) => format!("@{}", quote(l)),
             };
             return match &c.locator {
@@ -1108,7 +1174,7 @@ fn vis_prefix(v: Vis) -> String {
 }
 
 fn cite_lhs(c: &Cite) -> String {
-    format!("cite {}", c.name.name)
+    format!("cite {}: {}", c.name.name, c.ty.name)
 }
 
 fn paths(ps: &[Path]) -> String {
@@ -1195,7 +1261,7 @@ mod tests {
         format_source(src).unwrap_or_else(|e| panic!("{e}"))
     }
 
-    const SAMPLE: &str = "use std::fits::iso286\npub use self::parts::Tube\n\n// header\n\n/// A bracket.\n#[doc_only]\nmodel Bracket(h: Length = 3mm) : Mountable @\"ISO 1\" {\n#![strict]\n    thickness: Length=10mm   // both legs\n  width = 56mm [+-0.1mm]     #[important]\n  fillet_radius=thickness/2 // corner\n\n\n  let edge = (width - 4mm) / 2\n  bore = 12mm [+0.018mm -0] H8\n  thickness <= 20mm\n  part wall: Wall\n  part screws[2]: Screw(len = 8mm) = M4(x = 1) alt [M5, M6(y = 2)]\n  fit seat = H7/p6 on bore [-0.4mm .. 0.4mm]\n  check ok for p in parts: p.x >= 0mm \"say \\\"hi\\\"\"\n  require r1: width in 1mm..2mm @iso273\n  // dangling\n}\n\ninterface Mountable : Base {\n  size?: Length\n  size >= 1mm\n}\ncite iso = \"https://x\"\ncite a_long_name = std::iso273\n";
+    const SAMPLE: &str = "use std::fits::iso286\npub use self::parts::Tube\n\n// header\n\n/// A bracket.\n#[doc_only]\nmodel Bracket(h: Length = 3mm) : Mountable @\"ISO 1\" {\n#![strict]\n    thickness: Length=10mm   // both legs\n  width = 56mm [+-0.1mm]     #[important]\n  fillet_radius=thickness/2 // corner\n\n\n  let edge = (width - 4mm) / 2\n  bore = 12mm [+0.018mm -0] H8\n  thickness <= 20mm\n  part wall: Wall\n  part screws[2]: Screw(len = 8mm) = M4(x = 1) alt [M5, M6(y = 2)]\n  fit seat = H7/p6 on bore [-0.4mm .. 0.4mm]\n  check ok for p in parts: p.x >= 0mm \"say \\\"hi\\\"\"\n  require r1: width in 1mm..2mm @iso273\n  // dangling\n}\n\ninterface Mountable : Base {\n  size?: Length\n  size >= 1mm\n}\ncite iso: web {\n  url = \"https://x\"\n  title=\"T\"\n}\ncite a_long_name: book {\n  author = [\"A\", \"B\"]\n}\n";
 
     #[test]
     fn idempotent_on_sample() {

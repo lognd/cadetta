@@ -1,5 +1,5 @@
 use std::fasteners::{FastenerPolicy, IsoEngagement, IsoTapColumns, Iso4762Len, IsoDrills}
-cite shop = "shop standard SS-104 rev C"
+cite shop: document { title = "shop standard SS-104 rev C" }
 pub ots AcmeShop: FastenerPolicy @shop {
   engagement       = IsoEngagement
   tap_columns      = IsoTapColumns

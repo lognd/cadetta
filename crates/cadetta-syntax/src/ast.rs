@@ -89,7 +89,8 @@ pub struct Attr {
     pub span: Span,
 }
 
-/// A citation `@name`, `@"literal"` with an optional `:"locator"` (language.md 3.9).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+/// A citation `@path`, `@"literal"` with an optional `:"locator"` (language.md 3.9).
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Citation {
     /// The cite name or the literal text.
@@ -103,8 +104,8 @@ pub struct Citation {
 /// What a citation names.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum CiteName {
-    /// `@name`, a `cite` or pseudo-citation.
-    Named(Ident),
+    /// `@path`, a `cite` item path or a pseudo-citation (`measured`, `assumed`, `estimate`).
+    Named(Path),
     /// `@"literal"`, text that is never checked for reachability.
     Literal(String),
 }
@@ -295,22 +296,37 @@ pub enum ItemKind {
     Error,
 }
 
-/// `cite name = "..."` or `cite name = std::iso273`.
+/// A typed `cite NAME: TYPE { field = "value" ... }` item (language.md 3.9).
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Cite {
     /// The cite name.
     pub name: Ident,
-    /// What it points at.
-    pub target: CiteTarget,
+    /// The declared type word (checked by sema, E006).
+    pub ty: Ident,
+    /// The fields in source order.
+    pub fields: Vec<CiteFieldDecl>,
 }
 
-/// The right side of a `cite`.
+/// One `name = value` line of a `cite` body.
 #[derive(Clone, PartialEq, Eq, Debug)]
-pub enum CiteTarget {
-    /// A URL or file path string.
-    Str(String),
-    /// A standard, as a path.
-    Path(Path),
+pub struct CiteFieldDecl {
+    /// The field name (checked by sema, E006).
+    pub name: Ident,
+    /// The value as written.
+    pub value: CiteValue,
+    /// Where the whole field is.
+    pub span: Span,
+}
+
+/// The value of a `cite` field.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum CiteValue {
+    /// A string.
+    Text(String),
+    /// A list of strings (only `author` accepts one).
+    List(Vec<String>),
+    /// Anything else (wrongly shaped; sema reports E006).
+    Other,
 }
 
 /// An interface declaration.

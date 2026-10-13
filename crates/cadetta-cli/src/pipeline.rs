@@ -12,15 +12,13 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use cadetta_ir::entities::Waiver;
-use cadetta_ir::model::{
-    CitationKind as IrCitationKind, ComponentClass, MemberKind as IrMemberKind,
-    Project as IrProject,
-};
+use cadetta_ir::model::{ComponentClass, MemberKind as IrMemberKind, Project as IrProject};
 use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::{d, f, interface, m, n, q, unused};
+use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
 use cadetta_sema::kindcheck::{EmptyEnv, KindChecker};
@@ -209,17 +207,32 @@ fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
 /// is taken against the package directory).
 fn s_facts(ir: &IrProject, dir: Option<&Path>) -> (Vec<OtsValueFacts>, Vec<CitationFacts>) {
     let (mut values, mut cites) = (Vec::new(), Vec::new());
-    let cite_of = |path: String, c: &cadetta_ir::model::Citation, span| {
-        let kind = match c.kind {
-            IrCitationKind::File => CitationKind::LocalFile,
-            IrCitationKind::Url => CitationKind::Url,
-            _ => CitationKind::Literal,
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    let cite_of = |path: String, r: &cadetta_ir::model::CiteRef, span| {
+        let item = r
+            .cite
+            .as_ref()
+            .and_then(|p| ir.citations.iter().find(|c| &c.path == p));
+        // A `file` field is a local file (S002 checks it exists); a url-only cite is a Url;
+        // every other form (note, pseudo-citation, other item) is a Literal.
+        let (kind, target) = match item {
+            Some(c) if c.file().is_some() => {
+                (CitationKind::LocalFile, c.file().unwrap().to_owned())
+            }
+            Some(c) if c.text("url").is_some() => {
+                (CitationKind::Url, c.text("url").unwrap().to_owned())
+            }
+            _ => (CitationKind::Literal, r.display_name()),
+        };
+        let exists = match (&kind, dir) {
+            (CitationKind::LocalFile, Some(d)) => d.join(&target).exists(),
+            _ => true,
         };
         CitationFacts {
             path,
             kind,
-            target: c.target.clone(),
-            exists: dir.is_none_or(|d| d.join(&c.target).exists()),
+            target,
+            exists,
             span,
         }
     };
@@ -632,6 +645,26 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
     }
     for e in &resolve_errors {
         out.extend(located(e.code, Severity::Error, e.message.clone(), e.span));
+    }
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    {
+        let cites = CiteIndex::new(&sources);
+        for p in parsed
+            .iter()
+            .filter(|p| !p.is_std && scope.contains(&p.name))
+        {
+            for (src, m) in sources
+                .iter()
+                .find(|s| s.name == p.name)
+                .into_iter()
+                .flat_map(|s| s.modules.iter())
+                .map(|m| (&p.name, m))
+            {
+                for d in cites.check_module(src, m) {
+                    out.extend(located(d.code, Severity::Error, d.message, d.span));
+                }
+            }
+        }
     }
     for d in &evaluation.diagnostics {
         // C001/C002 are reported once, from the structured check results below.

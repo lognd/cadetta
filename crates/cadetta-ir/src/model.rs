@@ -197,36 +197,204 @@ pub enum MemberKind {
     Place,
 }
 
-/// A citation kind (ir.md 3 `Citation`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum CitationKind {
-    /// A web address.
-    Url,
-    /// A file in the package.
-    File,
+/// The declared type of a `cite` item (language.md 3.9, ir.md 3 `Citation`).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum CitationType {
     /// A standard.
     Standard,
-    /// A measurement.
+    /// A manufacturer datasheet.
+    Datasheet,
+    /// A drawing.
+    Drawing,
+    /// A catalog page.
+    Catalog,
+    /// A book.
+    Book,
+    /// A journal article.
+    Article,
+    /// A web page.
+    Web,
+    /// A quotation.
+    Quote,
+    /// Any other document.
+    Document,
+}
+
+impl CitationType {
+    /// Every type, in declaration order.
+    pub const ALL: [CitationType; 9] = [
+        Self::Standard,
+        Self::Datasheet,
+        Self::Drawing,
+        Self::Catalog,
+        Self::Book,
+        Self::Article,
+        Self::Web,
+        Self::Quote,
+        Self::Document,
+    ];
+
+    /// The source and wire name (`standard`, `datasheet`, ...).
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Standard => "standard",
+            Self::Datasheet => "datasheet",
+            Self::Drawing => "drawing",
+            Self::Catalog => "catalog",
+            Self::Book => "book",
+            Self::Article => "article",
+            Self::Web => "web",
+            Self::Quote => "quote",
+            Self::Document => "document",
+        }
+    }
+
+    /// The type named `name`, if any.
+    pub fn parse(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|t| t.name() == name)
+    }
+}
+
+/// One field value of a `cite` item: text, or a list for `author`.
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum CiteField {
+    /// A single string.
+    Text(String),
+    /// A list of strings (`author` only).
+    List(Vec<String>),
+}
+
+/// A `cite` item reached by the design (ir.md 3 `Citation`).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Citation {
+    /// Canonical item path, `PKG::module::name`.
+    pub path: String,
+    /// The declared type.
+    pub ty: CitationType,
+    /// Field values by field name.
+    pub fields: BTreeMap<String, CiteField>,
+    /// Digest of the file named by the `file` field, when it was readable.
+    pub file_digest: Option<Digest>,
+    /// Digest of type, fields in name order and the file digest (`absent` when missing).
+    pub digest: Digest,
+}
+
+impl Citation {
+    /// Builds a citation and computes its digest.
+    pub fn new(
+        path: impl Into<String>,
+        ty: CitationType,
+        fields: BTreeMap<String, CiteField>,
+        file_digest: Option<Digest>,
+    ) -> Self {
+        let digest = crate::digest::citation_digest(ty, &fields, file_digest.as_ref());
+        Self {
+            path: path.into(),
+            ty,
+            fields,
+            file_digest,
+            digest,
+        }
+    }
+
+    /// The text of field `name`, when it is a single string.
+    pub fn text(&self, name: &str) -> Option<&str> {
+        match self.fields.get(name) {
+            Some(CiteField::Text(t)) => Some(t),
+            _ => None,
+        }
+    }
+
+    /// The package-relative file the citation names, if any.
+    pub fn file(&self) -> Option<&str> {
+        self.text("file")
+    }
+}
+
+/// A built-in citation form (ir.md 3 `CiteRef.builtin`).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CiteBuiltin {
+    /// An inline `@"text"` note.
+    Note,
+    /// `@measured`.
     Measured,
-    /// An assumption.
+    /// `@assumed`.
     Assumed,
-    /// An estimate.
+    /// `@estimate`.
     Estimate,
 }
 
-/// A named source for a value (ir.md 3 `Citation`).
+impl CiteBuiltin {
+    /// The wire name.
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Note => "note",
+            Self::Measured => "measured",
+            Self::Assumed => "assumed",
+            Self::Estimate => "estimate",
+        }
+    }
+}
+
+/// A use-site citation: a cite item path or a built-in form, with a locator (ir.md 3 `CiteRef`).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Citation {
-    /// The citation's name.
-    pub name: String,
-    /// What it points at.
-    pub target: String,
-    /// Page, clause or table within the target.
+pub struct CiteRef {
+    /// The cited `cite` item's path, when the citation names one.
+    pub cite: Option<String>,
+    /// The built-in form, when it names none.
+    pub builtin: Option<CiteBuiltin>,
+    /// A note's text.
+    pub text: Option<String>,
+    /// The string after `:`.
     pub locator: Option<String>,
-    /// The kind of source.
-    pub kind: CitationKind,
-    /// Digest of the cited file, when `kind` is `File`.
-    pub file_digest: Option<Digest>,
+}
+
+impl CiteRef {
+    /// A reference to a `cite` item.
+    pub fn item(path: impl Into<String>, locator: Option<String>) -> Self {
+        Self {
+            cite: Some(path.into()),
+            builtin: None,
+            text: None,
+            locator,
+        }
+    }
+
+    /// A built-in reference (`measured`, `assumed`, `estimate`).
+    pub fn builtin(kind: CiteBuiltin, locator: Option<String>) -> Self {
+        Self {
+            cite: None,
+            builtin: Some(kind),
+            text: None,
+            locator,
+        }
+    }
+
+    /// An inline note.
+    pub fn note(text: impl Into<String>, locator: Option<String>) -> Self {
+        Self {
+            cite: None,
+            builtin: Some(CiteBuiltin::Note),
+            text: Some(text.into()),
+            locator,
+        }
+    }
+
+    /// The name the citation was written with: the item's last path segment, the built-in's
+    /// name, or the note text.
+    pub fn display_name(&self) -> String {
+        match (&self.cite, &self.text, self.builtin) {
+            (Some(c), _, _) => c.rsplit("::").next().unwrap_or(c).to_owned(),
+            (None, Some(t), _) => t.clone(),
+            (None, None, Some(b)) => b.name().to_owned(),
+            (None, None, None) => String::new(),
+        }
+    }
 }
 
 /// A parameter, `let`, bound or generated member (ir.md 3 `Member`).
@@ -251,7 +419,7 @@ pub struct Member {
     /// The tolerance role (`hole`, `shaft`, ...).
     pub role: Option<String>,
     /// The citation for the value.
-    pub citation: Option<Citation>,
+    pub citation: Option<CiteRef>,
     /// Previous names (`was`).
     pub was: Vec<String>,
     /// Attributes, semantic and presentational.
@@ -342,7 +510,7 @@ pub struct Component {
     /// Interfaces it implements, path text.
     pub implements: Vec<String>,
     /// Component-level citation.
-    pub citation: Option<Citation>,
+    pub citation: Option<CiteRef>,
     /// Attributes.
     pub attrs: BTreeMap<String, String>,
     /// Its members.
@@ -655,14 +823,13 @@ mod tests {
             }],
         };
         assert_eq!(a.terms.len(), 1);
-        let c = Citation {
-            name: "n".into(),
-            target: "t".into(),
-            locator: None,
-            kind: CitationKind::Standard,
-            file_digest: None,
-        };
-        assert_eq!(c.kind, CitationKind::Standard);
+        let c = Citation::new(
+            "acme.rover::refs::n",
+            CitationType::Standard,
+            BTreeMap::new(),
+            None,
+        );
+        assert_eq!(c.ty, CitationType::Standard);
         let pr = Provenance::Imported {
             adapter: "freecad".into(),
             file: "a.FCStd".into(),

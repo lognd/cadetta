@@ -3,13 +3,39 @@
 
 use std::materials::Material
 
-cite steppero = "StepperOnline 17HS16-2004S1 datasheet, p.1"
-cite nema     = "NEMA ICS 16 frame 17"
-cite coupler  = "Misumi MCKN19-5-8 drawing"
-cite iso2904  = "ISO 2904:1977 trapezoidal thread basic dimensions"
-cite screwds  = "Generic T8 lead screw datasheet (verify rev.)"
-cite nutds    = "Generic T8 anti-backlash flange nut drawing"
-cite hiwin    = "HIWIN MG series catalog, MGN12 (verify rev.)"
+cite steppero: datasheet {
+  organization = "StepperOnline"
+  title = "17HS16-2004S1 datasheet"
+  pages = "1"
+}
+cite nema: standard {
+  organization = "NEMA"
+  number = "NEMA ICS 16"
+  title = "Motion/position control motors, controls, and feedback devices"
+  note = "Frame 17"
+}
+cite coupler: drawing {
+  organization = "Misumi"
+  title = "MCKN19-5-8 coupling drawing"
+}
+cite iso2904: standard {
+  organization = "ISO"
+  number = "ISO 2904:1977"
+  title = "ISO metric trapezoidal screw threads: basic dimensions"
+  date = "1977"
+}
+cite screwds: datasheet {
+  title = "Generic T8 lead screw datasheet"
+  note = "Verify revision"
+}
+cite nutds: drawing {
+  title = "Generic T8 anti-backlash flange nut drawing"
+}
+cite hiwin: catalog {
+  organization = "HIWIN"
+  title = "MG series catalog, MGN12"
+  note = "Verify revision"
+}
 
 /// What a drivetrain needs from a motor.
 pub interface Stepper {

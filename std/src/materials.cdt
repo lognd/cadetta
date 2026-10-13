@@ -15,7 +15,12 @@
 // upper bound along the filament.
 
 /// The citation every row here carries: the materials handbook.
-pub cite handbook = "Machinery's Handbook, 31st ed., materials properties tables; ASM Metals Handbook vol. 2; MMPDS-2022 for aluminium tempers"
+pub cite handbook: book {
+    title = "Machinery's Handbook"
+    publisher = "Industrial Press"
+    edition = "31st"
+    note = "Materials properties tables; with ASM Metals Handbook vol. 2 and MMPDS-2022 for aluminium tempers"
+}
 
 /// The 14 stock materials std knows (stdlib.md 3).
 pub enum Material { Al6061T6, Al7075T6, Al5052H32, Ss304, Ss316, Steel1018, Steel4140, CastIron, Brass360, Petg, Pla, Abs, Nylon6, Pom }

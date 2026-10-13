@@ -273,10 +273,11 @@ pub fn ack(
 fn ack_citations(citations: &[Citation], signer: &Signer, lock: &mut Lock) -> Result<(), AckError> {
     for c in citations {
         let Ok(rec) = ack_citation(c, signer.clone()) else {
-            tracing::debug!(name = %c.name, "citation has no file digest; not acknowledged");
+            // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+            tracing::debug!(path = %c.path, "citation has no file digest; not acknowledged");
             continue;
         };
-        let id = citation_id(&c.target);
+        let id = citation_id(c.file().unwrap_or_default());
         if lock
             .attestation(&id, SOURCE_ROLE)
             .is_some_and(|a| a.digest == rec.digest)

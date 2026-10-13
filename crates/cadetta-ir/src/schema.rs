@@ -210,18 +210,54 @@ fn defs() -> Map<String, J> {
         ),
     ));
     d.push((
-        "CitationKind",
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        "CitationType",
         en(
-            "A citation kind.",
-            &["url", "file", "standard", "measured", "assumed", "estimate"],
+            "The declared type of a `cite` item.",
+            &[
+                "standard",
+                "datasheet",
+                "drawing",
+                "catalog",
+                "book",
+                "article",
+                "web",
+                "quote",
+                "document",
+            ],
+        ),
+    ));
+    d.push((
+        "CiteBuiltin",
+        en(
+            "A built-in citation form.",
+            &["note", "measured", "assumed", "estimate"],
         ),
     ));
     d.push((
         "Citation",
         obj(
-            "A named source for a value.",
-            &[("name", s()), ("target", s()), ("kind", r("CitationKind"))],
-            &[("locator", s()), ("file_digest", r("Digest"))],
+            "A `cite` item reached by the design; `fields` maps names to strings (`author` to a list).",
+            &[
+                ("path", s()),
+                ("type", r("CitationType")),
+                ("fields", map(json!({ "type": ["string", "array"], "items": { "type": "string" } }))),
+                ("digest", r("Digest")),
+            ],
+            &[("file_digest", r("Digest"))],
+        ),
+    ));
+    d.push((
+        "CiteRef",
+        obj(
+            "A use-site citation: exactly one of `cite` (an item path) and `builtin`.",
+            &[],
+            &[
+                ("cite", s()),
+                ("builtin", r("CiteBuiltin")),
+                ("text", s()),
+                ("locator", s()),
+            ],
         ),
     ));
     d.push((
@@ -243,7 +279,7 @@ fn defs() -> Map<String, J> {
                 ("bound", r("Bound")),
                 ("expr", s()),
                 ("role", s()),
-                ("citation", r("Citation")),
+                ("citation", r("CiteRef")),
                 ("doc", s()),
                 ("span", r("SpanRef")),
                 ("variants", map(r("Value"))),
@@ -375,7 +411,7 @@ fn defs() -> Map<String, J> {
             ],
             &[
                 ("params_sig", s()),
-                ("citation", r("Citation")),
+                ("citation", r("CiteRef")),
                 ("span", r("SpanRef")),
                 ("digest", r("Digest")),
             ],
@@ -540,7 +576,7 @@ fn defs() -> Map<String, J> {
                 ("cols", arr(r("TableCol"))),
                 ("rows", arr(r("TableRow"))),
             ],
-            &[("citation", r("Citation"))],
+            &[("citation", r("CiteRef"))],
         ),
     ));
     d.push((
@@ -777,14 +813,23 @@ mod tests {
         m
     }
 
-    fn cite() -> Citation {
-        Citation {
-            name: "n".into(),
-            target: "t".into(),
-            locator: Some("p1".into()),
-            kind: CitationKind::File,
-            file_digest: Some(Digest("ab".into())),
-        }
+    fn cite() -> CiteRef {
+        CiteRef::item("acme.rover::refs::n", Some("p1".into()))
+    }
+
+    fn citation() -> Citation {
+        let mut f = BTreeMap::new();
+        f.insert(
+            "author".to_owned(),
+            CiteField::List(vec!["A".into(), "B".into()]),
+        );
+        f.insert("title".to_owned(), CiteField::Text("T".into()));
+        Citation::new(
+            "acme.rover::refs::n",
+            CitationType::Book,
+            f,
+            Some(Digest("ab".into())),
+        )
     }
 
     /// A project with every optional field and every enum arm exercised.
@@ -893,7 +938,7 @@ mod tests {
                 loc(LocatorKind::Frame, LocatorMode::Value, Sign::Plus),
             ],
         });
-        pr.citations = vec![cite()];
+        pr.citations = vec![citation()];
         pr.digest = Some(Digest("0123".into()));
         pr
     }

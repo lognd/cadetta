@@ -14,10 +14,22 @@
 // Sizes listed are the preferred sizes 3..75 (Din471) and 8..75 (Din472) mm.
 
 /// The citation for the shaft-ring table: DIN 471.
-pub cite din471 = "DIN 471 retaining rings for shafts, normal type; groove dimensions"
+pub cite din471: standard {
+    organization = "DIN"
+    number = "DIN 471"
+    title = "Retaining rings for shafts, normal type"
+    date = "2022"
+    note = "Groove dimensions"
+}
 
 /// The citation for the bore-ring table: DIN 472.
-pub cite din472 = "DIN 472 retaining rings for bores, normal type; groove dimensions"
+pub cite din472: standard {
+    organization = "DIN"
+    number = "DIN 472"
+    title = "Retaining rings for bores, normal type"
+    date = "2022"
+    note = "Groove dimensions"
+}
 
 /// DIN 471 external ring and groove by shaft diameter d1, mm.
 pub table Din471 @din471:"groove dimensions" {

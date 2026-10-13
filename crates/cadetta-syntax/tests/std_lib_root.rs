@@ -1,36 +1,43 @@
-//! `std/src/lib.cdt` exports one `pub cite` per standard (stdlib.md intro).
+//! `std/src/lib.cdt` exports one `pub use` per standard (stdlib.md intro).
 
 // frob:ticket 01M4SXVA290E2HY5B284N1B3H9
 
-use cadetta_syntax::ast::{FileEntry, ItemKind};
+use cadetta_syntax::ast::FileEntry;
 use cadetta_syntax::parser::parse;
 
 const SRC: &str = include_str!("../../../std/src/lib.cdt");
 
-/// The root parses clean and every item is a cite.
+/// The root parses clean and every entry is a `pub use` re-export (draft 1.5).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
 #[test]
-fn root_parses_clean_and_only_cites() {
+fn root_parses_clean_and_only_reexports() {
     let parsed = parse(SRC);
     assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
-    let items: Vec<_> = parsed
-        .file
-        .entries
-        .iter()
-        .filter_map(|e| match e {
-            FileEntry::Item(i) => Some(i),
-            _ => None,
-        })
-        .collect();
-    assert_eq!(items.len(), 8);
-    assert!(items.iter().all(|i| matches!(i.kind, ItemKind::Cite(_))));
+    assert_eq!(parsed.file.uses().count(), 8);
+    assert_eq!(
+        parsed
+            .file
+            .entries
+            .iter()
+            .filter(|e| matches!(e, FileEntry::Item(_)))
+            .count(),
+        0
+    );
+    assert!(
+        parsed
+            .file
+            .uses()
+            .all(|u| u.vis != cadetta_syntax::ast::Vis::Private)
+    );
 }
 
 /// The named standards are all exported at the root.
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
 #[test]
 fn root_exports_each_standard() {
     for n in [
         "iso273", "iso286", "din471", "din472", "iso724", "iso4762", "iso4032", "tapdrill",
     ] {
-        assert!(SRC.contains(&format!("pub cite {n} = ")), "{n}");
+        assert!(SRC.contains(&format!("::{n}\n")), "{n}");
     }
 }

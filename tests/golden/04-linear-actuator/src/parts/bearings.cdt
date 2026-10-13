@@ -1,7 +1,17 @@
 // Shared library: the 608 is one physical part, stated once, imported anywhere.
 
-cite iso492 = "ISO 492:2014 table 4, normal (P0) class"
-cite skf608 = "https://www.skf.com/608-product-sheet"
+cite iso492: standard {
+  organization = "ISO"
+  number = "ISO 492:2014"
+  title = "Rolling bearings: radial bearings: geometrical product specification (GPS) and tolerance values"
+  date = "2014"
+  note = "Table 4, normal (P0) class"
+}
+cite skf608: datasheet {
+  organization = "SKF"
+  title = "608 product sheet"
+  url = "https://www.skf.com/608-product-sheet"
+}
 
 /// 608 deep-groove ball bearing, 8x22x7, ZZ shields, P0 tolerance.
 pub ots Bearing608 @skf608 {

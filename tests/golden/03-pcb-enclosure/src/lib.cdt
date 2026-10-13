@@ -2,8 +2,16 @@
 use std::fasteners::ScrewJoint
 use std::materials::Material
 
-cite pidrawing = "https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-mechanical-drawing.pdf"
-cite cnckitchen = "https://www.cnckitchen.com/blog/tipps-amp-tricks-fr-gewindeeinstze-im-3d-druck"
+cite pidrawing: drawing {
+  organization = "Raspberry Pi Ltd"
+  title = "Raspberry Pi 4 Model B mechanical drawing"
+  url = "https://datasheets.raspberrypi.com/rpi4/raspberry-pi-4-mechanical-drawing.pdf"
+}
+cite cnckitchen: web {
+  organization = "CNC Kitchen"
+  title = "Tips and tricks for threaded inserts in 3D printing"
+  url = "https://www.cnckitchen.com/blog/tipps-amp-tricks-fr-gewindeeinstze-im-3d-druck"
+}
 
 /// Raspberry Pi 4 Model B. Origin: board lower-left corner seen from the top,
 /// X along the 85mm edge, Y along the 56mm edge, Z up from the PCB top face.

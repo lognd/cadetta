@@ -176,7 +176,8 @@ mod tests {
             panic!()
         };
         let c = p.citation.expect("citation");
-        assert!(matches!(&c.name, CiteName::Named(i) if i.name == "vendor"));
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        assert!(matches!(&c.name, CiteName::Named(i) if i.text() == "vendor"));
         assert_eq!(c.locator.as_deref(), Some("p.2, table 1"));
         assert_eq!(p.was.len(), 1);
         assert_eq!(p.was[0].segments.len(), 2);

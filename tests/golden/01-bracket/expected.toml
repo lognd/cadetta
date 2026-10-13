@@ -7,7 +7,7 @@
 # mass roll-up are not pinned: IsoDefault and the screw masses are unspecified.
 
 [case]
-spec = "1.4"
+spec = "1.5"
 status = "hand-evaluated"
 exercises = ["quantities.md 5.3", "quantities.md 5.4", "language.md 3.1", "language.md 3.7", "stdlib.md 3", "geometry.md 2", "geometry.md 4", "geometry.md 5"]
 

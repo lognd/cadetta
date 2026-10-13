@@ -7,10 +7,23 @@ use std::materials::{Material, Materials}
 // Shop policy for every ScrewJoint in this file (stdlib.md 4).
 #![default(FastenerPolicy = AcmeShop)]
 
-cite vendor_a  = "docs/vendor/gm37-a.pdf"
-cite vendor_b  = "docs/vendor/gm42-b.pdf"
-cite customer  = "docs/requirements.md"
-cite rail_cert = "ASTM A276"
+cite vendor_a: datasheet {
+  title = "GM37-A gearmotor datasheet"
+  file = "docs/vendor/gm37-a.pdf"
+}
+cite vendor_b: datasheet {
+  title = "GM42-B gearmotor datasheet"
+  file = "docs/vendor/gm42-b.pdf"
+}
+cite customer: document {
+  title = "Customer requirements"
+  file = "docs/requirements.md"
+}
+cite rail_cert: standard {
+  organization = "ASTM"
+  number = "ASTM A276"
+  title = "Standard specification for stainless steel bars and shapes"
+}
 
 // Policy tables (stdlib.md 4). Copied from IsoDefault, then edited.
 table AcmeEngagement @"shop standard SS-104 rev C" {

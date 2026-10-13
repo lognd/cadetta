@@ -19,7 +19,12 @@
 use super::tables::{Iso4762Head, MetricThread, Thread, iso4762}
 
 /// The citation for the steel density used by the mass estimate: Machinery's Handbook.
-cite steel_density = "Machinery's Handbook, density of carbon and alloy steel, 7.85 g/cm^3"
+cite steel_density: book {
+    title = "Machinery's Handbook"
+    publisher = "Industrial Press"
+    edition = "31st"
+    note = "Density of carbon and alloy steel, 7.85 g/cm^3"
+}
 
 /// What a screw offers a joint: thread, length, head size and mass.
 pub interface Screw {

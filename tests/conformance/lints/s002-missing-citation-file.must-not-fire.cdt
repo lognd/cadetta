@@ -1,4 +1,4 @@
-cite spec = "https://x.example/a.pdf"
+cite spec: web { url = "https://x.example/a.pdf" }
 pub ots Pin @spec {
   dia = 5mm
 }

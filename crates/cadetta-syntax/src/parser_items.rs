@@ -691,7 +691,8 @@ mod tests {
     #[test]
     fn declarations_enum_fn_unit_kind_cite() {
         let p = clean(
-            "cite c = \"d.md\"\ncite s = std::iso273\nenum Material { Al6061T6, Petg }\nenum E {\n  A,\n  B,\n}\nfn f(a: Length, b: Ratio = 2) -> Length {\n  let x = a * b\n  x + 1mm\n}\nunit kip = 1000lbf\nunit Stress MPa\nkind Stress = Pressure\nkind HeatFlux = Power / Area\nkind Imp = Pressure / VolumeFlow^2\nfit f1 = H7/p6 on a.b\nrequire r: a > 0mm @c\ncheck k: a > 0mm\n",
+            // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+            "cite c: document {\n  file = \"d.md\"\n}\ncite s: standard { title = \"T\"; number = \"1\" }\nenum Material { Al6061T6, Petg }\nenum E {\n  A,\n  B,\n}\nfn f(a: Length, b: Ratio = 2) -> Length {\n  let x = a * b\n  x + 1mm\n}\nunit kip = 1000lbf\nunit Stress MPa\nkind Stress = Pressure\nkind HeatFlux = Power / Area\nkind Imp = Pressure / VolumeFlow^2\nfit f1 = H7/p6 on a.b\nrequire r: a > 0mm @c\ncheck k: a > 0mm\n",
         );
         let kinds: Vec<&str> = p
             .file
@@ -716,6 +717,10 @@ mod tests {
             ]
         );
         let items: Vec<_> = p.file.items().collect();
+        let ItemKind::Cite(c0) = &items[1].kind else {
+            panic!()
+        };
+        assert_eq!((c0.ty.name.as_str(), c0.fields.len()), ("standard", 2));
         let ItemKind::Enum(e) = &items[3].kind else {
             panic!()
         };

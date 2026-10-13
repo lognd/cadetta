@@ -1,4 +1,4 @@
-cite iso273 = std::iso273
+use std::iso273
 table Iso273 @iso273 {
   key d: Length
   cols pitch: Length

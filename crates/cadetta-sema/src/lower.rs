@@ -22,18 +22,18 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use cadetta_ir::model::{
-    self as ir, AffineTerm, Check, Citation, Component, ComponentClass, Exact, Fit, Flavour,
-    Inexact, Member, MemberKind, Nominal, PackageId, Part, Project, Provenance, SpanRef, Value,
-    VerdictState, Verdicts,
+    self as ir, AffineTerm, Check, Component, ComponentClass, Exact, Fit, Flavour, Inexact, Member,
+    MemberKind, Nominal, PackageId, Part, Project, Provenance, SpanRef, Value, VerdictState,
+    Verdicts,
 };
 use cadetta_ir::path::{Path, PathContext, Seg};
-use cadetta_syntax::ast::{self, FileEntry, ItemKind};
+use cadetta_syntax::ast;
 use cadetta_syntax::lexer::Span;
 use cadetta_units::compare::{Note, Verdict};
 use cadetta_units::{Magnitude, Toleranced, VarId};
 use tracing::{debug, trace, warn};
 
-use crate::cite::{CiteTable, effective};
+use crate::cite::{CiteIndex, effective};
 use crate::deps::DepGraph;
 use crate::eval::{Evaluated, Evaluation, Quant, Val};
 use crate::fits::FitResult;
@@ -245,7 +245,7 @@ impl Cx<'_> {
         &self,
         comp: &CanonPath,
         src: Option<&SourceText<'_>>,
-        table: &CiteTable,
+        idx: &CiteIndex<'_>,
         file: &ast::File,
         c: &ast::Component,
         m: &ast::Member,
@@ -299,10 +299,10 @@ impl Cx<'_> {
             .find(|r| out.attrs.contains_key(**r))
             .map(|r| (*r).to_owned());
         out.citation = effective(citation, c.citation.as_ref()).and_then(|cc| {
-            match table.resolve(self.input.package_dir, cc) {
-                Ok(c) => Some(c),
+            match idx.lower_ref(&comp.package, &comp.modules, cc) {
+                Ok(r) => Some(r),
                 Err(e) => {
-                    debug!(path = %canon, error = %e, "lower: citation unresolved");
+                    debug!(path = %canon, error = %e.message, "lower: citation unresolved");
                     None
                 }
             }
@@ -470,20 +470,14 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
             .collect(),
     };
     let mut modules = BTreeSet::new();
-    let mut citations: BTreeMap<String, Citation> = BTreeMap::new();
+    let mut cited: BTreeSet<String> = BTreeSet::new();
+    let idx = CiteIndex::new(input.packages);
     for pkg in input.packages.iter().filter(|p| p.name == input.name) {
         for module in &pkg.modules {
             if !module.path.is_empty() {
                 modules.insert(module.path.join("::"));
             }
             let src = input.sources.get(&module.path);
-            let table = CiteTable::new(module.file.entries.iter().filter_map(|e| match e {
-                FileEntry::Item(i) => match &i.kind {
-                    ItemKind::Cite(c) => Some(c),
-                    _ => None,
-                },
-                FileEntry::Use(_) => None,
-            }));
             for c in module.file.components() {
                 let canon = CanonPath::item(&pkg.name, &module.path, &c.name.name);
                 let Some(path) = ir_path_item(&canon) else {
@@ -513,7 +507,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                     citation: c
                         .citation
                         .as_ref()
-                        .and_then(|cc| table.resolve(input.package_dir, cc).ok()),
+                        .and_then(|cc| idx.lower_ref(&pkg.name, &module.path, cc).ok()),
                     attrs: BTreeMap::new(),
                     members: Vec::new(),
                     parts: Vec::new(),
@@ -522,12 +516,8 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                     digest: None,
                 };
                 for m in &c.members {
-                    if let Some(mem) = cx.lower_member(&canon, src, &table, module.file, c, m) {
-                        if let Some(cit) = &mem.citation {
-                            citations
-                                .entry(cit.name.clone())
-                                .or_insert_with(|| cit.clone());
-                        }
+                    if let Some(mem) = cx.lower_member(&canon, src, &idx, module.file, c, m) {
+                        cited.extend(mem.citation.iter().filter_map(|r| r.cite.clone()));
                         comp.members.push(mem);
                     } else if let ast::MemberKind::Part(p) = &m.kind {
                         comp.parts.extend(cx.lower_part(&canon, src, p));
@@ -539,6 +529,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                     .filter(|f| f.path.item_only() == canon)
                     .filter_map(|f| cx.lower_fit(f))
                     .collect();
+                cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
             }
@@ -576,7 +567,10 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
         });
     }
     project.set_modules(modules.into_iter().collect());
-    project.citations = citations.into_values().collect();
+    project.citations = cited
+        .iter()
+        .filter_map(|p| idx.citation(p, input.name, input.package_dir))
+        .collect();
     debug!(
         components = project.components.len(),
         checks = project.checks.len(),
@@ -842,6 +836,57 @@ mod tests {
                 .unwrap()
                 .tol
                 .is_none()
+        );
+    }
+
+    const CITED: &str = "cite zeta: web { url = \"https://x.example/z\" }\n\
+        cite alpha: web { title = \"A\" }\n\
+        pub ots Part @zeta {\n  a = 1mm @alpha:\"p.1\"\n  b = 2mm\n  c = 3mm @\"note\"\n}\n";
+
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn citations_are_sorted_and_member_citation_replaces_the_components() {
+        let b = build(CITED, &[], &[]);
+        let paths: Vec<&str> = b
+            .project
+            .citations
+            .iter()
+            .map(|c| c.path.as_str())
+            .collect();
+        assert_eq!(paths, ["p::alpha", "p::zeta"]);
+        let comp = &b.project.components[0];
+        assert_eq!(
+            comp.citation.as_ref().unwrap().cite.as_deref(),
+            Some("p::zeta")
+        );
+        let a = member(&b, "Part", "a").citation.as_ref().unwrap();
+        assert_eq!(a.cite.as_deref(), Some("p::alpha"));
+        assert_eq!(a.locator.as_deref(), Some("p.1"));
+        // an uncited member inherits the component's citation
+        let inherited = member(&b, "Part", "b").citation.as_ref().unwrap();
+        assert_eq!(inherited.cite.as_deref(), Some("p::zeta"));
+        let c = member(&b, "Part", "c").citation.as_ref().unwrap();
+        assert_eq!(c.text.as_deref(), Some("note"));
+        assert!(c.cite.is_none());
+    }
+
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn editing_a_cite_changes_its_digest_but_not_the_citing_nodes() {
+        use cadetta_ir::digest::{component_digest, member_digest};
+        let one = build(CITED, &[], &[]);
+        let two = build(&CITED.replace("\"A\"", "\"B\""), &[], &[]);
+        let d = |b: &Built| b.project.citations[0].digest.clone();
+        assert_ne!(d(&one), d(&two));
+        assert_eq!(
+            member_digest(member(&one, "Part", "a")),
+            member_digest(member(&two, "Part", "a"))
+        );
+        assert_eq!(
+            component_digest(&one.project.components[0]),
+            component_digest(&two.project.components[0])
         );
     }
 }

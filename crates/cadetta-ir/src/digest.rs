@@ -17,8 +17,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use tracing::{debug, trace};
 
 use crate::model::{
-    Affine, Binding, Bound, Check, Citation, Component, Digest, Exact, Fit, Locator, Member,
-    Nominal, Part, Project, Provenance, Solver, Value,
+    Affine, Binding, Bound, Check, CitationType, CiteField, CiteRef, Component, Digest, Exact, Fit,
+    Locator, Member, Nominal, Part, Project, Provenance, Solver, Value,
 };
 
 /// Attribute keys that never enter a digest (ir.md 4).
@@ -144,15 +144,56 @@ fn value(e: &mut Enc, v: &Value) {
     });
 }
 
-fn citation(e: &mut Enc, c: &Citation) {
-    e.str(&c.name).str(&c.target);
+/// A use-site reference: the cite item path (or built-in form, note text) and locator only.
+fn cite_ref(e: &mut Enc, c: &CiteRef) {
+    e.opt(&c.cite, |e, s| {
+        e.str(s);
+    });
+    e.opt(&c.builtin, |e, b| {
+        e.str(b.name());
+    });
+    e.opt(&c.text, |e, s| {
+        e.str(s);
+    });
     e.opt(&c.locator, |e, s| {
         e.str(s);
     });
-    e.str(&format!("{:?}", c.kind));
-    e.opt(&c.file_digest, |e, d| {
-        e.digest(d);
-    });
+}
+
+/// Digest of a `cite` item: its type, fields in name order, and the file digest (`absent` when
+/// the named file is missing). The item's path is not part of it (ir.md 3).
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+pub fn citation_digest(
+    ty: CitationType,
+    fields: &BTreeMap<String, CiteField>,
+    file_digest: Option<&Digest>,
+) -> Digest {
+    let mut e = Enc::new("citation");
+    e.str(ty.name());
+    e.num(fields.len() as u64);
+    for (k, v) in fields {
+        e.str(k);
+        match v {
+            CiteField::Text(t) => {
+                e.str("text").str(t);
+            }
+            CiteField::List(l) => {
+                e.str("list").num(l.len() as u64);
+                for item in l {
+                    e.str(item);
+                }
+            }
+        }
+    }
+    match file_digest {
+        Some(d) => {
+            e.digest(d);
+        }
+        None => {
+            e.str("absent");
+        }
+    }
+    e.finish()
 }
 
 fn attrs(e: &mut Enc, a: &BTreeMap<String, String>) {
@@ -181,7 +222,7 @@ pub fn member_digest(m: &Member) -> Digest {
     e.opt(&m.role, |e, s| {
         e.str(s);
     });
-    e.opt(&m.citation, citation);
+    e.opt(&m.citation, cite_ref);
     e.num(m.was.len() as u64);
     for w in &m.was {
         e.str(w);
@@ -315,7 +356,7 @@ pub fn component_digest(c: &Component) -> Digest {
     for i in imp {
         e.str(i);
     }
-    e.opt(&c.citation, citation);
+    e.opt(&c.citation, cite_ref);
     attrs(&mut e, &c.attrs);
     let mut kids: Vec<(String, Digest)> = Vec::new();
     for m in &c.members {
@@ -374,11 +415,7 @@ pub fn project_digest(p: &Project) -> Digest {
     let mut cites: Vec<(String, Digest)> = p
         .citations
         .iter()
-        .map(|c| {
-            let mut ce = Enc::new("citation");
-            citation(&mut ce, c);
-            (c.name.clone(), ce.finish())
-        })
+        .map(|c| (c.path.clone(), c.digest.clone()))
         .collect();
     kids.append(&mut cites);
     kids.sort_by(|a, b| a.0.cmp(&b.0));
@@ -580,7 +617,7 @@ pub fn digest_project(project: &mut Project) -> Result<(), DigestError> {
 mod tests {
     use super::*;
     use crate::model::{
-        AffineTerm, CitationKind, ComponentClass, Flavour, MemberKind, PackageId, SpanRef,
+        AffineTerm, Citation, ComponentClass, Flavour, MemberKind, PackageId, SpanRef,
     };
     use crate::path::{Path, PathContext};
     use cadetta_units::{Dim, Magnitude, Rational};
@@ -675,19 +712,13 @@ mod tests {
         assert_eq!(g.closure("a.b::X.c"), build(1, false).closure("a.b::X.c"));
         assert_ne!(g.closure("a.b::X.c"), build(5, true).closure("a.b::X.c"));
         assert_ne!(g.closure("a.b::X.c").unwrap(), *g.own("a.b::X.c").unwrap());
-        // cited file digest and solver result digest flow through closures
+        // a citing node's digest covers its CiteRef only, never the cited item's digest
         let mut m = mem("a.b::X.f", 1, &[]);
         let before = member_digest(&m);
-        m.citation = Some(Citation {
-            name: "n".into(),
-            target: "t".into(),
-            locator: None,
-            kind: CitationKind::File,
-            file_digest: Some(Digest("aa".into())),
-        });
+        m.citation = Some(CiteRef::item("a.b::refs::n", Some("p.2".into())));
         let c1 = member_digest(&m);
-        m.citation.as_mut().unwrap().file_digest = Some(Digest("bb".into()));
         assert_ne!(before, c1);
+        m.citation = Some(CiteRef::item("a.b::refs::n", Some("p.3".into())));
         assert_ne!(c1, member_digest(&m));
         let mut s = Solver {
             path: p("a.b::X.sol"),
@@ -849,5 +880,56 @@ mod tests {
         digest_project(&mut pr).unwrap();
         assert_ne!(first, pr.digest.clone().unwrap());
         assert_eq!(digest_bytes(b"x").0.len(), 64);
+    }
+
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    // frob:tests crates/cadetta-ir/src/digest.rs::citation_digest kind=unit
+    #[test]
+    fn citation_digest_covers_fields_and_file_not_citers() {
+        let fields =
+            |t: &str| BTreeMap::from([("title".to_owned(), CiteField::Text(t.to_owned()))]);
+        let base = Citation::new("a.b::refs::n", CitationType::Web, fields("T"), None);
+        let edited = Citation::new("a.b::refs::n", CitationType::Web, fields("U"), None);
+        assert_ne!(base.digest, edited.digest);
+        let with_file = Citation::new(
+            "a.b::refs::n",
+            CitationType::Web,
+            fields("T"),
+            Some(Digest("aa".into())),
+        );
+        assert_ne!(
+            base.digest, with_file.digest,
+            "absent marker differs from a digest"
+        );
+        let changed_file = Citation::new(
+            "a.b::refs::n",
+            CitationType::Web,
+            fields("T"),
+            Some(Digest("bb".into())),
+        );
+        assert_ne!(with_file.digest, changed_file.digest);
+        // the citing member and its closure do not move when the citation is edited
+        let mut m = mem("a.b::X.f", 1, &[]);
+        m.citation = Some(CiteRef::item("a.b::refs::n", None));
+        let mut g = DigestGraph::new();
+        g.add_member(&m);
+        let (own, closure) = (member_digest(&m), g.closure("a.b::X.f").unwrap());
+        let mut pr = Project::new(
+            Flavour::Design,
+            PackageId {
+                name: "a.b".into(),
+                version: "0.1.0".into(),
+            },
+        );
+        pr.citations = vec![base];
+        let before = project_digest(&pr);
+        pr.citations = vec![edited];
+        assert_ne!(
+            before,
+            project_digest(&pr),
+            "the project digest sees the edit"
+        );
+        assert_eq!(own, member_digest(&m));
+        assert_eq!(closure, g.closure("a.b::X.f").unwrap());
     }
 }

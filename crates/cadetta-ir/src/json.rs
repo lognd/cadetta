@@ -19,10 +19,42 @@ use tracing::{debug, warn};
 
 use crate::dim::DimWire;
 use crate::model::{
-    Affine, AffineTerm, Binding, Bound, BoundOp, Check, Citation, CitationKind, Component,
-    ComponentClass, Dependency, Digest, Exact, Fit, Flavour, Inexact, Locator, LocatorKind,
-    LocatorMode, Member, MemberKind, Nominal, PackageId, Part, Project, Provenance, Sign, Solver,
-    SpanRef, Value, VerdictState, Verdicts,
+    // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+    Affine,
+    AffineTerm,
+    Binding,
+    Bound,
+    BoundOp,
+    Check,
+    Citation,
+    CitationType,
+    CiteBuiltin,
+    CiteField,
+    CiteRef,
+    Component,
+    ComponentClass,
+    Dependency,
+    Digest,
+    Exact,
+    Fit,
+    Flavour,
+    Inexact,
+    Locator,
+    LocatorKind,
+    LocatorMode,
+    Member,
+    MemberKind,
+    Nominal,
+    PackageId,
+    Part,
+    Project,
+    Provenance,
+    Sign,
+    Solver,
+    SpanRef,
+    Value,
+    VerdictState,
+    Verdicts,
 };
 use crate::path::Path;
 
@@ -62,10 +94,16 @@ str_enum!(MemberKind {
     MemberKind::Param => "param", MemberKind::Let => "let", MemberKind::Bound => "bound",
     MemberKind::Datum => "datum", MemberKind::Place => "place",
 });
-str_enum!(CitationKind {
-    CitationKind::Url => "url", CitationKind::File => "file",
-    CitationKind::Standard => "standard", CitationKind::Measured => "measured",
-    CitationKind::Assumed => "assumed", CitationKind::Estimate => "estimate",
+str_enum!(CitationType {
+    CitationType::Standard => "standard", CitationType::Datasheet => "datasheet",
+    CitationType::Drawing => "drawing", CitationType::Catalog => "catalog",
+    CitationType::Book => "book", CitationType::Article => "article",
+    CitationType::Web => "web", CitationType::Quote => "quote",
+    CitationType::Document => "document",
+});
+str_enum!(CiteBuiltin {
+    CiteBuiltin::Note => "note", CiteBuiltin::Measured => "measured",
+    CiteBuiltin::Assumed => "assumed", CiteBuiltin::Estimate => "estimate",
 });
 str_enum!(VerdictState {
     VerdictState::Pass => "pass", VerdictState::Fail => "fail", VerdictState::Unknown => "unknown",
@@ -227,15 +265,37 @@ impl Serialize for Provenance {
     }
 }
 
+impl Serialize for CiteField {
+    /// Serialize as a string, or a list of strings for `author`.
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        match self {
+            CiteField::Text(t) => s.serialize_str(t),
+            CiteField::List(l) => l.serialize(s),
+        }
+    }
+}
+
 impl Serialize for Citation {
-    /// Serialize as `{ name, target, locator?, kind, file_digest? }`.
+    /// Serialize as `{ path, type, fields, file_digest?, digest }`.
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         let mut m = s.serialize_map(None)?;
-        m.serialize_entry("name", &self.name)?;
-        m.serialize_entry("target", &self.target)?;
-        opt(&mut m, "locator", &self.locator)?;
-        m.serialize_entry("kind", &self.kind)?;
+        m.serialize_entry("path", &self.path)?;
+        m.serialize_entry("type", &self.ty)?;
+        m.serialize_entry("fields", &self.fields)?;
         opt(&mut m, "file_digest", &self.file_digest)?;
+        m.serialize_entry("digest", &self.digest)?;
+        m.end()
+    }
+}
+
+impl Serialize for CiteRef {
+    /// Serialize as `{ cite?, builtin?, text?, locator? }`.
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut m = s.serialize_map(None)?;
+        opt(&mut m, "cite", &self.cite)?;
+        opt(&mut m, "builtin", &self.builtin)?;
+        opt(&mut m, "text", &self.text)?;
+        opt(&mut m, "locator", &self.locator)?;
         m.end()
     }
 }

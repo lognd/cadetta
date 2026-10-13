@@ -363,8 +363,9 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], job.config_point);
         let citation = member.citation.as_ref().map(|c| match &c.locator {
-            Some(l) => format!("{} {l}", c.name),
-            None => c.name.clone(),
+            // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+            Some(l) => format!("{} {l}", c.display_name()),
+            None => c.display_name(),
         });
         let mut own_global_written = false;
         for loc in locators {

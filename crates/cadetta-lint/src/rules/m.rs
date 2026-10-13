@@ -238,7 +238,15 @@ mod tests {
     use super::*;
     use crate::diag::Severity;
     use cadetta_ir::model::{
-        Affine, AffineTerm, Citation, CitationKind, ComponentClass, Exact, Fit, Flavour, PackageId,
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        Affine,
+        AffineTerm,
+        CiteRef,
+        ComponentClass,
+        Exact,
+        Fit,
+        Flavour,
+        PackageId,
         Provenance,
     };
     use cadetta_ir::path::{Path, PathContext};
@@ -283,14 +291,8 @@ mod tests {
         }
     }
 
-    fn cite() -> Citation {
-        Citation {
-            name: "c".into(),
-            target: "ISO 286".into(),
-            locator: None,
-            kind: CitationKind::Standard,
-            file_digest: None,
-        }
+    fn cite() -> CiteRef {
+        CiteRef::item("demo::iso286", None)
     }
 
     fn project(class: ComponentClass, members: Vec<Member>, fits: Vec<Fit>) -> Project {

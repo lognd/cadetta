@@ -24,19 +24,47 @@
 // audit must verify every row before release.
 
 /// The citation for the thread profile and coarse pitches: ISO 261 and ISO 724.
-pub cite iso724 = "ISO 261:1998 general plan; ISO 724:1993 basic dimensions of metric threads"
+pub cite iso724: standard {
+    organization = "ISO"
+    number = "ISO 724:1993"
+    title = "ISO general-purpose metric screw threads: basic dimensions"
+    date = "1993"
+    note = "With ISO 261:1998 general plan"
+}
 
 /// The citation for clearance holes: ISO 273.
-pub cite iso273 = "ISO 273:1979 fasteners, clearance holes for bolts and screws"
+pub cite iso273: standard {
+    organization = "ISO"
+    number = "ISO 273:1979"
+    title = "Fasteners: clearance holes for bolts and screws"
+    date = "1979"
+}
 
 /// The citation for tap-drill and roll-tap drill sizes: ISO 2306 and Machinery's Handbook.
-pub cite tapdrill = "ISO 2306:2015 drills for use prior to tapping and thread forming; Machinery's Handbook tap drill tables"
+pub cite tapdrill: standard {
+    organization = "ISO"
+    number = "ISO 2306:2015"
+    title = "Drills for use prior to tapping and thread forming"
+    date = "2015"
+    note = "With the Machinery's Handbook tap drill tables"
+}
 
 /// The citation for socket head cap screws: ISO 4762.
-pub cite iso4762 = "ISO 4762:2004 hexagon socket head cap screws; counterbore per ISO 4762 annex and DIN 974-1"
+pub cite iso4762: standard {
+    organization = "ISO"
+    number = "ISO 4762:2004"
+    title = "Hexagon socket head cap screws"
+    date = "2004"
+    note = "Counterbore per ISO 4762 annex and DIN 974-1"
+}
 
 /// The citation for hexagon nuts: ISO 4032.
-pub cite iso4032 = "ISO 4032:2012 hexagon regular nuts (style 1), product grades A and B"
+pub cite iso4032: standard {
+    organization = "ISO"
+    number = "ISO 4032:2012"
+    title = "Hexagon regular nuts (style 1), product grades A and B"
+    date = "2012"
+}
 
 /// The metric coarse thread sizes std knows (M1_6 displays as M1.6).
 pub enum MetricThread { M1_6, M2, M2_5, M3, M4, M5, M6, M8, M10, M12, M16, M20 }

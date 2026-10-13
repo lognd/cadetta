@@ -1,0 +1,9 @@
+cite s: standard {
+  organization = "ISO"
+  number = "273"
+  title = "Clearance holes"
+  date = "1979"
+}
+model Part {
+  width = 3mm @s
+}

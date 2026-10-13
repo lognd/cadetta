@@ -2,7 +2,11 @@
 // US shop, imperial. Catalog numbers are from memory; verify each against
 // the current catalog page before cutting.
 
-cite catalog = "https://8020.net/"
+cite catalog: catalog {
+  organization = "8020"
+  title = "8020 aluminum extrusion catalog"
+  url = "https://8020.net/"
+}
 
 /// 80/20 1010 profile, 6105-T5 aluminum (not in std::materials::Material).
 ots Extrusion1010 @catalog:"1010 profile page, verify edition" {

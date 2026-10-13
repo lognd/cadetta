@@ -23,7 +23,12 @@ use crate::materials::{Material, TapClass}
 use super::tables::{Iso4762Len, tapdrill}
 
 /// The citation for the shop-policy figures: Machinery's Handbook.
-pub cite policy_handbook = "Machinery's Handbook, tapping and thread engagement; ISO 2306:2015 preferred drill series"
+pub cite policy_handbook: book {
+    title = "Machinery's Handbook"
+    publisher = "Industrial Press"
+    edition = "31st"
+    note = "Tapping and thread engagement; ISO 2306:2015 preferred drill series"
+}
 
 /// Which TapDrill column a tap uses: cutting at 75% or 65% thread, or forming.
 pub enum TapColumn { Cut75, Cut65, Form }

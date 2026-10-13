@@ -10,11 +10,30 @@
 
 use std::commercial::Sourced
 
-cite sunon25   = "datasheets/sunon-mf80251v1-1000u-a99.pdf"
-cite sunon20   = "datasheets/sunon-mf80201v1-1000u-a99.pdf"
-cite noctua    = "datasheets/noctua-nf-a8-pwm.pdf"
-cite din7981   = "datasheets/din7981-st42-pan-head-tapping.pdf"
-cite grommetds = "datasheets/strain-relief-grommet-sb.pdf"
+cite sunon25: datasheet {
+  organization = "Sunon"
+  title = "MF80251V1-1000U-A99 datasheet"
+  file = "datasheets/sunon-mf80251v1-1000u-a99.pdf"
+}
+cite sunon20: datasheet {
+  organization = "Sunon"
+  title = "MF80201V1-1000U-A99 datasheet"
+  file = "datasheets/sunon-mf80201v1-1000u-a99.pdf"
+}
+cite noctua: datasheet {
+  organization = "Noctua"
+  title = "NF-A8 PWM datasheet"
+  file = "datasheets/noctua-nf-a8-pwm.pdf"
+}
+cite din7981: datasheet {
+  organization = "DIN"
+  title = "DIN 7981 ST4.2 pan head tapping screw datasheet"
+  file = "datasheets/din7981-st42-pan-head-tapping.pdf"
+}
+cite grommetds: datasheet {
+  title = "Strain relief grommet SB datasheet"
+  file = "datasheets/strain-relief-grommet-sb.pdf"
+}
 
 // VolumeFlow, cfm and mmH2O are built in (quantities.md 3); only the system
 // curve coefficient needs a kind.

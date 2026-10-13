@@ -20,7 +20,8 @@ use serde::ser::SerializeMap;
 use serde::{Serialize, Serializer};
 use tracing::debug;
 
-use crate::model::{Bound, Citation, Digest, Member, Value};
+// frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+use crate::model::{Bound, CiteRef, Digest, Member, Value};
 use crate::variant_name::{ComponentPath, VariantName};
 
 /// An interface member requirement `name[?]: type` (language.md 3.2).
@@ -95,7 +96,7 @@ pub struct Table {
     /// The rows.
     pub rows: Vec<TableRow>,
     /// The table's citation.
-    pub citation: Option<Citation>,
+    pub citation: Option<CiteRef>,
 }
 
 /// A suppression of one code on a path glob (ir.md 3 `Waiver`; lints.md 2.1).

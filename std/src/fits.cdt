@@ -23,7 +23,12 @@
 // Column naming: `it7` is IT7; `j_5_6` covers grades 5 and 6.
 
 /// The citation every table here carries: ISO 286-1:2010 and 286-2:2010.
-pub cite iso286 = "ISO 286-1:2010, ISO 286-2:2010"
+pub cite iso286: standard {
+    organization = "ISO"
+    number = "ISO 286-1:2010, ISO 286-2:2010"
+    title = "Geometrical product specifications (GPS): ISO code system for tolerances on linear sizes"
+    date = "2010"
+}
 
 /// Standard tolerance grades IT1 to IT18 by nominal size range, width in um (ISO 286-1 table 1).
 pub table ItGrade @iso286:"table 1" {

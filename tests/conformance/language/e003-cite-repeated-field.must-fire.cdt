@@ -1,0 +1,7 @@
+cite s: standard {
+  organization = "ISO"
+  organization = "DIN"
+  number = "1"
+  title = "T"
+  date = "1979"
+}

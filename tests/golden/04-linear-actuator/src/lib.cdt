@@ -9,7 +9,11 @@ use std::fasteners::ScrewJoint
 use self::drive::Drivetrain
 use self::structure::{MotorMount, EndBlock, CarriagePlate}
 
-cite fastlist = "fastener price list FL-2 rev A (hypothetical vendor)"
+cite fastlist: catalog {
+  organization = "Hypothetical vendor"
+  title = "Fastener price list FL-2"
+  rev = "A"
+}
 
 assembly Actuator {
   travel            = 300mm                  was stroke

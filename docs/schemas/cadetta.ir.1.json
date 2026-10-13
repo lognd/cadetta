@@ -153,42 +153,85 @@
     },
     "Citation": {
       "additionalProperties": false,
-      "description": "A named source for a value.",
+      "description": "A `cite` item reached by the design; `fields` maps names to strings (`author` to a list).",
       "properties": {
+        "digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "fields": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": [
+              "string",
+              "array"
+            ]
+          },
+          "type": "object"
+        },
         "file_digest": {
           "$ref": "#/$defs/Digest"
         },
-        "kind": {
-          "$ref": "#/$defs/CitationKind"
-        },
-        "locator": {
+        "path": {
           "type": "string"
         },
-        "name": {
-          "type": "string"
-        },
-        "target": {
-          "type": "string"
+        "type": {
+          "$ref": "#/$defs/CitationType"
         }
       },
       "required": [
-        "kind",
-        "name",
-        "target"
+        "digest",
+        "fields",
+        "path",
+        "type"
       ],
       "type": "object"
     },
-    "CitationKind": {
-      "description": "A citation kind.",
+    "CitationType": {
+      "description": "The declared type of a `cite` item.",
       "enum": [
-        "url",
-        "file",
         "standard",
+        "datasheet",
+        "drawing",
+        "catalog",
+        "book",
+        "article",
+        "web",
+        "quote",
+        "document"
+      ],
+      "type": "string"
+    },
+    "CiteBuiltin": {
+      "description": "A built-in citation form.",
+      "enum": [
+        "note",
         "measured",
         "assumed",
         "estimate"
       ],
       "type": "string"
+    },
+    "CiteRef": {
+      "additionalProperties": false,
+      "description": "A use-site citation: exactly one of `cite` (an item path) and `builtin`.",
+      "properties": {
+        "builtin": {
+          "$ref": "#/$defs/CiteBuiltin"
+        },
+        "cite": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
     },
     "Component": {
       "additionalProperties": false,
@@ -201,7 +244,7 @@
           "type": "object"
         },
         "citation": {
-          "$ref": "#/$defs/Citation"
+          "$ref": "#/$defs/CiteRef"
         },
         "class": {
           "$ref": "#/$defs/ComponentClass"
@@ -612,7 +655,7 @@
           "$ref": "#/$defs/Bound"
         },
         "citation": {
-          "$ref": "#/$defs/Citation"
+          "$ref": "#/$defs/CiteRef"
         },
         "closure": {
           "$ref": "#/$defs/Digest"
@@ -1069,7 +1112,7 @@
       "description": "A table of constants.",
       "properties": {
         "citation": {
-          "$ref": "#/$defs/Citation"
+          "$ref": "#/$defs/CiteRef"
         },
         "cols": {
           "items": {

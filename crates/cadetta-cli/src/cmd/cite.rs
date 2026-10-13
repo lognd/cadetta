@@ -1,7 +1,7 @@
 //! frob:ticket 01M4SWN8DY2SQYR5GCTQQM16Z9
 //! `cadetta cite pin NAME` (config-cli.md 3; obligations.md 2.3).
 //!
-//! Downloads the URL a `cite NAME = "https://..."` points at into the
+//! Downloads the URL a `cite NAME: T { url = "https://..." }` points at into the
 //! package's `cites/` directory, content-addressed as
 //! `cites/<first 16 hex of blake3>-<file name>`, and rewrites the `cite`
 //! to that package-relative path so S004 can detect drift. Pinning the
@@ -11,7 +11,7 @@
 use std::io;
 use std::path::{Path, PathBuf};
 
-use cadetta_syntax::ast::{CiteTarget, ItemKind};
+use cadetta_syntax::ast::{CiteValue, ItemKind};
 use cadetta_syntax::parser::parse;
 
 use crate::project::Project;
@@ -92,23 +92,26 @@ fn find_cite(source: &str, name: &str) -> Option<Found> {
         if cite.name.name != name {
             continue;
         }
-        let target = match &cite.target {
-            CiteTarget::Str(s) => s.clone(),
-            CiteTarget::Path(_) => source[item.span.start..item.span.end]
-                .rsplit('=')
-                .next()
-                .unwrap_or_default()
-                .trim()
-                .to_owned(),
+        // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
+        // Draft 1.5: the pinnable URL is the `url` field of the typed record; its string
+        // literal is what gets rewritten (the pin redesign is another ticket).
+        let Some(field) = cite.fields.iter().find(|f| f.name.name == "url") else {
+            return Some(Found {
+                target: String::new(),
+                literal: item.span.start..item.span.start,
+            });
         };
-        let text = source.get(item.span.start..item.span.end)?;
+        let CiteValue::Text(target) = &field.value else {
+            continue;
+        };
+        let text = source.get(field.span.start..field.span.end)?;
         let eq = text.find('=')? + 1;
         let rest = &text[eq..];
         let lead = rest.len() - rest.trim_start().len();
-        let start = item.span.start + eq + lead;
+        let start = field.span.start + eq + lead;
         let end = start + rest.trim().len();
         return Some(Found {
-            target,
+            target: target.clone(),
             literal: start..end,
         });
     }
@@ -215,8 +218,7 @@ mod tests {
     use crate::config::Config;
     use crate::project::{Module, PackageDir};
 
-    const SRC: &str =
-        "cite colson = \"https://colson.example/2-series.pdf?v=2\"\ncite local = \"docs/r.md\"\n";
+    const SRC: &str = "cite colson: web {\n    url = \"https://colson.example/2-series.pdf?v=2\"\n}\ncite local: web {\n    url = \"docs/r.md\"\n}\n";
 
     fn project(source: &str) -> Project {
         let config = Config::parse("[package]\nname = \"acme.p\"\nversion = \"0.1.0\"\n").unwrap();
@@ -260,7 +262,9 @@ mod tests {
         let text = String::from_utf8(writes[1].1.clone()).unwrap();
         assert_eq!(
             text,
-            format!("cite colson = \"{local}\"\ncite local = \"docs/r.md\"\n")
+            format!(
+                "cite colson: web {{\n    url = \"{local}\"\n}}\ncite local: web {{\n    url = \"docs/r.md\"\n}}\n"
+            )
         );
     }
 
