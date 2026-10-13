@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T07:10:42Z"
+updated = "2026-10-13T07:10:43Z"
 persona = "design engineer"
 capability = "get cycle detection and `was` rename resolution"
 outcome_text = "single-source-of-truth errors are caught"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a reference to a name listed in `was`, when resolved, then it resolves and N004 is emitted (language.md 3.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the dependency graph, when built, then it is known without evaluating the design (language.md intro)"
