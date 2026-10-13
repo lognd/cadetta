@@ -19,6 +19,10 @@ scope = ["std/materials.cdt"]
 kind = "blocks"
 target = "01M4STAPCEF5EPEYX0MZDSBA7J"
 
+[[links]]
+kind = "blocks"
+target = "01M4STAPPJR0478N5B1E751RZY"
+
 [[acceptance]]
 text = "Given the 14 Material variants in stdlib.md 3, when loaded, then each has its properties and a citation (stdlib.md 2)"
 bound = false
