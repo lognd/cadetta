@@ -8,9 +8,9 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T06:04:42Z"
+updated = "2026-10-13T06:04:47Z"
 persona = "design engineer"
-capability = "declare namespace, import, ots, model, assembly, part, fit, check and waive"
+capability = "declare import, ots, model, assembly, part, fit, check and waive"
 outcome_text = "I can describe a design in .cdt"
 labels = ["creates:crates/cadetta-syntax/src/{parser,ast}.rs"]
 scope = ["crates/cadetta-syntax/src/{parser,ast}.rs"]
@@ -48,10 +48,10 @@ text = "Given `part wheel[4]: Caster = Vendor4471B alt [Colson2Series]`, when pa
 bound = false
 
 [[acceptance]]
-text = "Given `use std.fasteners::{MetricThread, ScrewJoint}` and `as` renames, when parsed, then the imports are recorded (language.md 3)"
+text = "Given the file production, when parsed, then it is `{ use | item }` with no namespace header or mod declaration, and `use` follows packages.md 4 (language.md 3; packages.md 2)"
 bound = false
 
 [[acceptance]]
-text = "Given the file production, when parsed, then it is `{ use | item }` with no namespace header or mod declaration, and `use` follows packages.md 4 (language.md 3; packages.md 2)"
+text = "Given `use std::fasteners::{MetricThread, ScrewJoint}` and `as` renames, when parsed, then the imports are recorded (language.md 3; packages.md 4)"
 bound = false
 +++

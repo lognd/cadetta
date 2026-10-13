@@ -1,0 +1,7 @@
+kind = "field"
+field = "capability"
+old = "declare namespace, import, ots, model, assembly, part, fit, check and waive"
+new = "declare import, ots, model, assembly, part, fit, check and waive"
+at = "2026-10-13T06:04:47Z"
+actor = "lognd"
+rev = 1
