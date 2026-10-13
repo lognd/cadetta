@@ -2,7 +2,8 @@
 id = "01M4STAQ2HJ1561N1M6VJHY70G"
 title = "Conformance fixture layout and expectation format"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
