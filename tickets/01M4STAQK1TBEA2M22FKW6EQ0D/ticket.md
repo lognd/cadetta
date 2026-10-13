@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:58Z"
-updated = "2026-10-13T17:18:29Z"
+updated = "2026-10-13T17:21:21Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for emitters/sw-equations"
@@ -20,10 +20,10 @@ kind = "blocks"
 target = "01M4STCF3A4JQGPYSE7BBHK4BD"
 
 [[acceptance]]
-text = "Given docs/spec/emitters/sw-equations.md, when fixtures are written, then every normative rule and every diagnostic code in emitters/sw-equations has a must-fire and a must-not-fire fixture under tests/conformance/emitters/sw-equations/ (emitters/sw-equations.md)"
+text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
 bound = false
 
 [[acceptance]]
-text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
+text = "Given docs/spec/emitters/sw-equations.md, when fixtures are written, then every normative rule of emitters/sw-equations has a must-fire and a must-not-fire fixture pair under tests/conformance/emitters/sw-equations/ (execution awaits runner discovery of nested docs, ~EB99AA4, and non-check entries, ~6BCVN48)"
 bound = false
 +++
