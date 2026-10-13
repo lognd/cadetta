@@ -1,0 +1,16 @@
+kind = "create"
+title = "IR Dim vector over SI base, angle and currency"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
+persona = "design engineer"
+capability = "build quantities from the IR alone"
+idempotency_key = "replan14:ir-dim"
+labels = ["creates:crates/cadetta-ir/src/dim.rs"]
+scope = ["crates/cadetta-ir/src/dim.rs"]
+acceptance = ["Given a Value, when serialized, then dim holds integer exponents for m, kg, s, A, K, mol, cd, angle and a currency map keyed by ISO code (ir.md 3)", "Given an IR with no unit table, when a Quantity is built, then dim alone suffices to convert units (ir.md 3)"]
+at = "2026-10-13T05:43:35Z"
+actor = "lognd"
+rev = 1
