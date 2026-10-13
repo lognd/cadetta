@@ -2,7 +2,8 @@
 id = "01M4SWN72EQVW3BFMXRB22TJGA"
 title = "Selector grammar KIND:GLOB"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
