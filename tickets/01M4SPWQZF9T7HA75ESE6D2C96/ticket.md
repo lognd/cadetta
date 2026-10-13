@@ -2,7 +2,8 @@
 id = "01M4SPWQZF9T7HA75ESE6D2C96"
 title = "Lint family Magic-number rules M001-M003"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
