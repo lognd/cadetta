@@ -1,0 +1,16 @@
+kind = "create"
+title = "cadetta init and fmt"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
+persona = "design engineer"
+capability = "run `cadetta init` and `cadetta fmt [--check]`"
+outcome_text = "I can start a project and keep layout canonical"
+labels = ["creates:crates/cadetta-cli/src/cmd/{init,fmt}.rs"]
+scope = ["crates/cadetta-cli/src/cmd/{init,fmt}.rs"]
+acceptance = ["Given an existing project, when init repeats, then nothing is overwritten", "Given unformatted source, when `fmt --check` runs, then exit code is 1"]
+at = "2026-10-13T04:03:56Z"
+actor = "lognd"
+rev = 1
