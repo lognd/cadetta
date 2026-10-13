@@ -1125,6 +1125,7 @@ fn use_group(trees: &[UseTree]) -> String {
             UseTreeKind::Leaf { alias: Some(a) } => format!("{} as {}", t.name.name, a.name),
             UseTreeKind::Glob => format!("{}::*", t.name.name),
             UseTreeKind::Group(g) => format!("{}::{}", t.name.name, use_group(g)),
+            UseTreeKind::Star => "*".to_owned(),
         })
         .collect();
     format!("{{{}}}", items.join(", "))
