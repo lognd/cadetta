@@ -17,6 +17,10 @@ scope = ["crates/cadetta-obligations/src/waiver.rs"]
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWRDX98PHVNHPD14HYY8D"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4ST8EMQTXAGZAWGE2M5A4BR"
 
 [[links]]
