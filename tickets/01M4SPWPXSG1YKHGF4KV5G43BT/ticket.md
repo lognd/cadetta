@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T04:03:52Z"
-updated = "2026-10-13T06:31:57Z"
+updated = "2026-10-13T06:32:29Z"
 persona = "design engineer"
 capability = "resolve hole and shaft classes like H7, p6, g6 for any size in range"
 outcome_text = "fits are values, not comments"
 labels = ["creates:crates/cadetta-fits/**"]
-scope = ["crates/cadetta-fits/**"]
+scope = ["crates/cadetta-fits/**", "docs/spec/language.md"]
 
 [[links]]
 kind = "blocks"
