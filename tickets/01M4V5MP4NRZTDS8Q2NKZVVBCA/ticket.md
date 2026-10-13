@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:40:52Z"
-updated = "2026-10-13T18:13:45Z"
+updated = "2026-10-13T18:14:15Z"
 scope = ["docs/spec/emitters/csv.md", "docs/spec/emitters/json.md", "docs/spec/adapters.md", "tests/conformance/emitters/csv/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the csv note fixtures, when read, then they assert the exact note text (order, emit= token, fit class) rather than loose substrings"
-bound = false
+bound = true
 +++
 
 found while working ~9JX3J6F. csv.md 1 says note parts are joined with '; ' but its example row 1 joins literal and citation with a space (1/4in @"ASTM B209"), and row 2 writes 'emit mid' where json.md and sw-equations.md write 'emit=mid'. Decide the separator and token form; then tighten note-order, note-emit-point and note-fit-class fixtures under tests/conformance/emitters/csv/, which assert separator-agnostically today.
