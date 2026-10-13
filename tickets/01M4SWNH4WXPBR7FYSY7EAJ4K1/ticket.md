@@ -15,6 +15,10 @@ idempotency_key = "replan14:ob-asof"
 labels = ["creates:crates/cadetta-obligations/src/as_of.rs"]
 scope = ["crates/cadetta-obligations/src/as_of.rs"]
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWSTRG1FFAJ0XM89ETBBN"
+
 [[acceptance]]
 text = "Given --as-of or [project] as_of, when expiry is judged, then that date is used and recorded in the JSON report header (config-cli.md 4)"
 bound = false
