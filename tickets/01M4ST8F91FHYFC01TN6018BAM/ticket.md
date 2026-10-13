@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the suggested edit, when printed, then it is the new `part` line with NEW removed from alt and the old primary appended (obligations.md 5.1)"
-bound = false
+bound = true
 +++
