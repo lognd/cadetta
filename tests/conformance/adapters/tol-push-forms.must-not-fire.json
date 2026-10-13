@@ -1,0 +1,36 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ],
+    "features": [],
+    "tolerances": "drive",
+    "native_unit": "mm"
+  },
+  "design": {
+    "p.sym": "12mm +-0.1mm",
+    "p.bil": "12mm [+0.2mm, -0.1mm]",
+    "p.lim": "[11.9mm, 12.2mm]",
+    "p.fit": "12mm H7"
+  },
+  "locators": {
+    "p.sym": {
+      "kind": "dimension",
+      "tolerance": "drive"
+    },
+    "p.bil": {
+      "kind": "dimension",
+      "tolerance": "drive"
+    },
+    "p.lim": {
+      "kind": "dimension",
+      "tolerance": "drive"
+    },
+    "p.fit": {
+      "kind": "dimension",
+      "tolerance": "drive"
+    }
+  }
+}

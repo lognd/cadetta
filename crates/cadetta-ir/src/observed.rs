@@ -196,6 +196,7 @@ mod tests {
                 sign: None,
                 component: None,
                 implicit: None,
+                tolerance: None,
             },
             nominal: Nominal::Exact(Exact(Magnitude::new(Rational::new(n, 1).unwrap(), 0))),
             dim: Dim::default(),

@@ -122,6 +122,17 @@
             "null"
           ]
         },
+        "tolerance": {
+          "description": "The design tolerance to write with the value (adapters.md 3.6); only to `tolerances` adapters.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DimTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "value": {
           "description": "The new value."
         }
@@ -155,6 +166,97 @@
     },
     "DiagRecord": {
       "$ref": "diag.json"
+    },
+    "DimTolerance": {
+      "description": "A dimension tolerance on the wire, as native-unit literals (adapters.md 3.6).",
+      "oneOf": [
+        {
+          "description": "`[+-t]`: the value plus or minus `t`.",
+          "type": "object",
+          "properties": {
+            "form": {
+              "type": "string",
+              "const": "symmetric"
+            },
+            "t": {
+              "description": "Half-width `t`.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "form",
+            "t"
+          ]
+        },
+        {
+          "description": "Asymmetric deviations from the value.",
+          "type": "object",
+          "properties": {
+            "form": {
+              "type": "string",
+              "const": "bilateral"
+            },
+            "lower": {
+              "description": "Lower deviation (signed).",
+              "type": "string"
+            },
+            "upper": {
+              "description": "Upper deviation (signed).",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "form",
+            "upper",
+            "lower"
+          ]
+        },
+        {
+          "description": "Absolute limits (`.min`, `.max`); also the form when the emit point is not nominal.",
+          "type": "object",
+          "properties": {
+            "form": {
+              "type": "string",
+              "const": "limits"
+            },
+            "max": {
+              "description": "Upper limit.",
+              "type": "string"
+            },
+            "min": {
+              "description": "Lower limit.",
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "form",
+            "min",
+            "max"
+          ]
+        },
+        {
+          "description": "An ISO 286 class the tool names itself.",
+          "type": "object",
+          "properties": {
+            "class": {
+              "description": "The class, e.g. `H7`.",
+              "type": "string"
+            },
+            "form": {
+              "type": "string",
+              "const": "fit"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "form",
+            "class"
+          ]
+        }
+      ]
     },
     "EmitParams": {
       "description": "Params of `emit`.",
@@ -200,6 +302,36 @@
       "required": [
         "files",
         "diagnostics"
+      ]
+    },
+    "Feature": {
+      "description": "An optional adapter feature declared at `initialize` (adapters.md 5).",
+      "oneOf": [
+        {
+          "description": "Reads frame transforms.",
+          "type": "string",
+          "const": "frames"
+        },
+        {
+          "description": "Reads component transforms and reference properties.",
+          "type": "string",
+          "const": "instances"
+        },
+        {
+          "description": "Creates and drives coordinate systems.",
+          "type": "string",
+          "const": "create_frames"
+        },
+        {
+          "description": "Reads and writes dimension tolerances (adapters.md 3.6).",
+          "type": "string",
+          "const": "tolerances"
+        },
+        {
+          "description": "Renames globals in place.",
+          "type": "string",
+          "const": "rename_globals"
+        }
       ]
     },
     "FileDigest": {
@@ -275,6 +407,14 @@
             "$ref": "#/$defs/CapabilityName"
           }
         },
+        "features": {
+          "description": "Optional features (adapters.md 5); absent means none.",
+          "type": "array",
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Feature"
+          }
+        },
         "name": {
           "description": "Adapter name.",
           "type": "string"
@@ -328,12 +468,48 @@
         "status": {
           "description": "What happened.",
           "$ref": "#/$defs/PushStatus"
+        },
+        "tolerance": {
+          "description": "Tolerance read back after the push, for adapters reporting `tolerances`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DimTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "additionalProperties": false,
       "required": [
         "locator",
         "status"
+      ]
+    },
+    "ObservedTolerance": {
+      "description": "The tolerance read back from one dimension locator (adapters.md 3.6).",
+      "type": "object",
+      "properties": {
+        "locator": {
+          "description": "The dimension locator.",
+          "type": "string"
+        },
+        "tolerance": {
+          "description": "Its tolerance; `None` when the dimension is untoleranced.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DimTolerance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "locator"
       ]
     },
     "OpenParams": {
@@ -494,6 +670,13 @@
         },
         "observed": {
           "description": "The observed IR."
+        },
+        "tolerances": {
+          "description": "Dimension tolerances, only from adapters reporting `tolerances`.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ObservedTolerance"
+          }
         }
       },
       "additionalProperties": false,

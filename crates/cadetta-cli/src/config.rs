@@ -10,6 +10,7 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
+use cadetta_ir::model::TolerancePolicy;
 use serde::Deserialize;
 
 /// Why a `cadetta.toml` could not be loaded (config-cli.md exit code 2).
@@ -358,6 +359,15 @@ pub struct Adapter {
     /// External adapter save policy.
     #[serde(default)]
     pub save: SaveMode,
+    /// `drive` (default) or `ignore`: write dimension tolerances (adapters.md 3.6).
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    #[serde(default = "default_tolerances")]
+    pub tolerances: TolerancePolicy,
+}
+
+/// The `[[adapter]] tolerances` default, `drive` (adapters.md 3.6).
+fn default_tolerances() -> TolerancePolicy {
+    TolerancePolicy::Drive
 }
 
 impl Adapter {
@@ -907,6 +917,18 @@ native_unit = "mm"
         let mut c = Config::parse("[package]\n").unwrap();
         c.default_package_name(Path::new("/nonexistent-cadetta-dir/My Rover/cadetta.toml"));
         assert_eq!(c.package.unwrap().name.as_deref(), Some("my_rover"));
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerances_key_defaults_drive_and_is_strict
+    #[test]
+    fn tolerances_key_defaults_drive_and_is_strict() {
+        let c = Config::parse(SAMPLE).unwrap();
+        assert_eq!(c.adapters[1].tolerances, TolerancePolicy::Drive);
+        let ign =
+            Config::parse(&pkg("[[adapter]]\nname = \"x\"\ntolerances = \"ignore\"\n")).unwrap();
+        assert_eq!(ign.adapters[0].tolerances, TolerancePolicy::Ignore);
+        assert!(err_text(&pkg("[[adapter]]\nname = \"x\"\ntolerances = \"on\"\n")).contains("on"));
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::BindMode

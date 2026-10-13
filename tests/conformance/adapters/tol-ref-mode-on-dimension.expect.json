@@ -1,0 +1,24 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.6",
+  "rule": "tolerance-drive",
+  "kind": "binding",
+  "entry": "push-plan",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "contains": [
+        "D1@Sketch1 tolerance symmetric +-0.1mm"
+      ],
+      "excludes": [
+        "W tolerance"
+      ]
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

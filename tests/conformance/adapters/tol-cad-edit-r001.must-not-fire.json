@@ -1,0 +1,45 @@
+{
+  "adapter": {
+    "id": "solidworks",
+    "capabilities": [
+      "read",
+      "drive"
+    ],
+    "features": [
+      "tolerances"
+    ],
+    "save": "after-sync",
+    "native_unit": "mm",
+    "version": "1.0"
+  },
+  "design": {
+    "acme.demo::Part.width": "12mm +-0.1mm"
+  },
+  "document": {
+    "file": "cad/plate.SLDPRT",
+    "dirty": false,
+    "read_only": false,
+    "locked": false
+  },
+  "regen": "ok",
+  "restore": "ok",
+  "args": [],
+  "lock": {
+    "synced": [
+      {
+        "adapter": "solidworks",
+        "file": "cad/plate.SLDPRT",
+        "locator": "Plate_Thk",
+        "path": "acme.demo::Part.width",
+        "value": "12mm +-0.1mm"
+      }
+    ],
+    "adopted": []
+  },
+  "native": {
+    "Plate_Thk": {
+      "value": "12mm",
+      "tolerance": "+-0.1mm"
+    }
+  }
+}

@@ -623,6 +623,9 @@
             -1
           ],
           "type": "integer"
+        },
+        "tolerance": {
+          "$ref": "#/$defs/TolerancePolicy"
         }
       },
       "required": [
@@ -1248,6 +1251,14 @@
         "key"
       ],
       "type": "object"
+    },
+    "TolerancePolicy": {
+      "description": "Whether a dimension locator's design tolerance is written (adapters.md 3.6).",
+      "enum": [
+        "drive",
+        "ignore"
+      ],
+      "type": "string"
     },
     "Value": {
       "additionalProperties": false,

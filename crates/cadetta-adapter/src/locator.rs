@@ -6,9 +6,10 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
-use cadetta_ir::model::{Binding, Locator, LocatorKind, LocatorMode};
+use cadetta_ir::model::{Binding, Locator, LocatorKind, LocatorMode, TolerancePolicy};
 use cadetta_ir::path::Path;
 
+use crate::rpc::DimTolerance;
 use crate::{AdapterDiagnostic, AdapterError, Severity};
 
 /// Diagnostic code for a `[*]` binding whose instances emit different values (adapters.md 3).
@@ -29,6 +30,9 @@ pub enum LocatorError {
     BadComponent(String),
     /// `for` or `config` is present but empty.
     EmptyField(&'static str),
+    /// `tolerance` is set on a locator that is not a `dimension`.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    ToleranceNotDimension,
 }
 
 impl fmt::Display for LocatorError {
@@ -41,6 +45,9 @@ impl fmt::Display for LocatorError {
             Self::SignOnProperty => write!(f, "`sign` does not apply to a property locator"),
             Self::BadComponent(c) => write!(f, "component `{c}` is not of the form `name<N>`"),
             Self::EmptyField(n) => write!(f, "`{n}` is present but empty"),
+            Self::ToleranceNotDimension => {
+                write!(f, "`tolerance` applies to a dimension locator only")
+            }
         }
     }
 }
@@ -66,6 +73,10 @@ fn validate_inner(l: &Locator) -> Result<(), LocatorError> {
     if l.sign.is_some() && l.kind == LocatorKind::Property {
         return Err(LocatorError::SignOnProperty);
     }
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    if l.tolerance.is_some() && l.kind != LocatorKind::Dimension {
+        return Err(LocatorError::ToleranceNotDimension);
+    }
     if l.for_alternate.as_deref().is_some_and(str::is_empty) {
         return Err(LocatorError::EmptyField("for"));
     }
@@ -84,6 +95,97 @@ fn validate_inner(l: &Locator) -> Result<(), LocatorError> {
         }
     }
     Ok(())
+}
+
+/// The shape of a path's design tolerance, with the limits the emit point resolves to.
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum DesignForm {
+    /// Untoleranced.
+    None,
+    /// `[+-t]`.
+    Symmetric(String),
+    /// Asymmetric bracket: upper and lower deviations.
+    Bilateral(String, String),
+    /// An interval value.
+    Interval,
+    /// An ISO 286 class (or fit side), with its deviations.
+    Class {
+        /// The class name, e.g. `H7`.
+        class: String,
+        /// Upper deviation.
+        upper: String,
+        /// Lower deviation.
+        lower: String,
+    },
+}
+
+/// A path's design tolerance as the planner sees it (adapters.md 3.6).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DesignTolerance {
+    /// The authored shape.
+    pub form: DesignForm,
+    /// Lower limit (`.min`) as a native-unit literal.
+    pub min: String,
+    /// Upper limit (`.max`) as a native-unit literal.
+    pub max: String,
+}
+
+/// What the adapter and the policy say about writing a tolerance.
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TolerancePlan {
+    /// The `[[adapter]] tolerances` default.
+    pub adapter_default: TolerancePolicy,
+    /// The adapter reported the `tolerances` feature at `initialize`.
+    pub has_feature: bool,
+    /// The emit point is `nominal` (quantities.md 5.6).
+    pub nominal_emit: bool,
+    /// The tool has a native fit tolerance that can name a class.
+    pub tool_has_fit: bool,
+}
+
+/// The tolerance to push with a locator's value, or `None` when none is written (adapters.md 3.6).
+///
+/// Only `dimension` locators carry one (a `ref`-mode dimension takes it on the dimension, never
+/// the global); a non-nominal emit point writes limits instead of a class or deviations.
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+pub fn plan_tolerance(
+    l: &Locator,
+    plan: &TolerancePlan,
+    design: &DesignTolerance,
+) -> Option<DimTolerance> {
+    if l.kind != LocatorKind::Dimension || !plan.has_feature {
+        return None;
+    }
+    if l.tolerance.unwrap_or(plan.adapter_default) == TolerancePolicy::Ignore {
+        tracing::debug!(locator = %l.locator, "tolerance ignored by policy");
+        return None;
+    }
+    let limits = || DimTolerance::Limits {
+        min: design.min.clone(),
+        max: design.max.clone(),
+    };
+    let out = match &design.form {
+        DesignForm::None => None,
+        _ if !plan.nominal_emit => Some(limits()),
+        DesignForm::Interval => Some(limits()),
+        DesignForm::Symmetric(t) => Some(DimTolerance::Symmetric { t: t.clone() }),
+        DesignForm::Bilateral(u, lo) => Some(DimTolerance::Bilateral {
+            upper: u.clone(),
+            lower: lo.clone(),
+        }),
+        DesignForm::Class { class, .. } if plan.tool_has_fit => Some(DimTolerance::Fit {
+            class: class.clone(),
+        }),
+        DesignForm::Class { upper, lower, .. } => Some(DimTolerance::Bilateral {
+            upper: upper.clone(),
+            lower: lower.clone(),
+        }),
+    };
+    tracing::debug!(locator = %l.locator, tolerance = ?out, "tolerance planned");
+    out
 }
 
 /// R012 for a `[*]` binding: `values` are the emitted values of instances 0, 1, ...
@@ -183,6 +285,7 @@ mod tests {
             sign: None,
             component: None,
             implicit: None,
+            tolerance: None,
         }
     }
 
@@ -217,6 +320,120 @@ mod tests {
             let e = BindingSet::load_str("sw", &text).expect_err(want);
             assert!(e.to_string().contains(want), "{e}");
         }
+    }
+
+    fn dim(tol: Option<TolerancePolicy>) -> Locator {
+        Locator {
+            tolerance: tol,
+            ..loc(LocatorKind::Dimension, LocatorMode::Ref)
+        }
+    }
+
+    fn plan(has_feature: bool, nominal_emit: bool, tool_has_fit: bool) -> TolerancePlan {
+        TolerancePlan {
+            adapter_default: TolerancePolicy::Drive,
+            has_feature,
+            nominal_emit,
+            tool_has_fit,
+        }
+    }
+
+    fn design(form: DesignForm) -> DesignTolerance {
+        DesignTolerance {
+            form,
+            min: "11.9".into(),
+            max: "12.1".into(),
+        }
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_forms_map_per_spec
+    #[test]
+    fn tolerance_forms_map_per_spec() {
+        let p = plan(true, true, true);
+        let d = dim(None);
+        assert_eq!(
+            plan_tolerance(&d, &p, &design(DesignForm::Symmetric("0.1".into()))),
+            Some(DimTolerance::Symmetric { t: "0.1".into() })
+        );
+        assert_eq!(
+            plan_tolerance(
+                &d,
+                &p,
+                &design(DesignForm::Bilateral("0.2".into(), "-0.1".into()))
+            ),
+            Some(DimTolerance::Bilateral {
+                upper: "0.2".into(),
+                lower: "-0.1".into()
+            })
+        );
+        let lim = Some(DimTolerance::Limits {
+            min: "11.9".into(),
+            max: "12.1".into(),
+        });
+        assert_eq!(plan_tolerance(&d, &p, &design(DesignForm::Interval)), lim);
+        let class = DesignForm::Class {
+            class: "H7".into(),
+            upper: "0.018".into(),
+            lower: "0".into(),
+        };
+        assert_eq!(
+            plan_tolerance(&d, &p, &design(class.clone())),
+            Some(DimTolerance::Fit { class: "H7".into() })
+        );
+        assert_eq!(
+            plan_tolerance(&d, &plan(true, true, false), &design(class.clone())),
+            Some(DimTolerance::Bilateral {
+                upper: "0.018".into(),
+                lower: "0".into()
+            })
+        );
+        assert_eq!(plan_tolerance(&d, &p, &design(DesignForm::None)), None);
+        // frob:tests emit_point_not_nominal_writes_limits
+        assert_eq!(
+            plan_tolerance(&d, &plan(true, false, true), &design(class)),
+            lim
+        );
+        assert_eq!(
+            plan_tolerance(
+                &d,
+                &plan(true, false, true),
+                &design(DesignForm::Symmetric("0.1".into()))
+            ),
+            lim
+        );
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_gated_by_feature_policy_and_kind
+    #[test]
+    fn tolerance_gated_by_feature_policy_and_kind() {
+        let sym = design(DesignForm::Symmetric("0.1".into()));
+        assert!(plan_tolerance(&dim(None), &plan(false, true, true), &sym).is_none());
+        let ign = dim(Some(TolerancePolicy::Ignore));
+        assert!(plan_tolerance(&ign, &plan(true, true, true), &sym).is_none());
+        let mut ignoring_default = plan(true, true, true);
+        ignoring_default.adapter_default = TolerancePolicy::Ignore;
+        assert!(plan_tolerance(&dim(None), &ignoring_default, &sym).is_none());
+        assert!(
+            plan_tolerance(&dim(Some(TolerancePolicy::Drive)), &ignoring_default, &sym).is_some()
+        );
+        let global = loc(LocatorKind::Global, LocatorMode::Value);
+        assert!(plan_tolerance(&global, &plan(true, true, true), &sym).is_none());
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_on_non_dimension_rejected
+    #[test]
+    fn tolerance_on_non_dimension_rejected() {
+        let bad = "[\"a.b::C.d\"]\nlocators = [{ locator = \"x\", kind = \"global\", tolerance = \"drive\" }]";
+        let e = BindingSet::load_str("sw", bad).expect_err("global");
+        assert!(e.to_string().contains("tolerance"), "{e}");
+        let ok = "[\"a.b::C.d\"]\nlocators = [{ locator = \"x\", kind = \"dimension\", tolerance = \"ignore\" }]";
+        assert_eq!(
+            set(ok).entries()[0].locators[0].tolerance,
+            Some(TolerancePolicy::Ignore)
+        );
     }
 
     #[test]

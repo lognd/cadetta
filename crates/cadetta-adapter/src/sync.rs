@@ -10,6 +10,7 @@ use std::collections::BTreeMap;
 use std::fmt;
 
 use crate::classify::{Action, Class, R001, classify};
+use crate::rpc::DimTolerance;
 use crate::scope::Scope;
 
 /// Diagnostic code for a push that replaces a native expression (adapters.md 2.1).
@@ -63,6 +64,36 @@ pub struct Entry {
     pub theirs: String,
     /// Native expression a push would replace (R006), if any.
     pub replaces: Option<String>,
+    /// Design tolerance to write with `ours` (adapters.md 3.6); `None` writes none.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    pub ours_tol: Option<DimTolerance>,
+    /// Tolerance read from the document before any push.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    pub theirs_tol: Option<DimTolerance>,
+}
+
+/// The compared literal of a value and its tolerance: `12mm`, or `12mm +-0.1mm`.
+///
+/// `base`, `ours` and `theirs` are classified, and the lock records `synced`, in this form, so a
+/// tolerance edited in CAD is R001 like an edited value (adapters.md 3.6).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+pub fn record_literal(value: &str, tol: Option<&DimTolerance>) -> String {
+    match tol {
+        Some(t) => format!("{value} {t}"),
+        None => value.to_owned(),
+    }
+}
+
+impl Entry {
+    /// `ours` with its tolerance, the literal pushed and recorded.
+    pub fn ours_record(&self) -> String {
+        record_literal(&self.ours, self.ours_tol.as_ref())
+    }
+
+    /// `theirs` with its tolerance.
+    pub fn theirs_record(&self) -> String {
+        record_literal(&self.theirs, self.theirs_tol.as_ref())
+    }
 }
 
 /// Flags of one `sync` run (config-cli.md 3.1).
@@ -121,10 +152,15 @@ pub struct Record {
 impl Record {
     /// Renders `verb  path  locator  old -> new`.
     pub fn line(&self) -> String {
-        let old = self.entry.base.as_deref().unwrap_or(&self.entry.theirs);
+        let theirs = self.entry.theirs_record();
+        let old = self.entry.base.as_deref().unwrap_or(&theirs);
         format!(
             "{}  {}  {}  {} -> {}",
-            self.verb, self.entry.path, self.entry.locator, old, self.entry.ours
+            self.verb,
+            self.entry.path,
+            self.entry.locator,
+            old,
+            self.entry.ours_record()
         )
     }
 }
@@ -144,17 +180,37 @@ pub type LockKey = (String, String, String);
 /// The `synced` records of the lock the run reads and updates.
 pub type Lock = BTreeMap<LockKey, String>;
 
+/// One locator pushed: path, locator, value and the tolerance written with it.
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PushItem {
+    /// Canonical parameter path.
+    pub path: String,
+    /// Native locator.
+    pub locator: String,
+    /// The value literal.
+    pub value: String,
+    /// The tolerance to write, if any.
+    pub tolerance: Option<DimTolerance>,
+}
+
+/// The read-back of one pushed locator.
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReadBack {
+    /// Native locator.
+    pub locator: String,
+    /// Value read back; `None` when the locator failed or was rejected.
+    pub value: Option<String>,
+    /// Tolerance read back.
+    pub tolerance: Option<DimTolerance>,
+}
+
 /// The adapter side of a push: write, optionally rebuild, and read back.
 pub trait Backend {
-    /// Pushes `items` (path, locator, value) into `file`; returns the read-back
-    /// value per locator (`None` when the locator failed or was rejected).
-    fn push(
-        &mut self,
-        adapter: &str,
-        file: &str,
-        items: &[(String, String, String)],
-        regen: bool,
-    ) -> Vec<(String, Option<String>)>;
+    /// Pushes `items` into `file`; returns the read-back per locator.
+    fn push(&mut self, adapter: &str, file: &str, items: &[PushItem], regen: bool)
+    -> Vec<ReadBack>;
 }
 
 /// Everything a run produced.
@@ -204,7 +260,7 @@ pub fn run(
             tracing::debug!(path = %e.path, "path outside --only");
             continue;
         }
-        let class = classify(e.base.as_deref(), &e.ours, &e.theirs);
+        let class = classify(e.base.as_deref(), &e.ours_record(), &e.theirs_record());
         let action = class.action(opts.force_design);
         let verb = match action {
             Action::Nothing => Verb::Skip,
@@ -219,7 +275,10 @@ pub fn run(
                 code: R001,
                 message: format!(
                     "{msg}: {} base={:?} ours={} theirs={}",
-                    e.path, e.base, e.ours, e.theirs
+                    e.path,
+                    e.base,
+                    e.ours_record(),
+                    e.theirs_record()
                 ),
             });
         }
@@ -258,11 +317,16 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
     }
     let mut updates: Vec<(LockKey, String)> = Vec::new();
     for ((adapter, file), idx) in groups {
-        let items: Vec<(String, String, String)> = idx
+        let items: Vec<PushItem> = idx
             .iter()
             .map(|&i| {
                 let e = &report.records[i].entry;
-                (e.path.clone(), e.locator.clone(), e.ours.clone())
+                PushItem {
+                    path: e.path.clone(),
+                    locator: e.locator.clone(),
+                    value: e.ours.clone(),
+                    tolerance: e.ours_tol.clone(),
+                }
             })
             .collect();
         let back = backend.push(&adapter, &file, &items, !opts.no_regen);
@@ -270,10 +334,14 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
             let rec = &mut report.records[i];
             let got = back
                 .iter()
-                .find(|(l, _)| *l == rec.entry.locator)
-                .and_then(|(_, v)| v.as_ref());
-            if got == Some(&rec.entry.ours) {
-                updates.push((lock_key(&rec.entry), rec.entry.ours.clone()));
+                .find(|b| b.locator == rec.entry.locator)
+                .and_then(|b| {
+                    b.value
+                        .as_deref()
+                        .map(|v| record_literal(v, b.tolerance.as_ref()))
+                });
+            if got.as_deref() == Some(rec.entry.ours_record().as_str()) {
+                updates.push((lock_key(&rec.entry), rec.entry.ours_record()));
             } else {
                 tracing::warn!(locator = %rec.entry.locator, "read-back mismatch");
                 rec.verb = Verb::Fail;
@@ -286,7 +354,7 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
     }
     for r in &report.records {
         if r.verb == Verb::Converged {
-            updates.push((lock_key(&r.entry), r.entry.ours.clone()));
+            updates.push((lock_key(&r.entry), r.entry.ours_record()));
         }
     }
     for (k, v) in updates {
@@ -306,21 +374,24 @@ mod tests {
         calls: usize,
         regen: Vec<bool>,
         fail: bool,
+        drop_tol: bool,
     }
 
     impl Backend for Mock {
-        fn push(
-            &mut self,
-            _a: &str,
-            _f: &str,
-            items: &[(String, String, String)],
-            regen: bool,
-        ) -> Vec<(String, Option<String>)> {
+        fn push(&mut self, _a: &str, _f: &str, items: &[PushItem], regen: bool) -> Vec<ReadBack> {
             self.calls += 1;
             self.regen.push(regen);
             items
                 .iter()
-                .map(|(_, l, v)| (l.clone(), (!self.fail).then(|| v.clone())))
+                .map(|i| ReadBack {
+                    locator: i.locator.clone(),
+                    value: (!self.fail).then(|| i.value.clone()),
+                    tolerance: if self.drop_tol {
+                        None
+                    } else {
+                        i.tolerance.clone()
+                    },
+                })
                 .collect()
         }
     }
@@ -335,6 +406,8 @@ mod tests {
             ours: ours.into(),
             theirs: theirs.into(),
             replaces: None,
+            ours_tol: None,
+            theirs_tol: None,
         }
     }
 
@@ -476,6 +549,56 @@ mod tests {
         assert_eq!(r.records[0].verb, Verb::Converged);
         assert_eq!(mock.calls, 0);
         assert_eq!(lock.len(), 1);
+    }
+
+    fn tol(t: &str) -> Option<DimTolerance> {
+        Some(DimTolerance::Symmetric { t: t.into() })
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests tolerance_edit_in_cad_is_r001
+    #[test]
+    fn tolerance_edit_in_cad_is_r001() {
+        let mut e = entry("p.x", Some("12mm +-0.1mm"), "12mm", "12mm");
+        e.ours_tol = tol("0.1mm");
+        e.theirs_tol = tol("0.3mm");
+        let mut lock = Lock::new();
+        let mut mock = Mock::default();
+        let r = run(&[e.clone()], &Options::default(), &mut mock, &mut lock);
+        assert_eq!(r.records[0].class, Class::CadMoved);
+        assert_eq!(r.records[0].verb, Verb::Drift);
+        assert!(r.has_r001());
+        assert_eq!(r.diagnostics[0].code, R001);
+        assert!(r.diagnostics[0].message.contains("+-0.3mm"));
+        assert_eq!(mock.calls, 0);
+        // the same tolerance read back is not drift
+        e.theirs_tol = tol("0.1mm");
+        let r = run(&[e], &Options::default(), &mut mock, &mut lock);
+        assert_eq!(r.records[0].verb, Verb::Skip);
+        assert!(!r.has_r001());
+    }
+
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:tests synced_record_includes_tolerance
+    #[test]
+    fn synced_record_includes_tolerance() {
+        let mut e = entry("p.x", None, "12mm", "11mm");
+        e.ours_tol = tol("0.1mm");
+        let key = lock_key(&e);
+        let mut lock = Lock::new();
+        let mut mock = Mock::default();
+        let r = run(&[e.clone()], &Options::default(), &mut mock, &mut lock);
+        assert_eq!(r.records[0].verb, Verb::Push);
+        assert_eq!(lock[&key], "12mm +-0.1mm");
+        // a tool that drops the tolerance fails the read-back compare
+        let mut lock = Lock::new();
+        let mut mock = Mock {
+            drop_tol: true,
+            ..Default::default()
+        };
+        let r = run(&[e], &Options::default(), &mut mock, &mut lock);
+        assert_eq!(r.records[0].verb, Verb::Fail);
+        assert!(lock.is_empty());
     }
 
     // frob:tests implicit_vanished_after_sync_is_r003

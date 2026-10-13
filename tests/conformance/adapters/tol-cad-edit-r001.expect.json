@@ -1,0 +1,24 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.6",
+  "rule": "R001",
+  "kind": "binding",
+  "entry": "sync",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R001",
+        "severity": "error"
+      }
+    ],
+    "exit": 1,
+    "message_contains": [
+      "12mm +-0.3mm"
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

@@ -651,6 +651,20 @@ pub struct Locator {
     /// Set when the locator was discovered natively, not listed in a bindings file.
     // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
     pub implicit: Option<Implicit>,
+    /// Whether a `dimension` locator's tolerance is written (adapters.md 3.6); `None` is the adapter default.
+    // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    pub tolerance: Option<TolerancePolicy>,
+}
+
+/// Whether a dimension locator's design tolerance is written to the tool (adapters.md 3.6).
+// frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum TolerancePolicy {
+    /// Write the design tolerance with the value.
+    Drive,
+    /// Leave the tool's tolerance alone.
+    Ignore,
 }
 
 /// A frame seen in a native document (ir.md 3 observed `frames`).
@@ -931,6 +945,7 @@ mod tests {
             sign: Some(Sign::Minus),
             component: Some("wheel<2>".into()),
             implicit: None,
+            tolerance: None,
         };
         let b = Binding {
             path: p("acme.rover::Axle.d"),
@@ -990,6 +1005,7 @@ mod tests {
             sign: Some(Sign::Plus),
             component: None,
             implicit: None,
+            tolerance: None,
         };
         assert_eq!(l.kind, LocatorKind::Frame);
         assert_eq!(l.sign, Some(Sign::Plus));

@@ -122,6 +122,8 @@ mod tests {
             ours: ours.into(),
             theirs: theirs.into(),
             replaces: replaces.map(str::to_owned),
+            ours_tol: None,
+            theirs_tol: None,
         }
     }
 
