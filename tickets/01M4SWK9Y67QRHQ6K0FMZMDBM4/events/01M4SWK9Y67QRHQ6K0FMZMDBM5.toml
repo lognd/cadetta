@@ -1,0 +1,16 @@
+kind = "create"
+title = "Text renderer, rustc-style"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+persona = "design engineer"
+capability = "read diagnostics like rustc output"
+idempotency_key = "replan14:lint-text"
+labels = ["creates:crates/cadetta-lint/src/render/text.rs"]
+scope = ["crates/cadetta-lint/src/render/text.rs"]
+acceptance = ["Given a diagnostic with source span, notes, fixes and path, when rendered as text, then it prints severity[CODE], --> file:line:col, an excerpt with carets and = note:, = help:, = path: lines (lints.md 1.2)", "Given no terminal, when rendering, then text is still the default (lints.md 1.2; config-cli.md 5)"]
+at = "2026-10-13T05:43:36Z"
+actor = "lognd"
+rev = 1
