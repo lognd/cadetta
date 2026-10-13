@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `3/4in`, `1-1/2in` and `3 / 4in`, when lexed, then the first two are single literals and the third is three tokens (quantities.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `1e-3mm`, `9.81m/s^2` and `5%`, when lexed, then each is a single quantity literal (quantities.md 2)"
