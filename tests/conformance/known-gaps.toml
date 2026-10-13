@@ -6,3 +6,23 @@
 # fixture = "quantities/q006"   # <doc>/<NAME>
 # ticket = "~ABCDEFG"           # ticket that closes the gap
 # reason = "Q006 not emitted for inexact pi products yet"
+
+[[gap]]
+fixture = "config-cli/e003"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-no-cdt"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-member"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-path-dep"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"

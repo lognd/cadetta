@@ -1,0 +1,18 @@
+{
+  "spec": "1.4",
+  "doc": "config-cli",
+  "section": "config-cli.md 1 (4)",
+  "rule": "E003",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E003",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}
