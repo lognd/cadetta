@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `#[native(adapter, "locator")]` in source, when loaded, then it overrides the file entry (adapters.md 3)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unbound parameter or a `let`, when emitting, then it is not written (adapters.md 3)"
