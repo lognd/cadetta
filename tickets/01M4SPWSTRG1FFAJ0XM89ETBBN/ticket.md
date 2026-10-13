@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `[lint] severity`, `d001_min_digits`, `common_values` and `precision`, when loaded, then each is typed and validated (config-cli.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `[obligations.roles.X]` with covers and required_for, when loaded, then roles are modelled (obligations.md 4)"
