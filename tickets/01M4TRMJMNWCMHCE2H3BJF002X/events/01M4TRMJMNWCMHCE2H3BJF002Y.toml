@@ -1,0 +1,10 @@
+kind = "create"
+title = "Selection-aware solver input evaluation for solve --variants"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/eval.rs", "crates/cadetta-cli/src/cmd/solve.rs"]
+body = "found while working ~1NJKGFE: Evaluator::eval_input cannot re-evaluate under a slot selection, so cmd/solve.rs variant_requests returns no variants"
+at = "2026-10-13T13:53:37Z"
+actor = "lognd"
+rev = 1
