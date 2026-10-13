@@ -1,0 +1,16 @@
+kind = "create"
+title = "Python Quantity type and cadetta.quantity parsing"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SV2NDDVYW3WN79XN9C707C"
+persona = "Python user"
+capability = "work with exact Quantities and parse source syntax"
+outcome_text = "results never silently become floats"
+labels = ["creates:bindings/python/python/cadetta/quantity.py", "creates:bindings/python/tests/test_quantity.py"]
+scope = ["bindings/python/python/cadetta/quantity.py", "bindings/python/tests/test_quantity.py"]
+acceptance = ['Given cadetta.quantity("12mm [+-0.1mm]"), when .to("mm") is called, then Fraction(12, 1) is returned and .exact is True (bindings.md 3.1)', "Given an inexact value, when inspected, then .exact == False (bindings.md 3.1)", "Given arithmetic that violates a kind rule, when evaluated, then a Result error carries the same Q-code the compiler reports (bindings.md 3.1, quantities.md)"]
+at = "2026-10-13T05:17:02Z"
+actor = "lognd"
+rev = 1
