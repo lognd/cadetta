@@ -93,6 +93,7 @@ dependencies = [
  "cadetta-ir",
  "cadetta-sema",
  "cadetta-syntax",
+ "cadetta-variants",
  "tracing",
 ]
 

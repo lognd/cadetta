@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "Implementation done and committed on ticket/NPCBMPP (evidence bound, fragment written) but landing blocked: blocker ~ER0GZZA (Placement tree) is still open"
+at = "2026-10-13T08:27:55Z"
+actor = "lognd"
+rev = 1
