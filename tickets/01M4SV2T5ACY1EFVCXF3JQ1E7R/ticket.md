@@ -15,6 +15,10 @@ outcome_text = "non-Python languages get in-process interop"
 labels = ["later", "creates:bindings/c/**"]
 scope = ["bindings/c/**"]
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2P5W45J454JP96ZMPC6J"
+
 [[acceptance]]
 text = "Given bindings/c cadetta-capi, when a C test program evaluates a conformance project, then results equal the CLI --format json output (bindings.md 1, 2)"
 bound = false
