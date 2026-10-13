@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T13:34:17Z"
+updated = "2026-10-13T13:34:19Z"
 persona = "design engineer"
 capability = "preview a part swap before editing"
 idempotency_key = "replan13:impact --swap: verdict, changed values, flips and suggested edit"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given flipped checks, fits, requires and bounds, when printed, then they are sorted by canonical path (obligations.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given a NEW not in the alt list, when printed, then the output says "not yet approved" and NEW must still implement the interface (obligations.md 5.1)'
