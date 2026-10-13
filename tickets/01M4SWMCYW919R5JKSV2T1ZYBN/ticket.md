@@ -27,6 +27,10 @@ target = "01M4SWMCDEH4NF2SBVCRGE5VV9"
 kind = "blocked-by"
 target = "01M4VB636BKBDGRW3NBMGK7CBZ"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4VB640810PZEZHQJ1T5WFTK"
+
 [[acceptance]]
 text = "Given observed frames[] and instances[], when synced, then each bound datum's frame transform and each placement's composed frame are compared per adapters.md 3.4 (|design - read| <= 0.5 * 10^-precision) and a mismatch is R001 on the datum or placement path; placements are verify-only"
 bound = false
