@@ -19,6 +19,10 @@ scope = ["crates/cadetta-ir/src/geometry.rs"]
 kind = "blocked-by"
 target = "01M4SPWQ3VSX2CA3TZY4KQ2DZW"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWFX374CNSPDDD289Z9BCS"
+
 [[acceptance]]
 text = "Given a component with datums and points, when lowered, then Datum {path, parent, ops, variants?, digest, closure} and Point {path, datum, coords} are emitted (ir.md 3)"
 bound = false
