@@ -1,0 +1,29 @@
++++
+id = "01M4SPWR26H443049B6E0Q9EBH"
+title = "Lint family Fit rules F001-F003"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
+reporter = "lognd"
+created = "2026-10-13T04:03:54Z"
+updated = "2026-10-13T04:03:54Z"
+persona = "design engineer"
+capability = "get lints for the F family of the catalog"
+outcome_text = "I see actionable diagnostics with stable codes"
+labels = ["creates:crates/cadetta-lint/src/rules/f.rs", "creates:tests/lints/F*/**"]
+scope = ["crates/cadetta-lint/src/rules/f.rs", "tests/lints/F*/**"]
+
+[[acceptance]]
+text = "Given class Z99, when linted, then F001 is reported and cannot be waived"
+bound = false
+
+[[acceptance]]
+text = "Given a fitted parameter whose tolerance disagrees with the hole side, when linted, then F003 is reported"
+bound = false
+
+[[acceptance]]
+text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
+bound = false
++++
