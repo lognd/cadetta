@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given class Z99, when linted, then F001 is reported and cannot be waived", "Given a fitted parameter whose tolerance disagrees with the hole side, when linted, then F003 is reported", "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/", "Given a fit whose clearance lies entirely outside its required range, when linted, then F004 error; a partial overlap yields C002 instead (lints.md F)", "Given a nominal outside the table size range, when linted, then F002 is reported and cannot be waived (quantities.md 5.1)"]
+new = ["Given class Z99, when linted, then F001 is reported and cannot be waived", "Given a fitted parameter whose tolerance disagrees with the hole side, when linted, then F003 is reported", "Given a fit whose clearance lies entirely outside its required range, when linted, then F004 error; a partial overlap yields C002 instead (lints.md F)", "Given a nominal outside the table size range, when linted, then F002 is reported and cannot be waived (quantities.md 5.1)", "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"]
+moved = [1, 2, 0, 3, 4]
+at = "2026-10-13T05:46:22Z"
+actor = "lognd"
+rev = 1

@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:01:24Z"
+updated = "2026-10-13T05:46:22Z"
 persona = "design engineer"
 capability = "get lints for the F family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -24,14 +24,14 @@ text = "Given a fitted parameter whose tolerance disagrees with the hole side, w
 bound = false
 
 [[acceptance]]
-text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
-bound = false
-
-[[acceptance]]
 text = "Given a fit whose clearance lies entirely outside its required range, when linted, then F004 error; a partial overlap yields C002 instead (lints.md F)"
 bound = false
 
 [[acceptance]]
 text = "Given a nominal outside the table size range, when linted, then F002 is reported and cannot be waived (quantities.md 5.1)"
+bound = false
+
+[[acceptance]]
+text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/"
 bound = false
 +++
