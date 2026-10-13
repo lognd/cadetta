@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:46:05Z"
+updated = "2026-10-13T08:46:38Z"
 persona = "design engineer"
 capability = "place parts in a tree"
 idempotency_key = "replan14:geo-place"
@@ -33,7 +33,7 @@ bound = false
 
 [[acceptance]]
 text = "Given a chain that returns to a placed part, when evaluated, then G002 is raised (geometry.md 4, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a part placed twice, or overlapping for ranges, when evaluated, then G006 is raised (geometry.md 4, 7)"
