@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the precedence list in language.md 5, when parsed, then postfix > unary - > ^ > * / > + - > .. > as > comparisons"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `10mm [+-0.05mm]`, `8mm [+0 -0.008mm]`, `20mm H7` and `x j5`, when parsed, then tolerance and ISO class postfixes attach to the operand (quantities.md 5.1)"
