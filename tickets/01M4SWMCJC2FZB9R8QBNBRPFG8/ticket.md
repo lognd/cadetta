@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T09:35:10Z"
+updated = "2026-10-13T09:36:26Z"
 persona = "design engineer"
 capability = "split one design across several files"
 idempotency_key = "replan14:ad-scope"
 labels = ["creates:crates/cadetta-adapter/src/scope.rs"]
-scope = ["crates/cadetta-adapter/src/scope.rs"]
+scope = ["crates/cadetta-adapter/src/scope.rs", "crates/cadetta-adapter/src/lib.rs", "docs/spec/adapters.md"]
 
 [[links]]
 kind = "blocked-by"
