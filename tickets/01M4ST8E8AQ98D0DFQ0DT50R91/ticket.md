@@ -8,12 +8,16 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T05:02:42Z"
+updated = "2026-10-13T05:05:16Z"
 persona = "design engineer"
 capability = "declare what a design needs from a part and have implementers checked against it"
 idempotency_key = "replan13:Interface declarations and implementation checking"
 labels = ["creates:crates/cadetta-variants/src/interface.rs"]
 scope = ["crates/cadetta-variants/src/interface.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8EABK1PHDV3MGSY9GBF1"
 
 [[acceptance]]
 text = "Given `interface Caster { diameter: Length  load_rating >= 400N }`, when resolved, then members carry kinds and bounds (language.md 3.2)"
