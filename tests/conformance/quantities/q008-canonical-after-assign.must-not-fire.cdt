@@ -1,0 +1,4 @@
+model P {
+  t: Torque = 50N * 9mm
+  f: Force = t / 8mm/rev
+}

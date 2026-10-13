@@ -1,0 +1,5 @@
+model P {
+  a = sin(90deg)
+  b = cos(60deg)
+  e = cos(180deg)
+}

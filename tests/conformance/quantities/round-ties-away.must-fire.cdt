@@ -1,0 +1,4 @@
+model P {
+  a = round_to(0.5mm, 1mm)
+  b = round_to(-0.5mm, 1mm)
+}

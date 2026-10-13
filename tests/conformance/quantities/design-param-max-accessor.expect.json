@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.3",
+  "rule": "param-stores-nominal",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.nm",
+        "nominal": "9.1mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.nm",
+        "nominal": "8.9mm"
+      }
+    ]
+  }
+}

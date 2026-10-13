@@ -1,0 +1,5 @@
+kind Sink = AngularVelocity
+
+model P {
+  s: AngularVelocity = 6rad / 2s
+}

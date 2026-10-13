@@ -1,0 +1,5 @@
+kind Sink = Power
+
+model P {
+  s: Power = 6J / 2s
+}

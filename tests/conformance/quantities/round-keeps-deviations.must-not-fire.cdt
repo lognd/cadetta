@@ -1,0 +1,4 @@
+model P {
+  let a = round_to(1.26mm, 0.5mm)
+  hi = a.max
+}

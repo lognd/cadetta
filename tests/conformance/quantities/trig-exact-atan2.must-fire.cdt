@@ -1,0 +1,4 @@
+model P {
+  a = atan2(3in, 3in)
+  b = atan2(0mm, 2mm)
+}

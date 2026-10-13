@@ -1,0 +1,18 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.8",
+  "rule": "C003",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C003",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

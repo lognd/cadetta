@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.3",
+  "rule": "param-stores-nominal",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.spread",
+        "nominal": "0mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.spread",
+        "nominal": "0.2mm"
+      }
+    ]
+  }
+}

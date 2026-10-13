@@ -1,0 +1,4 @@
+model P {
+  a = round(2.4)
+  b = round(-2.4)
+}

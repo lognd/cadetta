@@ -1,0 +1,4 @@
+model P {
+  eta = 0.9
+  f: Force = 0.45N*m * eta / 8mm
+}

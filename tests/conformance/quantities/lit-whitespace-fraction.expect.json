@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 2",
+  "rule": "lit-whitespace-fraction",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "381/20000m"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "3750/127m^-1"
+      }
+    ]
+  }
+}

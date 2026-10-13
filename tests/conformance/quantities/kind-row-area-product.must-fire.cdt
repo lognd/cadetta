@@ -1,0 +1,5 @@
+kind Sink = Area
+
+model P {
+  s: Sink = 2mm * 3mm
+}

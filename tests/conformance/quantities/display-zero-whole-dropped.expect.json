@@ -1,0 +1,15 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 6",
+  "rule": "display-zero-whole-dropped",
+  "kind": "binding",
+  "must_fire": {
+    "diagnostics": [],
+    "result": "1/2in"
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "result": "1-1/2in"
+  }
+}

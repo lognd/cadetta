@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 1",
+  "rule": "exact-magnitude",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "127/5000m"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "1/1000m"
+      }
+    ]
+  }
+}

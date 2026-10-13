@@ -1,0 +1,5 @@
+model P {
+  x = 5mm [+-0.1mm]
+  let e = x - x
+  r = e.max
+}

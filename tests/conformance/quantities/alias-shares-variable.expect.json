@@ -1,0 +1,26 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.3",
+  "rule": "alias",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.diff",
+        "nominal": "0mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.diff",
+        "nominal": "0.15mm"
+      }
+    ]
+  }
+}

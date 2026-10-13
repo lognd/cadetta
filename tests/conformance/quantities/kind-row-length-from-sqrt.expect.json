@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 4.1",
+  "rule": "4.1-kind-table-length-from-sqrt",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q003",
+        "severity": "error",
+        "path": "acme.demo::P.s"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

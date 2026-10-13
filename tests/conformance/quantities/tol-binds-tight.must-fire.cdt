@@ -1,0 +1,4 @@
+model P {
+  let a = 2 * 5mm [+-1mm]
+  hi = a.max
+}

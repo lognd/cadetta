@@ -1,0 +1,34 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.5",
+  "rule": "ceil-floor-to",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "2mm"
+      },
+      {
+        "path": "acme.demo::P.b",
+        "nominal": "-2mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.a",
+        "nominal": "1mm"
+      },
+      {
+        "path": "acme.demo::P.b",
+        "nominal": "-1mm"
+      }
+    ]
+  }
+}

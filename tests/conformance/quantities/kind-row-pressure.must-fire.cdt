@@ -1,0 +1,5 @@
+kind Sink = Pressure
+
+model P {
+  s: Sink = 6N / 2m^2
+}

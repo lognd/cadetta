@@ -1,0 +1,18 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 2",
+  "rule": "E001",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

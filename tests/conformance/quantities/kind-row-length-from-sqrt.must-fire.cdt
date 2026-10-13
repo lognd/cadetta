@@ -1,0 +1,5 @@
+kind Sink = Length
+
+model P {
+  s: Sink = sqrt(4mm^2)
+}

@@ -1,0 +1,2 @@
+["acme.demo::P.w"]
+locators = [ { locator = "W", kind = "global", native_unit = "mm" } ]

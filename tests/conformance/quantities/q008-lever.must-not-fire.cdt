@@ -1,0 +1,3 @@
+model P {
+  t: Torque = 50N * 9mm
+}

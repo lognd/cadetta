@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 4.1",
+  "rule": "Q008",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q008",
+        "severity": "warning",
+        "path": "acme.demo::P.a"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

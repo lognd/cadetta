@@ -1,0 +1,5 @@
+kind Sink = Count
+
+model P {
+  a: Count = 6 / 2
+}

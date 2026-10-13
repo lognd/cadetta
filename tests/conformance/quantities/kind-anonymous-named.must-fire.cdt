@@ -1,0 +1,4 @@
+model P {
+  x = 2mm * 3mm / 4mm
+  a: Area = 5mm + x
+}

@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 4.2",
+  "rule": "Q002",
+  "kind": "source",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q002",
+        "severity": "error",
+        "path": "acme.demo::P.l"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

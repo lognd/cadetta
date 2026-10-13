@@ -1,0 +1,6 @@
+model P {
+  a = 8mm [+-0.1mm]
+  b = 8.05mm [+-0.1mm]
+  let df = a - b
+  diff = df.max
+}
