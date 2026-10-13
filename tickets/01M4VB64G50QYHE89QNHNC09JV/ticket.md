@@ -8,12 +8,12 @@ points = 3
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:47Z"
-updated = "2026-10-13T23:14:14Z"
+updated = "2026-10-13T23:14:39Z"
 persona = "design engineer"
 capability = "use citations, names and bindings from Python"
 outcome_text = "the binding matches the CLI"
 idempotency_key = "d15:py-surface"
-scope = ["bindings/python/python/**", "bindings/python/tests/**", "bindings/python/src/**", "bindings/python/scripts/**"]
+scope = ["bindings/python/python/**", "bindings/python/tests/**", "bindings/python/src/**", "bindings/python/scripts/**", "bindings/python/pyproject.toml"]
 
 [[links]]
 kind = "blocked-by"
