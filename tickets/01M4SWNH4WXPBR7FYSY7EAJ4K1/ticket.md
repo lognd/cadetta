@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:49Z"
-updated = "2026-10-13T06:42:54Z"
+updated = "2026-10-13T06:45:08Z"
 persona = "design engineer"
 capability = "reproduce a historic result"
 idempotency_key = "replan14:ob-asof"
 labels = ["creates:crates/cadetta-obligations/src/as_of.rs"]
-scope = ["crates/cadetta-obligations/src/as_of.rs"]
+scope = ["crates/cadetta-obligations/src/as_of.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"
