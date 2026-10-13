@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-13T22:35:59Z"
+updated = "2026-10-13T22:36:04Z"
 persona = "design engineer"
 capability = "place parts with a verb that does not suggest contact and place arrays without index plumbing"
 outcome_text = "placements read the way parts sit"
@@ -21,7 +21,7 @@ target = "01M4VB630NZKXA6Q9D7253FATR"
 
 [[acceptance]]
 text = "Given place A at B, when evaluated, then datum A's frame equals B's with no flip; place a.b on c and a trailing for clause are E001 pointing at the new form (geometry.md 4; language.md 5a)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given D.offset(p) with p typed on D as the first op, when evaluated, then it equals D.offset(x = p.x, y = p.y[, z]) with Members whose expression is the point; p on another datum, or the point form after another op, is G001 (geometry.md 4)"
