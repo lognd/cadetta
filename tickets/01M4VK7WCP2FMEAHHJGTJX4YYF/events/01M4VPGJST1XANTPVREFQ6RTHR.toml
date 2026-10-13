@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["editors/**"]
+new = ["editors/**", ".github/workflows/ci.yml"]
+at = "2026-10-13T22:35:43Z"
+actor = "lognd"
+rev = 1

@@ -184,6 +184,10 @@ enum Command {
     /// `swap SLOT ALT --reason`.
     Swap(Vec<String>),
     Emit(Vec<String>),
+    /// `names [ADAPTER-ID] [--module PATH] [GLOB...]`.
+    Names(Vec<String>),
+    /// `bind PATH --adapter ID --locator L --kind K ...` / `bind --remove ...`.
+    Bind(Vec<String>),
     Import(Vec<String>),
     /// `lsp`: the language server on stdio.
     Lsp(Vec<String>),
@@ -210,6 +214,8 @@ fn parse(args: &[String]) -> Command {
         Some("update") => Command::Update(args[1..].to_vec()),
         Some("swap") => Command::Swap(args[1..].to_vec()),
         Some("emit") => Command::Emit(args[1..].to_vec()),
+        Some("names") => Command::Names(args[1..].to_vec()),
+        Some("bind") => Command::Bind(args[1..].to_vec()),
         Some("import") => Command::Import(args[1..].to_vec()),
         Some("lsp") => Command::Lsp(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
@@ -264,6 +270,8 @@ pub fn run_with_env(
         Command::Update(rest) => cmd::run_update(&rest, &globals, out, err),
         Command::Swap(rest) => cmd::run_swap(&rest, &globals, out, err),
         Command::Emit(rest) => cmd::run_emit(&rest, &globals, out, err),
+        Command::Names(rest) => cmd::run_names(&rest, &globals, out, err),
+        Command::Bind(rest) => cmd::run_bind(&rest, &globals, out, err),
         Command::Import(rest) => cmd::run_import(&rest, &globals, out, err),
         Command::Lsp(rest) => cmd::run_lsp(&rest, &globals, out, err),
         Command::Unknown(arg) => {

@@ -57,6 +57,14 @@ pub enum BindingsError {
         /// Why it failed.
         reason: String,
     },
+    /// A locator with the same identity but other fields is already bound (bind refuses to guess).
+    // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+    Conflict {
+        /// The path key.
+        path: String,
+        /// The native locator text.
+        locator: String,
+    },
     /// Two paths create one native name (R013).
     NameCollision {
         /// The colliding name.
@@ -76,6 +84,10 @@ impl fmt::Display for BindingsError {
                 write!(f, "binding `{path}`: sign must be 1 or -1, got {value}")
             }
             Self::BadLocator { path, reason } => write!(f, "binding `{path}`: {reason}"),
+            Self::Conflict { path, locator } => write!(
+                f,
+                "binding `{path}`: `{locator}` is already bound with different fields; remove it first"
+            ),
             Self::NameCollision { name, paths } => {
                 write!(
                     f,
@@ -219,6 +231,118 @@ impl BindingSet {
                 })
             })
             .collect()
+    }
+
+    /// Adds one explicit locator for `path`; `Ok(false)` when an identical one is already there.
+    ///
+    /// Identity is (kind, locator, for, config, component). A locator with the same identity
+    /// but other fields is [`BindingsError::Conflict`]. New locators go after the path's
+    /// existing ones (file order resolves refs); entries stay sorted by path text.
+    // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+    pub fn bind(&mut self, path: &Path, loc: Locator) -> Result<bool, BindingsError> {
+        let identity = |l: &Locator| {
+            (
+                l.kind,
+                l.locator.clone(),
+                l.for_alternate.clone(),
+                l.config.clone(),
+                l.component.clone(),
+            )
+        };
+        let idx = self.entries.iter().position(|e| &e.path == path);
+        if let Some(i) = idx {
+            let same_id = self.entries[i]
+                .locators
+                .iter()
+                .filter(|l| l.implicit.is_none())
+                .find(|l| identity(l) == identity(&loc));
+            if let Some(existing) = same_id {
+                if *existing == loc {
+                    tracing::debug!(%path, locator = %loc.locator, "bindings: bind is a no-op");
+                    return Ok(false);
+                }
+                return Err(BindingsError::Conflict {
+                    path: path.to_string(),
+                    locator: loc.locator,
+                });
+            }
+        }
+        let i = idx.unwrap_or_else(|| {
+            self.entries.push(Binding {
+                path: path.clone(),
+                adapter: self.adapter.clone(),
+                locators: Vec::new(),
+            });
+            self.entries.len() - 1
+        });
+        tracing::info!(%path, locator = %loc.locator, "bindings: explicit locator added");
+        self.entries[i].locators.push(loc);
+        self.entries.sort_by_key(|b| b.path.to_string());
+        Ok(true)
+    }
+
+    /// Removes every explicit locator of `path` whose native text is `locator`; true if any went.
+    // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+    pub fn unbind(&mut self, path: &Path, locator: &str) -> bool {
+        let Some(i) = self.entries.iter().position(|e| &e.path == path) else {
+            return false;
+        };
+        let before = self.entries[i].locators.len();
+        self.entries[i]
+            .locators
+            .retain(|l| l.implicit.is_some() || l.locator != locator);
+        let removed = self.entries[i].locators.len() != before;
+        if self.entries[i].locators.is_empty() {
+            self.entries.remove(i);
+        }
+        if removed {
+            tracing::info!(%path, locator, "bindings: explicit locator removed");
+        }
+        removed
+    }
+
+    /// Renders the bindings file: explicit locators only, canonical path order, spec spelling.
+    // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+    pub fn to_toml(&self) -> String {
+        let quote = |s: &str| toml::Value::String(s.to_owned()).to_string();
+        let mut entries = self.file_entries();
+        entries.sort_by_key(|b| b.path.to_string());
+        let mut out = String::new();
+        for b in &entries {
+            out.push_str(&format!("[{}]\nlocators = [\n", quote(&b.path.to_string())));
+            for l in &b.locators {
+                let mut f = format!(
+                    "locator = {}, kind = {}, mode = {}",
+                    quote(&l.locator),
+                    quote(kind_text(l.kind)),
+                    quote(mode_text(l.mode))
+                );
+                if !l.native_unit.is_empty() {
+                    f.push_str(&format!(", native_unit = {}", quote(&l.native_unit)));
+                }
+                if let Some(r) = &l.ref_to {
+                    f.push_str(&format!(", ref_to = {}", quote(r)));
+                }
+                if let Some(a) = &l.for_alternate {
+                    f.push_str(&format!(", for = {}", quote(a)));
+                }
+                if let Some(c) = &l.config {
+                    f.push_str(&format!(", config = {}", quote(c)));
+                }
+                if let Some(s) = l.sign {
+                    f.push_str(&format!(
+                        ", sign = {}",
+                        if s == Sign::Minus { -1 } else { 1 }
+                    ));
+                }
+                if let Some(c) = &l.component {
+                    f.push_str(&format!(", component = {}", quote(c)));
+                }
+                out.push_str(&format!("  {{ {f} }},\n"));
+            }
+            out.push_str("]\n\n");
+        }
+        out.trim_end().to_owned() + if out.is_empty() { "" } else { "\n" }
     }
 
     /// Adds discovered or scope-implied locators (adapters.md 3.5); never touches the file.
@@ -501,6 +625,38 @@ fn convert(key: &str, l: RawLocator) -> Result<Locator, BindingsError> {
         reason: e.to_string(),
     })?;
     Ok(loc)
+}
+
+/// The bindings-file spelling of a locator kind.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub fn kind_text(k: LocatorKind) -> &'static str {
+    match k {
+        LocatorKind::Global => "global",
+        LocatorKind::Dimension => "dimension",
+        LocatorKind::Property => "property",
+        LocatorKind::Frame => "frame",
+        LocatorKind::Instance => "instance",
+    }
+}
+
+/// The bindings-file spelling of a locator mode.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub fn mode_text(m: LocatorMode) -> &'static str {
+    match m {
+        LocatorMode::Value => "value",
+        LocatorMode::Ref => "ref",
+    }
+}
+
+/// The spelling of an implicit-binding reason.
+// frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
+pub fn implicit_text(i: Implicit) -> &'static str {
+    match i {
+        Implicit::Global => "global",
+        Implicit::Link => "link",
+        Implicit::Frame => "frame",
+        Implicit::Reference => "reference",
+    }
 }
 
 /// Whether binding path `b` (which may hold `[*]`) addresses `k`.
@@ -1406,5 +1562,49 @@ locators = [
             )
             .expect("scope");
         assert_eq!(n, 1);
+    }
+
+    // frob:tests writer_round_trips_and_bind_is_idempotent
+    #[test]
+    fn writer_round_trips_and_bind_is_idempotent() {
+        let mut s = BindingSet::load_str("sw", FILE).expect("load");
+        let again = BindingSet::load_str("sw", &s.to_toml()).expect("reload");
+        assert_eq!(again.entries(), s.entries());
+        let path = p("acme.gearbox::CoverPlate.width");
+        let loc = Locator {
+            locator: "Plate_W".into(),
+            kind: LocatorKind::Global,
+            mode: LocatorMode::Value,
+            native_unit: "mm".into(),
+            ref_to: None,
+            for_alternate: None,
+            config: None,
+            sign: Some(Sign::Minus),
+            component: None,
+            implicit: None,
+        };
+        assert_eq!(s.bind(&path, loc.clone()), Ok(true));
+        assert_eq!(s.bind(&path, loc.clone()), Ok(false));
+        let mut other = loc.clone();
+        other.native_unit = "in".into();
+        assert!(matches!(
+            s.bind(&path, other),
+            Err(BindingsError::Conflict { .. })
+        ));
+        let text = s.to_toml();
+        assert!(text.find("CoverPlate.thickness") < text.find("CoverPlate.width"));
+        let back = BindingSet::load_str("sw", &text).expect("reload");
+        assert_eq!(back.get(&path).expect("w").locators, vec![loc]);
+    }
+
+    // frob:tests unbind_removes_and_drops_empty_tables
+    #[test]
+    fn unbind_removes_and_drops_empty_tables() {
+        let mut s = BindingSet::load_str("sw", FILE).expect("load");
+        let rover = p("acme.rover::Rover/axle[*].end_diameter");
+        assert!(!s.unbind(&rover, "nope"));
+        assert!(s.unbind(&rover, "X"));
+        assert!(s.get(&rover).is_none());
+        assert!(!s.to_toml().contains("rover"));
     }
 }

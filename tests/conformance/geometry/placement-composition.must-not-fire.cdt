@@ -12,8 +12,8 @@ model Bracket {
 assembly Mount {
   part rail: Rail
   part bracket: Bracket
-  place rail.origin on origin
-  place bracket.base on origin
+  place rail.origin at origin
+  place bracket.base at origin
   hx = (bracket.holes[0] in origin).x
   hz = (bracket.holes[0] in origin).z
 }

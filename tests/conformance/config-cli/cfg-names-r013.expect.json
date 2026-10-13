@@ -1,0 +1,22 @@
+{
+  "spec": "1.5",
+  "doc": "config-cli",
+  "section": "config-cli.md 3 (names)",
+  "rule": "R013",
+  "kind": "source",
+  "entry": "names sw-equations",
+  "note": "names reports R013 when two in-scope paths would create one native name; an explicit global locator on one path removes it from the created names (must-not-fire)",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "R013",
+        "severity": "error"
+      }
+    ],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

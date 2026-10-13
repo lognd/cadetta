@@ -851,16 +851,7 @@ impl Printer<'_> {
     }
 
     fn place(&self, p: &Place) -> String {
-        let mut s = format!("place {} on {}", self.expr(&p.target), self.expr(&p.on));
-        if let Some(r) = &p.each {
-            s.push_str(&format!(
-                " for {} in {}..{}",
-                r.var.name,
-                self.expr(&r.lo),
-                self.expr(&r.hi)
-            ));
-        }
-        s
+        format!("place {} at {}", self.expr(&p.target), self.expr(&p.at))
     }
 
     fn part(&self, p: &Part) -> String {

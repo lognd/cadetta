@@ -1,28 +1,30 @@
-//! Placement trees: `place A on B`, composition, G002 and G006 (geometry.md 4).
+//! Placement trees: `place A at B`, composition, G001, G002, G006 (geometry.md 4).
 //!
-//! `place PART.DATUM on EXPR` makes a datum of one part coincide with a frame of the assembly:
+//! `place PART.DATUM at EXPR` makes a datum of one part coincide with a frame of the assembly:
 //! `origin`, or a datum of another part or subassembly, optionally built further with
-//! `.offset`, `.rotate` and `.flip`. Placements form a tree rooted at the assembly's `origin`, so
-//! placing is composition of transforms and never a solve. [`lower_place`] turns the syntax into
-//! a [`Placement`] whose operation arguments are [`Member`]s with canonical paths
-//! `Assembly/part.place.<op index>.<axis>`; [`check_assembly`] finds the structural errors
-//! (G002 cycles, G006 double placement, unplaced parents); [`place_assembly`] evaluates every
-//! part's world transform with a caller-supplied member evaluator, so a variant re-evaluates
-//! placements by passing the alternate's evaluator, exactly as for any other member.
+//! `.offset`, `.rotate` and `.flip`, or by the point form `D.offset(p)` for a point `p` typed on
+//! `D`. Placements form a tree rooted at the assembly's `origin`, so placing is composition of
+//! transforms and never a solve. [`lower_place`] turns the syntax into a [`Placement`] whose
+//! operation arguments are [`Member`]s with canonical paths `Assembly/part.place.<op>.<axis>`,
+//! numbered per kind like datum ops (`place.offset.x`, `place.offset[1].x`, `place.rotate.z`);
+//! [`check_assembly`] finds the structural errors (G002 cycles, G006 double placement, unplaced
+//! parents); [`place_assembly`] evaluates every part's world transform with a caller-supplied
+//! member evaluator, so a variant re-evaluates placements by passing the alternate's evaluator,
+//! exactly as for any other member.
 //!
 //! Decisions made here (written into geometry.md 4): a part's world frame is
 //! `anchor * ops * inverse(own datum)`, built by appending operations to one frame, with the
 //! inverse of a datum being its operations reversed and negated; a subassembly is a node whose
 //! datums are its own and whose parts are placed relative to its `origin`, with instance paths
-//! joined by `/`; a placement on a part that is itself never placed is G003; the instance of a
-//! `for` placement carries the `[*]` index in its canonical path; double placement is judged on
-//! the half-open instance ranges of one node, an unindexed target covering all of it.
+//! joined by `/`; a placement on a part that is itself never placed is G003; a target naming an
+//! unindexed part array places every instance (elementwise, see `instances.rs`), and double
+//! placement is judged per instance, an unindexed target covering all of them.
 
 // frob:ticket 01M4SWFXC2K6D3S93F3ER0GZZA
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use cadetta_sema::resolve::{CanonPath, Index, MemberSeg, PartSeg};
+use cadetta_sema::resolve::{Index, PartSeg};
 use cadetta_syntax::ast::{Expr, ExprKind, Ident, Path, Place};
 use cadetta_syntax::span::Span;
 use cadetta_units::{Affine, Dim, Dimension, Magnitude, Rational};
@@ -35,18 +37,13 @@ use crate::datum::{
 use crate::interface_datum::resolve_placement_datum;
 use crate::transform::Transform;
 
-/// The instances of a node a placement covers, as a half-open range of indices.
+/// The instances of a node a placement covers.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Cover {
-    /// The whole node (a scalar part, or an array placed as a unit).
+    /// The whole node: a scalar part, or an unindexed part array placed elementwise.
     Whole,
-    /// Instances `lo..hi` (`feet[0]` is `0..1`; `for i in 0..N` is `0..N`).
-    Range {
-        /// First instance.
-        lo: u64,
-        /// One past the last instance.
-        hi: u64,
-    },
+    /// One instance of a part array (`feet[2]`).
+    Instance(u64),
 }
 
 impl Cover {
@@ -54,7 +51,16 @@ impl Cover {
     pub fn overlaps(&self, other: &Cover) -> bool {
         match (self, other) {
             (Cover::Whole, _) | (_, Cover::Whole) => true,
-            (Cover::Range { lo: a, hi: b }, Cover::Range { lo: c, hi: d }) => a < d && c < b,
+            (Cover::Instance(a), Cover::Instance(b)) => a == b,
+        }
+    }
+
+    /// True when this cover includes instance `i` (`None` is the unindexed node itself).
+    pub fn covers(&self, i: Option<u64>) -> bool {
+        match (self, i) {
+            (Cover::Whole, _) => true,
+            (Cover::Instance(k), Some(i)) => *k == i,
+            (Cover::Instance(_), None) => false,
         }
     }
 }
@@ -82,10 +88,13 @@ pub struct Placement {
     pub datum: String,
     /// The instances covered.
     pub cover: Cover,
-    /// What it is placed on.
-    pub on: Anchor,
+    /// The frame it is placed at.
+    pub at: Anchor,
     /// The operations built onto the anchor, left to right.
     pub ops: Vec<DatumOp>,
+    /// The point of the point form `D.offset(p)`, still an expression; its x, y (and z) Members
+    /// all read this expression.
+    pub point: Option<Expr>,
     /// Where it is.
     pub span: Span,
 }
@@ -137,6 +146,8 @@ pub enum PlacementCode {
     G002,
     /// G003: a placement is on a part that has no placement.
     G003,
+    /// G004: an elementwise placement whose array operands do not match the part array.
+    G004,
     /// G006: a part or instance is placed more than once.
     G006,
     /// A placement names a node or datum the assembly does not have.
@@ -149,6 +160,7 @@ impl PlacementCode {
         match self {
             PlacementCode::G002 => "G002",
             PlacementCode::G003 => "G003",
+            PlacementCode::G004 => "G004",
             PlacementCode::G006 => "G006",
             PlacementCode::Unresolved => "unresolved",
         }
@@ -299,13 +311,185 @@ fn rebase(e: &Expr) -> Option<(Expr, RefParts)> {
     }
 }
 
-/// Lowers `place target on expr [for i in lo..hi]`.
+/// What the caller knows about a point written in `D.offset(p)`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct PointInfo {
+    /// The datum the point is typed on (`origin` for a point on the assembly origin).
+    pub datum: String,
+    /// Its number of coordinates: 2 for a `Point2`, 3 for a `Point3`.
+    pub arity: usize,
+}
+
+/// A G001 error: the message carries the code so callers can route it.
+fn g001<T>(span: Span, message: impl Into<String>) -> Result<T, GeometryError> {
+    err(span, format!("G001: {}", message.into()))
+}
+
+/// The single positional argument of the chain's innermost `.offset(p)`, if the chain uses the
+/// point form; the chain is returned with that call rewritten to `.offset(x = p.x, y = p.y[, z])`.
+///
+/// The point form is legal only as the first operation after the named datum (G001 otherwise).
+fn expand_point_form(
+    at: &Expr,
+    point_of: &dyn Fn(&Expr) -> Option<PointInfo>,
+    base_datum: &str,
+) -> Result<(Expr, Option<Expr>), GeometryError> {
+    fn is_point_call(e: &Expr) -> Option<(&Expr, &Expr)> {
+        let ExprKind::Call {
+            callee,
+            optional: false,
+            args,
+        } = &e.kind
+        else {
+            return None;
+        };
+        let [arg] = args.as_slice() else { return None };
+        if arg.name.is_some() {
+            return None;
+        }
+        match &callee.kind {
+            ExprKind::Field(inner, op) if op.name == "offset" => Some((inner, &arg.value)),
+            ExprKind::Path(p) if p.segments.len() >= 2 && p.segments.last()?.name == "offset" => {
+                Some((callee, &arg.value))
+            }
+            _ => None,
+        }
+    }
+    // Walk the call chain from the outside in, remembering the position of each call.
+    let mut cur = at;
+    let mut depth = 0usize;
+    let mut found: Option<(usize, Span)> = None;
+    loop {
+        match &cur.kind {
+            ExprKind::Paren(i) => cur = i,
+            ExprKind::Call { callee, .. } => {
+                if is_point_call(cur).is_some() && found.is_none() {
+                    found = Some((depth, cur.span));
+                }
+                depth += 1;
+                match &callee.kind {
+                    ExprKind::Field(inner, _) => cur = inner,
+                    _ => break,
+                }
+            }
+            _ => break,
+        }
+    }
+    let Some((d, span)) = found else {
+        return Ok((at.clone(), None));
+    };
+    // The point call must be the innermost call (depth == total - 1).
+    if d + 1 != depth {
+        return g001(
+            span,
+            "the point form `D.offset(p)` is the first operation after the datum (geometry.md 4)",
+        );
+    }
+    fn rewrite(e: &Expr, d: usize, info: &PointInfo) -> Expr {
+        match &e.kind {
+            ExprKind::Paren(i) => rewrite(i, d, info),
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } if d == 0 => {
+                let value = &args[0].value;
+                let axes = ["x", "y", "z"];
+                let new_args = axes[..info.arity]
+                    .iter()
+                    .map(|a| cadetta_syntax::ast::Arg {
+                        name: Some(Ident {
+                            name: (*a).to_owned(),
+                            span: args[0].span,
+                        }),
+                        value: value.clone(),
+                        citation: None,
+                        span: args[0].span,
+                    })
+                    .collect();
+                Expr {
+                    kind: ExprKind::Call {
+                        callee: callee.clone(),
+                        optional: *optional,
+                        args: new_args,
+                    },
+                    span: e.span,
+                }
+            }
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } => {
+                let ExprKind::Field(inner, op) = &callee.kind else {
+                    return e.clone();
+                };
+                Expr {
+                    kind: ExprKind::Call {
+                        callee: Box::new(Expr {
+                            kind: ExprKind::Field(
+                                Box::new(rewrite(inner, d - 1, info)),
+                                op.clone(),
+                            ),
+                            span: callee.span,
+                        }),
+                        optional: *optional,
+                        args: args.clone(),
+                    },
+                    span: e.span,
+                }
+            }
+            _ => e.clone(),
+        }
+    }
+    // Find the point expression and its info.
+    let mut cur = at;
+    let mut idx = 0usize;
+    let point = loop {
+        match &cur.kind {
+            ExprKind::Paren(i) => cur = i,
+            ExprKind::Call { callee, args, .. } => {
+                if idx == d {
+                    break args[0].value.clone();
+                }
+                idx += 1;
+                match &callee.kind {
+                    ExprKind::Field(inner, _) => cur = inner,
+                    _ => unreachable!("walked above"),
+                }
+            }
+            _ => unreachable!("walked above"),
+        }
+    };
+    let Some(info) = point_of(&point) else {
+        return g001(
+            point.span,
+            "`offset(p)` takes a point, or `x = `, `y = ` lengths",
+        );
+    };
+    if info.datum != base_datum {
+        return g001(
+            point.span,
+            format!(
+                "the point is typed on `{}` but is used to offset `{base_datum}`; a point is measured in its own datum",
+                info.datum
+            ),
+        );
+    }
+    debug!(arity = info.arity, "expanded the point form of offset");
+    Ok((rewrite(at, d, &info), Some(point)))
+}
+
+/// Lowers `place target at expr`.
 ///
 /// `index` evaluates a literal or `count(..)` bound to an instance number; `None` is an error.
+/// `point_of` classifies the point `p` of the point form `D.offset(p)`; `None` means it is not a
+/// point.
 pub fn lower_place(
     id: &ComponentId,
     p: &Place,
     index: &dyn Fn(&Expr) -> Option<u64>,
+    point_of: &dyn Fn(&Expr) -> Option<PointInfo>,
 ) -> Result<Placement, GeometryError> {
     let Some(target) = parse_ref(&p.target) else {
         return err(p.target.span, "a placement target is `part.datum`");
@@ -316,24 +500,22 @@ pub fn lower_place(
             "a placement target names a datum: `part.datum`",
         );
     };
-    let cover = match (&p.each, &target.index) {
-        (Some(r), _) => match (index(&r.lo), index(&r.hi)) {
-            (Some(lo), Some(hi)) => Cover::Range { lo, hi },
-            _ => return err(r.var.span, "the bounds of a placement range must be counts"),
-        },
-        (None, Some(i)) => match index(i) {
-            Some(n) => Cover::Range { lo: n, hi: n + 1 },
+    let (cover, part_index) = match &target.index {
+        Some(i) => match index(i) {
+            Some(n) => (Cover::Instance(n), Some(Index::At(n))),
             None => return err(i.span, "a placed instance index must be a count"),
         },
-        (None, None) => Cover::Whole,
+        None => (Cover::Whole, None),
     };
-    let Some((rebased, base)) = rebase(&p.on) else {
+    let Some((rebased, base)) = rebase(&p.at) else {
         return err(
-            p.on.span,
+            p.at.span,
             "expected a datum with `.offset(..)`, `.rotate(..)` or `.flip(..)`",
         );
     };
-    let on = match (base.node.as_str(), base.datum) {
+    let base_datum = base.datum.clone().unwrap_or_else(|| ORIGIN.to_owned());
+    let (rebased, point) = expand_point_form(&rebased, point_of, &base_datum)?;
+    let at = match (base.node.as_str(), base.datum) {
         (ORIGIN, None) => Anchor::Origin,
         (_, Some(d)) => Anchor::Datum {
             node: base.node,
@@ -341,35 +523,27 @@ pub fn lower_place(
         },
         (_, None) => {
             return err(
-                p.on.span,
+                p.at.span,
                 format!("`{}` needs a datum: `{}.datum`", base.node, base.node),
             );
         }
     };
-    let mut def = lower_datum(id, "place", &rebased, p.on.span, &DatumScope::new())?;
+    let mut def = lower_datum(id, "place", &rebased, p.at.span, &DatumScope::new())?;
     let part_seg = PartSeg {
         name: target.node.clone(),
-        index: match (&p.each, &target.index) {
-            (Some(_), _) => Some(Index::Any),
-            (None, Some(i)) => index(i).map(Index::At),
-            (None, None) => None,
-        },
+        index: part_index,
     };
-    for (n, op) in def.ops.iter_mut().enumerate() {
-        let fix = |m: &mut Member, axis: Axis| {
-            let mut path = CanonPath::item(&id.package, &id.modules, &id.item);
-            path.parts.push(part_seg.clone());
-            path.members.push(MemberSeg::Name("place".to_owned()));
-            path.members.push(MemberSeg::Name(n.to_string()));
-            path.members.push(MemberSeg::Name(axis.name().to_owned()));
-            m.path = path;
+    for op in def.ops.iter_mut() {
+        let fix = |m: &mut Member| {
+            // lower_datum builds `Item.place.<op>[n].<axis>`; the part segment goes in front.
+            m.path.parts.push(part_seg.clone());
         };
         match op {
-            DatumOp::Offset { args } => args.iter_mut().for_each(|(a, m)| fix(m, *a)),
+            DatumOp::Offset { args } => args.iter_mut().for_each(|(_, m)| fix(m)),
             DatumOp::Rotate {
-                axis,
                 angle: Angle::Given(m),
-            } => fix(m, *axis),
+                ..
+            } => fix(m),
             DatumOp::Rotate { .. } => {}
         }
     }
@@ -378,8 +552,9 @@ pub fn lower_place(
         node: target.node,
         datum,
         cover,
-        on,
+        at,
         ops: def.ops,
+        point,
         span: p.span,
     })
 }
@@ -418,7 +593,7 @@ pub fn check_assembly(a: &Assembly) -> Vec<PlacementDiag> {
             }
         }
         first.entry(p.node.as_str()).or_insert(p);
-        if let Anchor::Datum { node, .. } = &p.on
+        if let Anchor::Datum { node, .. } = &p.at
             && !names.contains(node.as_str())
         {
             out.push(diag(
@@ -433,7 +608,7 @@ pub fn check_assembly(a: &Assembly) -> Vec<PlacementDiag> {
         let mut seen = vec![n.name.as_str()];
         let mut cur = n.name.as_str();
         while let Some(p) = first.get(cur) {
-            let Anchor::Datum { node, .. } = &p.on else {
+            let Anchor::Datum { node, .. } = &p.at else {
                 break;
             };
             let next = node.as_str();
@@ -589,8 +764,18 @@ impl Ctx<'_> {
     }
 
     /// The frame of `node`'s origin in the assembly's base frame.
-    fn node_frame(&mut self, name: &str, span: Span) -> Result<Vec<FrameOp>, GeometryError> {
-        if let Some(f) = self.memo.get(name) {
+    ///
+    /// `inst` is the instance of an array node being framed (`None` for the node itself); an
+    /// anchor on another node is framed at the same instance, which is how arrays place
+    /// elementwise.
+    fn node_frame(
+        &mut self,
+        name: &str,
+        inst: Option<u64>,
+        span: Span,
+    ) -> Result<Vec<FrameOp>, GeometryError> {
+        let key = format!("{name}#{inst:?}");
+        if let Some(f) = self.memo.get(&key) {
             return Ok(f.clone());
         }
         self.depth += 1;
@@ -600,13 +785,18 @@ impl Ctx<'_> {
                 format!("placement chain through `{name}` is cyclic (G002)"),
             );
         }
-        let Some(p) = self.a.placements.iter().find(|p| p.node == name) else {
+        let Some(p) = self
+            .a
+            .placements
+            .iter()
+            .find(|p| p.node == name && p.cover.covers(inst))
+        else {
             return err(span, format!("`{name}` has no placement (G003)"));
         };
-        let mut frame = match &p.on {
+        let mut frame = match &p.at {
             Anchor::Origin => self.base.clone(),
             Anchor::Datum { node, datum } => {
-                let mut f = self.node_frame(node, p.span)?;
+                let mut f = self.node_frame(node, inst, p.span)?;
                 let n = self.node(node, p.span)?;
                 f.extend(datum_ops(&n.datums, datum, self.eval, p.span)?);
                 f
@@ -618,7 +808,7 @@ impl Ctx<'_> {
         frame.extend(invert(&own_ops));
         self.depth -= 1;
         trace!(node = name, ops = frame.len(), "node frame composed");
-        self.memo.insert(name.to_owned(), frame.clone());
+        self.memo.insert(key, frame.clone());
         Ok(frame)
     }
 }
@@ -669,7 +859,11 @@ fn frames_into(
         depth: 0,
     };
     for p in &a.placements {
-        let frame = ctx.node_frame(&p.node, p.span)?;
+        let inst = match p.cover {
+            Cover::Instance(k) => Some(k),
+            Cover::Whole => None,
+        };
+        let frame = ctx.node_frame(&p.node, inst, p.span)?;
         ctx.depth = 0;
         let node = ctx.node(&p.node, p.span)?;
         let rel = if prefix.is_empty() {
@@ -694,6 +888,46 @@ fn frames_into(
     Ok(())
 }
 
+/// One array instance placed in the root assembly's frame.
+#[derive(Clone, PartialEq, Debug)]
+pub struct PlacedInstance {
+    /// The instance path, e.g. `Frame/feet[2]`.
+    pub path: String,
+    /// The instance index.
+    pub index: u64,
+    /// The instance origin frame in the assembly's frame.
+    pub transform: Transform,
+}
+
+/// The frame of instance `i` of `node` in `a`, or `None` when no placement covers it.
+///
+/// An anchor on another node is framed at the same instance, so every array operand is indexed
+/// by `i` (geometry.md 4).
+pub fn place_instance_frame(
+    a: &Assembly,
+    node: &str,
+    i: u64,
+    eval: Eval<'_>,
+) -> Result<Option<Transform>, GeometryError> {
+    // frob:ticket 01M4VB636BKBDGRW3NBMGK7CBZ
+    if !a
+        .placements
+        .iter()
+        .any(|p| p.node == node && p.cover.covers(Some(i)))
+    {
+        return Ok(None);
+    }
+    let mut ctx = Ctx {
+        a,
+        eval,
+        base: Vec::new(),
+        memo: BTreeMap::new(),
+        depth: 0,
+    };
+    let frame = ctx.node_frame(node, Some(i), Span::default())?;
+    Ok(Some(fold(&frame)?))
+}
+
 fn place_into(
     a: &Assembly,
     eval: Eval<'_>,
@@ -709,7 +943,11 @@ fn place_into(
         depth: 0,
     };
     for p in &a.placements {
-        let frame = ctx.node_frame(&p.node, p.span)?;
+        let inst = match p.cover {
+            Cover::Instance(k) => Some(k),
+            Cover::Whole => None,
+        };
+        let frame = ctx.node_frame(&p.node, inst, p.span)?;
         ctx.depth = 0;
         let node = ctx.node(&p.node, p.span)?;
         let path = format!("{prefix}/{}", node.name);
@@ -728,6 +966,7 @@ fn place_into(
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use cadetta_sema::resolve::MemberSeg;
     use cadetta_syntax::ast::{Component, FileEntry, ItemKind, MemberKind};
     use cadetta_syntax::parser::parse;
 
@@ -770,6 +1009,10 @@ pub(crate) mod tests {
         lit(e).or(Some(4))
     }
 
+    pub(crate) fn no_point(_: &Expr) -> Option<PointInfo> {
+        None
+    }
+
     fn num(e: &Expr) -> Option<Affine> {
         match &e.kind {
             ExprKind::Quantity(s) => {
@@ -801,6 +1044,15 @@ pub(crate) mod tests {
 
     /// Builds an assembly named by its component from model sources.
     pub(crate) fn build(src: &str, subs: &[(&str, Assembly)]) -> Assembly {
+        build_with(src, subs, &no_point)
+    }
+
+    /// [`build`] with a point classifier for the point form `D.offset(p)`.
+    pub(crate) fn build_with(
+        src: &str,
+        subs: &[(&str, Assembly)],
+        point_of: &dyn Fn(&Expr) -> Option<PointInfo>,
+    ) -> Assembly {
         let comps = components(src);
         let asm = comps
             .iter()
@@ -833,7 +1085,7 @@ pub(crate) mod tests {
             .members
             .iter()
             .filter_map(|m| match &m.kind {
-                MemberKind::Place(p) => Some(lower_place(&cid, p, &count).unwrap()),
+                MemberKind::Place(p) => Some(lower_place(&cid, p, &count, point_of).unwrap()),
                 _ => None,
             })
             .collect();
@@ -866,7 +1118,7 @@ pub(crate) mod tests {
     fn datum_frames_coincide() {
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin on origin\n  place bracket.base on rail.site\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin at origin\n  place bracket.base at rail.site\n}\n",
             ),
             &[],
         );
@@ -884,7 +1136,7 @@ pub(crate) mod tests {
     fn z_directions_included() {
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin on origin\n  place bracket.under on rail.top\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin at origin\n  place bracket.under at rail.top\n}\n",
             ),
             &[],
         );
@@ -901,7 +1153,7 @@ pub(crate) mod tests {
     fn g002_on_cycle() {
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin on bracket.base\n  place bracket.base on rail.site\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin at bracket.base\n  place bracket.base at rail.site\n}\n",
             ),
             &[],
         );
@@ -916,53 +1168,61 @@ pub(crate) mod tests {
     fn g002_must_not_fire_on_tree() {
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  part other: Bracket\n  place rail.origin on origin\n  place bracket.base on rail.site\n  place other.base on bracket.holes\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  part other: Bracket\n  place rail.origin at origin\n  place bracket.base at rail.site\n  place other.base at bracket.holes\n}\n",
             ),
             &[],
         );
         assert!(check_assembly(&a).is_empty());
     }
 
+    // frob:ticket 01M4VB636BKBDGRW3NBMGK7CBZ
     // frob:tests crates/cadetta-geometry/src/placement.rs::check_assembly kind=unit
     #[test]
-    fn g006_on_double_and_overlapping_ranges() {
+    fn g006_on_double_and_array_plus_indexed() {
         let twice = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  place rail.origin on origin\n  place rail.top on origin\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  place rail.origin at origin\n  place rail.top at origin\n}\n",
             ),
             &[],
         );
         let d = check_assembly(&twice);
         assert_eq!(d.len(), 1);
         assert_eq!(d[0].code, PlacementCode::G006);
-        let ranges = build(
+        let mixed = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part feet[4]: Bracket\n  place rail.origin on origin\n  place feet[i].base on rail.top for i in 0..3\n  place feet[i].base on rail.top for i in 2..4\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part feet[4]: Bracket\n  place rail.origin at origin\n  place feet.base at rail.top\n  place feet[2].base at rail.top\n}\n",
             ),
             &[],
         );
-        let d = check_assembly(&ranges);
+        let d = check_assembly(&mixed);
         assert_eq!(d.len(), 1, "{d:?}");
         assert_eq!(d[0].code, PlacementCode::G006);
-        let disjoint = build(
+        let indexed_twice = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part feet[4]: Bracket\n  place rail.origin on origin\n  place feet[i].base on rail.top for i in 0..2\n  place feet[i].base on rail.top for i in 2..4\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part feet[4]: Bracket\n  place rail.origin at origin\n  place feet[1].base at rail.top\n  place feet[1].base at rail.top\n}\n",
             ),
             &[],
         );
-        assert!(check_assembly(&disjoint).is_empty());
+        assert_eq!(check_assembly(&indexed_twice).len(), 1);
+        let distinct = build(
+            &src(
+                "assembly Mount {\n  part rail: Rail\n  part feet[4]: Bracket\n  place rail.origin at origin\n  place feet[0].base at rail.top\n  place feet[1].base at rail.top\n}\n",
+            ),
+            &[],
+        );
+        assert!(check_assembly(&distinct).is_empty());
     }
 
     // frob:tests crates/cadetta-geometry/src/placement.rs::place_assembly kind=unit
     #[test]
     fn subassembly_parts_come_along() {
         let sub = build(
-            &src("assembly Sub {\n  part bracket: Bracket\n  place bracket.base on origin\n}\n"),
+            &src("assembly Sub {\n  part bracket: Bracket\n  place bracket.base at origin\n}\n"),
             &[],
         );
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part sub: Sub\n  place rail.origin on origin\n  place sub.origin on rail.site\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part sub: Sub\n  place rail.origin at origin\n  place sub.origin at rail.site\n}\n",
             ),
             &[("Sub", sub)],
         );
@@ -978,7 +1238,7 @@ pub(crate) mod tests {
     #[test]
     fn member_paths_are_canonical() {
         let comps = components(&src(
-            "assembly Drive {\n  part plate: Bracket\n  place plate.base on origin.offset(x = 4mm).rotate(z = 90deg).offset(y = 1mm)\n}\n",
+            "assembly Drive {\n  part plate: Bracket\n  place plate.base at origin.offset(x = 4mm).rotate(z = 90deg).offset(y = 1mm)\n}\n",
         ));
         let asm = comps.last().unwrap();
         let MemberKind::Place(p) = &asm
@@ -990,14 +1250,14 @@ pub(crate) mod tests {
         else {
             panic!()
         };
-        let pl = lower_place(&id("Drive"), p, &count).unwrap();
+        let pl = lower_place(&id("Drive"), p, &count, &no_point).unwrap();
         let paths: Vec<String> = pl.members().iter().map(|m| m.path.to_string()).collect();
         assert_eq!(
             paths,
             [
-                "acme.rover::Drive/plate.place.0.x",
-                "acme.rover::Drive/plate.place.1.z",
-                "acme.rover::Drive/plate.place.2.y",
+                "acme.rover::Drive/plate.place.offset.x",
+                "acme.rover::Drive/plate.place.rotate.z",
+                "acme.rover::Drive/plate.place.offset[1].y",
             ]
         );
     }
@@ -1007,7 +1267,7 @@ pub(crate) mod tests {
     fn variants_re_evaluate_members() {
         let a = build(
             &src(
-                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin on origin\n  place bracket.base on rail.site.offset(x = 10mm)\n}\n",
+                "assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  place rail.origin at origin\n  place bracket.base at rail.site.offset(x = 10mm)\n}\n",
             ),
             &[],
         );

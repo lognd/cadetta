@@ -6,7 +6,7 @@ assembly A {
   part a: P
   part b: P
   part c: P
-  place a.origin on c.top
-  place b.origin on a.top
-  place c.origin on b.top
+  place a.origin at c.top
+  place b.origin at a.top
+  place c.origin at b.top
 }

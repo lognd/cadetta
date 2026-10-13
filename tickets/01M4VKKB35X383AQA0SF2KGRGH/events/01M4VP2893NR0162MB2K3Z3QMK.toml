@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-13T22:27:48Z"
+digest = "5e9c5aab700ede27c45a5dcda0e520800604e0b98c47080e9fc82fd8a75107a9"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, typeguard-4.6.0
+collected 2 items
+
+bindings/python/tests/test_gen_models.py ..                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1507612-0.xml --------------
+============================== 2 passed in 1.48s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_gen_models.py::test_check_names_stale_file bindings/python/tests/test_gen_models.py::test_committed_models_are_not_stale"
+size = 513
+status = "measured"
+test_count = 2
+tests_digest = "0432bdc3687538edad5d0182d22b7561e76c852a5870f256958aa6140121768f"
+at = "2026-10-13T22:27:48Z"
+actor = "lognd"
+rev = 1

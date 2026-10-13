@@ -17,7 +17,7 @@ model Base {
 assembly Box {
   part lid: Lid
   part base: Base
-  place base.origin on origin
-  place lid.origin on base.top
+  place base.origin at origin
+  place lid.origin at base.top
   part j: ScrewJoint(thread = M4, clamp = lid.thickness, into = base.material, at = lid.holes, onto = base.tapped, count = 2)
 }

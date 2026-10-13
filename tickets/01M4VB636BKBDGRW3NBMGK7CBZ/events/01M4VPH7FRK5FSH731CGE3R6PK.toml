@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:36:04Z"
+digest = "2659d66eb358ab6914eddb2dc4a6dd8d4538508c650cc0a824fa37f4a42c68c2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fa4f3319-6be7-4e64-b8f1-cb2ffdbc84b2 with nextest profile: default
+    Starting 2 tests across 12 binaries (93 tests skipped)
+        PASS [   0.018s] cadetta-syntax::geometry at_stays_usable_as_an_argument_name
+        PASS [   0.018s] cadetta-syntax::geometry old_place_spellings_are_e001_pointing_at_the_new_form
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 2 tests run: 2 passed, 93 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax old_place_spellings_are_e001_pointing_at_the_new_form at_stays_usable_as_an_argument_name"
+size = 658
+status = "measured"
+test_count = 2
+tests_digest = "87991eec00b80da50f141e7ffca4293cec98c99c683d27a09874da0a718511dd"
+at = "2026-10-13T22:36:04Z"
+actor = "lognd"
+rev = 1

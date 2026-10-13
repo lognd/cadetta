@@ -4,5 +4,5 @@ model Plate {
 
 assembly Drive {
   part plate: Plate
-  place plate.origin on origin.offset(x = 14mm)
+  place plate.origin at origin.offset(x = 14mm)
 }

@@ -10,7 +10,7 @@ model Plate {
 assembly A {
   part motor: Motor
   part plate: Plate
-  place plate.origin on origin
+  place plate.origin at origin
   
   moved = motor.mount_holes as Point2 on plate.face
 }

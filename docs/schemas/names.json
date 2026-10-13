@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NamesReport",
+  "description": "Output of `cadetta names --format json`: every in-scope bindable path per adapter, with its binding state.",
+  "type": "object",
+  "required": ["adapters", "diagnostics"],
+  "additionalProperties": false,
+  "properties": {
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "bindings", "names"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "description": "Adapter id.", "type": "string" },
+          "bindings": { "description": "Bindings file, relative to the package directory.", "type": "string" },
+          "names": {
+            "description": "Rows sorted by canonical path.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["path", "kind", "emit", "tolerance", "citation", "doc", "created_name", "state", "locators"],
+              "additionalProperties": false,
+              "properties": {
+                "path": { "description": "Canonical path.", "type": "string" },
+                "kind": { "enum": ["param", "datum", "place"] },
+                "emit": { "description": "Value emit would write at the resolved emit point; null when none is writable.", "type": ["string", "null"] },
+                "tolerance": { "description": "Authored value text when the value is toleranced, else null.", "type": ["string", "null"] },
+                "citation": { "type": ["string", "null"] },
+                "doc": { "type": ["string", "null"] },
+                "created_name": { "description": "The native name the adapter creates for the path.", "type": "string" },
+                "state": {
+                  "description": "unknown means the adapter could not read CAD on this machine.",
+                  "enum": ["explicit", "implicit", "unbound", "unknown"]
+                },
+                "reason": { "description": "Why an implicit binding exists.", "enum": ["global", "link", "frame", "reference"] },
+                "locators": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["locator", "kind", "mode"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "locator": { "type": "string" },
+                      "kind": { "enum": ["global", "dimension", "property", "frame", "instance"] },
+                      "mode": { "enum": ["value", "ref"] },
+                      "implicit": { "enum": ["global", "link", "frame", "reference"] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "description": "Rule code, e.g. R013.", "type": "string" },
+          "message": { "type": "string" },
+          "path": { "type": "string" }
+        }
+      }
+    }
+  }
+}

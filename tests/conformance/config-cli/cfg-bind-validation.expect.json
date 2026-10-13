@@ -1,0 +1,17 @@
+{
+  "spec": "1.5",
+  "doc": "config-cli",
+  "section": "config-cli.md 3 (bind)",
+  "rule": "cfg-bind-validation",
+  "kind": "source",
+  "entry": "bind acme.demo::Part.width --adapter sw-equations --locator Part_W --kind global",
+  "note": "the same bind call: must-fire meets an existing Part_W global with other fields (refused, exit 2, file untouched); must-not-fire meets the identical locator (idempotent, exit 0, file untouched)",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 2
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

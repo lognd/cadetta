@@ -56,6 +56,7 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/project.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/mod.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ack.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/bind.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/check.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/check_watch.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/emit.rs";
@@ -63,6 +64,7 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/fmt.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/init.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/ir.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/names.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/solve.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/swap.rs";
   may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
@@ -122,6 +124,9 @@ node py_binding : trusted {
   may fs.read at "bindings/python/tests/**";
   may fs.write at "bindings/python/tests/**";
   may exec at "bindings/python/python/cadetta/project.py";
+  may exec at "bindings/python/scripts/gen_models.py";
+  may fs.read at "bindings/python/scripts/gen_models.py";
+  may fs.write at "bindings/python/scripts/gen_models.py";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
@@ -272,6 +277,8 @@ flow f_py_cli : cli -> py_binding {
 flow f_py_ir : ir -> py_binding {
   label Internal;
   transport in_process;
+  producer "crates/cadetta-ir/src/model.rs::Project";
+  consumer "bindings/python/python/cadetta/models/ir.py::Project";
 }
 
 flow f_py_quantity_syntax : syntax -> py_binding {

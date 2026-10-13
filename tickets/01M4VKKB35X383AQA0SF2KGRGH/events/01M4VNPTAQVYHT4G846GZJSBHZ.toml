@@ -1,0 +1,109 @@
+kind = "evidence"
+captured_at = "2026-10-13T22:20:07Z"
+digest = "0341c68f38095f0427165e8d68b08335f1894878eb7d87cf45b34cf45c9133a0"
+exit_code = 1
+failed_tests = ["bindings/python/tests/test_gen_models.py::test_check_names_stale_file", "bindings/python/tests/test_gen_models.py::test_committed_models_are_not_stale"]
+inline = '''
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-8.4.2, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 2 items
+
+bindings/python/tests/test_gen_models.py EE                              [100%]
+
+==================================== ERRORS ====================================
+________________ ERROR at setup of test_check_names_stale_file _________________
+
+    @pytest.fixture(scope="module")
+    def gen_models():
+        """Load scripts/gen_models.py as a module (scripts/ is not a package)."""
+        spec = importlib.util.spec_from_file_location("gen_models", _SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules["gen_models"] = module
+>       spec.loader.exec_module(module)
+
+bindings/python/tests/test_gen_models.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<frozen importlib._bootstrap_external>:940: in exec_module
+    ???
+<frozen importlib._bootstrap>:241: in _call_with_frames_removed
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Regenerate cadetta.models from docs/schemas, or check they are not stale.
+    
+    WHY: the models are generated from the JSON schemas the Rust core owns; a schema
+    change that leaves them stale breaks the binding, so CI runs `--check`.
+    
+    Run with `uv run scripts/gen_models.py` (write) or `... --check` (drift gate).
+    """
+    
+    from __future__ import annotations
+    
+    import argparse
+    import shutil
+    import subprocess
+    import sys
+    import tempfile
+    from pathlib import Path
+    
+>   from cadetta.logging import get_logger
+E   ModuleNotFoundError: No module named 'cadetta'
+
+bindings/python/scripts/gen_models.py:18: ModuleNotFoundError
+____________ ERROR at setup of test_committed_models_are_not_stale _____________
+
+    @pytest.fixture(scope="module")
+    def gen_models():
+        """Load scripts/gen_models.py as a module (scripts/ is not a package)."""
+        spec = importlib.util.spec_from_file_location("gen_models", _SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules["gen_models"] = module
+>       spec.loader.exec_module(module)
+
+bindings/python/tests/test_gen_models.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<frozen importlib._bootstrap_external>:940: in exec_module
+    ???
+<frozen importlib._bootstrap>:241: in _call_with_frames_removed
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Regenerate cadetta.models from docs/schemas, or check they are not stale.
+    
+    WHY: the models are generated from the JSON schemas the Rust core owns; a schema
+    change that leaves them stale breaks the binding, so CI runs `--check`.
+    
+    Run with `uv run scripts/gen_models.py` (write) or `... --check` (drift gate).
+    """
+    
+    from __future__ import annotations
+    
+    import argparse
+    import shutil
+    import subprocess
+    import sys
+    import tempfile
+    from pathlib import Path
+    
+>   from cadetta.logging import get_logger
+E   ModuleNotFoundError: No module named 'cadetta'
+
+bindings/python/scripts/gen_models.py:18: ModuleNotFoundError
+-------------- generated xml file: /tmp/frob-pytest-1453438-0.xml --------------
+=========================== short test summary info ============================
+ERROR bindings/python/tests/test_gen_models.py::test_check_names_stale_file
+ERROR bindings/python/tests/test_gen_models.py::test_committed_models_are_not_stale
+============================== 2 errors in 2.00s ===============================
+'''
+passed = false
+provider = "pytest"
+ref = "bindings/python/tests/test_gen_models.py::test_check_names_stale_file bindings/python/tests/test_gen_models.py::test_committed_models_are_not_stale"
+size = 3717
+status = "measured"
+test_count = 2
+tests_digest = "0432bdc3687538edad5d0182d22b7561e76c852a5870f256958aa6140121768f"
+at = "2026-10-13T22:20:07Z"
+actor = "lognd"
+rev = 1

@@ -5,7 +5,7 @@ model P {
 assembly A {
   part a: P
   part b: P
-  place a.origin on origin
-  place b.origin on a.face
+  place a.origin at origin
+  place b.origin at a.face
   check clear: (b.face in origin).z - (a.face in origin).z >= 0mm "b above a"
 }

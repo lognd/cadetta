@@ -114,6 +114,13 @@ class Flavour(StrEnum):
     observed = "observed"
 
 
+class Implicit(StrEnum):
+    global_ = "global"
+    link = "link"
+    frame = "frame"
+    reference = "reference"
+
+
 class InterfaceMember(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -133,6 +140,7 @@ class LocatorKind(StrEnum):
     dimension = "dimension"
     property = "property"
     frame = "frame"
+    instance = "instance"
 
 
 class LocatorMode(StrEnum):
@@ -325,6 +333,7 @@ class Locator(BaseModel):
     component: str | None = None
     config: str | None = None
     for_: Annotated[str | None, Field(alias="for")] = None
+    implicit: Implicit | None = None
     kind: LocatorKind
     locator: str
     mode: LocatorMode
@@ -373,16 +382,9 @@ class Op2(BaseModel):
     rotate: Annotated[Rotate, Field(description="Rotate arguments.")]
 
 
-class Op4(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    at: Path
-
-
-class Op(RootModel[Op1 | Op2 | Op3 | Op4]):
+class Op(RootModel[Op1 | Op2 | Op3]):
     root: Annotated[
-        Op1 | Op2 | Op3 | Op4,
+        Op1 | Op2 | Op3,
         Field(description="A frame operation shared by Datum and Placement."),
     ]
 
@@ -403,12 +405,13 @@ class Placement(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    at: Path
     closure: Digest | None = None
     datum: Path
     digest: Digest | None = None
-    on: Path
     ops: list[Op]
     part: Path
+    path: Path
     variants: dict[str, list[Op]] | None = None
 
 
@@ -508,6 +511,25 @@ class Member(BaseModel):
     was: list[str]
 
 
+class ObservedFrame(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    document: str
+    name: str
+    transform: list[list[Value]]
+
+
+class ObservedInstance(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    component: str
+    document: str
+    reference: str | None = None
+    transform: list[list[Value]]
+
+
 class Point(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -573,6 +595,8 @@ class Project(BaseModel):
     dependencies: list[Dependency]
     digest: Digest | None = None
     flavour: Flavour
+    frames: list[ObservedFrame] | None = None
+    instances: list[ObservedInstance] | None = None
     modules: list[str]
     package: PackageId
     schema_: Annotated[

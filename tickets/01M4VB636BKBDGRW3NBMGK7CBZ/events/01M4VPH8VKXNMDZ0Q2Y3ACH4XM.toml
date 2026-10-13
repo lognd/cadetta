@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-13T22:36:06Z"
+digest = "c89f316a54c94247ca3e89da0ac8f98f173a06f48f905a3506ca131264be7d19"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fb935fb7-e05f-4878-974f-ee6d82805a4f with nextest profile: default
+    Starting 4 tests across 1 binary (42 tests skipped)
+        PASS [   0.010s] cadetta-geometry placement::tests::member_paths_are_canonical
+        PASS [   0.011s] cadetta-geometry op_members::tests::placement_args_are_authored_place_members
+        PASS [   0.012s] cadetta-geometry op_members::tests::array_placement_lowers_per_instance_with_integer_indexes
+        PASS [   0.015s] cadetta-geometry op_members::tests::star_is_never_an_ir_index
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 4 tests run: 4 passed, 42 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry placement_args_are_authored_place_members array_placement_lowers_per_instance_with_integer_indexes star_is_never_an_ir_index member_paths_are_canonical"
+size = 860
+status = "measured"
+test_count = 4
+tests_digest = "a5cda423cb24b93f1f3d7856f83bdea25c37052e5debc2705e481396f6091f15"
+at = "2026-10-13T22:36:06Z"
+actor = "lognd"
+rev = 1
