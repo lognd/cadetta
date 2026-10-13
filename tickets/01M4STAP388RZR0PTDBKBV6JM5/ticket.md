@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:56Z"
-updated = "2026-10-13T05:05:21Z"
+updated = "2026-10-13T06:05:15Z"
 persona = "design engineer"
 capability = "look up thread, head and nut dimensions"
 idempotency_key = "replan13:Metric fastener tables"
-labels = ["creates:std/fasteners/tables.cdt"]
-scope = ["std/fasteners/tables.cdt"]
+labels = ["creates:std/src/fasteners/tables.cdt"]
+scope = ["std/src/fasteners/tables.cdt"]
 
 [[links]]
 kind = "blocks"
