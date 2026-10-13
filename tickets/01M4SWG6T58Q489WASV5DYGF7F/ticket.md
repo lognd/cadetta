@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-13T23:21:00Z"
+updated = "2026-10-13T23:22:58Z"
 persona = "design engineer"
 capability = "prove that holes line up"
 idempotency_key = "replan14:geo-aligned"
@@ -29,7 +29,7 @@ target = "01M4SWG6N6DT76DRYYJHFB4656"
 
 [[acceptance]]
 text = "Given aligned(a, b, allowance) with equal counts, when evaluated, then every pair a[i], b[i] is measured in b's xy plane after conversion to b's datum, ignoring z (geometry.md 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given patterns of different counts, when evaluated, then G004 is raised (geometry.md 5, 7)"
