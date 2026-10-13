@@ -23,6 +23,10 @@ target = "01M4SPWS56AF9GE891GAM5QSWX"
 kind = "blocks"
 target = "01M4SPWS7TFEF86PHX2W33Q6YX"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWSABPXKK62B5V0SMJ8FD"
+
 [[acceptance]]
 text = 'Given `point = "mid"`, when resolved, then the midpoint of the limits is selected'
 bound = false
