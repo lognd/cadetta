@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given MetricThread M1_6 to M20, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len and Iso4032, when loaded, then every value is as published and cited (stdlib.md 4)", "Given tolerances, when read, then they are kept as published (stdlib.md 4)"]
+new = ["Given MetricThread M1_6 to M20, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len and Iso4032, when loaded, then every value is as published and cited (stdlib.md 2)", "Given tolerances, when read, then they are kept as published (stdlib.md 2)"]
+moved = [0, 0]
+at = "2026-10-13T05:04:18Z"
+actor = "lognd"
+rev = 1
