@@ -8,12 +8,12 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-13T16:21:53Z"
+updated = "2026-10-13T16:25:34Z"
 persona = "spec author"
 capability = "verify an implementation against the spec"
 idempotency_key = "replan13:Conformance fixtures for language"
 labels = ["creates:tests/conformance/language/**"]
-scope = ["tests/conformance/language/**"]
+scope = ["tests/conformance/language/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocks"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"
-bound = false
+bound = true
 +++
