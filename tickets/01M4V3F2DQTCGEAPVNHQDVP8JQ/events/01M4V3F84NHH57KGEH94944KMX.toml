@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["solvers.md 3: solve rejects a response with a missing or wrong-kind output as S005 and stores nothing (fixtures solvers/s005-output-missing, s005-output-wrong-kind; found while working ~KBYTYF0)"]
+moved = []
+at = "2026-10-13T17:02:57Z"
+actor = "lognd"
+rev = 1
