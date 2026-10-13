@@ -1,0 +1,35 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:38:27Z"
+digest = "32fc6ceb6c7ccccd9b3731811dd8f62bbdfe0830c1056c16f4d8823dfc26df2c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 76854999-1065-4c82-9d5d-dd610fd97492 with nextest profile: default
+    Starting 13 tests across 2 binaries (18 tests skipped)
+        PASS [   0.008s] cadetta output::tests::waived_diagnostics_appear_in_json_only
+        PASS [   0.010s] cadetta output::tests::text_is_rustc_style
+        PASS [   0.011s] cadetta project::tests::missing_or_empty_src_is_e005
+        PASS [   0.011s] cadetta project::tests::duplicate_component_is_e003_with_both_spans
+        PASS [   0.011s] cadetta output::tests::short_github_sarif_and_json_shapes
+        PASS [   0.010s] cadetta project::tests::modules_sorted_by_path
+        PASS [   0.011s] cadetta output::tests::exit_one_at_or_above_fail_on
+        PASS [   0.011s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.012s] cadetta project::tests::member_and_path_dependency_without_config_is_e005
+        PASS [   0.013s] cadetta output::tests::diagnostics_sort_by_file_line_code
+        PASS [   0.013s] cadetta project::tests::discovery_walks_up_skips_tableless_and_fails_when_none
+        PASS [   0.013s] cadetta project::tests::member_scope_unless_at_workspace_root
+        PASS [   0.006s] cadetta tests::unknown_argument_is_a_usage_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 13 tests run: 13 passed, 18 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=output::tests::diagnostics_sort_by_file_line_code) | test(=output::tests::exit_one_at_or_above_fail_on) | test(=output::tests::short_github_sarif_and_json_shapes) | test(=output::tests::text_is_rustc_style) | test(=output::tests::waived_diagnostics_appear_in_json_only) | test(=project::tests::discovery_walks_up_skips_tableless_and_fails_when_none) | test(=project::tests::duplicate_component_is_e003_with_both_spans) | test(=project::tests::member_and_path_dependency_without_config_is_e005) | test(=project::tests::member_scope_unless_at_workspace_root) | test(=project::tests::missing_or_empty_src_is_e005) | test(=project::tests::modules_sorted_by_path) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::unknown_argument_is_a_usage_error)))'"
+size = 1554
+status = "measured"
+test_count = 13
+tests_digest = "30d377d6fd0670d847ad71dfad1d5dbf6f2c278fa0fad8cc7a47d8ee825bb871"
+at = "2026-10-13T06:38:27Z"
+actor = "lognd"
+rev = 1
