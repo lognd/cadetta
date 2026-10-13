@@ -49,7 +49,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a process-compensated member, when lowered, then `designed` holds the value before compensation and `nominal` the drawn value (ir.md 3, language.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a literal tolerance and a derived affine form, when lowered, then Value.tol holds an Affine of source-variable terms (ir.md 3)"
