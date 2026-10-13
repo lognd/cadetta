@@ -70,6 +70,20 @@ fn unmet_expectation_fails_naming_fixture_doc_and_code() {
 
 // frob:tests crates/cadetta-cli/tests/conformance/corpus.rs::run_corpus
 #[test]
+fn nested_doc_directories_are_discovered() {
+    let report = corpus::run_corpus(&selftest_root(), &corpus::KnownGaps::default());
+    assert!(
+        matches!(report.outcomes["emitters/nested/ok"], Outcome::Pass),
+        "{report:?}"
+    );
+    assert!(
+        !report.outcomes.keys().any(|k| k == "emitters/ok"),
+        "{report:?}"
+    );
+}
+
+// frob:tests crates/cadetta-cli/tests/conformance/corpus.rs::run_corpus
+#[test]
 fn known_gap_tolerates_failure_and_flags_stale_entry() {
     let mut allow = corpus::KnownGaps::default();
     allow.insert("language/bad", "~TEST", "implementation lags");

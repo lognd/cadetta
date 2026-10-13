@@ -94,6 +94,8 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 - Single `.cdt` fixtures are staged as the package `acme.demo`
   (`src/lib.cdt`, `fail_on = "error"`); a `NAME.must-fire/` directory is
   copied as a whole package.
+- Doc directories may nest (`emitters/sw-equations`); the doc name is the
+  path below `tests/conformance`, and `expect.json` `doc` must equal it.
 - Only `kind = "source"` with `entry` `check` runs today; other kinds and
   entries are skipped with a logged note until their entry points exist.
 - Failures name the fixture (`<doc>/<NAME>`), the doc and the missing or

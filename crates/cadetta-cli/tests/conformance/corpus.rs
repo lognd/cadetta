@@ -177,16 +177,32 @@ fn names_in(dir: &Path) -> Vec<String> {
     names
 }
 
-/// Discover and run every fixture pair under `root/<doc>/`; tolerates no corpus.
+/// Collect doc names (`language`, `emitters/sw-equations`) under `dir`, recursing
+/// into nested directories but never into `NAME.must-fire/` package fixtures.
+fn collect_docs(dir: &Path, prefix: &str, out: &mut Vec<String>) {
+    for entry in fs::read_dir(dir).into_iter().flatten().flatten() {
+        let path = entry.path();
+        let Some(name) = entry.file_name().to_str().map(str::to_owned) else {
+            continue;
+        };
+        if !path.is_dir() || name.ends_with(".must-fire") || name.ends_with(".must-not-fire") {
+            continue;
+        }
+        let doc = if prefix.is_empty() {
+            name
+        } else {
+            format!("{prefix}/{name}")
+        };
+        collect_docs(&path, &doc, out);
+        out.push(doc);
+    }
+}
+
+/// Discover and run every fixture pair under `root/<doc>/` (nested docs included); tolerates no corpus.
 pub fn run_corpus(root: &Path, allow: &KnownGaps) -> Report {
     let mut report = Report::default();
-    let mut docs: Vec<_> = fs::read_dir(root)
-        .into_iter()
-        .flatten()
-        .flatten()
-        .filter(|e| e.path().is_dir())
-        .filter_map(|e| e.file_name().to_str().map(str::to_owned))
-        .collect();
+    let mut docs = Vec::new();
+    collect_docs(root, "", &mut docs);
     docs.sort();
     for doc in docs {
         for name in names_in(&root.join(&doc)) {
