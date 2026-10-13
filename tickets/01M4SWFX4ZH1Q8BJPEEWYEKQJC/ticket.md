@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:31:42Z"
+updated = "2026-10-13T08:31:50Z"
 persona = "design engineer"
 capability = "compose datum transforms exactly"
 idempotency_key = "replan14:geo-transform"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given any other angle, when composed, then the transform is Inexact with a root and Q006 applies to the nominal (geometry.md 2; quantities.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a toleranced angle, when a coordinate is carried through it, then the coordinate is conservative (geometry.md 2; quantities.md 5.4)"
