@@ -40,7 +40,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a priv member, when evaluated, shown by why or impact, carried in the IR, or bound by the package own bindings, then it behaves like any member (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a pub item whose interface member type, component parameter type, or function argument or result type is private, when checked, then E017 fires (packages.md 3)"
