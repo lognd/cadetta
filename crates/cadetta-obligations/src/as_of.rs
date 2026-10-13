@@ -169,7 +169,7 @@ mod tests {
         Date::parse(s).unwrap()
     }
 
-    // frob:tests as_of::tests::flag_wins_and_is_recorded
+    // frob:tests crates/cadetta-obligations/src/as_of.rs::tests.flag_wins_and_is_recorded
     #[test]
     fn flag_wins_and_is_recorded() {
         let a = AsOf::resolve(Some("2025-01-02"), Some("2026-10-13"), d("2030-01-01")).unwrap();
@@ -181,7 +181,7 @@ mod tests {
         );
     }
 
-    // frob:tests as_of::tests::config_then_today
+    // frob:tests crates/cadetta-obligations/src/as_of.rs::tests.config_then_today
     #[test]
     fn config_then_today() {
         let a = AsOf::resolve(None, Some("2026-10-13"), d("2030-01-01")).unwrap();
@@ -190,7 +190,7 @@ mod tests {
         assert_eq!((t.date, t.source), (d("2030-01-01"), AsOfSource::Today));
     }
 
-    // frob:tests as_of::tests::expiry_uses_fixed_date
+    // frob:tests crates/cadetta-obligations/src/as_of.rs::tests.expiry_uses_fixed_date
     #[test]
     fn expiry_uses_fixed_date() {
         let a = AsOf::resolve(Some("2026-06-01"), None, d("2030-01-01")).unwrap();
@@ -199,7 +199,7 @@ mod tests {
         assert!(!a.has_passed(d("2026-06-02")));
     }
 
-    // frob:tests as_of::tests::rejects_bad_dates
+    // frob:tests crates/cadetta-obligations/src/as_of.rs::tests.rejects_bad_dates
     #[test]
     fn rejects_bad_dates() {
         for bad in [
@@ -216,7 +216,7 @@ mod tests {
         assert!(Date::parse("2028-02-29").is_ok());
     }
 
-    // frob:tests as_of::tests::unix_epoch_conversion
+    // frob:tests crates/cadetta-obligations/src/as_of.rs::tests.unix_epoch_conversion
     #[test]
     fn unix_epoch_conversion() {
         assert_eq!(Date::from_unix_secs(0).to_string(), "1970-01-01");
