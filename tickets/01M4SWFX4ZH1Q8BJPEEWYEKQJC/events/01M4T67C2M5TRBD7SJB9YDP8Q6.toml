@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T08:31:50Z"
+digest = "a93615a0a6b47247048d889da1e90e60a0ab136aa9a2ca7aeb9c578bc8614359"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f47e91b3-3f63-42f0-a2a8-fe383535e057 with nextest profile: default
+    Starting 1 test across 1 binary (13 tests skipped)
+        PASS [   0.005s] cadetta-geometry transform::tests::other_angles_are_inexact_with_root
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 13 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry -E 'test(=transform::tests::other_angles_are_inexact_with_root)'"
+size = 558
+status = "measured"
+test_count = 1
+tests_digest = "479a072c8598f1ede6edfaa960d6a5cbde021c30707590860bed09cc970e6331"
+at = "2026-10-13T08:31:50Z"
+actor = "lognd"
+rev = 1
