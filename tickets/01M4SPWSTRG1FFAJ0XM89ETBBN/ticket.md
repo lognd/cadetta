@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:04:03Z"
+updated = "2026-10-13T05:01:25Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -25,5 +25,21 @@ bound = false
 
 [[acceptance]]
 text = "Given an unknown key, when loaded, then a diagnostic names it"
+bound = false
+
+[[acceptance]]
+text = "Given `[lint] severity`, `d001_min_digits`, `common_values` and `precision`, when loaded, then each is typed and validated (config-cli.md 1)"
+bound = false
+
+[[acceptance]]
+text = "Given `[obligations.roles.X]` with covers and required_for, when loaded, then roles are modelled (obligations.md 4)"
+bound = false
+
+[[acceptance]]
+text = "Given `[solvers.NAME]` and `[[adapter]]` tables, when loaded, then command, transport, native_unit, version and files parse (config-cli.md 1)"
+bound = false
+
+[[acceptance]]
+text = "Given `[emit] point` and `[units] display`, when loaded, then they feed emit policy and display (quantities.md 5.6, 6)"
 bound = false
 +++
