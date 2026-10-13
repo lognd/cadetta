@@ -19,6 +19,10 @@ scope = ["crates/cadetta-ir/src/model.rs"]
 kind = "blocks"
 target = "01M4SPWQ6VDD0177RREW273PYG"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWQED1EN19NWQJE5NT0J4"
+
 [[acceptance]]
 text = "Given design and observed flavours, when constructed, then both use the same Project type with flavour set"
 bound = false
