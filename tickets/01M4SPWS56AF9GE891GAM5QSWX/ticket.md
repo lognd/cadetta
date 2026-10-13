@@ -8,12 +8,16 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T04:03:55Z"
+updated = "2026-10-13T04:04:04Z"
 persona = "design engineer"
 capability = "emit and read cadetta.ir/1 JSON"
 outcome_text = "I can diff and consume the IR from scripts"
 labels = ["creates:crates/cadetta-adapter/src/builtin/json.rs"]
 scope = ["crates/cadetta-adapter/src/builtin/json.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4SPWTA1PQV15S63741V30XT"
 
 [[acceptance]]
 text = "Given the same IR twice, when emitted, then the bytes are identical (golden file)"
