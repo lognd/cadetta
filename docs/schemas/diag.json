@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Diagnostic",
+  "description": "A `cadetta.diag/1` record.",
+  "type": "object",
+  "properties": {
+    "alt": {
+      "description": "`SLOT=ALTERNATE` under variant evaluation, else null.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "code": {
+      "description": "Catalog code.",
+      "type": "string"
+    },
+    "fixes": {
+      "description": "Suggested edits.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Fix"
+      }
+    },
+    "location": {
+      "description": "Where to look, or null.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Location"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "message": {
+      "description": "One sentence, no trailing period.",
+      "type": "string"
+    },
+    "notes": {
+      "description": "Related locations and facts.",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Note"
+      }
+    },
+    "path": {
+      "description": "Canonical path of the subject, or null.",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema": {
+      "description": "Always `cadetta.diag/1`.",
+      "type": "string"
+    },
+    "severity": {
+      "description": "Effective severity.",
+      "$ref": "#/$defs/Severity"
+    },
+    "waived": {
+      "description": "Null, or why the diagnostic is suppressed.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Waived"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema",
+    "code",
+    "severity",
+    "message",
+    "notes",
+    "fixes"
+  ],
+  "$defs": {
+    "Edit": {
+      "description": "One text edit of a suggested fix.",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "File to edit.",
+          "type": "string"
+        },
+        "range": {
+          "description": "Range to replace.",
+          "$ref": "#/$defs/Range"
+        },
+        "text": {
+          "description": "Replacement text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "range",
+        "text"
+      ]
+    },
+    "Fix": {
+      "description": "A suggested fix; never applied without a flag.",
+      "type": "object",
+      "properties": {
+        "edits": {
+          "description": "The edits that make it up.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Edit"
+          }
+        },
+        "title": {
+          "description": "Short description of the fix.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "edits"
+      ]
+    },
+    "Location": {
+      "description": "Where to look: a source span, a native CAD locator or a lock line.",
+      "oneOf": [
+        {
+          "description": "A span in a `.cdt` file (required for every design-IR diagnostic).",
+          "type": "object",
+          "properties": {
+            "end": {
+              "description": "End of the span.",
+              "$ref": "#/$defs/Position"
+            },
+            "file": {
+              "description": "Path of the source file.",
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "source"
+            },
+            "start": {
+              "description": "Start of the span.",
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "required": [
+            "kind",
+            "file",
+            "start",
+            "end"
+          ]
+        },
+        {
+          "description": "A locator inside a native CAD file (R rules, adapters).",
+          "type": "object",
+          "properties": {
+            "adapter": {
+              "description": "Adapter name.",
+              "type": "string"
+            },
+            "file": {
+              "description": "Native file path.",
+              "type": "string"
+            },
+            "kind": {
+              "type": "string",
+              "const": "native"
+            },
+            "locator": {
+              "description": "Adapter-defined locator.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "adapter",
+            "file",
+            "locator"
+          ]
+        },
+        {
+          "description": "A line of the lock file (O, W and sync records).",
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "lock"
+            },
+            "line": {
+              "description": "1-based line.",
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            }
+          },
+          "required": [
+            "kind",
+            "line"
+          ]
+        }
+      ]
+    },
+    "Note": {
+      "description": "A related location or fact attached to a diagnostic.",
+      "type": "object",
+      "properties": {
+        "location": {
+          "description": "Where it applies, if anywhere.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Location"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "description": "The fact, one sentence.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message"
+      ]
+    },
+    "Position": {
+      "description": "A 1-based line and column.",
+      "type": "object",
+      "properties": {
+        "col": {
+          "description": "1-based column.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        },
+        "line": {
+          "description": "1-based line.",
+          "type": "integer",
+          "format": "uint32",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "line",
+        "col"
+      ]
+    },
+    "Range": {
+      "description": "A start/end range within one file.",
+      "type": "object",
+      "properties": {
+        "end": {
+          "description": "End of the range.",
+          "$ref": "#/$defs/Position"
+        },
+        "start": {
+          "description": "Start of the range.",
+          "$ref": "#/$defs/Position"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "Severity": {
+      "description": "Effective severity of a diagnostic after precedence.",
+      "oneOf": [
+        {
+          "description": "Fails the run.",
+          "type": "string",
+          "const": "error"
+        },
+        {
+          "description": "Reported, does not fail the run by default.",
+          "type": "string",
+          "const": "warning"
+        },
+        {
+          "description": "Informational.",
+          "type": "string",
+          "const": "info"
+        },
+        {
+          "description": "Suggestion only.",
+          "type": "string",
+          "const": "hint"
+        }
+      ]
+    },
+    "Waived": {
+      "description": "The reason a diagnostic was suppressed.",
+      "type": "object",
+      "properties": {
+        "because": {
+          "description": "The recorded justification.",
+          "type": "string"
+        },
+        "waiver": {
+          "description": "Identifier of the waiver.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "waiver",
+        "because"
+      ]
+    }
+  }
+}
