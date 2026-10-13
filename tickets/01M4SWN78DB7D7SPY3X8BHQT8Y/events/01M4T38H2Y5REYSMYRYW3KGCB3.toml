@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T07:40:01Z"
+digest = "7e94be8189910b759fe9523014b447f0a8bbd2d9f555a3a473940d3512bea921"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.57s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fb0e04a6-4df9-4d05-91d0-2fb336410338 with nextest profile: default
+    Starting 4 tests across 1 binary (30 tests skipped)
+        PASS [   0.007s] cadetta-obligations lock_merge::tests::one_sided_synced_change_wins
+        PASS [   0.007s] cadetta-obligations lock_merge::tests::unions_in_sorted_order_with_tie_rule
+        PASS [   0.007s] cadetta-obligations lock_merge::tests::invalid_records_are_dropped
+        PASS [   0.009s] cadetta-obligations lock_merge::tests::differing_synced_values_conflict
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 4 tests run: 4 passed, 30 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations -E test(/lock_merge::tests/)"
+size = 982
+status = "measured"
+test_count = 4
+tests_digest = "c19f4c0b84878c2b5f6d667c881d2b1c6549011cf60d6c35f095d8c05637316c"
+at = "2026-10-13T07:40:01Z"
+actor = "lognd"
+rev = 1
