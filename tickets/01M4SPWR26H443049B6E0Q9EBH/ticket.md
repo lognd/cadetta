@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T13:12:56Z"
+updated = "2026-10-13T13:12:57Z"
 persona = "design engineer"
 capability = "get lints for the F family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a nominal outside the table size range, when linted, then F002 is reported and cannot be waived (quantities.md 5.1)"
-bound = false
+bound = true
 +++
