@@ -2,7 +2,8 @@
 id = "01M4SWKA4EXSKCGVPWK9026WEG"
 title = "SARIF 2.1.0 renderer"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
