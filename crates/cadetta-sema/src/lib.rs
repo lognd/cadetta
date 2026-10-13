@@ -17,3 +17,4 @@ pub mod process;
 pub mod resolve;
 pub mod rollup;
 pub mod tables;
+pub mod visibility;
