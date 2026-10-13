@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `solver`, `waive ... because ... expires ...`, `cite`, `unit`, `kind`, `enum`, `fn`, `fit`, `require` and `check` items, when parsed, then each production of the grammar is accepted (language.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a component with parameters `(wheel: Caster, span: Length = 1mm)`, when parsed, then defaults are recorded (language.md 3.1)"
