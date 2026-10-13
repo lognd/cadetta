@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given docs/spec/bindings.md, when fixtures are written, then every normative rule and every diagnostic code in bindings has a must-fire and a must-not-fire fixture under tests/conformance/bindings/ (bindings.md)", "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)"]
+new = ["Given docs/spec/bindings.md, when fixtures are written, then every normative rule and every diagnostic code in bindings has a must-fire and a must-not-fire fixture under tests/conformance/bindings/ (bindings.md)", "Given ambiguities found while writing fixtures, when found, then each is filed as a ticket against the spec (docs/spec/README.md)", "Given draft 1.4 revisions of the document, when fixtures are rewritten, then every rule added or changed in 1.4 has fixtures (docs/spec/README.md)"]
+moved = [1, 2]
+at = "2026-10-13T05:45:12Z"
+actor = "lognd"
+rev = 1
