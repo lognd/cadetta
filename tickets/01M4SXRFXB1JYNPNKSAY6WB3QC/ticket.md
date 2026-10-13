@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:03:54Z"
-updated = "2026-10-13T07:23:05Z"
+updated = "2026-10-13T07:26:29Z"
 persona = "library author"
 capability = "write use trees, aliases, globs and pub use"
 labels = ["creates:crates/cadetta-syntax/src/parser_use.rs"]
@@ -20,7 +20,7 @@ target = "01M4SPWP1JK8XH8EKXK71P7EFH"
 
 [[acceptance]]
 text = "Given `use package::frame::Frame`, `use self::x`, `use super::super::y` and `use acme.shop::policy::AcmeShop`, when parsed, then each usepath start (package, self, super chain, dotted dependency or std) is recorded (packages.md 4; language.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `use path as alias`, `use path::*` and `use path::{A, B as C, sub::{D, *}}`, when parsed, then aliases, globs and nested trees are recorded (packages.md 4)"
