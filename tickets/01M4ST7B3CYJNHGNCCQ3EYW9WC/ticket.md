@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T09:21:23Z"
+updated = "2026-10-13T09:21:26Z"
 persona = "design engineer"
 capability = "read native values that carry no unit"
 idempotency_key = "replan13:Unit assumption at read"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given any read, when a value is unitless, then Q001 is never raised; Q001 is a source error (adapters.md 3)"
-bound = false
+bound = true
 +++
