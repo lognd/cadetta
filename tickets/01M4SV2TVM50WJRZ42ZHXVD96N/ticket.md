@@ -1,0 +1,24 @@
++++
+id = "01M4SV2TVM50WJRZ42ZHXVD96N"
+title = "SOLIDWORKS regen with rebuild-error mapping to R004"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SV2TCZM23R46EM75RYSA3B"
+reporter = "lognd"
+created = "2026-10-13T05:17:07Z"
+updated = "2026-10-13T05:17:07Z"
+persona = "design engineer"
+capability = "regenerate headless and see rebuild failures as diagnostics"
+labels = ["creates:adapters/solidworks/src/regen.py"]
+scope = ["adapters/solidworks/src/regen.py"]
+
+[[acceptance]]
+text = "Given a rebuild error, when regen runs, then R004 regen-failed is returned naming the feature (adapters.md 5, lints.md R004)"
+bound = false
+
+[[acceptance]]
+text = "Given a session with unsaved user changes, when driving, then the adapter refuses and reports (OQ-8)"
+bound = false
++++
