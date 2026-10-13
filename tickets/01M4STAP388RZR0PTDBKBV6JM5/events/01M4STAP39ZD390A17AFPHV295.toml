@@ -1,0 +1,16 @@
+kind = "create"
+title = "Metric fastener tables"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 8
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+persona = "design engineer"
+capability = "look up thread, head and nut dimensions"
+idempotency_key = "replan13:Metric fastener tables"
+labels = ["creates:std/fasteners/tables.cdt"]
+scope = ["std/fasteners/tables.cdt"]
+acceptance = ["Given MetricThread M1_6 to M20, Thread, Iso273, TapDrill, Iso4762Head, Iso4762Len and Iso4032, when loaded, then every value is as published and cited (stdlib.md 4)", "Given tolerances, when read, then they are kept as published (stdlib.md 4)"]
+at = "2026-10-13T05:03:56Z"
+actor = "lognd"
+rev = 1
