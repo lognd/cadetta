@@ -153,6 +153,12 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   Two globs that bring the same name are E004 only where the name is
   used. An unresolved name is E002.
 
+  Decided: a glob imports only `pub` items and `pub use` re-exports of
+  the module (a plain `use` is private and not re-exported); an explicit
+  `use` name beats a glob name; the prelude holds the built-in types,
+  `origin`, `self` and the units, kinds and built-in functions, and
+  nothing from `std`.
+
 ## 5. Renames, moves and versions
 
 - `was` takes a full canonical path, so a moved file, a renamed module,
