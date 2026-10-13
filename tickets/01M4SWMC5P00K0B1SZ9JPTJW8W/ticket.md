@@ -2,7 +2,8 @@
 id = "01M4SWMC5P00K0B1SZ9JPTJW8W"
 title = "Sync orchestration, dry-run and scoping"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
