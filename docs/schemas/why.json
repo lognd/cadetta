@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Why",
+  "description": "A `cadetta.why/1` report: the upstream derivation chain of one path.",
+  "type": "object",
+  "required": ["schema", "path", "chain"],
+  "properties": {
+    "schema": { "const": "cadetta.why/1" },
+    "path": { "description": "The path asked about.", "type": "string" },
+    "chain": { "$ref": "#/$defs/Node" }
+  },
+  "$defs": {
+    "Node": {
+      "description": "One node of the chain with the nodes it reads.",
+      "type": "object",
+      "required": ["path", "kind", "value", "expr", "detail", "repeated", "upstream"],
+      "properties": {
+        "path": { "description": "Canonical path, or the citation name.", "type": "string" },
+        "kind": { "enum": ["member", "check", "solver", "citation", "unresolved"] },
+        "value": { "description": "Value as authored, or null.", "type": ["string", "null"] },
+        "expr": { "description": "Normalized expression, or null.", "type": ["string", "null"] },
+        "detail": { "description": "Citation target, solver script or check verdict, or null.", "type": ["string", "null"] },
+        "repeated": { "description": "True when already expanded earlier in the chain.", "type": "boolean" },
+        "upstream": { "type": "array", "items": { "$ref": "#/$defs/Node" } }
+      }
+    }
+  }
+}

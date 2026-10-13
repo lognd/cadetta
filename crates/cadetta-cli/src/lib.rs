@@ -167,6 +167,7 @@ enum Command {
     Solve(Vec<String>),
     Obligations(Vec<String>),
     Ack(Vec<String>),
+    Why(Vec<String>),
     Unknown(String),
 }
 
@@ -180,6 +181,7 @@ fn parse(args: &[String]) -> Command {
         Some("solve") => Command::Solve(args[1..].to_vec()),
         Some("obligations") => Command::Obligations(args[1..].to_vec()),
         Some("ack") => Command::Ack(args[1..].to_vec()),
+        Some("why") => Command::Why(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
 }
@@ -222,6 +224,7 @@ pub fn run_with_env(
         Command::Solve(rest) => cmd::run_solve(&rest, &globals, out, err),
         Command::Obligations(rest) => cmd::run_obligations(&rest, &globals, out, err),
         Command::Ack(rest) => cmd::run_ack(&rest, &globals, out, err),
+        Command::Why(rest) => cmd::run_why(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
             EXIT_USAGE
