@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T05:17:02Z"
+updated = "2026-10-13T05:17:04Z"
 persona = "solver author"
 capability = "write a solver as a decorated Python function"
 outcome_text = "I speak cadetta.solve/1 without protocol code"
 labels = ["creates:bindings/python/python/cadetta/solve.py", "creates:bindings/python/tests/test_solve.py"]
 scope = ["bindings/python/python/cadetta/solve.py", "bindings/python/tests/test_solve.py"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2NGV5P9KBBT7987BZCKQ"
 
 [[acceptance]]
 text = "Given a decorated function, when .serve() reads a cadetta.solve/1 request on stdin, then it writes a valid response with the solver version on stdout (bindings.md 3.3, solvers.md)"
