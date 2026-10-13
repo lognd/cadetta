@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-13T14:23:16Z"
+updated = "2026-10-13T14:42:05Z"
 persona = "design engineer"
 capability = "keep requires unwaivable"
 idempotency_key = "replan14:ob-require"
 labels = ["creates:crates/cadetta-obligations/src/require.rs"]
-scope = ["crates/cadetta-obligations/src/require.rs"]
+scope = ["crates/cadetta-obligations/src/require.rs", "crates/cadetta-obligations/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"
