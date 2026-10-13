@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T06:10:42Z"
-updated = "2026-10-13T06:10:47Z"
+updated = "2026-10-13T06:11:11Z"
 scope = ["crates/cadetta-cli/src/main.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/logging.rs", "crates/cadetta-cli/Cargo.toml"]
 
 [[acceptance]]
@@ -24,4 +24,4 @@ text = "Given a second init call, when it runs, then it returns an error and doe
 bound = false
 +++
 
-Mirror /home/logan/projects/frob-v2/crates/gob-log (init.rs: LOG_ENV, default_directive, build_filter, InitError, text/JSON layers, FmtSpan::CLOSE timing, ansi only on a terminal; redact.rs for secret masking). Replace the ad-hoc init_logging in crates/cadetta-cli/src/main.rs. Keep stdout for command output; logs only on stderr.
+Mirror ~/projects/frob-v2/crates/gob-log (init.rs: LOG_ENV, default_directive, build_filter, InitError, text/JSON layers, FmtSpan::CLOSE timing, ansi only on a terminal; redact.rs for secret masking). Replace the ad-hoc init_logging in crates/cadetta-cli/src/main.rs. Keep stdout for command output; logs only on stderr.
