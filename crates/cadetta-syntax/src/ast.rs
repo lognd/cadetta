@@ -273,6 +273,22 @@ pub enum ItemKind {
     Require(Require),
     /// A file-scope `check`.
     Check(Check),
+    /// `process NAME { ... }`
+    Process(Process),
+    /// `table NAME { ... }`
+    Table(Table),
+    /// `enum NAME { A, B }`
+    Enum(EnumDecl),
+    /// `fn name(...) -> Kind { ... }`
+    Fn(FnDecl),
+    /// A file-scope `solver`.
+    Solver(Solver),
+    /// `waive CODE on GLOB { because ... }`
+    Waive(Waive),
+    /// `unit ...`
+    Unit(UnitDecl),
+    /// `kind NAME = kindexpr`
+    Kind(KindDecl),
     /// An item whose keyword is recognised but not parsed yet, or that had a syntax error.
     Error,
 }
@@ -414,6 +430,8 @@ pub enum MemberKind {
     Check(Check),
     /// `require ...`
     Require(Require),
+    /// `solver ...`
+    Solver(Solver),
     /// A syntax error or a member not parsed yet.
     Error,
 }
@@ -609,6 +627,245 @@ pub enum TypeKind {
     },
     /// `Table<K>`
     Table(Box<Type>),
+    /// A compound kind expression such as `Volume / Time` or `Pressure / VolumeFlow^2`.
+    KindExpr(KindExpr),
+}
+
+/// Whether a kind-expression term multiplies or divides (language.md 3.10).
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum KindOp {
+    /// `*`, also the implicit operator of the first term.
+    Mul,
+    /// `/`
+    Div,
+}
+
+/// One factor of a kind expression: a kind name with an optional integer exponent.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct KindTerm {
+    /// How it combines with the terms before it.
+    pub op: KindOp,
+    /// The kind.
+    pub name: Path,
+    /// The `^n` exponent as written, when given.
+    pub exp: Option<i32>,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// A product and quotient of kinds, read left to right.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct KindExpr {
+    /// The terms, at least two for a compound expression.
+    pub terms: Vec<KindTerm>,
+}
+
+/// A rule `rule name(param) -> Kind = expr` of a process (language.md 3.8).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Rule {
+    /// The role name.
+    pub name: Ident,
+    /// The one parameter.
+    pub param: ParamDecl,
+    /// The result kind.
+    pub ret: Type,
+    /// The compensation expression.
+    pub body: Expr,
+}
+
+/// A member of a process.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct ProcessMember {
+    /// Doc comments.
+    pub docs: Vec<Doc>,
+    /// Leading attributes.
+    pub attrs: Vec<Attr>,
+    /// What it is.
+    pub kind: ProcessMemberKind,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// The process member kinds.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum ProcessMemberKind {
+    /// A process parameter such as `hole_comp = 0.2mm [+-0.05mm]`.
+    Param(Box<Param>),
+    /// A compensation rule.
+    Rule(Box<Rule>),
+    /// A syntax error.
+    Error,
+}
+
+/// `process NAME [citation] { ... }`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Process {
+    /// The process name.
+    pub name: Ident,
+    /// Provenance of the calibration.
+    pub citation: Option<Citation>,
+    /// Parameters and rules in order.
+    pub members: Vec<ProcessMember>,
+}
+
+/// One table row; `values` is `None` for a key-only row (language.md 3.6).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct TableRow {
+    /// Doc comments.
+    pub docs: Vec<Doc>,
+    /// The key.
+    pub key: Expr,
+    /// The column values after `=>`, or `None` when the row has no `=>`.
+    pub values: Option<Vec<Expr>>,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// `table NAME [citation] { key ... cols ... rows }`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Table {
+    /// The table name.
+    pub name: Ident,
+    /// Provenance of the data.
+    pub citation: Option<Citation>,
+    /// The key column; `None` only after a syntax error.
+    pub key: Option<ParamDecl>,
+    /// The value columns (empty for a key-only table).
+    pub cols: Vec<ParamDecl>,
+    /// The rows in order.
+    pub rows: Vec<TableRow>,
+}
+
+/// `enum NAME { A, B }`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct EnumDecl {
+    /// The enum name.
+    pub name: Ident,
+    /// The variants in order.
+    pub variants: Vec<Ident>,
+}
+
+/// `fn name(params) -> Kind { let ...; expr }`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct FnDecl {
+    /// The function name.
+    pub name: Ident,
+    /// Parameters.
+    pub params: Vec<ParamDecl>,
+    /// The result kind.
+    pub ret: Type,
+    /// The body.
+    pub body: Block,
+}
+
+/// A solver input binding `name = expr`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Bind {
+    /// The input name.
+    pub name: Ident,
+    /// The bound expression.
+    pub value: Expr,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// A statement of a solver body.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct SolverMember {
+    /// What it is.
+    pub kind: SolverMemberKind,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// The solver body statements (solvers.md 1).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum SolverMemberKind {
+    /// `in a = expr, b = expr`
+    In(Vec<Bind>),
+    /// `out name: Kind`
+    Out {
+        /// The output name.
+        name: Ident,
+        /// Its kind or kind expression.
+        ty: Type,
+    },
+    /// `deps "file"`
+    Deps(String),
+    /// A syntax error.
+    Error,
+}
+
+/// `solver NAME @script { ... }`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Solver {
+    /// The solver name.
+    pub name: Ident,
+    /// The citation naming the script.
+    pub citation: Citation,
+    /// The body statements.
+    pub members: Vec<SolverMember>,
+}
+
+/// Source text kept verbatim: a waiver glob, slot or alternate, or a date.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct RawText {
+    /// The text as written.
+    pub text: String,
+    /// Where it is.
+    pub span: Span,
+}
+
+/// The `for alt SLOT=ALT` scope of a waiver (language.md 3.2).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct WaiveAlt {
+    /// The canonical slot path.
+    pub slot: RawText,
+    /// The qualified alternate.
+    pub alt: RawText,
+}
+
+/// `waive CODE on GLOB [for alt SLOT=ALT] { because STRING [expires DATE] }` (lints.md 2.1).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Waive {
+    /// The diagnostic code.
+    pub code: Ident,
+    /// The path glob (obligations.md 2.2).
+    pub glob: RawText,
+    /// The alternate scope, when given.
+    pub for_alt: Option<WaiveAlt>,
+    /// The required reason.
+    pub because: String,
+    /// The expiry date `YYYY-MM-DD`, when given.
+    pub expires: Option<RawText>,
+}
+
+/// `unit` declarations (language.md 3.10).
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum UnitDecl {
+    /// `unit kip = 1000lbf`
+    Define {
+        /// The new unit.
+        name: Ident,
+        /// Its value.
+        value: Expr,
+    },
+    /// `unit Stress MPa`, the default unit of a kind.
+    Default {
+        /// The kind.
+        kind: Ident,
+        /// Its default unit.
+        unit: Ident,
+    },
+}
+
+/// `kind NAME = kindexpr`.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct KindDecl {
+    /// The new kind.
+    pub name: Ident,
+    /// What it equals: a kind name or a kind expression.
+    pub def: Type,
 }
 
 /// An expression (language.md 5).
