@@ -554,9 +554,16 @@ Rules the grammar left open, fixed by the reference parser:
   `row.in`); elsewhere see the next rule.
 - Expression precedence is pinned by the conformance tests in
   `crates/cadetta-syntax/src/expr.rs`, one per rule of section 5.
-- Keywords used as names are errors (E001). `datum` and `place` members
-  are not yet parsed: they produce an E001 diagnostic and are skipped to
-  the next statement.
+- Keywords used as names are errors (E001). `origin` is one: a member,
+  datum or interface field named `origin` is E001 with a message pointing
+  at geometry.md 2.
+- `datum NAME = expr` needs its value in a component and forbids it in an
+  interface. `place TARGET on expr [for i in lo..hi]` takes a postfix
+  expression as TARGET (`rail.origin`, `feet[i].top`); the `for` range is
+  `lo..hi` with any additive bounds, and the semantic check that it is
+  `0..count(PART)` is sema's. `p in D` is the ordinary `in` expression
+  (section 5); at member level `IDENT in` is a bound, so it must be
+  followed by a range (`w in D` alone is E001).
 - Kind expressions (`Volume / Time`, `Pressure / VolumeFlow^2`) are a
   left-to-right product or quotient of kind paths, each with an optional
   integer exponent (`^2`, `^-1`); no parentheses and no rational
@@ -609,10 +616,10 @@ Formatting never changes the IR digest.
 
 Formatter decisions (cadetta-syntax `format`):
 
-- A file with any syntax error is refused, never formatted away. Only
-  `datum` and `place` members (and `datum` in interfaces) are still
-  skipped with E001, so files using them cannot be formatted yet, nor can
-  the golden corpus.
+- A file with any syntax error is refused, never formatted away.
+  `datum` and `place` members (and `datum` in interfaces) print on one
+  line (`datum top = origin.offset(z = height)`, `place a.b on c for i in
+  0..count(P)`) and take no part in `=` alignment.
 - `enum`, `fn`, `waive`, `unit` and `kind` items print on one line
   (`enum G { A, B }`, `waive C on GLOB { because "x" }`); `unit` and
   `kind` definitions align their `=` with neighbours. `process`,
