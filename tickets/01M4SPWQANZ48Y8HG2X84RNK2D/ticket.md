@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:45:36Z"
+updated = "2026-10-13T08:45:44Z"
 persona = "cadetta contributor"
 capability = "generate the schema from the Rust types and commit it"
 outcome_text = "the IR is a public contract with a compatibility check"
@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given draft 1.4, when schemas are generated, then docs/schemas also holds diag.json and the entities of ir.md 3 including Dim and Datum (ir.md 5; lints.md 1.1)"
-bound = false
+bound = true
 +++
