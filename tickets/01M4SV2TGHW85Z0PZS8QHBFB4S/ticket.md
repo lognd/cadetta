@@ -22,10 +22,6 @@ target = "01M4SPWRGXS8XKJCF2H8FDKPKC"
 kind = "blocked-by"
 target = "01M4SPWRS0CDJT4GYC92AB1HCD"
 
-[[links]]
-kind = "blocked-by"
-target = "01M4SV2NZT32CAT33D13T86646"
-
 [[acceptance]]
 text = "Given the solution, when built, then it has the projects of solidworks.md 1 and only Cadetta.SolidWorks.Com and the add-in reference the interop assemblies (from SOLIDWORKS_API_DIR, never committed)"
 bound = false
