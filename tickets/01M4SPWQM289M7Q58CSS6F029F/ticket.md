@@ -59,6 +59,10 @@ target = "01M4SPWT3FP4SN4RTCHE631Y52"
 kind = "blocks"
 target = "01M4STCCK2B2XG83N4BRS5GR7B"
 
+[[links]]
+kind = "blocks"
+target = "01M4STCCQD6C55WEN7HFEBPEYV"
+
 [[acceptance]]
 text = 'Given [lint] severity N002="info", when linted, then N002 is info'
 bound = false
