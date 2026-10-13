@@ -8,12 +8,16 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:43Z"
-updated = "2026-10-13T05:02:43Z"
+updated = "2026-10-13T05:05:17Z"
 persona = "design engineer"
 capability = "learn exactly which sign-offs went stale and why"
 idempotency_key = "replan13:Attestations and staleness from closure digests"
 labels = ["creates:crates/cadetta-obligations/src/staleness.rs"]
 scope = ["crates/cadetta-obligations/src/staleness.rs"]
+
+[[links]]
+kind = "blocks"
+target = "01M4ST8ET5NPMBSVXFVD4WN8XP"
 
 [[acceptance]]
 text = "Given an attestation on a check, when anything the check reads changes however far upstream, then it becomes stale (obligations.md 2)"
