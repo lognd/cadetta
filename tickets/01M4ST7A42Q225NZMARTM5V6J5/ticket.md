@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given `12mm [+0.018mm -0]`, when accessors are read, then each returns an untoleranced quantity (quantities.md 5.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a role from an ISO class letter case, a fit side or `#[role(hole)]`, when `.mmc` and `.lmc` are read, then they follow the role; without a role they are an error (quantities.md 5.2, 5.6)"
