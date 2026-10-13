@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "attach provenance and policy to values once"
 idempotency_key = "replan13:Attributes, citations and cite declarations"
 labels = ["creates:crates/cadetta-sema/src/{attrs,cite}.rs"]
-scope = ["crates/cadetta-sema/src/{attrs,cite}.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/language.md"]
+scope = ["crates/cadetta-sema/src/{attrs,cite}.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/language.md", "changelog.d/01M4ST7AX1C1SYB67DVDW1EB06.added.md"]
 
 [[acceptance]]
 text = "Given `#[emit(mid)]`, `#![display(mm)]` and trailing `#[...]`, when resolved, then scope defaults apply and the member attribute wins (language.md 3.11)"
