@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T08:16:07Z"
+updated = "2026-10-13T08:20:08Z"
 persona = "design engineer"
 capability = "compensate printed holes once, in a process, without hand-adjusting dimensions"
 idempotency_key = "replan13:Processes and drawn versus designed values"
 labels = ["creates:crates/cadetta-sema/src/process.rs"]
-scope = ["crates/cadetta-sema/src/process.rs"]
+scope = ["crates/cadetta-sema/src/process.rs", "crates/cadetta-sema/src/lib.rs", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given `process Fdm` with `rule hole(d)` and a member tagged `#[hole]`, when evaluated, then designed holds the part as made and drawn holds the rule applied to nominals (language.md 3.8)"
