@@ -8,11 +8,11 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-13T17:49:08Z"
+updated = "2026-10-13T17:53:48Z"
 persona = "spec author"
 capability = "verify an implementation against packages.md"
 labels = ["creates:tests/conformance/packages/**"]
-scope = ["tests/conformance/packages/**"]
+scope = ["tests/conformance/packages/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
