@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-13T09:40:27Z"
+updated = "2026-10-13T09:40:37Z"
 persona = "design engineer"
 capability = "run `cadetta check`"
 outcome_text = "I get lint diagnostics and CI gating in one command"
@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given stale obligations with required_for = "check", when `cadetta check` runs, then it exits 1 (obligations.md 4)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given check flags --release --as-of --watch --module PATH GLOB, when run, then exit 1 follows fail_on (config-cli.md 3)"
