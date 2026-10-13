@@ -1,0 +1,16 @@
+kind = "create"
+title = "Cargo workspace skeleton with all crates"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M4SPWFRR9DAEM60DX796GVPN"
+persona = "cadetta contributor"
+capability = "build a Cargo workspace containing cadetta-syntax, -units, -fits, -sema, -ir, -lint, -adapter, -cli and adapters/freecad"
+outcome_text = "every epic has a crate to land code in"
+labels = ["creates:Cargo.toml", "creates:crates/*/Cargo.toml", "creates:crates/*/src/lib.rs", "creates:adapters/freecad/pyproject.toml"]
+scope = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/lib.rs", "adapters/freecad/pyproject.toml"]
+acceptance = ["Given a clean checkout, when `cargo build --workspace` runs, then all eight crates compile", "Given the workspace, when `cargo test --workspace` runs, then it passes with zero tests failing"]
+at = "2026-10-13T04:03:47Z"
+actor = "lognd"
+rev = 1
