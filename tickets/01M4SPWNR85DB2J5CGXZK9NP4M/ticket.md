@@ -25,21 +25,21 @@ target = "01M4STCD6YD5DZFVD9RJDN02RY"
 
 [[acceptance]]
 text = "Given an affine form entirely above the threshold, when compared with `>`, then the verdict is holds (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a form that straddles the threshold, when compared, then the verdict is undecided (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a conservative evaluation that is undecided, when reported, then the verdict says so for C002 (quantities.md 5.4, 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an inexact operand whose difference is within 1e-9 relative, when compared, then the verdict is undecided with an inexactness note (quantities.md 5.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `==` on raw toleranced values, when compared, then C003 suggests the accessor form; `a.nominal == b.nominal` is exact (quantities.md 5.8, C003)"
-bound = false
+bound = true
 +++
