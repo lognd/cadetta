@@ -2,12 +2,12 @@
 id = "01M4V0NSCWCW8W0P7DG628M8AP"
 title = "Conformance corpus runner"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T16:14:06Z"
-updated = "2026-10-13T16:14:06Z"
+updated = "2026-10-13T16:14:08Z"
 idempotency_key = "conformance-runner"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**"]
 
