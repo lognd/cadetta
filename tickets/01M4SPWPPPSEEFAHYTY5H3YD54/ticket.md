@@ -2,7 +2,8 @@
 id = "01M4SPWPPPSEEFAHYTY5H3YD54"
 title = "Evaluation to exact values and analysis lets"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
