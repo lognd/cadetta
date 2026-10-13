@@ -2,7 +2,8 @@
 id = "01M4SPWT0RZH7FJYEZ8J7MBN3Z"
 title = "cadetta init and fmt"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
