@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T13:27:58Z"
+updated = "2026-10-13T13:29:04Z"
 persona = "design engineer"
 capability = "tolerance a hole pattern by its pitch"
 idempotency_key = "replan14:geo-pattern"
 labels = ["creates:crates/cadetta-geometry/src/pattern.rs"]
-scope = ["crates/cadetta-geometry/src/pattern.rs"]
+scope = ["crates/cadetta-geometry/src/pattern.rs", "crates/cadetta-geometry/src/lib.rs", "crates/cadetta-geometry/src/transform.rs", "docs/spec/geometry.md"]
 
 [[links]]
 kind = "blocked-by"
