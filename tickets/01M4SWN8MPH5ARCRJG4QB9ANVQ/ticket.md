@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T05:44:40Z"
-updated = "2026-10-13T21:59:52Z"
+updated = "2026-10-13T22:00:51Z"
 persona = "design engineer"
 capability = "see problems in any editor"
 idempotency_key = "replan14:cli-lsp"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an open or changed .cdt buffer, when parsed, then its E001 diagnostics are published for that document immediately; on open and save the package's full check runs against disk, every package file is published (empty lists clear stale ones), waived diagnostics are omitted, and a superseded run's result is dropped (config-cli.md 3.8)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given cadetta.diag/1 records, when mapped, then range, severity 1-4, code, source cadetta, message with note and help lines, and data {path, variant} follow config-cli.md 3.8; lock locations publish on cadetta.lock and native or absent locations are logged only"
