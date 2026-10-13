@@ -8,6 +8,7 @@ pub mod classify;
 pub mod import;
 pub mod policy;
 pub mod read_units;
+pub mod rpc;
 pub mod scope;
 pub mod testing;
 

@@ -333,6 +333,24 @@ unavailable (R008, exit 2). Adapters are located by `command` in
 Adapters are declared in `cadetta.toml` (`[[adapter]]`, config-cli.md
 2); the protocol schema lives in `docs/schemas/` beside the IR schema.
 
+Wire details fixed by the host (`cadetta-adapter`, `rpc`):
+
+- Framing is newline-delimited: one JSON-RPC message per line on the
+  adapter's stdin and stdout. Stdout carries protocol only; an adapter
+  logs to stderr, which the host passes through. A message without an
+  `id` from the adapter is a notification and is ignored.
+- `initialize` params are `{protocol: "cadetta.adapter/1", client:
+  {name, version}}`; `capabilities` is a list of `emit`, `read`,
+  `drive`; `precision` is the number of fractional decimal digits of
+  the native number format.
+- `read` takes `{source: {files: [...]}}` or `{source: {session:
+  handle}}`. `regen` per-target status is `ok` or `failed`.
+- The host refuses `open`, `save`, `close`, `push` and `regen` unless
+  `drive` was declared, and `emit` unless `emit` was.
+- Every result is parsed against the types in `docs/schemas/adapter-protocol.json`
+  (unknown fields are refused); each diagnostic must be a `cadetta.diag/1`
+  record.
+
 ## 6. Target matrix
 
 Planned support, not a 0.1.0 promise beyond the rows marked 0.1.0.
