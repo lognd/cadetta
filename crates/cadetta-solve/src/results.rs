@@ -266,7 +266,7 @@ mod tests {
         d
     }
 
-    // frob:tests cadetta-solve::results::tests::unchanged_inputs_are_fresh
+    // frob:tests crates/cadetta-solve/src/results.rs::ResultFile.lookup kind=unit
     #[test]
     fn unchanged_inputs_are_fresh() {
         let r = req("acme.drive::drive_torque", "300mm");
@@ -278,7 +278,7 @@ mod tests {
         ));
     }
 
-    // frob:tests cadetta-solve::results::tests::changed_inputs_are_stale_but_readable
+    // frob:tests crates/cadetta-solve/src/results.rs::ResultFile.lookup kind=unit
     #[test]
     fn changed_inputs_are_stale_but_readable() {
         let r = req("acme.drive::drive_torque", "300mm");
@@ -298,7 +298,7 @@ mod tests {
         );
     }
 
-    // frob:tests cadetta-solve::results::tests::file_is_sorted_and_named_beside_script
+    // frob:tests crates/cadetta-solve/src/results.rs::ResultFile.save kind=unit
     #[test]
     fn file_is_sorted_and_named_beside_script() {
         assert_eq!(
@@ -339,7 +339,7 @@ mod tests {
         );
     }
 
-    // frob:tests cadetta-solve::results::tests::shared_script_solvers_never_collide
+    // frob:tests crates/cadetta-solve/src/results.rs::ResultFile.upsert kind=unit
     #[test]
     fn shared_script_solvers_never_collide() {
         let r = req("s", "1mm");
@@ -351,7 +351,7 @@ mod tests {
         assert_eq!(f.results.len(), 2);
     }
 
-    // frob:tests cadetta-solve::results::tests::digests_live_only_in_the_out_file
+    // frob:tests crates/cadetta-solve/src/results.rs::out_path kind=unit
     #[test]
     fn digests_live_only_in_the_out_file() {
         // The lock file is written by other crates; this module only ever
