@@ -2,7 +2,8 @@
 id = "01M4SPWNYX632H3Q6WEGN0SM0R"
 title = "Lexer with single-token quantity literals"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
