@@ -2,7 +2,8 @@
 id = "01M4ST8EGHZA7YAZT8AEVQJJSN"
 title = "Lifecycle attribute and replacement candidates"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
