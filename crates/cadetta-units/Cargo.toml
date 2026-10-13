@@ -14,6 +14,10 @@ keywords = ["cad", "parameters", "tolerance", "units", "lint"]
 categories = ["science", "development-tools"]
 
 [dependencies]
+num-bigint = "0.5.1"
+num-integer = "0.1.47"
+num-traits = "0.2.19"
+thiserror = "2.0.21"
 tracing.workspace = true
 
 [lints]
