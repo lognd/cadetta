@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 92dd516aa562 (binding (python) (failure) https://github.com/lognd/cadetta/actions/runs/38472139887/job/115554022197): fixes the red binding (python) job"
+at = "2026-10-13T21:42:13Z"
+actor = "lognd"
+rev = 1
