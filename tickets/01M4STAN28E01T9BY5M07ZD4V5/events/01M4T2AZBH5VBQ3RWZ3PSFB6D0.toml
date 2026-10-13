@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T07:23:21Z"
+digest = "54e3896e0f7bbaf7cf189960767745e71db631b7c9a8f76da099efb0aeadf2c5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.64s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b8d34ad6-22ce-414e-8f2c-cae8916b336f with nextest profile: default
+    Starting 1 test across 16 binaries (304 tests skipped)
+        PASS [   1.025s] cadetta-solve transport::tests::slow_solver_error_names_solver
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.027s] 1 test run: 1 passed, 304 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "transport::tests::slow_solver_error_names_solver"
+size = 949
+status = "measured"
+test_count = 1
+tests_digest = "781fa13c01610da6acb5a88de2acf23e028fc2c09a45a9fe5190b6c54c605433"
+at = "2026-10-13T07:23:21Z"
+actor = "lognd"
+rev = 1

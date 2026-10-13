@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
 reporter = "lognd"
 created = "2026-10-13T05:03:55Z"
-updated = "2026-10-13T07:19:03Z"
+updated = "2026-10-13T07:23:21Z"
 persona = "design engineer"
 capability = "run solvers over stdio or files with a configured command"
 idempotency_key = "replan13:Solver transports and command template"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a nonzero exit or timeout, when run, then a typed error names the solver (solvers.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an unknown solver name, when run, then exit 2 with a message (config-cli.md 2)"
