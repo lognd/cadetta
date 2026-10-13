@@ -1,0 +1,9 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)", "Given at/onto, a clamped part placed on its host's pattern datum and locating = false, when evaluated, then the placement carries [+-float] on x and y as one source-variable pair per joint (geometry.md 5.2)", "Given the joint's own aligned check, when evaluated, then it reads the placement without the float (geometry.md 5.2)", "Given locating = true, when evaluated, then no float is added (geometry.md 5.2; stdlib.md 3)"]
+new = ["Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)", "Given a non-locating joint whose two parts are placement parent and child in either order, whatever datum the placement names, when evaluated, then that edge carries [+-float] on x and y and a rotation [+-theta] about z through the onto centroid, theta = 2 * asin(float / s), 180deg when float >= s (geometry.md 5.2)", "Given a one-point pattern or s = 0, when evaluated, then theta is 180deg, checks depending on the rotation are undecided and G008 fires (geometry.md 5.2; lints.md G008)", "Given several non-locating joints on one edge, when evaluated, then the edge takes the whole bound of the joint with the smallest theta, then smallest float, then first canonical path; any locating joint removes the float (geometry.md 5.2)", "Given the joint's own aligned check, when evaluated, then it reads its edge without the float; joints between parts that are not parent and child add no float (geometry.md 5.2)"]
+reason = "draft 1.5: parent-child edge criterion, rotation term, G008"
+moved = [0, 0, 0, 0]
+at = "2026-10-13T19:19:04Z"
+actor = "lognd"
+rev = 1
