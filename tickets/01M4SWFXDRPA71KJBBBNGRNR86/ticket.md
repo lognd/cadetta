@@ -2,7 +2,8 @@
 id = "01M4SWFXDRPA71KJBBBNGRNR86"
 title = "For-placements over part arrays, D.at(point) and G007"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
