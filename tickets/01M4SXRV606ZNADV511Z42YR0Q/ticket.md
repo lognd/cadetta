@@ -44,5 +44,5 @@ bound = true
 
 [[acceptance]]
 text = "Given declaration order reversed, when resolved, then results are identical (language.md 4)"
-bound = false
+bound = true
 +++
