@@ -1,0 +1,16 @@
+kind = "create"
+title = "std citation audit"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 2
+parent = "01M4STANRAWHV180C7RH0NQAY9"
+persona = "design engineer"
+capability = "trust every std value"
+idempotency_key = "replan13:std citation audit"
+labels = ["creates:std/**"]
+scope = ["std/**"]
+acceptance = ["Given the whole std tree, when linted, then no S001 is raised (stdlib.md 6, lints.md S)", "Given a value without a citation, when found, then the audit fails (stdlib.md 6)"]
+at = "2026-10-13T05:03:57Z"
+actor = "lognd"
+rev = 1
