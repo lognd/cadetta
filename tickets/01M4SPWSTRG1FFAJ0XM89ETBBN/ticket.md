@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-13T06:23:17Z"
+updated = "2026-10-13T06:23:18Z"
 persona = "design engineer"
 capability = "configure project, units, emit, lint and adapters in cadetta.toml"
 outcome_text = "behaviour is declared and versioned with the repo"
@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an unknown key, when loaded, then a diagnostic names it"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `[lint] severity`, `d001_min_digits`, `common_values` and `precision`, when loaded, then each is typed and validated (config-cli.md 1)"
