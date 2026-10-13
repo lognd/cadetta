@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/src/{func,enums}.rs"]
+new = ["crates/cadetta-sema/src/{func,enums}.rs", "crates/cadetta-sema/src/resolve.rs"]
+at = "2026-10-13T07:58:22Z"
+actor = "lognd"
+rev = 1
