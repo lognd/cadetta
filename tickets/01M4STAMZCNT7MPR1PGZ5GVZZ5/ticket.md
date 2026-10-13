@@ -19,6 +19,10 @@ scope = ["crates/cadetta-solvers/src/protocol.rs"]
 kind = "blocks"
 target = "01M4STAN28E01T9BY5M07ZD4V5"
 
+[[links]]
+kind = "blocks"
+target = "01M4STAN5C20ACNDRARX5MRDDP"
+
 [[acceptance]]
 text = "Given a solver run, when the request is built, then it is `cadetta.solve/1` JSON with inputs as lit or si values (solvers.md 3)"
 bound = false
