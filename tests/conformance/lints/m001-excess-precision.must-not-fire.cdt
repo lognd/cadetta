@@ -1,0 +1,3 @@
+model Part {
+  width = 12.3456789mm [+-0.1mm]
+}

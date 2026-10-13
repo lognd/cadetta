@@ -1,0 +1,3 @@
+model Part {
+  diameter = 20mm
+}

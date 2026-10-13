@@ -1,0 +1,1 @@
+Conformance fixtures for lints: 25 must-fire/must-not-fire pairs under tests/conformance/lints/ (Q, N, M, E010, S002, S007, W and U001 codes); unmet ones are listed in known-gaps.toml. The E010 spec text now says "hole or shaft".

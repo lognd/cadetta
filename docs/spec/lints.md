@@ -194,7 +194,7 @@ cannot be resolved or evaluated.
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
 | E009 | non-exhaustive-match | error | yes | A `match` leaves some case unhandled. |
-| E010 | role-required | error | yes | `mmc` or `lmc` read on a tolerance with no role (hole or boss) to say which side is material. |
+| E010 | role-required | error | yes | `mmc` or `lmc` read on a tolerance with no role (hole or shaft) to say which side is material. |
 | E011 | parameter-dependent-type-read | error | yes | `Type.member` read where the member depends on component parameters; a parameterized component exists only as instances (language.md 3.1). |
 | E012 | version-unsatisfied | error | yes | A resolved dependency does not meet the `version` requirement (packages.md 1). |
 | E013 | version-conflict | error | yes | Two requirements on one package cannot be met by a single version. |

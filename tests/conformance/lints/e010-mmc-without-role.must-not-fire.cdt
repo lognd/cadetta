@@ -1,0 +1,5 @@
+model Part {
+  #[role(hole)]
+  w = 5mm [+-0.1mm]
+  x = w.mmc
+}

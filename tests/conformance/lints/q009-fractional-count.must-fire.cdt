@@ -1,0 +1,3 @@
+model Part {
+  n: Count = 2.5
+}

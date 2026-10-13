@@ -1,0 +1,4 @@
+model Part {
+  t: Torque = 3N*m
+  e: Energy = t
+}

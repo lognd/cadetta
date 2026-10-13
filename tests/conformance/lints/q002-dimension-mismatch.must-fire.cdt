@@ -1,0 +1,3 @@
+model Part {
+  total = 5mm + 2s
+}

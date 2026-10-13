@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "lints",
+  "section": "lints.md 3",
+  "rule": "N002",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "N002",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

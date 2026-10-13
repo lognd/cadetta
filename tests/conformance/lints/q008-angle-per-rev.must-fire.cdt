@@ -1,0 +1,3 @@
+model Part {
+  speed: Velocity = 1500rpm * 8mm
+}

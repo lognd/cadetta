@@ -241,3 +241,38 @@ reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diag
 fixture = "config-cli/e005-path-dep"
 ticket = "~AN7BAC5"
 reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "lints/e010-mmc-without-role"
+ticket = "~FSJCX9G"
+reason = "#[role(hole)] not honoured"
+
+[[gap]]
+fixture = "lints/q003-named-kind-package"
+ticket = "~8S2ESWE"
+reason = "package-declared kinds are not checked for Q003"
+
+[[gap]]
+fixture = "lints/s007-solver-untyped-port"
+ticket = "~YBFVYDC"
+reason = "untyped out port raises E001, not S007"
+
+[[gap]]
+fixture = "lints/w003-allow-fixed-code"
+ticket = "~A7FN9YF"
+reason = "allow of a fixed code is not rejected"
+
+[[gap]]
+fixture = "lints/w003-waive-require"
+ticket = "~A7FN9YF"
+reason = "waiver of a require's C001 is not rejected"
+
+[[gap]]
+fixture = "lints/w004-unused-allow"
+ticket = "~A7FN9YF"
+reason = "unused allow is not reported"
+
+[[gap]]
+fixture = "lints/w005-waiver-expiring"
+ticket = "~A7FN9YF"
+reason = "expiring waiver is not reported"

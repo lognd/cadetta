@@ -1,0 +1,4 @@
+model Part {
+  w = 2mm
+  x = w * 2
+}

@@ -1,0 +1,6 @@
+model Part {
+  width = 5mm
+}
+waive E003 on acme.demo::Part.width {
+  because "x"
+}

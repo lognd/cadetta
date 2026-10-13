@@ -1,0 +1,7 @@
+model Frame {
+  span = 300mm
+}
+solver sizing @"analysis/sizing.py" {
+  in span = Frame.span
+  out wall: Length
+}

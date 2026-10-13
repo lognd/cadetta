@@ -1,0 +1,4 @@
+cite spec = "docs/missing.pdf"
+pub ots Pin @spec {
+  dia = 5mm
+}

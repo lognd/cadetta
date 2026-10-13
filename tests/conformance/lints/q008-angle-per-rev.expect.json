@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "lints",
+  "section": "lints.md 3",
+  "rule": "Q008",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "Q008",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

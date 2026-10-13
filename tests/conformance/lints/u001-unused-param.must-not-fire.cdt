@@ -1,0 +1,5 @@
+model Part {
+  a = 10mm
+  b = a
+  check ok: b < 20mm
+}

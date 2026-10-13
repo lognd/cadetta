@@ -1,0 +1,4 @@
+model Part {
+  #[allow(Q002, "vendor")]
+  width = 5mm
+}
