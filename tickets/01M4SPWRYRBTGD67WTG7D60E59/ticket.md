@@ -2,7 +2,8 @@
 id = "01M4SPWRYRBTGD67WTG7D60E59"
 title = "Bindings files, multi-locator bindings and name mangling"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
