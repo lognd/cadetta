@@ -1,0 +1,41 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:12:18Z"
+digest = "d2d1fb2e12adf7bbc29ab6987bef988bdc1be4d4692974db847c19e78be1c445"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.70s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 19b1a2c8-0edf-473e-9016-26e8a51fc6d6 with nextest profile: default
+    Starting 3 tests across 29 binaries (971 tests skipped)
+        PASS [   0.007s] cadetta-syntax parser::items::tests::solver_cited_script
+        PASS [   0.008s] cadetta-syntax parser::items::tests::solver_item_and_member
+        PASS [   0.009s] cadetta-solve decl::tests::citation_is_provenance_and_not_an_input
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 3 tests run: 3 passed, 971 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(citation_is_provenance) | test(solver_cited_script) | test(solver_item_and_member)'"
+size = 1724
+status = "measured"
+test_count = 3
+tests_digest = "e834a6a54bd4ee093e17aace89b12606a5ff0573f08d0a99105fb597168083d3"
+at = "2026-10-13T22:12:18Z"
+actor = "lognd"
+rev = 1
