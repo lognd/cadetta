@@ -9,4 +9,5 @@ pub mod kinds;
 pub mod lock;
 pub mod lock_merge;
 pub mod lock_tidy;
+pub mod lock_verify;
 pub mod selector;
