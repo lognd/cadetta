@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given intervals that overlap the threshold, when compared, then the verdict is undecided", "Given an interval entirely above the threshold, when compared with >, then the verdict is holds"]
+new = ["Given an affine form entirely above the threshold, when compared with `>`, then the verdict is holds (quantities.md 5.8)", "Given a form that straddles the threshold, when compared, then the verdict is undecided (quantities.md 5.8)", "Given a conservative evaluation that is undecided, when reported, then the verdict says so for C002 (quantities.md 5.4, 5.8)", "Given an inexact operand whose difference is within 1e-9 relative, when compared, then the verdict is undecided with an inexactness note (quantities.md 5.8)", "Given `==` on raw toleranced values, when compared, then C003 suggests the accessor form; `a.nominal == b.nominal` is exact (quantities.md 5.8, C003)"]
+moved = [0, 0]
+at = "2026-10-13T05:01:22Z"
+actor = "lognd"
+rev = 1

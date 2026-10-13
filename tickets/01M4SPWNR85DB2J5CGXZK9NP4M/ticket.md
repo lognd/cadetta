@@ -1,14 +1,14 @@
 +++
 id = "01M4SPWNR85DB2J5CGXZK9NP4M"
-title = "Three-valued comparison of toleranced quantities"
+title = "Three-valued comparison over affine forms"
 type = "story"
 category = "todo"
 priority = "medium"
-points = 2
+points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
 reporter = "lognd"
 created = "2026-10-13T04:03:51Z"
-updated = "2026-10-13T04:03:58Z"
+updated = "2026-10-13T05:01:22Z"
 persona = "design engineer"
 capability = "compare toleranced quantities as holds, violates or undecided"
 outcome_text = "an undecided check is never counted as holding"
@@ -20,10 +20,22 @@ kind = "blocks"
 target = "01M4SPWPT5XR3QCQJ7M1XP07MP"
 
 [[acceptance]]
-text = "Given intervals that overlap the threshold, when compared, then the verdict is undecided"
+text = "Given an affine form entirely above the threshold, when compared with `>`, then the verdict is holds (quantities.md 5.8)"
 bound = false
 
 [[acceptance]]
-text = "Given an interval entirely above the threshold, when compared with >, then the verdict is holds"
+text = "Given a form that straddles the threshold, when compared, then the verdict is undecided (quantities.md 5.8)"
+bound = false
+
+[[acceptance]]
+text = "Given a conservative evaluation that is undecided, when reported, then the verdict says so for C002 (quantities.md 5.4, 5.8)"
+bound = false
+
+[[acceptance]]
+text = "Given an inexact operand whose difference is within 1e-9 relative, when compared, then the verdict is undecided with an inexactness note (quantities.md 5.8)"
+bound = false
+
+[[acceptance]]
+text = "Given `==` on raw toleranced values, when compared, then C003 suggests the accessor form; `a.nominal == b.nominal` is exact (quantities.md 5.8, C003)"
 bound = false
 +++
