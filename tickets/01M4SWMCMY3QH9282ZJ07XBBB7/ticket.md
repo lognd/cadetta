@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T12:46:47Z"
+updated = "2026-10-13T12:46:48Z"
 persona = "design engineer"
 capability = "adopt an existing CAD model"
 idempotency_key = "replan14:ad-imp-prop"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given --assume-unit U, when native values lack units, then unit_assumed is recorded (adapters.md 7.1)"
-bound = false
+bound = true
 +++
