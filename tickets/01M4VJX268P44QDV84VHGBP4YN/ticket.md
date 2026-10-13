@@ -8,7 +8,7 @@ points = 2
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T21:32:38Z"
-updated = "2026-10-13T21:33:32Z"
+updated = "2026-10-13T21:33:33Z"
 idempotency_key = "d15:lsp-spec"
 scope = ["docs/spec/config-cli.md", "docs/spec/lints.md", "docs/spec/README.md", "docs/decisions/2026-10-13-draft-1-5-decisions.md"]
 
@@ -18,5 +18,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the draft 1.5 ADR, when read, then it records bringing the LSP into 0.1.0 and why"
-bound = false
+bound = true
 +++
