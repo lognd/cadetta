@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:07:45Z"
-updated = "2026-10-13T21:21:18Z"
+updated = "2026-10-13T21:21:19Z"
 persona = "design engineer"
 capability = "edit .cdt files with highlighting and inline diagnostics in my editor"
 outcome_text = "cadetta feels like a real language from day one"
@@ -30,7 +30,7 @@ bound = true
 
 [[acceptance]]
 text = "Given editors/sublime, editors/vim (also Neovim), editors/emacs and the JetBrains TextMate-bundle route, when installed per each README, then .cdt files are highlighted and cadetta check --format short diagnostics jump to file:line:col (Sublime build system, Vim compiler/errorformat, Emacs compilation-mode and a flymake backend)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given editors/README.md, when read, then it indexes the editors, explains that cadetta lsp is deferred (~QB9ANVQ), and recommends diagnostics bridges for now: the VS Code task, nvim-lint or efm-langserver for Neovim and Helix, ALE for Vim, flymake for Emacs, all driving cadetta check --format short; the root README links it"
