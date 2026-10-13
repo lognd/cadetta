@@ -2,18 +2,19 @@
 id = "01M4SWNH4WXPBR7FYSY7EAJ4K1"
 title = "Fixed as-of date for expiry"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:49Z"
-updated = "2026-10-13T06:42:54Z"
+updated = "2026-10-13T06:45:27Z"
 persona = "design engineer"
 capability = "reproduce a historic result"
 idempotency_key = "replan14:ob-asof"
 labels = ["creates:crates/cadetta-obligations/src/as_of.rs"]
-scope = ["crates/cadetta-obligations/src/as_of.rs"]
+scope = ["crates/cadetta-obligations/src/as_of.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"

@@ -1,0 +1,39 @@
+kind = "evidence"
+captured_at = "2026-10-13T06:44:20Z"
+digest = "e329c9cd59b3072ca8ab33f26e36d0956a3d2679c57501d0fd184437a9ea531e"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0502]: cannot borrow `disk` as mutable because it is also borrowed as immutable
+    --> crates/cadetta-obligations/src/lock.rs:1050:17
+     |
+1048 |             lock.save_with(
+     |                  --------- immutable borrow later used by call
+1049 |                 || Ok(disk.clone()),
+     |                 --    ---- first borrow occurs due to use of `disk` in closure
+     |                 |
+     |                 immutable borrow occurs here
+1050 |                 |b| {
+     |                 ^^^ mutable borrow occurs here
+1051 |                     disk = b.to_owned();
+     |                     ---- second borrow occurs due to use of `disk` in closure
+
+For more information about this error, try `rustc --explain E0502`.
+error: could not compile `cadetta-obligations` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics --package cadetta --package cadetta-lint --package cadetta-log --package cadetta-obligations --package cadetta-syntax --package cadetta-units` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-p cadetta -p cadetta-lint -p cadetta-log -p cadetta-obligations -p cadetta-syntax -p cadetta-units -E '(package(=cadetta) & (test(=config::tests::defaults_match_the_spec) | test(=config::tests::directory_names_normalise) | test(=config::tests::emit_point_and_display_units) | test(=config::tests::lint_keys_are_typed_and_validated) | test(=config::tests::load_reports_io_and_defaults_the_name) | test(=config::tests::old_project_namespace_is_rejected) | test(=config::tests::package_dependencies_and_workspace) | test(=config::tests::roles_are_modelled) | test(=config::tests::sample_parses_in_every_section) | test(=config::tests::solvers_and_adapters_parse) | test(=config::tests::unknown_keys_are_named) | test(=output::tests::diagnostics_sort_by_file_line_code) | test(=pkg::manifest::tests::dependency_sources_are_typed_and_registry_rejected) | test(=pkg::manifest::tests::load_reports_an_absent_manifest) | test(=pkg::manifest::tests::package_fields_default_and_root_module) | test(=pkg::manifest::tests::std_is_reserved_and_implicit) | test(=pkg::manifest::tests::trust_roles_are_parsed) | test(=pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005) | test(=project::tests::discovery_walks_up_skips_tableless_and_fails_when_none) | test(=project::tests::duplicate_component_is_e003_with_both_spans) | test(=project::tests::member_and_path_dependency_without_config_is_e005) | test(=project::tests::member_scope_unless_at_workspace_root) | test(=project::tests::missing_or_empty_src_is_e005) | test(=project::tests::modules_sorted_by_path) | test(=tests::cwd_and_config_are_validated) | test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::text_is_the_default_format_regardless_of_terminal) | test(=tests::usage_errors_exit_two_with_message))) | (package(=cadetta-lint) & (test(=diag::tests::serialize_has_all_fields) | test(=diag::tests::sorts_by_file_line_code_path))) | (package(=cadetta-log) & (test(=init::tests::empty_spec_uses_default) | test(=init::tests::invalid_spec_is_an_error) | test(=init::tests::invalid_spec_never_installs_or_panics) | test(=init::tests::second_init_is_an_error_not_a_panic) | test(=init::tests::valid_spec_is_honoured))) | (package(=cadetta-obligations) & (test(=graph::tests::all_ten_edges_buildable) | test(=graph::tests::bad_edges_rejected_and_duplicates_ignored) | test(=kinds::tests::required_for_gates_sync_and_solver) | test(=kinds::tests::set_rejects_bad_input) | test(=lock::tests::attest_holds_who_role_when_reason_and_digest_set) | test(=lock::tests::independent_attestations_merge_as_line_union) | test(=lock::tests::load_rebuilds_state_and_missing_file_is_empty) | test(=lock::tests::lock_has_no_solver_records_and_rejects_garbage) | test(=lock::tests::same_state_same_bytes_and_roundtrip) | test(=lock::tests::save_is_byte_exact_and_skips_unchanged) | test(=lock::tests::six_kinds_sorted_by_kind_then_key_line_oriented) | test(=lock::tests::tie_rule_newest_at_then_greater_line) | test(=lock::tests::unsorted_or_duplicate_text_is_not_canonical))) | (package(=cadetta-syntax) & (test(=expr::tests::member_and_scope_attributes_attach) | test(=lexer::tests::compound_literals_are_one_token) | test(=lexer::tests::exponent_compound_unit_and_percent_are_single_quantities) | test(=lexer::tests::fractions_need_no_whitespace_and_a_unit) | test(=lexer::tests::line_and_doc_comments_are_distinguished) | test(=lexer::tests::quote_alias_followed_by_letters_is_a_lex_error) | test(=lexer::tests::split_literal_is_q007_with_fixit) | test(=parser::tests::all_member_productions_accepted) | test(=parser::tests::doc_comments_attach_to_items) | test(=parser::tests::expressions_tolerances_and_classes) | test(=parser::tests::file_is_uses_and_items_with_no_header) | test(=parser::tests::part_has_one_primary_and_alternates) | test(=parser::tests::spec_example_parses_with_expected_shape) | test(=parser::tests::statements_end_at_newline_or_semicolon) | test(=parser::tests::use_trees_aliases_globs_and_roots) | test(=span::tests::every_node_has_a_location))) | (package(=cadetta-units) & (test(=compare::tests::conservative_undecided_says_so_in_c002) | test(=compare::tests::form_entirely_above_threshold_holds) | test(=compare::tests::raw_equality_raises_c003_and_nominal_equality_is_exact) | test(=compare::tests::straddling_form_is_undecided) | test(=dimension::tests::angle_exponent_is_beside_dimension_and_leaves_magnitude) | test(=dimension::tests::currency_is_its_own_base_dimension) | test(=display::tests::feet_inches) | test(=display::tests::inch_fraction) | test(=display::tests::money_and_percent) | test(=display::tests::plain_units) | test(=display::tests::precedence_order) | test(=kind::tests::angle_worked_cases) | test(=kind::tests::anonymous_assigns_to_named) | test(=kind::tests::builtin_canonical_angles) | test(=kind::tests::count_and_rounding) | test(=kind::tests::registered_kinds_are_distinct) | test(=rational::tests::degrees_ratio_cancels_pi_exactly) | test(=rational::tests::one_inch_is_exactly_127_over_5000_metres) | test(=rational::tests::powers_and_decimals_are_exact) | test(=tolerance::tests::product_of_toleranced_values_is_conservative) | test(=tolerance::tests::repeated_terms_count_once_and_cancel) | test(=tolerance::tests::roots_and_trig_are_conservative) | test(=units::tests::inch_factor) | test(=units::tests::percent_is_ratio) | test(=units::tests::quote_aliases) | test(=units::tests::temperature_factors_agree_with_affine) | test(=units::tests::user_unit_resolves_like_builtin)))'"
+size = 1630
+status = "measured"
+at = "2026-10-13T06:44:20Z"
+actor = "lognd"
+rev = 1
