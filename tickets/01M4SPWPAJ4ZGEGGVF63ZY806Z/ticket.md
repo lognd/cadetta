@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given formatted source, when lowered, then the IR digest is unchanged"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given trailing attributes and comments on consecutive members, when formatted, then they align into columns (language.md 7)"
