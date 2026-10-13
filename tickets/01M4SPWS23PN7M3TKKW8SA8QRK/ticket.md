@@ -19,6 +19,10 @@ scope = ["crates/cadetta-adapter/src/policy.rs"]
 kind = "blocks"
 target = "01M4SPWS56AF9GE891GAM5QSWX"
 
+[[links]]
+kind = "blocks"
+target = "01M4SPWS7TFEF86PHX2W33Q6YX"
+
 [[acceptance]]
 text = 'Given `point = "mid"`, when resolved, then the midpoint of the limits is selected'
 bound = false
