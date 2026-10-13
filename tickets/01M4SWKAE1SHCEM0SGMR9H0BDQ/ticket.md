@@ -31,6 +31,10 @@ target = "01M4SWFXC2K6D3S93F3ER0GZZA"
 kind = "blocked-by"
 target = "01M4SWG6T58Q489WASV5DYGF7F"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG70T71SNTZ2TWXZD1Y50"
+
 [[acceptance]]
 text = "Given G001-G007, when registered, then defaults match geometry.md 7: G001-G003 and G006 fixed errors, G004 error, G005 and G007 warnings (lints.md 3 G)"
 bound = false
