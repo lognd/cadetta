@@ -4,6 +4,7 @@
 
 pub mod digest;
 pub mod dim;
+pub mod entities;
 pub mod json;
 pub mod model;
 pub mod observed;
