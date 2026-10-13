@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T22:47:46Z"
+digest = "42423cd3a614cca033b7eb93030f7c856143ad3c3c2f41056229625bd77e814b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 24b17cb1-9411-41c7-8f52-74b77684ad65 with nextest profile: default
+    Starting 3 tests across 29 binaries (997 tests skipped)
+        PASS [   0.044s] cadetta-adapter rpc::client::tests::initialize_features_accepted_and_validated
+        PASS [   0.054s] cadetta-adapter rpc::types::tests::schema_file_matches_types
+        PASS [   0.104s] cadetta-ir schema::tests::schema_file_matches_types
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.120s] 3 tests run: 3 passed, 997 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(initialize_features_accepted_and_validated) | test(schema_file_matches_types)'"
+size = 737
+status = "measured"
+test_count = 3
+tests_digest = "3c53e9fd2b5f268cfc98e0ea6d933abdac28d3379776c5865b6775a0b949e20b"
+at = "2026-10-13T22:47:46Z"
+actor = "lognd"
+rev = 1

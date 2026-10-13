@@ -7,7 +7,7 @@
 // frob:ticket 01M4SWFX0C2BXQGR8WQ2VN1G88
 
 use super::*;
-use crate::ast::{Datum, Place, PlaceRange};
+use crate::ast::{Datum, Place};
 
 impl Parser<'_> {
     /// Fails with the geometry.md 2 message when the next token is the reserved `origin`.
@@ -45,31 +45,29 @@ impl Parser<'_> {
         })
     }
 
-    /// Parses `place TARGET on expr [for IDENT in lo..hi]`.
+    /// Parses `place TARGET at expr`; the draft 1.4 `on` form and a trailing `for` are E001.
     pub(super) fn place(&mut self) -> PResult<Place> {
         let start = self.start();
         self.expect_kw("place")?;
         let target = self.postfix()?;
-        self.expect_kw("on")?;
-        let on = self.expr()?;
-        let each = if self.eat_kw("for") {
-            let var = self.expect_ident()?;
-            self.expect_kw("in")?;
-            let lo = self.add()?;
-            if !self.is_p(Punct::DotDot) {
-                return self.err("a placement `for` needs a range `lo..hi`");
-            }
-            self.bump();
-            let hi = self.add()?;
-            Some(PlaceRange { var, lo, hi })
-        } else {
-            None
-        };
-        tracing::debug!(ranged = each.is_some(), "parsed place");
+        if self.is_kw("on") {
+            tracing::debug!("rejecting the draft 1.4 `place .. on ..` spelling");
+            return self.err("`place a.b on c` is the draft 1.4 spelling; write `place a.b at c` (geometry.md 4)");
+        }
+        if !matches!(self.tok(), Tok::Ident(n) if n == "at") {
+            return self
+                .err("expected `at` and the frame to place on: `place a.b at c` (geometry.md 4)");
+        }
+        self.bump();
+        let at = self.expr()?;
+        if self.is_kw("for") {
+            tracing::debug!("rejecting a trailing placement `for`");
+            return self.err("a placement has no `for` clause; an unindexed part array places elementwise: `place feet.top at base.site.offset(base.sites)` (geometry.md 4)");
+        }
+        tracing::debug!("parsed place");
         Ok(Place {
             target,
-            on,
-            each,
+            at,
             span: self.span_from(start),
         })
     }

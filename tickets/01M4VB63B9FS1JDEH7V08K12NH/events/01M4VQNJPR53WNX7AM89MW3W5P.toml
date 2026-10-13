@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T22:55:56Z"
+digest = "771bf3472279c9234b99e2599eaf30aa375b94301d4ddd3e2c363677fc62f37c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c7ff4a8e-8bfe-4fa7-8040-ab45bb109c5a with nextest profile: default
+    Starting 10 tests across 3 binaries (169 tests skipped)
+        PASS [   0.015s] cadetta-geometry pattern::tests::circle_points_are_evenly_spaced_from_start
+        PASS [   0.015s] cadetta-geometry pattern::tests::tolerance_after_a_pattern_is_one_variable_per_coordinate
+        PASS [   0.016s] cadetta-geometry pattern::tests::rect_points_run_row_by_row_centred_on_the_origin
+        PASS [   0.015s] cadetta-geometry pattern::tests::rotation_by_a_quarter_turn_stays_exact
+        PASS [   0.018s] cadetta-geometry pattern::tests::structural_counts_are_whole_numbers_known_before_evaluation
+        PASS [   0.024s] cadetta-sema eval::point::tests::circle_pattern_and_distance
+        PASS [   0.025s] cadetta-geometry pattern::tests::generator_members_bind_and_derived_coordinates_are_analysis_only
+        PASS [   0.028s] cadetta-geometry pattern::tests::a_toleranced_pitch_member_tolerates_the_pitch_itself
+        PASS [   0.035s] cadetta-sema eval::point::count_tests::pattern_counts_are_structural
+        PASS [   0.034s] cadetta-sema eval::point::tests::rect_pattern_is_centred_rows_first
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.037s] 10 tests run: 10 passed, 169 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -p cadetta-geometry -E 'test(/pattern/)'"
+size = 1517
+status = "measured"
+test_count = 10
+tests_digest = "8f94e26105f58fcc97f208319d01757085ea7e55a64353e92925a72451a7c4c6"
+at = "2026-10-13T22:55:56Z"
+actor = "lognd"
+rev = 1

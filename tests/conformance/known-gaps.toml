@@ -898,7 +898,7 @@ ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
 
 [[gap]]
-fixture = "geometry/g006-for-ranges-overlap"
+fixture = "geometry/g006-array-plus-indexed"
 ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
 
@@ -908,12 +908,7 @@ ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
 
 [[gap]]
-fixture = "geometry/g006-unindexed-overlaps-for"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g007-range-past-count"
+fixture = "geometry/g006-indexed-twice"
 ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
 
@@ -1206,3 +1201,28 @@ reason = "table/fit/variant pipeline not implemented yet"
 fixture = "packages/use-brace-tree"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the privacy and use-target diagnostics yet"
+
+[[gap]]
+fixture = "geometry/g004-elementwise-count-mismatch"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g004-array-target-no-array-anchor"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g004-indexed-target-array-anchor"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-point-offset-other-datum"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"
+
+[[gap]]
+fixture = "geometry/g001-point-offset-after-op"
+ticket = "~H0EKNH2"
+reason = "lint does not emit the geometry diagnostic yet"

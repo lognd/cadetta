@@ -10,7 +10,7 @@ model Base {
 assembly Frame {
   part base: Base
   part feet[3]: Foot
-  place base.origin on origin
-  place feet[i].top on base.underside.at(base.foot_sites[i]) for i in 0..2
-  
+  place base.origin at origin
+  place feet[0].top at base.underside
+  place feet[1].top at base.underside.offset(x = 1mm)
 }

@@ -1,0 +1,16 @@
+model Foot {
+  datum top = origin
+}
+
+model Base {
+  datum underside = origin
+  datum side = origin
+  site: Point2 on underside = Point2(1mm, 2mm)
+}
+
+assembly Frame {
+  part base: Base
+  part foot: Foot
+  place base.origin at origin
+  place foot.top at base.underside.rotate(z = 90deg).offset(base.site)
+}

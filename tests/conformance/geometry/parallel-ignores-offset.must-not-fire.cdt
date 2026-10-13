@@ -9,7 +9,7 @@ model B {
 assembly S {
   part a: A
   part b: B
-  place a.origin on origin
-  place b.origin on origin
+  place a.origin at origin
+  place b.origin at origin
   check c: parallel(a.ax, b.ax, 1mm, 20mm) "axes"
 }

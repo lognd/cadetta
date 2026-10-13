@@ -2,13 +2,14 @@
 //!
 //! [`lower_place`](crate::placement::lower_place) leaves each operation argument as a syntax-level
 //! [`Member`] with a sema [`CanonPath`]. This module turns them into IR [`IrMember`]s: path
-//! `Assembly/part.place.<op index>.<axis>` (`Assembly/part[i].place...` for a for-placement),
-//! kind `Place`, provenance `authored`, so bindings, R001, waivers and `why` attach to them.
+//! `Assembly/part.place.offset.x`, `place.offset[1].x`, `place.rotate.z` (ops numbered like datum
+//! ops), kind `Place`, provenance `authored`, so bindings, R001, waivers and `why` attach to them.
 //!
-//! Decision (written into geometry.md 4): the sema path of a `for` placement carries `[*]`
-//! because the instance is not one number; the IR path names the range variable instead
-//! (`feet[i]`), because `[*]` is valid only in bindings (ir.md 2).
-// frob:ticket 01M4SWFXF34KCT5NCZC6VQ98F7
+//! An array placement lowers per instance with integer indexes,
+//! `Assembly/feet[2].place.offset.x` ([`instance_members`]); the Members of every instance share
+//! the source expression and span. `[*]` is valid only in bindings, never in the IR (ir.md 2), so
+//! [`ir_path`] rejects it.
+// frob:ticket 01M4VB636BKBDGRW3NBMGK7CBZ
 
 use cadetta_ir::model::{Member as IrMember, MemberKind, Provenance, SpanRef};
 use cadetta_ir::path::{Index as IrIndex, Path as IrPath, Seg, Step};
@@ -25,18 +26,14 @@ pub struct OpSource<'a> {
     pub file: &'a str,
     /// The file text, from which the argument expression is read back.
     pub src: &'a str,
-    /// The `for` variable of a for-placement (`i` in `for i in 0..N`), if any.
-    pub range_var: Option<&'a str>,
 }
 
-/// Converts a sema canonical path to an IR path, naming `[*]` after the range variable.
-pub fn ir_path(p: &CanonPath, range_var: Option<&str>) -> Result<IrPath, String> {
+/// Converts a sema canonical path to an IR path; `[*]` is an error (IR indexes are integers).
+pub fn ir_path(p: &CanonPath) -> Result<IrPath, String> {
     let index = |i: &Index| -> Result<IrIndex, String> {
         match i {
             Index::At(n) => Ok(IrIndex::Int(*n)),
-            Index::Any => range_var
-                .map(|v| IrIndex::Var(v.to_owned()))
-                .ok_or_else(|| format!("`{p}` has `[*]` but no range variable was given")),
+            Index::Any => Err(format!("`{p}` has `[*]`; IR indexes are integers")),
         }
     };
     let steps = p
@@ -70,7 +67,7 @@ pub fn ir_path(p: &CanonPath, range_var: Option<&str>) -> Result<IrPath, String>
 
 pub(crate) fn lower_member(m: &Member, from: &OpSource<'_>) -> Result<IrMember, GeometryError> {
     let span = m.value.span;
-    let path = ir_path(&m.path, from.range_var).map_err(|message| {
+    let path = ir_path(&m.path).map_err(|message| {
         warn!(%message, "placement member path");
         GeometryError { span, message }
     })?;
@@ -94,6 +91,22 @@ pub fn op_members(p: &Placement, from: &OpSource<'_>) -> Result<Vec<IrMember>, G
         .collect()
 }
 
+/// Every operation argument of an array placement, once per instance (`feet[0]` .. `feet[n-1]`).
+///
+/// An indexed placement lowers to its own members unchanged.
+pub fn instance_members(
+    p: &Placement,
+    count: u64,
+    from: &OpSource<'_>,
+) -> Result<Vec<IrMember>, GeometryError> {
+    let mut out = Vec::new();
+    for q in crate::instances::expand_instances(p, count) {
+        out.extend(op_members(&q, from)?);
+    }
+    debug!(node = %p.node, members = out.len(), "array placement members");
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -104,7 +117,7 @@ mod tests {
     use crate::datum::ComponentId;
     use crate::placement::lower_place;
 
-    const SRC: &str = "model Bracket {\n  datum base = origin.offset(z = 5mm)\n}\nassembly Drive {\n  part plate: Bracket\n  part feet: [Bracket; 4]\n  place plate.base on origin.offset(x = 4mm).rotate(z = 90deg).offset(y = 1mm)\n  place feet[i].base on origin.offset(x = 9mm) for i in 0..4\n}\n";
+    const SRC: &str = "model Bracket {\n  datum base = origin.offset(z = 5mm)\n}\nassembly Drive {\n  part plate: Bracket\n  part feet: [Bracket; 4]\n  place plate.base at origin.offset(x = 4mm).rotate(z = 90deg).offset(y = 1mm)\n  place feet.base at origin.offset(x = 9mm)\n}\n";
 
     fn count(e: &Expr) -> Option<u64> {
         match &e.kind {
@@ -113,7 +126,7 @@ mod tests {
         }
     }
 
-    fn lowered() -> Vec<Vec<IrMember>> {
+    fn lowered() -> Vec<Placement> {
         let parsed = parse(SRC);
         assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
         let id = ComponentId {
@@ -129,64 +142,73 @@ mod tests {
             };
             for m in &c.members {
                 if let AstMember::Place(p) = &m.kind {
-                    let pl = lower_place(&id, p, &count).unwrap();
-                    let from = OpSource {
-                        file: "drive.cdt",
-                        src: SRC,
-                        range_var: p.each.as_ref().map(|r| r.var.name.as_str()),
-                    };
-                    out.push(op_members(&pl, &from).unwrap());
+                    out.push(lower_place(&id, p, &count, &|_| None).unwrap());
                 }
             }
         }
         out
     }
 
+    fn from() -> OpSource<'static> {
+        OpSource {
+            file: "drive.cdt",
+            src: SRC,
+        }
+    }
+
     // frob:tests crates/cadetta-geometry/src/op_members.rs::op_members kind=unit
     #[test]
     fn placement_args_are_authored_place_members() {
         let all = lowered();
-        let paths: Vec<String> = all[0].iter().map(|m| m.path.to_string()).collect();
+        let ms = op_members(&all[0], &from()).unwrap();
+        let paths: Vec<String> = ms.iter().map(|m| m.path.to_string()).collect();
         assert_eq!(
             paths,
             [
-                "acme.rover::Drive/plate.place.0.x",
-                "acme.rover::Drive/plate.place.1.z",
-                "acme.rover::Drive/plate.place.2.y",
+                "acme.rover::Drive/plate.place.offset.x",
+                "acme.rover::Drive/plate.place.rotate.z",
+                "acme.rover::Drive/plate.place.offset[1].y",
             ]
         );
-        for m in &all[0] {
+        for m in &ms {
             assert_eq!(m.kind, MemberKind::Place);
             assert_eq!(m.provenance, Provenance::Authored);
             assert!(m.span.is_some());
+            let reparsed =
+                IrPath::parse(&m.path.to_string(), cadetta_ir::path::PathContext::General).unwrap();
+            assert_eq!(reparsed, m.path);
         }
-        assert_eq!(all[0][0].expr.as_deref(), Some("4mm"));
+        assert_eq!(ms[0].expr.as_deref(), Some("4mm"));
     }
 
-    // frob:tests crates/cadetta-geometry/src/op_members.rs::op_members kind=unit
+    // frob:tests crates/cadetta-geometry/src/op_members.rs::instance_members kind=unit
     #[test]
-    fn for_placement_path_names_the_range_variable() {
+    fn array_placement_lowers_per_instance_with_integer_indexes() {
         let all = lowered();
-        let m = &all[1][0];
-        assert_eq!(m.path.to_string(), "acme.rover::Drive/feet[i].place.0.x");
-        let reparsed =
-            IrPath::parse(&m.path.to_string(), cadetta_ir::path::PathContext::General).unwrap();
-        assert_eq!(reparsed, m.path);
+        let ms = instance_members(&all[1], 4, &from()).unwrap();
+        let paths: Vec<String> = ms.iter().map(|m| m.path.to_string()).collect();
+        assert_eq!(
+            paths,
+            [
+                "acme.rover::Drive/feet[0].place.offset.x",
+                "acme.rover::Drive/feet[1].place.offset.x",
+                "acme.rover::Drive/feet[2].place.offset.x",
+                "acme.rover::Drive/feet[3].place.offset.x",
+            ]
+        );
+        assert!(ms.iter().all(|m| m.expr.as_deref() == Some("9mm")));
+        assert!(ms.iter().all(|m| m.span == ms[0].span));
     }
 
     // frob:tests crates/cadetta-geometry/src/op_members.rs::ir_path kind=unit
     #[test]
-    fn star_without_a_variable_is_an_error() {
+    fn star_is_never_an_ir_index() {
         let mut p = CanonPath::item("acme.rover", &[], "Drive");
         p.parts.push(cadetta_sema::resolve::PartSeg {
             name: "feet".into(),
             index: Some(Index::Any),
         });
         p.members.push(MemberSeg::Name("x".into()));
-        assert!(ir_path(&p, None).is_err());
-        assert_eq!(
-            ir_path(&p, Some("i")).unwrap().to_string(),
-            "acme.rover::Drive/feet[i].x"
-        );
+        assert!(ir_path(&p).is_err());
     }
 }

@@ -136,8 +136,8 @@ assembly Rover {
   part frame: Frame
   part axle[2]: Axle(wheel = wheel[0], span = frame.span)
   part plate: MotorPlate
-  place frame.origin on origin
-  place plate.base on frame.site
+  place frame.origin at origin
+  place plate.base at frame.site
   part plate_screws: ScrewJoint(thread = M4, clamp = plate.thickness, host = frame,
                                 at = plate.holes, onto = frame.tapped)
   check load_ok for w in wheel: w.load_rating * 4 >= 1500N

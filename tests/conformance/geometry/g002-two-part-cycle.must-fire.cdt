@@ -5,6 +5,6 @@ model P {
 assembly A {
   part a: P
   part b: P
-  place a.origin on b.top
-  place b.origin on a.top
+  place a.origin at b.top
+  place b.origin at a.top
 }

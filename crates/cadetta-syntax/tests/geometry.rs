@@ -24,7 +24,7 @@ fn members(src: &str) -> Vec<Member> {
 #[test]
 fn datum_on_in_and_place_yield_nodes_with_spans() {
     // frob:tests crates/cadetta-syntax/src/geometry.rs::datum kind=unit
-    let src = "assembly A {\n  datum top = origin.offset(z = height)\n  p: Point2 on top = Point2(1mm, 2mm)\n  q = p in D\n  place A on B for i in 0..count(P)\n}\n";
+    let src = "assembly A {\n  datum top = origin.offset(z = height)\n  p: Point2 on top = Point2(1mm, 2mm)\n  q = p in D\n  place A at B\n}\n";
     let ms = members(src);
     let MemberKind::Datum(d) = &ms[0].kind else {
         panic!("datum")
@@ -49,23 +49,52 @@ fn datum_on_in_and_place_yield_nodes_with_spans() {
     let MemberKind::Place(pl) = &ms[3].kind else {
         panic!("place")
     };
-    assert_eq!(pl.span.slice(src), "place A on B for i in 0..count(P)");
-    let r = pl.each.as_ref().expect("range");
-    assert_eq!(r.var.name, "i");
-    assert!(matches!(&r.hi.kind, ExprKind::Call { .. }));
+    assert_eq!(pl.span.slice(src), "place A at B");
+    assert!(matches!(&pl.at.kind, ExprKind::Path(..)));
 }
 
 #[test]
 fn place_targets_may_be_indexed_and_use_built_datums() {
     // frob:tests crates/cadetta-syntax/src/geometry.rs::place kind=unit
     let ms = members(
-        "assembly A {\n  place rail.origin on origin\n  place feet[i].top on base.underside.at(base.sites[i]) for i in 0..count(feet)\n  place bracket.base on rail.top.offset(x = 40mm).rotate(z = 90deg)\n}\n",
+        "assembly A {\n  place rail.origin at origin\n  place feet.top at base.underside.offset(base.sites)\n  place feet[2].top at base.underside\n  place bracket.base at rail.top.offset(x = 40mm).rotate(z = 90deg)\n}\n",
     );
     assert!(ms.iter().all(|m| matches!(&m.kind, MemberKind::Place(_))));
     let MemberKind::Place(p) = &ms[1].kind else {
         unreachable!()
     };
-    assert!(matches!(&p.target.kind, ExprKind::Field(..)));
+    assert!(matches!(
+        &p.target.kind,
+        ExprKind::Path(..) | ExprKind::Field(..)
+    ));
+}
+
+#[test]
+fn old_place_spellings_are_e001_pointing_at_the_new_form() {
+    // frob:tests crates/cadetta-syntax/src/geometry.rs::place kind=unit
+    for (src, needle) in [
+        ("assembly A {\n  place a.b on c\n}\n", "place a.b at c"),
+        (
+            "assembly A {\n  place a.b at c for i in 0..3\n}\n",
+            "no `for` clause",
+        ),
+        ("assembly A {\n  place a.b c\n}\n", "expected `at`"),
+    ] {
+        let parsed = parse(src);
+        assert!(
+            parsed.diags.iter().any(|d| d.message.contains(needle)),
+            "{src}: {:?}",
+            parsed.diags
+        );
+    }
+}
+
+#[test]
+fn at_stays_usable_as_an_argument_name() {
+    // frob:tests crates/cadetta-syntax/src/geometry.rs::place kind=unit
+    let parsed =
+        parse("assembly A {\n  j = ScrewJoint(at = a.b, onto = c.d)\n  place a.b at c.d\n}\n");
+    assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
 }
 
 #[test]
@@ -122,14 +151,17 @@ fn interface_datums_have_no_value() {
 #[test]
 fn formatter_handles_datum_and_place() {
     // frob:tests crates/cadetta-syntax/src/format.rs::format_source kind=unit
-    let src = "assembly Mount {\n  datum   top=origin.offset( z = height )\n  place rail.origin   on origin\n  place feet[i].top on base for i in 0..count(feet)\n}\ninterface I {\n datum shaft\n}\n";
+    let src = "assembly Mount {\n  datum   top=origin.offset( z = height )\n  place rail.origin   at origin\n  place feet.top at base.top.offset(base.sites)\n}\ninterface I {\n datum shaft\n}\n";
     let once = format_source(src).expect("format");
     assert!(
         once.contains("  datum top = origin.offset(z = height)\n"),
         "{once}"
     );
-    assert!(once.contains("  place rail.origin on origin\n"), "{once}");
-    assert!(once.contains("for i in 0..count(feet)\n"), "{once}");
+    assert!(once.contains("  place rail.origin at origin\n"), "{once}");
+    assert!(
+        once.contains("  place feet.top at base.top.offset(base.sites)\n"),
+        "{once}"
+    );
     assert!(once.contains("  datum shaft\n"), "{once}");
     assert_eq!(format_source(&once).expect("again"), once);
 }

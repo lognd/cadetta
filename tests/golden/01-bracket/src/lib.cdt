@@ -68,8 +68,8 @@ assembly WallTubeMount {
   part bracket: Bracket(clamp_hole = clamp_screws.clearance_hole)
   part tube: Tube
 
-  place wall.origin on origin
-  place bracket.mount_site on wall.site
+  place wall.origin at origin
+  place bracket.mount_site at wall.site
 
   // "Screw here", one joint per hole pattern: clearance holes and counterbores in
   // the bracket, tap drill in the wall, screw length, engagement, and the proof

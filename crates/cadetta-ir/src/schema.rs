@@ -347,7 +347,6 @@ fn defs() -> Map<String, J> {
                     &[],
                 ),
                 obj("Flip about an axis.", &[("flip", r("Axis"))], &[]),
-                obj("Move to a point.", &[("at", r("Path"))], &[]),
             ],
         }),
     ));
@@ -384,9 +383,10 @@ fn defs() -> Map<String, J> {
         obj(
             "A placement edge of the part tree.",
             &[
+                ("path", r("Path")),
                 ("part", r("Path")),
                 ("datum", r("Path")),
-                ("on", r("Path")),
+                ("at", r("Path")),
                 ("ops", arr(r("Op"))),
             ],
             &[
@@ -1197,9 +1197,6 @@ mod tests {
             crate::geometry::Op::Flip {
                 axis: crate::geometry::Axis::X,
             },
-            crate::geometry::Op::At {
-                point: p("a.b::C.pt"),
-            },
         ];
         let mut datum = crate::geometry::Datum::new(p("a.b::C.d"), p("a.b::C.origin"), ops.clone());
         datum.variants = Some(BTreeMap::from([(
@@ -1221,9 +1218,10 @@ mod tests {
             Vec::<String>::new()
         );
         let pl = crate::geometry::Placement {
+            path: p("a.b::A/br.place"),
             part: p("a.b::A/br.x"),
             datum: p("a.b::B.base"),
-            on: p("a.b::C.d"),
+            at: p("a.b::C.d"),
             ops,
             variants: None,
             digest: None,

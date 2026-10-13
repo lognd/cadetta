@@ -165,9 +165,9 @@ assembly DriveModule {
 
   // Placement tree: rail on the origin, plate on the rail's pattern datum,
   // motor on the plate's pattern datum. The hub is not positioned.
-  place rail.origin on origin
-  place plate.rail_face on rail.site
-  place motor.mount on plate.motor_face
+  place rail.origin at origin
+  place plate.rail_face at rail.site
+  place motor.mount at plate.motor_face
 
   // Motor to plate: tapped into 6061 (cut tap, 75% drill, shop engagement factor).
   part motor_screws: ScrewJoint(thread = motor.mount_thread, clamp = motor.flange_thk, host = plate,
