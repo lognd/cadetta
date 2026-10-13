@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given `[a, b, c]` and `[T; N]` parameters, when evaluated, then fixed arrays hold N elements of one kind (language.md 3.3, 3.8)", "Given `Point2(x, y)`, `p + q`, `p - q` and `p * s`, when evaluated, then results are Point2 with Length members `.x .y` (language.md 3.8)", "Given `rect_pattern(2, 2, 10mm, 10mm)`, when evaluated, then four points are centred on the origin, rows first (language.md 3.8)", "Given `circle_pattern(n, r, start)` and `distance(p, q)`, when evaluated, then n points and a Length result (language.md 3.8)", "Given `holes + Point2(5mm, 0mm)`, when evaluated, then the point is applied to each element (language.md 3.8)"]
+new = ["Given `[a, b, c]` and `[T; N]` parameters, when evaluated, then fixed arrays hold N elements of one kind (language.md 3.3, 3.8)", "Given `Point2(x, y)`, `p + q`, `p - q` and `p * s`, when evaluated, then results are Point2 with Length members `.x .y` (language.md 3.8)", "Given `rect_pattern(2, 2, 10mm, 10mm)`, when evaluated, then four points are centred on the origin, rows first (language.md 3.8)", "Given `circle_pattern(n, r, start)` and `distance(p, q)`, when evaluated, then n points and a Length result (language.md 3.8)", "Given `holes + Point2(5mm, 0mm)`, when evaluated, then the point is applied to each element (language.md 3.8)", "Given Point2/Point3 arrays, when this ticket lands, then datum typing, G001 and generator members are left to the geometry epic stories (geometry.md 3)"]
+moved = [1, 2, 3, 4, 5]
+at = "2026-10-13T05:41:48Z"
+actor = "lognd"
+rev = 1

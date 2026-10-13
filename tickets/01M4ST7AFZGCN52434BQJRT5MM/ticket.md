@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T05:05:14Z"
+updated = "2026-10-13T05:41:48Z"
 persona = "design engineer"
 capability = "compute hole patterns as points without trigonometry by hand"
 idempotency_key = "replan13:Arrays, Point2/Point3 and geometry patterns"
@@ -37,5 +37,9 @@ bound = false
 
 [[acceptance]]
 text = "Given `holes + Point2(5mm, 0mm)`, when evaluated, then the point is applied to each element (language.md 3.8)"
+bound = false
+
+[[acceptance]]
+text = "Given Point2/Point3 arrays, when this ticket lands, then datum typing, G001 and generator members are left to the geometry epic stories (geometry.md 3)"
 bound = false
 +++
