@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T09:56:25Z"
+updated = "2026-10-13T12:46:47Z"
 persona = "design engineer"
 capability = "adopt an existing CAD model"
 idempotency_key = "replan14:ad-imp-prop"
@@ -25,7 +25,7 @@ target = "01M4ST7B09TGN6VSXJBZ8FDVCN"
 
 [[acceptance]]
 text = "Given observed IR, when import runs without --accept, then build/import/proposal.toml and proposal.cdt are written and nothing else (adapters.md 7.1, 7.3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --assume-unit U, when native values lack units, then unit_assumed is recorded (adapters.md 7.1)"
