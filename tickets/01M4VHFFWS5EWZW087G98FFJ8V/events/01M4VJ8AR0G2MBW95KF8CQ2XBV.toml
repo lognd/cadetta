@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T21:21:18Z"
+digest = "fb9a5bbd0cb1e4065cea89f938243a5c42a933923413ed914756d1c95a4dab9f"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ae1021bc-c74f-4eba-bb31-9122cae74d1e with nextest profile: default
+    Starting 1 test across 28 binaries (933 tests skipped)
+        PASS [   0.012s] cadetta::editors_keywords vscode_manifest_declares_language_matcher_and_task
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 1 test run: 1 passed, 933 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "vscode_manifest_declares_language_matcher_and_task"
+size = 570
+status = "measured"
+test_count = 1
+tests_digest = "8b4f0dfc24dbb3f7fd7e242528610813750ffc6f80939f4eb0c404f3a40ca041"
+at = "2026-10-13T21:21:18Z"
+actor = "lognd"
+rev = 1

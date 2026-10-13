@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:07:45Z"
-updated = "2026-10-13T21:21:16Z"
+updated = "2026-10-13T21:21:18Z"
 persona = "design engineer"
 capability = "edit .cdt files with highlighting and inline diagnostics in my editor"
 outcome_text = "cadetta feels like a real language from day one"
@@ -26,7 +26,7 @@ bound = true
 
 [[acceptance]]
 text = "Given editors/vscode, when installed per its README (VSIX via npx @vscode/vsce package, or a copy into the extensions folder), then .cdt files get the language id cadetta, highlighting, comment toggling, bracket pairs and a $cadetta problem matcher plus a cadetta check task using --format short"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given editors/sublime, editors/vim (also Neovim), editors/emacs and the JetBrains TextMate-bundle route, when installed per each README, then .cdt files are highlighted and cadetta check --format short diagnostics jump to file:line:col (Sublime build system, Vim compiler/errorformat, Emacs compilation-mode and a flymake backend)"
