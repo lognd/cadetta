@@ -1,0 +1,15 @@
+kind = "create"
+title = "OQ-10: Coordinate frames for positions"
+type = "docs"
+category = "triage"
+priority = "medium"
+labels = ["open-question"]
+body = """
+Open question OQ-10 from language.md. Closes with an ADR in docs/decisions/.
+
+Question: Should the language gain coordinate frames (frame pi at (x, y))?
+
+Recommendation: deferred; Point2 arithmetic and patterns cover 0.1.0."""
+at = "2026-10-13T05:00:07Z"
+actor = "lognd"
+rev = 1
