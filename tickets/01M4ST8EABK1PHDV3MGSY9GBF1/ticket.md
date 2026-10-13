@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8E5XX0TX0MBND07JQME1"
 reporter = "lognd"
 created = "2026-10-13T05:02:42Z"
-updated = "2026-10-13T08:24:58Z"
+updated = "2026-10-13T08:24:59Z"
 persona = "design engineer"
 capability = "name a primary part and approved alternates for a slot"
 idempotency_key = "replan13:Interface-typed part slots with primary and alt list"
@@ -29,9 +29,9 @@ bound = true
 
 [[acceptance]]
 text = "Given the slot, when its instance paths are built, then every instance of the slot shares the primary and alternates (language.md 3.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `default(Iface = Impl)`, when a component parameter of that interface type is unset, then the scoped default fills it (language.md 3.11, stdlib.md 4)"
-bound = false
+bound = true
 +++

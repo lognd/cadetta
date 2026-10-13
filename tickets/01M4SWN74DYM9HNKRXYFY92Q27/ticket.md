@@ -8,12 +8,12 @@ points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:38Z"
-updated = "2026-10-13T08:23:23Z"
+updated = "2026-10-13T08:25:10Z"
 persona = "design engineer"
 capability = "attest once for identical instances"
 idempotency_key = "replan14:ob-level"
 labels = ["creates:crates/cadetta-obligations/src/level.rs"]
-scope = ["crates/cadetta-obligations/src/level.rs"]
+scope = ["crates/cadetta-obligations/src/level.rs", "crates/cadetta-obligations/src/lib.rs", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"
