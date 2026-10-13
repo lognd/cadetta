@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:34:35Z"
+digest = "464b692bcc38e28740ef4cbf84d5b31d2aafaff36cea90ce64c50ca817f8bba8"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c7673d90-b80f-4c5e-b4d5-0f04ea3e1781 with nextest profile: default
+    Starting 1 test across 20 binaries (494 tests skipped)
+        PASS [   0.012s] cadetta-sema affine::tests::pure_reference_shares_referent_variable
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-E 'test(=affine::tests::pure_reference_shares_referent_variable)'"
+size = 665
+status = "measured"
+test_count = 1
+tests_digest = "f4e8b63e25bb56a63aeef4d07b7448e3b0ebee8c89805aa6641f9cc5d5ea131c"
+at = "2026-10-13T08:34:35Z"
+actor = "lognd"
+rev = 1
