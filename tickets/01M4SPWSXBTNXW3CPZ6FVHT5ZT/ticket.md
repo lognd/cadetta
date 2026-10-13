@@ -2,7 +2,8 @@
 id = "01M4SPWSXBTNXW3CPZ6FVHT5ZT"
 title = "CLI skeleton, output formats and exit codes"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
