@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T04:03:54Z"
-updated = "2026-10-13T05:43:37Z"
+updated = "2026-10-13T05:46:14Z"
 persona = "design engineer"
 capability = "get lints for the R family of the catalog"
 outcome_text = "I see actionable diagnostics with stable codes"
@@ -28,15 +28,7 @@ text = "Given a bound path absent natively, when linted, then R003 error"
 bound = false
 
 [[acceptance]]
-text = "Given the rule, when shipped, then positive and negative fixtures exist under tests/lints/<code>/"
-bound = false
-
-[[acceptance]]
 text = "Given a binding matching no IR path and no `was` path, when linted, then R005 warning (adapters.md 3)"
-bound = false
-
-[[acceptance]]
-text = "Given first sync after import where the emitted value differs from the legacy native value, when linted, then R006 info (lints.md R)"
 bound = false
 
 [[acceptance]]
@@ -53,5 +45,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a push that replaces a native expression, when linted, then R006 is a warning (not info) listing the old expression, and also fires from an adopted record (lints.md 3 R; adapters.md 2.1, 7.4)"
+bound = false
+
+[[acceptance]]
+text = "Given the rule, when shipped, then a must-fire and a must-not-fire fixture exist under tests/conformance/lints/<code>/ (lints.md 4)"
 bound = false
 +++
