@@ -17,6 +17,10 @@ scope = ["bindings/python/python/cadetta/adapter.py", "bindings/python/tests/tes
 
 [[links]]
 kind = "blocked-by"
+target = "01M4SPWRS0CDJT4GYC92AB1HCD"
+
+[[links]]
+kind = "blocked-by"
 target = "01M4SV2NMPSM42YZT9MXT4YVMW"
 
 [[acceptance]]
