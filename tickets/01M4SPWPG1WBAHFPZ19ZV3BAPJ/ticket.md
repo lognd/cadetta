@@ -25,7 +25,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a part count expression that reads a member depending on the part, when analysed, then D003 is reported (language.md 3.5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a reference to a name listed in `was`, when resolved, then it resolves and N004 is emitted (language.md 3.3)"
