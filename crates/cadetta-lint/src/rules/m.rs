@@ -15,7 +15,7 @@
 use std::collections::BTreeSet;
 
 use cadetta_ir::model::{
-    Component, ComponentClass, Member, MemberKind, Nominal, Project, Provenance, SpanRef, Value,
+    Component, ComponentClass, Member, MemberKind, Nominal, Project, SpanRef, Value,
 };
 use cadetta_units::{Dim, Dimension};
 use tracing::{debug, trace};
@@ -82,10 +82,7 @@ fn all_members(project: &Project) -> impl Iterator<Item = (&Component, &Member)>
 
 /// True for a parameter written as a literal: no expression and nothing read.
 fn is_literal(m: &Member) -> bool {
-    m.kind == MemberKind::Param
-        && m.provenance == Provenance::Authored
-        && m.expr.is_none()
-        && m.deps.is_empty()
+    m.kind == MemberKind::Param && crate::rules::d::is_literal(m)
 }
 
 /// Canonical text of every path used as a side of a fit.
@@ -242,6 +239,7 @@ mod tests {
     use crate::diag::Severity;
     use cadetta_ir::model::{
         Affine, AffineTerm, Citation, CitationKind, ComponentClass, Exact, Fit, Flavour, PackageId,
+        Provenance,
     };
     use cadetta_ir::path::{Path, PathContext};
     use cadetta_units::{Magnitude, Rational};

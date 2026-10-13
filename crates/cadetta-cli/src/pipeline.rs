@@ -11,9 +11,16 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
-use cadetta_ir::model::Project as IrProject;
+use cadetta_ir::entities::Waiver;
+use cadetta_ir::model::{
+    CitationKind as IrCitationKind, ComponentClass, MemberKind as IrMemberKind,
+    Project as IrProject,
+};
+use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
-use cadetta_lint::rules::{interface, unused};
+use cadetta_lint::engine::{LintConfig, Suppressions};
+use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
+use cadetta_lint::rules::{d, f, interface, m, n, q, unused};
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
 use cadetta_sema::kindcheck::{EmptyEnv, KindChecker};
@@ -166,6 +173,76 @@ pub struct Analysis {
     pub sources: SourceIndex,
     /// True when a syntax error stopped the pipeline before evaluation.
     pub halted: bool,
+    /// The `waive` declarations of the in-scope packages, for the lint engine.
+    pub suppressions: Suppressions,
+}
+
+/// Lower the `waive` items of one parsed module to engine waivers (lints.md 2.1).
+fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
+    for item in file.items() {
+        let ItemKind::Waive(w) = &item.kind else {
+            continue;
+        };
+        let for_alt = match &w.for_alt {
+            None => None,
+            Some(a) => match VariantName::parse(&format!("{}={}", a.slot.text, a.alt.text)) {
+                Ok(v) => Some(v),
+                Err(error) => {
+                    tracing::warn!(code = %w.code.name, %error, "pipeline: waiver with a bad `for alt`; skipped");
+                    continue;
+                }
+            },
+        };
+        tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
+        out.push(Waiver {
+            code: w.code.name.clone(),
+            glob: w.glob.text.clone(),
+            because: w.because.clone(),
+            expires: w.expires.as_ref().map(|e| e.text.clone()),
+            for_alt,
+            targets_closure: BTreeMap::new(),
+        });
+    }
+}
+
+/// S001/S002 inputs of one lowered package: `ots` values and citations (the filesystem answer
+/// is taken against the package directory).
+fn s_facts(ir: &IrProject, dir: Option<&Path>) -> (Vec<OtsValueFacts>, Vec<CitationFacts>) {
+    let (mut values, mut cites) = (Vec::new(), Vec::new());
+    let cite_of = |path: String, c: &cadetta_ir::model::Citation, span| {
+        let kind = match c.kind {
+            IrCitationKind::File => CitationKind::LocalFile,
+            IrCitationKind::Url => CitationKind::Url,
+            _ => CitationKind::Literal,
+        };
+        CitationFacts {
+            path,
+            kind,
+            target: c.target.clone(),
+            exists: dir.is_none_or(|d| d.join(&c.target).exists()),
+            span,
+        }
+    };
+    for c in &ir.components {
+        if let Some(cit) = &c.citation {
+            cites.push(cite_of(c.path.to_string(), cit, c.span.clone()));
+        }
+        for m in &c.members {
+            if let Some(cit) = &m.citation {
+                cites.push(cite_of(m.path.to_string(), cit, m.span.clone()));
+            }
+            if c.class == ComponentClass::Ots && m.kind == IrMemberKind::Param && m.value.is_some()
+            {
+                values.push(OtsValueFacts {
+                    path: m.path.to_string(),
+                    cited: m.citation.is_some(),
+                    component_cited: c.citation.is_some(),
+                    span: m.span.clone(),
+                });
+            }
+        }
+    }
+    (values, cites)
 }
 
 /// A parsed module with everything the later stages borrow.
@@ -639,6 +716,23 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         let locate = |s: &cadetta_ir::model::SpanRef| index.locate_ref(&s.file, s.start, s.end);
         out.extend(unused::check(&ir, locate));
         out.extend(interface::check_alternates(&ir));
+        // IR-only rule families run with the catalog severities; `check` applies `[lint]`
+        // overrides afterwards through the engine.
+        let lcfg = LintConfig::new();
+        out.extend(d::check_d001(&ir, &lcfg, &d::DConfig::default(), locate));
+        out.extend(d::check_d002(&ir, &lcfg, &d::DConfig::default(), locate));
+        out.extend(f::check_f004(&ir, &lcfg, locate));
+        out.extend(m::check_m001(&ir, &lcfg, &m::MConfig::default(), locate));
+        out.extend(m::check_m002(&ir, &lcfg, locate));
+        out.extend(m::check_m003(&ir, &lcfg, locate));
+        out.extend(n::check(&ir, &lcfg, locate));
+        out.extend(q::check_inexact(&ir, &lcfg, locate));
+        let (ots_values, cites) = s_facts(&ir, Some(&p.dir));
+        out.extend(s::check_s001(&ots_values, locate));
+        out.extend(s::check_s002(&cites, locate));
+        for m in &p.modules {
+            module_waivers(&m.file, &mut analysis.suppressions.waivers);
+        }
         lowered.push(LoweredPackage {
             name: p.name.clone(),
             ir,

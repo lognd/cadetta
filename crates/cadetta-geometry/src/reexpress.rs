@@ -295,7 +295,7 @@ mod tests {
     // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.for_assembly kind=unit
     #[test]
     fn in_assembly_composes_placements() {
-        let t = FrameTable.for_assembly(&mount(), &eval).unwrap();
+        let t = FrameTable::for_assembly(&mount(), &eval).unwrap();
         // bracket.base sits on rail.site (x 40, z 30); a point 1mm along the bracket's base x
         // is at x = 41 in the rail's origin and at x = 1 on rail.site.
         let r = t
@@ -316,7 +316,7 @@ mod tests {
     // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.reexpress kind=unit
     #[test]
     fn g003_on_unplaced_or_absent_part() {
-        let t = FrameTable.for_assembly(&mount(), &eval).unwrap();
+        let t = FrameTable::for_assembly(&mount(), &eval).unwrap();
         let unplaced = t.reexpress(&pt("loose.base", &[0, 0, 0]), &DatumId::new("origin"));
         assert_eq!(unplaced.unwrap_err().code(), Some(G003));
         let absent = t.reexpress(&pt("rail.top", &[0, 0, 0]), &DatumId::new("motor.mount"));
@@ -329,7 +329,7 @@ mod tests {
     // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.reexpress kind=unit
     #[test]
     fn g003_must_not_fire_on_placed_parts() {
-        let t = FrameTable.for_assembly(&mount(), &eval).unwrap();
+        let t = FrameTable::for_assembly(&mount(), &eval).unwrap();
         assert!(
             t.reexpress(&pt("rail.top", &[0, 0, 0]), &DatumId::new("bracket.base"))
                 .is_ok()
@@ -341,7 +341,7 @@ mod tests {
     // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.reexpress kind=unit
     #[test]
     fn arrays_map_and_point2_lifts_to_z0() {
-        let t = FrameTable.for_assembly(&mount(), &eval).unwrap();
+        let t = FrameTable::for_assembly(&mount(), &eval).unwrap();
         let arr = Pos::Array(vec![pt("rail.top", &[1, 2]), pt("rail.top", &[3, 4])]);
         let Reexpressed::Array(items) = t.reexpress(&arr, &DatumId::new("rail.origin")).unwrap()
         else {
