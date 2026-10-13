@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWG5A0FJNPKRPDDCJQZN8"
 reporter = "lognd"
 created = "2026-10-13T05:02:06Z"
-updated = "2026-10-13T06:50:45Z"
+updated = "2026-10-13T06:50:46Z"
 persona = "cadetta contributor"
 capability = "parse the remaining item kinds of the grammar"
 idempotency_key = "replan13:Parser for interfaces, tables, processes, solvers and declarations"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `process Fdm @measured:"..." { hole_comp = ... rule hole(d: Length) -> Length = d + hole_comp }`, when parsed, then params and rules are recorded (language.md 3.8)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `solver`, `waive ... because ... expires ...`, `cite`, `unit`, `kind`, `enum`, `fn`, `fit`, `require` and `check` items, when parsed, then each production of the grammar is accepted (language.md 3)"
