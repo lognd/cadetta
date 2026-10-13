@@ -2,7 +2,8 @@
 id = "01M4SPWS7TFEF86PHX2W33Q6YX"
 title = "Built-in CSV adapter"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
