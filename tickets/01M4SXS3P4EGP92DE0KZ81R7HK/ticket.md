@@ -2,7 +2,8 @@
 id = "01M4SXS3P4EGP92DE0KZ81R7HK"
 title = "Renames and moves across modules with was"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
