@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
 reporter = "lognd"
 created = "2026-10-13T04:03:53Z"
-updated = "2026-10-13T08:45:21Z"
+updated = "2026-10-13T08:45:36Z"
 persona = "cadetta contributor"
 capability = "generate the schema from the Rust types and commit it"
 outcome_text = "the IR is a public contract with a compatibility check"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an optional field added, when diffed, then it is a minor change"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a schema change, when classified, then adding optional fields is minor and anything else bumps cadetta.ir/N (ir.md 5)"
