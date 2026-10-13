@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:45Z"
-updated = "2026-10-13T21:19:33Z"
+updated = "2026-10-13T21:19:51Z"
 persona = "design engineer"
 capability = "cite sources as typed records that someone else can look up"
 outcome_text = "every value says where it came from precisely"
@@ -25,7 +25,7 @@ bound = false
 
 [[acceptance]]
 text = """Given @std::iso273, @refs::x, @"note" and @measured:"...", when lowered, then CiteRef cite, builtin, text and locator are set per ir.md 3 and a member citation replaces the component's, never merges (language.md 3.9)"""
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a citation field or file edit, when digests are computed, then Citation.digest changes (absent marker for a missing file) and no citing node's own or closure digest changes (ir.md 3, 4)"
