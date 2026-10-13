@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-13T19:18:42Z"
+updated = "2026-10-13T19:19:15Z"
 persona = "design engineer"
 capability = "drive sketches from datums"
 idempotency_key = "replan14:sw-frame"
@@ -29,5 +29,9 @@ bound = false
 
 [[acceptance]]
 text = "Given a sketch not on the datum plane or not dimensioned from its origin, when read, then R007 is raised (lints.md 3 R)"
+bound = false
+
+[[acceptance]]
+text = "Given a datum bound to a SOLIDWORKS coordinate system, when read, then its transform is reported in frames[] and, under datums = create, the coordinate system is created and updated from numeric values (solidworks.md 4)"
 bound = false
 +++
