@@ -359,6 +359,18 @@ with the class it is declared to play. Against a required range, a
 clearance entirely outside it is F004 (violates); one that overlaps it
 only in part is C002 on the fit (undecided), like any check.
 
+Decisions (cadetta-sema `fits`): the clearance is `hole - shaft`
+over independent variables, so its bounds are `hole.min - shaft.max`
+and `hole.max - shaft.min`; negative is interference. `NAME.type` is
+`clearance` when every clearance is >= 0, `interference` when every
+clearance is <= 0 (and not clearance), else `transition`. A required
+range is two comparisons, `clearance >= lo` and `clearance <= hi`; either
+violating is F004, both holding is fine, anything else is C002. In `a /
+b` the first path is the hole and the second the shaft. For `H7/p6 on
+x` the fitted parameter x may be untoleranced or carry exactly one of
+the two classes' deviations; any other tolerance on it is F003. A
+nominal that is not a whole number of nanometres has no table row (F002).
+
 ### 3.8 Functions, enums, processes
 
 - `fn name(a: Kind, ...) -> Kind { let x = ...; expr }`: pure, total, no
