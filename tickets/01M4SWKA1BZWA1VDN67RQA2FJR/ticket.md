@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T06:59:00Z"
+updated = "2026-10-13T07:00:28Z"
 persona = "design engineer"
 capability = "see diagnostics in CI annotations"
 idempotency_key = "replan14:lint-short"
 labels = ["creates:crates/cadetta-lint/src/render/short.rs", "creates:crates/cadetta-lint/src/render/github.rs"]
-scope = ["crates/cadetta-lint/src/render/short.rs", "crates/cadetta-lint/src/render/github.rs", "crates/cadetta-lint/src/render/mod.rs", "crates/cadetta-lint/src/render/text.rs"]
+scope = ["crates/cadetta-lint/src/render/short.rs", "crates/cadetta-lint/src/render/github.rs", "crates/cadetta-lint/src/render/mod.rs", "crates/cadetta-lint/src/render/text.rs", "docs/spec/lints.md"]
 
 [[links]]
 kind = "blocked-by"
