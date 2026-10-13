@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Golden fit values (g6 8mm, c11 10mm, H7/H8/H11, j5 8mm, h11) all agree with ISO 286; no disagreement. Decisions written into language.md 3.7: range (0,500] mm, (lo,hi]; tabulated letters c d e f g h js j(5-7) k m n p / C D E F G H JS, others F001; mixed case F001; js = exactly IT/2; values in integer nm (IT1-4 are 0.1 um)."
+at = "2026-10-13T06:33:08Z"
+actor = "lognd"
+rev = 1

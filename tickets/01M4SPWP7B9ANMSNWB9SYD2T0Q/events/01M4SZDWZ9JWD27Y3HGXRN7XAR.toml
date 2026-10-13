@@ -1,0 +1,66 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-13T06:33:03Z"
+digest = "9f7d6f9b5989a9667e27dc0c2848db28f6bcdc5c66dec1ffe002cd946d5c0dc6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fdd7ecea-9159-4ab2-939a-a1ce2ef0b2e6 with nextest profile: default
+    Starting 43 tests across 14 binaries (87 tests skipped)
+        PASS [   0.020s] cadetta-log testing::tests::plain_level_filter_admits_everything_at_or_above
+        PASS [   0.025s] cadetta-log init::tests::invalid_spec_is_an_error
+        PASS [   0.027s] cadetta-obligations kinds::tests::required_for_gates_sync_and_solver
+        PASS [   0.026s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.025s] cadetta-log init::tests::second_init_is_an_error_not_a_panic
+        PASS [   0.022s] cadetta config::tests::directory_names_normalise
+        PASS [   0.025s] cadetta-log init::tests::invalid_spec_never_installs_or_panics
+        PASS [   0.041s] cadetta-obligations graph::tests::bad_edges_rejected_and_duplicates_ignored
+        PASS [   0.025s] cadetta-obligations selector::tests::matches_kind_and_canonical_path
+        PASS [   0.024s] cadetta-obligations selector::tests::rejects_bad_terms
+        PASS [   0.050s] cadetta-obligations selector::tests::any_index_matches_indices
+        PASS [   0.049s] cadetta config::tests::package_dependencies_and_workspace
+        PASS [   0.049s] cadetta-obligations selector::tests::parses_comma_separated_terms
+        PASS [   0.045s] cadetta-syntax lexer::tests::leading_and_trailing_dot_are_lex_errors
+        PASS [   0.052s] cadetta-obligations selector::tests::no_match_is_exit_2
+        PASS [   0.048s] cadetta-obligations selector::tests::sync_paths_are_file_paths
+        PASS [   0.075s] cadetta config::tests::load_reports_io_and_defaults_the_name
+        PASS [   0.029s] cadetta-syntax lexer::tests::reserved_words_lex_as_keywords
+        PASS [   0.050s] cadetta-obligations selector::tests::star_stays_within_a_segment
+        PASS [   0.040s] cadetta-syntax lexer::tests::quote_alias_followed_by_letters_is_a_lex_error
+        PASS [   0.033s] cadetta-syntax parser::tests::reserved_keyword_as_identifier_is_error
+        PASS [   0.021s] cadetta-units compare::tests::dimension_mismatch_is_an_error
+        PASS [   0.048s] cadetta-syntax parser::tests::statements_end_at_newline_or_semicolon
+        PASS [   0.057s] cadetta-syntax parser::tests::errors_recover_and_parsing_continues
+        PASS [   0.031s] cadetta-units inexact::tests::rounding_step_errors_are_values
+        PASS [   0.041s] cadetta-units inexact::tests::inexact_near_tie_or_boundary_is_q010
+        PASS [   0.045s] cadetta-units inexact::tests::ceil_and_floor_to_step
+        PASS [   0.052s] cadetta-units compare::tests::form_entirely_above_threshold_holds
+        PASS [   0.024s] cadetta-units tolerance::tests::literals_build_ordered_deviation_pairs
+        PASS [   0.037s] cadetta-units square::tests::distinct_forms_use_the_ordinary_product
+        PASS [   0.073s] cadetta-units dimension::tests::length_plus_mass_is_an_error_value
+        PASS [   0.032s] cadetta-units tolerance::tests::inverted_or_mismatched_deviations_are_errors
+        PASS [   0.045s] cadetta-units kind::tests::torque_to_energy_needs_as
+        PASS [   0.042s] cadetta-units rational::tests::division_by_zero_is_an_error_value
+        PASS [   0.074s] cadetta-units display::tests::precedence_order
+        PASS [   0.055s] cadetta-units kind::tests::force_times_length_is_anonymous
+        PASS [   0.074s] cadetta-units compare::tests::straddling_form_is_undecided
+        PASS [   0.026s] cadetta-units units::tests::errors_are_values
+        PASS [   0.030s] cadetta-units units::tests::temperature_factors_agree_with_affine
+        PASS [   0.187s] cadetta-log redact::tests::ordinary_text_is_unchanged_and_borrowed
+        PASS [   0.051s] cadetta-units units::tests::inch_factor
+        PASS [   0.067s] cadetta-units units::tests::exact_factors
+        PASS [   0.137s] cadetta-units kind::tests::angle_worked_cases
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.223s] 43 tests run: 43 passed, 87 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "span::tests::every_node_has_a_location or span::tests::locations_are_one_based_and_display or span::tests::columns_count_characters"
+size = 4191
+status = "measured"
+test_count = 43
+tests_digest = "3e789241608023b39feffe19117a9cfe9fad9104337aecfc978abb6d90eb5dd0"
+at = "2026-10-13T06:33:03Z"
+actor = "lognd"
+rev = 1

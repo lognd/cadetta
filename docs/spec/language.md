@@ -338,6 +338,15 @@ ships, and their column names, are in stdlib.md.
 - An optional required range: `fit insert = hole / Insert.od [-0.4mm ..
   -0.1mm]` (negative clearance is interference).
 
+Tabulated classes (cadetta-fits, 0.1): nominal sizes over 0 up to and
+including 500 mm, size ranges are (lo, hi]; IT1..IT18; shaft letters
+`c d e f g h js j k m n p` and hole letters `C D E F G H JS`; `j` only
+for grades 5 to 7. Any other class is F001 (not yet tabulated), a size
+outside (0, 500] mm is F002. A class letter is wholly upper or wholly
+lower case; mixed case is F001. `js`/`JS` is exactly +-IT/2 (no
+rounding of odd IT widths). Values are exact integer nanometres since
+IT1..IT4 are tabulated to 0.1 um.
+
 A fit defines `NAME.hole`, `NAME.shaft`, `NAME.clearance` (toleranced)
 and a computed `NAME.type` (clearance, transition, interference), and
 gives each side its role. F003 when a side's own tolerance disagrees
