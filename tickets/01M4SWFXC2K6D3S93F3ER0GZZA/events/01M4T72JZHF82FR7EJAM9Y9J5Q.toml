@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-13T08:46:42Z"
+digest = "7b3d4f48d5b8bcdfb241402b91681325ea879463fbc31c1e401855ae25d79122"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b9a70f61-850f-4f35-b8bf-0eac95cbfa4c with nextest profile: default
+    Starting 1 test across 1 binary (21 tests skipped)
+        PASS [   0.006s] cadetta-geometry placement::tests::g006_on_double_and_overlapping_ranges
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 21 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry -E 'test(=placement::tests::g006_on_double_and_overlapping_ranges)'"
+size = 561
+status = "measured"
+test_count = 1
+tests_digest = "b9f2083fa3aeb367f232e8b423a034528e1475ca816865c23ff4d031fbc81c1a"
+at = "2026-10-13T08:46:42Z"
+actor = "lognd"
+rev = 1

@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a part placed twice, or overlapping for ranges, when evaluated, then G006 is raised (geometry.md 4, 7)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a subassembly, when placed, then its parts come along and instance paths compose as Mount/sub/bracket.holes[1] (geometry.md 4)"
