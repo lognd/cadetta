@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:04:52Z"
-updated = "2026-10-13T09:14:53Z"
+updated = "2026-10-13T09:16:57Z"
 persona = "design engineer"
 capability = "be warned about unsound alternates and unevaluated roots"
 idempotency_key = "replan13:Lints I001-I004 for interfaces and alternates"
 labels = ["creates:crates/cadetta-lint/src/rules/interface.rs"]
-scope = ["crates/cadetta-lint/src/rules/interface.rs"]
+scope = ["crates/cadetta-lint/src/rules/interface.rs", "crates/cadetta-lint/src/rules/mod.rs"]
 
 [[acceptance]]
 text = "Given I001 to I004 in lints.md, when linted, then each fires on its defining condition with the severity and waivability in the catalog (lints.md I)"
