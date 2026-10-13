@@ -304,8 +304,10 @@ remove it first), and `bind --remove` of an absent locator is a no-op.
 `bind` also refuses a locator whose native name another path already
 uses (R013 rule, exit 2). The file is rewritten in canonical order
 (entries by path, one inline table per locator), which drops comments.
-`--tolerance` is accepted in the grammar but exits 2 until bindings carry
-a tolerance field. `names` takes at most one ADAPTER-ID.
+`--tolerance drive|ignore` writes the locator `tolerance` field
+(adapters.md 3.6) and is valid on a dimension locator only (exit 2
+otherwise). The field is not part of the identity, so binding the same
+identity with another tolerance is the conflict above. `names` takes at most one ADAPTER-ID.
 
 ### 3.4 `ack` details
 
