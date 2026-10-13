@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-geometry/src/interface_datum.rs", "crates/cadetta-geometry/Cargo.toml"]
+new = ["crates/cadetta-geometry/src/interface_datum.rs", "crates/cadetta-geometry/Cargo.toml", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md"]
+at = "2026-10-13T08:25:21Z"
+actor = "lognd"
+rev = 1
