@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T07:01:00Z"
+updated = "2026-10-13T07:01:26Z"
 persona = "design engineer"
 capability = "write datum, point and placement syntax"
 idempotency_key = "replan14:geo-parse"
@@ -25,7 +25,7 @@ target = "01M4SPWP4HDVWPMA4AFJ65KWPN"
 
 [[acceptance]]
 text = "Given 'datum top = origin.offset(z = height)', 'Point2 on top', 'p in D' and 'place A on B for i in 0..count(P)', when parsed, then each yields an AST node with spans (geometry.md 2, 3, 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given 'for i in 0..N' versus 'IDENT in EXPR', when parsed, then 'IDENT in' starts a bound only when the right side is a range (geometry.md 4)"
