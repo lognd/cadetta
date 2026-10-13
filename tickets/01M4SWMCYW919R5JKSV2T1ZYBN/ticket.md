@@ -8,12 +8,16 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:11Z"
+updated = "2026-10-13T05:44:14Z"
 persona = "design engineer"
 capability = "drive sketch geometry from the design"
 idempotency_key = "replan14:ad-geo"
 labels = ["creates:crates/cadetta-adapter/src/geometry_bind.rs"]
 scope = ["crates/cadetta-adapter/src/geometry_bind.rs"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWMCDEH4NF2SBVCRGE5VV9"
 
 [[acceptance]]
 text = "Given a frame-kind locator for a datum or point coordinate, when emitted, then sign and the sketch origin convention apply (adapters.md 3.4; geometry.md 6)"
