@@ -489,6 +489,24 @@ Default precedence, highest first: the enclosing component's
 - Inside a component, a bare name is its own member or parameter; a
   component's arguments are in scope; `Other.member` resolves a
   component; in an assembly, `part.member` resolves an instance.
+- Reference resolution (decided in the resolver, `cadetta-sema`
+  `resolve.rs`): a reference is a path plus `.field` and `[index]`
+  steps. If it contains `::`, the part before the first `::` is a
+  package (`acme.rover`, `std`), `package`, `self`, `super`, or a local
+  name (an enum or module alias); the `::` names then descend modules to
+  an item (a module's parent may have no file), and an enum item takes
+  one variant. Otherwise the first name is looked up as a local binding,
+  then the component's own argument or member or `part`, then module
+  items, explicit `use`, globs and the prelude. A component argument is
+  not a member: `Type.argument` is E011. `Type.member` is checked for
+  parameter dependence through the member's definition and the members
+  it reads (including `part` arguments); the first parameter in
+  declaration order is named in E011. A bare enum variant is accepted
+  only as an argument whose declared parameter type is that enum, and
+  only when the name is not otherwise in scope. An index in a reference
+  must be an integer literal, because a canonical path carries only
+  integers (ir.md 2); other indexes are for the evaluator. Visibility
+  (E016, E017) is checked by the lint family, not by resolution.
 - Reference cycles are D003, found between members, not components: a
   model's argument may come from a joint that reads another member of
   the same model (`part mount: Mount(hole = screws.clearance_hole)`
