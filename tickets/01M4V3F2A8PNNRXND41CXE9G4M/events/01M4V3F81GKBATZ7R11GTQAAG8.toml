@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["solvers.md 1: in forms string/boolean/array/comparison/logic/range/if/match raise S007 and bare numbers or bare additive operands raise Q001 in cadetta check (fixtures solvers/s007-in-*, q001-in-*; found while working ~KBYTYF0)"]
+moved = []
+at = "2026-10-13T17:02:57Z"
+actor = "lognd"
+rev = 1

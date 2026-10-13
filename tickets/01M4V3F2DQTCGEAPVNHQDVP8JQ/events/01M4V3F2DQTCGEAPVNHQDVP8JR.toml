@@ -1,0 +1,9 @@
+kind = "create"
+title = "solve accepts missing and wrong-kind solver outputs"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/**"]
+at = "2026-10-13T17:02:51Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,35 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-13T17:03:26Z"
+digest = "531496ceb56c15604abe0d0b2ff7b3fd2f3537d465c3195773eaefdd198d0f0c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.70s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 19e7c26d-97b9-47bd-8e13-d0cd2833c241 with nextest profile: default
+    Starting 1 test across 3 binaries (168 tests skipped)
+        PASS [   6.516s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   6.517s] 1 test run: 1 passed, 168 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(=conformance_corpus_matches_the_spec)'"
+size = 1292
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-13T17:03:26Z"
+actor = "lognd"
+rev = 1

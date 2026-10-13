@@ -1,0 +1,9 @@
+kind = "create"
+title = "S007 and Q001 not raised for solver in-expression forms"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+at = "2026-10-13T17:02:51Z"
+actor = "lognd"
+rev = 1
