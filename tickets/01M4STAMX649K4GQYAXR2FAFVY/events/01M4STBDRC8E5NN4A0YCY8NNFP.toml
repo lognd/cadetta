@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given a `solver` declaration with typed inputs, outputs and a script path, when lowered, then the IR carries it with its closure (solvers.md 2, ir.md 2)", "Given an input expression that is not a literal or SI-convertible value, when checked, then an error is reported (solvers.md 3)", "Given outputs, when lowered, then each is a bound or driving output (solvers.md 4)"]
+new = ["Given a `solver` declaration with typed inputs, outputs and a script path, when lowered, then the IR carries it with its closure (solvers.md 2, ir.md 2)", "Given an input expression that is not a literal or SI-convertible value, when checked, then an error is reported (solvers.md 1)", "Given outputs, when lowered, then each is a bound or driving output (solvers.md 1)"]
+moved = [0, 0, 0]
+at = "2026-10-13T05:04:20Z"
+actor = "lognd"
+rev = 1
