@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T08:18:35Z"
+updated = "2026-10-13T08:18:44Z"
 persona = "product engineer"
 capability = "import shop policy and parts by name"
 labels = ["creates:crates/cadetta-sema/src/imports.rs"]
@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given two globs bringing the same name, when the name is used, then E004 fires only at the use; an unresolved name is E002 (packages.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given `pub use self::fasteners::{ScrewJoint, MetricThread}` in lib.cdt, when a dependent writes acme.shop::ScrewJoint, then it resolves to the definition and its canonical path is still the definition path (packages.md 4)"
