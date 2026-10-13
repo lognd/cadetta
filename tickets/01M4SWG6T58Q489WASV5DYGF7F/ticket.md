@@ -37,7 +37,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the section 1 example with +-0.05mm tolerances, when checked, then the distance is in [0, 0.1414mm] and holds against 0.25mm; with +-0.2mm and +-0.1mm it is C002, not C001 (geometry.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given distance(p, q), when both are in one datum, then the axial component is included (geometry.md 3)"
