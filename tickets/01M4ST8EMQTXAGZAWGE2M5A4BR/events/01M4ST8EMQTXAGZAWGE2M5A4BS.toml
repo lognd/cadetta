@@ -1,0 +1,16 @@
+kind = "create"
+title = "Obligation graph nodes, edges and states"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
+persona = "design engineer"
+capability = "see every claim as a node with typed edges"
+idempotency_key = "replan13:Obligation graph nodes, edges and states"
+labels = ["creates:crates/cadetta-obligations/src/graph.rs"]
+scope = ["crates/cadetta-obligations/src/graph.rs"]
+acceptance = ["Given a lowered IR, when the graph is built, then edges derives, cites, implements, instantiates, evaluates, solves, binds, realizes, attests and waives exist as in the obligations.md 1 table", "Given the states discharged, stale, violated, undecided, open and waived, when an obligation is classified, then exactly one applies (obligations.md 2)", "Given a check, require, fit or alternate-viability obligation, when classified, then it is recomputed every run and never stale (obligations.md 2)"]
+at = "2026-10-13T05:02:43Z"
+actor = "lognd"
+rev = 1
