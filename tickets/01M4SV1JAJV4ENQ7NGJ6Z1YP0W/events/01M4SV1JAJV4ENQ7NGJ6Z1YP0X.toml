@@ -1,0 +1,9 @@
+kind = "create"
+title = "probe"
+type = "docs"
+category = "triage"
+priority = "medium"
+idempotency_key = "probe-x"
+at = "2026-10-13T05:16:26Z"
+actor = "lognd"
+rev = 1
