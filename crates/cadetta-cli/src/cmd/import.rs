@@ -20,7 +20,9 @@ use cadetta_adapter::import::propose::{
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::types::{ReadParams, ReadSource};
 use cadetta_ir::dim::DimWire;
-use cadetta_ir::model::{Exact, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Sign};
+use cadetta_ir::model::{
+    Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Sign,
+};
 use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
 use cadetta_obligations::lock::{Adopted, Lock, Record};
 use cadetta_units::{Dim, Magnitude, Rational};
@@ -128,6 +130,7 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
         Some("dimension") => LocatorKind::Dimension,
         Some("property") => LocatorKind::Property,
         Some("frame") => LocatorKind::Frame,
+        Some("instance") => LocatorKind::Instance,
         other => return Err(format!("locator `{locator}`: bad kind {other:?}")),
     };
     let mode = match text("mode").as_deref() {
@@ -141,6 +144,15 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
         Some(-1) => Some(Sign::Minus),
         Some(n) => return Err(format!("locator `{locator}`: bad sign {n}")),
     };
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    let implicit = match text("implicit").as_deref() {
+        None => None,
+        Some("global") => Some(Implicit::Global),
+        Some("link") => Some(Implicit::Link),
+        Some("frame") => Some(Implicit::Frame),
+        Some("reference") => Some(Implicit::Reference),
+        other => return Err(format!("locator `{locator}`: bad implicit {other:?}")),
+    };
     Ok(Locator {
         locator,
         kind,
@@ -151,6 +163,7 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
         config: text("config"),
         sign,
         component: text("component"),
+        implicit,
     })
 }
 

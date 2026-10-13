@@ -123,6 +123,18 @@ pub enum SaveMode {
     Never,
 }
 
+/// Which in-scope paths an adapter binds without a bindings entry (adapters.md 3.5).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum BindMode {
+    /// Only bindings-file entries, pins and discovered links (the default).
+    #[default]
+    Explicit,
+    /// Also every in-scope expressible path, to its created global.
+    Scope,
+}
+
 /// `[package]` (packages.md 1).
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -324,6 +336,10 @@ pub struct Adapter {
     /// Prefix for created native names.
     #[serde(default)]
     pub prefix: String,
+    /// `explicit` (default) or `scope`: also bind every in-scope path to its created global.
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    #[serde(default)]
+    pub bind: BindMode,
     /// Unit for unitless native values.
     #[serde(default)]
     pub native_unit: Option<String>,
@@ -891,5 +907,18 @@ native_unit = "mm"
         let mut c = Config::parse("[package]\n").unwrap();
         c.default_package_name(Path::new("/nonexistent-cadetta-dir/My Rover/cadetta.toml"));
         assert_eq!(c.package.unwrap().name.as_deref(), Some("my_rover"));
+    }
+
+    // frob:tests crates/cadetta-cli/src/config.rs::BindMode
+    #[test]
+    fn bind_mode_defaults_explicit_and_is_strict() {
+        let c = Config::parse(SAMPLE).unwrap();
+        assert_eq!(c.adapters[1].bind, BindMode::Explicit);
+        let scope = Config::parse(&pkg(
+            "[[adapter]]\nname = \"sw-equations\"\nbind = \"scope\"\n",
+        ))
+        .unwrap();
+        assert_eq!(scope.adapters[0].bind, BindMode::Scope);
+        assert!(err_text(&pkg("[[adapter]]\nname = \"x\"\nbind = \"all\"\n")).contains("all"));
     }
 }

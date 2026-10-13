@@ -15,6 +15,35 @@ use crate::scope::Scope;
 /// Diagnostic code for a push that replaces a native expression (adapters.md 2.1).
 pub const R006: &str = "R006";
 
+/// Diagnostic code for a locator whose native item is gone since a sync recorded it (adapters.md 3.5).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+pub const R003: &str = "R003";
+
+/// R003 for each implicit locator `(path, locator)` with a lock base that the read no longer finds.
+///
+/// `found` holds the `(path, locator)` pairs the read still sees; an implicit locator never
+/// recorded by a sync is not reported (nothing to lose).
+// frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+pub fn missing_implicit(
+    adapter: &str,
+    implicit: &[(String, String)],
+    found: &std::collections::BTreeSet<(String, String)>,
+    lock: &Lock,
+) -> Vec<Diag> {
+    implicit
+        .iter()
+        .filter(|(p, l)| !found.contains(&(p.clone(), l.clone())))
+        .filter(|(p, l)| lock.contains_key(&(adapter.to_owned(), p.clone(), l.clone())))
+        .map(|(p, l)| {
+            tracing::warn!(adapter, path = %p, locator = %l, "implicit locator vanished");
+            Diag {
+                code: R003,
+                message: format!("{p}: native item `{l}` recorded by a sync is gone"),
+            }
+        })
+        .collect()
+}
+
 /// One bound locator with its three-way inputs, as emitted literals.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Entry {
@@ -447,5 +476,23 @@ mod tests {
         assert_eq!(r.records[0].verb, Verb::Converged);
         assert_eq!(mock.calls, 0);
         assert_eq!(lock.len(), 1);
+    }
+
+    // frob:tests implicit_vanished_after_sync_is_r003
+    #[test]
+    fn implicit_vanished_after_sync_is_r003() {
+        let implicit = vec![
+            ("a::B.x".to_owned(), "G1".to_owned()),
+            ("a::B.y".to_owned(), "G2".to_owned()),
+        ];
+        let mut lock = Lock::new();
+        lock.insert(("sw".into(), "a::B.x".into(), "G1".into()), "5".into());
+        let found = std::collections::BTreeSet::new();
+        let d = missing_implicit("sw", &implicit, &found, &lock);
+        assert_eq!(d.len(), 1, "only the recorded one is lost");
+        assert_eq!(d[0].code, R003);
+        let mut found = found;
+        found.insert(("a::B.x".to_owned(), "G1".to_owned()));
+        assert!(missing_implicit("sw", &implicit, &found, &lock).is_empty());
     }
 }

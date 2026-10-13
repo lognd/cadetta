@@ -462,7 +462,7 @@ fn defs() -> Map<String, J> {
         "LocatorKind",
         en(
             "A native locator kind.",
-            &["global", "dimension", "property", "frame"],
+            &["global", "dimension", "property", "frame", "instance"],
         ),
     ));
     d.push((
@@ -472,13 +472,45 @@ fn defs() -> Map<String, J> {
             &["value", "ref"],
         ),
     ));
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    d.push((
+        "Implicit",
+        en(
+            "The native fact that implied a locator no bindings file lists.",
+            &["global", "link", "frame", "reference"],
+        ),
+    ));
+    d.push((
+        "ObservedFrame",
+        obj(
+            "A frame seen in a native document (observed flavour).",
+            &[
+                ("name", s()),
+                ("document", s()),
+                ("transform", arr(arr(r("Value")))),
+            ],
+            &[],
+        ),
+    ));
+    d.push((
+        "ObservedInstance",
+        obj(
+            "A component instance seen in a native document (observed flavour).",
+            &[
+                ("component", s()),
+                ("document", s()),
+                ("transform", arr(arr(r("Value")))),
+            ],
+            &[("reference", s())],
+        ),
+    ));
     d.push(("Locator", obj(
         "A native locator; `for` selects a slot binding's alternate.",
         &[("locator", s()), ("kind", r("LocatorKind")), ("mode", r("LocatorMode")), ("native_unit", s())],
         &[
             ("ref_to", s()), ("for", s()), ("config", s()),
             ("sign", json!({"description": "1, or -1 to negate a coordinate.", "type": "integer", "enum": [1, -1]})),
-            ("component", s()),
+            ("component", s()), ("implicit", r("Implicit")),
         ],
     )));
     d.push((
@@ -634,7 +666,11 @@ pub fn schema_value() -> J {
             ("bindings", arr(r("Binding"))),
             ("citations", arr(r("Citation"))),
         ],
-        &[("digest", r("Digest"))],
+        &[
+            ("frames", arr(r("ObservedFrame"))),
+            ("instances", arr(r("ObservedInstance"))),
+            ("digest", r("Digest")),
+        ],
     );
     let o = root.as_object_mut().expect("obj builds an object");
     o.insert(
@@ -927,6 +963,7 @@ mod tests {
             config: Some("Default".into()),
             sign: Some(sign),
             component: Some("wheel<2>".into()),
+            implicit: Some(crate::model::Implicit::Link),
         };
         pr.bindings.push(Binding {
             path: p("a.b::C.d"),

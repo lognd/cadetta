@@ -1,0 +1,16 @@
+{
+  "spec": "1.5",
+  "doc": "adapters",
+  "section": "adapters.md 3.5",
+  "rule": "adapters-3.5-global",
+  "kind": "binding",
+  "entry": "read",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

@@ -113,6 +113,7 @@ fn namespace(kind: LocatorKind) -> &'static str {
         LocatorKind::Dimension => "dimension",
         LocatorKind::Property => "property",
         LocatorKind::Frame => "frame",
+        LocatorKind::Instance => "instance",
     }
 }
 
@@ -181,6 +182,7 @@ mod tests {
             config: None,
             sign: None,
             component: None,
+            implicit: None,
         }
     }
 

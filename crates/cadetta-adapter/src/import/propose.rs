@@ -105,6 +105,7 @@ fn kind_name(k: LocatorKind) -> &'static str {
         LocatorKind::Dimension => "dimension",
         LocatorKind::Property => "property",
         LocatorKind::Frame => "frame",
+        LocatorKind::Instance => "instance",
     }
 }
 
@@ -253,6 +254,7 @@ mod tests {
                 config: None,
                 sign: None,
                 component: None,
+                implicit: None,
             },
             nominal: Nominal::Exact(Exact(Magnitude::new(Rational::new(n, 1).unwrap(), 0))),
             dim: Dim::default(),
