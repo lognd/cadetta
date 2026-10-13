@@ -2,7 +2,8 @@
 id = "01M4SPWSABPXKK62B5V0SMJ8FD"
 title = "Built-in sw-equations adapter (emit and read)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
