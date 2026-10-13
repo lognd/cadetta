@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:44Z"
-updated = "2026-10-13T08:22:33Z"
+updated = "2026-10-13T08:23:05Z"
 persona = "design engineer"
 capability = "swap parts without losing placements"
 idempotency_key = "replan14:geo-ifdatum"
 labels = ["creates:crates/cadetta-geometry/src/interface_datum.rs"]
-scope = ["crates/cadetta-geometry/src/interface_datum.rs"]
+scope = ["crates/cadetta-geometry/src/interface_datum.rs", "crates/cadetta-geometry/Cargo.toml"]
 
 [[links]]
 kind = "blocked-by"
