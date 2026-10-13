@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T09:07:59Z"
+updated = "2026-10-13T09:08:08Z"
 persona = "library author"
 capability = "keep intermediates out of my semver promise"
 labels = ["creates:crates/cadetta-sema/src/visibility.rs"]
@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "Given component members (parameters, lets, fits, checks, parts) with no modifier, when read from another module or package, then they are visible (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a `priv` member read from another package, when checked, then E016 fires; read inside its package, it is allowed (packages.md 3)"
