@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:06Z"
-updated = "2026-10-13T09:08:08Z"
+updated = "2026-10-13T09:08:10Z"
 persona = "library author"
 capability = "keep intermediates out of my semver promise"
 labels = ["creates:crates/cadetta-sema/src/visibility.rs"]
@@ -36,7 +36,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a `priv` member read from another package, when checked, then E016 fires; read inside its package, it is allowed (packages.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a priv member, when evaluated, shown by why or impact, carried in the IR, or bound by the package own bindings, then it behaves like any member (packages.md 3)"
