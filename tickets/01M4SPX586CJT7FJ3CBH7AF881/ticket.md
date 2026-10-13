@@ -2,11 +2,12 @@
 id = "01M4SPX586CJT7FJ3CBH7AF881"
 title = "OQ-8: drive with a session holding unsaved changes"
 type = "docs"
-category = "triage"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T04:04:07Z"
-updated = "2026-10-13T04:04:07Z"
+updated = "2026-10-13T05:45:33Z"
 labels = ["open-question"]
 +++
 
