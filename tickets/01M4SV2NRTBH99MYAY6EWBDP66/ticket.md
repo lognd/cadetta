@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T05:17:03Z"
+updated = "2026-10-13T05:17:04Z"
 persona = "Python user"
 capability = "run queries and get typed results"
 outcome_text = "CI scripts can gate on impact and compare"
@@ -18,6 +18,10 @@ scope = ["bindings/python/python/cadetta/queries.py", "bindings/python/tests/tes
 [[links]]
 kind = "blocked-by"
 target = "01M4ST8F5G8E0FMC3KZJG8A95T"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4ST8F7B9VYMFSCJD8MVBJNS"
 
 [[links]]
 kind = "blocked-by"
