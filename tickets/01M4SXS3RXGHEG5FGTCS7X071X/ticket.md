@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:14Z"
-updated = "2026-10-13T09:07:47Z"
+updated = "2026-10-13T09:07:54Z"
 persona = "product engineer"
 capability = "see exactly which checks a library update makes stale"
 labels = ["creates:crates/cadetta-obligations/src/pkg_closure.rs"]
@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a library update, when checked, then exactly the dependents checks, sign-offs and CAD syncs that read changed values are stale and others stay discharged (packages.md 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a library update that flips a dependent verdict, when `cadetta check` runs, then the flip is reported through the obligation graph whatever the version number says (packages.md 5)"
