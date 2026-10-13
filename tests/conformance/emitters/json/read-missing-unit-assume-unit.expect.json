@@ -1,0 +1,28 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 3",
+  "rule": "read-assume-unit",
+  "kind": "binding",
+  "entry": "read",
+  "note": "--assume-unit supplies the unit of a unitless param",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "B": {
+        "value": "5in",
+        "unit_assumed": "in"
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "observed": {
+      "B": {
+        "value": "5mm"
+      }
+    }
+  }
+}

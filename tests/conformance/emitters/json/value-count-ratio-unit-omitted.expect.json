@@ -1,0 +1,42 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "value-bare",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "Counts and Ratios are integer or decimal strings with unit omitted; a Length keeps its unit",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"4\"",
+          "\"value\": \"0.5\""
+        ],
+        "excludes": [
+          "\"unit\"",
+          "\"value\": 4,",
+          "\"value\": 0.5"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"4\"",
+          "\"unit\": \"mm\""
+        ],
+        "excludes": [
+          "\"unit\": \"\"",
+          "\"unit\": null"
+        ]
+      }
+    }
+  }
+}

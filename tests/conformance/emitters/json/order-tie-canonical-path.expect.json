@@ -1,0 +1,40 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 2",
+  "rule": "order-tie",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "independent paths are ordered by canonical path (byte order), whatever order the bindings file lists them in",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [],
+        "excludes": [],
+        "order": [
+          "\"name\": \"Z1\"",
+          "\"name\": \"Z2\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"name\": \"Z1\"",
+          "\"name\": \"Z2\""
+        ],
+        "excludes": [],
+        "order_not": [
+          "\"name\": \"Z2\"",
+          "\"name\": \"Z1\""
+        ]
+      }
+    }
+  }
+}

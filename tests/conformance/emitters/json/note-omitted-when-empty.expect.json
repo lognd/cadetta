@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "note-omitted",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "note is omitted (not null, not an empty string) when there is nothing to carry",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"5\""
+        ],
+        "excludes": [
+          "\"note\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"note\": \"1/4in\""
+        ],
+        "excludes": [
+          "\"note\": \"\"",
+          "\"note\": null"
+        ]
+      }
+    }
+  }
+}

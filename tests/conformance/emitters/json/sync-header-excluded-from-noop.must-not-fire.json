@@ -1,0 +1,4 @@
+{
+  "existing": "{\n  \"schema\": \"cadetta.params/1\",\n  \"header\": {\n    \"adapter\": \"json 0.1.0\",\n    \"ir\": \"blake3:aa\",\n    \"bindings\": \"blake3:bb\"\n  },\n  \"params\": [\n    {\n      \"name\": \"W\",\n      \"path\": \"acme.demo::Part.width\",\n      \"value\": \"10\",\n      \"unit\": \"mm\"\n    }\n  ]\n}\n",
+  "emitted": "{\n  \"schema\": \"cadetta.params/1\",\n  \"header\": {\n    \"adapter\": \"json 0.1.0\",\n    \"ir\": \"blake3:cc\",\n    \"bindings\": \"blake3:dd\"\n  },\n  \"params\": [\n    {\n      \"name\": \"W\",\n      \"path\": \"acme.demo::Part.width\",\n      \"value\": \"12\",\n      \"unit\": \"mm\"\n    }\n  ]\n}\n"
+}

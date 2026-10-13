@@ -1,0 +1,37 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "note-literal",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "note carries the tolerance or class of the authored literal (12mm H7 written as its emit point)",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"12.009\"",
+          "\"note\": \"12mm H7 emit=mid\""
+        ],
+        "excludes": []
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"12\""
+        ],
+        "excludes": [
+          "\"note\"",
+          "H7"
+        ]
+      }
+    }
+  }
+}

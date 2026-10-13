@@ -1,0 +1,5 @@
+{
+  "file": "build/params.json",
+  "text": "{\n  \"schema\": \"cadetta.params/1\",\n  \"header\": {\n    \"adapter\": \"json 0.1.0\",\n    \"ir\": \"blake3:00\",\n    \"bindings\": \"blake3:00\"\n  },\n  \"params\": [\n    {\n      \"name\": \"B\",\n      \"path\": \"acme.demo::Part.width\",\n      \"value\": \"5\",\n      \"unit\": \"in\"\n    }\n  ]\n}\n",
+  "native_unit": "mm"
+}

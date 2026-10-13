@@ -1,0 +1,38 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "note-order",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "note order is literal, emit point, citation; emit= is absent when the point is nominal",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"note\": \"1/4in emit=mmc @\\\"ASTM B209\\\"\""
+        ],
+        "excludes": [
+          "@\\\"ASTM B209\\\" emit=",
+          "emit=mmc 1/4in"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"note\": \"1/4in @\\\"ASTM B209\\\"\""
+        ],
+        "excludes": [
+          "emit="
+        ]
+      }
+    }
+  }
+}

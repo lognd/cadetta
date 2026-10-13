@@ -1,0 +1,49 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "shape",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "top-level keys are schema, header, params, in that order; the schema tag is cadetta.params/1",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"schema\": \"cadetta.params/1\""
+        ],
+        "excludes": [
+          "\"schema\": \"cadetta.params/2\"",
+          "cadetta.ir/1"
+        ],
+        "order": [
+          "\"schema\"",
+          "\"header\"",
+          "\"params\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"params\""
+        ],
+        "excludes": [
+          "\"schema\": \"cadetta.ir/1\"",
+          "\"design\""
+        ],
+        "order": [
+          "\"schema\"",
+          "\"header\"",
+          "\"params\""
+        ]
+      }
+    }
+  }
+}

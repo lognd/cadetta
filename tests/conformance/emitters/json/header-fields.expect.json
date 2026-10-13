@@ -1,0 +1,43 @@
+{
+  "spec": "1.4",
+  "doc": "emitters/json",
+  "section": "emitters/json.md 1",
+  "rule": "header",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "header carries adapter version, IR digest and bindings digest, in that key order",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"adapter\": \"json 0.1.0\"",
+          "\"ir\": \"blake3:",
+          "\"bindings\": \"blake3:"
+        ],
+        "excludes": [],
+        "order": [
+          "\"adapter\"",
+          "\"ir\"",
+          "\"bindings\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"10\""
+        ],
+        "excludes": [
+          "cadetta emit",
+          "' cadetta"
+        ]
+      }
+    }
+  }
+}
