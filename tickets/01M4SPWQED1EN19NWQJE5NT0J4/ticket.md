@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given semantic attributes (process, role, rule roles, default), when digested, then they enter the own digest; display, emit, allow and lifecycle date text do not (ir.md 4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an interface-typed slot, when an instance closure is computed, then it includes the part node's own digest so a swap stales that slot only (ir.md 4)"
