@@ -627,16 +627,6 @@ C002 `undecided` (warning). `require` is a check that carries a citation
 to an external requirement and is tracked as an obligation
 (obligations.md).
 
-Decisions (cadetta-sema `checks`): a condition is a comparison chain,
-`x satisfies P`, or `and`/`or`/`not` over those, combined with Kleene
-logic over the three verdicts. A bound is named syntactically, bare
-(`P`, in the enclosing component) or as `Item.P`, since bounds are not
-value members; where a parameter and a bound share a name, `P.min` and
-`P.max` read the parameter and `satisfies P` reads the bound. A bound's
-limits are the nominals of its expressions. `for x in` ranges over an
-array literal now, and over a `part` array once parts are evaluated. A
-`require` carries its own citation, else its component's.
-
 A `require` is never suppressed. Its verdict is evaluated like any
 check. An attestation is sign-off on a verdict, never a waiver: it
 discharges the sign-off obligation of a `holds` require (O003) and
