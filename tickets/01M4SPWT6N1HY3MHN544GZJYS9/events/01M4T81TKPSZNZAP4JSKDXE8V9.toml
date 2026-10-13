@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/kind.rs", "docs/schemas/explain.json", "docs/schemas/units.json", "docs/spec/config-cli.md"]
+new = ["crates/cadetta-cli/src/cmd/{ir,explain,units}.rs", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-units/src/units.rs", "crates/cadetta-units/src/kind.rs", "docs/schemas/explain.json", "docs/schemas/units.json", "docs/spec/config-cli.md", "Cargo.lock"]
+at = "2026-10-13T09:03:41Z"
+actor = "lognd"
+rev = 1
