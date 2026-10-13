@@ -2,12 +2,12 @@
 id = "01M4TQJJK40BJQTA59SMC5WD33"
 title = "Wire lint rule families (D, F, L, M, N, S, T, P, W, Q, O) into the check driver"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:35:03Z"
-updated = "2026-10-13T13:35:03Z"
+updated = "2026-10-13T13:43:37Z"
 idempotency_key = "wire-lints"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-lint/src/**", "docs/spec/lints.md"]
 
