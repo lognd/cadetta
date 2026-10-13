@@ -1,0 +1,16 @@
+kind = "create"
+title = "Re-expression 'p in D' and G003"
+type = "story"
+category = "todo"
+priority = "medium"
+points = 5
+parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
+persona = "design engineer"
+capability = "compare positions across parts"
+idempotency_key = "replan14:geo-in"
+labels = ["creates:crates/cadetta-geometry/src/reexpress.rs"]
+scope = ["crates/cadetta-geometry/src/reexpress.rs"]
+acceptance = ["Given p in D inside a part, when evaluated, then p is carried through the component's own datums (geometry.md 3)", "Given an assembly, when p in D crosses parts, then it composes the placements on the path (geometry.md 3, 4)", "Given a conversion out of an unplaced part, or re-typing where the model lacks the part or its placement, when evaluated, then G003 is raised (geometry.md 3, 4, 7)", "Given an array, when mapped with in, then every element is converted; a Point2 on d becomes a Point3 at z = 0 of d (geometry.md 3)"]
+at = "2026-10-13T05:41:54Z"
+actor = "lognd"
+rev = 1
