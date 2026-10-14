@@ -8,7 +8,7 @@ points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:44:39Z"
-updated = "2026-10-14T13:29:50Z"
+updated = "2026-10-14T13:30:08Z"
 persona = "design engineer"
 capability = "review a change before merging"
 idempotency_key = "replan14:ob-since"
@@ -21,5 +21,5 @@ target = "01M4ST8F7B9VYMFSCJD8MVBJNS"
 
 [[acceptance]]
 text = "Given two evaluations (git REV or worktree), when diffed, then changed nodes, stale obligations, flipped verdicts and CAD files to re-sync are reported (obligations.md 5; config-cli.md 3)"
-bound = false
+bound = true
 +++
