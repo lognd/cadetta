@@ -2,7 +2,8 @@
 id = "01M4TRBJ7D2JTGX6XX94BJ1ZGM"
 title = "sema evaluator cannot evaluate std ScrewJoint (parameterized components, table index, table-by-name defaults)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
