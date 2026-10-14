@@ -25,7 +25,7 @@ target = "01M4SWMCT03T7KB7HZRJXRXM2Y"
 
 [[acceptance]]
 text = "Given CAD values changed since adoption, when import --update runs, then a diff of .cdt literal edits is printed; only literals are edited, expressions never (adapters.md 7.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given --write, when run, then sources are rewritten and the lock updated; otherwise nothing is written (config-cli.md 3)"

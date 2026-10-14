@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:10:24Z"
+digest = "b72c6c99aa58e1658b072d1b5a5e289e51f0c61b435b8b0e2c0f680c58edfe6e"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.71s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9401e781-8177-4882-a2ae-dcf91d5ded2e with nextest profile: default
+    Starting 1 test across 45 binaries (1200 tests skipped)
+        PASS [   0.004s] cadetta-adapter import::update::tests::update_edits_only_literals
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 1200 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "update_edits_only_literals"
+size = 894
+status = "measured"
+test_count = 1
+tests_digest = "e4d3e57b43b3912518f51897f178d8c5df0ea9bd0f2d8584109703811247c252"
+at = "2026-10-14T21:10:24Z"
+actor = "lognd"
+rev = 1
