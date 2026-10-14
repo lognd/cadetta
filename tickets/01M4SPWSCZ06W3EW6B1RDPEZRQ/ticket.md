@@ -2,7 +2,8 @@
 id = "01M4SPWSCZ06W3EW6B1RDPEZRQ"
 title = "FreeCAD adapter skeleton and initialize"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
