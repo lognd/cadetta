@@ -2,7 +2,8 @@
 id = "01M4SPWTDD069AXXQBXD4T6ATZ"
 title = "cadetta sync"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
