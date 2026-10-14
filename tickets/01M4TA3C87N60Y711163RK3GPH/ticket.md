@@ -16,6 +16,10 @@ bound = false
 [[acceptance]]
 text = "cadetta check is clean of R lints when the CAD value matches the design"
 bound = false
+
+[[acceptance]]
+text = "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value"
+bound = false
 +++
 
 found while working ~E631Y52. check drift is an injectable hook, default no-op.
