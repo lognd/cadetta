@@ -1,12 +1,12 @@
 +++
 id = "01M4TA3C87N60Y711163RK3GPH"
-title = "Adapter read/drift lints (R rules) not implemented"
+title = "Wire adapter read/drift lints (R001-R005, R008-R010) into check"
 type = "bug"
 category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:12:09Z"
+updated = "2026-10-14T23:12:16Z"
 scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[acceptance]]

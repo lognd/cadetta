@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Adapter read/drift lints (R rules) not implemented"
+new = "Wire adapter read/drift lints (R001-R005, R008-R010) into check"
+at = "2026-10-14T23:12:16Z"
+actor = "lognd"
+rev = 1
