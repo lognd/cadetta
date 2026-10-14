@@ -2,7 +2,8 @@
 id = "01M4XE4KFVQ24QF7QMXPBQGCFY"
 title = "cadetta lock verify CLI verb with --format json (report and schema landed in 0DM3P8Y)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
