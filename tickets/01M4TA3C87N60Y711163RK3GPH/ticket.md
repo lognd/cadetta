@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:12:08Z"
+updated = "2026-10-14T23:12:09Z"
 scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
@@ -19,6 +19,10 @@ bound = false
 
 [[acceptance]]
 text = "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value"
+bound = false
+
+[[acceptance]]
+text = "cadetta check reports R005 (warning) for a binding whose path matches no IR path"
 bound = false
 +++
 

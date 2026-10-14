@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["cadetta check spawns each readable adapter and reports R001 when the CAD value and the design both moved from the lock base", "cadetta check is clean of R lints when the CAD value matches the design", "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value"]
+new = ["cadetta check spawns each readable adapter and reports R001 when the CAD value and the design both moved from the lock base", "cadetta check is clean of R lints when the CAD value matches the design", "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value", "cadetta check reports R005 (warning) for a binding whose path matches no IR path"]
+moved = [1, 2, 3]
+at = "2026-10-14T23:12:09Z"
+actor = "lognd"
+rev = 1
