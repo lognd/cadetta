@@ -2,7 +2,8 @@
 id = "01M4W47VHXH1PBPKTF87FQCBH8"
 title = "emit never skips a rewrite when only the header differs (same_modulo_header unused)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
