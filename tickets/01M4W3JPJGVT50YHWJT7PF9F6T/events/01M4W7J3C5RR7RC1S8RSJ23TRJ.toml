@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "needs a frob Rust-provider crate exclude (requested from frob-v2); PYO3_PYTHON via .cargo/config.toml builds but the test binary cannot load uv's libpython"
+at = "2026-10-14T03:33:39Z"
+actor = "lognd"
+rev = 1
