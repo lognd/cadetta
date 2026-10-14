@@ -12,7 +12,7 @@ use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
 use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::citation::{SOURCE_ROLE, check_citation, citation_id};
-use cadetta_obligations::graph::ObligationState;
+use cadetta_obligations::graph::{ObligationKind, ObligationState};
 use cadetta_obligations::lock::Lock;
 use cadetta_obligations::roles::Policy;
 
@@ -89,10 +89,14 @@ fn lint_config(config: &Config) -> Result<LintConfig, String> {
     Ok(cfg)
 }
 
-/// One `check` obligation per IR check that some role covers.
+/// One obligation per IR check and `ots` component that some role covers; cite items are left
+/// to S004 alone, never O001/O002 (obligations.md 2.3).
+// frob:ticket 01M4TA3C5QWZ2NH70V6QN4PR7X
 fn candidates(analysis: &Analysis, policy: &Policy) -> Vec<Candidate> {
     let mut out = universe::candidates(&universes(analysis));
-    out.retain(|c| !policy.roles_covering(&c.id).is_empty());
+    out.retain(|c| {
+        c.id.kind() != ObligationKind::Citation && !policy.roles_covering(&c.id).is_empty()
+    });
     out
 }
 

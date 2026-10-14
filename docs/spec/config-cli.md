@@ -162,7 +162,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `impact --swap SLOT ALT` | Swap preview (obligations.md 5.1). `SLOT` is a canonical path (`acme.rover::Rover/wheel`), `ALT` a qualified component name. | reads | verdict `blocked` | `swap.json` |
 | `swap SLOT ALT --reason "..."` | Apply the swap preview's suggested edit to source and write a `swap` lock record (obligations.md 3). | writes source, `cadetta.lock` | verdict `blocked` (nothing written) | `swap.json` |
 | `compare IFACE` | Implementers of an interface side by side. | reads | never | `compare.json` |
-| `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations. | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
+| `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations: every `check`, every `ots` component and every cite item an `ots` reaches (`citation:PATH`). | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
 | `ack SELECTOR --role R --reason "..." [--baseline] [--release] [--dry-run] [--as EMAIL]` | Attest at current digests; `--baseline` records reason `baseline` (obligations.md 4); `waiver:GLOB` records reviewed waivers' digests. | writes `cadetta.lock` | never | `ack.json` |
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
 | `cite pin NAME [--as-of DATE]` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |

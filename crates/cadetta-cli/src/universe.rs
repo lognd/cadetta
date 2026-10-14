@@ -14,6 +14,7 @@ use cadetta_ir::digest::{DigestError, DigestGraph, check_digest};
 use cadetta_ir::model::{
     Check, Citation, ComponentClass, Digest, Project as IrProject, VerdictState,
 };
+use cadetta_obligations::citation::citation_id;
 use cadetta_obligations::graph::{ObligationId, ObligationKind, Verdict};
 use cadetta_obligations::lock::Attest;
 use cadetta_obligations::staleness::Judgement;
@@ -265,20 +266,49 @@ pub fn universes(analysis: &Analysis) -> Vec<Universe> {
         .collect()
 }
 
-/// The `obligations` candidates: one per IR check, judged against closure digests.
+/// The `obligations` candidates: every IR check, every `ots` component and every cite item an
+/// `ots` reaches, judged against closure digests (obligations.md 2.2).
+// frob:ticket 01M4TA3C5QWZ2NH70V6QN4PR7X
 pub fn candidates(universes: &[Universe]) -> Vec<Candidate> {
-    universes
+    let checks = universes.iter().flat_map(|u| &u.checks).map(|e| Candidate {
+        id: e.id.clone(),
+        current: e.covered.clone(),
+        deps: e.deps.clone(),
+        judgement: Some(judgement(e)),
+        suppressed: false,
+        nearest_changed: None,
+    });
+    let ots = universes.iter().flat_map(|u| &u.ots).map(|e| Candidate {
+        id: e.id.clone(),
+        current: e.covered.clone(),
+        deps: e.deps.clone(),
+        judgement: Some(Judgement {
+            verdict: Verdict::Holds,
+            margin: NO_MARGIN.to_owned(),
+        }),
+        suppressed: false,
+        nearest_changed: None,
+    });
+    let mut seen = BTreeSet::new();
+    let citations = universes
         .iter()
-        .flat_map(|u| &u.checks)
-        .map(|e| Candidate {
-            id: e.id.clone(),
-            current: e.covered.clone(),
-            deps: e.deps.clone(),
-            judgement: Some(judgement(e)),
+        .flat_map(|u| &u.ots)
+        .flat_map(|e| &e.citations)
+        .filter(|c| seen.insert(c.path.clone()))
+        .map(|c| Candidate {
+            id: citation_id(&c.path),
+            current: c.digest.clone(),
+            deps: Vec::new(),
+            judgement: Some(Judgement {
+                verdict: Verdict::Holds,
+                margin: NO_MARGIN.to_owned(),
+            }),
             suppressed: false,
             nearest_changed: None,
-        })
-        .collect()
+        });
+    let out: Vec<Candidate> = checks.chain(ots).chain(citations).collect();
+    tracing::debug!(count = out.len(), "universe: obligation candidates");
+    out
 }
 
 /// The `ack` candidates: one sign-off per IR check.
@@ -442,6 +472,58 @@ mod tests {
     }
 
     const OTS_SRC: &str = "cite spec: document {\n  title = \"Spec\"\n  date = \"2026-01-01\"\n  file = \"docs/spec.txt\"\n}\nots Tube @spec {\n  od = 20mm @spec:\"p.1\"\n}\n";
+
+    // frob:ticket 01M4TA3C5QWZ2NH70V6QN4PR7X
+    // frob:tests crates/cadetta-cli/src/universe.rs::candidates
+    #[test]
+    fn obligations_enumerates_ots_and_citation_kinds() {
+        let dir = Dir::new();
+        std::fs::create_dir_all(dir.0.join("docs")).unwrap();
+        std::fs::write(dir.0.join("docs/spec.txt"), "one").unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), OTS_SRC).unwrap();
+        let ids = |v: &Value| -> Vec<String> {
+            v["obligations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| r["id"].as_str().unwrap().to_owned())
+                .collect()
+        };
+        let v = run(obligations::run_obligations, &dir, &[]);
+        let open = ids(&v);
+        assert!(open.contains(&"ots:acme.axle::Tube".to_owned()), "{v}");
+        assert!(open.contains(&"citation:acme.axle::spec".to_owned()), "{v}");
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            format!("{toml}[obligations.roles.source]\ncovers = [\"ots:acme.axle::**\", \"citation:acme.axle::**\"]\n"),
+        )
+        .unwrap();
+        run(
+            ack::run_ack,
+            &dir,
+            &[
+                "ots:acme.axle::Tube",
+                "--role",
+                "source",
+                "--reason",
+                "ok",
+                "--as",
+                "ana@x",
+            ],
+        );
+        let v = run(obligations::run_obligations, &dir, &[]);
+        assert!(ids(&v).is_empty(), "{v}");
+        std::fs::write(dir.0.join("docs/spec.txt"), "two").unwrap();
+        let v = run(obligations::run_obligations, &dir, &[]);
+        let rows = v["obligations"].as_array().unwrap();
+        let cit = rows
+            .iter()
+            .find(|r| r["id"] == "citation:acme.axle::spec")
+            .unwrap_or_else(|| panic!("{v}"));
+        assert_eq!(cit["state"], "stale", "{v}");
+        assert!(!ids(&v).contains(&"ots:acme.axle::Tube".to_owned()), "{v}");
+    }
 
     // frob:ticket 01M4VB63M63PQVRKN0HDXQP567
     // frob:tests crates/cadetta-cli/src/cmd/ack.rs::run_ack
