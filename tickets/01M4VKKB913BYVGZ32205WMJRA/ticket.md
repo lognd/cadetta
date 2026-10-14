@@ -2,7 +2,8 @@
 id = "01M4VKKB913BYVGZ32205WMJRA"
 title = "frob pytest provider does not use the binding's virtualenv"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
