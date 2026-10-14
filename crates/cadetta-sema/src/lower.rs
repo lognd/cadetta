@@ -368,6 +368,34 @@ impl Cx<'_> {
         Some(out)
     }
 
+    /// The numeric members of the parameterized instances declared in `comp` (`Box/j.depth`).
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn lower_instance_members(&self, comp: &CanonPath) -> Vec<Member> {
+        let ev = self.input.evaluation;
+        let mut out = Vec::new();
+        for (k, e) in &ev.values {
+            let is_instance_member = k.item_only() == *comp
+                && k.parts.len() == 1
+                && k.parts[0].index.is_none()
+                && k.members.len() == 1;
+            if !is_instance_member {
+                continue;
+            }
+            let Some(path) = ir_path(k) else { continue };
+            let Some(value) = evaluated_value(ev, &self.owners, k, e, "") else {
+                continue;
+            };
+            let mut m = Member::new(path, MemberKind::Param);
+            m.private = ev.instance_private.contains(k);
+            m.analysis = e.analysis;
+            m.value = Some(value);
+            m.provenance = Provenance::Derived;
+            out.push(m);
+        }
+        trace!(component = %comp, members = out.len(), "lower: instance members");
+        out
+    }
+
     /// The variant values of `canon` that differ from the primary value.
     fn differing_variants(
         &self,
@@ -560,6 +588,8 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                         comp.parts.extend(cx.lower_part(&canon, src, p));
                     }
                 }
+                // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+                comp.members.extend(cx.lower_instance_members(&canon));
                 cx.lower_geometry(&canon, src, c, &mut comp);
                 comp.fits = input
                     .fits
