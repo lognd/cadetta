@@ -37,5 +37,5 @@ bound = true
 
 [[acceptance]]
 text = "Given angle_between(a, b), when evaluated, then it returns an Angle that is inexact and conservative (geometry.md 5.1)"
-bound = false
+bound = true
 +++
