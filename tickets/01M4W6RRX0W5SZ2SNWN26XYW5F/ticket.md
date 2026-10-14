@@ -2,12 +2,12 @@
 id = "01M4W6RRX0W5SZ2SNWN26XYW5F"
 title = "Python InitializeResult lacks the optional features field"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T03:19:49Z"
-updated = "2026-10-14T03:19:49Z"
+updated = "2026-10-14T05:17:29Z"
 scope = ["bindings/python/**"]
 
 [[acceptance]]
