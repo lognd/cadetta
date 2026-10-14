@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:58:55Z"
+digest = "c20c1d6964b0c1ae12c3cc27ec1a52a004473363a0b8dfd5ef1234004418cde8"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test ir_corpus_is_not_empty has been running for over 60 seconds
+test ir_fixtures_match_the_spec has been running for over 60 seconds
+test ir_fixtures_match_the_spec ... ok
+test ir_corpus_is_not_empty ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.34s
+
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.65s
+     Running ../../tests/conformance_ir.rs (target/debug/deps/conformance_ir-1a367836d97a35fd)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_ir"
+size = 674
+status = "measured"
+at = "2026-10-14T05:58:55Z"
+actor = "Claude"
+rev = 1
