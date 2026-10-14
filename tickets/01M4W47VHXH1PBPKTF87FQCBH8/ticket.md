@@ -4,9 +4,10 @@ title = "emit never skips a rewrite when only the header differs (same_modulo_he
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-14T02:35:38Z"
-updated = "2026-10-14T02:35:38Z"
+updated = "2026-10-14T03:08:18Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs"]
 
 [[acceptance]]
