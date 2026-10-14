@@ -365,6 +365,17 @@ actually flips needs two evaluations (`--since`, `--swap`). A path with no
 dependents prints `PATH: no dependents` (JSON: empty arrays); an undefined
 path is a usage error (exit 2).
 
+`impact --since REV` and `impact --worktree` diff two evaluations: `--since
+REV` compiles the project as of git REV (via `git archive`, no checkout is
+touched) against the working tree; `--worktree` alone compares `HEAD` with
+the working tree. The report (schema `impact-since.json`, id
+`cadetta.impact-since/1`) has four sections: changed nodes (members,
+solvers, checks; added, removed or modified), obligations affected (a
+changed solver or its dependents `stale`, a changed check `may_flip`, a
+check whose verdict differs `flipped`), verdicts flipped (old and new), and
+CAD files to re-sync (bindings whose member changed or depends on a
+changed member). An empty diff prints `no changes`.
+
 `obligations --stale` prints per row: obligation id, role, last
 attester, age, nearest changed dep, and when the verdict is unchanged
 "verdict unchanged, margin 0.012mm -> 0.010mm", so re-review is cheap.

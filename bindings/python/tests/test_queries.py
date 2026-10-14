@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 from cadetta import Project, ProjectError
-from cadetta.models import compare, impact, obligations, swap, why
+from cadetta.models import compare, impact, impact_since, obligations, swap, why
 from cadetta.models.diag import Severity
 from cadetta.queries import CheckReport
 from typani import Err, Ok
@@ -169,6 +169,33 @@ def test_obligations_model_and_flags(
     assert seen == [
         ["obligations", "--stale", "--role", "r", "--release", "--as-of", "2026-10-13"]
     ]
+
+
+SINCE = {
+    "schema": "cadetta.impact-since/1",
+    "since": "HEAD~1",
+    "changed_nodes": [{"path": OD, "kind": "member", "change": "modified"}],
+    "obligations": [{"id": "check:acme.rover::Axle.thin", "effect": "flipped"}],
+    "verdicts_flipped": [
+        {"path": "acme.rover::Axle.thin", "old": "pass", "new": "fail"}
+    ],
+    "cad_resync": [{"file": "rover.FCStd", "paths": [OD]}],
+}
+
+
+# frob:tests bindings/python/python/cadetta/project.py::Project.impact_since kind=unit
+# frob:tests bindings/python/python/cadetta/queries.py::impact_since kind=unit
+def test_impact_since_model_and_flags(
+    project: Project, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`impact --since REV` / `--worktree` is an ImpactSince model."""
+    seen = _canned(project, monkeypatch, SINCE)
+    got = project.impact_since("HEAD~1").unwrap()
+    assert isinstance(got, impact_since.ImpactSince)
+    assert got.cad_resync[0].file == "rover.FCStd"
+    assert got.changed_nodes[0].change == impact_since.Change.modified
+    project.impact_since().unwrap()
+    assert seen == [["impact", "--since", "HEAD~1"], ["impact", "--worktree"]]
 
 
 # frob:tests bindings/python/python/cadetta/project.py::Project.impact_swap kind=unit

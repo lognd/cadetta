@@ -11,6 +11,7 @@ pub mod emit;
 pub mod explain;
 pub mod fmt;
 pub mod impact;
+pub mod impact_since;
 pub mod impact_swap;
 pub mod import;
 pub mod init;
@@ -48,7 +49,7 @@ pub use units::run_units;
 pub use update::run_update;
 pub use why::run_why;
 
-/// Run `cadetta impact`: `--swap PART NEW` previews a part swap, otherwise `PATH` queries
+/// Run `cadetta impact`: `--swap PART NEW` previews a part swap, `--since REV` / `--worktree` diffs two evaluations, otherwise `PATH` queries
 /// downstream dependents.
 pub fn run_impact(
     args: &[String],
@@ -58,6 +59,9 @@ pub fn run_impact(
 ) -> u8 {
     match args.split_first() {
         Some((flag, rest)) if flag == "--swap" => impact_swap::run_swap(rest, globals, out, err),
+        Some((flag, _)) if flag == "--since" || flag == "--worktree" => {
+            impact_since::run_since(args, globals, out, err)
+        }
         _ => impact::run_impact(args, globals, out, err),
     }
 }

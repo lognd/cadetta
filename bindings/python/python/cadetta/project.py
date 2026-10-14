@@ -33,6 +33,7 @@ from cadetta.models import (
     why,
 )
 from cadetta.models import bind as bind_model
+from cadetta.models import impact_since as since_model
 from cadetta.result import JSON_EXITS, report_from_exit
 
 __all__ = [
@@ -393,6 +394,12 @@ class Project:
     def impact(self, path: str) -> Result[impact.ImpactOutput, ProjectError]:
         """The downstream dependents of a member (`impact PATH`)."""
         return queries.impact_of(self, path)
+
+    def impact_since(
+        self, since: str | None = None
+    ) -> Result[since_model.ImpactSince, ProjectError]:
+        """Diff two evaluations: REV vs the working tree, or HEAD vs it when None."""
+        return queries.impact_since(self, since)
 
     def impact_swap(self, slot: str, alternate: str) -> Result[swap.Swap, ProjectError]:
         """Preview swapping `slot` to `alternate` (`impact --swap`)."""

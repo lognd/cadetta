@@ -157,7 +157,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `why PATH` | Upstream derivation. | reads | never | `why.json` |
 | `why --stale OBLIGATION` | Nearest changed upstream node, old and new values. | reads, lock | never | `why.json` |
 | `impact PATH` | Downstream effects of changing PATH. | reads | never | `impact.json` |
-| `impact --since REV` / `--worktree` | Diff of two evaluations: changed nodes, stale obligations, flipped verdicts, CAD files to re-sync. | reads, git | never | `impact.json` |
+| `impact --since REV` / `--worktree` | Diff of two evaluations: changed nodes, stale obligations, flipped verdicts, CAD files to re-sync. | reads, git | never | `impact-since.json` |
 | `impact --swap SLOT ALT` | Swap preview (obligations.md 5.1). `SLOT` is a canonical path (`acme.rover::Rover/wheel`), `ALT` a qualified component name. | reads | verdict `blocked` | `swap.json` |
 | `swap SLOT ALT --reason "..."` | Apply the swap preview's suggested edit to source and write a `swap` lock record (obligations.md 3). | writes source, `cadetta.lock` | verdict `blocked` (nothing written) | `swap.json` |
 | `compare IFACE` | Implementers of an interface side by side. | reads | never | `compare.json` |
