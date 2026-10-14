@@ -25,6 +25,7 @@ __all__ = [
     "Diagnostic",
     "EmitParams",
     "EmitResult",
+    "Feature",
     "FileDigest",
     "FileState",
     "InitializeParams",
@@ -99,6 +100,16 @@ class RegenState(StrEnum):
     FAILED = "failed"
 
 
+class Feature(StrEnum):
+    """An optional adapter feature declared at initialize (adapters.md 5)."""
+
+    FRAMES = "frames"
+    INSTANCES = "instances"
+    CREATE_FRAMES = "create_frames"
+    TOLERANCES = "tolerances"
+    RENAME_GLOBALS = "rename_globals"
+
+
 class Diagnostic(BaseModel):
     """A cadetta.diag/1 record; location, notes and fixes pass through as data."""
 
@@ -139,6 +150,8 @@ class InitializeResult(_Msg):
     native_units: str
     precision: int
     platforms: list[str]
+    # frob:ticket 01M4W6RRX0W5SZ2SNWN26XYW5F
+    features: list[Feature] | None = None  # None is omitted on the wire: no features
 
 
 class EmitParams(_Msg):

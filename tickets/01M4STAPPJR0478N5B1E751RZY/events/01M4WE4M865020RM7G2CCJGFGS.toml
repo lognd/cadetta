@@ -1,0 +1,8 @@
+kind = "transition"
+from = "in-progress"
+to = "done"
+outcome = "done"
+reason = "audit found no uncited std value; no std change"
+at = "2026-10-14T05:28:28Z"
+actor = "Claude"
+rev = 1

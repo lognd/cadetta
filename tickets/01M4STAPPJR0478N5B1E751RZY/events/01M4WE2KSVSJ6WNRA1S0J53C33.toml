@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T05:27:31Z"
+digest = "898259cf18e39253f791ff2202805a8851eb05ec0cbfbff2677d5b4b4c0c373d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c4395434-27b2-4f42-8635-982980193b2b with nextest profile: default
+    Starting 1 test across 1 binary (125 tests skipped)
+        PASS [   0.008s] cadetta-lint rules::s::tests::s001_fires_when_uncited
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 125 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -E 'test(s001_fires_when_uncited)'"
+size = 544
+status = "measured"
+test_count = 1
+tests_digest = "605831e7f25851b2c6441b6eb69b494e6ecf1d68e8b7a97b511958dc4fd71b3f"
+at = "2026-10-14T05:27:31Z"
+actor = "Claude"
+rev = 1

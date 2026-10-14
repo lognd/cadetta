@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**"]
+new = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
+at = "2026-10-14T05:30:06Z"
+actor = "Claude"
+rev = 1

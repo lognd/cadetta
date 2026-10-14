@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:23:47Z"
+digest = "f5e6cbeb355fc8137779beb141585bfe4d6c3c31faf6c555071742eec31facff"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_adapter.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-272228-0.xml ---------------
+============================== 1 passed in 0.75s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_adapter.py::test_initialize_result_features_round_trip"
+size = 512
+status = "measured"
+test_count = 1
+tests_digest = "482e4740264ec3fd1ad966039c67810fce06970138141a4436173d449db131c2"
+at = "2026-10-14T05:23:47Z"
+actor = "Claude"
+rev = 1
