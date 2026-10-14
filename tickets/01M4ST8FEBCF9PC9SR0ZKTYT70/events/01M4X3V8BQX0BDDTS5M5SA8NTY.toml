@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T11:47:59Z"
+digest = "4149d8abe723f12f8ed3ea05b36023391b65eb3e43907898a05ebf661544f50f"
+provider = "file"
+ref = "docs/schemas/diag.json"
+size = 7442
+status = "measured"
+at = "2026-10-14T11:47:59Z"
+actor = "Claude"
+rev = 1

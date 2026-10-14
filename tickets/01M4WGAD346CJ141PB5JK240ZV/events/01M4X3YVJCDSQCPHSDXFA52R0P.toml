@@ -1,0 +1,5 @@
+kind = "changelog-exempt"
+reason = "internal refactor, no user-visible change"
+at = "2026-10-14T11:49:57Z"
+actor = "Claude"
+rev = 1

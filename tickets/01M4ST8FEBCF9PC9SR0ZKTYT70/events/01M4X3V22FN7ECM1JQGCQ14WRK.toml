@@ -1,0 +1,49 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T11:47:04Z"
+digest = "0da365c7d192c0bcde1cfac0f56abdc595dece189b2a41689093772db05af67d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d1f11092-98c7-406a-8933-642141da49c9 with nextest profile: default
+    Starting 13 tests across 11 binaries (247 tests skipped)
+        PASS [   0.068s] cadetta cmd::impact_swap::tests::json_validates_against_swap_schema
+        PASS [   0.074s] cadetta cmd::ack::tests::json_validates_against_ack_schema
+        PASS [   0.084s] cadetta cmd::impact::tests::json_validates_against_impact_schema
+        PASS [   0.093s] cadetta cmd::obligations::tests::json_validates_against_obligations_schema
+        PASS [   0.016s] cadetta cmd::why::tests::json_validates_against_why_schema
+        PASS [   0.112s] cadetta cmd::check::tests::json_validates_against_check_and_diag_schemas
+        PASS [   0.108s] cadetta cmd::update::tests::json_validates_against_update_schema
+        PASS [   0.140s] cadetta cmd::compare::tests::json_validates_against_compare_schema
+        PASS [   0.149s] cadetta cmd::bind::tests::json_validates_against_bind_schema
+        PASS [   0.193s] cadetta cmd::emit::tests::json_validates_against_emit_schema
+        PASS [   0.202s] cadetta cmd::cite::tests::list_json_validates_against_the_schema
+        PASS [   0.241s] cadetta cmd::names::tests::json_validates_against_names_schema
+        PASS [   0.463s] cadetta cmd::import::tests::json_validates_against_import_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.465s] 13 tests run: 13 passed, 247 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta json_validates_against"
+size = 2535
+status = "measured"
+test_count = 13
+tests_digest = "f537b0eb1b49da59529d21024d33b3eadca75d613e1fa124eb91c8cba021dc48"
+at = "2026-10-14T11:47:04Z"
+actor = "Claude"
+rev = 1

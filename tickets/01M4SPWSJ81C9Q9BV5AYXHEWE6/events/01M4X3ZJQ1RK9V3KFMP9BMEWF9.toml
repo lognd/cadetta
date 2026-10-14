@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T11:50:20Z"
+digest = "09cff11d4ca51a32ce5f3dc07a857a3ddcb35831eb49508e71b64d6c3512a080"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+adapters/freecad/tests/unit/test_read.py .                               [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-269510-0.xml ---------------
+============================== 1 passed in 0.64s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_read.py::test_driven_dimension_is_inexact_with_a_reason"
+size = 513
+status = "measured"
+test_count = 1
+tests_digest = "6b584aa60c6dae329f7201d298582b295a360c85627c853c22c4cb686b87890d"
+at = "2026-10-14T11:50:20Z"
+actor = "Claude"
+rev = 1
