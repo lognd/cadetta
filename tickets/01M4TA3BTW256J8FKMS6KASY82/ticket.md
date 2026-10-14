@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema", "crates/cadetta-cli", "docs", "changelog.d", "te
 
 [[acceptance]]
 text = "Resolve errors (E002/E003/E004/E016/E017) carry the module they were raised in"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Evaluation diagnostics carry the module they were raised in"
