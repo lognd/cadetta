@@ -1,0 +1,42 @@
+{
+  "$id": "cadetta.lock/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta lock verify --format json`: every problem found in cadetta.lock.",
+  "properties": {
+    "schema": { "const": "cadetta.lock/1" },
+    "clean": { "description": "True when there are no findings.", "type": "boolean" },
+    "exit_code": { "description": "Process exit status: 1 on any finding, else 0.", "enum": [0, 1] },
+    "findings": {
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "not_canonical",
+              "duplicate_key",
+              "unknown_obligation",
+              "unknown_role",
+              "not_member",
+              "not_distinct",
+              "invalidated"
+            ]
+          },
+          "message": { "description": "Human-readable description.", "type": "string" },
+          "extra": { "description": "duplicate_key: lines lost to the tie rule.", "minimum": 1, "type": "integer" },
+          "id": { "description": "Obligation id `<kind>:<canonical path>`.", "type": "string" },
+          "role": { "type": "string" },
+          "by": { "description": "The attester.", "type": "string" },
+          "recorded": { "description": "invalidated: digest in the lock.", "type": "string" },
+          "current": { "description": "invalidated: current closure digest.", "type": "string" }
+        },
+        "required": ["kind", "message"],
+        "type": "object"
+      }
+    }
+  },
+  "required": ["schema", "clean", "exit_code", "findings"],
+  "title": "LockVerifyOutput",
+  "type": "object"
+}

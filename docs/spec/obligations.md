@@ -264,7 +264,10 @@ Rules:
   and sorted, keys are unique, every `attest` names an existing
   obligation and role and satisfies the role's `members` and
   `distinct_from_author` rules (4), and lists the attestations a merge
-  invalidated and why. Exit 1 on any finding.
+  invalidated and why. Exit 1 on any finding. `--format json` emits the
+  `cadetta.lock/1` report (`docs/schemas/lock.json`): `clean`,
+  `exit_code` and one `findings` entry per problem, each with a stable
+  `kind`, a `message` and the fields of that kind.
 - **`cadetta lock tidy`** drops superseded duplicates and records whose
   obligation no longer exists, and re-sorts. It never drops `swap`.
 
@@ -399,7 +402,7 @@ generated from the Rust types: `diag.json` (the `cadetta.diag/1`
 record, lints.md 1.1), `check.json`, `impact.json`, `swap.json`,
 `compare.json`, `why.json`, `obligations.json` (the
 `cadetta.obligations/1` report, which carries obligation state; state
-is not part of the IR), `ack.json` and `sync.json`. config-cli.md
+is not part of the IR), `ack.json`, `lock.json` (the `lock verify` report) and `sync.json`. config-cli.md
 holds the full command table.
 
 ### 5.1 `impact --swap` semantics

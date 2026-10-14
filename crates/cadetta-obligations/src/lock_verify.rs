@@ -81,6 +81,61 @@ pub enum Finding {
     },
 }
 
+// frob:ticket 01M4X3W8DK8NBX5A3GS0DM3P8Y
+/// Schema tag of the JSON report; the schema is `docs/schemas/lock.json`.
+pub const REPORT_SCHEMA: &str = "cadetta.lock/1";
+
+impl Finding {
+    /// Stable machine-readable kind of the finding (the `kind` field of the JSON report).
+    pub fn kind(&self) -> &'static str {
+        match self {
+            Self::NotCanonical => "not_canonical",
+            Self::DuplicateKey { .. } => "duplicate_key",
+            Self::UnknownObligation(_) => "unknown_obligation",
+            Self::UnknownRole { .. } => "unknown_role",
+            Self::NotMember { .. } => "not_member",
+            Self::NotDistinct { .. } => "not_distinct",
+            Self::Invalidated { .. } => "invalidated",
+        }
+    }
+
+    // frob:ticket 01M4X3W8DK8NBX5A3GS0DM3P8Y
+    /// The finding as a JSON object: `kind`, `message` and the fields its variant carries.
+    pub fn to_json(&self) -> serde_json::Value {
+        let mut v = serde_json::json!({"kind": self.kind(), "message": self.to_string()});
+        let obj = v.as_object_mut().expect("json! object literal");
+        let mut put = |k: &str, val: serde_json::Value| {
+            obj.insert(k.to_owned(), val);
+        };
+        match self {
+            Self::NotCanonical => {}
+            Self::DuplicateKey { extra } => put("extra", (*extra).into()),
+            Self::UnknownObligation(id) => put("id", id.to_string().into()),
+            Self::UnknownRole { id, role } => {
+                put("id", id.to_string().into());
+                put("role", role.as_str().into());
+            }
+            Self::NotMember { id, role, by } | Self::NotDistinct { id, role, by } => {
+                put("id", id.to_string().into());
+                put("role", role.as_str().into());
+                put("by", by.as_str().into());
+            }
+            Self::Invalidated {
+                id,
+                role,
+                recorded,
+                current,
+            } => {
+                put("id", id.to_string().into());
+                put("role", role.as_str().into());
+                put("recorded", recorded.as_str().into());
+                put("current", current.as_str().into());
+            }
+        }
+        v
+    }
+}
+
 impl fmt::Display for Finding {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -126,6 +181,18 @@ impl VerifyReport {
     /// Process exit status: 1 on any finding, else 0.
     pub fn exit_code(&self) -> i32 {
         i32::from(!self.is_clean())
+    }
+
+    // frob:ticket 01M4X3W8DK8NBX5A3GS0DM3P8Y
+    /// The `cadetta lock verify --format json` report (`docs/schemas/lock.json`).
+    pub fn to_json(&self) -> serde_json::Value {
+        debug!(findings = self.findings.len(), "rendering lock verify report");
+        serde_json::json!({
+            "schema": REPORT_SCHEMA,
+            "clean": self.is_clean(),
+            "exit_code": self.exit_code(),
+            "findings": self.findings.iter().map(Finding::to_json).collect::<Vec<_>>(),
+        })
     }
 
     /// The attestations invalidated by a merge or later change.
@@ -263,6 +330,42 @@ mod tests {
                 .iter()
                 .any(|f| matches!(f, Finding::NotDistinct { .. }))
         );
+    }
+
+    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::VerifyReport::to_json
+    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::Finding::to_json
+    #[test]
+    fn json_report_validates_against_lock_schema() {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../docs/schemas/lock.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let mut c = ctx("aaaa");
+        c.roles.insert(
+            "r".into(),
+            RolePolicy {
+                members: Some(vec!["ok@y".into()]),
+                distinct_from_author: true,
+            },
+        );
+        c.authors.insert(oid("check:a"), "me@y".into());
+        let text = format!(
+            "{}{}{}",
+            line("check:z", "aaaa", "ok@y"),
+            line("check:a", "bbbb", "me@y"),
+            line("check:a", "bbbb", "me@y")
+        );
+        let rep = verify_text(&text, &c).unwrap();
+        let v = rep.to_json();
+        assert!(validator.is_valid(&v), "{v}");
+        assert_eq!(v["clean"], false);
+        assert_eq!(v["exit_code"], 1);
+        assert!(v["findings"].as_array().unwrap().len() >= 5);
+        let clean = verify_text(&line("check:a", "aaaa", "x@y"), &ctx("aaaa"))
+            .unwrap()
+            .to_json();
+        assert!(validator.is_valid(&clean), "{clean}");
+        assert_eq!(clean["clean"], true);
+        assert_eq!(clean["findings"].as_array().unwrap().len(), 0);
     }
 
     // frob:tests crates/cadetta-obligations/src/lock_verify.rs::verify_text
