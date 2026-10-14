@@ -52,6 +52,10 @@ path = "../../tests/conformance_solvers.rs"
 name = "conformance_stdlib"
 path = "../../tests/conformance_stdlib.rs"
 
+[[test]]
+name = "conformance_lints"
+path = "../../tests/conformance_lints.rs"
+
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true
