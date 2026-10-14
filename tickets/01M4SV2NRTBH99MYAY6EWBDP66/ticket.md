@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-14T11:51:30Z"
+updated = "2026-10-14T11:53:06Z"
 persona = "Python user"
 capability = "run queries and get typed results"
 outcome_text = "CI scripts can gate on impact and compare"
 labels = ["creates:bindings/python/python/cadetta/queries.py", "creates:bindings/python/tests/test_queries.py"]
-scope = ["bindings/python/python/cadetta/queries.py", "bindings/python/tests/test_queries.py"]
+scope = ["bindings/python/python/cadetta/queries.py", "bindings/python/tests/test_queries.py", "bindings/python/python/cadetta/project.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/*.py"]
 
 [[links]]
 kind = "blocked-by"
