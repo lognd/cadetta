@@ -1,0 +1,1294 @@
+//! frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+//! `cadetta sync`: classify every bound locator three-way, push the design-owned
+//! changes through a drive adapter, rebuild, read back and record the lock
+//! (config-cli.md 3, 3.1; adapters.md 2, 2.1).
+//!
+//! An adapter that declares `drive` is driven through [`DriveSession`]; any other
+//! adapter falls back to `emit` plus printed manual instructions. Values are compared
+//! as normalized `{number}{unit}` text; differing units are compared textually.
+
+use std::collections::{BTreeMap, BTreeSet};
+use std::io::{BufRead, Write};
+use std::path::{Path as FsPath, PathBuf};
+
+use cadetta_adapter::builtin::sw_equations::{
+    ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
+};
+use cadetta_adapter::policy::resolve_point;
+use cadetta_adapter::rpc::client::ProcessClient;
+use cadetta_adapter::rpc::{
+    CapabilityName, ChangedParam, Client, PushMode, PushStatus, ReadParams, ReadSource, RegenState,
+};
+use cadetta_adapter::scope::Scope as AdapterScope;
+use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
+use cadetta_adapter::sync::{
+    Backend, Entry, Lock as EngineLock, Options, PushItem, R003, ReadBack, Verb, run,
+};
+use cadetta_ir::model::{LocatorMode, Project as Ir, Sign};
+use cadetta_obligations::lock::{Hex, Lock as FileLock, Record, SyncedFile, SyncedValue};
+use cadetta_units::UnitTable;
+use serde::Serialize;
+use serde_json::{Value as Json, json};
+
+use crate::cmd::emit::{
+    EmitArgs, EmitReport, attr_point, config_point, emit_package, kind_of, load_bindings,
+    locators_for, native_unit, negate_text, package_ir, written_for,
+};
+use crate::cmd::import::program;
+use crate::config::{Adapter, SaveMode};
+use crate::output::Format;
+use crate::pipeline::analyze;
+use crate::project::{PackageDir, Project};
+use crate::scope::{Glob, Scope as RunScope};
+use crate::{EXIT_FAIL, EXIT_OK, EXIT_USAGE, Globals};
+
+const USAGE: &str = "usage: cadetta sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]";
+
+/// Diagnostic codes that make `sync` exit 1 (config-cli.md 3).
+const BLOCKING: [&str; 9] = [
+    "R001", "R004", "R009", "R010", "Q004", "R013", "R014", "R015", "R016",
+];
+
+/// The parsed command line of `cadetta sync`.
+#[derive(Debug, Default, PartialEq, Eq)]
+pub struct SyncArgs {
+    /// Print every planned push; write nothing.
+    pub dry_run: bool,
+    /// `--only` canonical-path globs (repeatable).
+    pub only: Vec<String>,
+    /// Push over R001.
+    pub force_design: bool,
+    /// Push without rebuilding; the lock is not updated.
+    pub no_regen: bool,
+    /// `--module` prefixes (repeatable).
+    pub modules: Vec<String>,
+    /// Adapter ids; empty means every configured adapter.
+    pub adapters: Vec<String>,
+}
+
+/// Parse the words after `sync`; unknown flags are usage errors.
+pub fn parse_args(args: &[String]) -> Result<SyncArgs, String> {
+    let mut parsed = SyncArgs::default();
+    let mut it = args.iter();
+    while let Some(arg) = it.next() {
+        match arg.as_str() {
+            "--dry-run" => parsed.dry_run = true,
+            "--force-design" => parsed.force_design = true,
+            "--no-regen" => parsed.no_regen = true,
+            "--only" => parsed
+                .only
+                .push(it.next().ok_or("`--only` needs a glob")?.clone()),
+            "--module" => parsed
+                .modules
+                .push(it.next().ok_or("`--module` needs a path")?.clone()),
+            flag if flag.starts_with('-') => return Err(format!("unknown flag `{flag}`")),
+            id => parsed.adapters.push(id.to_owned()),
+        }
+    }
+    Ok(parsed)
+}
+
+/// One locator line of the report.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct SyncRecord {
+    /// Adapter id.
+    pub adapter: String,
+    /// Native file.
+    pub file: String,
+    /// Canonical parameter path.
+    pub path: String,
+    /// Native locator.
+    pub locator: String,
+    /// `push|skip|drift|converged|fail`.
+    pub verb: String,
+    /// The previous value (lock base, else what the CAD held).
+    pub old: String,
+    /// The design value.
+    pub new: String,
+}
+
+/// A diagnostic of the run.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct SyncDiag {
+    /// Rule code.
+    pub code: String,
+    /// Message.
+    pub message: String,
+}
+
+/// Rebuild outcome of one pushed file.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct RegenRecord {
+    /// Native file.
+    pub file: String,
+    /// `ok`, `failed` or `skipped`.
+    pub status: String,
+}
+
+/// Manual steps for an adapter without `drive`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct Manual {
+    /// Adapter id.
+    pub adapter: String,
+    /// What the user does by hand.
+    pub instructions: String,
+}
+
+/// The `sync.json` document (config-cli.md 3.1).
+#[derive(Debug, Default, Serialize)]
+pub struct SyncReport {
+    /// One record per in-scope locator.
+    pub records: Vec<SyncRecord>,
+    /// Diagnostics.
+    pub diagnostics: Vec<SyncDiag>,
+    /// Per-file rebuild status.
+    pub regen: Vec<RegenRecord>,
+    /// Files emitted by non-drive fallbacks.
+    pub emitted: Vec<String>,
+    /// Manual instructions for non-drive adapters.
+    pub manual: Vec<Manual>,
+    /// Whether `cadetta.lock` was written.
+    pub lock_written: bool,
+}
+
+impl SyncReport {
+    fn diag(&mut self, code: &str, message: impl Into<String>) {
+        let message = message.into();
+        tracing::warn!(code, %message, "sync diagnostic");
+        self.diagnostics.push(SyncDiag {
+            code: code.to_owned(),
+            message,
+        });
+    }
+
+    /// True when the run must exit 1.
+    pub fn failed(&self) -> bool {
+        self.diagnostics
+            .iter()
+            .any(|d| BLOCKING.contains(&d.code.as_str()))
+            || self.records.iter().any(|r| r.verb == "fail")
+    }
+}
+
+/// A value found in a native file: `(file, native name)` with its text and expression.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct Observed {
+    file: String,
+    native: String,
+    text: String,
+    expr: Option<String>,
+}
+
+/// Default native unit per `(adapter, locator)`.
+type UnitMap = BTreeMap<(String, String), String>;
+
+/// Per-run state shared by the adapters of a project.
+struct Ctx<'a> {
+    args: &'a SyncArgs,
+    run_scope: &'a RunScope,
+    lock: &'a mut FileLock,
+    lock_changed: bool,
+    report: &'a mut SyncReport,
+}
+
+/// Normalize `text` to `{number}{unit}`; `default_unit` fills a missing unit.
+///
+/// Text that does not start with a number is trimmed and kept as is.
+fn normalize(text: &str, default_unit: &str) -> String {
+    let t = text.trim();
+    let b = t.as_bytes();
+    let mut i = 0;
+    if i < b.len() && (b[i] == b'-' || b[i] == b'+') {
+        i += 1;
+    }
+    let digits_from = i;
+    while i < b.len() && (b[i].is_ascii_digit() || b[i] == b'.') {
+        i += 1;
+    }
+    if i == digits_from {
+        return t.to_owned();
+    }
+    if i < b.len() && (b[i] == b'e' || b[i] == b'E') {
+        let mut j = i + 1;
+        if j < b.len() && (b[j] == b'-' || b[j] == b'+') {
+            j += 1;
+        }
+        let exp_from = j;
+        while j < b.len() && b[j].is_ascii_digit() {
+            j += 1;
+        }
+        if j > exp_from {
+            i = j;
+        }
+    }
+    let mut num = t[..i].trim_start_matches('+').to_owned();
+    if num.contains('.') && !num.contains(['e', 'E']) {
+        num = num.trim_end_matches('0').trim_end_matches('.').to_owned();
+    }
+    if num == "-0" || num.is_empty() {
+        num = "0".to_owned();
+    }
+    let unit = t[i..].trim();
+    let unit = if unit.is_empty() { default_unit } else { unit };
+    format!("{num}{unit}")
+}
+
+/// Flatten an adapter's `observed` JSON into `(file, native name, authored, expr)` rows.
+fn observe(observed: &Json) -> Vec<Observed> {
+    let projects: Vec<&Json> = match observed {
+        Json::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    let mut rows = Vec::new();
+    for member in projects
+        .iter()
+        .filter_map(|p| p.get("components").and_then(Json::as_array))
+        .flatten()
+        .filter_map(|c| c.get("members").and_then(Json::as_array))
+        .flatten()
+    {
+        let imported = member.get("provenance").and_then(|p| p.get("imported"));
+        let text = |v: Option<&Json>, k: &str| {
+            v.and_then(|v| v.get(k))
+                .and_then(Json::as_str)
+                .map(str::to_owned)
+        };
+        let (Some(file), Some(native)) = (text(imported, "file"), text(imported, "native_name"))
+        else {
+            continue;
+        };
+        let Some(authored) = text(member.get("value"), "authored") else {
+            continue;
+        };
+        rows.push(Observed {
+            file,
+            native,
+            text: authored,
+            expr: member.get("expr").and_then(Json::as_str).map(str::to_owned),
+        });
+    }
+    tracing::debug!(rows = rows.len(), "sync: observed values flattened");
+    rows
+}
+
+/// Expand an adapter's `files` globs (relative to the package) to absolute paths.
+fn expand_files(pkg: &PackageDir, adapter: &Adapter) -> Vec<String> {
+    let mut out = BTreeSet::new();
+    for pattern in &adapter.files {
+        if !pattern.contains('*') {
+            out.insert(pkg.dir.join(pattern).to_string_lossy().into_owned());
+            continue;
+        }
+        let Ok(glob) = Glob::new(pattern) else {
+            tracing::warn!(%pattern, "sync: bad file glob skipped");
+            continue;
+        };
+        let prefix: PathBuf = pattern
+            .split('/')
+            .take_while(|s| !s.contains('*'))
+            .collect();
+        let mut stack = vec![pkg.dir.join(prefix)];
+        while let Some(dir) = stack.pop() {
+            let Ok(read) = std::fs::read_dir(&dir) else {
+                continue;
+            };
+            for entry in read.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    stack.push(path);
+                } else if let Ok(rel) = path.strip_prefix(&pkg.dir)
+                    && glob.matches(&rel.to_string_lossy())
+                {
+                    out.insert(path.to_string_lossy().into_owned());
+                }
+            }
+        }
+    }
+    out.into_iter().collect()
+}
+
+/// A diagnostic record's `(code, message)`.
+fn diag_parts(v: &Json) -> (String, String) {
+    let s = |k: &str| {
+        v.get(k)
+            .and_then(Json::as_str)
+            .unwrap_or_default()
+            .to_owned()
+    };
+    (s("code"), s("message"))
+}
+
+/// The `Backend` that drives a live session: push, optional rebuild, read back.
+struct SessionBackend<R: BufRead, W: Write> {
+    session: DriveSession<R, W>,
+    default_unit: UnitMap,
+    regen: Vec<RegenRecord>,
+    diags: Vec<SyncDiag>,
+    failure: Option<String>,
+}
+
+impl<R: BufRead, W: Write> SessionBackend<R, W> {
+    fn note(&mut self, code: &str, message: String) {
+        self.diags.push(SyncDiag {
+            code: code.to_owned(),
+            message,
+        });
+    }
+
+    fn fail(&mut self, e: &cadetta_adapter::session::SessionError) {
+        tracing::error!(error = %e, "sync: session step failed");
+        match e.code() {
+            Some(code) => self.note(code, e.to_string()),
+            None => self.failure = Some(e.to_string()),
+        }
+    }
+
+    fn adapter_diags(&mut self, records: &[cadetta_adapter::rpc::DiagRecord]) {
+        for r in records {
+            let (code, message) = diag_parts(&r.0);
+            // R006 is raised by the engine from the observed expression.
+            if code != "R006" && !code.is_empty() {
+                self.note(&code, message);
+            }
+        }
+    }
+}
+
+impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
+    fn push(
+        &mut self,
+        adapter: &str,
+        file: &str,
+        items: &[PushItem],
+        regen: bool,
+    ) -> Vec<ReadBack> {
+        let params = items
+            .iter()
+            .map(|i| ChangedParam {
+                path: i.path.clone(),
+                value: json!(i.value),
+                locator: i.locator.clone(),
+                mode: PushMode::Value,
+                ref_to: None,
+                tolerance: None,
+            })
+            .collect();
+        let result = match self.session.push(file, params) {
+            Ok(r) => r,
+            Err(e) => {
+                self.fail(&e);
+                return Vec::new();
+            }
+        };
+        self.adapter_diags(&result.diagnostics);
+        if regen {
+            let status = match self.session.regen(&[file.to_owned()]) {
+                Ok(r) => {
+                    self.adapter_diags(&r.diagnostics);
+                    if r.targets.iter().any(|t| t.status == RegenState::Failed) {
+                        self.note("R004", format!("rebuild of `{file}` failed"));
+                        "failed"
+                    } else {
+                        "ok"
+                    }
+                }
+                Err(e) => {
+                    self.fail(&e);
+                    "failed"
+                }
+            };
+            self.regen.push(RegenRecord {
+                file: file.to_owned(),
+                status: status.to_owned(),
+            });
+        } else {
+            self.regen.push(RegenRecord {
+                file: file.to_owned(),
+                status: "skipped".to_owned(),
+            });
+        }
+        let rows = match self.session.read() {
+            Ok(r) => observe(&r.observed),
+            Err(e) => {
+                self.fail(&e);
+                return Vec::new();
+            }
+        };
+        let unit_for = |locator: &str| {
+            self.default_unit
+                .get(&(adapter.to_owned(), locator.to_owned()))
+                .cloned()
+                .unwrap_or_default()
+        };
+        result
+            .statuses
+            .iter()
+            .map(|s| {
+                let value = (s.status == PushStatus::Pushed)
+                    .then(|| {
+                        rows.iter()
+                            .find(|o| o.file == file && o.native == s.locator)
+                            .map(|o| normalize(&o.text, &unit_for(&s.locator)))
+                    })
+                    .flatten();
+                ReadBack {
+                    locator: s.locator.clone(),
+                    value,
+                    tolerance: None,
+                }
+            })
+            .collect()
+    }
+}
+
+/// A backend for runs where nothing is pushed.
+struct NoBackend;
+
+impl Backend for NoBackend {
+    fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> {
+        unreachable!("no push was planned")
+    }
+}
+
+/// Build the three-way entries of one adapter from the design IR and the native read.
+fn build_entries(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    observed: &[Observed],
+    ctx: &mut Ctx<'_>,
+) -> Option<(Vec<Entry>, UnitMap)> {
+    let (set, _) = match load_bindings(pkg, adapter, ir) {
+        Ok(loaded) => loaded,
+        Err(d) => {
+            ctx.report.diag(&d.code, d.message);
+            return None;
+        }
+    };
+    let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
+    let table = UnitTable::builtin();
+    let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
+    let cfg_point = config_point(pkg.config.emit.point);
+    let mut entries = Vec::new();
+    let mut units = BTreeMap::new();
+    let mut clean = true;
+    for member in ir.components.iter().flat_map(|c| &c.members) {
+        let canonical = member.path.to_string();
+        let Some(value) = &member.value else { continue };
+        if member.analysis || !scope.accepts(&canonical) || !ctx.run_scope.contains(&canonical) {
+            continue;
+        }
+        let Some(locators) = locators_for(&set, &member.path) else {
+            continue;
+        };
+        let kind = kind_of(value);
+        let point = resolve_point(&[attr_point(member)], cfg_point);
+        for loc in locators {
+            if loc.for_alternate.is_some() || loc.mode == LocatorMode::Ref {
+                tracing::debug!(path = %canonical, locator = %loc.locator, "sync: locator not synced (alternate or ref mode)");
+                continue;
+            }
+            let unit = native_unit(adapter, loc);
+            let written = match written_for(&table, value, member, &unit, kind, point, precision) {
+                Ok(Some(w)) => w,
+                Ok(None) => continue,
+                Err((code, message)) => {
+                    clean = false;
+                    ctx.report.diag(code, format!("{canonical}: {message}"));
+                    continue;
+                }
+            };
+            let written = if loc.sign == Some(Sign::Minus) {
+                negate_text(&written)
+            } else {
+                written
+            };
+            let default_unit = if kind == ValueKind::Quantity {
+                unit
+            } else {
+                String::new()
+            };
+            let Some(found) = observed.iter().find(|o| o.native == loc.locator) else {
+                ctx.report.diag(
+                    R003,
+                    format!(
+                        "{canonical}: native item `{}` is not in the CAD files",
+                        loc.locator
+                    ),
+                );
+                continue;
+            };
+            units.insert(
+                (adapter.id().to_owned(), loc.locator.clone()),
+                default_unit.clone(),
+            );
+            let key = cadetta_obligations::lock::Record::SyncedValue(SyncedValue {
+                adapter: adapter.id().to_owned(),
+                path: canonical.clone(),
+                locator: loc.locator.clone(),
+                value: String::new(),
+            })
+            .key();
+            let base = match ctx.lock.get(&key) {
+                Some(Record::SyncedValue(v)) => Some(v.value.clone()),
+                _ => None,
+            };
+            entries.push(Entry {
+                adapter: adapter.id().to_owned(),
+                file: found.file.clone(),
+                path: canonical.clone(),
+                locator: loc.locator.clone(),
+                base,
+                ours: normalize(&written, &default_unit),
+                theirs: normalize(&found.text, &default_unit),
+                replaces: found.expr.clone(),
+                ours_tol: None,
+                theirs_tol: None,
+            });
+        }
+    }
+    tracing::info!(adapter = %adapter.id(), entries = entries.len(), "sync: entries built");
+    clean.then_some((entries, units))
+}
+
+/// Store the engine's changed `synced` values into the lock file model.
+fn apply_lock(ctx: &mut Ctx<'_>, before: &EngineLock, after: &EngineLock) {
+    for ((adapter, path, locator), value) in after {
+        if before.get(&(adapter.clone(), path.clone(), locator.clone())) == Some(value) {
+            continue;
+        }
+        let rec = Record::SyncedValue(SyncedValue {
+            adapter: adapter.clone(),
+            path: path.clone(),
+            locator: locator.clone(),
+            value: value.clone(),
+        });
+        // Tie rule: remove the old key first so the new value always wins.
+        ctx.lock.remove(&rec.key());
+        ctx.lock.insert(rec);
+        ctx.lock_changed = true;
+        tracing::info!(%adapter, %path, %locator, "sync: lock value recorded");
+    }
+}
+
+fn to_records(report: &cadetta_adapter::sync::Report, out: &mut SyncReport) {
+    for r in &report.records {
+        let theirs = r.entry.theirs_record();
+        out.records.push(SyncRecord {
+            adapter: r.entry.adapter.clone(),
+            file: r.entry.file.clone(),
+            path: r.entry.path.clone(),
+            locator: r.entry.locator.clone(),
+            verb: r.verb.to_string(),
+            old: r.entry.base.clone().unwrap_or(theirs),
+            new: r.entry.ours_record(),
+        });
+    }
+    for d in &report.diagnostics {
+        out.diag(d.code, d.message.clone());
+    }
+}
+
+/// Sync one drive-capable adapter over an already initialized `client`.
+fn drive_adapter<R: BufRead, W: Write>(
+    client: Client<R, W>,
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    ctx: &mut Ctx<'_>,
+) -> Result<(), String> {
+    let id = adapter.id().to_owned();
+    let files = expand_files(pkg, adapter);
+    if files.is_empty() {
+        let _ = client.shutdown();
+        return Err(format!("adapter `{id}` has no `files` to read"));
+    }
+    let mut client = client;
+    let read = client.read(&ReadParams {
+        source: ReadSource::Files(files),
+    });
+    let read = match read {
+        Ok(r) => r,
+        Err(e) => {
+            let _ = client.shutdown();
+            return Err(format!("adapter `{id}` read failed: {e}"));
+        }
+    };
+    let observed = observe(&read.observed);
+    let Some((entries, units)) = build_entries(pkg, adapter, ir, &observed, ctx) else {
+        let _ = client.shutdown();
+        return Ok(());
+    };
+    let mut engine_lock: EngineLock = ctx
+        .lock
+        .records()
+        .filter_map(|r| match r {
+            Record::SyncedValue(v) if v.adapter == id => Some((
+                (v.adapter.clone(), v.path.clone(), v.locator.clone()),
+                v.value.clone(),
+            )),
+            _ => None,
+        })
+        .collect();
+    let before = engine_lock.clone();
+    let opts = Options {
+        dry_run: true,
+        only: ctx.args.only.clone(),
+        no_regen: ctx.args.no_regen,
+        force_design: ctx.args.force_design,
+        adapters: vec![id.clone()],
+    };
+    let plan = run(&entries, &opts, &mut NoBackend, &mut before.clone());
+    let pushed_files: Vec<String> = plan
+        .records
+        .iter()
+        .filter(|r| r.verb == Verb::Push)
+        .map(|r| r.entry.file.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect();
+    if ctx.args.dry_run || pushed_files.is_empty() {
+        let real = if ctx.args.dry_run {
+            plan
+        } else {
+            // Nothing to push: record converged values, never open a session or rebuild.
+            let real = run(
+                &entries,
+                &Options {
+                    dry_run: false,
+                    ..opts
+                },
+                &mut NoBackend,
+                &mut engine_lock,
+            );
+            apply_lock(ctx, &before, &engine_lock);
+            real
+        };
+        to_records(&real, ctx.report);
+        if let Err(e) = client.shutdown() {
+            tracing::warn!(error = %e, "sync: adapter shutdown failed");
+        }
+        return Ok(());
+    }
+    let mut session = match DriveSession::open(client, &pushed_files) {
+        Ok(s) => s,
+        Err(e) => {
+            let code = e.code().unwrap_or("R009");
+            ctx.report.diag(code, e.to_string());
+            to_records(&plan, ctx.report);
+            return Ok(());
+        }
+    };
+    let _ = &mut session;
+    let mut backend = SessionBackend {
+        session,
+        default_unit: units,
+        regen: Vec::new(),
+        diags: Vec::new(),
+        failure: None,
+    };
+    let real = run(
+        &entries,
+        &Options {
+            dry_run: false,
+            ..opts
+        },
+        &mut backend,
+        &mut engine_lock,
+    );
+    apply_lock(ctx, &before, &engine_lock);
+    to_records(&real, ctx.report);
+    ctx.report.regen.append(&mut backend.regen);
+    let blocked = backend.failure.is_some()
+        || real.records.iter().any(|r| r.verb == Verb::Fail)
+        || backend
+            .diags
+            .iter()
+            .any(|d| ["R004", "R009", "R010"].contains(&d.code.as_str()));
+    ctx.report.diagnostics.append(&mut backend.diags);
+    let mut session = backend.session;
+    let mode = match adapter.save {
+        SaveMode::AfterSync => SessionSaveMode::AfterSync,
+        SaveMode::Never => SessionSaveMode::Never,
+    };
+    let mut failure = backend.failure;
+    if mode == SessionSaveMode::AfterSync && !blocked && !ctx.args.no_regen {
+        match session.save() {
+            Ok(saved) => record_saved(ctx, pkg, &id, &saved),
+            Err(e) => failure = Some(e.to_string()),
+        }
+    } else {
+        tracing::info!(
+            ?mode,
+            blocked,
+            no_regen = ctx.args.no_regen,
+            "sync: save skipped"
+        );
+    }
+    if let Err(e) = session.finish() {
+        tracing::warn!(error = %e, "sync: closing the session failed");
+    }
+    failure.map_or(Ok(()), |f| Err(format!("adapter `{id}`: {f}")))
+}
+
+/// Record the saved file digests as `synced file=` lock records.
+fn record_saved(
+    ctx: &mut Ctx<'_>,
+    pkg: &PackageDir,
+    adapter: &str,
+    saved: &cadetta_adapter::rpc::SaveResult,
+) {
+    for f in &saved.files {
+        let hex = f.digest.strip_prefix("blake3:").unwrap_or(&f.digest);
+        let Ok(digest) = Hex::new(hex) else {
+            tracing::warn!(file = %f.path, "sync: unusable digest not recorded");
+            continue;
+        };
+        let rel = FsPath::new(&f.path)
+            .strip_prefix(&pkg.dir)
+            .map_or_else(|_| f.path.clone(), |p| p.to_string_lossy().into_owned());
+        let rec = Record::SyncedFile(SyncedFile {
+            adapter: adapter.to_owned(),
+            file: rel,
+            digest,
+        });
+        ctx.lock.remove(&rec.key());
+        ctx.lock.insert(rec);
+        ctx.lock_changed = true;
+    }
+}
+
+/// The by-hand steps for an adapter that cannot be driven.
+fn instructions(adapter: &Adapter, emitted: Option<&str>) -> String {
+    if adapter.name == SW_EQUATIONS && adapter.command.is_none() {
+        let file = emitted.map_or_else(
+            || {
+                adapter
+                    .out
+                    .clone()
+                    .unwrap_or_else(|| format!("build/solidworks/{}.txt", adapter.id()))
+            },
+            str::to_owned,
+        );
+        format!(
+            "In SOLIDWORKS open Tools > Equations, choose Link to external file and select `{file}`, then rebuild (Ctrl+B)."
+        )
+    } else {
+        format!(
+            "`{}` does not declare `drive`: update its native files by hand from the design values, then run `cadetta check`.",
+            adapter.id()
+        )
+    }
+}
+
+/// Fall back to emit plus manual instructions (no classification, nothing pushed).
+fn manual_adapter(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_>) {
+    let mut emitted = None;
+    if !ctx.args.dry_run && adapter.command.is_none() {
+        let mut report = EmitReport::default();
+        let parsed = EmitArgs {
+            adapters: vec![adapter.id().to_owned()],
+            ..EmitArgs::default()
+        };
+        emit_package(pkg, ir, &parsed, ctx.run_scope, &mut report);
+        for f in report.files {
+            emitted = Some(f.path.clone());
+            ctx.report.emitted.push(f.path);
+        }
+        for d in report.diagnostics {
+            ctx.report.diag(&d.code, d.message);
+        }
+    }
+    tracing::info!(adapter = %adapter.id(), "sync: no drive, manual instructions");
+    ctx.report.manual.push(Manual {
+        adapter: adapter.id().to_owned(),
+        instructions: instructions(adapter, emitted.as_deref()),
+    });
+}
+
+/// Run one adapter of a package; `Err` is a usage/IO/adapter failure (exit 2).
+fn sync_adapter(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    ctx: &mut Ctx<'_>,
+) -> Result<(), String> {
+    let Some(command) = &adapter.command else {
+        manual_adapter(pkg, adapter, ir, ctx);
+        return Ok(());
+    };
+    let (path, argv) = program(pkg, command)
+        .ok_or_else(|| format!("adapter `{}` has an empty command", adapter.id()))?;
+    tracing::info!(adapter = %adapter.id(), "sync: starting adapter");
+    let client = ProcessClient::spawn(&path, &argv, adapter.version.as_deref())
+        .map_err(|e| format!("R008: could not start adapter `{}`: {e}", adapter.id()))?;
+    if client.info().capabilities.contains(&CapabilityName::Drive) {
+        drive_adapter(client, pkg, adapter, ir, ctx)
+    } else {
+        if let Err(e) = client.shutdown() {
+            tracing::warn!(error = %e, "sync: adapter shutdown failed");
+        }
+        manual_adapter(pkg, adapter, ir, ctx);
+        Ok(())
+    }
+}
+
+fn render_text(report: &SyncReport, dry_run: bool) -> String {
+    let mut s = String::new();
+    for r in &report.records {
+        s.push_str(&format!(
+            "{}  {}  {}  {} -> {}\n",
+            r.verb, r.path, r.locator, r.old, r.new
+        ));
+    }
+    for d in &report.diagnostics {
+        s.push_str(&format!("{}: {}\n", d.code, d.message));
+    }
+    let count = |v: &str| report.records.iter().filter(|r| r.verb == v).count();
+    s.push_str(&format!(
+        "{}{} pushed, {} skipped, {} drift, {} converged, {} failed\n",
+        if dry_run { "dry run: " } else { "" },
+        count("push"),
+        count("skip"),
+        count("drift"),
+        count("converged"),
+        count("fail"),
+    ));
+    for r in &report.regen {
+        s.push_str(&format!("regen  {}  {}\n", r.file, r.status));
+    }
+    for f in &report.emitted {
+        s.push_str(&format!("wrote {f}\n"));
+    }
+    for m in &report.manual {
+        s.push_str(&format!("manual  {}: {}\n", m.adapter, m.instructions));
+    }
+    s
+}
+
+/// Run `cadetta sync`; `args` are the words after the verb. Returns the exit code.
+pub fn run_sync(
+    args: &[String],
+    globals: &Globals,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
+    let fail = |err: &mut dyn Write, message: &str| {
+        tracing::error!(%message, "sync failed");
+        let _ = writeln!(err, "error: {message}");
+        EXIT_USAGE
+    };
+    let parsed = match parse_args(args) {
+        Ok(p) => p,
+        Err(message) => return fail(err, &format!("{message}; {USAGE}")),
+    };
+    let run_scope = match RunScope::new(&parsed.modules, &parsed.only) {
+        Ok(s) => s,
+        Err(e) => return fail(err, &format!("{e}; {USAGE}")),
+    };
+    let (project, scope) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
+        Ok(opened) => opened,
+        Err(e) => return fail(err, &e.to_string()),
+    };
+    let known: BTreeSet<&str> = scope
+        .iter()
+        .flat_map(|i| project.packages[*i].config.adapters.iter().map(Adapter::id))
+        .collect();
+    if let Some(unknown) = parsed.adapters.iter().find(|a| !known.contains(a.as_str())) {
+        return fail(err, &format!("no adapter `{unknown}` in cadetta.toml"));
+    }
+    let analysis = analyze(&project, &scope);
+    if analysis.halted {
+        return fail(err, "a syntax error stopped analysis; run `cadetta check`");
+    }
+    let lock_path = project.root.join("cadetta.lock");
+    let mut lock = match FileLock::load(&lock_path) {
+        Ok(l) => l,
+        Err(e) => return fail(err, &format!("could not read cadetta.lock: {e}")),
+    };
+    let mut report = SyncReport::default();
+    let mut lock_changed = false;
+    for index in &scope {
+        let pkg = &project.packages[*index];
+        let ir = match package_ir(&analysis, pkg) {
+            Ok(ir) => ir,
+            Err(message) => return fail(err, &message),
+        };
+        for adapter in &pkg.config.adapters {
+            if !parsed.adapters.is_empty() && !parsed.adapters.iter().any(|a| a == adapter.id()) {
+                continue;
+            }
+            let mut ctx = Ctx {
+                args: &parsed,
+                run_scope: &run_scope,
+                lock: &mut lock,
+                lock_changed: false,
+                report: &mut report,
+            };
+            let result = sync_adapter(pkg, adapter, &ir, &mut ctx);
+            lock_changed |= ctx.lock_changed;
+            if let Err(message) = result {
+                return fail(err, &message);
+            }
+        }
+    }
+    if lock_changed && !parsed.dry_run && !parsed.no_regen {
+        match lock.save(&lock_path) {
+            Ok(_) => report.lock_written = true,
+            Err(e) => return fail(err, &format!("could not write cadetta.lock: {e}")),
+        }
+    }
+    let rendered = match globals.format {
+        Format::Json => serde_json::to_string_pretty(&report).map_err(|e| e.to_string()),
+        _ => Ok(render_text(&report, parsed.dry_run)),
+    };
+    match rendered {
+        Ok(text) => {
+            let _ = writeln!(out, "{}", text.trim_end());
+        }
+        Err(e) => return fail(err, &format!("could not render the report: {e}")),
+    }
+    if report.failed() { EXIT_FAIL } else { EXIT_OK }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Cursor;
+
+    /// A self-removing scratch directory.
+    struct Dir(PathBuf);
+    impl Dir {
+        fn new() -> Self {
+            static N: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+            let n = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let p = std::env::temp_dir().join(format!("cadetta-sync-{}-{n}", std::process::id()));
+            std::fs::create_dir_all(&p).unwrap();
+            Self(p)
+        }
+    }
+    impl Drop for Dir {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+
+    const SOURCE: &str = "model CoverPlate {\n  thickness: Length = 6mm\n}\n";
+    const BINDINGS: &str = "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"Plate_Thk\", kind = \"global\", native_unit = \"mm\" } ]\n";
+    const PATH: &str = "acme.plate::CoverPlate.thickness";
+
+    fn project(extra: &str) -> Dir {
+        let dir = Dir::new();
+        let toml = format!(
+            "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"sw-equations\"\nid = \"equations\"\n{extra}"
+        );
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        std::fs::create_dir_all(dir.0.join("src")).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), SOURCE).unwrap();
+        std::fs::create_dir_all(dir.0.join("bindings")).unwrap();
+        std::fs::write(dir.0.join("bindings/equations.toml"), BINDINGS).unwrap();
+        dir
+    }
+
+    fn run(dir: &Dir, format: Format, args: &[&str]) -> (u8, String, String) {
+        let args: Vec<String> = args.iter().map(|a| (*a).to_owned()).collect();
+        let globals = Globals {
+            format,
+            cwd: Some(dir.0.clone()),
+            config: None,
+        };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = run_sync(&args, &globals, &mut out, &mut err);
+        (
+            code,
+            String::from_utf8(out).unwrap(),
+            String::from_utf8(err).unwrap(),
+        )
+    }
+
+    fn script(results: &[Json]) -> Cursor<Vec<u8>> {
+        let mut out = String::new();
+        for (i, r) in results.iter().enumerate() {
+            out.push_str(&json!({"jsonrpc": "2.0", "id": i + 1, "result": r}).to_string());
+            out.push('\n');
+        }
+        Cursor::new(out.into_bytes())
+    }
+
+    fn init() -> Json {
+        json!({"name": "mock", "version": "1.0.0", "capabilities": ["drive"],
+               "native_units": "mm", "precision": 6, "platforms": ["linux"]})
+    }
+
+    fn observed(text: &str) -> Json {
+        json!({"observed": {"components": [{"members": [{
+            "path": PATH,
+            "provenance": {"imported": {"file": "part.FCStd", "native_name": "Plate_Thk"}},
+            "value": {"authored": text}}]}]}, "diagnostics": []})
+    }
+
+    fn methods(out: &[u8]) -> Vec<String> {
+        String::from_utf8(out.to_vec())
+            .unwrap()
+            .lines()
+            .map(|l| {
+                serde_json::from_str::<Json>(l).unwrap()["method"]
+                    .as_str()
+                    .unwrap()
+                    .to_owned()
+            })
+            .collect()
+    }
+
+    fn pushed(old: &str, new: &str) -> Json {
+        json!({"statuses": [{"locator": "Plate_Thk", "status": "pushed", "old": old, "new": new}],
+               "diagnostics": []})
+    }
+
+    /// Drive one scripted adapter over the temp project; returns report, methods, lock.
+    fn drive(
+        args: &[&str],
+        base: Option<&str>,
+        results: &[Json],
+    ) -> (SyncReport, Vec<String>, FileLock) {
+        let dir = project("files = [\"part.FCStd\"]\n");
+        let args = parse_args(&args.iter().map(|a| (*a).to_owned()).collect::<Vec<_>>()).unwrap();
+        let (proj, scope) = Project::open(Some(&dir.0), None).unwrap();
+        let analysis = analyze(&proj, &scope);
+        let pkg = &proj.packages[scope[0]];
+        let ir = package_ir(&analysis, pkg).unwrap();
+        let mut lock = FileLock::load(&dir.0.join("cadetta.lock")).unwrap();
+        if let Some(b) = base {
+            lock.insert(Record::SyncedValue(SyncedValue {
+                adapter: "equations".into(),
+                path: PATH.into(),
+                locator: "Plate_Thk".into(),
+                value: b.into(),
+            }));
+        }
+        let run_scope = RunScope::new(&args.modules, &args.only).unwrap();
+        let mut report = SyncReport::default();
+        let mut out = Vec::new();
+        let client = Client::connect(script(results), &mut out, None).unwrap();
+        let mut ctx = Ctx {
+            args: &args,
+            run_scope: &run_scope,
+            lock: &mut lock,
+            lock_changed: false,
+            report: &mut report,
+        };
+        drive_adapter(client, pkg, &pkg.config.adapters[0], &ir, &mut ctx).unwrap();
+        (report, methods(&out), lock)
+    }
+
+    fn full_run(readback: &str) -> Vec<Json> {
+        vec![
+            init(),
+            observed("5mm"),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            pushed("5mm", "6mm"),
+            json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
+            observed(readback),
+            json!({"files": [{"path": "part.FCStd", "digest": "blake3:0a"}], "diagnostics": []}),
+            Json::Null,
+            Json::Null,
+        ]
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::normalize
+    #[test]
+    fn normalize_canonicalizes_numbers_and_units() {
+        assert_eq!(normalize("6.0 mm", "mm"), "6mm");
+        assert_eq!(normalize("6.50", "mm"), "6.5mm");
+        assert_eq!(normalize("-0.0mm", "mm"), "0mm");
+        assert_eq!(normalize("+2", ""), "2");
+        assert_eq!(normalize("1e3mm", "mm"), "1e3mm");
+        assert_eq!(normalize(" \"a\" ", "mm"), "\"a\"");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::parse_args
+    #[test]
+    fn parse_args_reads_every_flag() {
+        let a = |v: &[&str]| parse_args(&v.iter().map(|s| (*s).to_owned()).collect::<Vec<_>>());
+        let p = a(&[
+            "--dry-run",
+            "--only",
+            "a::*",
+            "--force-design",
+            "--no-regen",
+            "--module",
+            "m",
+            "fc",
+        ])
+        .unwrap();
+        assert!(p.dry_run && p.force_design && p.no_regen);
+        assert_eq!(
+            (p.only, p.modules, p.adapters),
+            (vec!["a::*".into()], vec!["m".into()], vec!["fc".into()])
+        );
+        assert!(a(&["--bogus"]).is_err());
+        assert!(a(&["--only"]).is_err());
+    }
+
+    // criterion 1: unchanged digest and matching read-back => no write, no regen.
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn unchanged_design_writes_nothing_and_never_regens() {
+        let (report, calls, lock) =
+            drive(&[], Some("6mm"), &[init(), observed("6.0 mm"), Json::Null]);
+        assert_eq!(calls, ["initialize", "read", "shutdown"]);
+        assert!(report.regen.is_empty() && !report.failed(), "{report:?}");
+        assert!(report.records.iter().all(|r| r.verb != "push"));
+        assert_eq!(lock.records().count(), 1);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn design_change_pushes_regens_reads_back_and_saves() {
+        let (report, calls, lock) = drive(&[], Some("5mm"), &full_run("6mm"));
+        assert_eq!(
+            calls,
+            [
+                "initialize",
+                "read",
+                "open",
+                "push",
+                "regen",
+                "read",
+                "save",
+                "close",
+                "shutdown"
+            ]
+        );
+        assert_eq!(report.records[0].verb, "push");
+        assert_eq!(report.regen[0].status, "ok");
+        assert!(!report.failed(), "{report:?}");
+        let key = Record::SyncedValue(SyncedValue {
+            adapter: "equations".into(),
+            path: PATH.into(),
+            locator: "Plate_Thk".into(),
+            value: String::new(),
+        })
+        .key();
+        assert!(matches!(lock.get(&key), Some(Record::SyncedValue(v)) if v.value == "6mm"));
+        assert!(lock.records().any(|r| matches!(r, Record::SyncedFile(_))));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn dry_run_and_no_regen_change_what_is_called() {
+        let (report, calls, lock) = drive(
+            &["--dry-run"],
+            Some("5mm"),
+            &[init(), observed("5mm"), Json::Null],
+        );
+        assert_eq!(calls, ["initialize", "read", "shutdown"]);
+        assert_eq!(report.records[0].verb, "push");
+        assert!(!report.lock_written && lock.records().count() == 1);
+        let results = [
+            init(),
+            observed("5mm"),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            pushed("5mm", "6mm"),
+            observed("6mm"),
+            Json::Null,
+            Json::Null,
+        ];
+        let (report, calls, _) = drive(&["--no-regen"], Some("5mm"), &results);
+        assert_eq!(
+            calls,
+            [
+                "initialize",
+                "read",
+                "open",
+                "push",
+                "read",
+                "close",
+                "shutdown"
+            ]
+        );
+        assert_eq!(report.regen[0].status, "skipped");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn read_back_mismatch_fails_and_skips_save() {
+        let (report, calls, _) = drive(&[], Some("5mm"), &{
+            let mut r = full_run("7mm");
+            r.remove(6);
+            r
+        });
+        assert_eq!(report.records[0].verb, "fail");
+        assert!(report.failed());
+        assert!(!calls.contains(&"save".to_owned()), "{calls:?}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn cad_side_edit_is_drift_and_both_sides_is_r001() {
+        let (report, calls, _) = drive(&[], Some("6mm"), &[init(), observed("5mm"), Json::Null]);
+        assert_eq!(report.records[0].verb, "drift");
+        assert_eq!(calls, ["initialize", "read", "shutdown"]);
+        let (report, _, _) = drive(&[], Some("4mm"), &[init(), observed("5mm"), Json::Null]);
+        assert!(report.failed(), "{report:?}");
+        assert!(report.diagnostics.iter().any(|d| d.code == "R001"));
+    }
+
+    // criterion 2: an adapter without drive gets emit plus manual instructions.
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::manual_adapter
+    #[test]
+    fn adapter_without_drive_emits_and_prints_manual_steps() {
+        let dir = project("");
+        let (code, out, e) = run(&dir, Format::Text, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(dir.0.join("build/solidworks/equations.txt").is_file());
+        assert!(
+            out.contains("manual  equations:") && out.contains("Link to external file"),
+            "{out}"
+        );
+        assert!(out.contains("build/solidworks/equations.txt"), "{out}");
+        let dir = project("");
+        let (code, out, _) = run(&dir, Format::Text, &["--dry-run"]);
+        assert_eq!(code, EXIT_OK);
+        assert!(!dir.0.join("build").exists(), "dry run wrote: {out}");
+        assert!(out.contains("manual  equations:"), "{out}");
+    }
+
+    // criterion 3: usage errors, exit codes and the JSON schema.
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::run_sync
+    #[test]
+    fn usage_errors_exit_2_and_json_matches_schema() {
+        let dir = project("");
+        let (code, _, e) = run(&dir, Format::Text, &["--bogus"]);
+        assert_eq!(code, EXIT_USAGE);
+        assert!(e.contains("unknown flag"), "{e}");
+        let (code, _, e) = run(&dir, Format::Text, &["nope"]);
+        assert_eq!(code, EXIT_USAGE);
+        assert!(e.contains("no adapter `nope`"), "{e}");
+        let schema: Json =
+            serde_json::from_str(include_str!("../../../../docs/schemas/sync.json")).unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        let (code, out, _) = run(&dir, Format::Json, &[]);
+        assert_eq!(code, EXIT_OK);
+        let v: Json = serde_json::from_str(&out).unwrap();
+        assert!(validator.is_valid(&v), "{v}");
+        let report = SyncReport {
+            records: vec![SyncRecord {
+                adapter: "a".into(),
+                file: "f".into(),
+                path: "p".into(),
+                locator: "l".into(),
+                verb: "push".into(),
+                old: "1mm".into(),
+                new: "2mm".into(),
+            }],
+            regen: vec![RegenRecord {
+                file: "f".into(),
+                status: "ok".into(),
+            }],
+            ..SyncReport::default()
+        };
+        assert!(validator.is_valid(&serde_json::to_value(&report).unwrap()));
+        assert!(render_text(&report, false).starts_with("push  p  l  1mm -> 2mm\n"));
+    }
+}

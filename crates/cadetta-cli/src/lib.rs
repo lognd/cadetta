@@ -192,6 +192,8 @@ enum Command {
     /// `bind PATH --adapter ID --locator L --kind K ...` / `bind --remove ...`.
     Bind(Vec<String>),
     Import(Vec<String>),
+    /// `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]`.
+    Sync(Vec<String>),
     /// `lsp`: the language server on stdio.
     Lsp(Vec<String>),
     Unknown(String),
@@ -220,6 +222,7 @@ fn parse(args: &[String]) -> Command {
         Some("names") => Command::Names(args[1..].to_vec()),
         Some("bind") => Command::Bind(args[1..].to_vec()),
         Some("import") => Command::Import(args[1..].to_vec()),
+        Some("sync") => Command::Sync(args[1..].to_vec()),
         Some("lsp") => Command::Lsp(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
@@ -276,6 +279,7 @@ pub fn run_with_env(
         Command::Names(rest) => cmd::run_names(&rest, &globals, out, err),
         Command::Bind(rest) => cmd::run_bind(&rest, &globals, out, err),
         Command::Import(rest) => cmd::run_import(&rest, &globals, out, err),
+        Command::Sync(rest) => cmd::run_sync(&rest, &globals, out, err),
         Command::Lsp(rest) => cmd::run_lsp(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
@@ -325,7 +329,7 @@ mod tests {
 
     #[test]
     fn unknown_argument_is_a_usage_error() {
-        assert_eq!(run_to_string(&["sync"]), (EXIT_USAGE, String::new()));
+        assert_eq!(run_to_string(&["bogus"]), (EXIT_USAGE, String::new()));
     }
 
     fn strings(args: &[&str]) -> Vec<String> {

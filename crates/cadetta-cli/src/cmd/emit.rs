@@ -194,7 +194,7 @@ fn role_of(member: &Member) -> Option<Role> {
 }
 
 /// Prefix `-` on a written decimal (`6.35mm` -> `-6.35mm`), keeping zero unsigned.
-fn negate_text(text: &str) -> String {
+pub(crate) fn negate_text(text: &str) -> String {
     if let Some(rest) = text.strip_prefix('-') {
         return rest.to_owned();
     }
@@ -567,6 +567,22 @@ fn write_file(path: &FsPath, text: &str) -> std::io::Result<String> {
     Ok(text.to_owned())
 }
 
+/// The digested design IR of one package from an analysis (an empty design when it has none).
+// frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+pub(crate) fn package_ir(
+    analysis: &crate::pipeline::Analysis,
+    pkg: &PackageDir,
+) -> Result<Ir, String> {
+    let id = package_id(pkg);
+    let mut ir = analysis
+        .packages
+        .iter()
+        .find(|p| p.name == id.name)
+        .map_or_else(|| Ir::new(Flavour::Design, id.clone()), |p| p.ir.clone());
+    digest_project(&mut ir).map_err(|e| format!("could not digest the IR: {e}"))?;
+    Ok(ir)
+}
+
 /// Run `cadetta emit`; `args` are the words after the verb. Returns the exit code.
 pub fn run_emit(
     args: &[String],
@@ -605,15 +621,10 @@ pub fn run_emit(
     let mut report = EmitReport::default();
     for index in &scope {
         let pkg = &project.packages[*index];
-        let id = package_id(pkg);
-        let mut ir = analysis
-            .packages
-            .iter()
-            .find(|p| p.name == id.name)
-            .map_or_else(|| Ir::new(Flavour::Design, id.clone()), |p| p.ir.clone());
-        if let Err(e) = digest_project(&mut ir) {
-            return fail(err, &format!("could not digest the IR: {e}"));
-        }
+        let ir = match package_ir(&analysis, pkg) {
+            Ok(ir) => ir,
+            Err(message) => return fail(err, &message),
+        };
         emit_package(pkg, &ir, &parsed, &run_scope, &mut report);
     }
     let failed = report
@@ -650,8 +661,49 @@ fn render_text(report: &EmitReport) -> String {
     s
 }
 
+/// Load an adapter's bindings file (missing means nothing bound) and apply `bind = scope`.
+///
+/// Returns the set and the file text, or the R005 / R013 diagnostic that stops the adapter.
+// frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+pub(crate) fn load_bindings(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+) -> Result<(BindingSet, String), EmitDiag> {
+    let bindings_file = pkg.dir.join(adapter.bindings_path());
+    let (mut set, bindings_text) = match std::fs::read_to_string(&bindings_file) {
+        Ok(text) => match BindingSet::load_str(adapter.id(), &text) {
+            Ok(set) => (set, text),
+            Err(e) => return Err(diag("R005", e.to_string(), None)),
+        },
+        Err(_) => {
+            tracing::info!(file = %bindings_file.display(), "bindings: no file, nothing bound");
+            (BindingSet::default(), String::new())
+        }
+    };
+    // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
+    if adapter.bind == BindMode::Scope {
+        let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
+        let package = pkg.config.package.as_ref().and_then(|p| p.name.as_deref());
+        let candidates = scope_candidates(ir, &scope);
+        match set.bind_scope(
+            &candidates,
+            package.unwrap_or_default(),
+            &adapter.prefix,
+            false,
+        ) {
+            Ok(n) => tracing::info!(adapter = %adapter.id(), n, "bind = scope applied"),
+            Err(e) => {
+                tracing::warn!(error = %e, "native name collision (R013)");
+                return Err(diag(R013, e.to_string(), None));
+            }
+        }
+    }
+    Ok((set, bindings_text))
+}
+
 /// Run emit for every selected adapter of one package, appending to `report`.
-fn emit_package(
+pub(crate) fn emit_package(
     pkg: &PackageDir,
     ir: &Ir,
     parsed: &EmitArgs,
@@ -671,39 +723,14 @@ fn emit_package(
             tracing::info!(adapter = %adapter.id(), "emit: built-in not implemented, skipped");
             continue;
         }
-        let bindings_file = pkg.dir.join(adapter.bindings_path());
-        let (mut set, bindings_text) = match std::fs::read_to_string(&bindings_file) {
-            Ok(text) => match BindingSet::load_str(adapter.id(), &text) {
-                Ok(set) => (set, text),
-                Err(e) => {
-                    report.diagnostics.push(diag("R005", e.to_string(), None));
-                    continue;
-                }
-            },
-            Err(_) => {
-                tracing::info!(file = %bindings_file.display(), "emit: no bindings file, nothing bound");
-                (BindingSet::default(), String::new())
+        let (set, bindings_text) = match load_bindings(pkg, adapter, ir) {
+            Ok(loaded) => loaded,
+            Err(d) => {
+                report.diagnostics.push(d);
+                continue;
             }
         };
         let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
-        // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
-        if adapter.bind == BindMode::Scope {
-            let package = pkg.config.package.as_ref().and_then(|p| p.name.as_deref());
-            let candidates = scope_candidates(ir, &scope);
-            match set.bind_scope(
-                &candidates,
-                package.unwrap_or_default(),
-                &adapter.prefix,
-                false,
-            ) {
-                Ok(n) => tracing::info!(adapter = %adapter.id(), n, "emit: bind = scope applied"),
-                Err(e) => {
-                    tracing::warn!(error = %e, "emit: native name collision (R013)");
-                    report.diagnostics.push(diag(R013, e.to_string(), None));
-                    continue;
-                }
-            }
-        }
         let job = Job {
             adapter,
             set: &set,

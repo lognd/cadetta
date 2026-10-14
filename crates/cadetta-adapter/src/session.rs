@@ -6,8 +6,9 @@ use std::fmt;
 use std::io::{BufRead, Write};
 
 use crate::rpc::{
-    ChangedParam, Client, LocatorStatus, OpenParams, PushParams, PushResult, PushStatus, RpcError,
-    SaveResult, SessionParams,
+    ChangedParam, Client, LocatorStatus, OpenParams, PushParams, PushResult, PushStatus,
+    ReadParams, ReadResult, ReadSource, RegenParams, RegenResult, RpcError, SaveResult,
+    SessionParams,
 };
 
 /// Diagnostic code for a dirty, locked or read-only document (adapters.md 2.3).
@@ -140,6 +141,27 @@ impl<R: BufRead, W: Write> DriveSession<R, W> {
         for s in &res.statuses {
             tracing::debug!(file, locator = %s.locator, status = ?s.status, "locator pushed");
         }
+        Ok(res)
+    }
+
+    // frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+    /// Rebuilds `targets` (all files when empty) so dependent geometry recomputes (R004 on failure).
+    pub fn regen(&mut self, targets: &[String]) -> Result<RegenResult, SessionError> {
+        let res = self.client.regen(&RegenParams {
+            session: self.handle.clone(),
+            targets: targets.to_vec(),
+        })?;
+        tracing::info!(targets = targets.len(), "session regenerated");
+        Ok(res)
+    }
+
+    // frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+    /// Reads the session's documents as they are now (the read-back after a push).
+    pub fn read(&mut self) -> Result<ReadResult, SessionError> {
+        let res = self.client.read(&ReadParams {
+            source: ReadSource::Session(self.handle.clone()),
+        })?;
+        tracing::debug!("session read back");
         Ok(res)
     }
 

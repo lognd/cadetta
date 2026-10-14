@@ -351,7 +351,7 @@ fn render_text(r: &ImportReport) -> String {
 }
 
 /// Resolve an adapter command: a `/`-bearing program is relative to the package directory.
-fn program(pkg: &PackageDir, command: &[String]) -> Option<(PathBuf, Vec<String>)> {
+pub(crate) fn program(pkg: &PackageDir, command: &[String]) -> Option<(PathBuf, Vec<String>)> {
     let (first, rest) = command.split_first()?;
     let path = if first.contains('/') {
         pkg.dir.join(first)

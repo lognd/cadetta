@@ -228,6 +228,28 @@ expression it would replace (R006), and writes nothing. `--only GLOB`
 limits to matching canonical paths; `--no-regen` pushes without
 rebuilding (the lock is then not updated).
 
+Implementation notes (`cadetta sync`, schema `docs/schemas/sync.json`):
+
+- The adapter is read first (`read` over its `files` globs); the entry
+  file of a locator is the observed member whose native name equals it
+  (first match). A locator missing from the CAD files raises R003 and is
+  skipped.
+- Values are compared as normalized `{number}{unit}` text (trailing zeros
+  trimmed, missing unit defaulted to the locator's native unit). Differing
+  units compare textually; unit conversion and tolerance sync are not yet
+  done.
+- No Push record: the adapter is shut down, nothing is opened, rebuilt or
+  saved; converged values still refresh the lock. With pushes the session
+  is opened on the pushed files only, each file is rebuilt (unless
+  `--no-regen`, reported `skipped`), read back and compared; a mismatch is
+  `fail`. `save = "after-sync"` saves only when nothing failed and
+  `--no-regen` is absent, recording `synced file=` digests.
+- An adapter without `drive` (including every built-in): `emit` runs for
+  `sw-equations` and the printed `manual` step says how to relink and
+  rebuild by hand; `--dry-run` prints the step only. Nothing is classified.
+- Exit 1: R001, R004, R009, R010, Q004, R013-R016 or any `fail`; exit 2:
+  usage, IO, config, unknown adapter id, unavailable adapter (R008).
+
 ### 3.3 `ir`, `explain`, `units`
 
 Decided (0.1.0): `explain CODE` takes the code case-insensitively and

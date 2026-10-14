@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SyncReport",
+  "description": "Output of `cadetta sync --format json`: one record per in-scope locator, diagnostics, per-file rebuild status and the manual fallbacks.",
+  "type": "object",
+  "required": ["records", "diagnostics", "regen", "emitted", "manual", "lock_written"],
+  "additionalProperties": false,
+  "properties": {
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["adapter", "file", "path", "locator", "verb", "old", "new"],
+        "additionalProperties": false,
+        "properties": {
+          "adapter": { "description": "Adapter id.", "type": "string" },
+          "file": { "description": "Native file holding the locator.", "type": "string" },
+          "path": { "description": "Canonical parameter path.", "type": "string" },
+          "locator": { "description": "Native locator.", "type": "string" },
+          "verb": { "description": "Classification outcome.", "enum": ["push", "skip", "drift", "converged", "fail"] },
+          "old": { "description": "Previous value: lock base, else what the CAD held.", "type": "string" },
+          "new": { "description": "The design value.", "type": "string" }
+        }
+      }
+    },
+    "diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "description": "Rule code, e.g. R001 or R004.", "type": "string" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "regen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "file": { "type": "string" },
+          "status": { "enum": ["ok", "failed", "skipped"] }
+        }
+      }
+    },
+    "emitted": { "description": "Files written by non-drive fallbacks.", "type": "array", "items": { "type": "string" } },
+    "manual": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["adapter", "instructions"],
+        "additionalProperties": false,
+        "properties": {
+          "adapter": { "type": "string" },
+          "instructions": { "type": "string" }
+        }
+      }
+    },
+    "lock_written": { "description": "Whether cadetta.lock was written.", "type": "boolean" }
+  }
+}
