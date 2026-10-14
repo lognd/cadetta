@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T22:08:44Z"
+digest = "7722536e7b00980fa53f4031da9027f0a76c524064d224d5f9fce8fc7a8c9ab1"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3e7a0a6e-09be-4d9f-a98b-8001db58591c with nextest profile: default
+    Starting 1 test across 47 binaries (1221 tests skipped)
+        PASS [   0.030s] cadetta::derived_fits satisfied_range_fit_is_lowered_without_f004
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.032s] 1 test run: 1 passed, 1221 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "satisfied_range_fit_is_lowered_without_f004"
+size = 561
+status = "measured"
+test_count = 1
+tests_digest = "fabfaa47bf5c75b9c6e7a70391e2b15f843a4c5b437058dda05d84730ed28cd4"
+at = "2026-10-14T22:08:44Z"
+actor = "lognd"
+rev = 1
