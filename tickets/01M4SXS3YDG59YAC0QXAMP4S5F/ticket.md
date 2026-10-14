@@ -2,7 +2,8 @@
 id = "01M4SXS3YDG59YAC0QXAMP4S5F"
 title = "Conformance run for packages"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
