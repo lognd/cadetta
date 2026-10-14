@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "cadetta check reports R005 (warning) for a binding whose path matches no IR path"
