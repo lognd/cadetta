@@ -18,7 +18,7 @@ from typani import Err, Ok, Result
 from cadetta._core import Quantity
 from cadetta.logging import get_logger
 from cadetta.models import bind as bind_model
-from cadetta.models import cite_list, ir, names
+from cadetta.models import cite_list, explain, ir, names
 
 __all__ = [
     "CadettaError",
@@ -237,6 +237,20 @@ class Project:
             return []
         src = self._table["package"].get("src", DEFAULT_SRC)
         return _module_paths(self.root, package.name, src)
+
+    def reload(self) -> Result[Project, ProjectError]:
+        """Re-read `cadetta.toml` from the root, replacing the snapshot in place."""
+        found = _discover(self.root)
+        if isinstance(found, Err):
+            _log.error("reload failed: %s", found.unwrap_err().message)
+            return found
+        self.root, self._table = found.unwrap()
+        _log.info("project reloaded: %s", self.root)
+        return Ok(self)
+
+    def explain(self, code: str) -> Result[explain.ExplainOutput, ProjectError]:
+        """One lint catalog entry (`explain CODE`)."""
+        return self._model(explain.ExplainOutput, ["explain", code])
 
     def _run(
         self, verb: list[str], *, global_format: bool = True

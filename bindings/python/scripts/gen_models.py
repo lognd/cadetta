@@ -60,6 +60,8 @@ MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="cite-list.json", module="cite_list"),
     ModelSpec(schema_file="names.json", module="names"),
     ModelSpec(schema_file="bind.json", module="bind"),
+    ModelSpec(schema_file="units.json", module="units"),
+    ModelSpec(schema_file="explain.json", module="explain"),
 )
 
 
