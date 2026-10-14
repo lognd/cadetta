@@ -11,7 +11,7 @@ use cadetta_syntax::span::Span;
 use tracing::{debug, trace};
 
 use super::{Evaluator, Fail, R, Scope, Val, diag, strip};
-use crate::resolve::{CanonPath, Ctx, Resolved};
+use crate::resolve::{CanonPath, Ctx, ModuleKey, Resolved};
 use crate::tables::{Key, LookupError, TableData};
 
 /// The range-lookup methods of a table (language.md 3.6).
@@ -64,7 +64,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let (ev, sc) = &mut *state.borrow_mut();
                 ev.eval(sc, e)
             },
-        )?;
+        )
+        .map_err(|e| e.in_module(ModuleKey::of_path(path)))?;
         let keys = keys.into_inner();
         let data = built.map_err(|e| lookup_diag(&e, span))?;
         debug!(%path, rows = data.rows.len(), "evaluator: table built");

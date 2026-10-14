@@ -24,7 +24,9 @@ use cadetta_syntax::ast::{
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};
 
-use crate::resolve::{CanonPath, Ctx, MemberSeg, PackageSrc, ResolveError, Resolved, Resolver};
+use crate::resolve::{
+    CanonPath, Ctx, MemberSeg, ModuleKey, PackageSrc, ResolveError, Resolved, Resolver,
+};
 
 /// Maximum depth when following `extends` chains.
 const MAX_EXTENDS_DEPTH: usize = 32;
@@ -63,9 +65,10 @@ pub(crate) fn member_name(m: &Member) -> Option<&str> {
     }
 }
 
-fn err(code: &'static str, span: Span, message: String) -> ResolveError {
+fn err(ctx: &Ctx, code: &'static str, span: Span, message: String) -> ResolveError {
     warn!(code, %message, "visibility error");
     ResolveError {
+        module: Some(Box::new(ModuleKey::of_ctx(ctx))),
         code,
         message,
         span,
@@ -136,6 +139,7 @@ impl<'a> VisibilityChecker<'a> {
             return Ok(());
         }
         Err(err(
+            from,
             "E016",
             span,
             format!("`{id}` is private to {}", scope_of(info.vis, &id)),
@@ -159,6 +163,7 @@ impl<'a> VisibilityChecker<'a> {
             };
             if m.private && from.package != cur.package {
                 return Err(err(
+                    from,
                     "E016",
                     span,
                     format!("`{name}` of `{cur}` is `priv` to package `{}`", cur.package),
@@ -257,6 +262,7 @@ impl<'a> VisibilityChecker<'a> {
             };
             if rank(named) < rank(vis) {
                 errors.push(err(
+                    ctx,
                     "E017",
                     p.span,
                     format!(
@@ -280,6 +286,7 @@ impl<'a> VisibilityChecker<'a> {
                 && required.contains(n)
             {
                 errors.push(err(
+                    ctx,
                     "E017",
                     m.span,
                     format!("`priv` member `{n}` implements an interface member"),

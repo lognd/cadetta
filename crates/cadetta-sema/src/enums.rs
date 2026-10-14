@@ -15,7 +15,7 @@ use tracing::{debug, trace};
 
 use super::{EvalDiagnostic, Evaluator, Fail, R, Scope, Val, diag};
 use crate::deps::Severity;
-use crate::resolve::{CanonPath, Resolved};
+use crate::resolve::{CanonPath, ModuleKey, Resolved};
 
 /// What one arm matches.
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -81,6 +81,7 @@ impl Evaluator<'_, '_> {
             if !missing.is_empty() {
                 debug!(?missing, "match: not exhaustive");
                 return Err(Fail::Diag(EvalDiagnostic {
+                    module: Some(ModuleKey::of_ctx(&sc.ctx)),
                     code: "E009",
                     severity: Severity::Error,
                     message: non_exhaustive_message(&enum_path.item, &missing),

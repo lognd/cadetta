@@ -34,7 +34,7 @@ use tracing::{debug, trace, warn};
 
 use crate::deps::Severity;
 use crate::eval::{EvalDiagnostic, Evaluation, Evaluator, Quant, Val};
-use crate::resolve::{CanonPath, Ctx, MemberSeg, PackageSrc};
+use crate::resolve::{CanonPath, Ctx, MemberSeg, ModuleKey, PackageSrc};
 
 /// Name words that make a parameter feature-like (P001).
 pub const FEATURE_WORDS: &[&str] = &[
@@ -72,6 +72,8 @@ struct RuleDef {
 struct ProcessDef {
     params: BTreeMap<String, Quant>,
     rules: BTreeMap<String, RuleDef>,
+    /// The module that declares the process (where its rules' spans live).
+    module: ModuleKey,
 }
 
 /// A member under a process with the role it plays.
@@ -145,6 +147,7 @@ fn problem(span: Span, message: impl Into<String>) -> EvalDiagnostic {
     let message = message.into();
     warn!(%message, "process error");
     EvalDiagnostic {
+        module: None,
         code: "EVAL",
         severity: Severity::Error,
         message,
@@ -300,7 +303,7 @@ impl Processes {
                     Ok(q) => {
                         params.insert(p.name.name.clone(), q);
                     }
-                    Err(d) => self.diagnostics.push(d),
+                    Err(d) => self.diagnostics.push(d.in_module(ModuleKey::of_ctx(ctx))),
                 }
             }
         }
@@ -311,11 +314,15 @@ impl Processes {
                     Ok(def) => {
                         rules.insert(r.name.name.clone(), def);
                     }
-                    Err(d) => self.diagnostics.push(d),
+                    Err(d) => self.diagnostics.push(d.in_module(ModuleKey::of_ctx(ctx))),
                 }
             }
         }
-        ProcessDef { params, rules }
+        ProcessDef {
+            params,
+            rules,
+            module: ModuleKey::of_ctx(ctx),
+        }
     }
 
     fn find(&self, package: &str, name: &str) -> Option<((String, String), &ProcessDef)> {
@@ -344,10 +351,10 @@ impl Processes {
             return;
         }
         let Some((key, def)) = self.find(package, &name) else {
-            self.diagnostics.push(problem(
-                c.name.span,
-                format!("process `{name}` is not declared"),
-            ));
+            self.diagnostics.push(
+                problem(c.name.span, format!("process `{name}` is not declared"))
+                    .in_module(ModuleKey::new(package, module)),
+            );
             return;
         };
         let rule_names: BTreeSet<String> = def.rules.keys().cloned().collect();
@@ -445,7 +452,7 @@ impl Processes {
                     debug!(path = ?plan.path, role = %plan.role, "process: member compensated");
                     out.compensated.insert(plan.path.clone(), c);
                 }
-                Err(d) => out.diagnostics.push(d),
+                Err(d) => out.diagnostics.push(d.in_module(def.module.clone())),
             }
         }
         out

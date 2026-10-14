@@ -39,7 +39,9 @@ use cadetta_units::{
 use tracing::{debug, trace, warn};
 
 use crate::deps::Severity;
-use crate::resolve::{CanonPath, Ctx, ItemClass, Level, MemberSeg, PackageSrc, Resolved, Resolver};
+use crate::resolve::{
+    CanonPath, Ctx, ItemClass, Level, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
+};
 
 #[path = "array.rs"]
 pub mod array;
@@ -138,6 +140,29 @@ pub struct EvalDiagnostic {
     pub message: String,
     /// The primary span.
     pub span: Span,
+    /// The module the primary span lies in, when known.
+    pub module: Option<ModuleKey>,
+}
+
+impl<'r, 'p> Evaluator<'r, 'p> {
+    /// Stamps `module` on every diagnostic recorded since index `start` that has none.
+    pub(super) fn stamp_since(&mut self, start: usize, module: &ModuleKey) {
+        for d in &mut self.diagnostics[start..] {
+            if d.module.is_none() {
+                d.module = Some(module.clone());
+            }
+        }
+    }
+}
+
+impl EvalDiagnostic {
+    /// Records `module` as the span's module unless one is already set.
+    pub fn in_module(mut self, module: ModuleKey) -> Self {
+        if self.module.is_none() {
+            self.module = Some(module);
+        }
+        self
+    }
 }
 
 impl fmt::Display for EvalDiagnostic {
@@ -179,6 +204,16 @@ enum Fail {
     Diag(EvalDiagnostic),
 }
 
+impl Fail {
+    /// Stamps the module on a carried diagnostic that has none.
+    fn in_module(self, module: ModuleKey) -> Self {
+        match self {
+            Self::Diag(d) => Self::Diag(d.in_module(module)),
+            Self::Silent => Self::Silent,
+        }
+    }
+}
+
 impl From<EvalDiagnostic> for Fail {
     fn from(d: EvalDiagnostic) -> Self {
         Self::Diag(d)
@@ -191,6 +226,7 @@ fn diag(code: &'static str, span: Span, message: impl Into<String>) -> Fail {
     let message = message.into();
     warn!(code, %message, "evaluation error");
     Fail::Diag(EvalDiagnostic {
+        module: None,
         code,
         severity: Severity::Error,
         message,
@@ -458,6 +494,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 severity: Severity::Error,
                 message: format!("function `{path}` is recursive; recursion is not allowed"),
                 span,
+                module: Some(ModuleKey::new(&path.package, &path.modules)),
             });
             recursive.insert(path);
         }
@@ -485,14 +522,16 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     /// Evaluates one free-standing expression (a solver `in` value) in `ctx`.
     // frob:ticket 01M4STAN8QG3QWZQCH5XN3QHMT
     pub fn eval_input(&mut self, ctx: Ctx, e: &Expr) -> Result<Quant, EvalDiagnostic> {
+        let here = ModuleKey::of_ctx(&ctx);
         let mut sc = Scope {
             ctx,
             locals: Vec::new(),
         };
         match self.quant(&mut sc, e) {
             Ok(q) => Ok(q),
-            Err(Fail::Diag(d)) => Err(d),
+            Err(Fail::Diag(d)) => Err(d.in_module(here)),
             Err(Fail::Silent) => Err(EvalDiagnostic {
+                module: Some(here),
                 code: "EVAL",
                 severity: Severity::Error,
                 message: "a value this expression reads failed to evaluate".to_owned(),
@@ -592,7 +631,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Ok(v) => Some(v),
             Err(Fail::Silent) => None,
             Err(Fail::Diag(d)) => {
-                self.diagnostics.push(d);
+                self.diagnostics
+                    .push(d.in_module(ModuleKey::of_ctx(&def.ctx)));
                 None
             }
         };
@@ -688,6 +728,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 severity: Severity::Error,
                 message: re.message,
                 span: re.span,
+                module: re.module.map(|m| *m),
             })
         })?;
         match resolved {

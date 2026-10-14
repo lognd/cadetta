@@ -34,7 +34,7 @@ use super::{Evaluator, Fail, Quant, R, Scope, Val, diag, strip, tol_diag};
 use crate::cite::effective;
 use crate::deps::Severity;
 use crate::eval::EvalDiagnostic;
-use crate::resolve::{CanonPath, Ctx, MemberSeg, Resolved};
+use crate::resolve::{CanonPath, Ctx, MemberSeg, ModuleKey, Resolved};
 
 /// The verdict of one `check` or `require` (for one instance when quantified).
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -285,6 +285,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 ctx: def.ctx.clone(),
                 locals: Vec::new(),
             };
+            let start = self.diagnostics.len();
             let saved = std::mem::replace(&mut self.cur_inst, def.inst.clone());
             let outcome = match self.gate(&mut sc, def) {
                 Ok(true) => self.run_check(&mut sc, def),
@@ -295,6 +296,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Err(f) => Err(f),
             };
             self.cur_inst = saved;
+            // C003 and other pushes made while the check ran carry the def's module.
+            self.stamp_since(start, &ModuleKey::of_ctx(&def.ctx));
             match outcome {
                 Ok(rs) => out.extend(rs),
                 Err(Fail::Silent) => {}
@@ -303,8 +306,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         // The callee's source is std or another package: report at the `part` site.
                         debug!(check = %def.path, code = d.code, "checks: instance failure reported at the part");
                         d.span = i.span;
+                        d.module = Some(ModuleKey::of_path(&i.prefix));
                     }
-                    self.diagnostics.push(d);
+                    self.diagnostics
+                        .push(d.in_module(ModuleKey::of_ctx(&def.ctx)));
                 }
             }
         }
@@ -397,6 +402,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             warn!(code, %message, "checks: verdict");
             self.diagnostics.push(EvalDiagnostic {
+                module: Some(match &def.inst {
+                    Some(i) => ModuleKey::of_path(&i.prefix),
+                    None => ModuleKey::of_ctx(&def.ctx),
+                }),
                 code,
                 severity,
                 message,
@@ -484,6 +493,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         for d in c.diagnostics() {
             if d.code == "C003" {
                 self.diagnostics.push(EvalDiagnostic {
+                    module: None,
                     code: "C003",
                     severity: Severity::Warning,
                     message: format!(

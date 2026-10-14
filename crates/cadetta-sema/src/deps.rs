@@ -29,8 +29,8 @@ use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};
 
 use crate::resolve::{
-    CanonPath, Ctx, Index, ItemClass, Level, MemberSeg, PackageSrc, PartSeg, ResolveError,
-    Resolved, Resolver,
+    CanonPath, Ctx, Index, ItemClass, Level, MemberSeg, ModuleKey, PackageSrc, PartSeg,
+    ResolveError, Resolved, Resolver,
 };
 
 /// Members every part contributes to a `name(self)` roll-up (language.md 3.5).
@@ -61,6 +61,8 @@ pub struct DepDiagnostic {
     pub span: Span,
     /// Other spans taking part (the rest of a cycle).
     pub related: Vec<Span>,
+    /// The module the primary span lies in, when known.
+    pub module: Option<ModuleKey>,
 }
 
 impl fmt::Display for DepDiagnostic {
@@ -182,6 +184,7 @@ impl Renames {
                             beside_instance: None,
                         },
                         Some(DepDiagnostic {
+                            module: Some(ModuleKey::of_ctx(ctx)),
                             code: "N004",
                             severity: Severity::Warning,
                             message: format!("`{old}` was renamed; use `{new}`"),
@@ -410,6 +413,7 @@ impl DepGraph {
                 .join(" -> ");
             warn!(cycle = %names, "reference cycle");
             out.push(DepDiagnostic {
+                module: Some(ModuleKey::of_path(&members[0].1)),
                 code: "D003",
                 severity: Severity::Error,
                 message: format!("reference cycle: {names}"),

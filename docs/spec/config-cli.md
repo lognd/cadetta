@@ -203,7 +203,11 @@ is loaded from `$CADETTA_STD` or the repository `std/` directory and
 its own findings are not reported. A diagnostic's `path` is the
 canonical path of the member it concerns (for a check verdict, the
 check's path) and its `location` the project-relative file with 1-based
-line and column. A diagnostic without a path is dropped from a scoped
+line and column. The file is the one of the module the finding was
+raised in: resolve, evaluation and dependency diagnostics carry their
+package and module path, so a finding is never attributed to another
+file by span position, and one raised in `std` is not reported. A
+diagnostic without a path is dropped from a scoped
 run (`--module` or GLOB). Open and stale obligations become O002 and
 O001; a row the role policy gates (`required_for = "check"`, or
 `"release"` with `--release`) is an error whatever `[lint] severity`

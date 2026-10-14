@@ -483,11 +483,6 @@ ticket = "~6K58FR1"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
-fixture = "stdlib/d003-joint-reads-itself"
-ticket = "~PGR0M75"
-reason = "joint-level lint not raised"
-
-[[gap]]
 fixture = "stdlib/e016-joint-priv-intermediate"
 ticket = "~PGR0M75"
 reason = "joint-level lint not raised"

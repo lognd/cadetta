@@ -20,7 +20,9 @@ use super::{Def, EvalDiagnostic, Evaluator, Fail, R, Scope, Val, diag};
 use crate::defaults::{Layers, Source, resolve_default};
 use crate::deps::Severity;
 use crate::parts::{ArgSource, bind_args_injecting};
-use crate::resolve::{CanonPath, Ctx, ItemClass, MemberSeg, PackageSrc, Resolved, Resolver};
+use crate::resolve::{
+    CanonPath, Ctx, ItemClass, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
+};
 
 /// The package whose components supply the default policies (stdlib.md 4).
 const STD: &str = "std";
@@ -87,9 +89,10 @@ fn placeholder() -> &'static Expr {
     })
 }
 
-fn bind_error(span: Span, message: String) -> EvalDiagnostic {
+fn bind_error(module: ModuleKey, span: Span, message: String) -> EvalDiagnostic {
     warn!(%message, "instances: argument binding failed");
     EvalDiagnostic {
+        module: Some(module),
         code: "E006",
         severity: Severity::Error,
         message,
@@ -127,8 +130,10 @@ pub(super) fn materialise<'p>(
                         continue;
                     }
                     if part.count.is_some() {
-                        if let Some(name) = pattern_arg(callee, part.args.as_deref().unwrap_or(&[])) {
+                        if let Some(name) = pattern_arg(callee, part.args.as_deref().unwrap_or(&[]))
+                        {
                             out.diagnostics.push(bind_error(
+                                ModuleKey::new(&pkg.name, &module.path),
                                 m.span,
                                 format!(
                                     "`{}` is one part per pattern: `{}[N]` repeats it, so each \
@@ -284,6 +289,7 @@ impl<'p> Site<'_, 'p> {
             Ok(b) => b,
             Err(e) => {
                 out.diagnostics.push(bind_error(
+                    ModuleKey::of_ctx(self.parent_ctx),
                     self.span,
                     format!("`{}`: {e}", self.callee.name.name),
                 ));
@@ -334,6 +340,7 @@ impl<'p> Site<'_, 'p> {
                         Some(imp) => def.fixed = Some(Val::Component(imp)),
                         None => {
                             out.diagnostics.push(bind_error(
+                                ModuleKey::of_ctx(self.parent_ctx),
                                 self.span,
                                 format!(
                                     "`{}`: no argument and no default for `{}` ({})",
@@ -419,7 +426,10 @@ fn pattern_arg(callee: &Component, args: &[ast::Arg]) -> Option<String> {
                 if tp.segments.last().is_some_and(|s| s.name.starts_with("Pattern")))
         })
         .map(|p| p.name.name.clone())
-        .find(|n| args.iter().any(|a| a.name.as_ref().is_some_and(|an| an.name == *n)))
+        .find(|n| {
+            args.iter()
+                .any(|a| a.name.as_ref().is_some_and(|an| an.name == *n))
+        })
 }
 
 fn is_part_type(ty: &ast::Type) -> bool {
@@ -480,11 +490,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                             ),
                         );
                         if let Fail::Diag(d) = d {
-                            self.diagnostics.push(d);
+                            self.diagnostics
+                                .push(d.in_module(ModuleKey::of_path(&info.prefix)));
                         }
                     }
                     Ok(_) => {}
-                    Err(Fail::Diag(d)) => self.diagnostics.push(d),
+                    Err(Fail::Diag(d)) => {
+                        self.diagnostics.push(d.in_module(ModuleKey::of_ctx(&ctx)))
+                    }
                     Err(Fail::Silent) => {}
                 }
             }
@@ -744,7 +757,11 @@ mod tests {
             )
         };
         let ev = run(&file(&src("a = 4mm, count = 2")));
-        assert!(ev.diagnostics.iter().any(|d| d.code == "E006"), "{:?}", ev.diagnostics);
+        assert!(
+            ev.diagnostics.iter().any(|d| d.code == "E006"),
+            "{:?}",
+            ev.diagnostics
+        );
         let ev = run(&file(&src("a = 4mm")));
         assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
     }

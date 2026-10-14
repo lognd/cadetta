@@ -45,7 +45,7 @@ use super::{
 };
 use crate::deps::Severity;
 use crate::parts;
-use crate::resolve::{CanonPath, Ctx, MemberSeg, Resolver};
+use crate::resolve::{CanonPath, Ctx, MemberSeg, ModuleKey, Resolver};
 
 /// The datums and assembly tree of one component, as the geometry crate lowers them.
 pub struct ComponentGeometry<'a> {
@@ -303,7 +303,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Ok(v) => Some(v),
             Err(Fail::Silent) => None,
             Err(Fail::Diag(d)) => {
-                self.diagnostics.push(d);
+                self.diagnostics
+                    .push(d.in_module(ModuleKey::of_path(&m.path)));
                 None
             }
         };
@@ -362,6 +363,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 continue;
             };
             let id = component_id(&item);
+            let start = self.diagnostics.len();
             let g = component_geometry(self.resolver, &id, comp);
             // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
             self.report_geometry(&id, comp, &g);
@@ -370,8 +372,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     self.geom_member(m);
                 }
             }
-            let Some(a) = &g.assembly else { continue };
-            self.evaluate_placements(&id, comp, a);
+            if let Some(a) = &g.assembly {
+                self.evaluate_placements(&id, comp, a);
+            }
+            self.stamp_since(start, &ModuleKey::of_path(&item));
         }
     }
 
@@ -387,6 +391,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if e.message.starts_with("G001") {
                 warn!(error = %e, "geometry: G001");
                 self.diagnostics.push(EvalDiagnostic {
+                    module: None,
                     code: "G001",
                     severity: Severity::Error,
                     message: e.message.clone(),
@@ -417,6 +422,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
             };
             self.diagnostics.push(EvalDiagnostic {
+                module: None,
                 code,
                 severity: Severity::Error,
                 message: d.to_string(),
@@ -428,6 +434,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         collect_counts(self, id, comp, a, &a.name, &mut counts);
         for d in check_unplaced(a, &|path: &str| counts.get(path).copied()) {
             self.diagnostics.push(EvalDiagnostic {
+                module: None,
                 code: "G007",
                 severity: Severity::Warning,
                 message: format!("G007: {}", d.message),
@@ -472,6 +479,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 warn!(node = %p.node, "geometry: G004 placement is not expanded");
                 self.g004_nodes.insert(p.node.clone());
                 self.diagnostics.push(EvalDiagnostic {
+                    module: None,
                     code: "G004",
                     severity: Severity::Error,
                     message: d.to_string(),

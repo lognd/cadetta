@@ -18,7 +18,7 @@ use tracing::{debug, warn};
 use super::geom::{find_part, unwrap_array};
 use super::{EvalDiagnostic, strip};
 use crate::deps::Severity;
-use crate::resolve::Resolver;
+use crate::resolve::{ModuleKey, Resolver};
 
 /// One component's pass: the resolver, the component, the placed part names and the lets so far.
 pub(super) struct PosCheck<'a, 'r> {
@@ -80,6 +80,7 @@ impl<'a, 'r> PosCheck<'a, 'r> {
     fn report(&mut self, code: &'static str, e: &Expr, message: String) {
         warn!(code, %message, "position shape finding");
         self.out.push(EvalDiagnostic {
+            module: Some(ModuleKey::new(&self.package, &self.modules)),
             code,
             severity: Severity::Error,
             message,

@@ -66,6 +66,35 @@ pub struct PackageSrc<'a> {
     pub modules: Vec<ModuleSrc<'a>>,
 }
 
+/// The module a diagnostic's span lies in: its package and module path.
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub struct ModuleKey {
+    /// The dotted package name.
+    pub package: String,
+    /// The module path below the package root (empty for `lib.cdt`).
+    pub module: Vec<String>,
+}
+
+impl ModuleKey {
+    /// The module a package name and module path name.
+    pub fn new(package: &str, module: &[String]) -> Self {
+        Self {
+            package: package.to_owned(),
+            module: module.to_vec(),
+        }
+    }
+
+    /// The module a reference context sits in.
+    pub fn of_ctx(ctx: &Ctx) -> Self {
+        Self::new(&ctx.package, &ctx.module)
+    }
+
+    /// The module a canonical item path lives in.
+    pub fn of_path(path: &CanonPath) -> Self {
+        Self::new(&path.package, &path.modules)
+    }
+}
+
 /// A resolution diagnostic with its fixed E code (lints.md E002, E003, E004, E006, E011).
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct ResolveError {
@@ -77,6 +106,18 @@ pub struct ResolveError {
     pub span: Span,
     /// Other spans (both definitions of an E003).
     pub related: Vec<Span>,
+    /// The module the primary span lies in, when known.
+    pub module: Option<Box<ModuleKey>>,
+}
+
+impl ResolveError {
+    /// Records `ctx`'s module as the span's module unless one is already set.
+    pub fn in_ctx(mut self, ctx: &Ctx) -> Self {
+        if self.module.is_none() {
+            self.module = Some(Box::new(ModuleKey::of_ctx(ctx)));
+        }
+        self
+    }
 }
 
 impl fmt::Display for ResolveError {
@@ -90,6 +131,7 @@ impl std::error::Error for ResolveError {}
 fn err<T>(code: &'static str, span: Span, message: String) -> Result<T, ResolveError> {
     warn!(code, %message, "resolution error");
     Err(ResolveError {
+        module: None,
         code,
         message,
         span,
@@ -256,6 +298,7 @@ impl<'a> Resolver<'a> {
             let mut modules = BTreeMap::new();
             for m in p.modules {
                 let mut items: BTreeMap<String, Entry<'a>> = BTreeMap::new();
+                let here = ModuleKey::new(&p.name, &m.path);
                 let mut add = |name: &Ident, kind: EntryKind<'a>| {
                     let entry = Entry {
                         kind,
@@ -264,6 +307,7 @@ impl<'a> Resolver<'a> {
                     if let Some(prev) = items.get(&name.name) {
                         warn!(item = %name.name, "duplicate definition");
                         errors.push(ResolveError {
+                            module: Some(Box::new(here.clone())),
                             code: "E003",
                             message: format!("`{}` is defined twice in one module", name.name),
                             span: name.span,
@@ -327,6 +371,7 @@ impl<'a> Resolver<'a> {
             })
             .collect::<Vec<_>>();
         self.resolve_steps(ctx, &steps, path.span, expected)
+            .map_err(|e| e.in_ctx(ctx))
     }
 
     /// Resolves a reference expression: a path, `.field` and `[index]` chain.
@@ -337,13 +382,25 @@ impl<'a> Resolver<'a> {
         expected: Option<&Type>,
     ) -> Result<Resolved, ResolveError> {
         let mut steps = Vec::new();
-        flatten(expr, &mut steps)?;
+        flatten(expr, &mut steps).map_err(|e| e.in_ctx(ctx))?;
         self.resolve_steps(ctx, &steps, expr.span, expected)
+            .map_err(|e| e.in_ctx(ctx))
     }
 
     /// Resolves argument `index` of a constructor `callee(...)`, using the
     /// parameter's declared type so a bare enum variant is accepted (language.md 3.1).
     pub fn resolve_arg(
+        &self,
+        ctx: &Ctx,
+        callee: &Path,
+        index: usize,
+        arg: &Arg,
+    ) -> Result<Resolved, ResolveError> {
+        self.resolve_arg_inner(ctx, callee, index, arg)
+            .map_err(|e| e.in_ctx(ctx))
+    }
+
+    fn resolve_arg_inner(
         &self,
         ctx: &Ctx,
         callee: &Path,
@@ -381,6 +438,17 @@ impl<'a> Resolver<'a> {
     }
 
     pub(crate) fn resolve_ref_in_param_type(
+        &self,
+        ctx: &Ctx,
+        value: &Expr,
+        ty: &Type,
+        comp: &CanonPath,
+    ) -> Result<Resolved, ResolveError> {
+        self.resolve_param_ref(ctx, value, ty, comp)
+            .map_err(|e| e.in_ctx(ctx))
+    }
+
+    fn resolve_param_ref(
         &self,
         ctx: &Ctx,
         value: &Expr,
@@ -1024,6 +1092,7 @@ impl<'a> Resolver<'a> {
             0 => Ok(None),
             1 => Ok(hits.pop().map(|(t, _)| t)),
             _ => Err(ResolveError {
+                module: Some(Box::new(ModuleKey::new(pkg, module))),
                 code: "E004",
                 message: format!("`{name}` is brought in by more than one `use`"),
                 span: hits[0].1,
@@ -1033,6 +1102,21 @@ impl<'a> Resolver<'a> {
     }
 
     fn resolve_import(
+        &self,
+        pkg: &str,
+        module: &[String],
+        imp: &Import<'_>,
+        depth: usize,
+    ) -> Result<Target, ResolveError> {
+        self.resolve_import_inner(pkg, module, imp, depth)
+            .map_err(|mut e| {
+                e.module
+                    .get_or_insert_with(|| Box::new(ModuleKey::new(pkg, module)));
+                e
+            })
+    }
+
+    fn resolve_import_inner(
         &self,
         pkg: &str,
         module: &[String],

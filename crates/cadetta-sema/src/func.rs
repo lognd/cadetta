@@ -23,7 +23,7 @@ use tracing::{debug, trace};
 
 use super::tablevals::LOOKUPS;
 use super::{Evaluator, Fail, Quant, R, Scope, Val, cmp_mag, diag, round_diag, strip, tol_diag};
-use crate::resolve::{CanonPath, Ctx, ItemClass, MemberSeg, Resolved};
+use crate::resolve::{CanonPath, Ctx, ItemClass, MemberSeg, ModuleKey, Resolved};
 
 /// Relative outward widening applied to every binary64 interval bound.
 const WIDEN: f64 = 4.0 * f64::EPSILON;
@@ -360,7 +360,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             let v = match v {
                 Some(v) => v,
                 None => match &p.default {
-                    Some(d) => self.eval(&mut fs, d)?,
+                    Some(d) => self
+                        .eval(&mut fs, d)
+                        .map_err(|e| e.in_module(ModuleKey::of_path(path)))?,
                     None => {
                         return Err(diag(
                             "E006",
@@ -373,7 +375,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             fs.push(&p.name.name, v);
         }
         debug!(%path, "func: calling user function");
+        // The body's spans live in the callee's module, not the caller's.
         self.eval_block(&mut fs, &f.body)
+            .map_err(|e| e.in_module(ModuleKey::of_path(path)))
     }
 
     /// An argument value; a bare variant name is accepted where the parameter is an enum.

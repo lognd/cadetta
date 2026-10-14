@@ -4,9 +4,9 @@
 //!
 //! [`analyze`] is the one entry point; `check` renders its diagnostics, and later verbs
 //! (`why`, `impact`, `ir`, `ack`, `obligations`) reuse the lowered packages it returns.
-//! Spans in the resolver, evaluator and dependency diagnostics are bare byte offsets with
-//! no module identity, so those diagnostics are attributed to a module heuristically
-//! (see [`SourceIndex::attribute`]); kind and check diagnostics are exact.
+//! Resolver, evaluator and dependency diagnostics carry the module their span lives in
+//! (`ModuleKey`), so [`SourceIndex::file_for`] maps them to the exact file; only a
+//! diagnostic without a module falls back to the span heuristic ([`SourceIndex::attribute`]).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
@@ -28,7 +28,7 @@ use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
 use cadetta_sema::resolve::{
-    CanonPath, EnumDecl as SemaEnum, MemberSeg, ModuleSrc, PackageSrc, Resolver,
+    CanonPath, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
@@ -123,11 +123,34 @@ impl SourceIndex {
         }
     }
 
+    /// The file a diagnostic belongs to: the file of its `module` when it has one
+    /// (None for std, whose findings are not the project's), else the span heuristic.
+    // frob:ticket 01M4TA3BTW256J8FKMS6KASY82
+    fn file_for<'a>(
+        &'a self,
+        module: Option<&ModuleKey>,
+        span: Span,
+        covering: &dyn Fn(&IndexedFile) -> bool,
+    ) -> Option<&'a IndexedFile> {
+        let Some(key) = module else {
+            return self.attribute(span, covering);
+        };
+        let file = self.module(&key.package, &key.module).filter(|f| !f.is_std);
+        if file.is_none() {
+            tracing::debug!(
+                package = %key.package,
+                module = ?key.module,
+                "pipeline: diagnostic module is std or has no file; dropped"
+            );
+        }
+        file
+    }
+
     /// Pick the project file a module-less span belongs to.
     ///
-    /// Resolver, evaluator and dependency diagnostics carry no module identity (gap
-    /// ticket filed). The rule: among non-std files whose text covers the span, the one
-    /// whose AST has a member covering it (`members`), else the first covering file.
+    /// Only used for diagnostics that carry no `ModuleKey`. The rule: among non-std files
+    /// whose text covers the span, the one whose AST has a member covering it
+    /// (`members`), else the first covering file.
     fn attribute<'a>(
         &'a self,
         span: Span,
@@ -588,32 +611,33 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         .iter()
         .filter(|p| !p.is_std && scope.contains(&p.name))
         .collect();
-    let located = |code: &str, sev: Severity, message: String, span: Span| {
-        let member_in = |f: &IndexedFile| {
-            in_scope.iter().find(|p| p.name == f.package).and_then(|p| {
-                let m = p.modules.iter().find(|m| m.path == f.module)?;
-                member_path_at(&p.name, &m.path, &m.file, span)
+    let located =
+        |code: &str, sev: Severity, message: String, span: Span, module: Option<&ModuleKey>| {
+            let member_in = |f: &IndexedFile| {
+                in_scope.iter().find(|p| p.name == f.package).and_then(|p| {
+                    let m = p.modules.iter().find(|m| m.path == f.module)?;
+                    member_path_at(&p.name, &m.path, &m.file, span)
+                })
+            };
+            let file = index.file_for(module, span, &|f| member_in(f).is_some());
+            let path = file.and_then(member_in);
+            if file.is_none() {
+                tracing::debug!(
+                    code,
+                    start = span.start,
+                    "pipeline: diagnostic outside every project file (std); dropped"
+                );
+            }
+            file.map(|f| {
+                diag_at(
+                    code,
+                    sev,
+                    message,
+                    path,
+                    Some(SourceIndex::location(f, span)),
+                )
             })
         };
-        let file = index.attribute(span, &|f| member_in(f).is_some());
-        let path = file.and_then(member_in);
-        if file.is_none() {
-            tracing::debug!(
-                code,
-                start = span.start,
-                "pipeline: diagnostic outside every project file (std); dropped"
-            );
-        }
-        file.map(|f| {
-            diag_at(
-                code,
-                sev,
-                message,
-                path,
-                Some(SourceIndex::location(f, span)),
-            )
-        })
-    };
 
     let mut out: Vec<Diagnostic> = Vec::new();
     // Kind diagnostics are exact: they come from one module at a time.
@@ -642,7 +666,13 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         }
     }
     for e in &resolve_errors {
-        out.extend(located(e.code, Severity::Error, e.message.clone(), e.span));
+        out.extend(located(
+            e.code,
+            Severity::Error,
+            e.message.clone(),
+            e.span,
+            e.module.as_deref(),
+        ));
     }
     // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
     {
@@ -658,8 +688,15 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
                 .flat_map(|s| s.modules.iter())
                 .map(|m| (&p.name, m))
             {
+                let key = ModuleKey::new(src, &m.path);
                 for d in cites.check_module(src, m) {
-                    out.extend(located(d.code, Severity::Error, d.message, d.span));
+                    out.extend(located(
+                        d.code,
+                        Severity::Error,
+                        d.message,
+                        d.span,
+                        Some(&key),
+                    ));
                 }
             }
         }
@@ -677,6 +714,7 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
             sema_severity(d.severity),
             d.message.clone(),
             d.span,
+            d.module.as_ref(),
         ));
     }
     for d in graph.diagnostics() {
@@ -685,6 +723,7 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
             sema_severity(d.severity),
             d.message.clone(),
             d.span,
+            d.module.as_ref(),
         ));
     }
     for r in &evaluation.checks {
@@ -777,4 +816,71 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
     );
     analysis.diagnostics.extend(out);
     analysis.packages = lowered;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A same-sized file of `pkg::module`.
+    fn indexed(name: &str, pkg: &str, module: &str, is_std: bool) -> IndexedFile {
+        IndexedFile {
+            name: name.to_owned(),
+            package: pkg.to_owned(),
+            module: vec![module.to_owned()],
+            is_std,
+            source: SourceFile::new(name, "model A { x = 1 }\n"),
+        }
+    }
+
+    fn index() -> SourceIndex {
+        SourceIndex {
+            files: vec![
+                indexed("src/alpha.cdt", "p", "alpha", false),
+                indexed("src/frame.cdt", "p", "frame", false),
+                indexed("std/src/s.cdt", "std", "s", true),
+            ],
+        }
+    }
+
+    // frob:tests file_for_picks_the_diagnostics_own_module
+    #[test]
+    fn file_for_picks_the_diagnostics_own_module() {
+        let ix = index();
+        let span = Span::new(0, 5);
+        let all = |_: &IndexedFile| true;
+        // The span fits every file; the module key, not the span, decides.
+        let frame = ModuleKey::new("p", &["frame".to_owned()]);
+        assert_eq!(
+            ix.file_for(Some(&frame), span, &all)
+                .map(|f| f.name.as_str()),
+            Some("src/frame.cdt")
+        );
+        let alpha = ModuleKey::new("p", &["alpha".to_owned()]);
+        assert_eq!(
+            ix.file_for(Some(&alpha), span, &all)
+                .map(|f| f.name.as_str()),
+            Some("src/alpha.cdt")
+        );
+    }
+
+    // frob:tests file_for_drops_std_and_unknown_modules
+    #[test]
+    fn file_for_drops_std_and_unknown_modules() {
+        let ix = index();
+        let span = Span::new(0, 5);
+        let all = |_: &IndexedFile| true;
+        let std = ModuleKey::new("std", &["s".to_owned()]);
+        assert!(ix.file_for(Some(&std), span, &all).is_none());
+        let none = ModuleKey::new("p", &["missing".to_owned()]);
+        assert!(ix.file_for(Some(&none), span, &all).is_none());
+    }
+
+    // frob:tests file_for_without_a_module_uses_the_heuristic
+    #[test]
+    fn file_for_without_a_module_uses_the_heuristic() {
+        let ix = index();
+        let got = ix.file_for(None, Span::new(0, 5), &|_: &IndexedFile| true);
+        assert!(got.is_some_and(|f| !f.is_std));
+    }
 }
