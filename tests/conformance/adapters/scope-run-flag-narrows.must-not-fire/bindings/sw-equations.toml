@@ -1,14 +1,14 @@
-["acme.demo.gear::X.width"]
+["acme.demo::gear::X.width"]
 locators = [
   { locator = "GW", kind = "global", mode = "value", native_unit = "mm" },
 
 ]
-["acme.demo.gear::X.depth"]
+["acme.demo::gear::X.depth"]
 locators = [
   { locator = "GD", kind = "global", mode = "value", native_unit = "mm" },
 
 ]
-["acme.demo.gear.sub::X.width"]
+["acme.demo::gear::sub::X.width"]
 locators = [
   { locator = "SW", kind = "global", mode = "value", native_unit = "mm" },
 

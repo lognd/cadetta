@@ -11,18 +11,19 @@
     "output": {
       "build/eq.txt": {
         "contains": [
-          "\"GW\""
+          "\"SW\""
         ],
         "excludes": [
-          "\"SW\""
+          "\"GW\"",
+          "\"GD\""
         ]
       }
     },
     "args": [
       "--module",
-      "acme.demo.gear.sub"
+      "acme.demo::gear::sub"
     ],
-    "note": "flag narrows within the configured scope: gear.sub is inside it"
+    "note": "flag narrows within the configured scope: gear::sub is inside it"
   },
   "must_not_fire": {
     "diagnostics": [],

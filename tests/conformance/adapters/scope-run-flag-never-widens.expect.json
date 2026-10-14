@@ -19,7 +19,7 @@
     },
     "args": [
       "--module",
-      "acme.demo.gear"
+      "acme.demo::gear"
     ]
   },
   "must_not_fire": {
@@ -37,7 +37,7 @@
     },
     "args": [
       "--module",
-      "acme.demo.gear.sub"
+      "acme.demo::gear::sub"
     ]
   }
 }

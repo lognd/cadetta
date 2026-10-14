@@ -1,0 +1,10 @@
+kind = "create"
+title = "Evaluate datums and placements of parameterized parts"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~NYB5TXC: geom_components excludes parameterized components; they lower structurally with valueless geometry members."
+at = "2026-10-14T01:03:51Z"
+actor = "lognd"
+rev = 1

@@ -2175,51 +2175,6 @@ ticket = "~JBHTKF3"
 reason = "binding import entries have no executor yet"
 
 [[gap]]
-fixture = "adapters/scope-both-filters"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-empty-lists-mean-all"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-modules-includes-submodules"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-modules-segment-boundary"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-paths-doublestar-any"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-paths-star-does-not-cross-colon"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-paths-star-stays-in-segment"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-run-flag-narrows"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
-fixture = "adapters/scope-run-flag-never-widens"
-ticket = "~M3DCA47"
-reason = "fixture uses dotted module path src/gear.sub.cdt which packages.md flags E015; spec notation unresolved"
-
-[[gap]]
 fixture = "adapters/contract-q004-not-representable"
 ticket = "~MHTX343"
 reason = "Q004/Q006 diagnostics not raised"

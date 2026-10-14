@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T01:02:21Z"
+digest = "d3b1f6e267ace6e3ce53358cc153fb91909a68ce8f113f4f37be3f3e2aaa32d5"
+exit_code = 0
+inline = '''
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.69s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5fd58311-754b-4b74-9d20-51df3e5de017 with nextest profile: default
+    Starting 1 test across 2 binaries (135 tests skipped)
+        PASS [   0.043s] cadetta-sema lower::tests::datums_placements_and_points_are_lowered
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.052s] 1 test run: 1 passed, 135 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema lower::tests::datums_placements_and_points_are_lowered"
+size = 700
+status = "measured"
+test_count = 1
+tests_digest = "53661d640f5a6ce4d75cf1a88c72d45a001138d8d48c83434401d9bee44a7e92"
+at = "2026-10-14T01:02:21Z"
+actor = "lognd"
+rev = 1
