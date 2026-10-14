@@ -1,0 +1,42 @@
+kind = "evidence"
+captured_at = "2026-10-14T20:47:56Z"
+digest = "4338e9046926f56a025cd6e73c0ca3a701b4f4f0e94d569ab68e757d7b513937"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.32s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9aa86921-863d-4e8b-955a-a877a5fe2948 with nextest profile: default
+    Starting 13 tests across 45 binaries (1164 tests skipped)
+        PASS [   0.009s] cadetta cmd::sync::tests::normalize_canonicalizes_numbers_and_units
+        PASS [   0.011s] cadetta cmd::sync::tests::observed_geometry_parses_frames_and_skips_malformed
+        PASS [   0.011s] cadetta cmd::sync::tests::native_scale_defaults_to_millimetres
+        PASS [   0.014s] cadetta cmd::sync::tests::parse_args_reads_every_flag
+        PASS [   0.014s] cadetta cmd::sync::tests::moved_frame_is_r001_and_matching_frame_is_silent
+        PASS [   0.016s] cadetta cmd::sync::tests::datums_create_appends_entries_only_with_the_feature
+        PASS [   0.037s] cadetta cmd::sync::tests::design_change_pushes_regens_reads_back_and_saves
+        PASS [   0.037s] cadetta cmd::sync::tests::read_back_mismatch_fails_and_skips_save
+        PASS [   0.040s] cadetta cmd::sync::tests::unchanged_design_writes_nothing_and_never_regens
+        PASS [   0.047s] cadetta cmd::sync::tests::cad_side_edit_is_drift_and_both_sides_is_r001
+        PASS [   0.047s] cadetta cmd::sync::tests::dry_run_and_no_regen_change_what_is_called
+        PASS [   0.042s] cadetta cmd::sync::tests::usage_errors_exit_2_and_json_matches_schema
+        PASS [   0.052s] cadetta cmd::sync::tests::adapter_without_drive_emits_and_prints_manual_steps
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.053s] 13 tests run: 13 passed, 1164 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cmd::sync::tests"
+size = 2207
+status = "measured"
+test_count = 13
+tests_digest = "3da6587cc6a7000a5d31fc576ca5137f0d80669787e2d09f40a5f191d38c49b5"
+at = "2026-10-14T20:47:56Z"
+actor = "lognd"
+rev = 1
