@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T02:58:24Z"
-updated = "2026-10-14T03:17:02Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
+updated = "2026-10-14T03:22:34Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/**", "std/**"]
 
 [[acceptance]]
 text = "Given a ScrewJoint instance, when cadetta check runs, then its named checks (Box/j.engaged ...) report verdicts"
