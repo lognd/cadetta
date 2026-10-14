@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-14T13:18:12Z"
+updated = "2026-10-14T13:18:25Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:.github/workflows/solidworks.yml", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
@@ -32,5 +32,5 @@ bound = false
 
 [[acceptance]]
 text = "Given a recording ISwSession wrapper, when a real session runs, then calls and results are captured as JSON lines that the fake replays byte-exactly (solidworks.md 6)"
-bound = false
+bound = true
 +++
