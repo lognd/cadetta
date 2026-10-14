@@ -2,7 +2,8 @@
 id = "01M4STCFQMGTXQAYPANNCHWEN4"
 title = "Conformance run for config-cli"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
