@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:33Z"
-updated = "2026-10-14T21:55:49Z"
+updated = "2026-10-14T21:56:02Z"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli/src", "docs/spec/quantities.md", "changelog.d"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check reports no Q or E diagnostic for a cross-component read of the matching dimension (Length = Plate.width)"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. pipeline wires no TypeEnv.
