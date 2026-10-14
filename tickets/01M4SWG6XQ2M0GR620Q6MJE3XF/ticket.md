@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T03:47:02Z"
+updated = "2026-10-14T03:47:29Z"
 persona = "design engineer"
 capability = "screw here and prove alignment"
 idempotency_key = "replan14:geo-screwpos"
@@ -45,5 +45,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the M5 medium example, when checked, then the fixed allowance is 0.25mm (geometry.md 1)"
-bound = false
+bound = true
 +++
