@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-14T13:17:16Z"
+updated = "2026-10-14T13:18:12Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:.github/workflows/solidworks.yml", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
-scope = [".github/workflows/solidworks.yml", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
+scope = [".github/workflows/solidworks.yml", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/TranscriptTests.cs", "docs/spec/solidworks.md"]
 
 [[links]]
 kind = "blocked-by"
