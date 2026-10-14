@@ -1,0 +1,228 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:39:03Z"
+digest = "bbd1502c5882708b490b58aa57606198f31a3dcef05cd7e66e85abd8d2a05937"
+exit_code = 1
+failed_tests = ["adapters/freecad/../../bindings/python/tests/test_gen_models.py::test_check_names_stale_file"]
+inline = '''
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0
+collected 87 items
+
+adapters/freecad/tests/unit/test_emit.py .....................           [ 24%]
+adapters/freecad/tests/unit/test_freecad_adapter.py .....                [ 29%]
+adapters/freecad/tests/unit/test_main.py ..                              [ 32%]
+adapters/freecad ...........F........................................... [ 95%]
+....                                                                     [100%]
+
+=================================== FAILURES ===================================
+_________________________ test_check_names_stale_file __________________________
+
+gen_models = <module 'gen_models' from '<worktree>/bindings/python/scripts/gen_models.py'>
+tmp_path = PosixPath('/tmp/pytest-of-logan/pytest-3/test_check_names_stale_file0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x724144c15490>
+
+    def test_check_names_stale_file(gen_models, tmp_path, monkeypatch):
+        """A drifted committed model makes --check exit 1 and name the file."""
+        stale = tmp_path / "ir.py"
+        stale.write_text("# stale\n")
+        monkeypatch.setattr(gen_models, "MODELS_DIR", tmp_path)
+        monkeypatch.setattr(gen_models, "REPO_ROOT", tmp_path)
+        monkeypatch.setattr(gen_models, "MODELS", gen_models.MODELS[:1])
+>       assert gen_models.run(check=True).unwrap() == ["ir.py"]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+bindings/python/tests/test_gen_models.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Err(GenError(step='datamodel-codegen ir', detail='<worktree>/.venv/bin/python: No module named datamodel_code_generator'))
+err = None, note = None
+
+    def unwrap(self, *, err: F | None = None, note: str | None = None) -> T_co:
+        """Always raises ``UnwrapError``: ``Err`` carries no success value.
+    
+        With *err* given the raised error's ``.container`` is
+        ``self.wrap_err(err)`` (optionally further ``.note(note)``-d);
+        with only *note* given it is ``self.note(note)``.
+        """
+        if err is None and note is None:
+>           raise UnwrapError(self)
+E           typani._exceptions.UnwrapError: unwrap() on Err(GenError(step='datamodel-codegen ir', detail='<worktree>/.venv/bin/python: No module named datamodel_code_generator'))
+
+.venv/lib/python3.11/site-packages/typani/result.py:515: UnwrapError
+----------------------------- Captured stderr call -----------------------------
+--- Logging error ---
+Traceback (most recent call last):
+  File "~/.local/share/uv/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<worktree>/.venv/lib/python3.11/site-packages/pytest/__main__.py", line 9, in <module>
+    raise SystemExit(_console_main())
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/config/__init__.py", line 253, in _console_main
+    code = _main(prog=_get_prog_name(sys.argv))
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/config/__init__.py", line 229, in _main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 377, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 330, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 384, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 408, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 139, in runtestprotocol
+    reports.append(call_and_report(item, "call", log))
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 249, in call_and_report
+    call = CallInfo.from_call(
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 361, in from_call
+    result: TResult | None = func()
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 250, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 184, in pytest_runtest_call
+    item.runtest()
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/python.py", line 1707, in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/python.py", line 167, in pytest_pyfunc_call
+    result = testfunction(**testargs)
+  File "<worktree>/bindings/python/tests/test_gen_models.py", line 38, in test_check_names_stale_file
+    assert gen_models.run(check=True).unwrap() == ["ir.py"]
+  File "<worktree>/bindings/python/scripts/gen_models.py", line 128, in run
+    match generate(spec, tmp_dir):
+  File "<worktree>/bindings/python/scripts/gen_models.py", line 95, in generate
+    log.info("generating %s from %s", out.name, schema.name)
+Message: 'generating %s from %s'
+Arguments: ('ir.py', 'cadetta.ir.1.json')
+--- Logging error ---
+Traceback (most recent call last):
+  File "~/.local/share/uv/python/cpython-3.11.17-linux-x86_64-gnu/lib/python3.11/logging/__init__.py", line 1113, in emit
+    stream.write(msg + self.terminator)
+ValueError: I/O operation on closed file.
+Call stack:
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<worktree>/.venv/lib/python3.11/site-packages/pytest/__main__.py", line 9, in <module>
+    raise SystemExit(_console_main())
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/config/__init__.py", line 253, in _console_main
+    code = _main(prog=_get_prog_name(sys.argv))
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/config/__init__.py", line 229, in _main
+    ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 377, in pytest_cmdline_main
+    return wrap_session(config, _main)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 330, in wrap_session
+    session.exitstatus = doit(config, session) or 0
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 384, in _main
+    config.hook.pytest_runtestloop(session=session)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/main.py", line 408, in pytest_runtestloop
+    item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 118, in pytest_runtest_protocol
+    runtestprotocol(item, nextitem=nextitem)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 139, in runtestprotocol
+    reports.append(call_and_report(item, "call", log))
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 249, in call_and_report
+    call = CallInfo.from_call(
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 361, in from_call
+    result: TResult | None = func()
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 250, in <lambda>
+    lambda: runtest_hook(item=item, **kwds),
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/runner.py", line 184, in pytest_runtest_call
+    item.runtest()
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/python.py", line 1707, in runtest
+    self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_hooks.py", line 512, in __call__
+    return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+  File "<worktree>/.venv/lib/python3.11/site-packages/pluggy/_callers.py", line 121, in _multicall
+    res = hook_impl.function(*args)
+  File "<worktree>/.venv/lib/python3.11/site-packages/_pytest/python.py", line 167, in pytest_pyfunc_call
+    result = testfunction(**testargs)
+  File "<worktree>/bindings/python/tests/test_gen_models.py", line 38, in test_check_names_stale_file
+    assert gen_models.run(check=True).unwrap() == ["ir.py"]
+  File "<worktree>/bindings/python/scripts/gen_models.py", line 128, in run
+    match generate(spec, tmp_dir):
+  File "<worktree>/bindings/python/scripts/gen_models.py", line 108, in generate
+    match _run(step, cmd):
+  File "<worktree>/bindings/python/scripts/gen_models.py", line 86, in _run
+    log.error("%s failed with exit %d", step, proc.returncode)
+Message: '%s failed with exit %d'
+Arguments: ('datamodel-codegen ir', 1)
+------------------------------ Captured log call -------------------------------
+INFO     gen_models:gen_models.py:95 generating ir.py from cadetta.ir.1.json
+DEBUG    gen_models:gen_models.py:83 running datamodel-codegen ir: <worktree>/.venv/bin/python -m datamodel_code_generator --input <worktree>/docs/schemas/cadetta.ir.1.json --output /tmp/cadetta-models-e7evdtpn/ir.py --input-file-type jsonschema --output-model-type pydantic_v2.BaseModel --use-annotated --use-standard-collections --use-union-operator --target-python-version 3.11 --use-subclass-enum --formatters ruff-format --disable-timestamp
+ERROR    gen_models:gen_models.py:86 datamodel-codegen ir failed with exit 1
+-------------- generated xml file: /tmp/frob-pytest-808617-0.xml ---------------
+=========================== short test summary info ============================
+FAILED adapters/freecad::test_check_names_stale_file - typani._exceptions.Unw...
+======================== 1 failed, 86 passed in 14.08s =========================
+'''
+passed = false
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_alternate_only_and_unwritten_locators_are_skipped adapters/freecad/tests/unit/test_emit.py::test_backend_failure_is_an_rpc_error adapters/freecad/tests/unit/test_emit.py::test_bad_policy_and_digestless_design_are_invalid_params adapters/freecad/tests/unit/test_emit.py::test_dependency_cycle_is_d003 adapters/freecad/tests/unit/test_emit.py::test_emit_over_json_rpc adapters/freecad/tests/unit/test_emit.py::test_emit_point_mid_mmc_lmc_and_notes adapters/freecad/tests/unit/test_emit.py::test_emit_twice_cells_are_identical_and_headed_by_digests adapters/freecad/tests/unit/test_emit.py::test_emit_twice_is_deterministic adapters/freecad/tests/unit/test_emit.py::test_invalid_and_colliding_aliases_are_diagnostics adapters/freecad/tests/unit/test_emit.py::test_mmc_without_role_is_e010_and_withholds adapters/freecad/tests/unit/test_emit.py::test_paths_follow_dependencies_then_smallest_path adapters/freecad/tests/unit/test_emit.py::test_q004_respects_policy_precision adapters/freecad/tests/unit/test_emit.py::test_q004_withholds_the_file adapters/freecad/tests/unit/test_emit.py::test_ref_mode_follows_alias_of_to_the_referent_global adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_any_global_is_a_diagnostic adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_global_creates_the_mangled_global_once adapters/freecad/tests/unit/test_emit.py::test_ref_to_names_the_target_global adapters/freecad/tests/unit/test_emit.py::test_several_locators_each_written_and_ref_mode_references_global adapters/freecad/tests/unit/test_emit.py::test_sign_negates_and_dimensionless_is_bare adapters/freecad/tests/unit/test_emit.py::test_star_binding_emits_instance_zero adapters/freecad/tests/unit/test_emit.py::test_unknown_bound_path_is_r005 adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_rejects_unknown_protocol adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_returns_all_three_capabilities adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_succeeds_without_freecad adapters/freecad/tests/unit/test_freecad_adapter.py::test_run_keeps_stdout_for_protocol_only adapters/freecad/tests/unit/test_freecad_adapter.py::test_served_by_adapter_base_and_shutdown_stops_loop adapters/freecad/tests/unit/test_main.py::test_no_arguments_serves_the_adapter adapters/freecad/tests/unit/test_main.py::test_version_prints_to_stdout bindings/python/tests/test_adapter.py::test_drive_methods_are_overridable_and_open_save_close_work bindings/python/tests/test_adapter.py::test_handler_err_becomes_rpc_error_and_exception_is_internal bindings/python/tests/test_adapter.py::test_initialize_dispatches_and_result_is_schema_shaped bindings/python/tests/test_adapter.py::test_invalid_handler_result_is_internal_error bindings/python/tests/test_adapter.py::test_invalid_params_and_unknown_fields_are_refused bindings/python/tests/test_adapter.py::test_observed_ir_uses_the_ir_models bindings/python/tests/test_adapter.py::test_parse_error_and_notifications bindings/python/tests/test_adapter.py::test_run_keeps_stdout_for_protocol_and_logs_to_stderr bindings/python/tests/test_adapter.py::test_shutdown_ends_loop bindings/python/tests/test_adapter.py::test_unoverridden_and_non_drive_methods_are_method_not_found bindings/python/tests/test_errors.py::test_operator_violations_raise_quantity_error_with_q_code bindings/python/tests/test_gen_models.py::test_check_names_stale_file bindings/python/tests/test_module_functions.py::test_format_source_canonical_and_error bindings/python/tests/test_module_functions.py::test_project_explain bindings/python/tests/test_module_functions.py::test_project_reload_rereads_snapshot bindings/python/tests/test_module_functions.py::test_quantity_returns_result bindings/python/tests/test_module_functions.py::test_units_all_and_by_kind bindings/python/tests/test_pint.py::test_angle_maps_to_radian bindings/python/tests/test_pint.py::test_compound_dimension_and_dimensionless bindings/python/tests/test_pint.py::test_length_converts_to_equivalent_pint_quantity bindings/python/tests/test_pint.py::test_missing_pint_is_err_naming_extra bindings/python/tests/test_project.py::test_member_matches_cli_json bindings/python/tests/test_project.py::test_open_evaluate_wraps_generated_models bindings/python/tests/test_project.py::test_package_and_modules bindings/python/tests/test_project.py::test_root_discovery_config_file bindings/python/tests/test_project.py::test_root_discovery_none_found bindings/python/tests/test_project.py::test_root_discovery_walks_up bindings/python/tests/test_project.py::test_root_discovery_workspace bindings/python/tests/test_project.py::test_unknown_path_is_err_not_keyerror bindings/python/tests/test_project_verbs.py::test_bind_errors_are_results bindings/python/tests/test_project_verbs.py::test_bind_then_unbind_round_trip bindings/python/tests/test_project_verbs.py::test_cite_list_json_model_and_text bindings/python/tests/test_project_verbs.py::test_design_citation_lookup bindings/python/tests/test_project_verbs.py::test_names_lists_unbound_paths bindings/python/tests/test_project_verbs.py::test_names_unknown_adapter_is_err bindings/python/tests/test_quantity.py::test_arithmetic_carries_tolerance_and_correlation bindings/python/tests/test_quantity.py::test_compound_and_fraction_literals_are_exact bindings/python/tests/test_quantity.py::test_division_by_interval_containing_zero_raises bindings/python/tests/test_quantity.py::test_inexact_value_reports_not_exact bindings/python/tests/test_quantity.py::test_kind_rule_violations_carry_q_codes bindings/python/tests/test_quantity.py::test_limits_are_computed_in_rust bindings/python/tests/test_quantity.py::test_mmc_lmc_need_a_role bindings/python/tests/test_quantity.py::test_named_kinds_do_not_mix_implicitly bindings/python/tests/test_quantity.py::test_no_dot_to_method bindings/python/tests/test_quantity.py::test_parse_error_is_err_with_code bindings/python/tests/test_quantity.py::test_parse_is_exact_and_converts_to_fraction bindings/python/tests/test_quantity.py::test_pi_factor_makes_to_exact_none bindings/python/tests/test_quantity.py::test_squaring_never_goes_negative bindings/python/tests/test_quantity.py::test_unit_dimension_mismatch_in_conversion bindings/python/tests/test_solve.py::test_inexact_and_large_values_have_no_exponent bindings/python/tests/test_solve.py::test_output_kind_mismatch_is_protocol_error_naming_output bindings/python/tests/test_solve.py::test_outputs_are_rounded_decimal_strings_not_repr_float bindings/python/tests/test_solve.py::test_serve_writes_valid_response_with_version bindings/python/tests/test_solve.py::test_toleranced_input_arrives_with_tolerance bindings/python/tests/unit/test_logging.py::test_below_level_filter_keeps_only_lower_levels bindings/python/tests/unit/test_logging.py::test_get_logger_returns_named_logger bindings/python/tests/unit/test_logging.py::test_info_has_no_level_prefix bindings/python/tests/unit/test_logging.py::test_use_protocol_logging_installs_stderr_only_root bindings/python/tests/unit/test_logging.py::test_warning_and_show_level_add_prefix"
+size = 14777
+status = "measured"
+test_count = 87
+tests_digest = "242a6964305061b37a5cb34a405740ecb4ed44069792ec327fbb50b49cd1a626"
+at = "2026-10-14T05:39:03Z"
+actor = "Claude"
+rev = 1
