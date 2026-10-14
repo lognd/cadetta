@@ -1,0 +1,7 @@
+kind = "field"
+field = "body"
+old = "found while working ~HWJP0GQ: tests/conformance/geometry fixtures, need sema wiring and binary support"
+new = "Found while working ~HWJP0GQ. Fixtures need the sema lowering (~4XTSTXR) and G008 emission (~1392B89); remove the matching known-gaps entries when they pass."
+at = "2026-10-14T20:53:30Z"
+actor = "lognd"
+rev = 1
