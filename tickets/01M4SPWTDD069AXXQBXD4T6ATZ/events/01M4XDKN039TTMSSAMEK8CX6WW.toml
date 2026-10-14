@@ -1,0 +1,32 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T14:38:36Z"
+digest = "7088891ca7b3303812105b3f23894f11e1642716415ef1a7aadc99785cc7b779"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cdeab772-7f21-4b2a-86f7-80986612ad70 with nextest profile: default
+    Starting 9 tests across 1 binary (216 tests skipped)
+        PASS [   0.012s] cadetta cmd::sync::tests::normalize_canonicalizes_numbers_and_units
+        PASS [   0.016s] cadetta cmd::sync::tests::parse_args_reads_every_flag
+        PASS [   0.040s] cadetta cmd::sync::tests::unchanged_design_writes_nothing_and_never_regens
+        PASS [   0.061s] cadetta cmd::sync::tests::read_back_mismatch_fails_and_skips_save
+        PASS [   0.065s] cadetta cmd::sync::tests::design_change_pushes_regens_reads_back_and_saves
+        PASS [   0.065s] cadetta cmd::sync::tests::adapter_without_drive_emits_and_prints_manual_steps
+        PASS [   0.070s] cadetta cmd::sync::tests::cad_side_edit_is_drift_and_both_sides_is_r001
+        PASS [   0.071s] cadetta cmd::sync::tests::usage_errors_exit_2_and_json_matches_schema
+        PASS [   0.074s] cadetta cmd::sync::tests::dry_run_and_no_regen_change_what_is_called
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.075s] 9 tests run: 9 passed, 216 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib cmd::sync"
+size = 1319
+status = "measured"
+test_count = 9
+tests_digest = "e3f2049402dae3e5534c30d3a281bc668d66ced336d6ef40a718bc33c8789708"
+at = "2026-10-14T14:38:36Z"
+actor = "lognd"
+rev = 1
