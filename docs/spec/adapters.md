@@ -321,6 +321,19 @@ coordinates, and positions are verified by transform (geometry.md 6):
   rotation entries as plain numbers; an inexact design entry uses its
   nominal. A mismatch is R001 on the datum or placement path, showing
   both transforms.
+- Composition. The host composes each frame in `f64` from the evaluated
+  IR (`cadetta_adapter::geometry_bind::Composer`): a datum's frame is
+  its parent's frame followed by its ops left to right, each op in the
+  running local frame (`offset` translates, `rotate` uses the angle
+  Member, `flip` is a half turn); `<Type>.origin` is the identity;
+  translations are divided by the adapter's native unit. A placement's
+  anchor frame is the frame of its `at` datum followed by the placement
+  ops. When `at` is a datum of another part, that part is the unique
+  placement in the same component whose placed datum has that type
+  (matching the array index for an indexed placement), its node frame
+  being its anchor frame times the inverse of its placed datum's frame;
+  an ambiguous or missing node is skipped with a warning, never
+  guessed. Variants compose with the base ops.
 - A placement is verify-only: it is never pushed, so any mismatch is
   R001 whatever the base (move the part in CAD, or change the design).
 - A datum is verify-only under `[[adapter]] datums = "verify"` (the
