@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: Claude in cadetta-wt/CJ14FY0; scope: bindings/python/src/logging.rs, bindings/python/python/cadetta/_logging.py; ttl 7200s"
+at = "2026-10-14T05:57:37Z"
+actor = "Claude"
+rev = 1

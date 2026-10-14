@@ -1,0 +1,7 @@
+kind = "field"
+field = "labels"
+old = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py"]
+new = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py", "creates:bindings/python/tests/test_logging_bridge.py"]
+at = "2026-10-14T05:58:06Z"
+actor = "Claude"
+rev = 1
