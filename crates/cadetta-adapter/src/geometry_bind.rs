@@ -6,6 +6,16 @@
 //! turns `cadetta_geometry`'s composed `Transform` (and the observed `frames[]`/`instances[]`
 //! values) into [`Mat34`] and this module only compares, so no transform is composed here
 //! beyond the one instance-times-datum product the spec names.
+//!
+//! Composition rule (to move into adapters.md 3.4): a datum's frame is its parent's frame followed
+//! by its ops left to right, each op in the running local frame (`offset` translates, `rotate`
+//! uses the angle Member, `flip` is a half turn); `<Type>.origin` is the identity; translations
+//! are divided by the adapter's native unit. A placement's anchor frame is the frame of its `at`
+//! datum followed by the placement ops. When `at` is a datum of another part, that part is the
+//! unique placement in the same component whose placed datum has that type (matching the array
+//! index for an indexed placement); its node frame is its anchor frame times the inverse of its
+//! placed datum's frame. An ambiguous or missing node is skipped with a warning, never guessed.
+//! Variants compose with the base ops.
 // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
 
 use cadetta_ir::geometry::{Axis, Op, Placement};
