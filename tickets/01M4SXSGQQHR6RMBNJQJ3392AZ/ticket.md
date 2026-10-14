@@ -8,11 +8,11 @@ points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-13T06:04:28Z"
+updated = "2026-10-14T02:47:55Z"
 persona = "maintainer"
 capability = "check each golden design against its hand-evaluated expectations"
-labels = ["creates:crates/cadetta-cli/tests/golden/**", "creates:tests/golden/*/expected.toml"]
-scope = ["crates/cadetta-cli/tests/golden/**", "tests/golden/*/expected.toml"]
+labels = ["creates:crates/cadetta-cli/tests/golden/**"]
+scope = ["crates/cadetta-cli/tests/golden/**"]
 
 [[links]]
 kind = "blocked-by"
