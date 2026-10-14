@@ -19,9 +19,10 @@
           "attester": { "type": ["string", "null"] },
           "age_days": { "type": ["integer", "null"] },
           "nearest_changed": { "type": ["string", "null"] },
-          "note": { "type": ["string", "null"] }
+          "note": { "type": ["string", "null"] },
+          "upstream": { "description": "Attestations of this node carried by a dependency lock (attested upstream).", "type": "array", "items": { "type": "string" } }
         },
-        "required": ["id", "state", "role", "attester", "age_days", "nearest_changed", "note"],
+        "required": ["id", "state", "role", "attester", "age_days", "nearest_changed", "note", "upstream"],
         "type": "object"
       }
     }

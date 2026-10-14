@@ -21,5 +21,6 @@ pub mod schema;
 pub mod selector;
 pub mod staleness;
 pub mod swap;
+pub mod trust;
 pub mod waiver;
 pub mod why_stale;

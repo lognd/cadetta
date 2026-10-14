@@ -10,6 +10,7 @@ use cadetta_obligations::graph::{ObligationId, ObligationState};
 use cadetta_obligations::lock::{Attest, Lock};
 use cadetta_obligations::roles::Policy;
 use cadetta_obligations::staleness::{Judgement, classify_attested};
+use cadetta_obligations::trust::{Trust, Upstream};
 use cadetta_obligations::why_stale::WhyStale;
 
 use super::ack::policy_of;
@@ -96,6 +97,8 @@ pub struct Row {
     pub nearest_changed: Option<String>,
     /// "verdict unchanged, margin A -> B" when a stale verdict still holds.
     pub note: Option<String>,
+    /// Attestations of this node carried by a dependency's lock ("attested upstream").
+    pub upstream: Vec<String>,
 }
 
 /// The listing plus the gate outcome that decides the exit code.
@@ -134,6 +137,30 @@ pub fn list(
     args: &ObligationsArgs,
     as_of: &AsOf,
 ) -> Report {
+    list_with_upstream(
+        candidates,
+        lock,
+        policy,
+        args,
+        as_of,
+        &Upstream::new(),
+        &Trust::new(),
+    )
+}
+
+/// [`list`] that also weighs dependency attestations (packages.md 6).
+///
+/// An obligation a trusted upstream role currently attests is discharged and not listed;
+/// any other upstream attestation of it is shown on its row as information only.
+pub fn list_with_upstream(
+    candidates: &[Candidate],
+    lock: &Lock,
+    policy: &Policy,
+    args: &ObligationsArgs,
+    as_of: &AsOf,
+    upstream: &Upstream,
+    trust: &Trust,
+) -> Report {
     let today = day_number(&as_of.date.to_string());
     let mut rows = Vec::new();
     for c in candidates {
@@ -151,6 +178,14 @@ pub fn list(
         let role = args.role.clone().or_else(|| covering.first().cloned());
         let att: Option<&Attest> = role.as_deref().and_then(|r| lock.attestation(&c.id, r));
         let state = classify_attested(att, &c.current.0, &c.deps, c.suppressed);
+        if state != ObligationState::Discharged
+            && trust
+                .discharging(upstream, &c.id, &covering, &c.current.0)
+                .is_some()
+        {
+            tracing::debug!(id = %c.id, "not listed: discharged by trusted upstream attestation");
+            continue;
+        }
         let wanted_state = if args.stale {
             state == ObligationState::Stale
         } else {
@@ -180,6 +215,7 @@ pub fn list(
             age_days,
             nearest_changed: c.nearest_changed.clone(),
             note,
+            upstream: upstream.for_id(&c.id).map(|u| u.describe()).collect(),
         });
     }
     let pending: Vec<_> = rows.iter().map(|r| (r.id.clone(), r.state)).collect();
@@ -219,6 +255,7 @@ pub fn render(report: &Report, as_of: &AsOf, format: Format, out: &mut dyn Write
                     "age_days": r.age_days,
                     "nearest_changed": r.nearest_changed,
                     "note": r.note,
+                    "upstream": r.upstream,
                 })
             })
             .collect();
@@ -250,6 +287,9 @@ pub fn render(report: &Report, as_of: &AsOf, format: Format, out: &mut dyn Write
         }
         if let Some(note) = &r.note {
             line.push_str(&format!(" ({note})"));
+        }
+        for up in &r.upstream {
+            line.push_str(&format!(" [attested upstream: {up}]"));
         }
         let _ = writeln!(out, "{line}");
     }
@@ -288,6 +328,25 @@ fn project_candidates(
     }
     tracing::debug!(count = out.len(), "obligations: candidates from the IR");
     out
+}
+
+/// Read the lock of every path dependency and the roles each is trusted for (packages.md 6).
+///
+/// Git dependencies are not materialised here, so they contribute nothing.
+fn upstream_of(project: &Project) -> Result<(Upstream, Trust), String> {
+    let mut upstream = Upstream::new();
+    let mut trust = Trust::new();
+    for (name, dep) in &project.config.dependencies {
+        trust.set(name, &dep.trust);
+        let Some(path) = &dep.path else {
+            tracing::debug!(dependency = %name, "no path: upstream lock not read");
+            continue;
+        };
+        let lock = Lock::load(&project.root.join(path).join("cadetta.lock"))
+            .map_err(|e| format!("dependency `{name}`: {e}"))?;
+        upstream.add_package(name, &lock);
+    }
+    Ok((upstream, trust))
 }
 
 /// Run `cadetta obligations`; `args` are the words after the verb. Returns the exit code.
@@ -337,12 +396,18 @@ pub fn run_obligations(
     if analysis.halted {
         return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
-    let report = list(
+    let (upstream, trust) = match upstream_of(&project) {
+        Ok(o) => o,
+        Err(message) => return fail(err, &message),
+    };
+    let report = list_with_upstream(
         &project_candidates(&analysis, &lock, &policy, &parsed),
         &lock,
         &policy,
         &parsed,
         &as_of,
+        &upstream,
+        &trust,
     );
     render(&report, &as_of, globals.format, out);
     if report.gated { EXIT_PENDING } else { EXIT_OK }
@@ -495,6 +560,131 @@ mod tests {
                 .rows
                 .is_empty()
         );
+    }
+
+    fn shop_upstream() -> Upstream {
+        let mut shop = Lock::new();
+        attested(&mut shop, "a::X.cur", "aa");
+        attested(&mut shop, "a::X.old", "bb");
+        let mut u = Upstream::new();
+        u.add_package("acme.shop", &shop);
+        u
+    }
+
+    fn undiscounted() -> Vec<Candidate> {
+        vec![cand("a::X.cur", "aa"), cand("a::X.old", "bb")]
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::list_with_upstream
+    #[test]
+    fn upstream_attestations_are_shown_as_attested_upstream() {
+        let r = list_with_upstream(
+            &undiscounted(),
+            &Lock::new(),
+            &policy(None),
+            &Default::default(),
+            &as_of(),
+            &shop_upstream(),
+            &Trust::new(),
+        );
+        assert_eq!(r.rows.len(), 2);
+        assert_eq!(
+            r.rows[0].upstream,
+            ["acme.shop review by ana@x on 2026-10-01"]
+        );
+        let mut out = Vec::new();
+        render(&r, &as_of(), Format::Text, &mut out);
+        let text = String::from_utf8(out).unwrap();
+        assert!(
+            text.contains("[attested upstream: acme.shop review by ana@x on 2026-10-01]"),
+            "{text}"
+        );
+        let mut json = Vec::new();
+        render(&r, &as_of(), Format::Json, &mut json);
+        let v: serde_json::Value = serde_json::from_slice(&json).unwrap();
+        assert_eq!(
+            v["obligations"][0]["upstream"][0],
+            "acme.shop review by ana@x on 2026-10-01"
+        );
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::list_with_upstream
+    #[test]
+    fn trusted_roles_discharge_dependent_obligations() {
+        let mut trust = Trust::new();
+        trust.set("acme.shop", &["review".to_owned()]);
+        let r = list_with_upstream(
+            &undiscounted(),
+            &Lock::new(),
+            &policy(Some("check")),
+            &Default::default(),
+            &as_of(),
+            &shop_upstream(),
+            &trust,
+        );
+        assert!(r.rows.is_empty(), "{:?}", r.rows);
+        assert!(!r.gated);
+        // an upstream sign-off of an older state discharges nothing
+        let stale = vec![cand("a::X.cur", "zz")];
+        let r = list_with_upstream(
+            &stale,
+            &Lock::new(),
+            &policy(Some("check")),
+            &Default::default(),
+            &as_of(),
+            &shop_upstream(),
+            &trust,
+        );
+        assert_eq!(r.rows.len(), 1);
+        assert!(r.gated);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::list_with_upstream
+    #[test]
+    fn without_trust_upstream_discharges_nothing() {
+        let r = list_with_upstream(
+            &undiscounted(),
+            &Lock::new(),
+            &policy(Some("check")),
+            &Default::default(),
+            &as_of(),
+            &shop_upstream(),
+            &Trust::new(),
+        );
+        assert_eq!(r.rows.len(), 2);
+        assert!(r.rows.iter().all(|row| row.state == ObligationState::Open));
+        assert!(r.gated);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::upstream_of
+    #[test]
+    fn path_dependency_locks_and_trust_are_read() {
+        let root = std::env::temp_dir().join(format!("cadetta-upstream-{}", std::process::id()));
+        let shop = root.join("shop");
+        std::fs::create_dir_all(shop.join("src")).unwrap();
+        std::fs::write(shop.join("src/lib.cdt"), "").unwrap();
+        std::fs::write(
+            shop.join("cadetta.toml"),
+            "[package]\nname = \"acme.shop\"\n",
+        )
+        .unwrap();
+        std::fs::write(root.join("src.keep"), "").unwrap();
+        let mut shop_lock = Lock::new();
+        attested(&mut shop_lock, "a::X.cur", "aa");
+        shop_lock.save(&shop.join("cadetta.lock")).unwrap();
+        let config = crate::config::Config::parse(
+            "[package]\nname = \"acme.app\"\n[dependencies.\"acme.shop\"]\npath = \"shop\"\ntrust = [\"review\"]\n",
+        )
+        .unwrap();
+        let project = Project {
+            root: root.clone(),
+            config,
+            packages: vec![],
+        };
+        let (upstream, trust) = upstream_of(&project).unwrap();
+        assert_eq!(upstream.for_id(&id("a::X.cur")).count(), 1);
+        assert!(trust.trusts("acme.shop", "review"));
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::parse_args
