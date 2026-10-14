@@ -1,0 +1,56 @@
+kind = "evidence"
+captured_at = "2026-10-14T02:19:47Z"
+digest = "f16bda977559e49e39ce9b2817da5276f2baef1238cbdf0f23004c80d5cd2211"
+exit_code = 101
+inline = """
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling pyo3-ffi v0.29.3
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+error: failed to run custom build command for `pyo3-ffi v0.29.3`
+
+Caused by:
+  process didn't exit successfully: `<worktree>/target/debug/build/pyo3-ffi-2b1bd7b3a01c46a4/build-script-build` (exit status: 1)
+  --- stdout
+  cargo:rustc-check-cfg=cfg(Py_LIMITED_API)
+  cargo:rustc-check-cfg=cfg(Py_GIL_DISABLED)
+  cargo:rustc-check-cfg=cfg(PyPy)
+  cargo:rustc-check-cfg=cfg(GraalPy)
+  cargo:rustc-check-cfg=cfg(RustPython)
+  cargo:rustc-check-cfg=cfg(py_sys_config, values("Py_DEBUG", "Py_REF_DEBUG", "Py_TRACE_REFS", "COUNT_ALLOCS"))
+  cargo:rustc-check-cfg=cfg(Py_3_8)
+  cargo:rustc-check-cfg=cfg(Py_3_9)
+  cargo:rustc-check-cfg=cfg(Py_3_10)
+  cargo:rustc-check-cfg=cfg(Py_3_11)
+  cargo:rustc-check-cfg=cfg(Py_3_12)
+  cargo:rustc-check-cfg=cfg(Py_3_13)
+  cargo:rustc-check-cfg=cfg(Py_3_14)
+  cargo:rustc-check-cfg=cfg(Py_3_15)
+  cargo:rustc-check-cfg=cfg(Py_3_16)
+  cargo:rerun-if-env-changed=PYO3_CONFIG_FILE
+  cargo:rerun-if-env-changed=PYO3_CROSS
+  cargo:rerun-if-env-changed=PYO3_CROSS_LIB_DIR
+  cargo:rerun-if-env-changed=PYO3_CROSS_PYTHON_VERSION
+  cargo:rerun-if-env-changed=PYO3_CROSS_PYTHON_IMPLEMENTATION
+  cargo:rerun-if-env-changed=PYO3_BUILD_EXTENSION_MODULE
+  cargo:rerun-if-env-changed=PYO3_NO_PYTHON
+  cargo:rerun-if-env-changed=PYO3_ENVIRONMENT_SIGNATURE
+  cargo:rerun-if-env-changed=PYO3_PYTHON
+  cargo:rerun-if-env-changed=VIRTUAL_ENV
+  cargo:rerun-if-env-changed=CONDA_PREFIX
+  cargo:rerun-if-env-changed=PATH
+
+  --- stderr
+  error: cannot set a minimum Python version 3.11 higher than the interpreter version 3.10 (the minimum Python version is implied by the abi3-py311 feature)
+warning: build failed, waiting for other jobs to finish...
+error: command `~/.rustup/toolchains/stable-aarch64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics --workspace` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "--workspace"
+size = 2170
+status = "measured"
+at = "2026-10-14T02:19:47Z"
+actor = "lognd"
+rev = 1

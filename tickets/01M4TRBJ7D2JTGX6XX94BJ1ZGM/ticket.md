@@ -2,12 +2,12 @@
 id = "01M4TRBJ7D2JTGX6XX94BJ1ZGM"
 title = "sema evaluator cannot evaluate std ScrewJoint (parameterized components, table index, table-by-name defaults)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:48:42Z"
-updated = "2026-10-14T02:10:45Z"
+updated = "2026-10-14T02:13:03Z"
 scope = ["crates/cadetta-sema/**", "std/**", "tests/**", "docs/spec/**"]
 
 [[acceptance]]

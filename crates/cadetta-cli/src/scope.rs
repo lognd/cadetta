@@ -140,26 +140,14 @@ fn match_seg(seg: &Seg, part: &str) -> bool {
     }
 }
 
-/// A module path prefix as `::`-separated segments (`drive/motor` and `drive::motor` agree).
+/// A module path prefix, matched by the one shared adapter matcher (config-cli.md 3).
 #[derive(Debug, Clone, PartialEq, Eq)]
-struct ModulePrefix(Vec<String>);
+struct ModulePrefix(String);
 
 impl ModulePrefix {
     /// Whether `path` (`pkg::mod::...::Item.member`) lies under this prefix.
-    ///
-    /// The prefix is compared segment-wise (`drive` never matches
-    /// `driveline`), either relative to the package or fully qualified.
     fn matches(&self, path: &str) -> bool {
-        let segs: Vec<&str> = path.split("::").collect();
-        let starts = |from: usize| {
-            segs.len() >= from + self.0.len()
-                && self
-                    .0
-                    .iter()
-                    .zip(&segs[from..])
-                    .all(|(want, got)| want == got || (got.split('.').next() == Some(want)))
-        };
-        starts(0) || starts(1)
+        cadetta_adapter::scope::module_prefix_matches(&self.0, path)
     }
 }
 
@@ -189,7 +177,7 @@ impl Scope {
                 if segs.is_empty() {
                     Err(ScopeError::Empty { what: "module" })
                 } else {
-                    Ok(ModulePrefix(segs))
+                    Ok(ModulePrefix(segs.join("::")))
                 }
             })
             .collect::<Result<Vec<_>, _>>()?;
@@ -245,10 +233,28 @@ mod tests {
         );
         assert_eq!(scope(&["drive/motor"], &[]), vec![NODES[0]]);
         assert_eq!(scope(&["acme.rover::drive::motor"], &[]), vec![NODES[0]]);
+        assert_eq!(scope(&["acme.rover"], &[]).len(), NODES.len());
+        assert_eq!(
+            scope(&["acme"], &[]).len(),
+            NODES.len(),
+            "dotted package prefix"
+        );
+        assert!(scope(&["acme.rov"], &[]).is_empty(), "dot boundary only");
         assert_eq!(
             scope(&["frame", "drive::motor"], &[]),
             vec![NODES[0], NODES[3]]
         );
+    }
+
+    // frob:tests crates/cadetta-cli/src/scope.rs::Scope
+    // frob:ticket 01M4VVBYRVM2SEPC3F1HX1YH7M
+    #[test]
+    fn dotted_module_prefix_matches_on_dot_boundaries() {
+        let nodes = ["acme.gear::X.w", "acme.gear.sub::X.w", "acme.gearbox::X.w"];
+        let got = Scope::new(&["acme.gear"], &[] as &[&str])
+            .unwrap()
+            .filter(nodes);
+        assert_eq!(got, vec![nodes[0], nodes[1]]);
     }
 
     // frob:tests crates/cadetta-cli/src/scope.rs::Glob

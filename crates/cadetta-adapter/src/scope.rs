@@ -126,7 +126,7 @@ impl Narrowed<'_> {
 /// `acme.gear::drive`), compared segment-wise (`/` also separates). A
 /// leading package part matches on dot boundaries (`acme.gear` covers
 /// packages `acme.gear` and `acme.gear.sub`, not `acme.gearbox`).
-fn module_prefix_matches(prefix: &str, canonical: &str) -> bool {
+pub fn module_prefix_matches(prefix: &str, canonical: &str) -> bool {
     let want: Vec<&str> = prefix
         .split("::")
         .flat_map(|p| p.split('/'))
@@ -221,6 +221,8 @@ mod tests {
         assert!(Scope::default().accepts("anything::At.all"));
     }
 
+    // frob:tests crates/cadetta-adapter/src/scope.rs::module_prefix_matches
+    // frob:ticket 01M4VVBYRVM2SEPC3F1HX1YH7M
     #[test]
     fn module_prefix_forms() {
         let sc = |m: &str| Scope::new(s(&[m]), vec![]);
