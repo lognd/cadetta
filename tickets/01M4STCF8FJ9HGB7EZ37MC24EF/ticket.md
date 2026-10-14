@@ -2,7 +2,8 @@
 id = "01M4STCF8FJ9HGB7EZ37MC24EF"
 title = "Conformance run for obligations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
