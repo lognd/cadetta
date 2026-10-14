@@ -2,7 +2,8 @@
 id = "01M4SWP7NQ1KSHZ7TTSR6ZMFBF"
 title = "Conformance run for emitters/csv"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
