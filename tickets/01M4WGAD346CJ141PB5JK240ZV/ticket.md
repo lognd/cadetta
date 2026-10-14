@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "Claude"
 created = "2026-10-14T06:06:44Z"
-updated = "2026-10-14T11:49:57Z"
+updated = "2026-10-14T11:50:00Z"
 idempotency_key = "wire-default-impl"
 scope = ["crates/cadetta-sema/src/instances.rs"]
 
