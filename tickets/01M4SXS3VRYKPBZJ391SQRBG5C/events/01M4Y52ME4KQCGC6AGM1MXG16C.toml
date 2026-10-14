@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:28:44Z"
+digest = "372c7f499025860a428c242f0bccf8b704e742c1fd9ed4c6d2146733637bd91a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 298b1630-f1e8-4467-be86-3b8e36507708 with nextest profile: default
+    Starting 1 test across 45 binaries (1209 tests skipped)
+        PASS [   0.007s] cadetta cmd::obligations::tests::path_dependency_locks_and_trust_are_read
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 1209 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "path_dependency_locks_and_trust_are_read"
+size = 569
+status = "measured"
+test_count = 1
+tests_digest = "18c85915817da171f53a8b4ea728a9b061564af5b0511ea0b09865b7e15fe089"
+at = "2026-10-14T21:28:44Z"
+actor = "lognd"
+rev = 1
