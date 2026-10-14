@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:36:44Z"
+updated = "2026-10-14T12:39:01Z"
 persona = "design engineer"
 capability = "get typed results"
 idempotency_key = "replan14:py-models"
@@ -25,5 +25,5 @@ target = "01M4SWK9V5CYNNVTAS3PE4EC23"
 
 [[acceptance]]
 text = "Given docs/schemas, when models are generated, then Member, Value (with dim), Quantity and the diag record are pydantic models field for field (bindings.md 3.1, 3.2)"
-bound = false
+bound = true
 +++
