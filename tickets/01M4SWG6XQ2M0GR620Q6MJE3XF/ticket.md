@@ -2,7 +2,8 @@
 id = "01M4SWG6XQ2M0GR620Q6MJE3XF"
 title = "ScrewJoint at/onto: aligned with fixed and floating allowances"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
