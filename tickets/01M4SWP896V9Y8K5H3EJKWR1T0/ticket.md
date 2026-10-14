@@ -12,8 +12,8 @@ updated = "2026-10-14T12:48:08Z"
 persona = "design engineer"
 capability = "script the whole workflow"
 idempotency_key = "replan14:py-mut"
-labels = ["creates:bindings/python/python/cadetta/project_ops.py", "creates:bindings/python/python/cadetta/models/{update,ack,emit,import_}.py"]
-scope = ["bindings/python/python/cadetta/project_ops.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/{update,ack,emit,import_}.py"]
+labels = ["creates:bindings/python/python/cadetta/project_ops.py", "creates:bindings/python/python/cadetta/models/{update,ack,emit,import_}.py", "creates:bindings/python/tests/test_project_ops.py"]
+scope = ["bindings/python/python/cadetta/project_ops.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/{update,ack,emit,import_}.py", "bindings/python/python/cadetta/project.py", "docs/spec/bindings.md", "bindings/python/tests/test_project_ops.py"]
 
 [[links]]
 kind = "blocked-by"
