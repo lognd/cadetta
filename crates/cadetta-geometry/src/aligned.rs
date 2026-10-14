@@ -138,15 +138,15 @@ impl AlignedReport {
     }
 }
 
-fn pad_down(x: f64) -> f64 {
+pub(crate) fn pad_down(x: f64) -> f64 {
     x - 4.0 * f64::EPSILON * x.abs().max(f64::MIN_POSITIVE)
 }
 
-fn pad_up(x: f64) -> f64 {
+pub(crate) fn pad_up(x: f64) -> f64 {
     x + 4.0 * f64::EPSILON * x.abs().max(f64::MIN_POSITIVE)
 }
 
-fn coord_bounds(c: &Coord) -> Result<(f64, f64), AlignedError> {
+pub(crate) fn coord_bounds(c: &Coord) -> Result<(f64, f64), AlignedError> {
     match c {
         Coord::Approx(p) => Ok((p.lo, p.hi)),
         Coord::Exact(a) => {
@@ -250,7 +250,7 @@ pub fn measure(diff: &[Coord], allowance: &Affine) -> Result<Measured, AlignedEr
     })
 }
 
-fn located_diff(a: &Located, b: &Located) -> Result<Vec<Coord>, AlignedError> {
+pub(crate) fn located_diff(a: &Located, b: &Located) -> Result<Vec<Coord>, AlignedError> {
     if a.datum != b.datum {
         warn!(a = %a.datum, b = %b.datum, "aligned: distance across datums");
         return Err(PositionError::G001 {
@@ -317,7 +317,7 @@ fn flatten<'a>(p: &'a Pos, out: &mut Vec<&'a crate::point::Point>) -> Result<(),
     Ok(())
 }
 
-fn to_datum(
+pub(crate) fn to_datum(
     table: &FrameTable,
     p: &crate::point::Point,
     datum: &DatumId,

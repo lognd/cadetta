@@ -237,6 +237,7 @@ fn is_builtin(name: &str) -> bool {
             | "circle_pattern"
             | "distance"
             | "radial"
+            | "angle_between"
     )
 }
 
@@ -420,6 +421,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             "Point2" | "Point3" | "Vec2" | "Vec3" | "rect_pattern" | "circle_pattern"
             | "distance" | "radial" => self.geometry(sc, name, args, span),
+            // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+            "angle_between" => self.angle_between(sc, args, span),
             _ => self.fmt(sc, args, span),
         }
     }

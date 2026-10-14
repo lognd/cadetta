@@ -360,6 +360,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let (verdict, notes) = self.aligned_condition(sc, args, e.span)?;
                 Ok(Outcome { verdict, notes })
             }
+            // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+            ExprKind::Call { callee, args, .. }
+                if is_named(callee, "coaxial") || is_named(callee, "parallel") =>
+            {
+                let name = if is_named(callee, "coaxial") {
+                    "coaxial"
+                } else {
+                    "parallel"
+                };
+                let (verdict, notes) = self.axis_condition(sc, name, args, e.span)?;
+                Ok(Outcome { verdict, notes })
+            }
             _ => Err(diag(
                 "EVAL",
                 e.span,

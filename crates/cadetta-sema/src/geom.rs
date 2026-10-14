@@ -17,7 +17,8 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use cadetta_geometry::aligned::{AlignedError, aligned};
+use cadetta_geometry::aligned::{AlignedError, AlignedReport, aligned};
+use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
@@ -638,11 +639,24 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         span: Span,
     ) -> R<(Verdict, Vec<Note>)> {
         let xs = super::func::arity("aligned", args, 3, span)?;
+        let (here, comp) = self.enclosing("aligned", sc, span)?;
+        let a = self.point_operand(sc, comp, xs[0])?;
+        let b = self.point_operand(sc, comp, xs[1])?;
+        let allowance = self.quant(sc, xs[2])?;
+        let (table, _) = self.frame_tables(&here, comp, span)?;
+        let report =
+            aligned(&table, &a, &b, &allowance.form).map_err(|e| aligned_diag(&e, span))?;
+        debug!(verdict = ?report.verdict, pairs = report.pairs.len(), "geometry: aligned condition");
+        Ok((report.verdict, report_notes(&report)))
+    }
+
+    /// The enclosing component of a geometry builtin, as its path and syntax.
+    fn enclosing(&mut self, what: &str, sc: &Scope, span: Span) -> R<(CanonPath, &'p Component)> {
         let Some(comp_name) = sc.ctx.component.clone() else {
             return Err(diag(
                 "EVAL",
                 span,
-                "`aligned` is evaluated inside a component",
+                format!("`{what}` is evaluated inside a component"),
             ));
         };
         let here = CanonPath::item(&sc.ctx.package, &sc.ctx.module, &comp_name);
@@ -650,22 +664,85 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .resolver
             .component(&here)
             .ok_or_else(|| diag("EVAL", span, "the enclosing component is unknown"))?;
-        let a = self.point_operand(sc, comp, xs[0])?;
-        let b = self.point_operand(sc, comp, xs[1])?;
-        let allowance = self.quant(sc, xs[2])?;
-        let (table, _) = self.frame_tables(&here, comp, span)?;
-        let report =
-            aligned(&table, &a, &b, &allowance.form).map_err(|e| aligned_diag(&e, span))?;
-        let mut notes: Vec<Note> = Vec::new();
-        for m in &report.pairs {
-            for n in &m.comparison.notes {
-                if !notes.contains(n) {
-                    notes.push(*n);
+        Ok((here, comp))
+    }
+
+    /// A datum operand of an axis builtin (`a.ax`): its datum id, G003 for a part-local name.
+    fn axis_operand(&mut self, sc: &Scope, comp: &'p Component, e: &Expr) -> R<DatumId> {
+        match self.walk_ref(comp, &sc.ctx, e, e.span)? {
+            Some((Ref::Datum { parts, name }, _)) => Ok(DatumId::new(datum_id(&parts, &name))),
+            Some(_) => Err(diag("EVAL", e.span, "an axis operand names a datum")),
+            None => {
+                if let Some(name) = self.part_local_datum(comp, &sc.ctx, e) {
+                    return Err(diag(
+                        "G003",
+                        e.span,
+                        format!(
+                            "G003: `{name}` is a part-local datum met in an assembly; name it as `part.{name}` (geometry.md 3)"
+                        ),
+                    ));
                 }
+                Err(diag("EVAL", e.span, "an axis operand names a datum"))
             }
         }
-        debug!(verdict = ?report.verdict, pairs = report.pairs.len(), "geometry: aligned condition");
-        Ok((report.verdict, notes))
+    }
+
+    /// `coaxial(a, b, allowance, over)` or `parallel(..)` as a check condition (geometry.md 5.1).
+    ///
+    /// The axis sampling, the carry between datums and the tolerance bound are
+    /// `cadetta_geometry::axes`; this adapts the operands and maps its errors to G001, G003.
+    // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+    pub(super) fn axis_condition(
+        &mut self,
+        sc: &mut Scope,
+        name: &str,
+        args: &[Arg],
+        span: Span,
+    ) -> R<(Verdict, Vec<Note>)> {
+        let xs = super::func::arity(name, args, 4, span)?;
+        let (here, comp) = self.enclosing(name, sc, span)?;
+        let a = self.axis_operand(sc, comp, xs[0])?;
+        let b = self.axis_operand(sc, comp, xs[1])?;
+        let allowance = self.quant(sc, xs[2])?;
+        let over = self.quant(sc, xs[3])?;
+        let (table, _) = self.frame_tables(&here, comp, span)?;
+        let report = if name == "coaxial" {
+            axes::coaxial(&table, &a, &b, &allowance.form, &over.form)
+        } else {
+            axes::parallel(&table, &a, &b, &allowance.form, &over.form)
+        }
+        .map_err(|e| aligned_diag(&e, span))?;
+        debug!(name, verdict = ?report.verdict, "geometry: axis condition");
+        Ok((report.verdict, report_notes(&report)))
+    }
+
+    /// `angle_between(a, b)`: the angle between two datum z axes, exact or marked inexact (Q006).
+    // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+    pub(super) fn angle_between(&mut self, sc: &mut Scope, args: &[Arg], span: Span) -> R<Val> {
+        let xs = super::func::arity("angle_between", args, 2, span)?;
+        let (here, comp) = self.enclosing("angle_between", sc, span)?;
+        let a = self.axis_operand(sc, comp, xs[0])?;
+        let b = self.axis_operand(sc, comp, xs[1])?;
+        let (form, nominal) = self.frame_tables(&here, comp, span)?;
+        let r = axes::angle_between(&form, &nominal, &a, &b).map_err(|e| aligned_diag(&e, span))?;
+        let dim = Dim::new(cadetta_units::Dimension::dimensionless(), 1);
+        if let Some(m) = r.exact {
+            debug!("geometry: angle_between is exact");
+            return Ok(Val::Quantity(Quant::constant(dim, m)));
+        }
+        debug!(
+            lo = r.lo,
+            hi = r.hi,
+            "geometry: angle_between is inexact (Q006)"
+        );
+        Ok(Val::Inexact(Inex {
+            dim,
+            nominal: r.nominal,
+            lo: r.lo,
+            hi: r.hi,
+            root: RootOp::Atan2,
+            exact_nominal: None,
+        }))
     }
 
     /// A declared point or point array (`lid.holes`) as a position in its own datum.
@@ -843,6 +920,19 @@ fn collect_node(n: &Node, out: &mut Vec<GeoMember>) {
     if let Some(sub) = &n.sub {
         collect_members(sub, out);
     }
+}
+
+/// The distinct comparison notes across every measured pair of a report.
+fn report_notes(report: &AlignedReport) -> Vec<Note> {
+    let mut notes: Vec<Note> = Vec::new();
+    for m in &report.pairs {
+        for n in &m.comparison.notes {
+            if !notes.contains(n) {
+                notes.push(*n);
+            }
+        }
+    }
+    notes
 }
 
 fn aligned_diag(e: &AlignedError, span: Span) -> Fail {

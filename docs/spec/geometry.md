@@ -350,6 +350,15 @@ Axis tests are builtins over the z axes of two datums:
 that is never negative, so `sqrt` of a sum of squares never fails on a
 sign-straddling tolerance (quantities.md 5.4).
 
+`coaxial` and `parallel` are check conditions (they give a verdict, and
+C002 when undecided), carried through the same frame table as `in`, so
+placement tolerances and flips flow in; a flipped z axis is still
+coaxial and parallel (the axis is a line, not a ray). `angle_between`
+is the angle of the carried z direction, `atan2(lateral, axial)`, in
+`[0, pi]`: exact when no tolerance is involved and the direction is
+along or across the axis (0, pi/2 or pi), otherwise inexact, marked
+`atan2` (Q006), with outward-padded bounds from the tolerance box.
+
 ### 5.2 Bolt float
 
 A bolted part in clearance holes is not located exactly: it can sit up to
