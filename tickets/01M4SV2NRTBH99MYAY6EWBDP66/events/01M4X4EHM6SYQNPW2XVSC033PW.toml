@@ -1,0 +1,34 @@
+kind = "evidence"
+captured_at = "2026-10-14T11:58:02Z"
+digest = "500ccaee37b6e6c388245cf5a987b66e25d943a90415a7e6a285b4220fadb7b8"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.48s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 546be782-4ca7-44fc-92eb-6b14df1e91e0 with nextest profile: default
+    Starting 12 tests across 11 binaries (248 tests skipped)
+        PASS [   0.033s] cadetta cmd::update::tests::update_name_touches_only_that_record
+        PASS [   0.033s] cadetta cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones
+        PASS [   0.032s] cadetta pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005
+        PASS [   0.034s] cadetta cmd::update::tests::run_update_writes_the_lock_and_reports
+        PASS [   0.033s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.034s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.034s] cadetta pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy
+        PASS [   0.036s] cadetta pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order
+        PASS [   0.041s] cadetta pkg::resolve::tests::unmet_version_requirement_is_e012
+        PASS [   0.057s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.062s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.080s] cadetta cmd::update::tests::json_validates_against_update_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.085s] 12 tests run: 12 passed, 248 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged) | test(=cmd::update::tests::e013_exits_one) | test(=cmd::update::tests::json_validates_against_update_schema) | test(=cmd::update::tests::run_update_writes_the_lock_and_reports) | test(=cmd::update::tests::update_name_touches_only_that_record) | test(=cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones) | test(=pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy) | test(=pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005) | test(=pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order) | test(=pkg::resolve::tests::unmet_version_requirement_is_e012)))'"
+size = 1617
+status = "measured"
+test_count = 12
+tests_digest = "a0aabc13ecac23d3e9303331066732c503ceb20e96150c69eda05a5662918158"
+at = "2026-10-14T11:58:02Z"
+actor = "Claude"
+rev = 1

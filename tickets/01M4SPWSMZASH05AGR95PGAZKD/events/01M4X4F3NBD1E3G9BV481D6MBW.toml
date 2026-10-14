@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T11:58:49Z"
+digest = "447f3d8d49f0619dfc75a6a1048003069efa3bfa27776ebbcbaa54902db5c258"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+adapters/freecad/tests/unit/test_drive.py .                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-595164-0.xml ---------------
+============================== 1 passed in 0.47s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_drive.py::test_regen_failure_is_r004_and_restores_the_snapshot"
+size = 513
+status = "measured"
+test_count = 1
+tests_digest = "a8f0ddae6909c98ab9359c8615d87497265a924d7d00b2d3aea16f95c7d8329f"
+at = "2026-10-14T11:58:49Z"
+actor = "Claude"
+rev = 1

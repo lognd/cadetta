@@ -598,6 +598,24 @@ function of the request.
   the one place 4's byte-determinism rule applies to the plan instead of
   the file.
 
+### 6.3 FreeCAD drive
+
+`drive.py` runs sessions over the backend seam. `open` attaches to a
+document already open in the running instance, else opens it hidden, and
+reports `dirty` (unsaved changes) and `readonly`; either is R009 and the
+file is refused: `push` to it rejects every locator without writing. A
+locator is a Spreadsheet alias or a `Sketch.Name` dimension. `push`
+snapshots each locator it will change, skips an unchanged value (no
+write) and a missing locator (R003), rejects a driven dimension or a
+non-numeric value (R010), and warns R006 when it replaces a native
+expression. `regen` recomputes the targets (every session file when
+empty); a failed object is R004: the snapshot is written back and the
+document recomputed, and the diagnostic says whether the restore held.
+`save` writes only modified files whose rebuild did not fail and returns
+`blake3` digests of the saved bytes. `close` closes only documents the
+adapter opened. `read` accepts a `session`, reading the open documents.
+The live FreeCAD calls are not exercised in CI without `freecadcmd`.
+
 ## 7. Import
 
 `import` is the adoption path for existing CAD files. It never writes

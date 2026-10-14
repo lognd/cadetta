@@ -336,7 +336,7 @@ fn load_candidate(
             (dir.clone(), Source::Path(dir))
         }
         Source::Git { url, reference } => {
-            let dir = (io.fetch)(url, reference).map_err(&missing)?;
+            let dir = (io.fetch)(url, reference).map_err(missing)?;
             (dir, dep.source.clone())
         }
     };

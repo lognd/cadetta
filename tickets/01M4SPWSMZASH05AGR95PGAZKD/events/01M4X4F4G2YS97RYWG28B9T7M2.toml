@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T11:58:50Z"
+digest = "f36c6f297ed1bb62c0ec0ac8348b1f65f5b1785b8031f527b7c12a9675c9221e"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+adapters/freecad/tests/unit/test_drive.py .                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-595481-0.xml ---------------
+============================== 1 passed in 0.29s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_drive.py::test_dirty_or_readonly_document_is_refused_with_r009_before_any_push"
+size = 513
+status = "measured"
+test_count = 1
+tests_digest = "e985505ad91ab371a6b03874342d39256b60a2161e5b14d7be971ca45e352751"
+at = "2026-10-14T11:58:50Z"
+actor = "Claude"
+rev = 1

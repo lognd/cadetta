@@ -1,0 +1,17 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T11:52:20Z"
+digest = "cab4c0682bb045f974c81bbd93d9565577e96b70d782f4ca8406611495c5e997"
+exit_code = 0
+inline = """
+    Blocking waiting for file lock on build directory
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.94s
+"""
+passed = true
+provider = "command"
+ref = "cargo clippy -p cadetta -- -D warnings"
+size = 126
+status = "measured"
+at = "2026-10-14T11:52:20Z"
+actor = "Claude"
+rev = 1
