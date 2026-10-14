@@ -2,13 +2,14 @@
 id = "01M4Y42EVP0N8T8JFC13E4TV99"
 title = "Wire import --update/--write into the CLI"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "wont-fix"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-14T21:11:10Z"
-updated = "2026-10-14T21:11:10Z"
+updated = "2026-10-14T21:17:27Z"
 idempotency_key = "cli-import-update-wire"
 scope = ["crates/cadetta-cli/src/cmd/import*"]
 
