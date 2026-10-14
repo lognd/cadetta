@@ -194,6 +194,11 @@ Rust.
   result during a real session as JSON lines; the fake session replays
   them, so the protocol executable's `read`, `push`, `regen` and `save`
   paths run in CI with byte-exact protocol output.
+  Implemented in `Cadetta.SolidWorks.Session.Recording`: `RecordingSwSession`
+  writes one canonical JSON line per call (`seq`, `call`, `args`, `result`,
+  optional `error`); `ReplaySwSession` answers from those lines in order and
+  throws `TranscriptMismatchException` on any divergence. Fixtures live in
+  `adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/`.
 - Release smoke, on a licensed machine, recorded as transcripts for the
   next CI run: open the pilot r3-05 part; link a dimension, a pattern
   count and a tolerance through the add-in; create datum frames; assign
