@@ -6,8 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:06:07Z"
+updated = "2026-10-14T22:14:10Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4Y77276XRHD2NDXHJMCB8NQ"
 
 [[acceptance]]
 text = "pipeline analyze evaluates every part slot alternate (key <slot>=<alt>) and passes LowerInput.variants so Member.variants and Verdicts.per_alternate are populated for checks that differ from the primary"
