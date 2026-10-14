@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T11:50:20Z"
+updated = "2026-10-14T11:50:21Z"
 persona = "design engineer"
 capability = "import existing FCStd spreadsheet aliases and dimensions"
 outcome_text = "I can lint a design before any .cdt exists"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given emit then read, when compared, then IR values are equal (round trip)"
-bound = false
+bound = true
 +++
