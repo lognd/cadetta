@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: Claude in cadetta-wt/T4JQ86R; scope: crates/cadetta-cli/src/pkg/resolve.rs; ttl 7200s"
+at = "2026-10-14T11:50:53Z"
+actor = "Claude"
+rev = 1
