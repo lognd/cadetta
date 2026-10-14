@@ -2,7 +2,8 @@
 id = "01M4STCDGQMN86JQJXKAQ2FX25"
 title = "Conformance run for language"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGB2729B40CQE81MHM2Z"
