@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/adapters.md`.
 
 pub mod atomic;
+pub mod availability;
 pub mod bindings;
 pub mod builtin;
 pub mod classify;
