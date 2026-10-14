@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:32:42Z"
+updated = "2026-10-14T12:32:51Z"
 persona = "maintainer"
 capability = "know the implementation matches the spec"
 idempotency_key = "replan14:cr-json"
 labels = ["creates:tests/conformance_emitters_json.rs"]
-scope = ["tests/conformance_emitters_json.rs"]
+scope = ["tests/conformance_emitters_json.rs", "crates/cadetta-cli/Cargo.toml", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
