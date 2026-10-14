@@ -11,6 +11,10 @@ created = "2026-10-14T20:51:57Z"
 updated = "2026-10-14T20:53:30Z"
 scope = ["crates/cadetta-lint/src/rules/g008.rs", "crates/cadetta-lint/src/engine.rs", "tests/conformance/lints/G008/**"]
 
+[[links]]
+kind = "blocked-by"
+target = "01M4Y2Z95B99FTVX68T4XTSTXR"
+
 [[acceptance]]
 text = "Given a one-point pattern or s = 0 on a non-locating joint, when linted, then theta is 180deg, dependent checks are undecided and G008 fires (geometry.md 5.2; lints.md G008; takes over ~HWJP0GQ acceptance 3 emission, using float::unconstrained_rotation)"
 bound = false
