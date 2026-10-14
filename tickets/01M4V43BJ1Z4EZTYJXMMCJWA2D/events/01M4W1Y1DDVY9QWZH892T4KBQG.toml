@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1, 2]
+captured_at = "2026-10-14T01:54:41Z"
+digest = "f97f2ea4180ba8a380beac9b9d39973fbe1f98af039981c19c8b3ccee6e57582"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f0aa36a1-e60e-4770-8891-a594c119a3a5 with nextest profile: default
+    Starting 7 tests across 1 binary
+        PASS [   0.012s] cadetta::conformance compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.016s] cadetta::conformance compare::tests::closed_list_and_duplicates
+        PASS [   0.021s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.137s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.146s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.262s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [  28.326s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  28.327s] 7 tests run: 7 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test conformance"
+size = 1144
+status = "measured"
+test_count = 7
+tests_digest = "ae280bc2c4dad079f20b0f2a21b8512a0653f973863e5014387bc2bcdf3a3394"
+at = "2026-10-14T01:54:41Z"
+actor = "lognd"
+rev = 1
