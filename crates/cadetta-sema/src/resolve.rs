@@ -110,6 +110,8 @@ pub enum ItemClass {
     Fn,
     /// A `cite`.
     Cite,
+    /// A `table`.
+    Table,
 }
 
 /// Where a reference is made from.
@@ -186,6 +188,7 @@ enum EntryKind<'a> {
     Enum(Vec<String>),
     Fn(&'a FnDecl),
     Cite,
+    Table,
 }
 
 struct Entry<'a> {
@@ -201,6 +204,7 @@ impl Entry<'_> {
             EntryKind::Enum(_) => ItemClass::Enum,
             EntryKind::Fn(_) => ItemClass::Fn,
             EntryKind::Cite => ItemClass::Cite,
+            EntryKind::Table => ItemClass::Table,
         }
     }
 }
@@ -376,7 +380,7 @@ impl<'a> Resolver<'a> {
         self.resolve_ref_in_param_type(ctx, &arg.value, &param.ty, &comp)
     }
 
-    fn resolve_ref_in_param_type(
+    pub(crate) fn resolve_ref_in_param_type(
         &self,
         ctx: &Ctx,
         value: &Expr,
@@ -1120,6 +1124,8 @@ fn index_item<'a>(it: &'a Item, add: &mut impl FnMut(&Ident, EntryKind<'a>)) {
             EntryKind::Enum(e.variants.iter().map(|v| v.name.clone()).collect()),
         ),
         ItemKind::Fn(f) => add(&f.name, EntryKind::Fn(f)),
+        // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+        ItemKind::Table(t) => add(&t.name, EntryKind::Table),
         _ => {}
     }
 }

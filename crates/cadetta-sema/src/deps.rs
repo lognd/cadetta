@@ -533,7 +533,17 @@ impl<'a> Builder<'_, 'a> {
             });
             let mut edges = BTreeSet::new();
             match (supplied, &p.default) {
-                (Some((site, value)), _) => self.reads(value, &[], site, comp, &mut edges),
+                // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+                (Some((site, value)), _) => {
+                    let bare = matches!(
+                        self.resolver
+                            .resolve_ref_in_param_type(&site.ctx, value, &p.ty, comp_id),
+                        Ok(Resolved::Variant { .. })
+                    );
+                    if !bare {
+                        self.reads(value, &[], site, comp, &mut edges);
+                    }
+                }
                 (None, Some(d)) => self.reads(d, &[], &own, comp, &mut edges),
                 (None, None) => {}
             }

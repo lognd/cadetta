@@ -2,13 +2,14 @@
 id = "01M4V43BJ1Z4EZTYJXMMCJWA2D"
 title = "Geometry evaluation: axis builtins, point ops, Q006 and joint checks"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-14T01:54:41Z"
+updated = "2026-10-14T02:06:44Z"
 scope = ["crates/cadetta-ir/**", "crates/cadetta-sema/**", "crates/cadetta-geometry/**", "tests/conformance/**", "docs/spec/**"]
 
 [[links]]

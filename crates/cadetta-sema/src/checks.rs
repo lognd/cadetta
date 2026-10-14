@@ -19,6 +19,7 @@
 // frob:ticket 01M4SPWPT5XR3QCQJ7M1XP07MP
 
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 use cadetta_syntax::ast::{
     self, BinOp, BoundKind, CmpOp as AstCmp, Component, Expr, ExprKind, MemberKind, UnOp,
@@ -28,6 +29,7 @@ use cadetta_units::Bound;
 use cadetta_units::compare::{CmpOp, Note, Operand, Verdict, compare};
 use tracing::{debug, trace, warn};
 
+use super::instances::InstInfo;
 use super::{Evaluator, Fail, Quant, R, Scope, Val, diag, strip, tol_diag};
 use crate::cite::effective;
 use crate::deps::Severity;
@@ -66,6 +68,10 @@ struct CheckDef<'p> {
     obligation: bool,
     ctx: Ctx,
     span: Span,
+    /// The instance whose members the condition reads (`None` for a plain component).
+    inst: Option<Rc<InstInfo>>,
+    /// The `#[when(cond)]` gate: the check exists only while it holds.
+    when: Option<&'p Expr>,
 }
 
 /// A bound member, indexed by its component and name.
@@ -85,9 +91,9 @@ pub struct CheckIndex<'p> {
 impl<'p> CheckIndex<'p> {
     /// Indexes the checks, requires and bounds of a component without parameters.
     pub fn add_component(&mut self, package: &str, module: &[String], c: &'p Component) {
-        if !c.params.is_empty() {
-            trace!(component = %c.name.name, "checks: parameterized component skipped");
-            return;
+        let parameterized = !c.params.is_empty();
+        if parameterized {
+            trace!(component = %c.name.name, "checks: parameterized component, checks run per instance");
         }
         let ctx = Ctx {
             package: package.to_owned(),
@@ -103,6 +109,7 @@ impl<'p> CheckIndex<'p> {
         };
         for m in &c.members {
             match &m.kind {
+                MemberKind::Check(_) | MemberKind::Require(_) if parameterized => {}
                 MemberKind::Check(k) => self.checks.push(CheckDef {
                     path: at(&k.name.name),
                     each: k.each.as_ref(),
@@ -112,6 +119,8 @@ impl<'p> CheckIndex<'p> {
                     obligation: false,
                     ctx: ctx.clone(),
                     span: m.span,
+                    inst: None,
+                    when: None,
                 }),
                 MemberKind::Require(r) => self.checks.push(CheckDef {
                     path: at(&r.name.name),
@@ -122,6 +131,8 @@ impl<'p> CheckIndex<'p> {
                     obligation: true,
                     ctx: ctx.clone(),
                     span: m.span,
+                    inst: None,
+                    when: None,
                 }),
                 MemberKind::Bound(b) => {
                     let name = match &b.kind {
@@ -210,16 +221,81 @@ fn units_op(op: AstCmp) -> CmpOp {
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// The checks and requires of every instance, keyed under the instance prefix.
+    // frob:ticket 01M4W5HM6SAY12P1J3R3G80Q7F
+    fn instance_check_defs(&self) -> Vec<CheckDef<'p>> {
+        let mut out = Vec::new();
+        for (info, comp, ctx, _) in self.instances.members() {
+            let at = |name: &str| {
+                let mut p = info.prefix.clone();
+                p.members.push(MemberSeg::Name(name.to_owned()));
+                p
+            };
+            for m in &comp.members {
+                let when = m
+                    .attrs
+                    .iter()
+                    .chain(m.trailing.iter())
+                    .find(|a| a.name.name == "when")
+                    .and_then(|a| match a.args.first() {
+                        Some(ast::AttrArg::Expr(e)) => Some(e),
+                        _ => None,
+                    });
+                let def = match &m.kind {
+                    MemberKind::Check(k) => CheckDef {
+                        path: at(&k.name.name),
+                        each: k.each.as_ref(),
+                        cond: &k.cond,
+                        message: k.message.clone(),
+                        citation: None,
+                        obligation: false,
+                        ctx: ctx.clone(),
+                        span: m.span,
+                        inst: Some(info.clone()),
+                        when,
+                    },
+                    MemberKind::Require(r) => CheckDef {
+                        path: at(&r.name.name),
+                        each: None,
+                        cond: &r.cond,
+                        message: r.message.clone(),
+                        citation: effective(r.citation.as_ref(), comp.citation.as_ref()).cloned(),
+                        obligation: true,
+                        ctx: ctx.clone(),
+                        span: m.span,
+                        inst: Some(info.clone()),
+                        when,
+                    },
+                    _ => continue,
+                };
+                out.push(def);
+            }
+        }
+        debug!(checks = out.len(), "checks: instance checks indexed");
+        out
+    }
+
     /// Evaluates every indexed check and require, recording C001, C002 and C003.
     pub(super) fn run_checks(&mut self) -> Vec<CheckResult> {
-        let defs = self.index.checks.clone();
+        let mut defs = self.index.checks.clone();
+        defs.extend(self.instance_check_defs());
         let mut out = Vec::new();
         for def in &defs {
             let mut sc = Scope {
                 ctx: def.ctx.clone(),
                 locals: Vec::new(),
             };
-            match self.run_check(&mut sc, def) {
+            let saved = std::mem::replace(&mut self.cur_inst, def.inst.clone());
+            let outcome = match self.gate(&mut sc, def) {
+                Ok(true) => self.run_check(&mut sc, def),
+                Ok(false) => {
+                    debug!(check = %def.path, "checks: `when` is false, check absent");
+                    Ok(Vec::new())
+                }
+                Err(f) => Err(f),
+            };
+            self.cur_inst = saved;
+            match outcome {
                 Ok(rs) => out.extend(rs),
                 Err(Fail::Silent) => {}
                 Err(Fail::Diag(d)) => self.diagnostics.push(d),
@@ -227,6 +303,17 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         debug!(checks = out.len(), "checks: evaluation finished");
         out
+    }
+
+    /// True when the check's `#[when]` gate (if any) holds.
+    fn gate(&mut self, sc: &mut Scope, def: &CheckDef<'p>) -> R<bool> {
+        match def.when {
+            None => Ok(true),
+            Some(cond) => match self.eval(sc, cond)? {
+                Val::Bool(b) => Ok(b),
+                _ => Err(diag("EVAL", cond.span, "a `when` condition must be a Bool")),
+            },
+        }
     }
 
     fn run_check(&mut self, sc: &mut Scope, def: &CheckDef<'p>) -> R<Vec<CheckResult>> {
@@ -358,6 +445,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
             ExprKind::Call { callee, args, .. } if is_named(callee, "aligned") => {
                 let (verdict, notes) = self.aligned_condition(sc, args, e.span)?;
+                Ok(Outcome { verdict, notes })
+            }
+            // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+            ExprKind::Call { callee, args, .. }
+                if is_named(callee, "coaxial") || is_named(callee, "parallel") =>
+            {
+                let name = if is_named(callee, "coaxial") {
+                    "coaxial"
+                } else {
+                    "parallel"
+                };
+                let (verdict, notes) = self.axis_condition(sc, name, args, e.span)?;
                 Ok(Outcome { verdict, notes })
             }
             _ => Err(diag(

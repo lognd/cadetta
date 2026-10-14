@@ -43,6 +43,7 @@ crossbeam-channel = "0.5.17"
 
 [dev-dependencies]
 jsonschema = { version = "0.58", default-features = false }
+regex = "1"
 
 [lints]
 workspace = true

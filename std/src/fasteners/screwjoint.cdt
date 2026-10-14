@@ -27,7 +27,7 @@
 // read from tables.cdt, materials.cdt and the policy, and inherits their
 // provenance warnings.
 
-use crate::materials::{Material, Materials, TapClass}
+use package::materials::{Material, Materials, TapClass}
 use super::policy::{FastenerPolicy, TapColumn}
 use super::screw::Iso4762
 use super::tables::{Iso273, Iso4762Head, MetricThread, TapDrill, Thread}

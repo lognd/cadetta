@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [1, 2, 3, 4, 5, 6, 7, 8]
+captured_at = "2026-10-14T02:59:19Z"
+digest = "cb7ef2a036705275c73772c0a8d133b0db0a2db7657cadc1fecda9bf10e525f2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ee797d03-7f93-4630-8d0d-38154a5cd7d6 with nextest profile: default
+    Starting 11 tests across 1 binary
+        PASS [   0.055s] cadetta::golden compare::tests::diagnostics_are_closed_for_errors_and_warnings
+        PASS [   0.057s] cadetta::golden stale_spec_fails_until_ported
+        PASS [   0.056s] cadetta::golden compare::tests::artifact_command_redirect_is_split
+        PASS [   0.055s] cadetta::golden compare::tests::masks_replace_matches_in_both_files
+        PASS [   0.056s] cadetta::golden compare::tests::mismatch_names_the_suspect_side
+        PASS [   0.057s] cadetta::golden confirm::tests::refuses_when_a_tbd_file_is_not_regenerated
+        PASS [   0.070s] cadetta::golden quantity::tests::range_adds_tolerance_terms
+        PASS [   0.084s] cadetta::golden quantity::tests::literals_compare_exactly_in_any_unit
+        PASS [   0.093s] cadetta::golden confirm::tests::adopt_requires_digest_only_difference
+        PASS [   0.110s] cadetta::golden confirm::tests::confirm_writes_digests_and_status_on_a_temp_copy
+        PASS [   1.256s] cadetta::golden golden_corpus
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.264s] 11 tests run: 11 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test golden"
+size = 1433
+status = "measured"
+test_count = 11
+tests_digest = "25921fa6322ffb89a4efec8c8352d592d63b7689516407bfb056a53d0d104bb3"
+at = "2026-10-14T02:59:19Z"
+actor = "lognd"
+rev = 1

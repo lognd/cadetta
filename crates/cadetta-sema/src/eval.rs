@@ -23,10 +23,11 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
+use std::rc::Rc;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm, Type,
-    UnOp,
+    self, BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm,
+    Type, UnOp,
 };
 use cadetta_syntax::lexer::Segment;
 use cadetta_syntax::span::Span;
@@ -38,7 +39,7 @@ use cadetta_units::{
 use tracing::{debug, trace, warn};
 
 use crate::deps::Severity;
-use crate::resolve::{CanonPath, Ctx, Level, MemberSeg, PackageSrc, Resolved, Resolver};
+use crate::resolve::{CanonPath, Ctx, ItemClass, Level, MemberSeg, PackageSrc, Resolved, Resolver};
 
 #[path = "array.rs"]
 pub mod array;
@@ -50,10 +51,14 @@ pub mod enums;
 pub mod func;
 #[path = "geom.rs"]
 pub mod geom;
+#[path = "instances.rs"]
+mod instances;
 #[path = "point.rs"]
 pub mod point;
 #[path = "posshape.rs"]
 mod posshape;
+#[path = "tablevals.rs"]
+mod tablevals;
 
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -93,6 +98,18 @@ pub enum Val {
     Point(Vec<Val>),
     /// An inexact number (`sqrt`, trigonometry): interval plus root operation.
     Inexact(func::Inex),
+    /// A table named as a value (a policy member such as `drills = IsoDrills`).
+    Table(CanonPath),
+    /// One row of a table, read by `.key` or by column name.
+    Row {
+        /// The table.
+        table: CanonPath,
+        /// The row's position in source order.
+        row: usize,
+    },
+    /// A component named as a value: an `ots` policy argument or a part instance.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    Component(CanonPath),
 }
 
 /// A parameter or `let` after evaluation.
@@ -142,6 +159,9 @@ pub struct Evaluation {
     pub var_count: u32,
     /// The evaluated instance count of every counted part slot (`part leg[4]`), by part path.
     pub part_counts: BTreeMap<CanonPath, u64>,
+    /// Instance members that are `priv` in their component (lowering marks them private).
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    pub instance_private: BTreeSet<CanonPath>,
 }
 
 impl Evaluation {
@@ -317,11 +337,11 @@ impl Quant {
 
 /// How a reference expression resolved.
 enum RefKind {
-    /// A member of a definition (or the implicit instance), with an optional accessor.
-    Member {
-        key: CanonPath,
-        accessor: Option<String>,
-    },
+    /// A member of a definition (or an instance), then the names read from its value
+    /// (an accessor, a component member, a row column, a point coordinate).
+    Member { key: CanonPath, chain: Vec<String> },
+    /// A component or part instance named as a value.
+    Component(CanonPath),
     /// A block-local binding.
     Local(String),
     /// An enum variant.
@@ -329,6 +349,8 @@ enum RefKind {
         enum_path: CanonPath,
         variant: String,
     },
+    /// A table named as a value.
+    Table(CanonPath),
 }
 
 /// A member definition indexed for evaluation.
@@ -339,6 +361,12 @@ struct Def<'p> {
     is_let: bool,
     ctx: Ctx,
     span: Span,
+    /// The instance this definition belongs to (callee members and callee-scope defaults).
+    inst: Option<Rc<instances::InstInfo>>,
+    /// A value known without evaluating `expr` (a bare enum variant or a default policy).
+    fixed: Option<Val>,
+    /// The `#[when(cond)]` presence condition, evaluated in `ctx`.
+    when: Option<&'p Expr>,
 }
 
 /// The names visible while evaluating one definition.
@@ -377,6 +405,16 @@ pub struct Evaluator<'r, 'p> {
     index: checks::CheckIndex<'p>,
     /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
     recursive: BTreeSet<CanonPath>,
+    /// Every `table` item of the project, by path.
+    tables: BTreeMap<CanonPath, &'p ast::Table>,
+    /// Tables built so far (built on first read).
+    table_cache: BTreeMap<CanonPath, std::rc::Rc<tablevals::TableVals>>,
+    /// Instances of parameterized components, materialised from `part` members.
+    instances: instances::Instances<'p>,
+    /// The instance whose member is being evaluated (callee names map to its prefix).
+    cur_inst: Option<Rc<instances::InstInfo>>,
+    /// Instance members whose `#[when]` condition was false.
+    absent: BTreeSet<CanonPath>,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -390,11 +428,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
+        let mut tables: BTreeMap<CanonPath, &'p ast::Table> = BTreeMap::new();
         for p in packages {
             for m in &p.modules {
                 for item in m.file.items() {
                     if let ItemKind::Fn(f) = &item.kind {
                         fns.insert(CanonPath::item(&p.name, &m.path, &f.name.name), f);
+                    }
+                    if let ItemKind::Table(t) = &item.kind {
+                        tables.insert(CanonPath::item(&p.name, &m.path, &t.name.name), t);
                     }
                 }
                 for c in m.file.components() {
@@ -406,8 +448,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
             }
         }
+        let instances = instances::materialise(resolver, packages, &mut defs);
         debug!(members = defs.len(), "evaluator: indexed members");
-        let mut diagnostics = Vec::new();
+        let mut diagnostics = instances.diagnostics.clone();
         let mut recursive = BTreeSet::new();
         for (path, span) in Self::find_recursive(resolver, &fns) {
             diagnostics.push(EvalDiagnostic {
@@ -431,6 +474,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             diagnostics,
             index,
             recursive,
+            tables,
+            table_cache: BTreeMap::new(),
+            instances,
+            cur_inst: None,
+            absent: BTreeSet::new(),
         }
     }
 
@@ -459,9 +507,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         for k in &keys {
             self.value_of(k);
         }
+        self.check_requires();
         self.evaluate_geometry();
         let checks = self.run_checks();
         self.drop_shadowed_evals();
+        let instance_private = self.instances.private.clone();
         let values = self
             .done
             .into_iter()
@@ -477,6 +527,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             checks,
             var_count: self.next_var,
             part_counts: self.part_counts,
+            instance_private,
         }
     }
 
@@ -517,17 +568,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ctx: def.ctx.clone(),
             locals: Vec::new(),
         };
-        let result = if def.is_let {
-            self.eval_let(&mut scope, &def)
-        } else {
-            self.eval_param(&mut scope, &def, key)
+        let saved = std::mem::replace(&mut self.cur_inst, def.inst.clone());
+        let present = match def.when {
+            Some(cond) => match self.eval(&mut scope, cond) {
+                Ok(Val::Bool(b)) => Ok(b),
+                Ok(_) => Err(diag("EVAL", cond.span, "a `when` condition must be a Bool")),
+                Err(f) => Err(f),
+            },
+            None => Ok(true),
         };
-        let result = match (result, def.ty) {
-            (Ok(ev), Some(ty)) => self
-                .check_declared(&mut scope, ty, &ev.value, def.span)
-                .map(|()| ev),
-            (r, _) => r,
+        let result = match present {
+            Ok(true) => self.eval_def(&mut scope, &def, key),
+            Ok(false) => {
+                debug!(%key, "evaluator: `when` is false, member absent");
+                self.absent.insert(key.clone());
+                Err(Fail::Silent)
+            }
+            Err(f) => Err(f),
         };
+        self.cur_inst = saved;
         self.in_progress.remove(key);
         let out = match result {
             Ok(v) => Some(v),
@@ -539,6 +598,29 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         self.done.insert(key.clone(), out.clone());
         out
+    }
+
+    /// Evaluates one present definition, then checks it against its declared type.
+    fn eval_def(&mut self, scope: &mut Scope, def: &Def<'p>, key: &CanonPath) -> R<Evaluated> {
+        let result = if let Some(v) = &def.fixed {
+            Ok(Evaluated {
+                value: v.clone(),
+                analysis: false,
+                var: None,
+                alias_of: None,
+                span: def.span,
+            })
+        } else if def.is_let {
+            self.eval_let(scope, def)
+        } else {
+            self.eval_param(scope, def, key)
+        };
+        match (result, def.ty) {
+            (Ok(ev), Some(ty)) => self
+                .check_declared(scope, ty, &ev.value, def.span)
+                .map(|()| ev),
+            (r, _) => r,
+        }
     }
 
     fn eval_let(&mut self, sc: &mut Scope, def: &Def<'p>) -> R<Evaluated> {
@@ -563,10 +645,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let e = strip(expr);
         // A pure reference is an alias of its referent's source variable.
         if matches!(e.kind, ExprKind::Path(_) | ExprKind::Field(..))
-            && let Ok(RefKind::Member {
-                key: rk,
-                accessor: None,
-            }) = self.classify(sc, e)
+            && let Ok(RefKind::Member { key: rk, chain }) = self.classify(sc, e)
+            && chain.is_empty()
             && let Some(ev) = self.value_of(&rk)
             && !ev.analysis
             && matches!(ev.value, Val::Quantity(_))
@@ -612,8 +692,19 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         })?;
         match resolved {
             Resolved::Local(n) => Ok(RefKind::Local(n)),
+            // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+            Resolved::Arg { path, .. } => match self.instance_path(&path) {
+                Some(p) => member_ref(p, e.span),
+                None => Err(diag(
+                    "EVAL",
+                    e.span,
+                    "a component argument is read only inside its instance",
+                )),
+            },
             Resolved::Member { path, level, .. } => {
-                let path = if path.parts.is_empty() {
+                let path = if let Some(p) = self.instance_path(&path) {
+                    p
+                } else if path.parts.is_empty() {
                     if level == Level::Instance {
                         return Err(diag(
                             "EVAL",
@@ -622,24 +713,29 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         ));
                     }
                     path
+                } else if self.defs.contains_key(&first_member(&path)) {
+                    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+                    path
                 } else {
                     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
                     self.through_parts(&path, e.span)?
                 };
-                let mut key = path.clone();
-                let accessor = match path.members.as_slice() {
-                    [MemberSeg::Name(_)] => None,
-                    [MemberSeg::Name(_), MemberSeg::Name(a)] if ACCESSORS.contains(&a.as_str()) => {
-                        Some(a.clone())
-                    }
-                    _ => {
-                        return Err(diag("EVAL", e.span, "member chain is not evaluable here"));
-                    }
-                };
-                key.members.truncate(1);
-                Ok(RefKind::Member { key, accessor })
+                member_ref(path, e.span)
             }
+            // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+            Resolved::Part { path } if self.instances.is_instance(&path) => {
+                Ok(RefKind::Component(path))
+            }
+            Resolved::Item {
+                path,
+                class: ItemClass::Component,
+            } => Ok(RefKind::Component(path)),
             Resolved::Variant { enum_path, variant } => Ok(RefKind::Variant { enum_path, variant }),
+            // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+            Resolved::Item {
+                path,
+                class: ItemClass::Table,
+            } => Ok(RefKind::Table(path)),
             other => Err(diag(
                 "EVAL",
                 e.span,
@@ -658,15 +754,81 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 .map(|(_, v)| v.clone())
                 .ok_or_else(|| diag("EVAL", e.span, format!("local `{n}` has no value"))),
             RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
-            RefKind::Member { key, accessor } => {
-                let ev = self.value_of(&key).ok_or(Fail::Silent)?;
-                match (ev.value, accessor) {
-                    (v, None) => Ok(v),
-                    (Val::Quantity(q), Some(a)) => Ok(Val::Quantity(q.accessor(&a, e.span)?)),
-                    (_, Some(a)) => Err(diag("EVAL", e.span, format!("`.{a}` needs a quantity"))),
-                }
+            RefKind::Table(path) => Ok(Val::Table(path)),
+            RefKind::Component(path) => Ok(Val::Component(path)),
+            RefKind::Member { key, chain } => {
+                let v = self.member_value(&key, e.span)?;
+                self.apply_chain(v, &chain, e.span)
             }
         }
+    }
+
+    /// The value of member `key`; a missing instance member is E002 (absent), a failed one is silent.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn member_value(&mut self, key: &CanonPath, span: Span) -> R<Val> {
+        match self.value_of(key) {
+            Some(ev) => Ok(ev.value),
+            None if !key.parts.is_empty()
+                && (self.absent.contains(key) || !self.defs.contains_key(key)) =>
+            {
+                Err(diag("E002", span, format!("`{key}` is absent here")))
+            }
+            None => Err(Fail::Silent),
+        }
+    }
+
+    /// Reads `chain` from `v`: accessors, component members, row columns, point coordinates.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn apply_chain(&mut self, v: Val, chain: &[String], span: Span) -> R<Val> {
+        let mut v = v;
+        for name in chain {
+            v = match v {
+                Val::Quantity(q) if ACCESSORS.contains(&name.as_str()) => {
+                    Val::Quantity(q.accessor(name, span)?)
+                }
+                Val::Component(mut p) => {
+                    p.members = vec![MemberSeg::Name(name.clone())];
+                    self.member_value(&p, span)?
+                }
+                Val::Row { table, row } => {
+                    let id = ast::Ident {
+                        name: name.clone(),
+                        span,
+                    };
+                    self.row_field(&table, row, &id, span)?
+                }
+                Val::Point(comps) if ["x", "y", "z"].contains(&name.as_str()) => {
+                    let i = ["x", "y", "z"].iter().position(|m| m == name).unwrap_or(0);
+                    comps
+                        .get(i)
+                        .cloned()
+                        .ok_or_else(|| diag("EVAL", span, format!("this point has no `.{name}`")))?
+                }
+                _ if ACCESSORS.contains(&name.as_str()) => {
+                    return Err(diag("EVAL", span, format!("`.{name}` needs a quantity")));
+                }
+                _ => {
+                    return Err(diag(
+                        "EVAL",
+                        span,
+                        format!("`.{name}` is not readable on this value"),
+                    ));
+                }
+            };
+        }
+        Ok(v)
+    }
+
+    /// Maps a callee-definition path to the current instance's path (`None` outside an instance).
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn instance_path(&self, path: &CanonPath) -> Option<CanonPath> {
+        let inst = self.cur_inst.as_ref()?;
+        if !path.parts.is_empty() || path.item_only() != inst.callee {
+            return None;
+        }
+        let mut p = inst.prefix.clone();
+        p.members = path.members.clone();
+        Some(p)
     }
 
     fn quant(&mut self, sc: &mut Scope, e: &Expr) -> R<Quant> {
@@ -706,6 +868,22 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     format!("this point has no `.{}`", member.name),
                 )
             });
+        }
+        // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+        if let ExprKind::Field(base, member) = &e.kind
+            && matches!(
+                strip(base).kind,
+                ExprKind::Index(..) | ExprKind::Call { .. }
+            )
+        {
+            return match self.eval(sc, base)? {
+                Val::Row { table, row } => self.row_field(&table, row, member, span),
+                _ => Err(diag(
+                    "EVAL",
+                    span,
+                    format!("`.{}` needs a table row or a point", member.name),
+                )),
+            };
         }
         if let ExprKind::Field(..) = &e.kind
             && let Some(r) = self.bound_limit(sc, e)
@@ -747,12 +925,55 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 args,
             } => self.call(sc, callee, args, span),
             ExprKind::Block(b) => self.eval_block(sc, b),
+            // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+            ExprKind::If {
+                cond,
+                then,
+                otherwise,
+            } => match self.eval(sc, cond)? {
+                Val::Bool(true) => self.eval_block(sc, then),
+                Val::Bool(false) => match otherwise {
+                    Some(o) => self.eval(sc, o),
+                    None => Err(diag("EVAL", span, "an `if` without `else` has no value")),
+                },
+                _ => Err(diag("EVAL", cond.span, "an `if` condition must be a Bool")),
+            },
+            ExprKind::Compare { first, rest } => self.compare_chain(sc, first, rest, span),
+            ExprKind::Unary(UnOp::Not, x) => Ok(Val::Bool(!self.boolean(sc, x)?)),
             _ => Err(diag(
                 "EVAL",
                 span,
                 "this construct is not evaluated by this stage",
             )),
         }
+    }
+
+    /// Evaluates `e` as a Bool.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn boolean(&mut self, sc: &mut Scope, e: &Expr) -> R<bool> {
+        match self.eval(sc, e)? {
+            Val::Bool(b) => Ok(b),
+            _ => Err(diag("EVAL", e.span, "a Bool is required here")),
+        }
+    }
+
+    /// Evaluates a (chained) comparison to a Bool: `==`/`!=` on any like values, ordering on quantities.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn compare_chain(
+        &mut self,
+        sc: &mut Scope,
+        first: &Expr,
+        rest: &[(ast::CmpOp, Expr)],
+        span: Span,
+    ) -> R<Val> {
+        let mut left = self.eval(sc, first)?;
+        let mut holds = true;
+        for (op, r) in rest {
+            let right = self.eval(sc, r)?;
+            holds &= compare(*op, &left, &right, span)?;
+            left = right;
+        }
+        Ok(Val::Bool(holds))
     }
 
     /// Evaluates a block: its `let`s in order, then the tail.
@@ -808,11 +1029,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
             BinOp::In => self.reexpress(sc, l, r, span),
-            _ => Err(diag(
-                "EVAL",
-                span,
-                "this operator is not evaluated by this stage",
-            )),
+            // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+            BinOp::And => Ok(Val::Bool(self.boolean(sc, l)? && self.boolean(sc, r)?)),
+            BinOp::Or => Ok(Val::Bool(self.boolean(sc, l)? || self.boolean(sc, r)?)),
         }
     }
 
@@ -1021,6 +1240,58 @@ fn parse_number(text: &str, span: Span) -> R<Magnitude> {
     Ok(Magnitude::new(parse_rational(text, span)?, 0))
 }
 
+/// Compares two values: equality on any like values, ordering on same-dimension quantities.
+fn compare(op: ast::CmpOp, a: &Val, b: &Val, span: Span) -> R<bool> {
+    use ast::CmpOp::{Eq, Ge, Gt, Le, Lt, Ne};
+    let ord = match (a, b) {
+        (Val::Quantity(x), Val::Quantity(y)) => {
+            x.dim()
+                .check_same_dimension(y.dim())
+                .map_err(|e| diag("Q002", span, e.to_string()))?;
+            cmp_mag(&x.nominal, &y.nominal)
+        }
+        _ => {
+            return match op {
+                Eq => Ok(a == b),
+                Ne => Ok(a != b),
+                _ => Err(diag("EVAL", span, "ordering needs two quantities")),
+            };
+        }
+    };
+    Ok(match op {
+        Eq => ord.is_eq(),
+        Ne => ord.is_ne(),
+        Lt => ord.is_lt(),
+        Le => ord.is_le(),
+        Gt => ord.is_gt(),
+        Ge => ord.is_ge(),
+    })
+}
+
+/// The path truncated to its first member (the definition key).
+fn first_member(path: &CanonPath) -> CanonPath {
+    let mut k = path.clone();
+    k.members.truncate(1);
+    k
+}
+
+/// Splits a member path into its definition key and the names read after it.
+fn member_ref(path: CanonPath, span: Span) -> R<RefKind> {
+    let mut chain = Vec::new();
+    for m in path.members.iter().skip(1) {
+        match m {
+            MemberSeg::Name(n) => chain.push(n.clone()),
+            MemberSeg::Index(_) => {
+                return Err(diag("EVAL", span, "member chain is not evaluable here"));
+            }
+        }
+    }
+    Ok(RefKind::Member {
+        key: first_member(&path),
+        chain,
+    })
+}
+
 fn index_component<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
     package: &str,
@@ -1054,6 +1325,9 @@ fn index_component<'p>(
                 is_let,
                 ctx: ctx.clone(),
                 span,
+                inst: None,
+                fixed: None,
+                when: None,
             },
         );
     }
@@ -1441,5 +1715,51 @@ mod tests {
         assert_eq!(val(&ev, "M", "c"), Val::Text("3in".to_owned()));
         assert!(has(&ev, "E006", "placeholder"), "{:?}", ev.diagnostics);
         assert_eq!(val(&ev, "M", "e"), Val::Text("2s".to_owned()));
+    }
+
+    const TABLES: &str = "enum Th { A, B }\n\
+        table T { key t: Th\n cols major: Length, fine: Ratio\n \
+        Th::A => 5mm, 0.5\n Th::B => 6mm, 0.25 }\n\
+        table D { key d: Length\n 3mm\n 4mm\n 5mm }\n";
+
+    // frob:tests table_index_with_a_member_key_selects_the_row
+    #[test]
+    fn table_index_with_a_member_key_selects_the_row() {
+        let src = format!(
+            "{TABLES}model M {{\n  th = Th::B\n  major = T[th].major\n  fine = T[Th::A].fine\n  \
+             miss = T[Th::A].nope\n}}\n"
+        );
+        let f = file(&src);
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "major").nominal, m(6, 1000));
+        assert_eq!(quant(&ev, "M", "fine").nominal, m(1, 2));
+        assert!(has(&ev, "E008", "nope"), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests table_index_miss_is_e007
+    #[test]
+    fn table_index_miss_is_e007() {
+        let src = format!("{TABLES}model M {{\n  x = D[3.5mm].key\n}}\n");
+        let f = file(&src);
+        let ev = run(&f);
+        assert!(has(&ev, "E007", "no row"), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests range_lookups_and_table_by_name_values
+    #[test]
+    fn range_lookups_and_table_by_name_values() {
+        let src = format!(
+            "{TABLES}model M {{\n  want = 3.2mm\n  drills = D\n  \
+             up = D.at_least(want).key\n  down = D.at_most(want).key\n  \
+             near = D.nearest(4.4mm).key\n  via = drills.at_least(4.1mm).key\n}}\n"
+        );
+        let f = file(&src);
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "M", "up").nominal, m(4, 1000));
+        assert_eq!(quant(&ev, "M", "down").nominal, m(3, 1000));
+        assert_eq!(quant(&ev, "M", "near").nominal, m(4, 1000));
+        assert_eq!(quant(&ev, "M", "via").nominal, m(5, 1000));
+        assert!(matches!(val(&ev, "M", "drills"), Val::Table(_)));
     }
 }

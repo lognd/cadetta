@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T03:30:19Z"
+digest = "d0a7a4d0c64cde23c56c52b05cff3da68040095b64978bdc0d4b6af667500841"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+collected 3 items
+
+adapters/freecad/tests/unit/test_emit.py ...                             [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-2677899-0.xml --------------
+============================== 3 passed in 0.70s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_q004_withholds_the_file adapters/freecad/tests/unit/test_emit.py::test_q004_respects_policy_precision adapters/freecad/tests/unit/test_emit.py::test_to_decimal_never_rounds"
+size = 468
+status = "measured"
+test_count = 3
+tests_digest = "db3cd708ba5c652f98e3d9fc70775d05469626ef9122efdc27c64aa1b15c3c60"
+at = "2026-10-14T03:30:19Z"
+actor = "lognd"
+rev = 1

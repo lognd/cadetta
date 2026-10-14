@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "found while working ~Z1N30JH: LiveBackend.write_sheet (adapters/freecad/src/cadetta_freecad/backend.py) is only tested against its no-FreeCAD error path; this job should add an in-process test that runs under FreeCAD's own python (or with its lib dir on sys.path, conda-forge freecad or apt freecad-python3), emits to a tmp FCStd via LiveBackend, reopens it and asserts each alias cell and ref formula (adapters.md 6.1). CI today (ci.yml python-adapter) does not provision FreeCAD. No subprocess spawning in tests (CAP001)."
+at = "2026-10-14T03:31:10Z"
+actor = "lognd"
+rev = 1

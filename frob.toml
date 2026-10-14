@@ -104,6 +104,14 @@ forbid_imports = [
   { from = 'bindings/**', to = 'tracing_subscriber', reason = 'only cadetta-log owns subscriber setup' },
 ]
 
+[tests]
+# One interpreter runs every pytest project (frob has a single `[tests] python`, no per-project key):
+# a repo-root venv holding both Python projects and their test deps. Fresh clone / CI:
+#   uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -e bindings/python \
+#     -e adapters/freecad pytest pint ruff datamodel-code-generator==0.83.0
+# (the system Python is 3.10 and cannot import the 3.11+ projects).
+python = ".venv/bin/python"
+
 [lease]
 # Append-shared files exempt from lease overlap: frob's default lockfiles plus the
 # conformance known-gaps list, which most tickets touch with line-local entries.

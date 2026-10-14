@@ -21,8 +21,9 @@ use cadetta_units::{
 };
 use tracing::{debug, trace};
 
+use super::tablevals::LOOKUPS;
 use super::{Evaluator, Fail, Quant, R, Scope, Val, cmp_mag, diag, round_diag, strip, tol_diag};
-use crate::resolve::{CanonPath, Ctx, ItemClass, Resolved};
+use crate::resolve::{CanonPath, Ctx, ItemClass, MemberSeg, Resolved};
 
 /// Relative outward widening applied to every binary64 interval bound.
 const WIDEN: f64 = 4.0 * f64::EPSILON;
@@ -228,6 +229,7 @@ fn is_builtin(name: &str) -> bool {
             | "ceil"
             | "round"
             | "count"
+            | "given"
             | "fmt"
             | "Point2"
             | "Point3"
@@ -237,6 +239,7 @@ fn is_builtin(name: &str) -> bool {
             | "circle_pattern"
             | "distance"
             | "radial"
+            | "angle_between"
     )
 }
 
@@ -249,6 +252,27 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         args: &[Arg],
         span: Span,
     ) -> R<Val> {
+        // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+        if let ExprKind::Field(table_expr, method) = &callee.kind
+            && LOOKUPS.contains(&method.name.as_str())
+        {
+            let Val::Table(table) = self.eval(sc, table_expr)? else {
+                return Err(diag(
+                    "EVAL",
+                    callee.span,
+                    format!("`.{}` needs a table", method.name),
+                ));
+            };
+            let [arg] = args else {
+                return Err(diag(
+                    "E006",
+                    span,
+                    format!("`.{}` takes one argument", method.name),
+                ));
+            };
+            let key = self.eval(sc, &arg.value)?;
+            return self.table_lookup(&table, &method.name, &key, span);
+        }
         let ExprKind::Path(p) = &callee.kind else {
             return Err(diag(
                 "EVAL",
@@ -408,6 +432,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 };
                 to_count(&x, mode, span)
             }
+            // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+            "given" => self.given(args, span),
             "count" => {
                 let xs = arity(name, args, 1, span)?;
                 match self.eval(sc, xs[0])? {
@@ -420,8 +446,31 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             "Point2" | "Point3" | "Vec2" | "Vec3" | "rect_pattern" | "circle_pattern"
             | "distance" | "radial" => self.geometry(sc, name, args, span),
+            // frob:ticket 01M4V43BJ1Z4EZTYJXMMCJWA2D
+            "angle_between" => self.angle_between(sc, args, span),
             _ => self.fmt(sc, args, span),
         }
+    }
+
+    /// `given(name)`: true when the optional argument `name` of the current instance was supplied.
+    // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+    fn given(&mut self, args: &[Arg], span: Span) -> R<Val> {
+        let xs = arity("given", args, 1, span)?;
+        let ExprKind::Path(p) = &strip(xs[0]).kind else {
+            return Err(diag("E006", xs[0].span, "`given` takes an argument name"));
+        };
+        let (Some(inst), [only]) = (self.cur_inst.as_ref(), p.segments.as_slice()) else {
+            return Err(diag(
+                "E006",
+                span,
+                "`given` reads an argument inside a component instance",
+            ));
+        };
+        let mut key = inst.prefix.clone();
+        key.members = vec![MemberSeg::Name(only.name.clone())];
+        let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+        trace!(%key, present, "func: given");
+        Ok(Val::Bool(present))
     }
 
     fn min_max(&mut self, sc: &mut Scope, is_max: bool, args: &[Arg], span: Span) -> R<Val> {
@@ -611,6 +660,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Val::Text(s) => s.clone(),
             Val::Bool(b) => b.to_string(),
             Val::Variant { variant, .. } => variant.clone(),
+            Val::Table(t) => t.item.clone(),
+            Val::Component(p) => p.item.clone(),
+            Val::Row { table, row } => format!("{}[{row}]", table.item),
             Val::Inexact(i) => format!("{}", i.nominal),
             Val::Array(a) => {
                 let items: Vec<String> = a.iter().map(|x| self.render(x, unit)).collect();

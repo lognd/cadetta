@@ -3,6 +3,8 @@
 //! `NAME.expect.json` fixture pair through the `cadetta` library and compares
 //! the diagnostics with the closed-list rules of the README.
 
+#[path = "conformance/binding.rs"]
+mod binding;
 #[path = "conformance/compare.rs"]
 mod compare;
 #[path = "conformance/corpus.rs"]

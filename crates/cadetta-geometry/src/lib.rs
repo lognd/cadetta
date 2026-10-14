@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/geometry.md`.
 
 pub mod aligned;
+pub mod axes;
 pub mod datum;
 pub mod instances;
 pub mod interface_datum;

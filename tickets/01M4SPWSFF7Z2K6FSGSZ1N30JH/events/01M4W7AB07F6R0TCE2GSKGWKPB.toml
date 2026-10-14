@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/freecad/src/emit.py"]
+new = ["adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/pyproject.toml", "adapters/freecad/uv.lock", "adapters/freecad/README.md", "docs/spec/adapters.md", "adapters/freecad/src/cadetta_freecad/emit.py", "adapters/freecad/tests/unit/test_emit.py", "adapters/freecad/tests/unit/_ir.py"]
+at = "2026-10-14T03:29:21Z"
+actor = "lognd"
+rev = 1

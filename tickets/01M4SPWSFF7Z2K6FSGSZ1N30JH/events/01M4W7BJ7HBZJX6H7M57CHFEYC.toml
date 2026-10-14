@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T03:29:56Z"
+digest = "164d2c51b62ed5d3f5e4b45d91e3202ae28e0603a1b86231185936ff862980d2"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+collected 3 items
+
+adapters/freecad/tests/unit/test_emit.py ...                             [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-2675954-0.xml --------------
+============================== 3 passed in 0.26s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_emit_twice_is_deterministic adapters/freecad/tests/unit/test_emit.py::test_emit_twice_cells_are_identical_and_headed_by_digests adapters/freecad/tests/unit/test_emit.py::test_emit_over_json_rpc"
+size = 468
+status = "measured"
+test_count = 3
+tests_digest = "d2ad866ce145d344c8bf1e6339db5bf1fff0807e9a44afc9ed1b94f34c15bd11"
+at = "2026-10-14T03:29:56Z"
+actor = "lognd"
+rev = 1

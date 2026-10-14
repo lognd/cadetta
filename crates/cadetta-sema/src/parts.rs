@@ -147,6 +147,8 @@ pub enum ArgSource<'a> {
     Default(&'a Expr),
     /// An optional (`name?: Type`) parameter that was not given: absent (language.md 3.3).
     Absent,
+    /// A parameter the caller left to a scope default (an interface-typed policy, stdlib.md 4).
+    Injected,
 }
 
 /// One parameter bound to its value expression.
@@ -165,6 +167,17 @@ pub fn bind_args<'a>(
     component: &str,
     params: &'a [ParamDecl],
     args: &'a [Arg],
+) -> Result<Vec<BoundArg<'a>>, PartsError> {
+    bind_args_injecting(component, params, args, |_| false)
+}
+
+/// Like [`bind_args`], but a missing parameter for which `inject` is true is left to a scope default.
+// frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+pub fn bind_args_injecting<'a>(
+    component: &str,
+    params: &'a [ParamDecl],
+    args: &'a [Arg],
+    inject: impl Fn(&ParamDecl) -> bool,
 ) -> Result<Vec<BoundArg<'a>>, PartsError> {
     let mut slots: Vec<Option<(&'a Expr, Span)>> = vec![None; params.len()];
     let mut positional = 0usize;
@@ -208,6 +221,10 @@ pub fn bind_args<'a>(
             (None, None) if p.optional => {
                 debug!(component, param = %p.name.name, "optional argument absent");
                 ArgSource::Absent
+            }
+            (None, None) if inject(p) => {
+                debug!(component, param = %p.name.name, "argument left to a scope default");
+                ArgSource::Injected
             }
             (None, None) => return Err(PartsError::MissingArg(p.name.name.clone())),
         };

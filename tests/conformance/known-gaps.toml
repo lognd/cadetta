@@ -33,31 +33,6 @@ ticket = "~8WN9V3R"
 reason = "sema does not emit the spec diagnostic yet"
 
 [[gap]]
-fixture = "language/e006-argument-mismatch"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
-fixture = "language/e007-lookup-miss"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/e008-at-least-enum-key"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/e008-key-only-column"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/e008-missing-column"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "language/e016-private-item"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the spec diagnostic yet"
@@ -154,11 +129,6 @@ reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
 fixture = "language/i004-root-not-evaluated"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/if-else-expression"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
@@ -483,26 +453,6 @@ ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
 [[gap]]
-fixture = "stdlib/check-depth-ok-drill"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-depth-ok-vendor"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-grip-positive"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-not-bottomed"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
 fixture = "stdlib/e006-count-with-pattern"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
@@ -513,22 +463,12 @@ ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
 [[gap]]
-fixture = "stdlib/e006-vendor-needs-depth"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
 fixture = "stdlib/g004-joint-pattern-count"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
 [[gap]]
 fixture = "stdlib/g005-float-unlocated"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/vendor-tap-members-absent"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
@@ -554,11 +494,6 @@ reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
 fixture = "stdlib/i001-sourced-wrong-kind"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/materials-density-units"
 ticket = "~6K58FR1"
 reason = "std commercial/fits/materials diagnostic not raised"
 
@@ -753,21 +688,6 @@ ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
-fixture = "geometry/angle-between-axes"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/coaxial-offset"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/coaxial-tilt-included"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
 fixture = "geometry/datum-bound-inexact-rotation-undecided"
 ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
@@ -801,21 +721,6 @@ reason = "sema does not enforce the datum declaration rule yet"
 fixture = "geometry/i001-interface-datum-omitted"
 ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/joint-undecided-when-loosened"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/joint-violated-over-allowance"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/parallel-ignores-offset"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
 
 [[gap]]
 fixture = "packages/e002-glob-imports-only-pub"
@@ -1154,98 +1059,48 @@ reason = "invalid bindings config must exit 2; binary does not"
 
 [[gap]]
 fixture = "stdlib/joint-callout"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-clearance-classes"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~QA1M8TZ"
+reason = "Text members are not lowered to IR members or compared by the runner"
 
 [[gap]]
 fixture = "stdlib/joint-count-from-pattern"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~1EBM7ZH"
+reason = "count(at) with Pattern2 and part arrays inside instances are not evaluated"
 
 [[gap]]
 fixture = "stdlib/joint-count-no-pattern"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-depths"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-grip-counterbore"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~1EBM7ZH"
+reason = "count(at) with Pattern2 and part arrays inside instances are not evaluated"
 
 [[gap]]
 fixture = "stdlib/joint-host-default-into"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-into-follows-material"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-min-engagement"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~1EBM7ZH"
+reason = "Part-typed host argument is not evaluated"
 
 [[gap]]
 fixture = "stdlib/joint-screw-cost"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-screw-length"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-tap-drill-by-class"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/joint-tap-form"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~1EBM7ZH"
+reason = "part arrays and count(j.screw) are not evaluated"
 
 [[gap]]
 fixture = "stdlib/joint-vendor-callout"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/materials-engagement-factor"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~QA1M8TZ"
+reason = "Text members are not lowered to IR members or compared by the runner"
 
 [[gap]]
 fixture = "stdlib/policy-default-component-over-file"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~TGY21E7"
+reason = "dependency packages and [defaults] are not passed to the evaluator"
 
 [[gap]]
 fixture = "stdlib/policy-default-file-over-package"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~TGY21E7"
+reason = "dependency packages and [defaults] are not passed to the evaluator"
 
 [[gap]]
 fixture = "stdlib/policy-default-package-over-std"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
-
-[[gap]]
-fixture = "stdlib/policy-engagement-override"
-ticket = "~4BJ1ZGM"
-reason = "sema cannot evaluate std ScrewJoint and policy components"
+ticket = "~TGY21E7"
+reason = "dependency packages and [defaults] are not passed to the evaluator"
 
 [[gap]]
 fixture = "adapters/bind-let-never-emitted"
@@ -1801,31 +1656,6 @@ reason = "binding sync entries have no executor yet"
 fixture = "emitters/sw-equations/sync-header-excluded-from-noop"
 ticket = "~BC7S5KT"
 reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/bind-scope-every-in-scope-path"
-ticket = "~HSDKA6V"
-reason = "binding emit entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/sync-noop-excludes-header"
-ticket = "~HSDKA6V"
-reason = "binding emit-compare entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/contract-deterministic-bytes"
-ticket = "~HSDKA6V"
-reason = "binding emit-twice entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/contract-emitters-decide-nothing"
-ticket = "~HSDKA6V"
-reason = "binding emit-twice entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/slots-swap-impact-replace-component"
-ticket = "~HSDKA6V"
-reason = "binding impact-swap entries have no executor yet"
 
 [[gap]]
 fixture = "quantities/display-fraction-spec"
@@ -2418,11 +2248,6 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "stdlib/table-iso273"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
 fixture = "stdlib/table-iso4032"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
@@ -2433,22 +2258,7 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "stdlib/table-iso4762-len"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
 fixture = "stdlib/table-retaining-tolerance"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/table-tapdrill"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/table-thread"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
@@ -3191,3 +3001,13 @@ reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md
 fixture = "geometry/g004-joint-at-onto-count"
 ticket = "~6MJE3XF"
 reason = "ScrewJoint at/onto count check (G004) is not implemented; the pairing is the joint's, not a placement's"
+
+[[gap]]
+fixture = "geometry/joint-undecided-when-loosened"
+ticket = "~6MJE3XF"
+reason = "ScrewJoint at/onto aligned with the joint float is not evaluated; belongs to ~6MJE3XF"
+
+[[gap]]
+fixture = "geometry/joint-violated-over-allowance"
+ticket = "~6MJE3XF"
+reason = "ScrewJoint at/onto aligned with the joint float is not evaluated; belongs to ~6MJE3XF"
