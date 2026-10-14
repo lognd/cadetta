@@ -1,0 +1,10 @@
+kind = "create"
+title = "Evaluate indexed part-instance reads and re-expression (leg[1].top in origin)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~NYB5TXC: indexed part instance re-expression errors 'not evaluated yet'; blocks golden 06 array placement values."
+at = "2026-10-14T01:03:50Z"
+actor = "lognd"
+rev = 1
