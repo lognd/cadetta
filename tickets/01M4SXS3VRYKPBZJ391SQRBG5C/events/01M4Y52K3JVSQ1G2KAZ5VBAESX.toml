@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:28:39Z"
+digest = "e828e6ead00f951d568f79d76e5728eeecd9f0b31438f4c1bd63f0904d7d3f28"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.72s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 90ebf56d-abfa-4cbc-8473-a697009a5dd9 with nextest profile: default
+    Starting 1 test across 45 binaries (1209 tests skipped)
+        PASS [   0.005s] cadetta-obligations trust::tests::dependency_lock_attestations_travel_with_the_package
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1209 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "dependency_lock_attestations_travel_with_the_package"
+size = 782
+status = "measured"
+test_count = 1
+tests_digest = "a067beb570ec7b8c0378675696ddaa1f9a0f84c24a92d6deab65e26b7f9b0449"
+at = "2026-10-14T21:28:39Z"
+actor = "lognd"
+rev = 1
