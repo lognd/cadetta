@@ -2,13 +2,13 @@
 id = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 title = "SOLIDWORKS C# solution skeleton, initialize, features and CI build"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T19:18:43Z"
+updated = "2026-10-14T12:40:10Z"
 persona = "design engineer"
 capability = "connect to SOLIDWORKS through the adapter protocol"
 labels = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md"]

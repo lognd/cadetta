@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:39:01Z"
+digest = "8d0f4184c3a8af907c104dc7cb1b26e32cd103eade085e1ec5b35130b9b081f3"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 4 items
+
+bindings/python/tests/test_gen_models.py .                               [ 25%]
+bindings/python/tests/test_project.py ..                                 [ 75%]
+bindings/python/tests/test_queries.py .                                  [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1395388-0.xml --------------
+============================== 4 passed in 21.38s ==============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_gen_models.py::test_committed_models_are_not_stale bindings/python/tests/test_project.py::test_member_matches_cli_json bindings/python/tests/test_project.py::test_open_evaluate_wraps_generated_models bindings/python/tests/test_queries.py::test_check_diagnostics_are_typed_and_exit_one_is_ok"
+size = 673
+status = "measured"
+test_count = 4
+tests_digest = "422def453a9f02186fb5eb6ac3ea1e005bdcf3a686551a4f10e1ab0fdada4c48"
+at = "2026-10-14T12:39:01Z"
+actor = "Claude"
+rev = 1
