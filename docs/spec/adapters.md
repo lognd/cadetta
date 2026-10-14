@@ -114,6 +114,10 @@ rebuild again). If the restore itself fails the adapter says so in the
 diagnostic. Lock `synced` records are updated only for locators whose
 read-back matched, so a partial sync reconverges on the next run.
 
+The host implements this in `cadetta_adapter::atomic`: `push_atomic`
+snapshots, writes, rebuilds and restores on R004 over a `Document`, and
+`matched_locators` selects the locators eligible for a `synced` record.
+
 ### 2.4 Resolving drift
 
 | Direction | Command |
