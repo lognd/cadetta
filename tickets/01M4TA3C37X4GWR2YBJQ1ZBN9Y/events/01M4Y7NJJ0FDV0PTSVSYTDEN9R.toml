@@ -1,0 +1,7 @@
+kind = "field"
+field = "body"
+old = "found while working ~E631Y52. pipeline calls lower with empty variants and fits."
+new = "The pipeline called lower with empty fits. Derive each component fit (clearance, fit type, required range) so Component.fits is populated and F004 fires through cadetta check. The variant half is split out to ~JMCB8NQ (evaluator bug reading through part slots) and ~H360TSR (variant evaluations)."
+at = "2026-10-14T22:14:02Z"
+actor = "lognd"
+rev = 1

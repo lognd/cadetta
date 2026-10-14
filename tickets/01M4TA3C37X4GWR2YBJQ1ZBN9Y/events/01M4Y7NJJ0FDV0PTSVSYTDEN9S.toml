@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Fits and variant evaluations not derived for lowering"
+new = "Component fits not derived for lowering"
+at = "2026-10-14T22:14:02Z"
+actor = "lognd"
+rev = 1
