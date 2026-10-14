@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T03:19:49Z"
-updated = "2026-10-14T05:23:47Z"
+updated = "2026-10-14T05:23:51Z"
 scope = ["bindings/python/**"]
 
 [[acceptance]]
