@@ -2,11 +2,12 @@
 id = "01M4W1REG5EVCAD4NWWB6MN43Z"
 title = "Call geometry_bind verify_geometry and datum_entries from cadetta sync"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-14T01:52:16Z"
-updated = "2026-10-14T20:47:56Z"
+updated = "2026-10-14T20:48:06Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "docs/spec/adapters.md", "docs/spec/config-cli.md"]
 
 [[links]]
