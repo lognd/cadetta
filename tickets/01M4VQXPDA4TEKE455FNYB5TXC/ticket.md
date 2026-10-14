@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-14T01:02:29Z"
+updated = "2026-10-14T01:02:30Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**", "crates/cadetta-ir/**", "crates/cadetta-geometry/Cargo.toml", "Cargo.lock", "docs/spec/ir.md", "docs/spec/geometry.md", "docs/schemas/**", "bindings/python/**", "crates/cadetta-lint/**", "crates/cadetta-cli/src/cmd/**", "crates/cadetta-cli/Cargo.toml"]
 
 [[acceptance]]
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the geometry fixtures and golden cases that only needed evaluation, when the conformance corpus and golden tests run, then their known-gaps entries are removed and they pass"
-bound = false
+bound = true
 +++
 
 found while working ~6BCVN48: geometry/* fixtures expect members like P.qx not present in the evaluated IR (14 fixtures).
