@@ -2,7 +2,8 @@
 id = "01M4VVBYRVM2SEPC3F1HX1YH7M"
 title = "One module-prefix matcher: CLI --module mishandles dotted package prefixes"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
