@@ -1,0 +1,28 @@
+kind = "evidence"
+captured_at = "2026-10-14T03:34:45Z"
+digest = "bb63d063b659682efa2ca4be6f88f6117990de9adb890b7b1e1e4a82bfeac363"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+collected 35 items
+
+adapters/freecad/tests/unit/test_emit.py .........................       [ 71%]
+adapters/freecad/tests/unit/test_freecad_adapter.py ......               [ 88%]
+adapters/freecad ....                                                    [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-2697230-0.xml --------------
+============================== 35 passed in 0.19s ==============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_alternate_only_and_unwritten_locators_are_skipped adapters/freecad/tests/unit/test_emit.py::test_backend_failure_is_an_rpc_error adapters/freecad/tests/unit/test_emit.py::test_bad_policy_and_digestless_design_are_invalid_params adapters/freecad/tests/unit/test_emit.py::test_dependency_cycle_is_d003 adapters/freecad/tests/unit/test_emit.py::test_digest_plan_is_stable_and_content_sensitive adapters/freecad/tests/unit/test_emit.py::test_emit_over_json_rpc adapters/freecad/tests/unit/test_emit.py::test_emit_point_mid_mmc_lmc_and_notes adapters/freecad/tests/unit/test_emit.py::test_emit_twice_cells_are_identical_and_headed_by_digests adapters/freecad/tests/unit/test_emit.py::test_emit_twice_is_deterministic adapters/freecad/tests/unit/test_emit.py::test_invalid_and_colliding_aliases_are_diagnostics adapters/freecad/tests/unit/test_emit.py::test_live_backend_write_sheet_reports_missing_freecad adapters/freecad/tests/unit/test_emit.py::test_mmc_without_role_is_e010_and_withholds adapters/freecad/tests/unit/test_emit.py::test_paths_follow_dependencies_then_smallest_path adapters/freecad/tests/unit/test_emit.py::test_q004_respects_policy_precision adapters/freecad/tests/unit/test_emit.py::test_q004_withholds_the_file adapters/freecad/tests/unit/test_emit.py::test_ref_mode_follows_alias_of_to_the_referent_global adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_any_global_is_a_diagnostic adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_global_creates_the_mangled_global_once adapters/freecad/tests/unit/test_emit.py::test_ref_to_names_the_target_global adapters/freecad/tests/unit/test_emit.py::test_several_locators_each_written_and_ref_mode_references_global adapters/freecad/tests/unit/test_emit.py::test_sign_negates_and_dimensionless_is_bare adapters/freecad/tests/unit/test_emit.py::test_star_binding_emits_instance_zero adapters/freecad/tests/unit/test_emit.py::test_to_decimal_exact_and_trimmed adapters/freecad/tests/unit/test_emit.py::test_to_decimal_never_rounds adapters/freecad/tests/unit/test_emit.py::test_unknown_bound_path_is_r005 adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_rejects_unknown_protocol adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_returns_all_three_capabilities adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_succeeds_without_freecad adapters/freecad/tests/unit/test_freecad_adapter.py::test_live_backend_errs_when_freecad_missing adapters/freecad/tests/unit/test_freecad_adapter.py::test_run_keeps_stdout_for_protocol_only adapters/freecad/tests/unit/test_freecad_adapter.py::test_served_by_adapter_base_and_shutdown_stops_loop bindings/python/tests/test_adapter.py::test_run_keeps_stdout_for_protocol_and_logs_to_stderr bindings/python/tests/unit/test_logging.py::test_below_level_filter_keeps_only_lower_levels bindings/python/tests/unit/test_logging.py::test_info_has_no_level_prefix bindings/python/tests/unit/test_logging.py::test_warning_and_show_level_add_prefix"
+size = 629
+status = "measured"
+test_count = 35
+tests_digest = "69e4eb82acd1e3c4cb90fb30dadfb3aee0e05849ddade0dc19d1f42055d4448b"
+at = "2026-10-14T03:34:45Z"
+actor = "lognd"
+rev = 1
