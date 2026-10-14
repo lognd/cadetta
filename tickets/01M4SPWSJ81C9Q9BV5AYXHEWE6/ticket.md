@@ -12,8 +12,8 @@ updated = "2026-10-14T11:48:07Z"
 persona = "design engineer"
 capability = "import existing FCStd spreadsheet aliases and dimensions"
 outcome_text = "I can lint a design before any .cdt exists"
-labels = ["creates:adapters/freecad/src/read.py"]
-scope = ["adapters/freecad/src/read.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/src/cadetta_freecad/backend.py"]
+labels = ["creates:adapters/freecad/src/read.py", "creates:adapters/freecad/src/cadetta_freecad/read.py"]
+scope = ["adapters/freecad/src/read.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/read.py"]
 
 [[links]]
 kind = "blocks"
