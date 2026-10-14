@@ -2,7 +2,8 @@
 id = "01M4VQXNA0BKA7HPM9GNWB8SVP"
 title = "Attribute role(hole) not honored for mmc/lmc emit point (E010)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
