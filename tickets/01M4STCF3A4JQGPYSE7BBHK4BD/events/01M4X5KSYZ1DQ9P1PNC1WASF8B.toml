@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:16:33Z"
+digest = "d9013979762331b01de508aa9bb7855bc2523c3449159463f1b79bdded4d2c75"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test adapters_and_sw_equations_corpus_is_not_empty has been running for over 60 seconds
+test adapters_and_sw_equations_fixtures_match_the_spec has been running for over 60 seconds
+test adapters_and_sw_equations_fixtures_match_the_spec ... ok
+test adapters_and_sw_equations_corpus_is_not_empty ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 138.26s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.35s
+     Running ../../tests/conformance_adapters.rs (target/debug/deps/conformance_adapters-73c77e5e7b98239a)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_adapters"
+size = 723
+status = "measured"
+at = "2026-10-14T12:16:33Z"
+actor = "Claude"
+rev = 1
