@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T20:56:24Z"
+updated = "2026-10-14T20:57:38Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
@@ -49,5 +49,5 @@ bound = true
 
 [[acceptance]]
 text = "Given FloatMode::Without(path), when placing, then that joint's own edge is read without its float (place_assembly_reading)"
-bound = false
+bound = true
 +++
