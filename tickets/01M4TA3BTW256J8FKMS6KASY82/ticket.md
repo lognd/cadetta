@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:33Z"
-updated = "2026-10-14T21:44:26Z"
+updated = "2026-10-14T21:44:27Z"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli", "docs", "changelog.d", "tests/conformance"]
 
 [[acceptance]]
@@ -23,7 +23,7 @@ bound = true
 
 [[acceptance]]
 text = "The check pipeline attributes a diagnostic to its own module's file, dropping std, instead of guessing from the span"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. Check attributes these heuristically to project files and drops std ones.
