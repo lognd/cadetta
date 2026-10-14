@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/Directory.Build.props", "adapters/solidworks/src/cadetta-solidworks/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "adapters/solidworks/README.md"]
+new = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/Directory.Build.props", "adapters/solidworks/src/cadetta-solidworks/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "adapters/solidworks/README.md", "adapters/solidworks/**"]
+at = "2026-10-14T12:41:05Z"
+actor = "Claude"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "labels"
+old = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md"]
+new = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md", "creates:adapters/solidworks/**"]
+at = "2026-10-14T12:41:05Z"
+actor = "Claude"
+rev = 1
