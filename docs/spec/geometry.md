@@ -475,8 +475,16 @@ with `p in D` retagging to `D`), so values need no run-time datum. A
 comparison or `distance` that raises G001 suppresses the evaluator's own
 failure for the same expression. G003 fires on `x as Point2 on D` when
 `x` reads through a part slot that no `place` positions. G007 is a
-warning at the part slot. G005 and G008 need the ScrewJoint float on the
-placement edge (section 5.2) and are not emitted yet.
+warning at the part slot. The placement float of section 5.2 is
+evaluated by `cadetta-geometry` (`float.rs`): an assembly carries one
+`EdgeFloat` per placement edge with the joints between its two parts,
+the edge takes the whole bound of the selected joint (translation,
+`theta`, centroid together; `theta` rounded up to `1e-9 pi`), and a
+joint's own `aligned` check places the tree with `FloatMode::Without`.
+The caller lowers the `onto` points into the frame of the placement
+datum and supplies the source variables. G005 and G008 are not emitted
+yet: G008 is `float::unconstrained_rotation`, and the lint rules and
+the sema lowering of `EdgeFloat` follow.
 
 ## 8. Conformance decisions
 

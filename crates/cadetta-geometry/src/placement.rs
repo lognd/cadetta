@@ -34,6 +34,7 @@ use crate::datum::{
     Angle, Axis, ComponentId, DatumDef, DatumOp, DatumScope, GeometryError, Member, ORIGIN,
     lower_datum,
 };
+use crate::float::{EdgeFloat, FloatMode, edge_ops};
 use crate::interface_datum::resolve_placement_datum;
 use crate::transform::Transform;
 
@@ -137,6 +138,8 @@ pub struct Assembly {
     pub nodes: Vec<Node>,
     /// Its placements, in source order.
     pub placements: Vec<Placement>,
+    /// The bolt float of each placement edge that carries one (geometry.md 5.2).
+    pub floats: Vec<EdgeFloat>,
 }
 
 /// The rule a placement diagnostic belongs to.
@@ -753,6 +756,7 @@ struct Ctx<'a> {
     base: Vec<FrameOp>,
     memo: BTreeMap<String, Vec<FrameOp>>,
     depth: usize,
+    mode: FloatMode<'a>,
 }
 
 impl Ctx<'_> {
@@ -803,6 +807,7 @@ impl Ctx<'_> {
             }
         };
         frame.extend(eval_ops(&p.ops, self.eval)?);
+        frame.extend(edge_ops(&self.a.floats, name, self.mode)?);
         let own = self.node(name, p.span)?;
         let own_ops = datum_ops(&own.datums, &p.datum, self.eval, p.span)?;
         frame.extend(invert(&own_ops));
@@ -819,8 +824,19 @@ impl Ctx<'_> {
 /// placements for that alternate. Run [`check_assembly`] first for the cycle and double
 /// placement diagnostics; a cycle found here is also an error.
 pub fn place_assembly(a: &Assembly, eval: Eval<'_>) -> Result<Vec<PlacedPart>, GeometryError> {
+    place_assembly_reading(a, eval, FloatMode::With)
+}
+
+/// [`place_assembly`] under a float read mode: a joint's own `aligned` check passes
+/// [`FloatMode::Without`] so it reads its edge without the float (geometry.md 5.2).
+// frob:ticket 01M4SWG6Z6JVP5Z7H38HWJP0GQ
+pub fn place_assembly_reading(
+    a: &Assembly,
+    eval: Eval<'_>,
+    mode: FloatMode<'_>,
+) -> Result<Vec<PlacedPart>, GeometryError> {
     let mut out = Vec::new();
-    place_into(a, eval, Vec::new(), &a.name, &mut out)?;
+    place_into(a, eval, mode, Vec::new(), &a.name, &mut out)?;
     debug!(assembly = %a.name, parts = out.len(), "placed assembly");
     Ok(out)
 }
@@ -857,6 +873,7 @@ fn frames_into(
         base,
         memo: BTreeMap::new(),
         depth: 0,
+        mode: FloatMode::With,
     };
     for p in &a.placements {
         let inst = match p.cover {
@@ -923,6 +940,7 @@ pub fn place_instance_frame(
         base: Vec::new(),
         memo: BTreeMap::new(),
         depth: 0,
+        mode: FloatMode::With,
     };
     let frame = ctx.node_frame(node, Some(i), Span::default())?;
     Ok(Some(fold(&frame)?))
@@ -931,6 +949,7 @@ pub fn place_instance_frame(
 fn place_into(
     a: &Assembly,
     eval: Eval<'_>,
+    mode: FloatMode<'_>,
     base: Vec<FrameOp>,
     prefix: &str,
     out: &mut Vec<PlacedPart>,
@@ -941,6 +960,7 @@ fn place_into(
         base,
         memo: BTreeMap::new(),
         depth: 0,
+        mode,
     };
     for p in &a.placements {
         let inst = match p.cover {
@@ -952,7 +972,7 @@ fn place_into(
         let node = ctx.node(&p.node, p.span)?;
         let path = format!("{prefix}/{}", node.name);
         match &node.sub {
-            Some(sub) => place_into(sub, eval, frame, &path, out)?,
+            Some(sub) => place_into(sub, eval, mode, frame, &path, out)?,
             None => out.push(PlacedPart {
                 path,
                 cover: p.cover,
@@ -1023,6 +1043,7 @@ pub fn build_assembly<'a>(
             name: comp.name.name.clone(),
             nodes,
             placements,
+            floats: Vec::new(),
         },
         errors,
     )
@@ -1158,6 +1179,7 @@ pub(crate) mod tests {
             name: asm.name.name.clone(),
             nodes,
             placements,
+            floats: Vec::new(),
         }
     }
 

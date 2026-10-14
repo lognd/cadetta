@@ -5,6 +5,7 @@
 pub mod aligned;
 pub mod axes;
 pub mod datum;
+pub mod float;
 pub mod instances;
 pub mod interface_datum;
 pub mod op_members;
