@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:36:45Z"
+updated = "2026-10-14T12:38:13Z"
 persona = "maintainer"
 capability = "know the implementation matches the spec"
 idempotency_key = "replan14:cr-csv"
@@ -21,5 +21,5 @@ target = "01M4SWP7GFWFNXTDSZC9JX3J6F"
 
 [[acceptance]]
 text = "Given tests/conformance/emitters/csv/ fixtures, when the harness runs, then every must-fire fixture produces its expected diagnostic and every must-not-fire fixture produces none (docs/spec/emitters/csv.md)"
-bound = false
+bound = true
 +++
