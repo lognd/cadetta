@@ -2,7 +2,8 @@
 id = "01M4VQXNP5VGKM9XM5DM3DCA47"
 title = "Spec: module path notation differs between adapters.md 3.2 (dotted) and packages.md 2 (file-tree, E015)"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
