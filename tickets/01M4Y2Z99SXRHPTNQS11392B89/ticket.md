@@ -8,8 +8,9 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-14T20:53:30Z"
-scope = ["crates/cadetta-lint/src/rules/g008.rs", "crates/cadetta-lint/src/engine.rs", "tests/conformance/lints/G008/**"]
+updated = "2026-10-14T20:53:39Z"
+labels = ["creates:crates/cadetta-lint/src/rules/g008.rs", "creates:tests/conformance/lints/G008/**"]
+scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**"]
 
 [[links]]
 kind = "blocked-by"
