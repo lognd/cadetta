@@ -1,0 +1,10 @@
++++
+id = "01M4XB33RBF6FWZ1GJ3CDRJTN9"
+title = "Python binding suite replays the 35 kind=binding entry=python conformance fixtures (follow-up to 6ZMPC6J)"
+type = "task"
+category = "todo"
+priority = "low"
+reporter = "lognd"
+created = "2026-10-14T13:54:37Z"
+updated = "2026-10-14T13:54:37Z"
++++
