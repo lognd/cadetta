@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T05:25:18Z"
+updated = "2026-10-14T05:28:40Z"
 persona = "design engineer"
 capability = "separate failures from findings"
 idempotency_key = "replan14:py-result"
-labels = ["creates:bindings/python/python/cadetta/result.py"]
-scope = ["bindings/python/python/cadetta/result.py"]
+labels = ["creates:bindings/python/python/cadetta/result.py", "creates:bindings/python/tests/test_result.py"]
+scope = ["bindings/python/python/cadetta/result.py", "bindings/python/tests/test_result.py"]
 
 [[links]]
 kind = "blocked-by"
