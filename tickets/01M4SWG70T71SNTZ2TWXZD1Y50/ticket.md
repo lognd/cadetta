@@ -19,6 +19,10 @@ scope = ["crates/cadetta-lint/src/rules/g005.rs", "tests/conformance/lints/G005/
 kind = "blocked-by"
 target = "01M4SPWQM289M7Q58CSS6F029F"
 
+[[links]]
+kind = "blocked-by"
+target = "01M4Y2Z95B99FTVX68T4XTSTXR"
+
 [[acceptance]]
 text = "Given a check tighter than a joint's float that reads through a placement carrying it, when linted, then G005 warning fires (geometry.md 5.2, 7)"
 bound = false
