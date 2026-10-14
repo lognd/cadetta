@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:11:01Z"
+updated = "2026-10-14T21:14:35Z"
 persona = "design engineer"
 capability = "pull CAD edits back into source"
 idempotency_key = "replan14:ad-imp-upd"
 labels = ["creates:crates/cadetta-adapter/src/import/update.rs"]
-scope = ["crates/cadetta-adapter/src/import/update.rs", "crates/cadetta-adapter/src/import/mod.rs", "changelog.d/01M4SWMCWHXKA8K6VG7Z1PNF3W.added.md"]
+scope = ["crates/cadetta-adapter/src/import/update.rs", "crates/cadetta-adapter/src/import/mod.rs", "changelog.d/01M4SWMCWHXKA8K6VG7Z1PNF3W.added.md", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/src/cmd/sync.rs", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
