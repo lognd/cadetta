@@ -19,7 +19,8 @@
 use std::collections::BTreeMap;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, Let, MemberKind, Type, TypeKind, UnOp,
+    BinOp, Block, Component, Expr, ExprKind, Ident, Let, MemberKind, Path, PathSep, Type, TypeKind,
+    UnOp,
 };
 use cadetta_syntax::span::Span;
 use cadetta_units::{
@@ -28,6 +29,8 @@ use cadetta_units::{
 use tracing::{debug, trace};
 
 use crate::deps::Severity;
+use crate::eval::{Evaluation, Val};
+use crate::resolve::{Ctx, Resolved, Resolver};
 
 /// Accessors that return an untoleranced quantity of the receiver's type (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -91,6 +94,12 @@ pub trait TypeEnv {
     /// The type of a dotted or `::` path given as its segment names, when known.
     fn name_type(&self, segments: &[String]) -> Option<KindedDim>;
 
+    /// Like [`name_type`](Self::name_type) but with the separator after each segment but the
+    /// last, so a `::` qualified path can be told from a `.` member chain.
+    fn path_type(&self, segments: &[String], _seps: &[PathSep]) -> Option<KindedDim> {
+        self.name_type(segments)
+    }
+
     /// The result type of a call to a user function, when known.
     fn call_type(&self, _name: &str, _args: &[Option<Ty>]) -> Option<Ty> {
         None
@@ -103,6 +112,71 @@ pub struct EmptyEnv;
 impl TypeEnv for EmptyEnv {
     fn name_type(&self, _segments: &[String]) -> Option<KindedDim> {
         None
+    }
+}
+
+/// A [`TypeEnv`] that types names through the resolver and the evaluated values, so a
+/// cross-component read such as `Other.width` or `pkg::Mod::Comp.width` has its real
+/// dimension (the evaluator owns magnitudes; only the dimension is taken here).
+// frob:ticket 01M4TA3BXQVZSNE6JB2CH5HR2K
+pub struct EvalEnv<'a> {
+    resolver: &'a Resolver<'a>,
+    evaluation: &'a Evaluation,
+    ctx: Ctx,
+}
+
+impl<'a> EvalEnv<'a> {
+    /// An environment for names written inside `component` of `module` in `package`.
+    pub fn new(
+        resolver: &'a Resolver<'a>,
+        evaluation: &'a Evaluation,
+        package: &str,
+        module: &[String],
+        component: &str,
+    ) -> Self {
+        Self {
+            resolver,
+            evaluation,
+            ctx: Ctx {
+                package: package.to_owned(),
+                module: module.to_vec(),
+                component: Some(component.to_owned()),
+                locals: Vec::new(),
+            },
+        }
+    }
+}
+
+impl TypeEnv for EvalEnv<'_> {
+    fn name_type(&self, segments: &[String]) -> Option<KindedDim> {
+        let seps = vec![PathSep::Dot; segments.len().saturating_sub(1)];
+        self.path_type(segments, &seps)
+    }
+
+    fn path_type(&self, segments: &[String], seps: &[PathSep]) -> Option<KindedDim> {
+        let span = Span::default();
+        let path = Path {
+            segments: segments
+                .iter()
+                .map(|name| Ident {
+                    name: name.clone(),
+                    span,
+                })
+                .collect(),
+            seps: seps.to_vec(),
+            span,
+        };
+        let Ok(Resolved::Member { path: member, .. }) =
+            self.resolver.resolve_path(&self.ctx, &path, None)
+        else {
+            trace!(path = %path.text(), "kind env: not a resolvable member");
+            return None;
+        };
+        let Val::Quantity(q) = &self.evaluation.get(&member)?.value else {
+            return None;
+        };
+        trace!(path = %path.text(), "kind env: typed from evaluated member");
+        Some(KindedDim::anonymous(q.dim().clone()))
     }
 }
 
@@ -475,27 +549,29 @@ impl<'a> KindChecker<'a> {
             return self.expr(base);
         }
         let mut segs = Vec::new();
-        if !flatten(e, &mut segs) {
+        let mut seps = Vec::new();
+        if !flatten(e, &mut segs, &mut seps) {
             if let ExprKind::Field(inner, _) = &e.kind {
                 return self.expr(inner);
             }
             return None;
         }
-        self.lookup(&segs).or_else(|| match segs.split_last() {
-            Some((last, rest)) if ACCESSORS.contains(&last.as_str()) && !rest.is_empty() => {
-                self.lookup(rest)
-            }
-            _ => None,
-        })
+        self.lookup(&segs, &seps)
+            .or_else(|| match segs.split_last() {
+                Some((last, rest)) if ACCESSORS.contains(&last.as_str()) && !rest.is_empty() => {
+                    self.lookup(rest, &seps[..rest.len() - 1])
+                }
+                _ => None,
+            })
     }
 
-    fn lookup(&self, segs: &[String]) -> Option<Ty> {
+    fn lookup(&self, segs: &[String], seps: &[PathSep]) -> Option<Ty> {
         if let [one] = segs
             && let Some(t) = self.locals.get(one)
         {
             return Some(t.clone());
         }
-        self.env.name_type(segs).map(Ty::quantity)
+        self.env.path_type(segs, seps).map(Ty::quantity)
     }
 
     fn binary(&mut self, op: BinOp, l: &Expr, r: &Expr, span: Span) -> Option<Ty> {
@@ -719,20 +795,23 @@ impl<'a> KindChecker<'a> {
     }
 }
 
-/// Flatten a `Path` and `.field` chain into segment names; false when it is anything else.
-fn flatten(e: &Expr, out: &mut Vec<String>) -> bool {
+/// Flatten a `Path` and `.field` chain into segment names and their separators; false when
+/// it is anything else.
+fn flatten(e: &Expr, out: &mut Vec<String>, seps: &mut Vec<PathSep>) -> bool {
     match &e.kind {
         ExprKind::Path(p) => {
             out.extend(p.segments.iter().map(|s| s.name.clone()));
+            seps.extend(p.seps.iter().copied());
             true
         }
         ExprKind::Field(inner, f) => {
-            let ok = flatten(inner, out);
+            let ok = flatten(inner, out, seps);
             out.push(f.name.clone());
+            seps.push(PathSep::Dot);
             ok
         }
-        ExprKind::Index(inner, _) => flatten(inner, out),
-        ExprKind::Paren(inner) => flatten(inner, out),
+        ExprKind::Index(inner, _) => flatten(inner, out, seps),
+        ExprKind::Paren(inner) => flatten(inner, out, seps),
         _ => false,
     }
 }

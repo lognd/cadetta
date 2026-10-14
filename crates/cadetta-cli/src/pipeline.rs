@@ -23,7 +23,7 @@ use cadetta_lint::rules::{d, f, interface, m, n, q, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
-use cadetta_sema::kindcheck::{EmptyEnv, KindChecker};
+use cadetta_sema::kindcheck::{EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
@@ -644,15 +644,20 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
     let mut kind_keys: BTreeSet<(String, usize, usize)> = BTreeSet::new();
     for p in &in_scope {
         for m in &p.modules {
-            let mut checker = KindChecker::new(&kinds, &units, &EmptyEnv);
+            // One checker per component, each over an env that types cross-component names
+            // from the evaluated values (~CH5HR2K).
+            let mut found = Vec::new();
             for c in m.file.items().filter_map(|i| match &i.kind {
                 ItemKind::Component(c) => Some(c),
                 _ => None,
             }) {
+                let env = EvalEnv::new(&resolver, &evaluation, &p.name, &m.path, &c.name.name);
+                let mut checker = KindChecker::new(&kinds, &units, &env);
                 checker.check_component(c);
+                found.extend(checker.into_diagnostics());
             }
             let file = index.module(&p.name, &m.path);
-            for d in checker.into_diagnostics() {
+            for d in found {
                 kind_keys.insert((d.code.to_owned(), d.span.start, d.span.end));
                 let path = member_path_at(&p.name, &m.path, &m.file, d.span);
                 out.push(diag_at(

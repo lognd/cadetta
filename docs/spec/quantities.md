@@ -230,6 +230,10 @@ change, 2 and 4.1-4.3.
   (at the deviation), a deviation of another dimension Q002 (decided in
   the conformance fixtures).
 - An unknown kind or unit name is E002 (unresolved-name).
+- A name that is not a local of the component being checked (`Other.width`,
+  `pkg::Mod::Other.width`, an own member) is typed from its evaluated
+  dimension, as an anonymous kind: a dimension mismatch against it is Q002,
+  but a named-kind mismatch between two kinds of one dimension is not seen.
 - Expressions that are not quantities (booleans, strings, arrays) and
   names the checker cannot type are unknown and never cascade.
 

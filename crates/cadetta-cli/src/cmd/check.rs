@@ -400,6 +400,38 @@ mod tests {
 
     // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
     #[test]
+    fn cross_component_read_with_wrong_dimension_is_q002() {
+        let src =
+            "model Plate {\n  mass: Mass = 2kg\n}\nmodel Axle {\n  seat: Length = Plate.mass\n}\n";
+        let dir = project(src, "");
+        let (code, json, _) = run(&dir, &[]);
+        assert_eq!(code, 1);
+        let q = json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == "Q002")
+            .expect("Q002 for Length = Plate.mass");
+        assert_eq!(q["path"], "acme.axle::Axle.seat");
+        assert_eq!(q["location"]["start"]["line"], 5);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn cross_component_read_with_matching_dimension_is_clean() {
+        let src = "model Plate {\n  width: Length = 4mm\n}\nmodel Axle {\n  seat: Length = Plate.width\n}\n";
+        let dir = project(src, "");
+        let (code, json, _) = run(&dir, &[]);
+        assert_eq!(code, 0, "{json}");
+        let bad: Vec<_> = codes(&json)
+            .into_iter()
+            .filter(|c| c.starts_with('Q') || c.starts_with('E'))
+            .collect();
+        assert!(bad.is_empty(), "{bad:?}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
     fn violated_check_is_c001_with_path() {
         let dir = project(AXLE_BAD_CHECK, "");
         let (code, json, _) = run(&dir, &[]);
