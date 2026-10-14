@@ -2,7 +2,8 @@
 id = "01M4W3YJCH948JJQ3HY646D1T7"
 title = "sema: evaluate parameterized component instances (std ScrewJoint members)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 13
 reporter = "lognd"
