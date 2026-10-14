@@ -1,0 +1,169 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:30:08Z"
+digest = "e54e1fbbcdac670215c8d9b9cfb02867574251fadfc9f689eeb5122e60882476"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bf1e114f-6542-42d2-b28e-68c131cc04fe with nextest profile: default
+    Starting 145 tests across 8 binaries (246 tests skipped)
+        PASS [   0.039s] cadetta cmd::bind::tests::add_is_canonical_and_idempotent
+        PASS [   0.038s] cadetta cmd::bind::tests::tolerance_is_written_canonically_and_idempotent
+        PASS [   0.039s] cadetta cmd::check::tests::bad_arguments_are_usage_errors
+        PASS [   0.044s] cadetta cmd::bind::tests::remove_drops_the_locator
+        PASS [   0.047s] cadetta cmd::bind::tests::rejects_conflicts_and_invalid_requests
+        PASS [   0.051s] cadetta cmd::bind::tests::refuses_native_name_collisions
+        PASS [   0.064s] cadetta cmd::check::tests::clean_project_exits_zero
+        PASS [   0.080s] cadetta cmd::check::tests::drift_lints_run_for_adapters_that_can_read
+        PASS [   0.091s] cadetta cmd::bind::tests::json_validates_against_bind_schema
+        PASS [   0.095s] cadetta cmd::check::tests::ir_lint_families_run_in_check
+        PASS [   0.029s] cadetta cmd::check_watch::tests::requires_json_format
+        PASS [   0.128s] cadetta cmd::ack::tests::selector_matching_nothing_exits_two
+        PASS [   0.115s] cadetta cmd::check::tests::obligations_no_role_covers_are_not_raised
+        PASS [   0.107s] cadetta cmd::check::tests::stale_check_obligation_exits_one
+        PASS [   0.033s] cadetta cmd::cite::tests::ieee_article_template
+        PASS [   0.086s] cadetta cmd::check_watch::tests::change_emits_sorted_ndjson_records
+        PASS [   0.133s] cadetta cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span
+        PASS [   0.048s] cadetta cmd::cite::tests::ieee_authors_join_and_truncate
+        PASS [   0.031s] cadetta cmd::cite::tests::ieee_book_template
+        PASS [   0.038s] cadetta cmd::cite::tests::ieee_labels_by_type
+        PASS [   0.021s] cadetta cmd::cite::tests::ieee_other_template_with_url_and_accessed
+        PASS [   0.039s] cadetta cmd::cite::tests::ieee_dates_print_at_their_precision
+        PASS [   0.150s] cadetta cmd::check::tests::violated_check_is_c001_with_path
+        PASS [   0.037s] cadetta cmd::cite::tests::ieee_online_parts_need_a_url
+        PASS [   0.186s] cadetta cmd::check::tests::json_validates_against_check_and_diag_schemas
+        PASS [   0.052s] cadetta cmd::cite::tests::ieee_separators_collapse_and_one_final_period
+        PASS [   0.032s] cadetta cmd::compare::tests::usage_errors_exit_two
+        PASS [   0.072s] cadetta cmd::cite::tests::ieee_who_is_authors_else_organization
+        PASS [   0.248s] cadetta cmd::check::tests::release_role_gates_open_obligations_only_with_release
+        PASS [   0.110s] cadetta cmd::cite::tests::list_bibtex_is_keyed_by_canonical_path
+        PASS [   0.126s] cadetta cmd::cite::tests::list_numbers_by_path_order_with_dependencies_after_their_reader
+        PASS [   0.091s] cadetta cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths
+        PASS [   0.141s] cadetta cmd::cite::tests::list_of_a_broken_design_is_an_error
+        PASS [   0.311s] cadetta cmd::check::tests::waive_suppresses_through_the_engine_and_unused_waiver_is_w004
+        PASS [   0.131s] cadetta cmd::emit::tests::explicit_binding_resolves_name_collision
+        PASS [   0.137s] cadetta cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings
+        PASS [   0.197s] cadetta cmd::cite::tests::list_scope_limits_the_roots_but_not_what_they_read
+        PASS [   0.237s] cadetta cmd::cite::tests::list_json_validates_against_the_schema
+        PASS [   0.122s] cadetta cmd::emit::tests::native_name_collision_exits_one
+        PASS [   0.054s] cadetta cmd::impact::tests::usage_errors_exit_two
+        PASS [   0.066s] cadetta cmd::emit::tests::usage_errors_exit_two
+        PASS [   0.119s] cadetta cmd::emit::tests::unrepresentable_value_exits_one
+        PASS [   0.102s] cadetta cmd::emit::tests::writes_equations_for_bound_members_only
+        PASS [   0.189s] cadetta cmd::emit::tests::honours_out_and_adapter_selection
+        PASS [   0.074s] cadetta cmd::import::tests::never_exits_one
+        PASS [   0.260s] cadetta cmd::emit::tests::header_only_difference_is_not_rewritten
+        PASS [   0.082s] cadetta cmd::ir::tests::usage_errors_exit_two
+        PASS [   0.583s] cadetta cmd::check::tests::flags_scope_as_of_watch_and_fail_on
+        PASS [   0.498s] cadetta cmd::check_watch::tests::unchanged_run_emits_nothing_twice
+        PASS [   0.106s] cadetta cmd::names::tests::colliding_created_names_raise_r013
+        PASS [   0.285s] cadetta cmd::emit::tests::json_validates_against_emit_schema
+        PASS [   0.175s] cadetta cmd::ir::tests::observed_ir_for_a_configured_adapter
+        PASS [   0.041s] cadetta cmd::names::tests::usage_errors_exit_2
+        PASS [   0.073s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.132s] cadetta cmd::names::tests::lists_sorted_paths_with_explicit_and_unknown_states
+        PASS [   0.050s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.116s] cadetta cmd::names::tests::scope_binding_is_implicit_global
+        PASS [   0.089s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.088s] cadetta cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record
+        PASS [   0.043s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.025s] cadetta pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005
+        PASS [   0.290s] cadetta cmd::import::tests::propose_writes_only_the_proposal
+        PASS [   0.045s] cadetta cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones
+        PASS [   0.058s] cadetta cmd::update::tests::run_update_writes_the_lock_and_reports
+        PASS [   0.312s] cadetta cmd::import::tests::json_validates_against_import_schema
+        PASS [   0.347s] cadetta cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently
+        PASS [   0.057s] cadetta cmd::update::tests::update_name_touches_only_that_record
+        PASS [   0.037s] cadetta cmd::why::tests::usage_errors_exit_two
+        PASS [   0.187s] cadetta cmd::names::tests::text_output_and_glob_filter
+        PASS [   0.033s] cadetta pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005
+        PASS [   0.029s] cadetta project::tests::discovery_walks_up_skips_tableless_and_fails_when_none
+        PASS [   0.034s] cadetta pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy
+        PASS [   0.033s] cadetta pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order
+        PASS [   0.042s] cadetta project::tests::member_and_path_dependency_without_config_is_e005
+        PASS [   0.043s] cadetta project::tests::duplicate_component_is_e003_with_both_spans
+        PASS [   0.029s] cadetta tests::cwd_and_config_are_validated
+        PASS [   0.032s] cadetta tests::cite_list_keeps_its_own_format_flag
+        PASS [   0.033s] cadetta project::tests::missing_or_empty_src_is_e005
+        PASS [   0.063s] cadetta project::tests::member_scope_unless_at_workspace_root
+        PASS [   0.072s] cadetta pkg::resolve::tests::unmet_version_requirement_is_e012
+        PASS [   0.044s] cadetta project::tests::modules_sorted_by_path
+        PASS [   0.029s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.049s] cadetta tests::format_flag_beats_env_and_both_validate
+        PASS [   0.026s] cadetta tests::text_is_the_default_format_regardless_of_terminal
+        PASS [   0.042s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.040s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.057s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.381s] cadetta cmd::names::tests::json_validates_against_names_schema
+        PASS [   0.040s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.107s] cadetta universe::tests::impact_lists_dependents_of_a_lowered_member
+        PASS [   0.256s] cadetta cmd::update::tests::json_validates_against_update_schema
+        PASS [   0.484s] cadetta cmd::ir::tests::prints_design_ir_that_validates
+        PASS [   0.128s] cadetta universe::tests::why_traces_a_lowered_member
+        PASS [   0.171s] cadetta universe::tests::obligations_lists_the_open_check
+        PASS [   0.176s] cadetta universe::tests::ir_prints_lowered_digested_members
+        PASS [   0.068s] cadetta::lsp capabilities_and_exit_codes
+        PASS [   0.209s] cadetta universe::tests::ack_records_an_attestation_for_the_check
+        PASS [   0.035s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.032s] cadetta-sema eval::tests::dimension_mismatch_and_cycles_are_reported_once
+        PASS [   0.247s] cadetta universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone
+        PASS [   0.112s] cadetta::lsp format_returns_one_whole_document_edit
+        PASS [   0.052s] cadetta-sema eval::tests::exact_sum_of_inch_and_millimetre_is_338_1mm
+        PASS [   0.079s] cadetta-sema eval::tests::fmt_renders_by_display_rules
+        PASS [   0.050s] cadetta-sema eval::tests::match_exhaustive_and_wildcard_select_an_arm
+        PASS [   0.065s] cadetta-sema eval::tests::let_keeps_analysis_form_and_is_readable_elsewhere
+        PASS [   0.297s] cadetta universe::tests::why_stale_names_the_changed_node_after_an_edit
+        PASS [   0.056s] cadetta-sema eval::tests::match_non_exhaustive_names_missing_variants
+        PASS [   0.058s] cadetta-sema eval::tests::max_accessor_parameter_stores_untoleranced_9_5mm
+        PASS [   0.036s] cadetta-sema eval::tests::min_max_abs_follow_intervals
+        PASS [   0.031s] cadetta-sema eval::tests::recursion_is_rejected
+        PASS [   0.055s] cadetta-sema eval::tests::parameter_from_arithmetic_stores_nominal_and_own_tolerance
+        PASS [   0.057s] cadetta-sema eval::tests::pure_reference_parameter_aliases_referent_variable
+        PASS [   0.062s] cadetta-sema eval::tests::round_to_inexact_near_tie_is_q010
+        PASS [   0.076s] cadetta-sema eval::tests::range_lookups_and_table_by_name_values
+        PASS [   0.041s] cadetta-sema eval::tests::table_index_miss_is_e007
+        PASS [   0.065s] cadetta-sema eval::tests::round_to_on_exact_input_is_exact
+        PASS [   0.066s] cadetta-sema eval::tests::rounding_to_count_and_count_of_array
+        PASS [   0.065s] cadetta-sema eval::tests::sqrt_exact_inexact_and_dimension
+        PASS [   0.035s] cadetta-sema eval::tests::table_index_with_a_member_key_selects_the_row
+        PASS [   0.041s] cadetta-sema eval::tests::user_function_with_lets_and_defaults
+        PASS [   0.050s] cadetta-sema eval::tests::user_function_argument_errors_are_e006
+        PASS [   0.042s] cadetta-sema lower::tests::compensated_member_keeps_designed_nominal_and_drawn
+        PASS [   0.278s] cadetta::lsp save_publishes_package_lint_and_clears
+        PASS [   0.079s] cadetta-sema eval::tests::trig_exact_special_angles_and_inexact
+        PASS [   0.051s] cadetta-sema lower::tests::datums_placements_and_points_are_lowered
+        PASS [   0.073s] cadetta-sema lower::tests::citations_are_sorted_and_member_citation_replaces_the_components
+        PASS [   0.049s] cadetta-sema lower::tests::derived_member_has_derived_provenance_and_deps
+        PASS [   0.055s] cadetta-sema lower::tests::derived_tolerance_is_an_affine_of_source_variables
+        PASS [   0.054s] cadetta-sema lower::tests::let_is_analysis
+        PASS [   0.063s] cadetta-sema lower::tests::example_lowers_components_fits_and_checks
+        PASS [   0.065s] cadetta-sema lower::tests::editing_a_cite_changes_its_digest_but_not_the_citing_nodes
+        PASS [   0.057s] cadetta-sema lower::tests::re_expression_composes_the_placement
+        PASS [   0.034s] cadetta-sema process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made
+        PASS [   0.057s] cadetta-sema lower::tests::re_expression_out_of_an_unplaced_part_is_g003
+        PASS [   0.033s] cadetta-sema process::tests::emit_applies_rule_to_chosen_point
+        PASS [   0.081s] cadetta-sema lower::tests::variants_store_only_differing_values
+        PASS [   0.046s] cadetta-sema process::tests::member_without_role_is_not_compensated_and_p001_is_recorded
+        PASS [   0.044s] cadetta-sema process::tests::roles_are_not_inherited_from_scope
+        PASS [   0.048s] cadetta-sema process::tests::process_parameter_scatter_is_added_to_designed
+        PASS [   0.041s] cadetta-sema process::tests::unsupported_rule_construct_is_reported
+        PASS [   0.504s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.564s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.898s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [   2.616s] cadetta::golden golden_corpus
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        PASS [ 124.800s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 125.662s] 145 tests run: 145 passed (1 slow), 246 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-sema -E '(package(=cadetta) & (test(=capabilities_and_exit_codes) | test(=cmd::ack::tests::selector_matching_nothing_exits_two) | test(=cmd::bind::tests::add_is_canonical_and_idempotent) | test(=cmd::bind::tests::json_validates_against_bind_schema) | test(=cmd::bind::tests::refuses_native_name_collisions) | test(=cmd::bind::tests::rejects_conflicts_and_invalid_requests) | test(=cmd::bind::tests::remove_drops_the_locator) | test(=cmd::bind::tests::tolerance_is_written_canonically_and_idempotent) | test(=cmd::check::tests::bad_arguments_are_usage_errors) | test(=cmd::check::tests::clean_project_exits_zero) | test(=cmd::check::tests::drift_lints_run_for_adapters_that_can_read) | test(=cmd::check::tests::flags_scope_as_of_watch_and_fail_on) | test(=cmd::check::tests::ir_lint_families_run_in_check) | test(=cmd::check::tests::json_validates_against_check_and_diag_schemas) | test(=cmd::check::tests::obligations_no_role_covers_are_not_raised) | test(=cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span) | test(=cmd::check::tests::release_role_gates_open_obligations_only_with_release) | test(=cmd::check::tests::stale_check_obligation_exits_one) | test(=cmd::check::tests::violated_check_is_c001_with_path) | test(=cmd::check::tests::waive_suppresses_through_the_engine_and_unused_waiver_is_w004) | test(=cmd::check_watch::tests::change_emits_sorted_ndjson_records) | test(=cmd::check_watch::tests::requires_json_format) | test(=cmd::check_watch::tests::unchanged_run_emits_nothing_twice) | test(=cmd::cite::tests::ieee_article_template) | test(=cmd::cite::tests::ieee_authors_join_and_truncate) | test(=cmd::cite::tests::ieee_book_template) | test(=cmd::cite::tests::ieee_dates_print_at_their_precision) | test(=cmd::cite::tests::ieee_labels_by_type) | test(=cmd::cite::tests::ieee_online_parts_need_a_url) | test(=cmd::cite::tests::ieee_other_template_with_url_and_accessed) | test(=cmd::cite::tests::ieee_separators_collapse_and_one_final_period) | test(=cmd::cite::tests::ieee_who_is_authors_else_organization) | test(=cmd::cite::tests::list_bibtex_is_keyed_by_canonical_path) | test(=cmd::cite::tests::list_json_validates_against_the_schema) | test(=cmd::cite::tests::list_numbers_by_path_order_with_dependencies_after_their_reader) | test(=cmd::cite::tests::list_of_a_broken_design_is_an_error) | test(=cmd::cite::tests::list_scope_limits_the_roots_but_not_what_they_read) | test(=cmd::compare::tests::usage_errors_exit_two) | test(=cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths) | test(=cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings) | test(=cmd::emit::tests::explicit_binding_resolves_name_collision) | test(=cmd::emit::tests::header_only_difference_is_not_rewritten) | test(=cmd::emit::tests::honours_out_and_adapter_selection) | test(=cmd::emit::tests::json_validates_against_emit_schema) | test(=cmd::emit::tests::native_name_collision_exits_one) | test(=cmd::emit::tests::unrepresentable_value_exits_one) | test(=cmd::emit::tests::usage_errors_exit_two) | test(=cmd::emit::tests::writes_equations_for_bound_members_only) | test(=cmd::impact::tests::usage_errors_exit_two) | test(=cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently) | test(=cmd::import::tests::json_validates_against_import_schema) | test(=cmd::import::tests::never_exits_one) | test(=cmd::import::tests::propose_writes_only_the_proposal) | test(=cmd::ir::tests::observed_ir_for_a_configured_adapter) | test(=cmd::ir::tests::prints_design_ir_that_validates) | test(=cmd::ir::tests::usage_errors_exit_two) | test(=cmd::names::tests::colliding_created_names_raise_r013) | test(=cmd::names::tests::json_validates_against_names_schema) | test(=cmd::names::tests::lists_sorted_paths_with_explicit_and_unknown_states) | test(=cmd::names::tests::scope_binding_is_implicit_global) | test(=cmd::names::tests::text_output_and_glob_filter) | test(=cmd::names::tests::usage_errors_exit_2) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record) | test(=cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged) | test(=cmd::update::tests::e013_exits_one) | test(=cmd::update::tests::json_validates_against_update_schema) | test(=cmd::update::tests::run_update_writes_the_lock_and_reports) | test(=cmd::update::tests::update_name_touches_only_that_record) | test(=cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones) | test(=cmd::why::tests::usage_errors_exit_two) | test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=format_returns_one_whole_document_edit) | test(=golden_corpus) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=pkg::manifest::tests::workspace_members_load_and_missing_member_is_e005) | test(=pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy) | test(=pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005) | test(=pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order) | test(=pkg::resolve::tests::unmet_version_requirement_is_e012) | test(=project::tests::discovery_walks_up_skips_tableless_and_fails_when_none) | test(=project::tests::duplicate_component_is_e003_with_both_spans) | test(=project::tests::member_and_path_dependency_without_config_is_e005) | test(=project::tests::member_scope_unless_at_workspace_root) | test(=project::tests::missing_or_empty_src_is_e005) | test(=project::tests::modules_sorted_by_path) | test(=save_publishes_package_lint_and_clears) | test(=syntax_error_then_format_refused) | test(=tests::cite_list_keeps_its_own_format_flag) | test(=tests::cwd_and_config_are_validated) | test(=tests::diagnostics_are_closed_for_errors_and_warnings) | test(=tests::format_flag_beats_env_and_both_validate) | test(=tests::mismatch_names_the_suspect_side) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::text_is_the_default_format_regardless_of_terminal) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone) | test(=universe::tests::ack_records_an_attestation_for_the_check) | test(=universe::tests::impact_lists_dependents_of_a_lowered_member) | test(=universe::tests::ir_prints_lowered_digested_members) | test(=universe::tests::obligations_lists_the_open_check) | test(=universe::tests::why_stale_names_the_changed_node_after_an_edit) | test(=universe::tests::why_traces_a_lowered_member) | test(=unmet_expectation_fails_naming_fixture_doc_and_code))) | (package(=cadetta-sema) & (test(=checks::tests::check_false_everywhere_violates_c001) | test(=checks::tests::check_path_is_canonical_member_path) | test(=checks::tests::check_true_for_some_values_is_undecided_c002) | test(=checks::tests::quantified_check_yields_one_verdict_per_instance) | test(=checks::tests::require_is_a_check_with_citation_and_obligation) | test(=checks::tests::satisfies_tests_value_against_bound_and_reads_limits) | test(=eval::tests::dimension_mismatch_and_cycles_are_reported_once) | test(=eval::tests::exact_sum_of_inch_and_millimetre_is_338_1mm) | test(=eval::tests::fmt_renders_by_display_rules) | test(=eval::tests::let_keeps_analysis_form_and_is_readable_elsewhere) | test(=eval::tests::match_exhaustive_and_wildcard_select_an_arm) | test(=eval::tests::match_non_exhaustive_names_missing_variants) | test(=eval::tests::max_accessor_parameter_stores_untoleranced_9_5mm) | test(=eval::tests::min_max_abs_follow_intervals) | test(=eval::tests::parameter_from_arithmetic_stores_nominal_and_own_tolerance) | test(=eval::tests::pure_reference_parameter_aliases_referent_variable) | test(=eval::tests::range_lookups_and_table_by_name_values) | test(=eval::tests::recursion_is_rejected) | test(=eval::tests::round_to_inexact_near_tie_is_q010) | test(=eval::tests::round_to_on_exact_input_is_exact) | test(=eval::tests::rounding_to_count_and_count_of_array) | test(=eval::tests::sqrt_exact_inexact_and_dimension) | test(=eval::tests::table_index_miss_is_e007) | test(=eval::tests::table_index_with_a_member_key_selects_the_row) | test(=eval::tests::trig_exact_special_angles_and_inexact) | test(=eval::tests::user_function_argument_errors_are_e006) | test(=eval::tests::user_function_with_lets_and_defaults) | test(=instances::tests::arguments_defaults_and_members_evaluate) | test(=instances::tests::assembly_default_beats_file_default) | test(=instances::tests::instance_check_when_gates_the_verdict) | test(=instances::tests::instance_checks_report_under_the_instance_path) | test(=instances::tests::missing_required_argument_is_e006) | test(=instances::tests::optional_argument_and_when_follow_given) | test(=instances::tests::requires_reports_e006_when_the_argument_is_missing) | test(=lower::tests::citations_are_sorted_and_member_citation_replaces_the_components) | test(=lower::tests::compensated_member_keeps_designed_nominal_and_drawn) | test(=lower::tests::datums_placements_and_points_are_lowered) | test(=lower::tests::derived_member_has_derived_provenance_and_deps) | test(=lower::tests::derived_tolerance_is_an_affine_of_source_variables) | test(=lower::tests::editing_a_cite_changes_its_digest_but_not_the_citing_nodes) | test(=lower::tests::example_lowers_components_fits_and_checks) | test(=lower::tests::let_is_analysis) | test(=lower::tests::re_expression_composes_the_placement) | test(=lower::tests::re_expression_out_of_an_unplaced_part_is_g003) | test(=lower::tests::role_attribute_names_hole_or_shaft) | test(=lower::tests::variants_store_only_differing_values) | test(=point::count_tests::pattern_counts_are_structural) | test(=point::tests::array_plus_point_shifts_every_element) | test(=point::tests::circle_pattern_and_distance) | test(=point::tests::fixed_arrays_hold_n_elements_of_one_kind) | test(=point::tests::point_arithmetic_gives_points_with_length_members) | test(=point::tests::rect_pattern_is_centred_rows_first) | test(=posshape::tests::array_plus_point_is_g001) | test(=posshape::tests::comparison_across_datums_is_g001_without_eval_noise) | test(=posshape::tests::distance_across_datums_is_g001) | test(=posshape::tests::re_expressed_operands_share_a_datum) | test(=posshape::tests::subtraction_across_datums_is_g001) | test(=process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made) | test(=process::tests::emit_applies_rule_to_chosen_point) | test(=process::tests::member_without_role_is_not_compensated_and_p001_is_recorded) | test(=process::tests::process_parameter_scatter_is_added_to_designed) | test(=process::tests::roles_are_not_inherited_from_scope) | test(=process::tests::unsupported_rule_construct_is_reported)))'"
+size = 13550
+status = "measured"
+test_count = 145
+tests_digest = "5f81bc6657adbe2e90fc64149fea368c2647e776d269a6b3b94381b567e0a89e"
+at = "2026-10-14T05:30:08Z"
+actor = "Claude"
+rev = 1
