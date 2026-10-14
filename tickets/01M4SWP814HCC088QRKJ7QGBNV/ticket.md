@@ -2,7 +2,8 @@
 id = "01M4SWP814HCC088QRKJ7QGBNV"
 title = "ScrewJoint one joint per pattern"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
