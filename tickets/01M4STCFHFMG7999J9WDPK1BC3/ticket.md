@@ -8,7 +8,7 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:04:55Z"
-updated = "2026-10-14T12:23:45Z"
+updated = "2026-10-14T12:25:02Z"
 persona = "maintainer"
 capability = "know the implementation matches the spec"
 idempotency_key = "replan13:Conformance run for stdlib"
@@ -17,5 +17,5 @@ scope = ["tests/conformance_stdlib.rs", "crates/cadetta-cli/Cargo.toml", "tests/
 
 [[acceptance]]
 text = "Given tests/conformance/stdlib/ fixtures, when the harness runs, then every must-fire fixture produces its expected diagnostic and every must-not-fire fixture produces none (docs/spec/stdlib.md)"
-bound = false
+bound = true
 +++
