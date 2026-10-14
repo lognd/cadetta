@@ -1,6 +1,7 @@
 """FreeCADAdapter: the reference external adapter (adapters.md 5, 6)."""
 
 # frob:ticket 01M4SPWSCZ06W3EW6B1RDPEZRQ
+# frob:ticket 01M4SPWSFF7Z2K6FSGSZ1N30JH
 
 from __future__ import annotations
 
@@ -10,15 +11,26 @@ from cadetta.adapter import (
     PROTOCOL,
     Adapter,
     Capability,
+    EmitParams,
+    EmitResult,
+    FileDigest,
     InitializeParams,
     InitializeResult,
     RpcError,
 )
 from cadetta.logging import get_logger
+from cadetta.models import ir
+from pydantic import TypeAdapter, ValidationError
 from typani import Err, Ok, Result
 
 from cadetta_freecad import __version__
 from cadetta_freecad.backend import FreeCadBackend, LiveBackend
+from cadetta_freecad.emit import (
+    SHEET_NAME,
+    EmitPolicy,
+    build_plan,
+    digest_plan,
+)
 
 __all__ = ["NATIVE_UNITS", "PRECISION", "FreeCadAdapter"]
 
@@ -28,6 +40,9 @@ NATIVE_UNITS = "mm"
 PRECISION = 6
 
 INVALID_PARAMS = -32602
+INTERNAL_ERROR = -32000
+
+_BINDINGS = TypeAdapter(list[ir.Binding])
 
 _log = get_logger(__name__)
 
@@ -75,3 +90,31 @@ class FreeCadAdapter(Adapter):
                 platforms=["linux", "windows", "macos"],
             )
         )
+
+    def emit(self, params: EmitParams) -> Result[EmitResult, RpcError]:
+        """Write the bound values as Spreadsheet aliases into the FCStd at `out`."""
+        try:
+            policy = EmitPolicy.model_validate(params.policy)
+            bindings = _BINDINGS.validate_python(params.bindings)
+        except ValidationError as e:
+            _log.error("bad emit params: %s", e)
+            return Err(RpcError(code=INVALID_PARAMS, message=f"bad emit params: {e}"))
+        if params.design.digest is None:
+            _log.error("design IR carries no digest")
+            return Err(
+                RpcError(code=INVALID_PARAMS, message="design IR carries no digest")
+            )
+        match build_plan(params.design, bindings, policy, __version__):
+            case Err(diags):
+                _log.error("emit withheld %s: %d diagnostics", policy.out, len(diags))
+                return Ok(EmitResult(files=[], diagnostics=diags))
+            case Ok(plan):
+                pass
+        match self._backend.write_sheet(policy.out, SHEET_NAME, plan.cells):
+            case Err(why):
+                return Err(RpcError(code=INTERNAL_ERROR, message=why))
+            case Ok(_):
+                pass
+        digest = digest_plan(plan)
+        _log.info("emitted %s (%s)", policy.out, digest)
+        return Ok(EmitResult(files=[FileDigest(path=policy.out, digest=digest)]))
