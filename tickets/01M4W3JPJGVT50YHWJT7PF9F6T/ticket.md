@@ -2,12 +2,12 @@
 id = "01M4W3JPJGVT50YHWJT7PF9F6T"
 title = "frob test --all builds cadetta-py under system Python 3.10 and fails"
 type = "bug"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:24:05Z"
-updated = "2026-10-14T03:07:54Z"
+updated = "2026-10-14T03:08:32Z"
 scope = ["frob.toml"]
 
 [[acceptance]]
