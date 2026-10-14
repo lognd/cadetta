@@ -1,0 +1,34 @@
+kind = "evidence"
+captured_at = "2026-10-14T20:51:19Z"
+digest = "70fab7bc49ab3c98dca1c64d59a559c7a0b29fa33c2506b60ebe6a2f64a4914f"
+exit_code = 0
+inline = '''
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 44ed9813-df85-491f-903c-d03171810c74 with nextest profile: default
+    Starting 9 tests across 45 binaries (1175 tests skipped)
+        PASS [   0.009s] cadetta-geometry float::tests::edge_carries_translation_and_rotation_bound
+        PASS [   0.009s] cadetta-geometry float::tests::smallest_theta_then_float_then_path
+        PASS [   0.009s] cadetta-geometry float::tests::locating_joint_leaves_transform_exact
+        PASS [   0.010s] cadetta-geometry float::tests::one_point_pattern_is_g008
+        PASS [   0.010s] cadetta-geometry float::tests::own_check_reads_edge_without_float
+        PASS [   0.010s] cadetta-geometry float::tests::theta_is_two_asin_and_half_turn_when_unconstrained
+        PASS [   0.011s] cadetta-ir json::tests::json_no_magnitude_float
+        PASS [   0.012s] cadetta-ir json::tests::json_inexact_only_float
+        PASS [   0.013s] cadetta-geometry float::tests::locating_joint_removes_the_float
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 9 tests run: 9 passed, 1175 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "float"
+size = 1474
+status = "measured"
+test_count = 9
+tests_digest = "e2396ed01fd503dc2337075b01120ecb3c160a7b8af16b2810d2a55bbf16cc39"
+at = "2026-10-14T20:51:19Z"
+actor = "lognd"
+rev = 1
