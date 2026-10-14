@@ -8,6 +8,7 @@ use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options, PushItem, ReadB
 use cadetta_units::{Magnitude, Rational, UnitTable};
 use serde_json::{Value, json};
 
+use crate::binding;
 use crate::compare::Produced;
 use crate::expect::{Block, Expect};
 use crate::run::{Facts, Scratch, parse_json, run_cli, stage};
@@ -40,6 +41,10 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("source", "eval", eval),
     ("source", "init", init),
     ("binding", "classify", classify),
+    ("binding", "emit", binding::emit_scope),
+    ("binding", "emit-twice", binding::emit_twice),
+    ("binding", "emit-compare", binding::emit_compare),
+    ("binding", "impact-swap", binding::impact_swap),
 ];
 
 /// Run the fixture with the executor registered for the expectation's kind and entry.

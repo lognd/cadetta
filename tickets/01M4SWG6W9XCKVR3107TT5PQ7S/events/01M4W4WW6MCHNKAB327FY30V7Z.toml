@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T02:47:07Z"
+digest = "663ed2f0bda6ae4550d5d398ad24297c3a862bd99045941774088ed13cc74807"
+exit_code = 0
+inline = """
+
+running 5 tests
+test axes::tests::a_non_length_sampling_distance_is_invalid ... ok
+test axes::tests::parallel_ignores_offset ... ok
+test axes::tests::coaxial_bounds_the_radial_offset ... ok
+test instances::tests::point_form_equals_the_explicit_axes ... ok
+test axes::tests::angle_between_is_exact_at_zero_and_half_turn ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 57 filtered out; finished in 0.00s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.05s
+     Running unittests src/lib.rs (cadetta-wt/HSDKA6V-target/debug/deps/cadetta_geometry-34e5d0e90a22d646)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta-geometry axes"
+size = 604
+status = "measured"
+at = "2026-10-14T02:47:07Z"
+actor = "lognd"
+rev = 1

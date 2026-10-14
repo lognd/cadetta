@@ -2,17 +2,17 @@
 id = "01M4SXSGQQHR6RMBNJQJ3392AZ"
 title = "Golden corpus runner"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-13T06:04:28Z"
+updated = "2026-10-14T02:48:03Z"
 persona = "maintainer"
 capability = "check each golden design against its hand-evaluated expectations"
-labels = ["creates:crates/cadetta-cli/tests/golden/**", "creates:tests/golden/*/expected.toml"]
-scope = ["crates/cadetta-cli/tests/golden/**", "tests/golden/*/expected.toml"]
+labels = ["creates:crates/cadetta-cli/tests/golden/**"]
+scope = ["crates/cadetta-cli/tests/golden/**"]
 
 [[links]]
 kind = "blocked-by"

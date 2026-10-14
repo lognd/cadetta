@@ -1678,31 +1678,6 @@ ticket = "~BC7S5KT"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
-fixture = "adapters/bind-scope-every-in-scope-path"
-ticket = "~HSDKA6V"
-reason = "binding emit entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/sync-noop-excludes-header"
-ticket = "~HSDKA6V"
-reason = "binding emit-compare entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/contract-deterministic-bytes"
-ticket = "~HSDKA6V"
-reason = "binding emit-twice entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/contract-emitters-decide-nothing"
-ticket = "~HSDKA6V"
-reason = "binding emit-twice entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/slots-swap-impact-replace-component"
-ticket = "~HSDKA6V"
-reason = "binding impact-swap entries have no executor yet"
-
-[[gap]]
 fixture = "quantities/display-fraction-spec"
 ticket = "~HX96KHW"
 reason = "quantities binding check (display formatter) has no executor yet"
