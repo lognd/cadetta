@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T03:20:39Z"
+updated = "2026-10-14T03:29:21Z"
 persona = "design engineer"
 capability = "emit parameters as Spreadsheet aliases in an FCStd file"
 outcome_text = "FreeCAD models update without retyping"
-labels = ["creates:adapters/freecad/src/emit.py"]
-scope = ["adapters/freecad/src/emit.py"]
+labels = ["creates:adapters/freecad/src/cadetta_freecad/emit.py", "creates:adapters/freecad/tests/unit/test_emit.py", "creates:adapters/freecad/tests/unit/_ir.py"]
+scope = ["adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/pyproject.toml", "adapters/freecad/uv.lock", "adapters/freecad/README.md", "docs/spec/adapters.md", "adapters/freecad/src/cadetta_freecad/emit.py", "adapters/freecad/tests/unit/test_emit.py", "adapters/freecad/tests/unit/_ir.py"]
 
 [[links]]
 kind = "blocks"
