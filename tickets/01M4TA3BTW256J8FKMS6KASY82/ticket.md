@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:33Z"
-updated = "2026-10-14T21:44:25Z"
+updated = "2026-10-14T21:44:26Z"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli", "docs", "changelog.d", "tests/conformance"]
 
 [[acceptance]]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "Dependency diagnostics (D003, N004) carry the module they were raised in"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "The check pipeline attributes a diagnostic to its own module's file, dropping std, instead of guessing from the span"
