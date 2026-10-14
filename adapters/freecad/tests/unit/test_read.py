@@ -120,7 +120,7 @@ def test_long_binary64_is_inexact_and_unit_less_dimension_is_assumed():
 
 
 # frob:tests adapters/freecad/src/cadetta_freecad/adapter.py::FreeCadAdapter.read kind=unit
-def test_read_rejects_sessions_and_reports_backend_errors():
+def test_read_rejects_unknown_sessions_and_reports_backend_errors():
     adapter = FreeCadAdapter(_DocBackend())
     session = ReadParams.model_validate({"source": {"session": "s1"}})
     assert adapter.read(session).danger_err.code == -32602

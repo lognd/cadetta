@@ -3,6 +3,7 @@
 # frob:ticket 01M4SPWSCZ06W3EW6B1RDPEZRQ
 # frob:ticket 01M4SPWSFF7Z2K6FSGSZ1N30JH
 # frob:ticket 01M4SPWSJ81C9Q9BV5AYXHEWE6
+# frob:ticket 01M4SPWSMZASH05AGR95PGAZKD
 
 from __future__ import annotations
 
@@ -17,9 +18,17 @@ from cadetta.adapter import (
     FileDigest,
     InitializeParams,
     InitializeResult,
+    OpenParams,
+    OpenResult,
+    PushParams,
+    PushResult,
     ReadParams,
     ReadResult,
+    RegenParams,
+    RegenResult,
     RpcError,
+    SaveResult,
+    SessionParams,
 )
 from cadetta.logging import get_logger
 from cadetta.models import ir
@@ -28,6 +37,7 @@ from typani import Err, Ok, Result
 
 from cadetta_freecad import __version__
 from cadetta_freecad.backend import FreeCadBackend, LiveBackend, NativeDocument
+from cadetta_freecad.drive import DriveSessions
 from cadetta_freecad.emit import (
     SHEET_NAME,
     EmitPolicy,
@@ -63,6 +73,7 @@ class FreeCadAdapter(Adapter):
         self._backend: FreeCadBackend = (
             backend if backend is not None else LiveBackend()
         )
+        self._drive = DriveSessions(self._backend)
 
     def initialize(
         self, params: InitializeParams
@@ -126,14 +137,17 @@ class FreeCadAdapter(Adapter):
     def read(self, params: ReadParams) -> Result[ReadResult, RpcError]:
         """Read aliases and dimensions of the given FCStd files into observed IR."""
         files = params.source.files
-        if files is None or params.source.session is not None:
-            _log.error("read supports file sources only")
-            return Err(
-                RpcError(
-                    code=INVALID_PARAMS,
-                    message="read supports source.files only; sessions are unsupported",
+        if files is None:
+            handle = params.source.session
+            files = self._drive.files(handle) if handle is not None else None
+            if files is None:
+                _log.error("read: no files and unknown session %r", handle)
+                return Err(
+                    RpcError(
+                        code=INVALID_PARAMS,
+                        message=f"read needs files or a known session: {handle!r}",
+                    )
                 )
-            )
         docs: list[NativeDocument] = []
         for path in files:
             match self._backend.read_document(path):
@@ -144,3 +158,42 @@ class FreeCadAdapter(Adapter):
         observed, diags = observed_from_documents(docs, native_unit=NATIVE_UNITS)
         _log.info("read %d files into %s", len(docs), observed.package.name)
         return Ok(ReadResult(observed=observed, diagnostics=diags))
+
+    def open(self, params: OpenParams) -> Result[OpenResult, RpcError]:
+        """Open the files hidden (or attach); R009 for dirty or read-only ones."""
+        match self._drive.open(params.files):
+            case str() as why:
+                return Err(RpcError(code=INTERNAL_ERROR, message=why))
+            case (session, diags):
+                return Ok(OpenResult(session=session, diagnostics=diags))
+
+    def push(self, params: PushParams) -> Result[PushResult, RpcError]:
+        """Write the changed params of one file, snapshotting old values first."""
+        match self._drive.push(params.session, params.file, params.params):
+            case str() as why:
+                return Err(RpcError(code=INVALID_PARAMS, message=why))
+            case (statuses, diags):
+                return Ok(PushResult(statuses=statuses, diagnostics=diags))
+
+    def regen(self, params: RegenParams) -> Result[RegenResult, RpcError]:
+        """Recompute targets; a rebuild failure is R004 and restores the snapshot."""
+        match self._drive.regen(params.session, params.targets):
+            case str() as why:
+                return Err(RpcError(code=INVALID_PARAMS, message=why))
+            case (targets, diags):
+                return Ok(RegenResult(targets=targets, diagnostics=diags))
+
+    def save(self, params: SessionParams) -> Result[SaveResult, RpcError]:
+        """Save modified documents whose rebuild succeeded; report their digests."""
+        match self._drive.save(params.session):
+            case str() as why:
+                return Err(RpcError(code=INTERNAL_ERROR, message=why))
+            case (files, diags):
+                return Ok(SaveResult(files=files, diagnostics=diags))
+
+    def close(self, params: SessionParams) -> Result[None, RpcError]:
+        """Close the session, closing only documents the adapter opened itself."""
+        why = self._drive.close(params.session)
+        if why is not None:
+            return Err(RpcError(code=INTERNAL_ERROR, message=why))
+        return Ok(None)
