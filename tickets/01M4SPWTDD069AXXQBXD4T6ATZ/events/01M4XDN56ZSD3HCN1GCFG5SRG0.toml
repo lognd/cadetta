@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 0a50e7317628 (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38567375419/job/115863401389; binding (python) (failure) https://github.com/lognd/cadetta/actions/runs/38567375419/job/115863401366; freecadcmd (live round trip) (failure) https://github.com/lognd/cadetta/actions/runs/38567375530/job/115863401005; build and test (ubuntu-latest) (failure) https://github.com/lognd/cadetta/actions/runs/38567375457/job/115863401004; build and test (windows-latest) (failure) https://github.com/lognd/cadetta/actions/runs/38567375457/job/115863400666): gh and grimble absent"
+at = "2026-10-14T14:39:00Z"
+actor = "lognd"
+rev = 1
