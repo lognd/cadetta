@@ -56,7 +56,9 @@ pub assembly ScrewJoint(
   depth_available?: Length,
   screw_cost?: Money,
   at?: Pattern2,
-  onto?: Pattern2
+  onto?: Pattern2,
+  nut: Bool = false,
+  locating: Bool = false
 ) {
   #![requires(depth_available, when = tap == TapKind::Vendor)]
   priv material = if given(into) { into } else { host.material }
@@ -96,8 +98,10 @@ pub assembly ScrewJoint(
   priv n = if given(at) { count(at) } else if given(count) { count } else { 1 }
   /// The joint's screws, one per hole, so roll-ups count every screw; priced by screw_cost.
   part screw[n]: Iso4762(thread, screw_length, screw_cost)
-  /// Allowance for a screw in its clearance hole: half the clearance over the thread major.
-  float = (clearance_hole - major) / 2
+  /// One clearance hole's half: (clearance_hole - major) / 2, independent of any hole tolerance.
+  priv half = (clearance_hole - major) / 2
+  /// Allowance the aligned check uses: one half fixed, both halves (two clearance patterns) with a nut.
+  float = if nut { half + half } else { half }
   /// Tap drill: the policy's column for the host material, rounded up to a drill on the shelf (absent under Vendor).
   #[when(tap != TapKind::Vendor)]
   tap_drill = policy.drills.at_least(drill_nominal).key
