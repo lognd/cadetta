@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T02:47:06Z"
+updated = "2026-10-14T02:47:07Z"
 persona = "design engineer"
 capability = "check axes without a solver"
 idempotency_key = "replan14:geo-axes"
@@ -33,7 +33,7 @@ bound = true
 
 [[acceptance]]
 text = "Given parallel(a, b, allowance, over), when evaluated, then lateral deviation over the length is within allowance (geometry.md 5.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given angle_between(a, b), when evaluated, then it returns an Angle that is inexact and conservative (geometry.md 5.1)"
