@@ -1,0 +1,37 @@
+kind = "evidence"
+captured_at = "2026-10-14T02:21:07Z"
+digest = "7264fc1053305a23e74b227496450917edff61a017fc24fa79dc2e5b1e1912d8"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: platformdirs-4.13.0, typeguard-4.6.0
+collected 64 items
+
+bindings/python/tests/test_adapter.py ..........                         [ 15%]
+bindings/python/tests/test_errors.py .                                   [ 17%]
+bindings/python/tests/test_gen_models.py ..                              [ 20%]
+bindings/python/tests/test_pint.py ....                                  [ 26%]
+bindings/python/tests/test_project.py ........                           [ 39%]
+bindings/python/tests/test_project_verbs.py ......                       [ 48%]
+bindings/python/tests/test_quantity.py ..............                    [ 70%]
+bindings/python/tests/test_solve.py .......                              [ 81%]
+bindings/python/tests/unit/test_core.py ...                              [ 85%]
+bindings/python/tests/unit/test_logging.py .......                       [ 96%]
+bindings/python/unit/test_main.py ..                                     [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-2394263-0.xml --------------
+============================== 64 passed in 7.70s ==============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests adapters/freecad/tests"
+size = 1314
+status = "measured"
+test_count = 64
+tests_digest = "069b59ee253393adee920e9e61f120aa30bdfe253082bb987409907910416ece"
+at = "2026-10-14T02:21:07Z"
+actor = "lognd"
+rev = 1
