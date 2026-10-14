@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:55:49Z"
+digest = "9435f2f8989ffc56575b6d22cebcc13a08a363ac2560ed03c460995ed4511b66"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.68s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 42aca1c4-e485-43f9-9b7d-8df908fda098 with nextest profile: default
+    Starting 1 test across 46 binaries (1218 tests skipped)
+        PASS [   0.026s] cadetta cmd::check::tests::cross_component_read_with_wrong_dimension_is_q002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.028s] 1 test run: 1 passed, 1218 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cross_component_read_with_wrong_dimension_is_q002"
+size = 633
+status = "measured"
+test_count = 1
+tests_digest = "fe2788ef927e4eda471f3830f976d3c10ada6cbdc65dbdf417727f828547df38"
+at = "2026-10-14T21:55:49Z"
+actor = "lognd"
+rev = 1
