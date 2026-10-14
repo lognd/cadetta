@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T12:50:44Z"
+digest = "3f4290d6ca33e2b60af41b4687a26c564bf3742da6abf17e01634861aeb4d4f4"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 2 items
+
+bindings/python/tests/test_project_ops.py ..                             [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1480420-0.xml --------------
+============================== 2 passed in 0.75s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_project_ops.py::test_update_all_and_named bindings/python/tests/test_project_ops.py::test_update_real_cli_runs"
+size = 513
+status = "measured"
+test_count = 2
+tests_digest = "0ba0cbef95b9ade62001bed8a5ea9f03fd33489dbe14366bc3370857ea67eb89"
+at = "2026-10-14T12:50:44Z"
+actor = "lognd"
+rev = 1
