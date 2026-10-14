@@ -19,7 +19,7 @@
 // tap lead of about 3 pitches; 118 degree point length 0.3 d). The std
 // citation audit must verify all of them.
 
-use crate::materials::{Material, TapClass}
+use package::materials::{Material, TapClass}
 use super::tables::{Iso4762Len, tapdrill}
 
 /// The citation for the shop-policy figures: Machinery's Handbook.

@@ -251,8 +251,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// `base[i]`: the i-th element of an evaluated array.
     pub(super) fn index(&mut self, sc: &mut Scope, base: &Expr, idx: &Expr, span: Span) -> R<Val> {
-        let Val::Array(items) = self.eval(sc, base)? else {
-            return Err(diag("EVAL", span, "only an array can be indexed"));
+        let items = match self.eval(sc, base)? {
+            Val::Array(items) => items,
+            // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+            Val::Table(table) => {
+                let key = self.eval(sc, idx)?;
+                return self.table_index(&table, key, span);
+            }
+            _ => {
+                return Err(diag(
+                    "EVAL",
+                    span,
+                    "only an array or a table can be indexed",
+                ));
+            }
         };
         let q = self.quant(sc, idx)?;
         let i = parts::array_count(&q)

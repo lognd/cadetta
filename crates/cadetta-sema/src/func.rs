@@ -21,6 +21,7 @@ use cadetta_units::{
 };
 use tracing::{debug, trace};
 
+use super::tablevals::LOOKUPS;
 use super::{Evaluator, Fail, Quant, R, Scope, Val, cmp_mag, diag, round_diag, strip, tol_diag};
 use crate::resolve::{CanonPath, Ctx, ItemClass, Resolved};
 
@@ -250,6 +251,27 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         args: &[Arg],
         span: Span,
     ) -> R<Val> {
+        // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+        if let ExprKind::Field(table_expr, method) = &callee.kind
+            && LOOKUPS.contains(&method.name.as_str())
+        {
+            let Val::Table(table) = self.eval(sc, table_expr)? else {
+                return Err(diag(
+                    "EVAL",
+                    callee.span,
+                    format!("`.{}` needs a table", method.name),
+                ));
+            };
+            let [arg] = args else {
+                return Err(diag(
+                    "E006",
+                    span,
+                    format!("`.{}` takes one argument", method.name),
+                ));
+            };
+            let key = self.eval(sc, &arg.value)?;
+            return self.table_lookup(&table, &method.name, &key, span);
+        }
         let ExprKind::Path(p) = &callee.kind else {
             return Err(diag(
                 "EVAL",
@@ -614,6 +636,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Val::Text(s) => s.clone(),
             Val::Bool(b) => b.to_string(),
             Val::Variant { variant, .. } => variant.clone(),
+            Val::Table(t) => t.item.clone(),
+            Val::Row { table, row } => format!("{}[{row}]", table.item),
             Val::Inexact(i) => format!("{}", i.nominal),
             Val::Array(a) => {
                 let items: Vec<String> = a.iter().map(|x| self.render(x, unit)).collect();

@@ -25,8 +25,8 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm, Type,
-    UnOp,
+    self, BinOp, Block, Component, Expr, ExprKind, FnDecl, ItemKind, MemberKind, TolSign, TolTerm,
+    Type, UnOp,
 };
 use cadetta_syntax::lexer::Segment;
 use cadetta_syntax::span::Span;
@@ -38,7 +38,7 @@ use cadetta_units::{
 use tracing::{debug, trace, warn};
 
 use crate::deps::Severity;
-use crate::resolve::{CanonPath, Ctx, Level, MemberSeg, PackageSrc, Resolved, Resolver};
+use crate::resolve::{CanonPath, Ctx, ItemClass, Level, MemberSeg, PackageSrc, Resolved, Resolver};
 
 #[path = "array.rs"]
 pub mod array;
@@ -54,6 +54,8 @@ pub mod geom;
 pub mod point;
 #[path = "posshape.rs"]
 mod posshape;
+#[path = "tablevals.rs"]
+mod tablevals;
 
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -93,6 +95,15 @@ pub enum Val {
     Point(Vec<Val>),
     /// An inexact number (`sqrt`, trigonometry): interval plus root operation.
     Inexact(func::Inex),
+    /// A table named as a value (a policy member such as `drills = IsoDrills`).
+    Table(CanonPath),
+    /// One row of a table, read by `.key` or by column name.
+    Row {
+        /// The table.
+        table: CanonPath,
+        /// The row's position in source order.
+        row: usize,
+    },
 }
 
 /// A parameter or `let` after evaluation.
@@ -329,6 +340,8 @@ enum RefKind {
         enum_path: CanonPath,
         variant: String,
     },
+    /// A table named as a value.
+    Table(CanonPath),
 }
 
 /// A member definition indexed for evaluation.
@@ -377,6 +390,10 @@ pub struct Evaluator<'r, 'p> {
     index: checks::CheckIndex<'p>,
     /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
     recursive: BTreeSet<CanonPath>,
+    /// Every `table` item of the project, by path.
+    tables: BTreeMap<CanonPath, &'p ast::Table>,
+    /// Tables built so far (built on first read).
+    table_cache: BTreeMap<CanonPath, std::rc::Rc<tablevals::TableVals>>,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -390,11 +407,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
+        let mut tables: BTreeMap<CanonPath, &'p ast::Table> = BTreeMap::new();
         for p in packages {
             for m in &p.modules {
                 for item in m.file.items() {
                     if let ItemKind::Fn(f) = &item.kind {
                         fns.insert(CanonPath::item(&p.name, &m.path, &f.name.name), f);
+                    }
+                    if let ItemKind::Table(t) = &item.kind {
+                        tables.insert(CanonPath::item(&p.name, &m.path, &t.name.name), t);
                     }
                 }
                 for c in m.file.components() {
@@ -431,6 +452,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             diagnostics,
             index,
             recursive,
+            tables,
+            table_cache: BTreeMap::new(),
         }
     }
 
@@ -640,6 +663,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(RefKind::Member { key, accessor })
             }
             Resolved::Variant { enum_path, variant } => Ok(RefKind::Variant { enum_path, variant }),
+            // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+            Resolved::Item {
+                path,
+                class: ItemClass::Table,
+            } => Ok(RefKind::Table(path)),
             other => Err(diag(
                 "EVAL",
                 e.span,
@@ -658,6 +686,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 .map(|(_, v)| v.clone())
                 .ok_or_else(|| diag("EVAL", e.span, format!("local `{n}` has no value"))),
             RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
+            RefKind::Table(path) => Ok(Val::Table(path)),
             RefKind::Member { key, accessor } => {
                 let ev = self.value_of(&key).ok_or(Fail::Silent)?;
                 match (ev.value, accessor) {
@@ -706,6 +735,22 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     format!("this point has no `.{}`", member.name),
                 )
             });
+        }
+        // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
+        if let ExprKind::Field(base, member) = &e.kind
+            && matches!(
+                strip(base).kind,
+                ExprKind::Index(..) | ExprKind::Call { .. }
+            )
+        {
+            return match self.eval(sc, base)? {
+                Val::Row { table, row } => self.row_field(&table, row, member, span),
+                _ => Err(diag(
+                    "EVAL",
+                    span,
+                    format!("`.{}` needs a table row or a point", member.name),
+                )),
+            };
         }
         if let ExprKind::Field(..) = &e.kind
             && let Some(r) = self.bound_limit(sc, e)
@@ -1441,5 +1486,51 @@ mod tests {
         assert_eq!(val(&ev, "M", "c"), Val::Text("3in".to_owned()));
         assert!(has(&ev, "E006", "placeholder"), "{:?}", ev.diagnostics);
         assert_eq!(val(&ev, "M", "e"), Val::Text("2s".to_owned()));
+    }
+
+    const TABLES: &str = "enum Th { A, B }\n\
+        table T { key t: Th\n cols major: Length, fine: Ratio\n \
+        Th::A => 5mm, 0.5\n Th::B => 6mm, 0.25 }\n\
+        table D { key d: Length\n 3mm\n 4mm\n 5mm }\n";
+
+    // frob:tests table_index_with_a_member_key_selects_the_row
+    #[test]
+    fn table_index_with_a_member_key_selects_the_row() {
+        let src = format!(
+            "{TABLES}model M {{\n  th = Th::B\n  major = T[th].major\n  fine = T[Th::A].fine\n  \
+             miss = T[Th::A].nope\n}}\n"
+        );
+        let f = file(&src);
+        let ev = run(&f);
+        assert_eq!(quant(&ev, "M", "major").nominal, m(6, 1000));
+        assert_eq!(quant(&ev, "M", "fine").nominal, m(1, 2));
+        assert!(has(&ev, "E008", "nope"), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests table_index_miss_is_e007
+    #[test]
+    fn table_index_miss_is_e007() {
+        let src = format!("{TABLES}model M {{\n  x = D[3.5mm].key\n}}\n");
+        let f = file(&src);
+        let ev = run(&f);
+        assert!(has(&ev, "E007", "no row"), "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests range_lookups_and_table_by_name_values
+    #[test]
+    fn range_lookups_and_table_by_name_values() {
+        let src = format!(
+            "{TABLES}model M {{\n  want = 3.2mm\n  drills = D\n  \
+             up = D.at_least(want).key\n  down = D.at_most(want).key\n  \
+             near = D.nearest(4.4mm).key\n  via = drills.at_least(4.1mm).key\n}}\n"
+        );
+        let f = file(&src);
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "M", "up").nominal, m(4, 1000));
+        assert_eq!(quant(&ev, "M", "down").nominal, m(3, 1000));
+        assert_eq!(quant(&ev, "M", "near").nominal, m(4, 1000));
+        assert_eq!(quant(&ev, "M", "via").nominal, m(5, 1000));
+        assert!(matches!(val(&ev, "M", "drills"), Val::Table(_)));
     }
 }
