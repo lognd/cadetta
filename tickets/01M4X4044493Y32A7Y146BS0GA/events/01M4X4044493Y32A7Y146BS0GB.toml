@@ -1,0 +1,9 @@
+kind = "create"
+title = "Flaky conformance selftest under load (conformance_corpus_matches_the_spec)"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 3
+at = "2026-10-14T11:50:39Z"
+actor = "Claude"
+rev = 1
