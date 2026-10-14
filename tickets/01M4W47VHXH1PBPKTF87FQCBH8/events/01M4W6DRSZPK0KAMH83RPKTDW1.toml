@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T03:13:47Z"
+digest = "14c205a4a08d1ed34cd58d6d5678a631577d3986e5b867b5656affeee45f2d47"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b2aadb12-6d6a-4bfe-80c3-ad325801e2a2 with nextest profile: default
+    Starting 1 test across 6 binaries (239 tests skipped)
+        PASS [   0.096s] cadetta cmd::emit::tests::header_only_difference_is_not_rewritten
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.103s] 1 test run: 1 passed, 239 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(header_only_difference_is_not_rewritten)'"
+size = 558
+status = "measured"
+test_count = 1
+tests_digest = "c7e4593edbe62ac146f8d9d8040a5110d6add1b0b3ee6006efba2933b36c5005"
+at = "2026-10-14T03:13:47Z"
+actor = "lognd"
+rev = 1
