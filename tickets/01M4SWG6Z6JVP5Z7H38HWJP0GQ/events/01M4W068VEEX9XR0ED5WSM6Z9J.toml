@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "From ~H0EKNH2: this ticket also owns emitting G005 and G008 (geometry.md 5.2, 7). Known-gaps entries geometry/g005-check-looser-than-float and geometry/g005-locating-joint-no-float are retargeted here; remove them when it lands. No G008 fixture exists yet; add one."
+at = "2026-10-14T01:24:52Z"
+actor = "lognd"
+rev = 1
