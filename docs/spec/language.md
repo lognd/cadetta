@@ -296,6 +296,23 @@ interface only, so:
   checked at the use site, where a missing column or a kind mismatch is
   E008 naming the table.
 
+#### 3.3.1 Evaluating a parameterized instance
+
+`part j: ScrewJoint(thread = M6, clamp = 10mm)` inside a parameterless
+component is evaluated per instance, keyed `Box/j.<name>` (the argument
+and every member of the callee, `priv` ones included, shown as private).
+Given arguments evaluate in the instantiating component's scope; defaults
+and the callee's own members evaluate in the callee's scope with its
+parameters bound to this instance. A missing argument with no default is
+E006. An interface-typed argument that is omitted takes the scope default
+(stdlib.md 4): the `#![default(Iface = Impl)]` of the enclosing
+assembly, then the file, then (when the project is wired for it) the
+package `[defaults]`, then `std`'s `IsoDefault`. `#[when(cond)]` members
+exist only while `cond` holds, and `#![requires(arg, when = cond)]` is
+E006 when `cond` holds and `arg` was not given. Instances inside
+parameterized components, `Part`-typed arguments and part arrays inside
+an instance are not evaluated yet (ticketed).
+
 ### 3.4 Bounds
 
 `name <= expr`, `name >= expr`, `name in lo..hi` declare a requirement on

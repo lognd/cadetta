@@ -2,12 +2,13 @@
 id = "01M4W3YJCH948JJQ3HY646D1T7"
 title = "sema: evaluate parameterized component instances (std ScrewJoint members)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 13
 reporter = "lognd"
 created = "2026-10-14T02:30:34Z"
-updated = "2026-10-14T03:11:59Z"
+updated = "2026-10-14T03:14:47Z"
 scope = ["crates/cadetta-sema/**", "std/**", "tests/**", "docs/spec/language.md"]
 
 [[acceptance]]
