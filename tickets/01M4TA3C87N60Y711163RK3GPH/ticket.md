@@ -24,6 +24,10 @@ bound = false
 [[acceptance]]
 text = "cadetta check reports R005 (warning) for a binding whose path matches no IR path"
 bound = false
+
+[[acceptance]]
+text = "cadetta check reports an unstartable adapter as R008 at info severity and exits 0"
+bound = false
 +++
 
 found while working ~E631Y52. check drift is an injectable hook, default no-op.
