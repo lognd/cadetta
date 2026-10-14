@@ -378,7 +378,9 @@ Defined with their semantics in geometry.md 7.
 
 R rules run on observed IR after `read` or `sync`; R004 and R008-R010
 come from the adapter's responses and are passed through unchanged
-(adapters.md).
+(adapters.md). The implementation is `crates/cadetta-lint/src/rules/r_adapter.rs`:
+R007, R011, R012 and R013 are pure functions over binding facts, and
+`pass_through` forwards the adapter codes unchanged.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
