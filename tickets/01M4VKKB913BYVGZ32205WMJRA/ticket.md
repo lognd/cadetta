@@ -2,13 +2,13 @@
 id = "01M4VKKB913BYVGZ32205WMJRA"
 title = "frob pytest provider does not use the binding's virtualenv"
 type = "chore"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 parent = "01M4SPWFRR9DAEM60DX796GVPN"
 reporter = "lognd"
 created = "2026-10-13T21:44:49Z"
-updated = "2026-10-13T21:44:49Z"
+updated = "2026-10-14T02:11:31Z"
 idempotency_key = "d15:frob-pytest-venv"
 scope = ["frob.toml"]
 
