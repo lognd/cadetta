@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:03Z"
-updated = "2026-10-14T13:46:16Z"
+updated = "2026-10-14T13:50:15Z"
 persona = "maintainer"
 capability = "prove the binding adds no semantics"
 outcome_text = "binding and CLI cannot disagree"
@@ -37,13 +37,13 @@ target = "01M4SV2R23GPE64N4CZVNWRJHC"
 
 [[acceptance]]
 text = "Given every fixture in tests/conformance, when replayed through the binding, then its results equal the CLI --format json output (bindings.md 1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the bindings CI job, when it runs, then the parity suite executes and gates the PR (bindings.md 2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the conformance corpus, when replayed, then binding results equal the CLI JSON, including geometry, json and csv fixtures (bindings.md 1)"
-bound = false
+bound = true
 +++
