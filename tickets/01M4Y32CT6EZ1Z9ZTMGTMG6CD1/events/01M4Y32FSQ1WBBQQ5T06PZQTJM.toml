@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "wont-fix"
+reason = "Record of scope cut from ~HWJP0GQ; the work lives in ~4XTSTXR, ~1392B89, ~516EW7Q and ~XZD1Y50"
+at = "2026-10-14T20:53:42Z"
+actor = "lognd"
+rev = 1
