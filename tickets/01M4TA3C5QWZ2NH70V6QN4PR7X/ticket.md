@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T22:54:17Z"
-scope = ["crates/cadetta-obligations", "crates/cadetta-cli/src/universe.rs", "docs/spec/config-cli.md", "changelog.d/*"]
+updated = "2026-10-14T22:56:34Z"
+scope = ["crates/cadetta-obligations", "crates/cadetta-cli/src/universe.rs", "docs/spec/config-cli.md", "changelog.d/*", "tests/conformance/obligations/s004-citation-changed.must-fire/*"]
 
 [[acceptance]]
 text = "Given an ots component citing a file, when 'cadetta obligations' runs with no attestation, then ots:PATH and citation:PATH are listed open"
