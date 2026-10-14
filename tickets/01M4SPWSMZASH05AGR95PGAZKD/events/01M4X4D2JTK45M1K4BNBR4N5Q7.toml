@@ -1,0 +1,40 @@
+kind = "evidence"
+captured_at = "2026-10-14T11:57:26Z"
+digest = "75b7e70bb0e816edb7f7a9a0604c50e704c4c3c7b720288b19e53601e620dc08"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.40s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 65424e3c-b97d-4988-99cd-ddbf4c6f0322 with nextest profile: default
+    Starting 12 tests across 11 binaries (248 tests skipped)
+        PASS [   0.023s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.024s] cadetta cmd::update::tests::run_update_writes_the_lock_and_reports
+        PASS [   0.030s] cadetta pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order
+        PASS [   0.040s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.035s] cadetta cmd::update::tests::update_name_touches_only_that_record
+        PASS [   0.034s] cadetta pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005
+        PASS [   0.035s] cadetta pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy
+        PASS [   0.037s] cadetta pkg::resolve::tests::unmet_version_requirement_is_e012
+        PASS [   0.053s] cadetta cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones
+        PASS [   0.063s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.082s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.098s] cadetta cmd::update::tests::json_validates_against_update_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.104s] 12 tests run: 12 passed, 248 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged) | test(=cmd::update::tests::e013_exits_one) | test(=cmd::update::tests::json_validates_against_update_schema) | test(=cmd::update::tests::run_update_writes_the_lock_and_reports) | test(=cmd::update::tests::update_name_touches_only_that_record) | test(=cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones) | test(=pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy) | test(=pkg::resolve::tests::path_and_git_sources_resolve_and_missing_is_e005) | test(=pkg::resolve::tests::transitive_dependencies_resolve_once_in_name_order) | test(=pkg::resolve::tests::unmet_version_requirement_is_e012)))'"
+size = 1931
+status = "measured"
+test_count = 12
+tests_digest = "31d2bc9a590d2049c4d20f26df0fed3db65b5f12a45b6d86e2fcdfef6b41d113"
+at = "2026-10-14T11:57:26Z"
+actor = "Claude"
+rev = 1
