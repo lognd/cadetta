@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:06:07Z"
-scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md"]
+updated = "2026-10-14T22:14:02Z"
+scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "A fit that fails fits::analyze (e.g. F003 tolerance conflict, F001/F002 bad class) produces the catalog diagnostic through analyze/cadetta check, with a conformance fixture leaving known-gaps.toml"
