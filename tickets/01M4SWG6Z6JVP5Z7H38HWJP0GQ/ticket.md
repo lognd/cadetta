@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given several joints on one edge, when selected, then the edge takes the whole bound of the joint with the smallest theta, then smallest float, then first canonical path; any locating joint removes the float (float::select)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given FloatMode::Without(path), when placing, then that joint's own edge is read without its float (place_assembly_reading)"

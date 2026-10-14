@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-14T20:56:24Z"
+digest = "84c992364901922576c3a1e751620fdf7ff0c762d770a295f2191c033056c98c"
+exit_code = 0
+passed = true
+provider = "nextest"
+ref = "smallest_theta_then_float_then_path or locating_joint_removes_the_float"
+size = 37106
+status = "measured"
+test_count = 395
+tests_digest = "b298329af59cc2ef0fe60f4350a1f59f10cb5da3a642399081895d8d2bcbb073"
+uri = "dir:.git/frob/artifacts/84c992364901922576c3a1e751620fdf7ff0c762d770a295f2191c033056c98c"
+at = "2026-10-14T20:56:24Z"
+actor = "lognd"
+rev = 1
