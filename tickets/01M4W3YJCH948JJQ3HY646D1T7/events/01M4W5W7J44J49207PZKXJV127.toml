@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T03:04:06Z"
+digest = "67d0255a5ddd46afd0ff6215c3600a7e3ba5c2297c31ca7253930650b054f84c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.27s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 846806bf-92f6-4eb6-9ce3-8fa4c7e4195f with nextest profile: default
+    Starting 5 tests across 2 binaries (144 tests skipped)
+        PASS [   0.009s] cadetta-sema eval::instances::tests::missing_required_argument_is_e006
+        PASS [   0.009s] cadetta-sema eval::instances::tests::assembly_default_beats_file_default
+        PASS [   0.011s] cadetta-sema eval::instances::tests::requires_reports_e006_when_the_argument_is_missing
+        PASS [   0.011s] cadetta-sema eval::instances::tests::optional_argument_and_when_follow_given
+        PASS [   0.011s] cadetta-sema eval::instances::tests::arguments_defaults_and_members_evaluate
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 5 tests run: 5 passed, 144 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema instances"
+size = 1046
+status = "measured"
+test_count = 5
+tests_digest = "4fbcbee31f2e6aafaca29baacfbba6faa51fbf9db06ab52e3f7cb287cfaa0d41"
+at = "2026-10-14T03:04:06Z"
+actor = "lognd"
+rev = 1
