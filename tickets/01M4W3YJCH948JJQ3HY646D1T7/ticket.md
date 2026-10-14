@@ -7,8 +7,8 @@ priority = "medium"
 points = 13
 reporter = "lognd"
 created = "2026-10-14T02:30:34Z"
-updated = "2026-10-14T03:04:17Z"
-scope = ["crates/cadetta-sema/**", "std/**", "tests/**"]
+updated = "2026-10-14T03:11:59Z"
+scope = ["crates/cadetta-sema/**", "std/**", "tests/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given a design instantiating std::fasteners ScrewJoint with M5 medium, when cadetta check runs, then its members evaluate to the ISO table values with no E002/EVAL errors"
