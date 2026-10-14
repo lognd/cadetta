@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["tests/conformance_packages.rs"]
+new = ["tests/conformance_packages.rs", "crates/cadetta-cli/Cargo.toml", "tests/conformance/known-gaps.toml"]
+at = "2026-10-14T12:41:17Z"
+actor = "Claude"
+rev = 1

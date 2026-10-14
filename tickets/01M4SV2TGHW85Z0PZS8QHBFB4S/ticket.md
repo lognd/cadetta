@@ -8,11 +8,11 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-14T12:40:10Z"
+updated = "2026-10-14T12:41:05Z"
 persona = "design engineer"
 capability = "connect to SOLIDWORKS through the adapter protocol"
-labels = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md"]
-scope = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/Directory.Build.props", "adapters/solidworks/src/cadetta-solidworks/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "adapters/solidworks/README.md"]
+labels = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md", "creates:adapters/solidworks/**"]
+scope = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/Directory.Build.props", "adapters/solidworks/src/cadetta-solidworks/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "adapters/solidworks/README.md", "adapters/solidworks/**"]
 
 [[links]]
 kind = "blocked-by"
