@@ -2,7 +2,8 @@
 id = "01M4SPWSMZASH05AGR95PGAZKD"
 title = "FreeCAD push, regen and R004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
