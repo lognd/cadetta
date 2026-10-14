@@ -69,6 +69,10 @@ MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="swap.json", module="swap"),
     ModelSpec(schema_file="compare.json", module="compare"),
     ModelSpec(schema_file="obligations.json", module="obligations"),
+    ModelSpec(schema_file="update.json", module="update"),
+    ModelSpec(schema_file="ack.json", module="ack"),
+    ModelSpec(schema_file="emit.json", module="emit"),
+    ModelSpec(schema_file="import.json", module="import_"),
 )
 
 

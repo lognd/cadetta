@@ -14,21 +14,25 @@ from typing import TypeVar
 from pydantic import BaseModel, ConfigDict
 from typani import Err, Ok, Result
 
-from cadetta import queries
+from cadetta import project_ops, queries
 from cadetta._core import Quantity
 from cadetta.logging import get_logger
-from cadetta.models import bind as bind_model
 from cadetta.models import (
+    ack,
     cite_list,
     compare,
+    emit,
     explain,
     impact,
+    import_,
     ir,
     names,
     obligations,
     swap,
+    update,
     why,
 )
+from cadetta.models import bind as bind_model
 from cadetta.result import JSON_EXITS, report_from_exit
 
 __all__ = [
@@ -413,3 +417,59 @@ class Project:
     ) -> Result[obligations.ObligationsOutput, ProjectError]:
         """The obligation list (`obligations`)."""
         return queries.obligations_of(self, stale, role, release, as_of)
+
+    def update(self, name: str | None = None) -> Result[update.Update, ProjectError]:
+        """Re-resolve dependencies and rewrite the lock (`update [NAME]`)."""
+        return project_ops.update_lock(self, name)
+
+    def solve(
+        self, names: list[str] | None = None, variants: bool = False
+    ) -> Result[project_ops.SolveReport, ProjectError]:
+        """Run solvers and refresh result files (`solve`)."""
+        return project_ops.solve_project(self, names, variants)
+
+    def emit(
+        self, adapters: list[str] | None = None
+    ) -> Result[emit.EmitReport, ProjectError]:
+        """Write the configured adapters' outputs (`emit`)."""
+        return project_ops.emit_adapters(self, adapters)
+
+    def sync(
+        self,
+        adapters: list[str] | None = None,
+        dry_run: bool = False,
+        only: str | None = None,
+        force_design: bool = False,
+        no_regen: bool = False,
+        module: str | None = None,
+    ) -> Result[project_ops.SyncReport, ProjectError]:
+        """The three-way CAD sync loop (`sync`)."""
+        return project_ops.sync_project(
+            self, adapters, dry_run, only, force_design, no_regen, module
+        )
+
+    def import_(
+        self,
+        adapter: str,
+        files: list[str],
+        accept: bool = False,
+        update: bool = False,
+        write: bool = False,
+    ) -> Result[import_.ImportReport, ProjectError]:
+        """Propose, accept or diff an import from CAD files (`import`)."""
+        return project_ops.import_adapter(self, adapter, files, accept, update, write)
+
+    def ack(
+        self,
+        selector: str,
+        role: str,
+        reason: str | None = None,
+        baseline: bool = False,
+        release: bool = False,
+        dry_run: bool = False,
+        as_: str | None = None,
+    ) -> Result[ack.AckOutput, ProjectError]:
+        """Attest obligations at their current digests (`ack`)."""
+        return project_ops.ack_obligations(
+            self, selector, role, reason, baseline, release, dry_run, as_
+        )
