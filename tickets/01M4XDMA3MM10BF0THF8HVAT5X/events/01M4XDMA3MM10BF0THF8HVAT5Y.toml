@@ -1,0 +1,10 @@
+kind = "create"
+title = "python: wire Project.sync to sync verb"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["bindings/python/python/cadetta/project_ops.py"]
+body = "found while working ~D4T6ATZ: sync_project returns Err; test_sync_flags_and_cli_gap in bindings/python/tests/test_project_ops.py asserts it"
+at = "2026-10-14T14:38:58Z"
+actor = "lognd"
+rev = 1

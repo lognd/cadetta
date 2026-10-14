@@ -1,0 +1,10 @@
+kind = "create"
+title = "sync: unit-converting normalization"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+body = "found while working ~D4T6ATZ: units compared textually"
+at = "2026-10-14T14:38:57Z"
+actor = "lognd"
+rev = 1
