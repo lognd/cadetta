@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T20:51:19Z"
+updated = "2026-10-14T20:53:39Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
-labels = ["creates:std/fasteners/screwjoint_float.cdt", "creates:crates/cadetta-geometry/src/float.rs"]
-scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md", "docs/spec/stdlib.md", "changelog.d/**"]
+labels = ["creates:crates/cadetta-geometry/src/float.rs"]
+scope = ["crates/cadetta-geometry/src/float.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md", "docs/spec/stdlib.md", "changelog.d/**"]
 
 [[links]]
 kind = "blocked-by"
@@ -32,22 +32,22 @@ kind = "blocked-by"
 target = "01M4VQXPDA4TEKE455FNYB5TXC"
 
 [[acceptance]]
-text = "Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (geometry.md 5.2; stdlib.md 3)"
+text = "Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (already met by std/src/fasteners/screwjoint.cdt; checked by tests/conformance/stdlib/joint-float-nut-sum; geometry.md 5.2)"
 bound = false
 
 [[acceptance]]
-text = "Given a non-locating joint whose two parts are placement parent and child in either order, whatever datum the placement names, when evaluated, then that edge carries [+-float] on x and y and a rotation [+-theta] about z through the onto centroid, theta = 2 * asin(float / s), 180deg when float >= s (geometry.md 5.2)"
+text = "Given a placement edge with non-locating joints between parent and child supplied as EdgeFloat, when placed by cadetta-geometry, then the edge carries [+-float] on x and y and a rotation [+-theta] about z through the onto centroid, theta = 2 * asin(float / s), 180deg when float >= s (float.rs; geometry.md 5.2)"
 bound = false
 
 [[acceptance]]
-text = "Given a one-point pattern or s = 0, when evaluated, then theta is 180deg, checks depending on the rotation are undecided and G008 fires (geometry.md 5.2; lints.md G008)"
+text = "Given a one-point pattern or s = 0, when evaluated in cadetta-geometry, then theta is 180deg and float::unconstrained_rotation (the G008 condition) is true"
 bound = false
 
 [[acceptance]]
-text = "Given several non-locating joints on one edge, when evaluated, then the edge takes the whole bound of the joint with the smallest theta, then smallest float, then first canonical path; any locating joint removes the float (geometry.md 5.2)"
+text = "Given several joints on one edge, when selected, then the edge takes the whole bound of the joint with the smallest theta, then smallest float, then first canonical path; any locating joint removes the float (float::select)"
 bound = false
 
 [[acceptance]]
-text = "Given the joint's own aligned check, when evaluated, then it reads its edge without the float; joints between parts that are not parent and child add no float (geometry.md 5.2)"
+text = "Given FloatMode::Without(path), when placing, then that joint's own edge is read without its float (place_assembly_reading)"
 bound = false
 +++
