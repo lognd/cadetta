@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T03:46:30Z"
+updated = "2026-10-14T03:47:02Z"
 persona = "design engineer"
 capability = "screw here and prove alignment"
 idempotency_key = "replan14:geo-screwpos"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given nut = true with onto a second clearance pattern, when checked, then the floating allowance is the sum of both halves (geometry.md 5; stdlib.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the M5 medium example, when checked, then the fixed allowance is 0.25mm (geometry.md 1)"
