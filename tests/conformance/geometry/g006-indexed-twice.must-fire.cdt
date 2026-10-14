@@ -11,6 +11,8 @@ assembly Frame {
   part base: Base
   part feet[3]: Foot
   place base.origin at origin
+  place feet[0].top at base.underside
+  place feet[2].top at base.underside.offset(x = 2mm)
   place feet[1].top at base.underside
   place feet[1].top at base.underside.offset(x = 1mm)
 }

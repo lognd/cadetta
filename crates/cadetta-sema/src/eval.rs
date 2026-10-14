@@ -52,6 +52,8 @@ pub mod func;
 pub mod geom;
 #[path = "point.rs"]
 pub mod point;
+#[path = "posshape.rs"]
+mod posshape;
 
 /// Accessors that read a quantity's bounds (quantities.md 5.2).
 const ACCESSORS: &[&str] = &["nominal", "min", "max", "mid", "mmc", "lmc"];
@@ -456,6 +458,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         self.evaluate_geometry();
         let checks = self.run_checks();
+        self.drop_shadowed_evals();
         let values = self
             .done
             .into_iter()
@@ -472,6 +475,23 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             var_count: self.next_var,
             part_counts: self.part_counts,
         }
+    }
+
+    /// Drops the internal `EVAL` failures that sit inside a span already reported as `G001`/`G003`.
+    // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
+    fn drop_shadowed_evals(&mut self) {
+        let spans: Vec<Span> = self
+            .diagnostics
+            .iter()
+            .filter(|d| matches!(d.code, "G001" | "G003"))
+            .map(|d| d.span)
+            .collect();
+        self.diagnostics.retain(|d| {
+            !(d.code == "EVAL"
+                && spans
+                    .iter()
+                    .any(|s| s.start <= d.span.start && d.span.end <= s.end))
+        });
     }
 
     fn fresh_var(&mut self) -> VarId {

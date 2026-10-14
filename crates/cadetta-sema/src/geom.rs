@@ -20,8 +20,10 @@ use std::collections::{BTreeMap, BTreeSet};
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
-use cadetta_geometry::instances::expand_instances;
-use cadetta_geometry::placement::{Assembly, Cover, Node, PointInfo, build_assembly};
+use cadetta_geometry::instances::{check_unplaced, expand_instances};
+use cadetta_geometry::placement::{
+    Assembly, Cover, Node, PlacementCode, PointInfo, build_assembly, check_assembly,
+};
 use cadetta_geometry::point::{DatumId, Point, Pos, point_type};
 use cadetta_geometry::reexpress::{FrameTable, Located, ReexpressError, Reexpressed};
 use cadetta_geometry::transform::Coord;
@@ -32,7 +34,11 @@ use cadetta_syntax::span::Span;
 use cadetta_units::{Affine, Dim, RootOp};
 use tracing::{debug, trace, warn};
 
-use super::{Evaluated, Evaluator, Fail, Quant, R, Scope, Val, diag, func::Inex, owned, strip};
+use super::{
+    EvalDiagnostic, Evaluated, Evaluator, Fail, Quant, R, Scope, Val, diag, func::Inex, owned,
+    strip,
+};
+use crate::deps::Severity;
 use crate::parts;
 use crate::resolve::{CanonPath, Ctx, MemberSeg, Resolver};
 
@@ -61,22 +67,22 @@ fn item_path(id: &ComponentId) -> CanonPath {
     CanonPath::item(&id.package, &id.modules, &id.item)
 }
 
-/// The point info of a point-typed parameter or `let` written as `name` or `name[i]`.
+/// The point info of a point-typed parameter or `let` written as `name`, `name[i]` or a chain
+/// through part slots (`base.foot_sites`).
 fn point_info(resolver: &Resolver<'_>, id: &ComponentId, e: &Expr) -> Option<PointInfo> {
-    let mut e = strip(e);
-    if let ExprKind::Index(base, _) = &e.kind {
-        e = strip(base);
+    let chain = steps(e)?;
+    let (last, slots) = chain.split_last()?;
+    let mut comp = resolver.component(&item_path(id))?;
+    let (mut package, mut modules) = (id.package.clone(), id.modules.clone());
+    for (slot, _) in slots {
+        let part = find_part(comp, slot)?;
+        let (p, c) = resolver.part_type(&package, &modules, &part.ty)?;
+        (package, modules, comp) = (p.package.clone(), p.modules.clone(), c);
     }
-    let ExprKind::Path(p) = &e.kind else {
-        return None;
-    };
-    let [name] = p.segments.as_slice() else {
-        return None;
-    };
-    let comp = resolver.component(&item_path(id))?;
+    let name = &last.0;
     let ty = comp.members.iter().find_map(|m| match &m.kind {
-        MemberKind::Param(q) if q.name.name == name.name => q.ty.as_ref(),
-        MemberKind::Let(l) if l.name.name == name.name => l.ty.as_ref(),
+        MemberKind::Param(q) if q.name.name == *name => q.ty.as_ref(),
+        MemberKind::Let(l) if l.name.name == *name => l.ty.as_ref(),
         _ => None,
     })?;
     let pt = point_type(unwrap_array(ty))?;
@@ -149,7 +155,7 @@ fn datum_id(parts: &[String], name: &str) -> String {
 }
 
 /// Flattens `a.b[1].c` into steps; `None` for anything that is not a plain reference chain.
-fn steps(e: &Expr) -> Option<Vec<(String, Option<u64>)>> {
+pub(super) fn steps(e: &Expr) -> Option<Vec<(String, Option<u64>)>> {
     match &strip(e).kind {
         ExprKind::Path(p) => Some(p.segments.iter().map(|s| (s.name.clone(), None)).collect()),
         ExprKind::Field(base, name) => {
@@ -340,9 +346,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             };
             let id = component_id(&item);
             let g = component_geometry(self.resolver, &id, comp);
-            for e in &g.errors {
-                debug!(error = %e, "geometry lowering reported (G-family emission is separate)");
-            }
+            // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
+            self.report_geometry(&id, comp, &g);
             for d in &g.datums {
                 for m in d.members() {
                     self.geom_member(m);
@@ -350,6 +355,66 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             let Some(a) = &g.assembly else { continue };
             self.evaluate_placements(&id, comp, a);
+        }
+    }
+
+    /// Emits G001 (lowering), G002, G003 and G006 (placement tree) and G007 (unplaced instances).
+    // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
+    fn report_geometry(
+        &mut self,
+        id: &ComponentId,
+        comp: &'p Component,
+        g: &ComponentGeometry<'_>,
+    ) {
+        for e in &g.errors {
+            if e.message.starts_with("G001") {
+                warn!(error = %e, "geometry: G001");
+                self.diagnostics.push(EvalDiagnostic {
+                    code: "G001",
+                    severity: Severity::Error,
+                    message: e.message.clone(),
+                    span: e.span,
+                });
+            } else {
+                debug!(error = %e, "geometry lowering reported");
+            }
+        }
+        let mut shape = super::posshape::PosCheck::new(
+            self.resolver,
+            &id.package,
+            &id.modules,
+            comp,
+            g.assembly.as_ref(),
+        );
+        shape.run();
+        self.diagnostics.append(&mut shape.out);
+        let Some(a) = &g.assembly else { return };
+        for d in check_assembly(a) {
+            let code = match d.code {
+                PlacementCode::G002 => "G002",
+                PlacementCode::G003 => "G003",
+                PlacementCode::G006 => "G006",
+                _ => {
+                    debug!(diag = %d, "placement check: not a G-family finding here");
+                    continue;
+                }
+            };
+            self.diagnostics.push(EvalDiagnostic {
+                code,
+                severity: Severity::Error,
+                message: d.to_string(),
+                span: d.span,
+            });
+        }
+        let mut counts: BTreeMap<String, u64> = BTreeMap::new();
+        collect_counts(self, id, comp, a, &a.name, &mut counts);
+        for d in check_unplaced(a, &|path: &str| counts.get(path).copied()) {
+            self.diagnostics.push(EvalDiagnostic {
+                code: "G007",
+                severity: Severity::Warning,
+                message: format!("G007: {}", d.message),
+                span: d.span,
+            });
         }
     }
 
@@ -748,4 +813,29 @@ fn merge_point(f: &Located, n: &Located) -> R<Val> {
         });
     }
     Ok(Val::Point(out))
+}
+
+/// Fills `out` with the instance count of every counted part slot of `a`, by instance path.
+fn collect_counts<'p>(
+    ev: &mut Evaluator<'_, 'p>,
+    id: &ComponentId,
+    comp: &'p Component,
+    a: &Assembly,
+    prefix: &str,
+    out: &mut BTreeMap<String, u64>,
+) {
+    for n in &a.nodes {
+        let path = format!("{prefix}/{}", n.name);
+        let Some(part) = find_part(comp, &n.name) else {
+            continue;
+        };
+        if let Some(c) = ev.part_count(id, part) {
+            out.insert(path.clone(), c);
+        }
+        if let Some(sub) = &n.sub
+            && let Some((p, c)) = ev.resolver.part_type(&id.package, &id.modules, &part.ty)
+        {
+            collect_counts(ev, &component_id(&p), c, sub, &path, out);
+        }
+    }
 }

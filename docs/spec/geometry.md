@@ -459,6 +459,16 @@ float enters the placement.
 
 lints.md is the catalog; this table must agree with it.
 
+Implementation notes. G001 is decided statically from declared types:
+each operand of `+ -`, a comparison or `distance` is classified by its
+`Point2 on D` type (or by the shapes of the `let`s it was built from,
+with `p in D` retagging to `D`), so values need no run-time datum. A
+comparison or `distance` that raises G001 suppresses the evaluator's own
+failure for the same expression. G003 fires on `x as Point2 on D` when
+`x` reads through a part slot that no `place` positions. G007 is a
+warning at the part slot. G005 and G008 need the ScrewJoint float on the
+placement edge (section 5.2) and are not emitted yet.
+
 ## 8. Conformance decisions
 
 Rules the fixtures under `tests/conformance/geometry/` pin where the
