@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the remaining geometry fixtures (angle-between-axes, coaxial-offset, coaxial-tilt-included, joint-undecided-when-loosened, joint-violated-over-allowance, parallel-ignores-offset), when cadetta check runs, then they pass and their known-gaps entries are removed"]
+moved = []
+at = "2026-10-14T01:43:56Z"
+actor = "lognd"
+rev = 1

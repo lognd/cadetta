@@ -1,0 +1,98 @@
+kind = "evidence"
+captured_at = "2026-10-14T01:52:36Z"
+digest = "e77e7baa3dd514957a47a42330da9a6d0c3e184389b970fe648dbe0d1e02e4e3"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 458b9f39-a472-48e2-9885-e6e9c6eb5cd1 with nextest profile: default
+    Starting 76 tests across 9 binaries (479 tests skipped)
+        PASS [   0.016s] cadetta cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing
+        PASS [   0.017s] cadetta cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested
+        PASS [   0.019s] cadetta cmd::ack::tests::repeat_at_same_digest_changes_nothing
+        PASS [   0.022s] cadetta cmd::ack::tests::ack_attests_at_current_closure_digest
+        PASS [   0.028s] cadetta cmd::bind::tests::refuses_native_name_collisions
+        PASS [   0.033s] cadetta cmd::bind::tests::add_is_canonical_and_idempotent
+        PASS [   0.033s] cadetta cmd::ack::tests::waiver_records_target_digest_without_a_reason
+        PASS [   0.028s] cadetta cmd::bind::tests::rejects_conflicts_and_invalid_requests
+        PASS [   0.015s] cadetta cmd::impact::tests::no_dependents_is_said_plainly
+        PASS [   0.012s] cadetta cmd::impact::tests::usage_errors_exit_two
+        PASS [   0.032s] cadetta cmd::bind::tests::remove_drops_the_locator
+        PASS [   0.019s] cadetta cmd::bind::tests::tolerance_is_written_canonically_and_idempotent
+        PASS [   0.016s] cadetta cmd::import::tests::decodes_observed_and_applies_assume_unit
+        PASS [   0.054s] cadetta cmd::ack::tests::selector_matching_nothing_exits_two
+        PASS [   0.052s] cadetta cmd::bind::tests::json_validates_against_bind_schema
+        PASS [   0.042s] cadetta cmd::impact::tests::json_validates_against_impact_schema
+        PASS [   0.028s] cadetta cmd::import::tests::never_exits_one
+        PASS [   0.030s] cadetta cmd::impact_swap::tests::unapproved_new_says_so_and_must_implement
+        PASS [   0.065s] cadetta cmd::ack::tests::json_validates_against_ack_schema
+        PASS [   0.011s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.030s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.010s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.048s] cadetta cmd::impact_swap::tests::json_validates_against_swap_schema
+        PASS [   0.011s] cadetta cmd::why::tests::json_validates_against_why_schema
+        PASS [   0.017s] cadetta cmd::update::tests::run_update_writes_the_lock_and_reports
+        PASS [   0.011s] cadetta cmd::why::tests::text_is_indented_chain
+        PASS [   0.009s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.010s] cadetta cmd::why::tests::usage_errors_exit_two
+        PASS [   0.022s] cadetta cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones
+        PASS [   0.011s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.031s] cadetta cmd::update::tests::update_name_touches_only_that_record
+        PASS [   0.016s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.010s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.051s] cadetta cmd::update::tests::json_validates_against_update_schema
+        PASS [   0.079s] cadetta cmd::import::tests::propose_writes_only_the_proposal
+        PASS [   0.019s] cadetta::lsp capabilities_and_exit_codes
+        PASS [   0.098s] cadetta cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently
+        PASS [   0.020s] cadetta::lsp format_returns_one_whole_document_edit
+        PASS [   0.015s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.047s] cadetta universe::tests::impact_lists_dependents_of_a_lowered_member
+        PASS [   0.045s] cadetta universe::tests::why_traces_a_lowered_member
+        PASS [   0.009s] cadetta-adapter geometry_bind::tests::composed_frames_and_instances_verify_through_geometry_bind
+        PASS [   0.010s] cadetta-adapter bindings::tests::unbind_removes_and_drops_empty_tables
+        PASS [   0.113s] cadetta cmd::import::tests::json_validates_against_import_schema
+        PASS [   0.014s] cadetta-adapter geometry_bind::tests::create_needs_the_create_frames_feature
+        PASS [   0.009s] cadetta-adapter geometry_bind::tests::create_requests_missing_frame_and_records_lock
+        PASS [   0.013s] cadetta-adapter geometry_bind::tests::datums_create_pushes_composed_frame_to_the_adapter
+        PASS [   0.012s] cadetta-adapter geometry_bind::tests::flip_and_exact_quarter_turns_never_pushed
+        PASS [   0.008s] cadetta-adapter geometry_bind::tests::half_unit_of_precision_boundary
+        PASS [   0.012s] cadetta-adapter geometry_bind::tests::frame_moved_in_cad_is_r001_under_create
+        PASS [   0.008s] cadetta-adapter geometry_bind::tests::inverse_and_rotation_are_rigid
+        PASS [   0.073s] cadetta universe::tests::ack_records_an_attestation_for_the_check
+        PASS [   0.008s] cadetta-adapter geometry_bind::tests::placement_is_instance_times_part_datum
+        PASS [   0.008s] cadetta-adapter import::propose::tests::assume_unit_recorded
+        PASS [   0.009s] cadetta-adapter import::accept::tests::plan_binds_new_and_skips_rest
+        PASS [   0.009s] cadetta-adapter geometry_bind::tests::mismatch_is_r001_showing_both_transforms
+        PASS [   0.018s] cadetta-adapter geometry_bind::tests::literal_round_trips_and_normalizes_negative_zero
+        PASS [   0.015s] cadetta-adapter import::propose::tests::proposal_written_alone
+        PASS [   0.009s] cadetta-adapter scope::tests::run_scope_narrows
+        PASS [   0.008s] cadetta-adapter sync::tests::no_regen_pushes_without_lock_update
+        PASS [   0.009s] cadetta-adapter sync::tests::drift_refused_and_force_design_pushes
+        PASS [   0.008s] cadetta-adapter sync::tests::only_and_adapter_id_scope
+        PASS [   0.013s] cadetta-adapter sync::tests::dry_run_writes_nothing_and_lists_r006
+        PASS [   0.016s] cadetta-adapter sync::tests::converged_recorded_in_lock
+        PASS [   0.008s] cadetta-adapter sync::tests::synced_record_includes_tolerance
+        PASS [   0.009s] cadetta-adapter sync::tests::second_run_pushes_nothing_and_lock_identical
+        PASS [   0.010s] cadetta-adapter sync::tests::readback_mismatch_fails_and_skips_lock
+        PASS [   0.012s] cadetta-adapter sync::tests::tolerance_edit_in_cad_is_r001
+        PASS [   0.011s] cadetta-geometry placement::tests::subassembly_parts_come_along
+        PASS [   0.011s] cadetta-geometry reexpress::tests::in_assembly_composes_placements
+        PASS [   0.013s] cadetta-sema resolve::tests::bare_enum_variant_needs_known_type
+        PASS [   0.519s] cadetta cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record
+        PASS [   0.522s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.487s] cadetta universe::tests::why_stale_names_the_changed_node_after_an_edit
+        PASS [   0.466s] cadetta::lsp save_publishes_package_lint_and_clears
+        PASS [   0.555s] cadetta universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.647s] 76 tests run: 76 passed, 479 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -p cadetta-geometry -p cadetta-sema -E '(package(=cadetta) & (test(=capabilities_and_exit_codes) | test(=cmd::ack::tests::ack_attests_at_current_closure_digest) | test(=cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested) | test(=cmd::ack::tests::json_validates_against_ack_schema) | test(=cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing) | test(=cmd::ack::tests::repeat_at_same_digest_changes_nothing) | test(=cmd::ack::tests::selector_matching_nothing_exits_two) | test(=cmd::ack::tests::waiver_records_target_digest_without_a_reason) | test(=cmd::bind::tests::add_is_canonical_and_idempotent) | test(=cmd::bind::tests::json_validates_against_bind_schema) | test(=cmd::bind::tests::refuses_native_name_collisions) | test(=cmd::bind::tests::rejects_conflicts_and_invalid_requests) | test(=cmd::bind::tests::remove_drops_the_locator) | test(=cmd::bind::tests::tolerance_is_written_canonically_and_idempotent) | test(=cmd::impact::tests::json_validates_against_impact_schema) | test(=cmd::impact::tests::no_dependents_is_said_plainly) | test(=cmd::impact::tests::usage_errors_exit_two) | test(=cmd::impact_swap::tests::json_validates_against_swap_schema) | test(=cmd::impact_swap::tests::unapproved_new_says_so_and_must_implement) | test(=cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently) | test(=cmd::import::tests::decodes_observed_and_applies_assume_unit) | test(=cmd::import::tests::json_validates_against_import_schema) | test(=cmd::import::tests::never_exits_one) | test(=cmd::import::tests::propose_writes_only_the_proposal) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record) | test(=cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged) | test(=cmd::update::tests::e013_exits_one) | test(=cmd::update::tests::json_validates_against_update_schema) | test(=cmd::update::tests::run_update_writes_the_lock_and_reports) | test(=cmd::update::tests::update_name_touches_only_that_record) | test(=cmd::update::tests::update_rewrites_every_record_and_drops_stale_ones) | test(=cmd::why::tests::json_validates_against_why_schema) | test(=cmd::why::tests::text_is_indented_chain) | test(=cmd::why::tests::usage_errors_exit_two) | test(=format_returns_one_whole_document_edit) | test(=save_publishes_package_lint_and_clears) | test(=syntax_error_then_format_refused) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone) | test(=universe::tests::ack_records_an_attestation_for_the_check) | test(=universe::tests::impact_lists_dependents_of_a_lowered_member) | test(=universe::tests::why_stale_names_the_changed_node_after_an_edit) | test(=universe::tests::why_traces_a_lowered_member))) | (package(=cadetta-adapter) & (test(=bindings::tests::unbind_removes_and_drops_empty_tables) | test(=geometry_bind::tests::composed_frames_and_instances_verify_through_geometry_bind) | test(=geometry_bind::tests::create_needs_the_create_frames_feature) | test(=geometry_bind::tests::create_requests_missing_frame_and_records_lock) | test(=geometry_bind::tests::datums_create_pushes_composed_frame_to_the_adapter) | test(=geometry_bind::tests::flip_and_exact_quarter_turns_never_pushed) | test(=geometry_bind::tests::frame_moved_in_cad_is_r001_under_create) | test(=geometry_bind::tests::half_unit_of_precision_boundary) | test(=geometry_bind::tests::inverse_and_rotation_are_rigid) | test(=geometry_bind::tests::literal_round_trips_and_normalizes_negative_zero) | test(=geometry_bind::tests::mismatch_is_r001_showing_both_transforms) | test(=geometry_bind::tests::placement_is_instance_times_part_datum) | test(=import::accept::tests::plan_binds_new_and_skips_rest) | test(=import::propose::tests::assume_unit_recorded) | test(=import::propose::tests::proposal_written_alone) | test(=scope::tests::run_scope_narrows) | test(=sync::tests::converged_recorded_in_lock) | test(=sync::tests::drift_refused_and_force_design_pushes) | test(=sync::tests::dry_run_writes_nothing_and_lists_r006) | test(=sync::tests::no_regen_pushes_without_lock_update) | test(=sync::tests::only_and_adapter_id_scope) | test(=sync::tests::readback_mismatch_fails_and_skips_lock) | test(=sync::tests::second_run_pushes_nothing_and_lock_identical) | test(=sync::tests::synced_record_includes_tolerance) | test(=sync::tests::tolerance_edit_in_cad_is_r001))) | (package(=cadetta-geometry) & (test(=placement::tests::subassembly_parts_come_along) | test(=reexpress::tests::in_assembly_composes_placements))) | (package(=cadetta-sema) & (test(=resolve::tests::bare_enum_variant_needs_known_type)))'"
+size = 7327
+status = "measured"
+test_count = 76
+tests_digest = "486a53608f1618329be250da2dd704e470f17ec1958b5b7edae99e6eff685dce"
+at = "2026-10-14T01:52:36Z"
+actor = "lognd"
+rev = 1

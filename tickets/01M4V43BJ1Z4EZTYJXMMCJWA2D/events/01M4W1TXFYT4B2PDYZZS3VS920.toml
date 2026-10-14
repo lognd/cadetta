@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given the remaining geometry fixtures (angle-between-axes, coaxial-offset, coaxial-tilt-included, joint-undecided-when-loosened, joint-violated-over-allowance, parallel-ignores-offset), when cadetta check runs, then they pass and their known-gaps entries are removed"]
+new = ["Given the axis fixtures (angle-between-axes, coaxial-offset, coaxial-tilt-included, parallel-ignores-offset), when cadetta check runs, then they pass and their known-gaps entries are removed", "Given the joint fixtures (joint-undecided-when-loosened, joint-violated-over-allowance), when they are not yet evaluable, then their known-gaps entries are retargeted to ~6MJE3XF"]
+moved = [0]
+at = "2026-10-14T01:53:37Z"
+actor = "lognd"
+rev = 1
