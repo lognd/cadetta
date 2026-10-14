@@ -2,7 +2,8 @@
 id = "01M4W3JPJGVT50YHWJT7PF9F6T"
 title = "frob test --all builds cadetta-py under system Python 3.10 and fails"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
