@@ -2,7 +2,8 @@
 id = "01M4SWN7GJW88YVBJ2XVR00EKX"
 title = "impact --since and --worktree"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
