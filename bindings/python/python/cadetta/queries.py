@@ -11,6 +11,7 @@ from typani import Result
 
 from cadetta.logging import get_logger
 from cadetta.models import compare, diag, impact, obligations, swap, why
+from cadetta.models import impact_since as since_model
 
 if TYPE_CHECKING:
     from cadetta.project import Project, ProjectError
@@ -74,6 +75,14 @@ def why_stale(
 def impact_of(project: Project, path: str) -> Result[impact.ImpactOutput, ProjectError]:
     """Run `impact PATH`: the downstream dependents of a member."""
     return project._model(impact.ImpactOutput, ["impact", path])
+
+
+def impact_since(
+    project: Project, since: str | None = None
+) -> Result[since_model.ImpactSince, ProjectError]:
+    """Run `impact --since REV` (`--worktree` when None): diff two evaluations."""
+    verb = ["impact", "--worktree"] if since is None else ["impact", "--since", since]
+    return project._model(since_model.ImpactSince, verb)
 
 
 def impact_swap(

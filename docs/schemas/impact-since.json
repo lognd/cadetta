@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImpactSince",
+  "description": "A `cadetta.impact-since/1` report: `cadetta impact --since REV` / `--worktree`, the diff of two evaluations.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "since",
+    "changed_nodes",
+    "obligations",
+    "verdicts_flipped",
+    "cad_resync"
+  ],
+  "properties": {
+    "schema": {
+      "const": "cadetta.impact-since/1"
+    },
+    "since": {
+      "description": "The older revision, as named (default HEAD); the newer side is the working tree.",
+      "type": "string"
+    },
+    "changed_nodes": {
+      "description": "Nodes that differ, sorted by path.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind", "change"],
+        "properties": {
+          "path": {"type": "string"},
+          "kind": {"enum": ["member", "check", "solver"]},
+          "change": {"enum": ["added", "removed", "modified"]}
+        }
+      }
+    },
+    "obligations": {
+      "description": "Obligations that go stale, may flip or flipped, sorted by id.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "effect"],
+        "properties": {
+          "id": {"type": "string"},
+          "effect": {"enum": ["stale", "may_flip", "flipped"]}
+        }
+      }
+    },
+    "verdicts_flipped": {
+      "description": "Checks whose primary verdict differs, sorted by path.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "old", "new"],
+        "properties": {
+          "path": {"type": "string"},
+          "old": {"type": "string"},
+          "new": {"type": "string"}
+        }
+      }
+    },
+    "cad_resync": {
+      "description": "CAD files holding a bound value that changed, sorted by file.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "paths"],
+        "properties": {
+          "file": {"type": "string"},
+          "paths": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    }
+  }
+}

@@ -66,6 +66,7 @@ MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="check.json", module="check"),
     ModelSpec(schema_file="why.json", module="why"),
     ModelSpec(schema_file="impact.json", module="impact"),
+    ModelSpec(schema_file="impact-since.json", module="impact_since"),
     ModelSpec(schema_file="swap.json", module="swap"),
     ModelSpec(schema_file="compare.json", module="compare"),
     ModelSpec(schema_file="obligations.json", module="obligations"),

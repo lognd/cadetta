@@ -6,6 +6,7 @@ pub mod as_of;
 pub mod citation;
 pub mod digest_attrs;
 pub mod graph;
+pub mod impact_since;
 pub mod kinds;
 pub mod level;
 pub mod lock;

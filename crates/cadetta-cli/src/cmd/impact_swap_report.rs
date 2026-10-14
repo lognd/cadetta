@@ -117,7 +117,7 @@ pub struct Report {
 }
 
 /// The file a locator addresses: the last `@` segment when it names a file, else the adapter.
-fn file_of(locator: &str, adapter: &str) -> String {
+pub fn file_of(locator: &str, adapter: &str) -> String {
     match locator.rsplit('@').next() {
         Some(tail) if locator.contains('@') && tail.contains('.') && !tail.contains(' ') => {
             tail.to_owned()
