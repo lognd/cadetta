@@ -6,8 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T22:54:12Z"
-updated = "2026-10-14T22:54:12Z"
+updated = "2026-10-14T22:54:17Z"
 scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-ir", "crates/cadetta-obligations"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4TA3C5QWZ2NH70V6QN4PR7X"
 
 [[acceptance]]
 text = "Given a component with a fit that has a required bound, when 'cadetta obligations' runs, then fit:PATH is listed and judged against the fit digest"
