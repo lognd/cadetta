@@ -5,6 +5,7 @@
 pub mod affine;
 pub mod attrs;
 pub mod cite;
+pub mod defaults;
 pub mod deps;
 pub mod eval;
 pub mod fits;
