@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/README.md", "adapters/freecad/tests/unit/test_read.py", "docs/spec/adapters.md"]
+new = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/README.md", "adapters/freecad/tests/unit/test_read.py", "docs/spec/adapters.md", "adapters/freecad/src/cadetta_freecad/drive.py"]
+at = "2026-10-14T11:52:27Z"
+actor = "Claude"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/python/cadetta/queries.py", "bindings/python/tests/test_queries.py"]
+new = ["bindings/python/python/cadetta/queries.py", "bindings/python/tests/test_queries.py", "bindings/python/python/cadetta/project.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/*.py"]
+at = "2026-10-14T11:53:06Z"
+actor = "Claude"
+rev = 1
