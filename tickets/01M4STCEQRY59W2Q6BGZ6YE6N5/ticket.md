@@ -2,7 +2,8 @@
 id = "01M4STCEQRY59W2Q6BGZ6YE6N5"
 title = "Conformance run for ir"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWGV64X8H1TN1YBR6K5CH"
