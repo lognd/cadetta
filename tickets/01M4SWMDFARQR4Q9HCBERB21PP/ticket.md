@@ -2,7 +2,8 @@
 id = "01M4SWMDFARQR4Q9HCBERB21PP"
 title = "Session attach and hidden start"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
