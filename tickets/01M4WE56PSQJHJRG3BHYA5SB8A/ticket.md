@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "Claude"
 created = "2026-10-14T05:28:57Z"
-updated = "2026-10-14T05:53:00Z"
+updated = "2026-10-14T05:55:48Z"
 labels = ["creates:bindings/python/tests/test_project_exit.py"]
 scope = ["bindings/python/python/cadetta/project.py", "bindings/python/tests/test_project_exit.py"]
 
