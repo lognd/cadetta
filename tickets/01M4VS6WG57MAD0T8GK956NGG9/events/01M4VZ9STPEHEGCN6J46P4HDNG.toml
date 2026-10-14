@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the aligned/distance fixtures, when cadetta check runs, then aligned and distance evaluate through cadetta-geometry, G004 fires per lints.md, and the geometry/aligned-*, distance-axial-component and g004 known-gaps entries are removed"]
+moved = []
+at = "2026-10-14T01:09:19Z"
+actor = "lognd"
+rev = 1

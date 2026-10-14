@@ -2,14 +2,14 @@
 id = "01M4V436F7JRA8P832RH0EKNH2"
 title = "Geometry diagnostics G001-G008 emitted by check"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:51Z"
-updated = "2026-10-13T23:29:31Z"
-scope = ["crates/cadetta-lint/**"]
+updated = "2026-10-14T01:08:53Z"
+scope = ["crates/cadetta-lint/**", "crates/cadetta-sema/**", "crates/cadetta-cli/**", "tests/conformance/**", "docs/**"]
 
 [[links]]
 kind = "blocked-by"
