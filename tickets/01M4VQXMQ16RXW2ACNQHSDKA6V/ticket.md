@@ -2,7 +2,8 @@
 id = "01M4VQXMQ16RXW2ACNQHSDKA6V"
 title = "Conformance runner: executors for emit, emit-twice, emit-compare, impact-swap binding entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
