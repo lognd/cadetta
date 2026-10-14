@@ -2,7 +2,8 @@
 id = "01M4STCD6YD5DZFVD9RJDN02RY"
 title = "Conformance run for quantities"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWFZP4041AN6YQE08X2AN"
