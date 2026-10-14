@@ -2,7 +2,8 @@
 id = "01M4SV2P5W45J454JP96ZMPC6J"
 title = "Python binding test suite replays conformance corpus and asserts CLI parity"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
