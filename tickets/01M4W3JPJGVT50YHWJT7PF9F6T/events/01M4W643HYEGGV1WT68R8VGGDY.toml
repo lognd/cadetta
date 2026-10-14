@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "frob.toml has no exclude key for the Rust provider; fix needs .config/nextest.toml or .cargo/config.toml, outside scope"
+at = "2026-10-14T03:08:32Z"
+actor = "lognd"
+rev = 1

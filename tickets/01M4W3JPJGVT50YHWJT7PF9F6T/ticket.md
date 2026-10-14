@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:24:05Z"
-updated = "2026-10-14T02:24:05Z"
+updated = "2026-10-14T03:08:32Z"
 scope = ["frob.toml"]
 
 [[acceptance]]
