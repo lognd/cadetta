@@ -154,7 +154,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `check [--release] [--as-of DATE] [--watch] [--module PATH] [GLOB...]` | Compile, evaluate, lint, obligations; with `read` adapters, drift lints. | reads all | diagnostics >= `fail_on` | `check.json` |
 | `solve [GLOB...] [--module PATH] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<stem>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` |
 | `update [NAME]` | Re-resolve dependencies (all, or NAME) and write the `package` records of the lock (packages.md 1). | writes `cadetta.lock` | E012, E013 | `update.json` |
-| `lock verify` | Check the lock is well formed, sorted, unique and policy-conformant; list merge-invalidated attestations (obligations.md 3). | reads, lock | any finding | `lock.json` |
+| `lock verify [--format json]` | Check the lock is well formed, sorted, unique and policy-conformant; list merge-invalidated attestations (obligations.md 3). Text prints `cadetta.lock: clean` or one line per finding; JSON is `cadetta.lock/1`. A missing lock is clean; an unparsable lock exits `2`. | reads, lock | any finding (exit `1`) | `lock.json` |
 | `why PATH` | Upstream derivation. | reads | never | `why.json` |
 | `why --stale OBLIGATION` | Nearest changed upstream node, old and new values. | reads, lock | never | `why.json` |
 | `impact PATH` | Downstream effects of changing PATH. | reads | never | `impact.json` |

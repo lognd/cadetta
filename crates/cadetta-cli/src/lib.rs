@@ -194,6 +194,8 @@ enum Command {
     Import(Vec<String>),
     /// `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]`.
     Sync(Vec<String>),
+    /// `lock verify`: check `cadetta.lock` (`--format json` for `cadetta.lock/1`).
+    Lock(Vec<String>),
     /// `lsp`: the language server on stdio.
     Lsp(Vec<String>),
     Unknown(String),
@@ -223,6 +225,7 @@ fn parse(args: &[String]) -> Command {
         Some("bind") => Command::Bind(args[1..].to_vec()),
         Some("import") => Command::Import(args[1..].to_vec()),
         Some("sync") => Command::Sync(args[1..].to_vec()),
+        Some("lock") => Command::Lock(args[1..].to_vec()),
         Some("lsp") => Command::Lsp(args[1..].to_vec()),
         Some(other) => Command::Unknown(other.to_owned()),
     }
@@ -280,6 +283,7 @@ pub fn run_with_env(
         Command::Bind(rest) => cmd::run_bind(&rest, &globals, out, err),
         Command::Import(rest) => cmd::run_import(&rest, &globals, out, err),
         Command::Sync(rest) => cmd::run_sync(&rest, &globals, out, err),
+        Command::Lock(rest) => cmd::run_lock(&rest, &globals, out, err),
         Command::Lsp(rest) => cmd::run_lsp(&rest, &globals, out, err),
         Command::Unknown(arg) => {
             tracing::error!(%arg, "unknown command; only --version exists so far");
