@@ -2,7 +2,8 @@
 id = "01M4SV2TGHW85Z0PZS8QHBFB4S"
 title = "SOLIDWORKS C# solution skeleton, initialize, features and CI build"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
