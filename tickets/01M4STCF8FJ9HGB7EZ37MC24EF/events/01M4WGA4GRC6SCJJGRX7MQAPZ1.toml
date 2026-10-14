@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T06:05:45Z"
+digest = "438e0d2624f53e5acfb23b8893b3ad84d972c1e49f82a3c514d4623bce6a9b1e"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test compare::tests::closed_list_and_duplicates ... ok
+test obligations_corpus_is_not_empty ... ok
+test obligations_fixtures_match_the_spec ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.29s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.89s
+     Running ../../tests/conformance_obligations.rs (target/debug/deps/conformance_obligations-2fbb534858275bfe)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_obligations"
+size = 520
+status = "measured"
+at = "2026-10-14T06:05:45Z"
+actor = "Claude"
+rev = 1
