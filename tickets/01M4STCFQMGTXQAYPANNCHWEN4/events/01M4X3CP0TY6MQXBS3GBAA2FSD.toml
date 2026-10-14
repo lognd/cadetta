@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T11:39:02Z"
+digest = "f32b07ffa548fbe1ce0b842cd00d151690fa5b991d5dc617f37e9b2907cc44cf"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test config_cli_fixtures_match_the_spec ... ok
+test config_cli_corpus_is_not_empty ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.67s
+
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.48s
+     Running ../../tests/conformance_config_cli.rs (target/debug/deps/conformance_config_cli-b29af981f5ded102)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_config_cli"
+size = 642
+status = "measured"
+at = "2026-10-14T11:39:02Z"
+actor = "Claude"
+rev = 1
