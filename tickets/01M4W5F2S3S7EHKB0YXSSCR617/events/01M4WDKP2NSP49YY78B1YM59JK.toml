@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:19:23Z"
+digest = "a849d814289e3d086a0ec8417e4bc75baba6a17b7d3c95df0369b83390bce910"
+provider = "file"
+ref = "tests/golden/README.md"
+size = 5329
+status = "measured"
+at = "2026-10-14T05:19:23Z"
+actor = "Claude"
+rev = 1
