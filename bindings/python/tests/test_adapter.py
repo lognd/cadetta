@@ -7,9 +7,13 @@ import json
 import logging
 import sys
 
+import pytest
+from pydantic import ValidationError
+
 from cadetta.adapter import (
     Adapter,
     Capability,
+    Feature,
     InitializeResult,
     OpenResult,
     PushResult,
@@ -206,3 +210,25 @@ def test_run_keeps_stdout_for_protocol_and_logs_to_stderr(monkeypatch, capfd):
     lines = cap.out.splitlines()
     assert len(lines) == 1 and json.loads(lines[0])["result"]["name"] == "fake"
     assert "stray print" in cap.err
+
+
+def test_initialize_result_features_round_trip():
+    # frob:ticket 01M4W6RRX0W5SZ2SNWN26XYW5F
+    """features serializes when set and stays absent when not (adapters.md 5)."""
+    base = dict(
+        name="x",
+        version="1",
+        capabilities=[Capability.READ],
+        native_units="mm",
+        precision=4,
+        platforms=["linux"],
+    )
+    absent = InitializeResult(**base).model_dump(mode="json", exclude_none=True)
+    assert "features" not in absent
+    got = InitializeResult(**base, features=[Feature.FRAMES, "tolerances"])
+    assert got.model_dump(mode="json", exclude_none=True)["features"] == [
+        "frames",
+        "tolerances",
+    ]
+    with pytest.raises(ValidationError):
+        InitializeResult(**base, features=["bogus"])

@@ -2,12 +2,13 @@
 id = "01M4W5F2S3S7EHKB0YXSSCR617"
 title = "golden README: document runner rules"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:57:03Z"
-updated = "2026-10-14T05:17:07Z"
+updated = "2026-10-14T05:19:26Z"
 scope = ["tests/golden/README.md"]
 +++
 

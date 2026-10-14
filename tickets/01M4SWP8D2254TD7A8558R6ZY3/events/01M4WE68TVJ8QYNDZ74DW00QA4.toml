@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:29:31Z"
+digest = "f4dfae5bc195bfe84c57bc01db16e52af99b98297c3e1a886a2fdd6f7c841394"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+collected 3 items
+
+bindings/python/tests/test_result.py ...                                 [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-496119-0.xml ---------------
+============================== 3 passed in 0.37s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_result.py"
+size = 467
+status = "measured"
+test_count = 3
+tests_digest = "c78e4da900a64e97d53423046764017e5004161e6c34b05be3f008bed48fb44b"
+at = "2026-10-14T05:29:31Z"
+actor = "Claude"
+rev = 1

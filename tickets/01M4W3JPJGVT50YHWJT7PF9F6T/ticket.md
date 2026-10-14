@@ -2,18 +2,18 @@
 id = "01M4W3JPJGVT50YHWJT7PF9F6T"
 title = "frob test --all builds cadetta-py under system Python 3.10 and fails"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:24:05Z"
-updated = "2026-10-14T03:34:35Z"
+updated = "2026-10-14T05:29:01Z"
 labels = ["creates:.cargo/config.toml"]
 scope = [".cargo/config.toml"]
 
 [[acceptance]]
 text = "Given frob.toml, when frob test --all runs on a machine whose system Python is 3.10, then the Rust step does not build cadetta-py under 3.10 and the run passes"
-bound = false
+bound = true
 +++
 
 found while working ~05WMJRA: frob test --all runs nextest over the whole workspace, which builds the pyo3 crate cadetta-py with the system Python 3.10 ('cannot set a minimum Python version 3.11 higher than the interpreter version 3.10'). [tests] python only covers pytest. Exclude cadetta-py from the Rust test provider (the gates use --exclude cadetta-py) or point PYO3_PYTHON at .venv/bin/python.
