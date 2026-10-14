@@ -8,11 +8,6 @@ fixtures with `entry = python` are replayed against the binding API itself.
 """
 
 # frob:ticket 01M4SV2P5W45J454JP96ZMPC6J
-# frob:tests bindings/python/python/cadetta/project.py::Project.check
-# frob:tests bindings/python/python/cadetta/project.py::Project.evaluate
-# frob:tests bindings/python/python/cadetta/project.py::Project.emit
-# frob:tests bindings/python/python/cadetta/project.py::Project.solve
-# frob:tests bindings/python/python/cadetta/project.py::Project.ack
 
 from __future__ import annotations
 
@@ -348,6 +343,11 @@ def test_corpus_is_discovered() -> None:
     assert len(CASES) > 500
 
 
+# frob:tests bindings/python/python/cadetta/project.py::Project.check
+# frob:tests bindings/python/python/cadetta/project.py::Project.evaluate
+# frob:tests bindings/python/python/cadetta/project.py::Project.emit
+# frob:tests bindings/python/python/cadetta/project.py::Project.solve
+# frob:tests bindings/python/python/cadetta/project.py::Project.ack
 @pytest.mark.parametrize("case", CASES, ids=[c.id for c in CASES])
 def test_binding_equals_cli_json(case: Case, replays: Callable[[Case], Replay]) -> None:
     """The binding result and files equal the CLI `--format json` run (bindings.md 1)."""
