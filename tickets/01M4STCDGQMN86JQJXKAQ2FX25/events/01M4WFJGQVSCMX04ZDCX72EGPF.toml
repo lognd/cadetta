@@ -1,0 +1,46 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:53:10Z"
+digest = "4d9bf5322c1eaee22737b7d716c2b7b5839ea6423dc7d37b2cc85fc02965ff7f"
+exit_code = 101
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test language_corpus_is_not_empty ... ok
+test language_fixtures_match_the_spec ... FAILED
+
+failures:
+
+---- language_fixtures_match_the_spec stdout ----
+
+thread 'language_fixtures_match_the_spec' (1138398) panicked at crates/cadetta-cli/../../tests/conformance_language.rs:59:5:
+6 language conformance failure(s):
+language/e007-lookup-miss [language]: must-fire: extra E002 (error)
+language/e007-lookup-miss [language]: must-not-fire: extra E002 (error)
+language/e007-lookup-miss [language]: must-not-fire: exit status 1, expected 0
+language/e008-missing-column [language]: must-fire: extra E002 (error)
+language/e008-missing-column [language]: must-not-fire: extra E002 (error)
+language/e008-missing-column [language]: must-not-fire: exit status 1, expected 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    language_fixtures_match_the_spec
+
+test result: FAILED. 3 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 23.51s
+
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.72s
+     Running ../../tests/conformance_language.rs (target/debug/deps/conformance_language-9d7db8fdd8778838)
+error: test failed, to rerun pass `-p cadetta --test conformance_language`
+"""
+passed = false
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_language"
+size = 1448
+status = "measured"
+at = "2026-10-14T05:53:10Z"
+actor = "Claude"
+rev = 1
