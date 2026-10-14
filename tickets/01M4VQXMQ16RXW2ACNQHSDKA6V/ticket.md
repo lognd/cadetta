@@ -2,13 +2,13 @@
 id = "01M4VQXMQ16RXW2ACNQHSDKA6V"
 title = "Conformance runner: executors for emit, emit-twice, emit-compare, impact-swap binding entries"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:20Z"
-updated = "2026-10-13T23:00:20Z"
+updated = "2026-10-14T02:21:23Z"
 scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]

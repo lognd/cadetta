@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [2, 3]
+captured_at = "2026-10-14T02:30:39Z"
+digest = "8167f518f77c7ca834df22c9a1f6dc9ee88cdc7d72c2d45d62c3a1c31d23267d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.49s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1dce3855-819f-466e-a747-6c7ed1d510c8 with nextest profile: default
+    Starting 4 tests across 2 binaries (140 tests skipped)
+        PASS [   0.006s] cadetta-sema tables::tests::range_lookups_and_ties
+        PASS [   0.008s] cadetta-sema eval::tests::table_index_miss_is_e007
+        PASS [   0.008s] cadetta-sema eval::tests::range_lookups_and_table_by_name_values
+        PASS [   0.008s] cadetta-sema eval::tests::table_index_with_a_member_key_selects_the_row
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 4 tests run: 4 passed, 140 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema table_index range_lookups"
+size = 1080
+status = "measured"
+test_count = 4
+tests_digest = "74e7622979e7ba60f28d1ff2b22af4f6676301e9518013ed32c782ce64197736"
+at = "2026-10-14T02:30:39Z"
+actor = "lognd"
+rev = 1

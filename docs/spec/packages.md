@@ -175,6 +175,18 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   `origin`, `self` and the units, kinds and built-in functions, and
   nothing from `std`.
 
+  Decided (~4BJ1ZGM): `crate` is not a path root; a package refers to its
+  own modules with `package::` (std included: `use package::materials::
+  Material`). `std::fasteners` is a real module (`std/src/fasteners.cdt`)
+  that `pub use`s the items of its submodules (`ScrewJoint`, `Screw`,
+  `IsoDefault`, `FastenerPolicy` and the thread tables), so the spec's
+  `use std::fasteners::ScrewJoint` resolves; the submodule path
+  (`std::fasteners::screwjoint::ScrewJoint`) names the same canonical item.
+  Tables are items: they resolve, import and re-export like components, and
+  evaluate to table values (language.md 3.6). A lone bare name passed as a
+  component argument may be a variant of the parameter's enum type
+  (`ScrewJoint(thread = M6)`).
+
 ## 5. Renames, moves and versions
 
 - `was` takes a full canonical path, so a moved file, a renamed module,
