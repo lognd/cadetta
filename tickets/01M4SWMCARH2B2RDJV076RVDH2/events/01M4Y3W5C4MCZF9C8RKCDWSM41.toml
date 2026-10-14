@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:07:08Z"
+digest = "49b9320ac285463b0893e8681f85ec87632f5331f7e5bbde86768577d3d9ca70"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.72s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID adca9907-078e-4f74-aee9-59ee6781bce9 with nextest profile: default
+    Starting 2 tests across 45 binaries (1196 tests skipped)
+        PASS [   0.005s] cadetta-adapter availability::tests::r008_unavailable_adapter_is_info_on_check_with_lock_base
+        PASS [   0.005s] cadetta-adapter availability::tests::r008_unavailable_adapter_is_error_exit_2_on_sync
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 2 tests run: 2 passed, 1196 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "r008_unavailable_adapter"
+size = 1035
+status = "measured"
+test_count = 2
+tests_digest = "d93c416e38727b3fb8a4d3532dab0b420a9a9cd096138b7818969b696937e06e"
+at = "2026-10-14T21:07:08Z"
+actor = "lognd"
+rev = 1
