@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-14T01:02:30Z"
+updated = "2026-10-14T01:07:03Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**", "crates/cadetta-ir/**", "crates/cadetta-geometry/Cargo.toml", "Cargo.lock", "docs/spec/ir.md", "docs/spec/geometry.md", "docs/schemas/**", "bindings/python/**", "crates/cadetta-lint/**", "crates/cadetta-cli/src/cmd/**", "crates/cadetta-cli/Cargo.toml"]
 
 [[acceptance]]
