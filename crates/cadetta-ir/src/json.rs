@@ -379,6 +379,9 @@ impl Serialize for Component {
         m.serialize_entry("members", &self.members)?;
         m.serialize_entry("parts", &self.parts)?;
         m.serialize_entry("fits", &self.fits)?;
+        m.serialize_entry("datums", &self.datums)?;
+        m.serialize_entry("points", &self.points)?;
+        m.serialize_entry("placements", &self.placements)?;
         opt(&mut m, "span", &self.span)?;
         opt(&mut m, "digest", &self.digest)?;
         m.end()
@@ -576,6 +579,9 @@ mod tests {
             members: vec![m],
             parts: vec![],
             fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         };

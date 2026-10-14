@@ -410,6 +410,13 @@ float enters the placement.
   composed transform is derived, not stored (ir.md, Datum and
   Placement). Digests cover all three (ir.md 4), so a moved datum makes
   everything that reads through it stale.
+- Implementation notes. Re-expression runs twice, once for the
+  tolerance form and once for the exact nominals, so inexact results are
+  marked (Q006). A point-form placement reads x, y and z from one point
+  expression. A read through a nested part chain
+  (`sub.bracket.holes[1]`) composes each part's placement. Re-expression
+  of an indexed part instance (`leg[1].top in origin`) is not evaluated
+  yet.
 - CAD gets numbers, and positions are checked by transform. Cadetta
   never reconstructs geometry; reading a frame's or a component's
   transform is reading numbers the tool exposes. The mapping

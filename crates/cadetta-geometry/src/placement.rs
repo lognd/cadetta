@@ -24,7 +24,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
-use cadetta_sema::resolve::{Index, PartSeg};
+use cadetta_ir::canon::{Index, PartSeg};
 use cadetta_syntax::ast::{Expr, ExprKind, Ident, Path, Place};
 use cadetta_syntax::span::Span;
 use cadetta_units::{Affine, Dim, Dimension, Magnitude, Rational};
@@ -963,10 +963,75 @@ fn place_into(
     Ok(())
 }
 
+/// Resolves a part's declared type, seen from the containing component, to its id and component.
+pub type PartLookup<'a> = dyn Fn(
+        &ComponentId,
+        &cadetta_syntax::ast::Type,
+    ) -> Option<(ComponentId, &'a cadetta_syntax::ast::Component)>
+    + 'a;
+
+/// Builds the [`Assembly`] of an assembly component: its nodes (with their implementers' datums,
+/// and subassemblies built recursively) and its lowered placements.
+///
+/// `lookup` resolves a part's declared type (seen from the containing component's id) to its component and id; a part whose type is not
+/// found becomes a node with no datums. Lowering failures are returned alongside the assembly.
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+pub fn build_assembly<'a>(
+    id: &ComponentId,
+    comp: &'a cadetta_syntax::ast::Component,
+    lookup: &PartLookup<'a>,
+    index: &dyn Fn(&Expr) -> Option<u64>,
+    point_of: &dyn Fn(&ComponentId, &Expr) -> Option<PointInfo>,
+) -> (Assembly, Vec<GeometryError>) {
+    use crate::datum::lower_component_datums;
+    use cadetta_syntax::ast::{ComponentClass, MemberKind as AstMember};
+    let mut errors = Vec::new();
+    let mut nodes = Vec::new();
+    let mut placements = Vec::new();
+    for m in &comp.members {
+        match &m.kind {
+            AstMember::Part(p) => {
+                let (datums, sub) = match lookup(id, &p.ty) {
+                    Some((tid, tc)) => {
+                        let (ds, es) = lower_component_datums(&tid, tc);
+                        errors.extend(es);
+                        let sub = (tc.class == ComponentClass::Assembly).then(|| {
+                            let (a, es) = build_assembly(&tid, tc, lookup, index, point_of);
+                            errors.extend(es);
+                            Box::new(a)
+                        });
+                        (ds, sub)
+                    }
+                    None => (Vec::new(), None),
+                };
+                nodes.push(Node {
+                    name: p.name.name.clone(),
+                    datums,
+                    sub,
+                });
+            }
+            AstMember::Place(p) => match lower_place(id, p, index, &|e| point_of(id, e)) {
+                Ok(q) => placements.push(q),
+                Err(e) => errors.push(e),
+            },
+            _ => {}
+        }
+    }
+    debug!(assembly = %comp.name.name, nodes = nodes.len(), placements = placements.len(), "assembly built");
+    (
+        Assembly {
+            name: comp.name.name.clone(),
+            nodes,
+            placements,
+        },
+        errors,
+    )
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use cadetta_sema::resolve::MemberSeg;
+    use cadetta_ir::canon::MemberSeg;
     use cadetta_syntax::ast::{Component, FileEntry, ItemKind, MemberKind};
     use cadetta_syntax::parser::parse;
 

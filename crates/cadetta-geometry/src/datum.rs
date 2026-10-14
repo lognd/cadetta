@@ -17,7 +17,7 @@
 use std::collections::BTreeSet;
 use std::fmt;
 
-use cadetta_sema::resolve::{CanonPath, Index, MemberSeg};
+use cadetta_ir::canon::{CanonPath, Index, MemberSeg};
 use cadetta_syntax::ast::{Arg, Component, Expr, ExprKind, MemberKind, Segment};
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};

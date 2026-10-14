@@ -15,7 +15,6 @@ categories = ["science", "development-tools"]
 
 [dependencies]
 cadetta-ir.workspace = true
-cadetta-sema.workspace = true
 cadetta-syntax.workspace = true
 cadetta-units.workspace = true
 cadetta-variants.workspace = true

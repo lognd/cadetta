@@ -768,11 +768,6 @@ ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet; the computation is cadetta_geometry::aligned"
 
 [[gap]]
-fixture = "geometry/distance-axial-component"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet; the computation is cadetta_geometry::aligned"
-
-[[gap]]
 fixture = "geometry/aligned-xy-plane-only"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
@@ -823,11 +818,6 @@ ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
 
 [[gap]]
-fixture = "geometry/datum-unknown-of-placed-part"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
 fixture = "geometry/g001-array-plus-point"
 ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
@@ -859,16 +849,6 @@ reason = "lint does not emit the geometry diagnostic yet"
 
 [[gap]]
 fixture = "geometry/g002-two-part-cycle"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g003-convert-unplaced-part"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g003-part-local-datum-in-assembly"
 ticket = "~H0EKNH2"
 reason = "lint does not emit the geometry diagnostic yet"
 
@@ -948,27 +928,7 @@ ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
 
 [[gap]]
-fixture = "geometry/q006-circle-pattern-angle"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/q006-inexact-rotation"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/q006-toleranced-angle-at-90"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
 fixture = "geometry/tolerance-after-array-per-coordinate"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/tolerance-on-generator-member"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
 
@@ -2433,71 +2393,6 @@ reason = "solver failure, Q001 and variants handling not implemented"
 fixture = "emitters/sw-equations/comment-trailing-emit-point"
 ticket = "~NWB8SVP"
 reason = "role(hole) attribute not honored for emit point"
-
-[[gap]]
-fixture = "geometry/datum-op-member-paths"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/datum-ops-left-to-right"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/flip-reverses-normal"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/pattern-circle-start"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/pattern-order-row-major"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/placement-composition"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/placement-inverse-of-placed-datum"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/placement-op-member-path"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/radial-distance-from-z-axis"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/reexpress-point2-becomes-point3"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/rotate-90-exact"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/square-aware-sqrt"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
-
-[[gap]]
-fixture = "geometry/subassembly-paths-compose"
-ticket = "~NYB5TXC"
-reason = "geometry values not evaluated into the IR"
 
 [[gap]]
 fixture = "adapters/protocol-command-no-path-search"

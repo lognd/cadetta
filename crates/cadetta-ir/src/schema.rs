@@ -422,6 +422,9 @@ fn defs() -> Map<String, J> {
                 ("fits", arr(r("Fit"))),
             ],
             &[
+                ("datums", arr(r("Datum"))),
+                ("points", arr(r("Point"))),
+                ("placements", arr(r("Placement"))),
                 ("params_sig", s()),
                 ("citation", r("CiteRef")),
                 ("span", r("SpanRef")),
@@ -944,6 +947,9 @@ mod tests {
                     hi: None,
                 }),
             }],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: Some(SpanRef {
                 file: "a.cdt".into(),
                 start: 0,

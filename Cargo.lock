@@ -165,7 +165,6 @@ name = "cadetta-geometry"
 version = "0.0.0"
 dependencies = [
  "cadetta-ir",
- "cadetta-sema",
  "cadetta-syntax",
  "cadetta-units",
  "cadetta-variants",
@@ -237,6 +236,7 @@ name = "cadetta-sema"
 version = "0.0.0"
 dependencies = [
  "cadetta-fits",
+ "cadetta-geometry",
  "cadetta-ir",
  "cadetta-solve",
  "cadetta-syntax",

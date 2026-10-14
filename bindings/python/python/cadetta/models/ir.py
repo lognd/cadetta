@@ -573,6 +573,7 @@ class Component(BaseModel):
     attrs: dict[str, str]
     citation: CiteRef | None = None
     class_: Annotated[ComponentClass, Field(alias="class")]
+    datums: list[Datum] | None = None
     digest: Digest | None = None
     fits: list[Fit]
     implements: list[str]
@@ -580,6 +581,8 @@ class Component(BaseModel):
     params_sig: str | None = None
     parts: list[Part]
     path: Path
+    placements: list[Placement] | None = None
+    points: list[Point] | None = None
     span: SpanRef | None = None
 
 

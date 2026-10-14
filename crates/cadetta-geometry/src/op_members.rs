@@ -11,9 +11,9 @@
 //! [`ir_path`] rejects it.
 // frob:ticket 01M4VB636BKBDGRW3NBMGK7CBZ
 
+use cadetta_ir::canon::{CanonPath, Index, MemberSeg};
 use cadetta_ir::model::{Member as IrMember, MemberKind, Provenance, SpanRef};
 use cadetta_ir::path::{Index as IrIndex, Path as IrPath, Seg, Step};
-use cadetta_sema::resolve::{CanonPath, Index, MemberSeg};
 use tracing::{debug, warn};
 
 use crate::datum::{GeometryError, Member};
@@ -65,13 +65,17 @@ pub fn ir_path(p: &CanonPath) -> Result<IrPath, String> {
     })
 }
 
-pub(crate) fn lower_member(m: &Member, from: &OpSource<'_>) -> Result<IrMember, GeometryError> {
+pub(crate) fn lower_member(
+    m: &Member,
+    kind: MemberKind,
+    from: &OpSource<'_>,
+) -> Result<IrMember, GeometryError> {
     let span = m.value.span;
     let path = ir_path(&m.path).map_err(|message| {
         warn!(%message, "placement member path");
         GeometryError { span, message }
     })?;
-    let mut out = IrMember::new(path, MemberKind::Place);
+    let mut out = IrMember::new(path, kind);
     out.provenance = Provenance::Authored;
     out.expr = Some(span.slice(from.src).to_owned());
     out.span = Some(SpanRef {
@@ -83,11 +87,23 @@ pub(crate) fn lower_member(m: &Member, from: &OpSource<'_>) -> Result<IrMember, 
     Ok(out)
 }
 
+/// Every operation argument of a datum declaration as an authored `Datum` IR member.
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+pub fn datum_members(
+    d: &crate::datum::DatumDef,
+    from: &OpSource<'_>,
+) -> Result<Vec<IrMember>, GeometryError> {
+    d.members()
+        .into_iter()
+        .map(|m| lower_member(m, MemberKind::Datum, from))
+        .collect()
+}
+
 /// Every operation argument of `p` as an authored IR member, in op order.
 pub fn op_members(p: &Placement, from: &OpSource<'_>) -> Result<Vec<IrMember>, GeometryError> {
     p.members()
         .into_iter()
-        .map(|m| lower_member(m, from))
+        .map(|m| lower_member(m, MemberKind::Place, from))
         .collect()
 }
 
@@ -204,7 +220,7 @@ mod tests {
     #[test]
     fn star_is_never_an_ir_index() {
         let mut p = CanonPath::item("acme.rover", &[], "Drive");
-        p.parts.push(cadetta_sema::resolve::PartSeg {
+        p.parts.push(cadetta_ir::canon::PartSeg {
             name: "feet".into(),
             index: Some(Index::Any),
         });

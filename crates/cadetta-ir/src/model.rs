@@ -519,6 +519,12 @@ pub struct Component {
     pub parts: Vec<Part>,
     /// Its fits.
     pub fits: Vec<Fit>,
+    /// Its datums (geometry.md 2).
+    pub datums: Vec<crate::geometry::Datum>,
+    /// Its named points (geometry.md 3).
+    pub points: Vec<crate::geometry::Point>,
+    /// Its placements, one per array instance (geometry.md 4).
+    pub placements: Vec<crate::geometry::Placement>,
     /// Source location.
     pub span: Option<SpanRef>,
     /// Own digest.
@@ -863,6 +869,9 @@ mod tests {
                     hi: Some(exact(1)),
                 }),
             }],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         };

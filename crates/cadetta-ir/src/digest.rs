@@ -255,6 +255,80 @@ pub fn member_digest(m: &Member) -> Digest {
     d
 }
 
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+/// Encodes an op chain: kind and argument member paths.
+fn ops(e: &mut Enc, ops: &[crate::geometry::Op]) {
+    use crate::geometry::Op;
+    e.num(ops.len() as u64);
+    for o in ops {
+        match o {
+            Op::Offset(a) => {
+                e.str("offset");
+                for p in [&a.x, &a.y, &a.z] {
+                    e.opt(p, |e, p| {
+                        e.str(&p.to_string());
+                    });
+                }
+            }
+            Op::Rotate { axis, angle } => {
+                e.str("rotate")
+                    .str(&format!("{axis:?}"))
+                    .str(&angle.to_string());
+            }
+            Op::Flip { axis } => {
+                e.str("flip").str(&format!("{axis:?}"));
+            }
+        }
+    }
+}
+
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+/// Own digest of a datum: path, parent and op chain (per-alternate chains included).
+pub fn datum_digest(d: &crate::geometry::Datum) -> Digest {
+    let mut e = Enc::new("datum");
+    e.str(&d.path.to_string()).str(&d.parent.to_string());
+    ops(&mut e, &d.ops);
+    e.opt(&d.variants, |e, vs| {
+        e.num(vs.len() as u64);
+        for (k, v) in vs {
+            e.str(k);
+            ops(e, v);
+        }
+    });
+    e.finish()
+}
+
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+/// Own digest of a point: path, datum and coordinate values.
+pub fn point_digest(p: &crate::geometry::Point) -> Digest {
+    let mut e = Enc::new("point");
+    e.str(&p.path.to_string()).str(&p.datum.to_string());
+    e.num(p.coords.len() as u64);
+    for c in &p.coords {
+        value(&mut e, c);
+    }
+    e.finish()
+}
+
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+/// Own digest of a placement: path, part, datum, target and op chain.
+pub fn placement_digest(p: &crate::geometry::Placement) -> Digest {
+    let mut e = Enc::new("placement");
+    e.str(&p.path.to_string())
+        .str(&p.part.to_string())
+        .str(&p.datum.to_string())
+        .str(&p.at.to_string());
+    ops(&mut e, &p.ops);
+    e.opt(&p.variants, |e, vs| {
+        e.num(vs.len() as u64);
+        for (k, v) in vs {
+            e.str(k);
+            ops(e, v);
+        }
+    });
+    e.finish()
+}
+
 /// Own digest of a part: type, count, primary, alternates (as a set) and arguments.
 pub fn part_digest(p: &Part) -> Digest {
     let mut e = Enc::new("part");
@@ -368,6 +442,16 @@ pub fn component_digest(c: &Component) -> Digest {
     for f in &c.fits {
         kids.push((f.path.to_string(), fit_digest(f)));
     }
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    for d in &c.datums {
+        kids.push((d.path.to_string(), datum_digest(d)));
+    }
+    for p in &c.points {
+        kids.push((p.path.to_string(), point_digest(p)));
+    }
+    for p in &c.placements {
+        kids.push((p.path.to_string(), placement_digest(p)));
+    }
     kids.sort_by(|a, b| a.0.cmp(&b.0));
     e.num(kids.len() as u64);
     for (k, d) in &kids {
@@ -461,6 +545,22 @@ impl DigestGraph {
     pub fn add_solver(&mut self, s: &Solver) {
         let deps = s.deps.iter().map(ToString::to_string).collect();
         self.add_node(s.path.to_string(), solver_digest(s), deps);
+    }
+
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    /// Add a datum keyed by its path; it depends on its parent and every op argument member.
+    pub fn add_datum(&mut self, d: &crate::geometry::Datum) {
+        let mut deps = frame_dep(&d.parent);
+        deps.extend(op_paths(&d.ops));
+        self.add_node(d.path.to_string(), datum_digest(d), deps);
+    }
+
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    /// Add a placement keyed by its path; it depends on its target and every op argument member.
+    pub fn add_placement(&mut self, p: &crate::geometry::Placement) {
+        let mut deps = frame_dep(&p.at);
+        deps.extend(op_paths(&p.ops));
+        self.add_node(p.path.to_string(), placement_digest(p), deps);
     }
 
     /// Add a part slot under `slot` plus one node `<slot>.<arg>` per argument.
@@ -582,6 +682,36 @@ impl DigestGraph {
     }
 }
 
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+/// The graph dependency of a frame path: none for a component origin (not a node).
+fn frame_dep(p: &crate::path::Path) -> Vec<String> {
+    let t = p.to_string();
+    if t.ends_with(".origin") {
+        Vec::new()
+    } else {
+        vec![t]
+    }
+}
+
+/// The argument member paths of an op chain, as text.
+fn op_paths(chain: &[crate::geometry::Op]) -> Vec<String> {
+    use crate::geometry::Op;
+    let mut out = Vec::new();
+    for o in chain {
+        match o {
+            Op::Offset(a) => out.extend(
+                [&a.x, &a.y, &a.z]
+                    .into_iter()
+                    .flatten()
+                    .map(ToString::to_string),
+            ),
+            Op::Rotate { angle, .. } => out.push(angle.to_string()),
+            Op::Flip { .. } => {}
+        }
+    }
+    out
+}
+
 /// Fill every digest and closure in `project`; returns an error on cycles or unknown deps.
 ///
 /// Part slots are keyed by `Part.path`. Closures are set on members only (components,
@@ -595,6 +725,13 @@ pub fn digest_project(project: &mut Project) -> Result<(), DigestError> {
         for p in &c.parts {
             g.add_part(&p.path.to_string(), p);
         }
+        // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+        for d in &c.datums {
+            g.add_datum(d);
+        }
+        for p in &c.placements {
+            g.add_placement(p);
+        }
     }
     for s in &project.solvers {
         g.add_solver(s);
@@ -605,6 +742,17 @@ pub fn digest_project(project: &mut Project) -> Result<(), DigestError> {
             let k = m.path.to_string();
             m.digest = Some(g.own(&k)?.clone());
             m.closure = closures.get(&k).cloned();
+        }
+        // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+        for d in &mut c.datums {
+            let k = d.path.to_string();
+            d.digest = Some(g.own(&k)?.clone());
+            d.closure = closures.get(&k).cloned();
+        }
+        for p in &mut c.placements {
+            let k = p.path.to_string();
+            p.digest = Some(g.own(&k)?.clone());
+            p.closure = closures.get(&k).cloned();
         }
         c.digest = Some(component_digest(c));
     }
@@ -864,6 +1012,9 @@ mod tests {
             members: vec![mem("a.b::X.a", 1, &[]), mem("a.b::X.b", 2, &["a.b::X.a"])],
             parts: vec![],
             fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         });

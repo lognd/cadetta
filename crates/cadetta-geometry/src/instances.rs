@@ -14,7 +14,7 @@
 //! in 0 to count - 1; a scalar target with an array operand is not judged here.
 // frob:ticket 01M4VB636BKBDGRW3NBMGK7CBZ
 
-use cadetta_sema::resolve::Index;
+use cadetta_ir::canon::Index;
 use cadetta_syntax::ast::Expr;
 use cadetta_syntax::span::Span;
 use cadetta_units::Affine;
@@ -182,8 +182,8 @@ pub fn place_instances(
                 }
                 let v = point(&m.value, i)?;
                 match m.path.members.last() {
-                    Some(cadetta_sema::resolve::MemberSeg::Name(n)) if n == "x" => Ok(v.x),
-                    Some(cadetta_sema::resolve::MemberSeg::Name(n)) if n == "y" => Ok(v.y),
+                    Some(cadetta_ir::canon::MemberSeg::Name(n)) if n == "x" => Ok(v.x),
+                    Some(cadetta_ir::canon::MemberSeg::Name(n)) if n == "y" => Ok(v.y),
                     _ => v.z.ok_or(GeometryError {
                         span: m.value.span,
                         message: "a Point2 has no z".to_owned(),

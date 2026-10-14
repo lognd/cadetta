@@ -33,182 +33,7 @@ const PRELUDE_TYPES: &[&str] = &[
     "Bool", "Text", "Count", "Ratio", "Point2", "Point3", "Vec2", "Vec3", "Datum", "Table",
 ];
 
-/// A numeric index or the `[*]` wildcard of a binding path (ir.md 2).
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub enum Index {
-    /// `[2]`
-    At(u64),
-    /// `[*]`, valid only in bindings.
-    Any,
-}
-
-impl fmt::Display for Index {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Index::At(n) => write!(f, "{n}"),
-            Index::Any => f.write_str("*"),
-        }
-    }
-}
-
-/// One `/part[index]` segment of an instance path.
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub struct PartSeg {
-    /// The slot name.
-    pub name: String,
-    /// The instance index, absent for a scalar slot or the whole array.
-    pub index: Option<Index>,
-}
-
-/// One segment after the item: `.name` or `[index]`.
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub enum MemberSeg {
-    /// `.name`
-    Name(String),
-    /// `[index]`
-    Index(Index),
-}
-
-/// A canonical path `PKG::module::Item/part[i].member[j]` (ir.md 2).
-#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub struct CanonPath {
-    /// The dotted package name.
-    pub package: String,
-    /// The module path below the package root (empty for `lib.cdt`).
-    pub modules: Vec<String>,
-    /// The item (type) name.
-    pub item: String,
-    /// The `/part[index]` instance segments.
-    pub parts: Vec<PartSeg>,
-    /// The member chain.
-    pub members: Vec<MemberSeg>,
-}
-
-impl CanonPath {
-    /// The path of an item with no parts or members.
-    pub fn item(package: &str, modules: &[String], item: &str) -> Self {
-        Self {
-            package: package.to_owned(),
-            modules: modules.to_vec(),
-            item: item.to_owned(),
-            parts: Vec::new(),
-            members: Vec::new(),
-        }
-    }
-
-    /// This path with the parts and members dropped.
-    pub fn item_only(&self) -> Self {
-        Self::item(&self.package, &self.modules, &self.item)
-    }
-
-    /// Parses ir.md 2 text such as `acme.rover::Rover/wheel[2].hub_bore`.
-    pub fn parse(text: &str) -> Result<Self, String> {
-        let bad = |why: &str| format!("canonical path `{text}`: {why}");
-        let (package, mut rest) = text.split_once("::").ok_or_else(|| bad("missing `::`"))?;
-        if package.is_empty() || !package.split('.').all(is_ident) {
-            return Err(bad("bad package name"));
-        }
-        let mut idents = Vec::new();
-        loop {
-            let end = rest
-                .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
-                .unwrap_or(rest.len());
-            let (id, after) = rest.split_at(end);
-            if !is_ident(id) {
-                return Err(bad("bad module or item name"));
-            }
-            idents.push(id.to_owned());
-            match after.strip_prefix("::") {
-                Some(r) => rest = r,
-                None => {
-                    rest = after;
-                    break;
-                }
-            }
-        }
-        let item = idents.pop().unwrap_or_default();
-        let mut out = Self::item(package, &idents, &item);
-        while let Some(r) = rest.strip_prefix('/') {
-            let (name, r) = take_word(r);
-            if !is_ident(name) {
-                return Err(bad("bad part name"));
-            }
-            let (index, r) = take_index(r).map_err(|e| bad(&e))?;
-            out.parts.push(PartSeg {
-                name: name.to_owned(),
-                index,
-            });
-            rest = r;
-        }
-        while !rest.is_empty() {
-            if let Some(r) = rest.strip_prefix('.') {
-                let (name, r) = take_word(r);
-                if name.is_empty() {
-                    return Err(bad("empty member"));
-                }
-                out.members.push(MemberSeg::Name(name.to_owned()));
-                rest = r;
-            } else if rest.starts_with('[') {
-                let (index, r) = take_index(rest).map_err(|e| bad(&e))?;
-                out.members
-                    .push(MemberSeg::Index(index.ok_or_else(|| bad("empty index"))?));
-                rest = r;
-            } else {
-                return Err(bad("unexpected text"));
-            }
-        }
-        Ok(out)
-    }
-}
-
-fn is_ident(s: &str) -> bool {
-    let mut cs = s.chars();
-    matches!(cs.next(), Some(c) if c.is_ascii_alphabetic() || c == '_')
-        && cs.all(|c| c.is_ascii_alphanumeric() || c == '_')
-}
-
-fn take_word(s: &str) -> (&str, &str) {
-    let end = s
-        .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
-        .unwrap_or(s.len());
-    s.split_at(end)
-}
-
-fn take_index(s: &str) -> Result<(Option<Index>, &str), String> {
-    let Some(r) = s.strip_prefix('[') else {
-        return Ok((None, s));
-    };
-    let (body, r) = r.split_once(']').ok_or("unclosed `[`")?;
-    let index = if body == "*" {
-        Index::Any
-    } else {
-        Index::At(body.parse().map_err(|_| format!("bad index `{body}`"))?)
-    };
-    Ok((Some(index), r))
-}
-
-impl fmt::Display for CanonPath {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}::", self.package)?;
-        for m in &self.modules {
-            write!(f, "{m}::")?;
-        }
-        f.write_str(&self.item)?;
-        for p in &self.parts {
-            write!(f, "/{}", p.name)?;
-            if let Some(i) = p.index {
-                write!(f, "[{i}]")?;
-            }
-        }
-        for m in &self.members {
-            match m {
-                MemberSeg::Name(n) => write!(f, ".{n}")?,
-                MemberSeg::Index(i) => write!(f, "[{i}]")?,
-            }
-        }
-        Ok(())
-    }
-}
+pub use cadetta_ir::canon::{CanonPath, Index, MemberSeg, PartSeg};
 
 /// An `enum` declaration, supplied by the caller until the parser reads `enum` items.
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -641,11 +466,36 @@ impl<'a> Resolver<'a> {
         }
     }
 
-    fn component(&self, id: &CanonPath) -> Option<&'a Component> {
+    /// The component declared at `id`.
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    pub fn component(&self, id: &CanonPath) -> Option<&'a Component> {
         match self.entry(id)?.kind {
             EntryKind::Component(c) => Some(c),
             _ => None,
         }
+    }
+
+    /// The component a part slot's declared type names, resolved from the slot's module.
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    pub fn part_type(
+        &self,
+        package: &str,
+        module: &[String],
+        ty: &Type,
+    ) -> Option<(CanonPath, &'a Component)> {
+        let TypeKind::Path(tp) = &ty.kind else {
+            return None;
+        };
+        let scope = Ctx {
+            package: package.to_owned(),
+            module: module.to_vec(),
+            component: None,
+            locals: Vec::new(),
+        };
+        let Ok(Resolved::Item { path, .. }) = self.resolve_path(&scope, tp, None) else {
+            return None;
+        };
+        Some((path.clone(), self.component(&path)?))
     }
 
     fn resolve_steps(
@@ -788,32 +638,65 @@ impl<'a> Resolver<'a> {
             name: part.name.name.clone(),
             index,
         });
-        let Some(Step::Name(member, mspan, _)) = rest.first() else {
-            return Ok(Resolved::Part { path });
+        // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+        let mut ty = &part.ty;
+        let mut scope = Ctx {
+            component: None,
+            locals: Vec::new(),
+            ..ctx.clone()
         };
-        if let TypeKind::Path(tp) = &part.ty.kind {
-            let scope = Ctx {
-                component: None,
-                locals: Vec::new(),
-                ..ctx.clone()
+        loop {
+            let Some(Step::Name(member, mspan, _)) = rest.first() else {
+                return Ok(Resolved::Part { path });
             };
-            if let Ok(Resolved::Item { path: tid, .. }) = self.resolve_path(&scope, tp, None) {
-                let known = match self.entry(&tid).map(|e| &e.kind) {
-                    Some(EntryKind::Component(tc)) => {
-                        tc.params.iter().any(|p| p.name.name == *member)
-                            || find_member(tc, member).is_some()
+            let TypeKind::Path(tp) = &ty.kind else {
+                break;
+            };
+            let Ok(Resolved::Item { path: tid, .. }) = self.resolve_path(&scope, tp, None) else {
+                break;
+            };
+            let known = match self.entry(&tid).map(|e| &e.kind) {
+                Some(EntryKind::Component(tc)) => {
+                    // A part of the part's type is a further slot of the chain (`sub.bracket.x`).
+                    if let Some(MemberKind::Part(inner)) = find_member(tc, member).map(|m| &m.kind)
+                    {
+                        let mut next = &rest[1..];
+                        let mut index = None;
+                        if let Some(Step::Index(i)) = next.first() {
+                            index = Some(*i);
+                            next = &next[1..];
+                        }
+                        path.parts.push(PartSeg {
+                            name: inner.name.name.clone(),
+                            index,
+                        });
+                        rest = next;
+                        ty = &inner.ty;
+                        scope = Ctx {
+                            package: tid.package.clone(),
+                            module: tid.modules.clone(),
+                            component: None,
+                            locals: Vec::new(),
+                        };
+                        continue;
                     }
-                    Some(EntryKind::Interface(i)) => self.interface_has(&tid, i, member, 0),
-                    _ => false,
-                };
-                if !known {
-                    return err(
-                        "E002",
-                        *mspan,
-                        format!("`{}` has no member `{member}`", tid.item),
-                    );
+                    tc.params.iter().any(|p| p.name.name == *member)
+                        || find_member(tc, member).is_some()
+                        || tc.members.iter().any(
+                            |m| matches!(&m.kind, MemberKind::Datum(d) if d.name.name == *member),
+                        )
                 }
+                Some(EntryKind::Interface(i)) => self.interface_has(&tid, i, member, 0),
+                _ => false,
+            };
+            if !known {
+                return err(
+                    "E002",
+                    *mspan,
+                    format!("`{}` has no member `{member}`", tid.item),
+                );
             }
+            break;
         }
         path.members = member_segs(rest)?;
         Ok(Resolved::Member {

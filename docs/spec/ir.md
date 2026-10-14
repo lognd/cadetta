@@ -265,10 +265,17 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     the analysis form.
   - `variants` keys are caller-supplied variant names; only values that
     differ from the primary are stored.
+  - Datums, points and placements are lowered through `cadetta-geometry`.
+    A Datum's `of` and a Placement's `datum` and `at` are definition-level
+    paths (`Type.datum`). An array placement is expanded to one Placement
+    per instance (`Asm/node[i]`, integer indexes) and skipped, with a
+    warning, when its count is unknown. A Point is `Type.p` or
+    `Type.holes[i]`; its coordinates are Members `...x|y|z` (kind `let`,
+    analysis form, derived from the declaring member) and `position` stays
+    absent.
   - Not lowered yet: waivers, interfaces, tables, `require` obligations,
-    solvers and bindings; datums, points and placements (pending the
-    geometry entities ticket); parameterized components lower with
-    valueless members.
+    solvers and bindings; parameterized components lower with valueless
+    members.
 
 ## 4. Digests
 

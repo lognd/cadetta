@@ -43,12 +43,15 @@ pub struct Inex {
     pub hi: f64,
     /// The operation that first made the value inexact (Q006 root).
     pub root: RootOp,
+    /// The exact nominal when only the tolerance interval is inexact (a square-aware root).
+    pub exact_nominal: Option<Magnitude>,
 }
 
 impl PartialEq for Inex {
     fn eq(&self, o: &Self) -> bool {
         self.dim == o.dim
             && self.root == o.root
+            && self.exact_nominal == o.exact_nominal
             && self.nominal.to_bits() == o.nominal.to_bits()
             && self.lo.to_bits() == o.lo.to_bits()
             && self.hi.to_bits() == o.hi.to_bits()
@@ -107,6 +110,7 @@ fn inex(dim: Dim, nominal: f64, lo: f64, hi: f64, root: RootOp, span: Span) -> R
         lo,
         hi,
         root,
+        exact_nominal: None,
     }))
 }
 
@@ -165,6 +169,7 @@ pub(super) fn inex_neg(i: &Inex) -> Inex {
         lo: -i.hi,
         hi: -i.lo,
         root: i.root,
+        exact_nominal: i.exact_nominal.as_ref().map(Magnitude::neg),
     }
 }
 
@@ -231,6 +236,7 @@ fn is_builtin(name: &str) -> bool {
             | "rect_pattern"
             | "circle_pattern"
             | "distance"
+            | "radial"
     )
 }
 
@@ -413,7 +419,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
             }
             "Point2" | "Point3" | "Vec2" | "Vec3" | "rect_pattern" | "circle_pattern"
-            | "distance" => self.geometry(sc, name, args, span),
+            | "distance" | "radial" => self.geometry(sc, name, args, span),
             _ => self.fmt(sc, args, span),
         }
     }
@@ -859,7 +865,15 @@ pub(super) fn sqrt(v: &Val, span: Span) -> R<Val> {
             }
             let iv = q.form.sqrt().map_err(|e| tol_diag(&e, span))?;
             let root = nv.root().unwrap_or(RootOp::Sqrt);
-            inex(dim, nv.to_f64(), iv.lo, iv.hi, root, span)
+            let out = inex(dim, nv.to_f64(), iv.lo, iv.hi, root, span)?;
+            // A root of an exact nominal keeps that exact nominal: only the interval is inexact.
+            Ok(match (out, nv) {
+                (Val::Inexact(mut i), Value::Exact(m)) => {
+                    i.exact_nominal = Some(m);
+                    Val::Inexact(i)
+                }
+                (other, _) => other,
+            })
         }
         Val::Inexact(i) => {
             if i.lo < 0.0 {

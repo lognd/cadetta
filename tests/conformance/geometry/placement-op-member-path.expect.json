@@ -9,7 +9,7 @@
     "diagnostics": [],
     "values": [
       {
-        "path": "acme.demo::Drive/plate.place.0.x",
+        "path": "acme.demo::Drive/plate.place.offset.x",
         "nominal": "12mm"
       }
     ]
@@ -18,10 +18,10 @@
     "diagnostics": [],
     "values": [
       {
-        "path": "acme.demo::Drive/plate.place.0.x",
+        "path": "acme.demo::Drive/plate.place.offset.x",
         "nominal": "14mm"
       }
     ]
   },
-  "note": "each placement op argument is a Member at Assembly/part.place.<op index>.<axis>"
+  "note": "each placement op argument is a Member at Assembly/part.place.offset.<axis> (second offset place.offset[1].<axis>; ir.md 2)"
 }

@@ -313,8 +313,11 @@ mod tests {
             members,
             parts: vec![],
             fits,
-            span: None,
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             digest: None,
+            span: None,
         });
         proj
     }

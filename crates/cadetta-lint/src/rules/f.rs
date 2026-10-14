@@ -208,6 +208,9 @@ mod tests {
                 fit_type: "clearance".into(),
                 required: req,
             }],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         });

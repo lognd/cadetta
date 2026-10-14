@@ -48,6 +48,8 @@ pub mod checks;
 pub mod enums;
 #[path = "func.rs"]
 pub mod func;
+#[path = "geom.rs"]
+pub mod geom;
 #[path = "point.rs"]
 pub mod point;
 
@@ -136,6 +138,8 @@ pub struct Evaluation {
     pub checks: Vec<checks::CheckResult>,
     /// How many source variables were allocated (ids `0..var_count`); lowering enumerates them.
     pub var_count: u32,
+    /// The evaluated instance count of every counted part slot (`part leg[4]`), by part path.
+    pub part_counts: BTreeMap<CanonPath, u64>,
 }
 
 impl Evaluation {
@@ -358,6 +362,10 @@ pub struct Evaluator<'r, 'p> {
     resolver: &'r Resolver<'p>,
     units: &'r UnitTable,
     defs: BTreeMap<CanonPath, Def<'p>>,
+    /// Components whose datums and placements are evaluated (those without parameters).
+    geom_components: Vec<CanonPath>,
+    /// Instance counts of evaluated `part name[N]` slots, by part path.
+    part_counts: BTreeMap<CanonPath, u64>,
     done: BTreeMap<CanonPath, Option<Evaluated>>,
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
@@ -375,6 +383,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         packages: &[PackageSrc<'p>],
     ) -> Self {
         let mut defs = BTreeMap::new();
+        let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
         for p in packages {
@@ -386,6 +395,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
+                    if c.params.is_empty() {
+                        geom_components.push(CanonPath::item(&p.name, &m.path, &c.name.name));
+                    }
                     index.add_component(&p.name, &m.path, c);
                 }
             }
@@ -406,6 +418,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             resolver,
             units,
             defs,
+            geom_components,
+            part_counts: BTreeMap::new(),
             done: BTreeMap::new(),
             in_progress: BTreeSet::new(),
             next_var: 0,
@@ -440,6 +454,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         for k in &keys {
             self.value_of(k);
         }
+        self.evaluate_geometry();
         let checks = self.run_checks();
         let values = self
             .done
@@ -455,6 +470,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             diagnostics: self.diagnostics,
             checks,
             var_count: self.next_var,
+            part_counts: self.part_counts,
         }
     }
 
@@ -515,8 +531,13 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 
     fn eval_param(&mut self, sc: &mut Scope, def: &Def<'p>, _key: &CanonPath) -> R<Evaluated> {
-        let e = strip(def.expr);
-        let span = def.span;
+        self.eval_param_expr(sc, def.expr, def.span)
+    }
+
+    /// Evaluates `expr` the way a parameter value is: tolerance and range own a fresh variable.
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    fn eval_param_expr(&mut self, sc: &mut Scope, expr: &Expr, span: Span) -> R<Evaluated> {
+        let e = strip(expr);
         // A pure reference is an alias of its referent's source variable.
         if matches!(e.kind, ExprKind::Path(_) | ExprKind::Field(..))
             && let Ok(RefKind::Member {
@@ -570,13 +591,19 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match resolved {
             Resolved::Local(n) => Ok(RefKind::Local(n)),
             Resolved::Member { path, level, .. } => {
-                if level == Level::Instance || !path.parts.is_empty() {
-                    return Err(diag(
-                        "EVAL",
-                        e.span,
-                        "reading a part instance is evaluated by the parts ticket",
-                    ));
-                }
+                let path = if path.parts.is_empty() {
+                    if level == Level::Instance {
+                        return Err(diag(
+                            "EVAL",
+                            e.span,
+                            "reading a part instance is evaluated by the parts ticket",
+                        ));
+                    }
+                    path
+                } else {
+                    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+                    self.through_parts(&path, e.span)?
+                };
                 let mut key = path.clone();
                 let accessor = match path.members.as_slice() {
                     [MemberSeg::Name(_)] => None,
@@ -632,11 +659,23 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Evaluates the base of a `.x` access; a `p in D` re-expression that fails with G003 keeps
+    /// that diagnostic, any other failure falls through to reference classification.
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    fn point_base(&mut self, sc: &mut Scope, base: &Expr) -> R<Option<Val>> {
+        let reexpress = matches!(&strip(base).kind, ExprKind::Binary(BinOp::In, ..));
+        match self.eval(sc, base) {
+            Ok(v) => Ok(Some(v)),
+            Err(Fail::Diag(d)) if reexpress && d.code == "G003" => Err(Fail::Diag(d)),
+            Err(_) => Ok(None),
+        }
+    }
+
     fn eval(&mut self, sc: &mut Scope, e: &Expr) -> R<Val> {
         let span = e.span;
         if let ExprKind::Field(base, member) = &e.kind
             && let Some(i) = ["x", "y", "z"].iter().position(|m| *m == member.name)
-            && let Ok(Val::Point(comps)) = self.eval(sc, base)
+            && let Some(Val::Point(comps)) = self.point_base(sc, base)?
         {
             return comps.get(i).cloned().ok_or_else(|| {
                 diag(
@@ -676,6 +715,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(Val::Array(out))
             }
             ExprKind::Match { scrutinee, arms } => self.eval_match(sc, scrutinee, arms, span),
+            // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+            ExprKind::Index(base, idx) => self.index(sc, base, idx, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
             ExprKind::Tolerance(inner, terms) => {
                 let var = self.fresh_var();
@@ -746,6 +787,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let var = self.fresh_var();
                 Ok(Val::Quantity(self.range(sc, l, r, var, span)?))
             }
+            // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+            BinOp::In => self.reexpress(sc, l, r, span),
             _ => Err(diag(
                 "EVAL",
                 span,

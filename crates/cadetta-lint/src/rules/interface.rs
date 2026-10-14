@@ -225,6 +225,9 @@ mod tests {
             members: vec![],
             parts: vec![],
             fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         }

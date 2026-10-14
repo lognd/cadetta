@@ -222,6 +222,9 @@ impl ObservedBuilder {
             members: self.members,
             parts: Vec::new(),
             fits: Vec::new(),
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
             span: None,
             digest: None,
         });

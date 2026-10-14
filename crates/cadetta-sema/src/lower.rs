@@ -16,8 +16,8 @@
 //! - Variant evaluations are supplied by the caller keyed `"<slot>=<alternate>"`; a member
 //!   stores only the values that differ from the primary.
 //! - Not lowered (the IR `Project` has no field for them yet): waivers, interfaces, tables,
-//!   `require` obligations, solvers and bindings; datums, points and placements wait for the
-//!   geometry entities; parameterized components lower with valueless members.
+//!   `require` obligations, solvers and bindings; parameterized components lower with
+//!   valueless members. Datums, points and placements lower in `lower_geom.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -213,6 +213,12 @@ fn evaluated_value(
 ) -> Option<Value> {
     match &e.value {
         Val::Quantity(q) => Some(quant_value(ev, owners, path, q, authored)),
+        Val::Inexact(i) if i.exact_nominal.is_some() => {
+            let m = i.exact_nominal.clone()?;
+            let mut v = Value::new(Nominal::Exact(Exact(m)), i.dim.clone(), authored);
+            v.conservative = true;
+            Some(v)
+        }
         Val::Inexact(i) => {
             let root = ir_path(path)?;
             let mut v = Value::new(
@@ -233,14 +239,30 @@ fn evaluated_value(
     }
 }
 
+#[path = "lower_geom.rs"]
+mod lower_geom;
+
 /// Per-lowering shared state.
 struct Cx<'a> {
     input: &'a LowerInput<'a>,
     owners: BTreeMap<u32, CanonPath>,
     variant_owners: BTreeMap<String, BTreeMap<u32, CanonPath>>,
+    resolver: crate::resolve::Resolver<'a>,
 }
 
 impl Cx<'_> {
+    /// A dependency path with part-slot instances mapped to the part type's own member.
+    fn dep_node(&self, p: CanonPath) -> Option<CanonPath> {
+        if p.parts.is_empty() {
+            return Some(p);
+        }
+        let d = crate::eval::geom::definition_path(&self.resolver, &p);
+        if d.is_none() {
+            debug!(path = %p, "lower: dependency through an unresolved part slot dropped");
+        }
+        d
+    }
+
     fn lower_member(
         &self,
         comp: &CanonPath,
@@ -311,7 +333,8 @@ impl Cx<'_> {
             .input
             .deps
             .deps_of(&canon)
-            .filter_map(ir_path)
+            .filter_map(|d| self.dep_node(d.clone()))
+            .filter_map(|d| ir_path(&d))
             .collect();
         out.provenance = if deps.is_empty() {
             Provenance::Authored
@@ -341,20 +364,30 @@ impl Cx<'_> {
             trace!(path = %canon, "lower: member has no evaluated value");
         }
 
+        out.variants = self.differing_variants(&canon, &text, out.value.as_ref());
+        Some(out)
+    }
+
+    /// The variant values of `canon` that differ from the primary value.
+    fn differing_variants(
+        &self,
+        canon: &CanonPath,
+        text: &str,
+        primary: Option<&Value>,
+    ) -> Option<BTreeMap<String, Value>> {
         let mut variants = BTreeMap::new();
         for (key, vev) in &self.input.variants {
-            let Some(e) = vev.get(&canon) else { continue };
+            let Some(e) = vev.get(canon) else { continue };
             let owners = self.variant_owners.get(key).unwrap_or(&self.owners);
-            let v = evaluated_value(vev, owners, &canon, e, &text);
+            let v = evaluated_value(vev, owners, canon, e, text);
             if let Some(v) = v
-                && Some(&v) != out.value.as_ref()
+                && Some(&v) != primary
             {
                 debug!(path = %canon, variant = %key, "lower: variant value differs");
                 variants.insert(key.clone(), v);
             }
         }
-        out.variants = (!variants.is_empty()).then_some(variants);
-        Some(out)
+        (!variants.is_empty()).then_some(variants)
     }
 
     fn lower_part(
@@ -462,6 +495,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
     );
     let cx = Cx {
         input,
+        resolver: crate::resolve::Resolver::new(input.packages.to_vec()).0,
         owners: var_owners(input.evaluation),
         variant_owners: input
             .variants
@@ -512,6 +546,9 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                     members: Vec::new(),
                     parts: Vec::new(),
                     fits: Vec::new(),
+                    datums: Vec::new(),
+                    points: Vec::new(),
+                    placements: Vec::new(),
                     span: None,
                     digest: None,
                 };
@@ -523,6 +560,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                         comp.parts.extend(cx.lower_part(&canon, src, p));
                     }
                 }
+                cx.lower_geometry(&canon, src, c, &mut comp);
                 comp.fits = input
                     .fits
                     .iter()
@@ -608,6 +646,7 @@ mod tests {
     use crate::fits::analyze;
     use crate::process::Processes;
     use crate::resolve::{ModuleSrc, Resolver};
+    use cadetta_ir::geometry::Op;
     use cadetta_syntax::ast::{FitSpec, Ident};
     use cadetta_syntax::parser::parse;
     use cadetta_units::{Rational, UnitTable};
@@ -888,5 +927,81 @@ mod tests {
             component_digest(&one.project.components[0]),
             component_digest(&two.project.components[0])
         );
+    }
+
+    const GEOM_SRC: &str = "model Rail {\n  height = 30mm\n  datum top = origin.offset(z = height)\n}\n\
+        model Bracket {\n  holes: [Point2 on origin; 2] = [Point2(-25mm, 0mm), Point2(25mm, 0mm)]\n}\n\
+        assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  \
+        place rail.origin at origin\n  place bracket.origin at origin.offset(x = 10mm)\n  \
+        hx = (bracket.holes[1] in origin).x\n}\n";
+
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_geometry kind=unit
+    #[test]
+    fn datums_placements_and_points_are_lowered() {
+        let b = build(GEOM_SRC, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let rail = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rail")
+            .expect("Rail");
+        assert!(
+            rail.datums
+                .iter()
+                .any(|d| d.path.to_string().ends_with("Rail.top"))
+        );
+        let mount = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Mount")
+            .expect("Mount");
+        let places: Vec<String> = mount
+            .placements
+            .iter()
+            .map(|p| p.path.to_string())
+            .collect();
+        assert!(
+            places.iter().any(|p| p.ends_with("Mount/bracket.place")),
+            "{places:?}"
+        );
+        let br = mount
+            .placements
+            .iter()
+            .find(|p| p.path.to_string().ends_with("Mount/bracket.place"))
+            .expect("bracket placement");
+        assert_eq!(br.ops.len(), 1);
+        let Op::Offset(o) = &br.ops[0] else {
+            panic!("expected an offset op, got {:?}", br.ops[0]);
+        };
+        assert!(o.x.is_some() && o.y.is_none());
+    }
+
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
+    #[test]
+    fn re_expression_composes_the_placement() {
+        let b = build(GEOM_SRC, &[], &[]);
+        let hx = member(&b, "Mount", "hx");
+        let v = hx.value.as_ref().expect("hx value");
+        // 25 mm + the 10 mm placement offset = 35 mm, exact.
+        let Nominal::Exact(Exact(m)) = &v.nominal else {
+            panic!("expected an exact nominal, got {v:?}");
+        };
+        assert_eq!(m.rational().to_string(), "7/200");
+    }
+
+    // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+    // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
+    #[test]
+    fn re_expression_out_of_an_unplaced_part_is_g003() {
+        let src = "model P {\n  datum face = origin.offset(z = 5mm)\n}\n\
+            assembly A {\n  part a: P\n  part b: P\n  place a.origin at origin\n  \
+            dz = (b.face in origin).z\n  dy = (a.face in face).z\n}\n";
+        let (ev, _, _) = evaluate(src);
+        let codes: Vec<&str> = ev.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, vec!["G003", "G003"], "{:?}", ev.diagnostics);
     }
 }

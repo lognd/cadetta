@@ -249,6 +249,12 @@
         "class": {
           "$ref": "#/$defs/ComponentClass"
         },
+        "datums": {
+          "items": {
+            "$ref": "#/$defs/Datum"
+          },
+          "type": "array"
+        },
         "digest": {
           "$ref": "#/$defs/Digest"
         },
@@ -281,6 +287,18 @@
         },
         "path": {
           "$ref": "#/$defs/Path"
+        },
+        "placements": {
+          "items": {
+            "$ref": "#/$defs/Placement"
+          },
+          "type": "array"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "type": "array"
         },
         "span": {
           "$ref": "#/$defs/SpanRef"

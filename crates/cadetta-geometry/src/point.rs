@@ -9,7 +9,7 @@
 
 use std::fmt;
 
-use cadetta_sema::resolve::{CanonPath, Index, MemberSeg};
+use cadetta_ir::canon::{CanonPath, Index, MemberSeg};
 use cadetta_syntax::ast::{Expr, Type, TypeKind};
 use cadetta_units::{Affine, ToleranceError};
 use tracing::{debug, warn};

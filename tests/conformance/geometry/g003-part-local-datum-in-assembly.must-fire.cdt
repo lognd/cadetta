@@ -6,5 +6,5 @@ model P {
 assembly A {
   part a: P
   place a.origin at origin
-  check c: (a.pt in top).z >= 0mm "converted"
+  check c: (a.pt in top).z <= 0mm "converted"
 }

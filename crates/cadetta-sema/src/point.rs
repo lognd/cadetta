@@ -198,6 +198,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let (p, q) = (self.eval(sc, xs[0])?, self.eval(sc, xs[1])?);
                 distance(&p, &q, span)
             }
+            "radial" => {
+                // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+                let xs = super::func::arity(name, args, 1, span)?;
+                let p = self.eval(sc, xs[0])?;
+                radial(&p, span)
+            }
             "circle_pattern" => {
                 let xs = super::func::arity(name, args, 3, span)?;
                 let n = self.pattern_count(sc, xs[0], "the point count")?;
@@ -299,6 +305,26 @@ fn circle_pattern(n: u64, r: &Val, start: &Quant, span: Span) -> R<Val> {
 }
 
 /// The Euclidean distance between two points of one arity.
+/// `radial(p)`: the distance of a `Point3` from the z axis of its datum, `sqrt(x^2 + y^2)`.
+// frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+fn radial(p: &Val, span: Span) -> R<Val> {
+    let Val::Point(c) = p else {
+        return Err(diag("EVAL", span, "`radial` takes a Point3"));
+    };
+    if c.len() != 3 {
+        return Err(diag("EVAL", span, "`radial` takes a Point3"));
+    }
+    let mut sum: Option<Val> = None;
+    for a in &c[..2] {
+        let sq = scalar(BinOp::Mul, a, a, span)?;
+        sum = Some(match sum {
+            None => sq,
+            Some(s) => scalar(BinOp::Add, &s, &sq, span)?,
+        });
+    }
+    sqrt(&sum.expect("two components"), span)
+}
+
 fn distance(p: &Val, q: &Val, span: Span) -> R<Val> {
     let (Val::Point(p), Val::Point(q)) = (p, q) else {
         return Err(diag("EVAL", span, "`distance` takes two points"));

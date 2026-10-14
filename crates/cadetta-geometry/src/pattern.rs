@@ -18,8 +18,8 @@
 // frob:ticket 01M4SWFXADMC8C5Y451JRVBYZM
 // frob:ticket 01M4VB63B9FS1JDEH7V08K12NH
 
+use cadetta_ir::canon::{CanonPath, Index, MemberSeg};
 use cadetta_ir::model::{Member as IrMember, MemberKind, Provenance};
-use cadetta_sema::resolve::{CanonPath, Index, MemberSeg};
 use cadetta_syntax::ast::Expr;
 use cadetta_syntax::span::Span;
 use cadetta_units::{Affine, Magnitude, Rational, ToleranceError, Toleranced, VarId};
@@ -318,11 +318,7 @@ pub fn generator_ir_members(
 ) -> Result<Vec<IrMember>, GeometryError> {
     members
         .iter()
-        .map(|m| {
-            let mut ir = lower_member(m, from)?;
-            ir.kind = MemberKind::Param;
-            Ok(ir)
-        })
+        .map(|m| lower_member(m, MemberKind::Param, from))
         .collect()
 }
 
