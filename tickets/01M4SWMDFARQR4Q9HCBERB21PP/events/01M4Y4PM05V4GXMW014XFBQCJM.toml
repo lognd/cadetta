@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "Closed on reviewer APPROVE with the C# unverified by execution (no dotnet locally, nova offline). Runtime verification of the COM attach/hidden-start path belongs to the release smoke ticket ~V3ADT95; CI on a dotnet host must run the SessionConnectTests xunit tests and the net48 Com build."
+at = "2026-10-14T21:22:11Z"
+actor = "lognd"
+rev = 1
