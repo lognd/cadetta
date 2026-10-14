@@ -2,7 +2,8 @@
 id = "01M4W6RRX0W5SZ2SNWN26XYW5F"
 title = "Python InitializeResult lacks the optional features field"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
