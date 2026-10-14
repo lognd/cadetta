@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:44:25Z"
+digest = "a18143ddf65033cf3cbbe32c5ca45a31232f8114a16e4f15ecb457374997c3cb"
+provider = "file"
+ref = "adapters/solidworks/Cadetta.SolidWorks.sln"
+size = 3142
+status = "measured"
+at = "2026-10-14T12:44:25Z"
+actor = "Claude"
+rev = 1
