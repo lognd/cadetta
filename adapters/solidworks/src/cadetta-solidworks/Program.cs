@@ -27,6 +27,7 @@ namespace Cadetta.SolidWorks.Cli
             var fake = Array.IndexOf(args, "--fake") >= 0
                 || Environment.GetEnvironmentVariable("CADETTA_SW_FAKE") == "1";
             ISwSession session;
+            IDisposable? owner = null;
             if (fake)
             {
                 log.Info("using the fake session");
@@ -35,8 +36,10 @@ namespace Cadetta.SolidWorks.Cli
             else
             {
 #if CADETTA_COM
-                log.Info("attaching to SOLIDWORKS");
-                session = Cadetta.SolidWorks.Com.SwComSession.Attach();
+                log.Info("connecting to SOLIDWORKS (attach or start hidden)");
+                var com = Cadetta.SolidWorks.Com.SwComSession.Attach(log);
+                owner = com.Connection;
+                session = com;
 #else
                 log.Error("built without the COM session; pass --fake");
                 return 2;
@@ -45,7 +48,15 @@ namespace Cadetta.SolidWorks.Cli
 
             var input = new StreamReader(Console.OpenStandardInput(), utf8);
             var output = new StreamWriter(Console.OpenStandardOutput(), utf8) { NewLine = "\n", AutoFlush = true };
-            return new RpcServer(session, log).Run(input, output);
+            try
+            {
+                return new RpcServer(session, log).Run(input, output);
+            }
+            finally
+            {
+                // Quits SOLIDWORKS only if this process started it.
+                owner?.Dispose();
+            }
         }
     }
 }

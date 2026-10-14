@@ -44,3 +44,10 @@ filtered by `CADETTA_LOG` (`error|warn|info|debug|trace`, optionally
 `cadetta_solidworks=LEVEL`). `--fake` (or `CADETTA_SW_FAKE=1`) uses the
 in-memory session. Implemented so far: `initialize` and `shutdown`; other
 methods answer -32601 until their tickets land.
+
+## Session lifetime
+
+Without `--fake`, the Com build connects through `SwConnection<T>`
+(`Core/Session`): it attaches to a running SOLIDWORKS if there is one,
+otherwise starts one hidden through `SwComHost`. On exit it quits the
+instance only if it started it (adapters.md 2.2).
