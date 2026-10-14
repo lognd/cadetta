@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:24:05Z"
-updated = "2026-10-14T05:17:07Z"
+updated = "2026-10-14T05:25:44Z"
 labels = ["creates:.cargo/config.toml"]
 scope = [".cargo/config.toml"]
 
