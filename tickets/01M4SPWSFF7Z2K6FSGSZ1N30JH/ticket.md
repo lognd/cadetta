@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T03:30:19Z"
+updated = "2026-10-14T03:30:32Z"
 persona = "design engineer"
 capability = "emit parameters as Spreadsheet aliases in an FCStd file"
 outcome_text = "FreeCAD models update without retyping"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a path with several locators, when emitted to FreeCAD, then each alias is written and ref-mode aliases reference the emitted global (adapters.md 3)"
-bound = false
+bound = true
 +++

@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T03:30:32Z"
+digest = "b80c58a8c27a9195836e1abf357eb5925a5f4b359b4beef7fef82ec4721023bf"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+collected 4 items
+
+adapters/freecad/tests/unit/test_emit.py ....                            [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-2678688-0.xml --------------
+============================== 4 passed in 0.27s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_several_locators_each_written_and_ref_mode_references_global adapters/freecad/tests/unit/test_emit.py::test_ref_to_names_the_target_global adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_global_creates_the_mangled_global_once adapters/freecad/tests/unit/test_emit.py::test_ref_mode_follows_alias_of_to_the_referent_global"
+size = 468
+status = "measured"
+test_count = 4
+tests_digest = "a2f9bb7e7a650790a4d442eb0520bc59a9a22365986d44c09ff6b5dd4f5561ab"
+at = "2026-10-14T03:30:32Z"
+actor = "lognd"
+rev = 1
