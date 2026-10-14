@@ -2,7 +2,8 @@
 id = "01M4VQXPDA4TEKE455FNYB5TXC"
 title = "Geometry in check: evaluate datums, points, patterns and placements through cadetta-geometry and lower them to the IR"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
