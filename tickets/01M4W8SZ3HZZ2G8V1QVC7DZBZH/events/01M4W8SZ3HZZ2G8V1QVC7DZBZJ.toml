@@ -1,0 +1,8 @@
+kind = "create"
+title = "golden 07/08 cadetta ir fails: depends on unknown node for std component members Din7981St42.length, ScrewJoint.unit_cost (found while working ~6MJE3XF; unverified if pre-existing)"
+type = "bug"
+category = "todo"
+priority = "medium"
+at = "2026-10-14T03:55:26Z"
+actor = "lognd"
+rev = 1
