@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T21:07:45Z"
+digest = "1a578fd5faf59094294d336827d2a24648db4c3d6d75c87eeee13da8f258fab7"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 69a39333-b6fb-45a1-a143-cb62e5d8ac13 with nextest profile: default
+    Starting 1 test across 45 binaries (1197 tests skipped)
+        PASS [   0.005s] cadetta-adapter availability::tests::r010_rejection_is_reported_per_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 1197 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "r010_rejection"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "0e554eacceb4aff3a75c57a86896259154cf850e91d96a8bbb9cf1ad60926ca5"
+at = "2026-10-14T21:07:45Z"
+actor = "lognd"
+rev = 1

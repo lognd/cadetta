@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:07:44Z"
+updated = "2026-10-14T21:07:45Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 idempotency_key = "replan14:ad-r8910"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a read-only or protected file, when pushing, then R010 is reported per file (adapters.md 4)"
-bound = false
+bound = true
 +++
