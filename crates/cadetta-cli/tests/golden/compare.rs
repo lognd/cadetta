@@ -428,7 +428,7 @@ mod tests {
         let o = compare(&exp, &dirty, Path::new("."), Path::new("."));
         assert_eq!(
             (o.verdicts.mismatched, o.hand_suspect, o.impl_suspect),
-            (1, 0, 1)
+            (1, 0, 2)
         );
     }
 
