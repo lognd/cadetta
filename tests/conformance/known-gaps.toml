@@ -443,16 +443,6 @@ ticket = "~G5NT80Z"
 reason = "C002 not raised for inexact boundary"
 
 [[gap]]
-fixture = "stdlib/e006-count-with-pattern"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/e006-joint-per-pattern"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
 fixture = "stdlib/commercial-misspelling-not-a-member"
 ticket = "~6K58FR1"
 reason = "std commercial/fits/materials diagnostic not raised"
