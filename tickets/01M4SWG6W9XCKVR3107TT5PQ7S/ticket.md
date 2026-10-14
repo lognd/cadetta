@@ -2,7 +2,8 @@
 id = "01M4SWG6W9XCKVR3107TT5PQ7S"
 title = "Axis builtins radial, coaxial, parallel and angle_between"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
