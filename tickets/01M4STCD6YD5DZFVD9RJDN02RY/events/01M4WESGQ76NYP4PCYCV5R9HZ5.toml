@@ -1,0 +1,43 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:34:11Z"
+digest = "e72182d620cc86dc9985a0e7fff5641b9c76a94f89ea5b8f4f30343c617641c4"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 51s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ab4dcda9-a812-4898-a1a8-e004e11062b2 with nextest profile: default
+    Starting 7 tests across 8 binaries (366 tests skipped)
+        PASS [   0.026s] cadetta-adapter bindings::tests::implicit_never_in_file_never_r005
+        PASS [   0.030s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.032s] cadetta-adapter bindings::tests::bindings_orphans_r005
+        PASS [   0.276s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.312s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.525s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [  44.601s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  44.603s] 7 tests run: 7 passed, 366 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E '(package(=cadetta) & (test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=unmet_expectation_fails_naming_fixture_doc_and_code))) | (package(=cadetta-adapter) & (test(=bindings::tests::bindings_orphans_r005) | test(=bindings::tests::implicit_never_in_file_never_r005)))'"
+size = 2029
+status = "measured"
+test_count = 7
+tests_digest = "8cab6f1bf12bb52b02b9ec55a48b70b80c5d60415160492f7a042c2f4807b6a0"
+at = "2026-10-14T05:34:11Z"
+actor = "Claude"
+rev = 1

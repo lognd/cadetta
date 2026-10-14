@@ -1,0 +1,30 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:40:08Z"
+digest = "d893a5317981bdfcf9e48e8a9260acdc6a7fa32f1c225a714e67448fd605a10c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 203a521b-6a53-47b6-ab7a-74c06c5f4359 with nextest profile: default
+    Starting 7 tests across 8 binaries (366 tests skipped)
+        PASS [   0.018s] cadetta-adapter bindings::tests::implicit_never_in_file_never_r005
+        PASS [   0.024s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.036s] cadetta-adapter bindings::tests::bindings_orphans_r005
+        PASS [   0.238s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.308s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.375s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        PASS [  81.379s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  81.387s] 7 tests run: 7 passed (1 slow), 366 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E '(package(=cadetta) & (test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=unmet_expectation_fails_naming_fixture_doc_and_code))) | (package(=cadetta-adapter) & (test(=bindings::tests::bindings_orphans_r005) | test(=bindings::tests::implicit_never_in_file_never_r005)))'"
+size = 1175
+status = "measured"
+test_count = 7
+tests_digest = "8cab6f1bf12bb52b02b9ec55a48b70b80c5d60415160492f7a042c2f4807b6a0"
+at = "2026-10-14T05:40:08Z"
+actor = "Claude"
+rev = 1

@@ -1,0 +1,15 @@
+kind = "evidence"
+captured_at = "2026-10-14T05:40:08Z"
+digest = "553202c6ea8be6600ef44ea94f7211aeac80e7378990b80c9e6f6e7c807c1935"
+exit_code = 1
+inline = """
+<worktree>/.venv/bin/python: No module named pytest
+"""
+passed = false
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_alternate_only_and_unwritten_locators_are_skipped adapters/freecad/tests/unit/test_emit.py::test_backend_failure_is_an_rpc_error adapters/freecad/tests/unit/test_emit.py::test_dependency_cycle_is_d003 adapters/freecad/tests/unit/test_emit.py::test_emit_over_json_rpc adapters/freecad/tests/unit/test_emit.py::test_emit_point_mid_mmc_lmc_and_notes adapters/freecad/tests/unit/test_emit.py::test_emit_twice_cells_are_identical_and_headed_by_digests adapters/freecad/tests/unit/test_emit.py::test_emit_twice_is_deterministic adapters/freecad/tests/unit/test_emit.py::test_invalid_and_colliding_aliases_are_diagnostics adapters/freecad/tests/unit/test_emit.py::test_mmc_without_role_is_e010_and_withholds adapters/freecad/tests/unit/test_emit.py::test_paths_follow_dependencies_then_smallest_path adapters/freecad/tests/unit/test_emit.py::test_q004_respects_policy_precision adapters/freecad/tests/unit/test_emit.py::test_q004_withholds_the_file adapters/freecad/tests/unit/test_emit.py::test_ref_mode_follows_alias_of_to_the_referent_global adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_any_global_is_a_diagnostic adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_global_creates_the_mangled_global_once adapters/freecad/tests/unit/test_emit.py::test_ref_to_names_the_target_global adapters/freecad/tests/unit/test_emit.py::test_several_locators_each_written_and_ref_mode_references_global adapters/freecad/tests/unit/test_emit.py::test_sign_negates_and_dimensionless_is_bare adapters/freecad/tests/unit/test_emit.py::test_star_binding_emits_instance_zero adapters/freecad/tests/unit/test_emit.py::test_unknown_bound_path_is_r005"
+size = 52
+status = "measured"
+at = "2026-10-14T05:40:08Z"
+actor = "Claude"
+rev = 1

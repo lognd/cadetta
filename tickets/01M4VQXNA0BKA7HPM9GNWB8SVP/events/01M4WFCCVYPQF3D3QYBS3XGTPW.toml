@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:42:31Z"
+digest = "a180e464d03dcd8a47a415c225bdb15d16039fdba6c48f9f1f2231b91ca9093a"
+exit_code = 0
+inline = """
+
+running 7 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test empty_or_missing_corpus_is_tolerated ... ok
+test unmet_expectation_fails_naming_fixture_doc_and_code ... ok
+test nested_doc_directories_are_discovered ... ok
+test known_gap_tolerates_failure_and_flags_stale_entry ... ok
+test conformance_corpus_matches_the_spec has been running for over 60 seconds
+test conformance_corpus_matches_the_spec ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 467.89s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.60s
+     Running tests/conformance.rs (target/debug/deps/conformance-1aa792a4e961733b)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance"
+size = 750
+status = "measured"
+at = "2026-10-14T05:42:31Z"
+actor = "Claude"
+rev = 1
