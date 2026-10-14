@@ -8,8 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-14T20:53:29Z"
+updated = "2026-10-14T20:53:30Z"
 scope = ["crates/cadetta-sema/src/**", "crates/cadetta-geometry/src/float.rs", "docs/spec/geometry.md", "changelog.d/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SWG6Z6JVP5Z7H38HWJP0GQ"
 
 [[acceptance]]
 text = "Given a non-locating ScrewJoint whose two parts are placement parent and child in either order, whatever datum the placement names, when lowered, then the edge carries an EdgeFloat with [+-float] on x and y and a rotation [+-theta] about z through the onto centroid (geometry.md 5.2; takes over ~HWJP0GQ acceptance 2)"
