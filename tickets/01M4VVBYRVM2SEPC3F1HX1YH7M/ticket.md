@@ -2,13 +2,13 @@
 id = "01M4VVBYRVM2SEPC3F1HX1YH7M"
 title = "One module-prefix matcher: CLI --module mishandles dotted package prefixes"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-14T00:00:35Z"
-updated = "2026-10-14T00:00:35Z"
+updated = "2026-10-14T02:07:32Z"
 scope = ["crates/cadetta-cli/src/scope.rs", "crates/cadetta-adapter/src/scope.rs"]
 
 [[acceptance]]
