@@ -7,8 +7,9 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:24:05Z"
-updated = "2026-10-14T03:28:49Z"
-scope = ["frob.toml"]
+updated = "2026-10-14T03:28:58Z"
+labels = ["creates:.cargo/config.toml"]
+scope = [".cargo/config.toml"]
 
 [[acceptance]]
 text = "Given frob.toml, when frob test --all runs on a machine whose system Python is 3.10, then the Rust step does not build cadetta-py under 3.10 and the run passes"
