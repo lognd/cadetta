@@ -2,13 +2,14 @@
 id = "01M4SXS3VRYKPBZJ391SQRBG5C"
 title = "Upstream attestations and trust roles"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:15Z"
-updated = "2026-10-14T21:28:46Z"
+updated = "2026-10-14T21:30:10Z"
 persona = "product engineer"
 capability = "accept a library sign-off I did not make"
 labels = ["creates:crates/cadetta-obligations/src/trust.rs"]
