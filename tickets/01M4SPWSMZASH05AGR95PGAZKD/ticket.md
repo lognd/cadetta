@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T11:52:25Z"
+updated = "2026-10-14T11:52:26Z"
 persona = "design engineer"
 capability = "push changed params, regenerate and read back headless"
 outcome_text = "sync is hands-free"
 labels = ["creates:adapters/freecad/src/drive.py"]
-scope = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py"]
+scope = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py"]
 
 [[links]]
 kind = "blocks"
