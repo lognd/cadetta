@@ -1,0 +1,8 @@
+kind = "transition"
+from = "in-progress"
+to = "done"
+outcome = "done"
+reason = "test-only conformance run; gh and grimble absent"
+at = "2026-10-14T12:26:13Z"
+actor = "Claude"
+rev = 1
