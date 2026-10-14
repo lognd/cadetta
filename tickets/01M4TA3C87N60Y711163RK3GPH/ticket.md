@@ -27,7 +27,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check reports an unstartable adapter as R008 at info severity and exits 0"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "cadetta check passes adapter-reported R009 diagnostics through"
