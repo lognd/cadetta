@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A component fit declaration (including its [lo .. hi] required range) is evaluated by the pipeline and appears in the lowered IR Component.fits with its clearance, fit_type and required bound", "F004 fires through the pipeline (analyze / cadetta check) when a fit clearance lies entirely outside its required range, and does not fire when the range is satisfied"]
+moved = []
+at = "2026-10-14T22:05:34Z"
+actor = "lognd"
+rev = 1
