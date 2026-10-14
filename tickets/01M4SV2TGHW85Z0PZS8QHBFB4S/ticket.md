@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-14T12:44:21Z"
+updated = "2026-10-14T12:44:22Z"
 persona = "design engineer"
 capability = "connect to SOLIDWORKS through the adapter protocol"
 labels = ["creates:adapters/solidworks/Cadetta.SolidWorks.sln", "creates:adapters/solidworks/Directory.Build.props", "creates:adapters/solidworks/src/cadetta-solidworks/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "creates:adapters/solidworks/README.md", "creates:adapters/solidworks/**"]
@@ -32,5 +32,5 @@ bound = true
 
 [[acceptance]]
 text = "Given CI, when the solidworks workflow runs, then Core, the executable (against a fake session) and the tests build and pass on Linux and Windows without SOLIDWORKS"
-bound = false
+bound = true
 +++

@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T12:44:22Z"
+digest = "68438f4b7bde9d906cfaab686b30109bb1568bf87f2635ccda7e5e7f207c7a9d"
+provider = "file"
+ref = ".github/workflows/solidworks.yml"
+size = 2549
+status = "measured"
+at = "2026-10-14T12:44:22Z"
+actor = "Claude"
+rev = 1
