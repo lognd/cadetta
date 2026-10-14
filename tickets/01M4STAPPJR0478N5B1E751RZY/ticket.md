@@ -2,7 +2,8 @@
 id = "01M4STAPPJR0478N5B1E751RZY"
 title = "std citation audit"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4STANRAWHV180C7RH0NQAY9"
