@@ -2,7 +2,8 @@
 id = "01M4V436F7JRA8P832RH0EKNH2"
 title = "Geometry diagnostics G001-G008 emitted by check"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
