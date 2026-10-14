@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py"]
+new = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py"]
+at = "2026-10-14T11:52:26Z"
+actor = "Claude"
+rev = 1

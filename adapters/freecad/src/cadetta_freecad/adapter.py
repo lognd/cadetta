@@ -2,6 +2,7 @@
 
 # frob:ticket 01M4SPWSCZ06W3EW6B1RDPEZRQ
 # frob:ticket 01M4SPWSFF7Z2K6FSGSZ1N30JH
+# frob:ticket 01M4SPWSJ81C9Q9BV5AYXHEWE6
 
 from __future__ import annotations
 
@@ -16,6 +17,8 @@ from cadetta.adapter import (
     FileDigest,
     InitializeParams,
     InitializeResult,
+    ReadParams,
+    ReadResult,
     RpcError,
 )
 from cadetta.logging import get_logger
@@ -24,13 +27,14 @@ from pydantic import TypeAdapter, ValidationError
 from typani import Err, Ok, Result
 
 from cadetta_freecad import __version__
-from cadetta_freecad.backend import FreeCadBackend, LiveBackend
+from cadetta_freecad.backend import FreeCadBackend, LiveBackend, NativeDocument
 from cadetta_freecad.emit import (
     SHEET_NAME,
     EmitPolicy,
     build_plan,
     digest_plan,
 )
+from cadetta_freecad.read import observed_from_documents
 
 __all__ = ["NATIVE_UNITS", "PRECISION", "FreeCadAdapter"]
 
@@ -118,3 +122,25 @@ class FreeCadAdapter(Adapter):
         digest = digest_plan(plan)
         _log.info("emitted %s (%s)", policy.out, digest)
         return Ok(EmitResult(files=[FileDigest(path=policy.out, digest=digest)]))
+
+    def read(self, params: ReadParams) -> Result[ReadResult, RpcError]:
+        """Read aliases and dimensions of the given FCStd files into observed IR."""
+        files = params.source.files
+        if files is None or params.source.session is not None:
+            _log.error("read supports file sources only")
+            return Err(
+                RpcError(
+                    code=INVALID_PARAMS,
+                    message="read supports source.files only; sessions are unsupported",
+                )
+            )
+        docs: list[NativeDocument] = []
+        for path in files:
+            match self._backend.read_document(path):
+                case Err(why):
+                    return Err(RpcError(code=INTERNAL_ERROR, message=why))
+                case Ok(doc):
+                    docs.append(doc)
+        observed, diags = observed_from_documents(docs, native_unit=NATIVE_UNITS)
+        _log.info("read %d files into %s", len(docs), observed.package.name)
+        return Ok(ReadResult(observed=observed, diagnostics=diags))

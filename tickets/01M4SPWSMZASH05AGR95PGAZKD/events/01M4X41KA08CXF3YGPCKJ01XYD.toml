@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: Claude in cadetta-wt/5PGAZKD; scope: adapters/freecad/src/drive.py; ttl 7200s"
+at = "2026-10-14T11:51:26Z"
+actor = "Claude"
+rev = 1
