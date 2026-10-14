@@ -2,12 +2,12 @@
 id = "01M4WGAD346CJ141PB5JK240ZV"
 title = "Wire instances.rs default_impl to defaults::resolve_default"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "Claude"
 created = "2026-10-14T06:06:44Z"
-updated = "2026-10-14T06:06:44Z"
+updated = "2026-10-14T06:06:55Z"
 idempotency_key = "wire-default-impl"
 scope = ["crates/cadetta-sema/src/instances.rs"]
 

@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-14T06:06:52Z"
+digest = "4c8c618b8c7fc115379d949b7863a2cf558ed8b4b39f610a46c8ffe559df738b"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 4 items
+
+bindings/python/tests/test_logging_bridge.py ....                        [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1523572-0.xml --------------
+============================== 4 passed in 0.29s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_logging_bridge.py::test_core_call_emits_debug_records bindings/python/tests/test_logging_bridge.py::test_emit_keeps_level_and_target bindings/python/tests/test_logging_bridge.py::test_emit_respects_logger_level bindings/python/tests/test_logging_bridge.py::test_logger_name_maps_rust_paths"
+size = 513
+status = "measured"
+test_count = 4
+tests_digest = "ab23f5af09dfa3ca85777e99f27093e9002edea2fec6f5ac015874aeec939f37"
+at = "2026-10-14T06:06:52Z"
+actor = "Claude"
+rev = 1
