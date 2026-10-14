@@ -10,7 +10,8 @@ def test_version_prints_to_stdout(capsys):
 
 
 # frob:tests adapters/freecad/src/cadetta_freecad/__main__.py::main kind=unit
-def test_no_arguments_is_a_usage_error_and_logged(capsys, caplog):
-    assert main([]) == 2
-    assert capsys.readouterr().out == ""
-    assert "not implemented" in caplog.text
+def test_no_arguments_serves_the_adapter(monkeypatch):
+    from cadetta_freecad import __main__ as m
+
+    monkeypatch.setattr(m.FreeCadAdapter, "run", classmethod(lambda cls: 0))
+    assert main([]) == 0
