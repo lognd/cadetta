@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:10:24Z"
+updated = "2026-10-14T21:11:01Z"
 persona = "design engineer"
 capability = "pull CAD edits back into source"
 idempotency_key = "replan14:ad-imp-upd"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given --write, when run, then sources are rewritten and the lock updated; otherwise nothing is written (config-cli.md 3)"
-bound = false
+bound = true
 +++
