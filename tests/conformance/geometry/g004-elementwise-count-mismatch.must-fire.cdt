@@ -4,7 +4,7 @@ model Foot {
 
 model Base {
   datum underside = origin
-  foot_sites: [Point2 on underside; 2] = rect_pattern(3, 1, 20mm, 0mm)
+  foot_sites: [Point2 on underside; 2] = rect_pattern(2, 1, 20mm, 0mm)
 }
 
 assembly Frame {

@@ -753,21 +753,6 @@ ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
-fixture = "geometry/aligned-pairs-by-index"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/aligned-tolerance-range"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet; the computation is cadetta_geometry::aligned"
-
-[[gap]]
-fixture = "geometry/aligned-xy-plane-only"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
 fixture = "geometry/angle-between-axes"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
@@ -813,16 +798,6 @@ ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
 
 [[gap]]
-fixture = "geometry/g004-aligned-count"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g004-joint-at-onto-count"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
 fixture = "geometry/i001-interface-datum-omitted"
 ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
@@ -839,11 +814,6 @@ reason = "geometry expression is not evaluated by this stage yet"
 
 [[gap]]
 fixture = "geometry/parallel-ignores-offset"
-ticket = "~MCJWA2D"
-reason = "geometry expression is not evaluated by this stage yet"
-
-[[gap]]
-fixture = "geometry/tolerance-after-array-per-coordinate"
 ticket = "~MCJWA2D"
 reason = "geometry expression is not evaluated by this stage yet"
 
@@ -1081,21 +1051,6 @@ reason = "table/fit/variant pipeline not implemented yet"
 fixture = "packages/use-brace-tree"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
-fixture = "geometry/g004-elementwise-count-mismatch"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g004-array-target-no-array-anchor"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
-
-[[gap]]
-fixture = "geometry/g004-indexed-target-array-anchor"
-ticket = "~H0EKNH2"
-reason = "lint does not emit the geometry diagnostic yet"
 
 [[gap]]
 fixture = "emitters/sw-equations/global-created-unit-from-locator"
@@ -3231,3 +3186,8 @@ reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md
 fixture = "geometry/g005-locating-joint-no-float"
 ticket = "~HWJP0GQ"
 reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
+
+[[gap]]
+fixture = "geometry/g004-joint-at-onto-count"
+ticket = "~6MJE3XF"
+reason = "ScrewJoint at/onto count check (G004) is not implemented; the pairing is the joint's, not a placement's"

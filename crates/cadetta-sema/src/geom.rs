@@ -17,10 +17,13 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use cadetta_geometry::aligned::{AlignedError, aligned};
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
-use cadetta_geometry::instances::{check_unplaced, expand_instances};
+use cadetta_geometry::instances::{
+    Operand, check_elementwise, check_unplaced, expand_instances, operands,
+};
 use cadetta_geometry::placement::{
     Assembly, Cover, Node, PlacementCode, PointInfo, build_assembly, check_assembly,
 };
@@ -28,9 +31,10 @@ use cadetta_geometry::point::{DatumId, Point, Pos, point_type};
 use cadetta_geometry::reexpress::{FrameTable, Located, ReexpressError, Reexpressed};
 use cadetta_geometry::transform::Coord;
 use cadetta_syntax::ast::{
-    Component, ComponentClass, Expr, ExprKind, MemberKind, Part, Type, TypeKind,
+    Arg, Component, ComponentClass, Expr, ExprKind, MemberKind, Part, Type, TypeKind,
 };
 use cadetta_syntax::span::Span;
+use cadetta_units::compare::{Note, Verdict};
 use cadetta_units::{Affine, Dim, RootOp};
 use tracing::{debug, trace, warn};
 
@@ -406,6 +410,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 span: d.span,
             });
         }
+        self.report_elementwise(id, comp, a);
         let mut counts: BTreeMap<String, u64> = BTreeMap::new();
         collect_counts(self, id, comp, a, &a.name, &mut counts);
         for d in check_unplaced(a, &|path: &str| counts.get(path).copied()) {
@@ -418,8 +423,57 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Emits G004 for array placements whose anchor operands do not match the part array.
+    // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
+    fn report_elementwise(&mut self, id: &ComponentId, comp: &'p Component, a: &Assembly) {
+        let mut sc = Scope {
+            ctx: Ctx {
+                package: id.package.clone(),
+                module: id.modules.clone(),
+                component: Some(id.item.clone()),
+                locals: Vec::new(),
+            },
+            locals: Vec::new(),
+        };
+        self.g004_nodes.clear();
+        for p in &a.placements {
+            let target = match (p.cover, find_part(comp, &p.node)) {
+                (Cover::Whole, Some(part)) => self.part_count(id, part),
+                _ => None,
+            };
+            let mut lens: Vec<(Operand, Option<u64>)> = Vec::new();
+            for o in operands(p) {
+                let n = match &o {
+                    Operand::Point(e) => match self.eval(&mut sc, e) {
+                        Ok(Val::Array(v)) => u64::try_from(v.len()).ok(),
+                        _ => None,
+                    },
+                    Operand::Datum(node) => {
+                        find_part(comp, node).and_then(|part| self.part_count(id, part))
+                    }
+                };
+                lens.push((o, n));
+            }
+            let len = |o: &Operand| lens.iter().find(|(k, _)| k == o).and_then(|(_, n)| *n);
+            for d in check_elementwise(p, target, &len) {
+                warn!(node = %p.node, "geometry: G004 placement is not expanded");
+                self.g004_nodes.insert(p.node.clone());
+                self.diagnostics.push(EvalDiagnostic {
+                    code: "G004",
+                    severity: Severity::Error,
+                    message: d.to_string(),
+                    span: d.span,
+                });
+            }
+        }
+    }
+
     fn evaluate_placements(&mut self, id: &ComponentId, comp: &'p Component, a: &Assembly) {
         for p in &a.placements {
+            if self.g004_nodes.contains(&p.node) {
+                debug!(node = %p.node, "geometry: skipping a placement that raised G004");
+                continue;
+            }
             let count = match (p.cover, find_part(comp, &p.node)) {
                 (Cover::Whole, Some(part)) => self.part_count(id, part),
                 _ => None,
@@ -572,56 +626,69 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .then(|| name.clone())
     }
 
-    /// `p in D` (geometry.md 3): re-expresses a point, or an array of points, in datum `D`.
-    pub(super) fn reexpress(&mut self, sc: &mut Scope, l: &Expr, r: &Expr, span: Span) -> R<Val> {
+    /// `aligned(a, b, allowance)` as a check condition (geometry.md 5): the verdict and notes.
+    ///
+    /// The pairing, the datum conversion and the tolerance bound are `cadetta_geometry::aligned`;
+    /// this adapts the operands (declared point arrays) and maps its errors to G001, G003, G004.
+    // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
+    pub(super) fn aligned_condition(
+        &mut self,
+        sc: &mut Scope,
+        args: &[Arg],
+        span: Span,
+    ) -> R<(Verdict, Vec<Note>)> {
+        let xs = super::func::arity("aligned", args, 3, span)?;
         let Some(comp_name) = sc.ctx.component.clone() else {
-            return Err(diag("EVAL", span, "`in` is evaluated inside a component"));
+            return Err(diag(
+                "EVAL",
+                span,
+                "`aligned` is evaluated inside a component",
+            ));
         };
         let here = CanonPath::item(&sc.ctx.package, &sc.ctx.module, &comp_name);
         let comp = self
             .resolver
             .component(&here)
             .ok_or_else(|| diag("EVAL", span, "the enclosing component is unknown"))?;
-        let Some((right, _)) = self.walk_ref(comp, &sc.ctx, r, r.span)? else {
-            // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
-            if let Some(name) = self.part_local_datum(comp, &sc.ctx, r) {
-                return Err(diag(
-                    "G003",
-                    r.span,
-                    format!(
-                        "G003: `{name}` is a part-local datum met in an assembly; name it as `part.{name}` (geometry.md 3)"
-                    ),
-                ));
+        let a = self.point_operand(sc, comp, xs[0])?;
+        let b = self.point_operand(sc, comp, xs[1])?;
+        let allowance = self.quant(sc, xs[2])?;
+        let (table, _) = self.frame_tables(&here, comp, span)?;
+        let report =
+            aligned(&table, &a, &b, &allowance.form).map_err(|e| aligned_diag(&e, span))?;
+        let mut notes: Vec<Note> = Vec::new();
+        for m in &report.pairs {
+            for n in &m.comparison.notes {
+                if !notes.contains(n) {
+                    notes.push(*n);
+                }
             }
-            return Err(diag("EVAL", r.span, "the right side of `in` names a datum"));
+        }
+        debug!(verdict = ?report.verdict, pairs = report.pairs.len(), "geometry: aligned condition");
+        Ok((report.verdict, notes))
+    }
+
+    /// A declared point or point array (`lid.holes`) as a position in its own datum.
+    fn point_operand(&mut self, sc: &mut Scope, comp: &'p Component, e: &Expr) -> R<Pos> {
+        let Some((Ref::Value { parts, tag }, _)) = self.walk_ref(comp, &sc.ctx, e, e.span)? else {
+            return Err(diag(
+                "EVAL",
+                e.span,
+                "`aligned` takes declared points or point arrays",
+            ));
         };
-        let Ref::Datum {
-            parts: rparts,
-            name: rname,
-        } = right
-        else {
-            return Err(diag("EVAL", r.span, "the right side of `in` names a datum"));
-        };
-        let to = DatumId::new(datum_id(&rparts, &rname));
-        let (left_val, from_tag) = match self.walk_ref(comp, &sc.ctx, l, l.span)? {
-            Some((Ref::Datum { parts, name }, _)) => {
-                let id = datum_id(&parts, &name);
-                let zero = Val::Quantity(Quant::constant(
-                    Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0),
-                    cadetta_units::Magnitude::new(cadetta_units::Rational::from_int(0), 0),
-                ));
-                (Val::Point(vec![zero.clone(), zero.clone(), zero]), id)
-            }
-            Some((Ref::Value { parts, tag }, _)) => (self.eval(sc, l)?, datum_id(&parts, &tag)),
-            None => {
-                return Err(diag(
-                    "EVAL",
-                    l.span,
-                    "the left side of `in` is a declared point or a datum",
-                ));
-            }
-        };
-        let id = component_id(&here);
+        let val = self.eval(sc, e)?;
+        to_pos(&val, &DatumId::new(datum_id(&parts, &tag)), false, e.span)
+    }
+
+    /// The frame tables of `comp` over the tolerance forms and over the exact nominals.
+    fn frame_tables(
+        &mut self,
+        here: &CanonPath,
+        comp: &'p Component,
+        span: Span,
+    ) -> R<(FrameTable, FrameTable)> {
+        let id = component_id(here);
         let g = component_geometry(self.resolver, &id, comp);
         let scope_assembly = comp.class == ComponentClass::Assembly
             || comp
@@ -671,6 +738,59 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             (Ok(f), Ok(n)) => (f, n),
             (Err(e), _) | (_, Err(e)) => return Err(reexpress_diag(&e, span)),
         };
+        Ok((ft_form, ft_nominal))
+    }
+
+    /// `p in D` (geometry.md 3): re-expresses a point, or an array of points, in datum `D`.
+    pub(super) fn reexpress(&mut self, sc: &mut Scope, l: &Expr, r: &Expr, span: Span) -> R<Val> {
+        let Some(comp_name) = sc.ctx.component.clone() else {
+            return Err(diag("EVAL", span, "`in` is evaluated inside a component"));
+        };
+        let here = CanonPath::item(&sc.ctx.package, &sc.ctx.module, &comp_name);
+        let comp = self
+            .resolver
+            .component(&here)
+            .ok_or_else(|| diag("EVAL", span, "the enclosing component is unknown"))?;
+        let Some((right, _)) = self.walk_ref(comp, &sc.ctx, r, r.span)? else {
+            // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
+            if let Some(name) = self.part_local_datum(comp, &sc.ctx, r) {
+                return Err(diag(
+                    "G003",
+                    r.span,
+                    format!(
+                        "G003: `{name}` is a part-local datum met in an assembly; name it as `part.{name}` (geometry.md 3)"
+                    ),
+                ));
+            }
+            return Err(diag("EVAL", r.span, "the right side of `in` names a datum"));
+        };
+        let Ref::Datum {
+            parts: rparts,
+            name: rname,
+        } = right
+        else {
+            return Err(diag("EVAL", r.span, "the right side of `in` names a datum"));
+        };
+        let to = DatumId::new(datum_id(&rparts, &rname));
+        let (left_val, from_tag) = match self.walk_ref(comp, &sc.ctx, l, l.span)? {
+            Some((Ref::Datum { parts, name }, _)) => {
+                let id = datum_id(&parts, &name);
+                let zero = Val::Quantity(Quant::constant(
+                    Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0),
+                    cadetta_units::Magnitude::new(cadetta_units::Rational::from_int(0), 0),
+                ));
+                (Val::Point(vec![zero.clone(), zero.clone(), zero]), id)
+            }
+            Some((Ref::Value { parts, tag }, _)) => (self.eval(sc, l)?, datum_id(&parts, &tag)),
+            None => {
+                return Err(diag(
+                    "EVAL",
+                    l.span,
+                    "the left side of `in` is a declared point or a datum",
+                ));
+            }
+        };
+        let (ft_form, ft_nominal) = self.frame_tables(&here, comp, span)?;
         let from = DatumId::new(from_tag);
         let run = |ft: &FrameTable, nominal: bool| -> R<Reexpressed> {
             let pos = to_pos(&left_val, &from, nominal, l.span)?;
@@ -723,6 +843,16 @@ fn collect_node(n: &Node, out: &mut Vec<GeoMember>) {
     if let Some(sub) = &n.sub {
         collect_members(sub, out);
     }
+}
+
+fn aligned_diag(e: &AlignedError, span: Span) -> Fail {
+    let code = match e.code() {
+        Some("G001") => "G001",
+        Some("G003") => "G003",
+        Some("G004") => "G004",
+        _ => "EVAL",
+    };
+    diag(code, span, e.to_string())
 }
 
 fn reexpress_diag(e: &ReexpressError, span: Span) -> Fail {

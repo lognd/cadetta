@@ -368,6 +368,8 @@ pub struct Evaluator<'r, 'p> {
     geom_components: Vec<CanonPath>,
     /// Instance counts of evaluated `part name[N]` slots, by part path.
     part_counts: BTreeMap<CanonPath, u64>,
+    /// Part nodes of the current component whose placement raised G004 (not expanded).
+    g004_nodes: BTreeSet<String>,
     done: BTreeMap<CanonPath, Option<Evaluated>>,
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
@@ -422,6 +424,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             defs,
             geom_components,
             part_counts: BTreeMap::new(),
+            g004_nodes: BTreeSet::new(),
             done: BTreeMap::new(),
             in_progress: BTreeSet::new(),
             next_var: 0,
@@ -579,9 +582,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         match &e.kind {
             ExprKind::Tolerance(inner, terms) => {
-                let var = self.fresh_var();
-                let q = self.tolerance(sc, inner, terms, var, e.span)?;
-                Ok(owned(Val::Quantity(q), Some(var), span))
+                let (v, var) = self.tolerance_val(sc, inner, terms, e.span)?;
+                Ok(owned(v, var, span))
             }
             ExprKind::Binary(BinOp::Range, l, r) => {
                 let var = self.fresh_var();
@@ -738,10 +740,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
             ExprKind::Index(base, idx) => self.index(sc, base, idx, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
-            ExprKind::Tolerance(inner, terms) => {
-                let var = self.fresh_var();
-                Ok(Val::Quantity(self.tolerance(sc, inner, terms, var, span)?))
-            }
+            ExprKind::Tolerance(inner, terms) => Ok(self.tolerance_val(sc, inner, terms, span)?.0),
             ExprKind::Call {
                 callee,
                 optional: false,
@@ -851,6 +850,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         span: Span,
     ) -> R<Quant> {
         let base = self.quant(sc, inner)?;
+        self.tolerance_on(sc, base, terms, var, span)
+    }
+
+    /// Applies a tolerance bracket to an already evaluated base quantity.
+    fn tolerance_on(
+        &mut self,
+        sc: &mut Scope,
+        base: Quant,
+        terms: &[TolTerm],
+        var: VarId,
+        span: Span,
+    ) -> R<Quant> {
         let dim = base.dim().clone();
         let zero = Magnitude::new(Rational::from_int(0), 0);
         let mut devs: Vec<Magnitude> = Vec::new();
@@ -899,6 +910,48 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             form,
             nominal: base.nominal,
         })
+    }
+
+    // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
+    /// Evaluates a tolerance suffix; on an array or point it gives every coordinate its own source variable (geometry.md 3).
+    fn tolerance_val(
+        &mut self,
+        sc: &mut Scope,
+        inner: &Expr,
+        terms: &[TolTerm],
+        span: Span,
+    ) -> R<(Val, Option<VarId>)> {
+        if matches!(inner.kind, ExprKind::Array(_) | ExprKind::Call { .. }) {
+            let v = self.eval(sc, inner)?;
+            if matches!(v, Val::Array(_) | Val::Point(_)) {
+                debug!("evaluator: tolerance on a composite value, one variable per coordinate");
+                return Ok((self.tolerate_coords(sc, v, terms, span)?, None));
+            }
+        }
+        let var = self.fresh_var();
+        let q = self.tolerance(sc, inner, terms, var, span)?;
+        Ok((Val::Quantity(q), Some(var)))
+    }
+
+    /// Recurses into arrays and points, tolerancing each quantity leaf independently.
+    fn tolerate_coords(&mut self, sc: &mut Scope, v: Val, terms: &[TolTerm], span: Span) -> R<Val> {
+        match v {
+            Val::Array(items) => items
+                .into_iter()
+                .map(|i| self.tolerate_coords(sc, i, terms, span))
+                .collect::<R<Vec<_>>>()
+                .map(Val::Array),
+            Val::Point(items) => items
+                .into_iter()
+                .map(|i| self.tolerate_coords(sc, i, terms, span))
+                .collect::<R<Vec<_>>>()
+                .map(Val::Point),
+            Val::Quantity(q) => {
+                let var = self.fresh_var();
+                Ok(Val::Quantity(self.tolerance_on(sc, q, terms, var, span)?))
+            }
+            other => Ok(other),
+        }
     }
 
     fn range(&mut self, sc: &mut Scope, l: &Expr, r: &Expr, var: VarId, span: Span) -> R<Quant> {

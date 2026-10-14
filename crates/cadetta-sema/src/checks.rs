@@ -193,6 +193,11 @@ fn join(a: Outcome, b: Outcome, f: fn(Verdict, Verdict) -> Verdict) -> Outcome {
     }
 }
 
+/// True when `callee` is the bare name `name`.
+fn is_named(callee: &Expr, name: &str) -> bool {
+    matches!(&strip(callee).kind, ExprKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == name)
+}
+
 fn units_op(op: AstCmp) -> CmpOp {
     match op {
         AstCmp::Eq => CmpOp::Eq,
@@ -350,6 +355,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 acc.ok_or_else(|| diag("EVAL", e.span, "a comparison needs an operator"))
             }
             ExprKind::Satisfies(x, p) => self.satisfies(sc, x, p, e.span),
+            // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
+            ExprKind::Call { callee, args, .. } if is_named(callee, "aligned") => {
+                let (verdict, notes) = self.aligned_condition(sc, args, e.span)?;
+                Ok(Outcome { verdict, notes })
+            }
             _ => Err(diag(
                 "EVAL",
                 e.span,
