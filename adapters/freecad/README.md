@@ -7,7 +7,8 @@ protocol messages only and every log line goes to stderr
 
 `FreeCadAdapter` subclasses `cadetta.adapter.Adapter` (bindings.md 3.4),
 so the JSON-RPC loop is the base class's. `initialize` reports
-capabilities emit, read and drive, native unit mm and precision 6; the
-other methods are planned in the FreeCAD adapter epic. FreeCAD is reached
+capabilities emit, read and drive, native unit mm and precision 6. `emit`
+writes bound values as Spreadsheet aliases (`emit.py`, adapters.md 6.1);
+read and drive are planned in the FreeCAD adapter epic. FreeCAD is reached
 through the `FreeCadBackend` seam (`backend.py`) so the protocol is
 testable without FreeCAD. `cadetta-freecad --version` prints the version.

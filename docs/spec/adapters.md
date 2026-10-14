@@ -547,6 +547,57 @@ FreeCAD is the reference external adapter for CI: it is the only target
 that exercises `read` and `drive` without a license or Windows, so the
 protocol's conformance tests run against it.
 
+### 6.1 FreeCAD emit
+
+`emit` writes one Spreadsheet object named `cadetta` into the FCStd
+document at `policy.out` (opened, or created when missing; the sheet is
+replaced whole, nothing else in the document is touched). The adapter
+reaches FreeCAD only through a backend seam, so the cell plan is a pure
+function of the request.
+
+- **Request.** `bindings` is the list of `ir.Binding` records this run
+  emits (the host has already restricted it). `policy` is an object with
+  unknown keys rejected: `out` (required FCStd path), `precision`
+  (default 6), `point` (default `nominal`; a member's `emit` attribute
+  wins), `paths` (optional canonical-path filter), `names` (path to
+  created mangled name, supplied by the host so tools never reimplement
+  mangling, 3.1), `alias_of` (path to the referent path whose global a
+  `ref` locator follows) and `native_unit` (default `mm`). A malformed
+  policy, or a design IR without a digest, is a JSON-RPC error -32602.
+- **Layout.** Row 1 is the header: `A1` `cadetta emit freecad VERSION`,
+  `B1` `ir=blake3:HEX`, `C1` `bindings=blake3:HEX`. Each later row has
+  the canonical path in `A`, the value or formula in `B` carrying the
+  alias, and the note in `C` (authored literal when it differs from the
+  written value, `emit=POINT` when not nominal, then the citation).
+- **Values.** A dimensioned value is the formula `=DEC UNIT`
+  (`=12.029 mm`), a Count or Ratio the bare number. `DEC` is exact at
+  `precision`, trailing zeros trimmed; a value not representable there,
+  or an inexact one (Q006), is Q004 and is never rounded. `sign = -1`
+  negates the written value (zero stays unsigned). `mmc` or `lmc` on a
+  member without a hole or shaft role is E010.
+- **Locators.** `global` locators and `dimension` locators are written
+  as alias cells, globals first. In emit a `dimension` locator is a
+  Spreadsheet alias; driving a sketch constraint is `drive`'s job.
+  A `ref`-mode dimension is the formula `=GLOBAL`, where GLOBAL is
+  `ref_to`, else the path's first global locator, else the first global
+  locator of the `alias_of` referent, else the path's own created global
+  (`policy.names`), written once as a value cell before its dimension
+  rows. `property`, `frame` and `instance` locators and locators with
+  `for` set are not written by emit. A `[*]` binding emits instance 0.
+- **Order.** Paths are written in dependency order, the smallest
+  canonical path first among the ready ones, following dependencies
+  through unbound members (emitters/sw-equations.md 2); a cycle is D003.
+- **Failure.** A diagnostic of error severity (Q004, E010, D003, R013
+  for a repeated alias, R005 for a bound path missing from the design,
+  R015 for an alias that is not a valid Spreadsheet alias, collides with
+  a cell address or has no resolvable `ref` target) withholds the whole
+  document: nothing is written and `files` is empty.
+- **Determinism.** The reported digest is the blake3 of the canonical
+  cell plan (cell, alias, content per line), not of the FCStd bytes: a
+  saved FCStd is a zip that FreeCAD stamps with the save time, so it is
+  the one place 4's byte-determinism rule applies to the plan instead of
+  the file.
+
 ## 7. Import
 
 `import` is the adoption path for existing CAD files. It never writes
