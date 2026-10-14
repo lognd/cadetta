@@ -8,11 +8,11 @@ points = 3
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:15Z"
-updated = "2026-10-14T12:41:03Z"
+updated = "2026-10-14T12:41:17Z"
 persona = "maintainer"
 capability = "run the packages.md fixtures in CI"
 labels = ["creates:tests/conformance_packages.rs"]
-scope = ["tests/conformance_packages.rs"]
+scope = ["tests/conformance_packages.rs", "crates/cadetta-cli/Cargo.toml", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
