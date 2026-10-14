@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T14:38:58Z"
-updated = "2026-10-14T14:46:53Z"
+updated = "2026-10-14T14:47:04Z"
 scope = ["bindings/python/python/cadetta/project_ops.py", "bindings/python/tests/test_project_ops.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/sync.py", "docs/spec/bindings.md"]
 +++
 
