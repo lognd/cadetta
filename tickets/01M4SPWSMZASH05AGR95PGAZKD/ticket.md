@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T11:58:48Z"
+updated = "2026-10-14T11:58:49Z"
 persona = "design engineer"
 capability = "push changed params, regenerate and read back headless"
 outcome_text = "sync is hands-free"
@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a rebuild failure, when regen runs, then R004 regen-failed is returned"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a session with unsaved user changes, when driving, then the adapter refuses and reports (OQ-8)"
