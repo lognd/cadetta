@@ -2,7 +2,8 @@
 id = "01M4XE4D01DYBCVVVQKVYC8E1J"
 title = "bindings/python tests/unit/test_core.py uses 'sync' as the unknown command; sync is now a real verb"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
