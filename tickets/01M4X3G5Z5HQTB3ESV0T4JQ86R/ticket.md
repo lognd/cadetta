@@ -2,7 +2,8 @@
 id = "01M4X3G5Z5HQTB3ESV0T4JQ86R"
 title = "clippy needless_borrows_for_generic_args in cadetta-cli pkg/resolve.rs"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "Claude"
