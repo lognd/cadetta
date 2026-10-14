@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a design that instantiates std::fasteners ScrewJoint with M5 medium, when cadetta check runs, then the joint's members evaluate to the ISO table values with no E002/EVAL errors", "Given T[x] with a non-literal integer/key index, when evaluated, then the table row is selected per language.md", "Given IsoDefault table-by-name values (IsoDrills, IsoEngagement, IsoTapColumns, Iso4762Len), when resolved, then they resolve without E002"]
+moved = []
+at = "2026-10-14T02:10:45Z"
+actor = "lognd"
+rev = 1
