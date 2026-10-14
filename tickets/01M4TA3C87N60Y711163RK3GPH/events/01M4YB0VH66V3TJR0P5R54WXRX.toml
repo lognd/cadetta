@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T23:12:16Z"
+digest = "bc784178a032dbd3b61712e261bf781057652f43c167191046a3291e0917b9e0"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.44s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8672b0d0-b3c3-4174-9e6e-4b972386f490 with nextest profile: default
+    Starting 1 test across 47 binaries (1229 tests skipped)
+        PASS [   1.645s] cadetta cmd::check_drift::tests::check_reports_r001_when_cad_and_design_both_moved
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.647s] 1 test run: 1 passed, 1229 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "check_reports_r001_when_cad_and_design_both_moved"
+size = 839
+status = "measured"
+test_count = 1
+tests_digest = "af095e7caebc7f0110c6ea58c238a5a7c86376ed79b496e0d95dcd749f057d7e"
+at = "2026-10-14T23:12:16Z"
+actor = "lognd"
+rev = 1
