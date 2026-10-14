@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-14T01:54:41Z"
+updated = "2026-10-14T02:06:44Z"
 scope = ["crates/cadetta-ir/**", "crates/cadetta-sema/**", "crates/cadetta-geometry/**", "tests/conformance/**", "docs/spec/**"]
 
 [[links]]
