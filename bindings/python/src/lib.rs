@@ -3,6 +3,7 @@
 
 use pyo3::prelude::*;
 
+mod logging;
 mod quantity;
 
 /// Run the `cadetta` command line with `argv` (arguments after the
@@ -28,6 +29,7 @@ fn core_version() -> &'static str {
 fn _core(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(run_cli, m)?)?;
     m.add_function(wrap_pyfunction!(core_version, m)?)?;
+    logging::register(m)?;
     quantity::register(m)?;
     Ok(())
 }

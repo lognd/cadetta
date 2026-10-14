@@ -21,6 +21,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 cadetta.workspace = true
+cadetta-log.workspace = true
 cadetta-syntax.workspace = true
 cadetta-units.workspace = true
 pyo3.workspace = true

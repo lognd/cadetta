@@ -1,5 +1,6 @@
 """Type stubs for the Rust extension module (bindings/python)."""
 
+from collections.abc import Callable
 from fractions import Fraction
 
 def run_cli(argv: list[str]) -> int:
@@ -7,6 +8,9 @@ def run_cli(argv: list[str]) -> int:
 
 def core_version() -> str:
     """The Rust core's version string, e.g. `cadetta 0.1.0`."""
+
+def install_log_bridge(callback: Callable[[int, str, str], object]) -> bool:
+    """Bridge tracing events to callback(level, target, message); False if taken."""
 
 class QuantityError(Exception):
     """A quantity operation violated the kind, dimension or parse rules."""

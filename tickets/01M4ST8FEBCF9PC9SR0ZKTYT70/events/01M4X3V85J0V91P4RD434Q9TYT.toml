@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T11:47:59Z"
+digest = "80b3de9eb120985f47b5e0ac8dec2bf69aba3650a68a1e8f09d337279de64a64"
+provider = "file"
+ref = "docs/schemas/why.json"
+size = 3105
+status = "measured"
+at = "2026-10-14T11:47:59Z"
+actor = "Claude"
+rev = 1

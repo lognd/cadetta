@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: Claude in cadetta-wt/ZKTYT70; scope: docs/schemas/impact.json, docs/schemas/compare.json, crates/cadetta-obligations/src/schema.rs; ttl 7200s"
+at = "2026-10-14T11:42:16Z"
+actor = "Claude"
+rev = 1
