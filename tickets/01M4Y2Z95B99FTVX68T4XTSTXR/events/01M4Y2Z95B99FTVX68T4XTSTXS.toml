@@ -1,0 +1,9 @@
+kind = "create"
+title = "Lower ScrewJoint at/onto to EdgeFloat in sema"
+type = "task"
+category = "todo"
+priority = "medium"
+body = "found while working ~HWJP0GQ: pattern points, parent/child detection, variable ids, FloatMode::Without for own aligned check"
+at = "2026-10-14T20:51:57Z"
+actor = "lognd"
+rev = 1
