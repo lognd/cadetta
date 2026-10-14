@@ -2,7 +2,8 @@
 id = "01M4SWP896V9Y8K5H3EJKWR1T0"
 title = "Mutation and IO methods"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
