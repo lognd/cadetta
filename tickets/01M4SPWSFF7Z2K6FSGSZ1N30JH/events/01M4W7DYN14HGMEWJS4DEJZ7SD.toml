@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Spec decisions (adapters.md 6.1): policy shape (out, precision, point, paths, names, alias_of, native_unit); sheet layout (header row, path/value/note columns); dimension locators are alias cells in emit; Q004/E010/D003/R013/R005/R015 withhold the whole document; digest is over the canonical cell plan not the FCStd bytes (FreeCAD stamps save time). Scope widened from the nonexistent adapters/freecad/src/emit.py to the real package paths. blake3 dependency added to adapters/freecad for digests."
+at = "2026-10-14T03:31:23Z"
+actor = "lognd"
+rev = 1
