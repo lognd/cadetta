@@ -2,7 +2,8 @@
 id = "01M4SWP8BCQ00WCDJ5FQ2QMDX9"
 title = "Module functions and reload"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
