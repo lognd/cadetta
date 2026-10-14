@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:04:27Z"
+digest = "3464ac35c8570a8bcd48abdd4d678de000195855ea21e7193b574b94683ca435"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a2f2d618-f237-496f-80ac-3910e6547745 with nextest profile: default
+    Starting 1 test across 45 binaries (1193 tests skipped)
+        PASS [   0.005s] cadetta-adapter atomic::tests::failed_restore_is_reported
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 1193 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "atomic::tests::failed_restore_is_reported"
+size = 553
+status = "measured"
+test_count = 1
+tests_digest = "0151aedb9bddcdd8fb246e6531720178728484fc9a7975ecc85c2ca46cc8b328"
+at = "2026-10-14T21:04:27Z"
+actor = "lognd"
+rev = 1
