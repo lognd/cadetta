@@ -131,6 +131,7 @@ dependencies = [
  "jsonschema",
  "lsp-server",
  "lsp-types",
+ "regex",
  "serde",
  "serde_json",
  "thiserror",
