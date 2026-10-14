@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Emit lints G005 and G008 from placement float"
+new = "Emit lint G008 from the placement float"
+at = "2026-10-14T20:53:42Z"
+actor = "lognd"
+rev = 1

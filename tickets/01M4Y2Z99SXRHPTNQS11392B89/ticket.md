@@ -1,6 +1,6 @@
 +++
 id = "01M4Y2Z99SXRHPTNQS11392B89"
-title = "Emit lints G005 and G008 from placement float"
+title = "Emit lint G008 from the placement float"
 type = "task"
 category = "todo"
 priority = "medium"
@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-14T20:53:39Z"
+updated = "2026-10-14T20:53:42Z"
 labels = ["creates:crates/cadetta-lint/src/rules/g008.rs", "creates:tests/conformance/lints/G008/**"]
 scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**"]
 
