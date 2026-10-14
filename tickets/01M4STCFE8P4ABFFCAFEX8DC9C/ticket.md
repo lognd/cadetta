@@ -2,7 +2,8 @@
 id = "01M4STCFE8P4ABFFCAFEX8DC9C"
 title = "Conformance run for solvers"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAMTNCTC1MRHE5VYP9QYN"
