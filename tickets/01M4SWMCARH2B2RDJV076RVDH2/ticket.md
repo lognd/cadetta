@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:07:45Z"
+updated = "2026-10-14T21:09:19Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 idempotency_key = "replan14:ad-r8910"
@@ -28,6 +28,6 @@ text = "Given a busy or modal CAD session, when pushing, then R009 fails the fil
 bound = true
 
 [[acceptance]]
-text = "Given a read-only or protected file, when pushing, then R010 is reported per file (adapters.md 4)"
-bound = true
+text = "Given rejected, driven or suppressed locators, when pushing, then R010 is reported once per file and the other locators proceed (adapters.md 2.3, 4)"
+bound = false
 +++

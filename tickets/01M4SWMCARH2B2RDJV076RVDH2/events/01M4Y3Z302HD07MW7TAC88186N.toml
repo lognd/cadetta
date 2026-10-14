@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Given an unavailable adapter, when sync runs, then R008 is an error and exit 2; when check runs it is info (adapters.md 4; config-cli.md 3)", "Given a busy or modal CAD session, when pushing, then R009 fails the file without touching it (adapters.md 4)", "Given a read-only or protected file, when pushing, then R010 is reported per file (adapters.md 4)"]
+new = ["Given an unavailable adapter, when sync runs, then R008 is an error and exit 2; when check runs it is info (adapters.md 4; config-cli.md 3)", "Given a busy or modal CAD session, when pushing, then R009 fails the file without touching it (adapters.md 4)", "Given rejected, driven or suppressed locators, when pushing, then R010 is reported once per file and the other locators proceed (adapters.md 2.3, 4)"]
+moved = [1, 2, 0]
+at = "2026-10-14T21:09:19Z"
+actor = "lognd"
+rev = 1
