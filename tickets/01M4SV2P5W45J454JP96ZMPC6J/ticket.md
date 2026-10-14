@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:03Z"
-updated = "2026-10-14T13:17:21Z"
+updated = "2026-10-14T13:46:15Z"
 persona = "maintainer"
 capability = "prove the binding adds no semantics"
 outcome_text = "binding and CLI cannot disagree"
 labels = ["creates:bindings/python/tests/test_conformance.py"]
-scope = ["bindings/python/tests/test_conformance.py"]
+scope = ["bindings/python/tests/test_conformance.py", "adapters/freecad/tests/live/test_roundtrip_live.py"]
 
 [[links]]
 kind = "blocked-by"
