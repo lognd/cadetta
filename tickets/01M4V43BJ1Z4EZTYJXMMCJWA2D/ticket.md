@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-14T01:43:56Z"
+updated = "2026-10-14T01:53:37Z"
 scope = ["crates/cadetta-ir/**", "crates/cadetta-sema/**", "crates/cadetta-geometry/**", "tests/conformance/**", "docs/spec/**"]
 
 [[links]]
@@ -16,7 +16,11 @@ kind = "blocked-by"
 target = "01M4VS6WG57MAD0T8GK956NGG9"
 
 [[acceptance]]
-text = "Given the remaining geometry fixtures (angle-between-axes, coaxial-offset, coaxial-tilt-included, joint-undecided-when-loosened, joint-violated-over-allowance, parallel-ignores-offset), when cadetta check runs, then they pass and their known-gaps entries are removed"
+text = "Given the axis fixtures (angle-between-axes, coaxial-offset, coaxial-tilt-included, parallel-ignores-offset), when cadetta check runs, then they pass and their known-gaps entries are removed"
+bound = false
+
+[[acceptance]]
+text = "Given the joint fixtures (joint-undecided-when-loosened, joint-violated-over-allowance), when they are not yet evaluable, then their known-gaps entries are retargeted to ~6MJE3XF"
 bound = false
 +++
 
