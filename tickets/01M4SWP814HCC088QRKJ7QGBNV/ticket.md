@@ -8,12 +8,12 @@ points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:49:40Z"
+updated = "2026-10-14T12:50:24Z"
 persona = "design engineer"
 capability = "model a bolt pattern once"
 idempotency_key = "replan14:sd-screw"
 labels = ["creates:std/src/fasteners.cdt"]
-scope = ["std/src/fasteners.cdt", "crates/cadetta-sema/src/instances.rs", "docs/spec/stdlib.md", "tests/conformance/known-gaps.toml"]
+scope = ["std/src/fasteners.cdt", "crates/cadetta-sema/src/instances.rs", "docs/spec/stdlib.md", "tests/conformance/known-gaps.toml", "std/src/fasteners/screwjoint.cdt"]
 
 [[links]]
 kind = "blocked-by"
