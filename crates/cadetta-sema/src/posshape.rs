@@ -274,7 +274,7 @@ mod tests {
     const TWO: &str = "datum top = origin.offset(z = 5mm)\n  a: Point2 on origin = Point2(1mm, 1mm)\n  b: Point2 on top = Point2(2mm, 2mm)\n";
 
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
-    // frob:tests posshape::PosCheck
+    // frob:tests crates/cadetta-sema/src/posshape.rs::PosCheck kind=unit
     #[test]
     fn subtraction_across_datums_is_g001() {
         let c = codes(&format!("model M {{\n  {TWO}  d = a - b\n}}\n"));
@@ -282,7 +282,7 @@ mod tests {
     }
 
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
-    // frob:tests posshape::PosCheck
+    // frob:tests crates/cadetta-sema/src/posshape.rs::PosCheck kind=unit
     #[test]
     fn distance_across_datums_is_g001() {
         let c = codes(&format!("model M {{\n  {TWO}  d = distance(a, b)\n}}\n"));
@@ -290,7 +290,7 @@ mod tests {
     }
 
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
-    // frob:tests posshape::PosCheck
+    // frob:tests crates/cadetta-sema/src/posshape.rs::PosCheck kind=unit
     #[test]
     fn comparison_across_datums_is_g001_without_eval_noise() {
         let c = codes(&format!(
@@ -300,7 +300,7 @@ mod tests {
     }
 
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
-    // frob:tests posshape::PosCheck
+    // frob:tests crates/cadetta-sema/src/posshape.rs::PosCheck kind=unit
     #[test]
     fn re_expressed_operands_share_a_datum() {
         let c = codes(&format!(
@@ -310,7 +310,7 @@ mod tests {
     }
 
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
-    // frob:tests posshape::PosCheck
+    // frob:tests crates/cadetta-sema/src/posshape.rs::PosCheck kind=unit
     #[test]
     fn array_plus_point_is_g001() {
         let src = "model M {\n  holes: [Point2 on origin; 4] = rect_pattern(2, 2, 40mm, 20mm)\n  p: Point2 on origin = Point2(1mm, 1mm)\n  s = holes + p\n}\n";
