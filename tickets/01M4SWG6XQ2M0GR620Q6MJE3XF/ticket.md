@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T03:36:59Z"
+updated = "2026-10-14T03:37:00Z"
 persona = "design engineer"
 capability = "screw here and prove alignment"
 idempotency_key = "replan14:geo-screwpos"
 labels = ["creates:std/src/fasteners/screwjoint_position.cdt"]
-scope = ["std/src/fasteners/screwjoint_position.cdt", "std/**"]
+scope = ["std/src/fasteners/screwjoint_position.cdt", "std/**", "crates/cadetta-sema/**"]
 
 [[links]]
 kind = "blocked-by"
