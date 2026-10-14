@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T20:53:39Z"
+updated = "2026-10-14T20:55:11Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
@@ -37,7 +37,7 @@ bound = false
 
 [[acceptance]]
 text = "Given a placement edge with non-locating joints between parent and child supplied as EdgeFloat, when placed by cadetta-geometry, then the edge carries [+-float] on x and y and a rotation [+-theta] about z through the onto centroid, theta = 2 * asin(float / s), 180deg when float >= s (float.rs; geometry.md 5.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a one-point pattern or s = 0, when evaluated in cadetta-geometry, then theta is 180deg and float::unconstrained_rotation (the G008 condition) is true"
