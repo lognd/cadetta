@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/6MJE3XF; scope: std/src/fasteners/screwjoint_position.cdt; ttl 7200s"
+at = "2026-10-14T03:36:55Z"
+actor = "lognd"
+rev = 1
