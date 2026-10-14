@@ -1,0 +1,8 @@
+kind = "land"
+base_ref = "refs/heads/main"
+commit = "884d92b869a86535be0cf188bc5025335bf62951"
+branch = "ticket/NWB8SVP"
+pushed = false
+at = "2026-10-14T05:51:40Z"
+actor = "Claude"
+rev = 1

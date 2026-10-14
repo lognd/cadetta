@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:55:37Z"
+digest = "8445f256b7fa63efb5c9dcc04a487568c3f439c9cee77520947f2ce57b1c9f63"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test language_fixtures_match_the_spec ... ok
+test language_corpus_is_not_empty ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 40.77s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.41s
+     Running ../../tests/conformance_language.rs (target/debug/deps/conformance_language-9d7db8fdd8778838)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_language"
+size = 508
+status = "measured"
+at = "2026-10-14T05:55:37Z"
+actor = "Claude"
+rev = 1

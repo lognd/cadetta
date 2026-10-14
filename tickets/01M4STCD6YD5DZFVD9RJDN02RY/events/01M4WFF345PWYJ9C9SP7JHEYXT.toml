@@ -1,0 +1,8 @@
+kind = "transition"
+from = "in-progress"
+to = "done"
+outcome = "done"
+reason = "test-only conformance runner, no user-visible change"
+at = "2026-10-14T05:50:52Z"
+actor = "Claude"
+rev = 1

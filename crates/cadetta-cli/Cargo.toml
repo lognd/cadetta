@@ -20,6 +20,14 @@ path = "src/lib.rs"
 name = "cadetta"
 path = "src/main.rs"
 
+[[test]]
+name = "conformance_quantities"
+path = "../../tests/conformance_quantities.rs"
+
+[[test]]
+name = "conformance_language"
+path = "../../tests/conformance_language.rs"
+
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true

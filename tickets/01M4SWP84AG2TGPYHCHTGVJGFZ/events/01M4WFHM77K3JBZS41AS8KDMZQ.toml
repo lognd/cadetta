@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/src/defaults.rs"]
+new = ["crates/cadetta-sema/src/defaults.rs", "crates/cadetta-sema/src/lib.rs"]
+at = "2026-10-14T05:53:11Z"
+actor = "Claude"
+rev = 1
