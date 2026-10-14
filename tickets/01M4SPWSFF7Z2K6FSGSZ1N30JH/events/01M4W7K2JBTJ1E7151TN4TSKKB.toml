@@ -1,0 +1,37 @@
+kind = "evidence"
+captured_at = "2026-10-14T03:34:08Z"
+digest = "9f1a43aa7cb1e50cdf9ebba95b53b2419abdf6b37b50b2903a9af54971b3a5b9"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 99f1edaa-9fb5-45c9-9b43-b98870f6755e with nextest profile: default
+    Starting 15 tests across 7 binaries (353 tests skipped)
+        PASS [   0.021s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.024s] cadetta cmd::emit::tests::usage_errors_exit_two
+        PASS [   0.012s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.014s] cadetta-adapter bindings::tests::bindings_orphans_r005
+        PASS [   0.006s] cadetta-adapter bindings::tests::implicit_never_in_file_never_r005
+        PASS [   0.043s] cadetta cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings
+        PASS [   0.045s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.049s] cadetta cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths
+        PASS [   0.050s] cadetta cmd::emit::tests::honours_out_and_adapter_selection
+        PASS [   0.050s] cadetta cmd::emit::tests::explicit_binding_resolves_name_collision
+        PASS [   0.049s] cadetta cmd::emit::tests::unrepresentable_value_exits_one
+        PASS [   0.053s] cadetta cmd::emit::tests::native_name_collision_exits_one
+        PASS [   0.055s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.060s] cadetta cmd::emit::tests::writes_equations_for_bound_members_only
+        PASS [   0.106s] cadetta cmd::emit::tests::json_validates_against_emit_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.110s] 15 tests run: 15 passed, 353 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-adapter -E '(package(=cadetta) & (test(=cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths) | test(=cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings) | test(=cmd::emit::tests::explicit_binding_resolves_name_collision) | test(=cmd::emit::tests::honours_out_and_adapter_selection) | test(=cmd::emit::tests::json_validates_against_emit_schema) | test(=cmd::emit::tests::native_name_collision_exits_one) | test(=cmd::emit::tests::unrepresentable_value_exits_one) | test(=cmd::emit::tests::usage_errors_exit_two) | test(=cmd::emit::tests::writes_equations_for_bound_members_only) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::usage_errors_exit_two_with_message))) | (package(=cadetta-adapter) & (test(=bindings::tests::bindings_orphans_r005) | test(=bindings::tests::implicit_never_in_file_never_r005)))'"
+size = 1795
+status = "measured"
+test_count = 15
+tests_digest = "05e4c75cde4fd4a201bcd2529f4d6e1f865c653744a3e1d79c9f5dc1dfd8dd9d"
+at = "2026-10-14T03:34:08Z"
+actor = "lognd"
+rev = 1
