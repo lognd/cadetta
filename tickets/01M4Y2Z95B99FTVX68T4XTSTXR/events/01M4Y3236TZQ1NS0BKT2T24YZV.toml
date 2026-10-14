@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a non-locating ScrewJoint whose two parts are placement parent and child in either order, whatever datum the placement names, when lowered, then the edge carries an EdgeFloat with [+-float] on x and y and a rotation [+-theta] about z through the onto centroid (geometry.md 5.2; takes over ~HWJP0GQ acceptance 2)", "Given the joint's own aligned check, when evaluated, then it places the tree with FloatMode::Without for that joint; joints between parts that are not parent and child add no float (geometry.md 5.2; takes over ~HWJP0GQ acceptance 5)", "Given several joints on one edge, when lowered, then the pattern points, variable ids and locating flags reach float::select unchanged (takes over the lowering half of ~HWJP0GQ acceptance 4)"]
+moved = []
+at = "2026-10-14T20:53:29Z"
+actor = "lognd"
+rev = 1

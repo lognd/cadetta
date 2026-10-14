@@ -1,0 +1,7 @@
+kind = "field"
+field = "body"
+old = "found while working ~HWJP0GQ: pattern points, parent/child detection, variable ids, FloatMode::Without for own aligned check"
+new = "Found while working ~HWJP0GQ. The geometry crate evaluates EdgeFloat (float.rs, Assembly.floats, place_assembly_reading); nothing yet builds EdgeFloat from a ScrewJoint at/onto: pattern points, parent/child detection in either order, variable ids, and FloatMode::Without(joint path) for the joint's own aligned check."
+at = "2026-10-14T20:53:29Z"
+actor = "lognd"
+rev = 1
