@@ -2,7 +2,8 @@
 id = "01M4SV2P2ZX7BMWKB98CJ14FY0"
 title = "Bridge Rust tracing to Python logging"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
