@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:29:01Z"
+digest = "a76b60f95faf50bed2e401f38742206241d97ecc558f3952f0b8cf3f8c3cdcf6"
+exit_code = 0
+passed = true
+provider = "nextest"
+ref = "--workspace"
+size = 99259
+status = "measured"
+test_count = 1091
+tests_digest = "67e1e02ffd6f43bd131f41736065b7a1a1d32fafe54117c4501ab6d2e3dd95be"
+uri = "dir:.git/frob/artifacts/a76b60f95faf50bed2e401f38742206241d97ecc558f3952f0b8cf3f8c3cdcf6"
+at = "2026-10-14T05:29:01Z"
+actor = "Claude"
+rev = 1
