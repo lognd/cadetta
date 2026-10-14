@@ -12,6 +12,10 @@ scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint
 [[acceptance]]
 text = "cadetta check spawns each readable adapter and reports R001 when the CAD value and the design both moved from the lock base"
 bound = false
+
+[[acceptance]]
+text = "cadetta check is clean of R lints when the CAD value matches the design"
+bound = false
 +++
 
 found while working ~E631Y52. check drift is an injectable hook, default no-op.
