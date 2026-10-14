@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:46:31Z"
-updated = "2026-10-14T01:52:36Z"
+updated = "2026-10-14T01:53:12Z"
 persona = "design engineer"
 capability = "have sync verify datums and placements against CAD"
 outcome_text = "a part that sits elsewhere in CAD is R001"
@@ -20,7 +20,7 @@ target = "01M4VQXPDA4TEKE455FNYB5TXC"
 
 [[acceptance]]
 text = "Given a design with bound datums and placements and an adapter reporting frames and instances, when cadetta sync runs, then composed transforms from the evaluated IR are converted to Mat34 and compared through geometry_bind (R001 on mismatch), and datums = create pushes frames (adapters.md 3.4)"
-bound = false
+bound = true
 +++
 
 Left by ~2T1ZYBN: comparison, planning and schema exist; no CLI code feeds them. Needs ~NYB5TXC (geometry in the evaluated IR).
