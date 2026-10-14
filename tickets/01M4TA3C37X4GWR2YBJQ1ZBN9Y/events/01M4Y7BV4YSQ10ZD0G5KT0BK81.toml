@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T22:08:39Z"
+digest = "55be496b06582755f7c7b1b9ad8752c60eb90ec217a46eb49668bf3b6e02c6f4"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d49b85f7-0ebd-44fd-8cf4-ed4655724b56 with nextest profile: default
+    Starting 1 test across 47 binaries (1221 tests skipped)
+        PASS [   0.022s] cadetta::derived_fits range_fit_reaches_the_ir_with_required_bound_and_fires_f004
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.026s] 1 test run: 1 passed, 1221 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "range_fit_reaches_the_ir_with_required_bound"
+size = 647
+status = "measured"
+test_count = 1
+tests_digest = "0316ebbcae6ac7289d44f0b4203f95a9064a558b2dbe9850f5b9626cc8e21d94"
+at = "2026-10-14T22:08:39Z"
+actor = "lognd"
+rev = 1
