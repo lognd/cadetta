@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T11:47:59Z"
+digest = "7bb738e7a87a21afab5eadbf01e5012bffd4c82a99a3c8d3ef4c261fc3a6e734"
+provider = "file"
+ref = "docs/schemas/obligations.json"
+size = 1391
+status = "measured"
+at = "2026-10-14T11:47:59Z"
+actor = "Claude"
+rev = 1

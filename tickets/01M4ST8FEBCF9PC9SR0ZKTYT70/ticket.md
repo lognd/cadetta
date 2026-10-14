@@ -8,7 +8,7 @@ points = 5
 parent = "01M4ST8EJWTGQM9CMVBJVBATJT"
 reporter = "lognd"
 created = "2026-10-13T05:02:44Z"
-updated = "2026-10-14T11:47:04Z"
+updated = "2026-10-14T11:47:59Z"
 persona = "tool integrator"
 capability = "consume query output from other tools such as frob"
 idempotency_key = "replan13:Query schemas impact.json and compare.json"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given the verbs obligations, why, swap, lock and diag, when emitting JSON, then each has a generated schema in docs/schemas (bindings.md 1; obligations.md 5)"
-bound = false
+bound = true
 +++
