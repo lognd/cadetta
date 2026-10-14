@@ -8,11 +8,11 @@ fixtures with `entry = python` are replayed against the binding API itself.
 """
 
 # frob:ticket 01M4SV2P5W45J454JP96ZMPC6J
-# frob:tests cadetta.project::Project.check
-# frob:tests cadetta.project::Project.evaluate
-# frob:tests cadetta.project::Project.emit
-# frob:tests cadetta.project::Project.solve
-# frob:tests cadetta.project::Project.ack
+# frob:tests bindings/python/python/cadetta/project.py::Project.check
+# frob:tests bindings/python/python/cadetta/project.py::Project.evaluate
+# frob:tests bindings/python/python/cadetta/project.py::Project.emit
+# frob:tests bindings/python/python/cadetta/project.py::Project.solve
+# frob:tests bindings/python/python/cadetta/project.py::Project.ack
 
 from __future__ import annotations
 
