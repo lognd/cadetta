@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import json
 import re
 import subprocess
 import sys
@@ -12,13 +11,14 @@ import tomllib
 from pathlib import Path
 from typing import TypeVar
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict
 from typani import Err, Ok, Result
 
 from cadetta._core import Quantity
 from cadetta.logging import get_logger
 from cadetta.models import bind as bind_model
 from cadetta.models import cite_list, explain, ir, names
+from cadetta.result import JSON_EXITS, report_from_exit
 
 __all__ = [
     "CadettaError",
@@ -33,8 +33,6 @@ _log = get_logger(__name__)
 
 _M = TypeVar("_M", bound=BaseModel)
 
-# CLI exit codes whose stdout is a JSON document: 0 clean, 1 findings.
-_JSON_EXITS = (0, 1)
 # `bind` keyword fields to CLI flags where the name is not just `--<name with hyphens>`.
 _BIND_FLAGS = {"for_alternate": "--for"}
 _BIND_FIELDS = frozenset(
@@ -252,13 +250,10 @@ class Project:
         """One lint catalog entry (`explain CODE`)."""
         return self._model(explain.ExplainOutput, ["explain", code])
 
-    def _run(
-        self, verb: list[str], *, global_format: bool = True
-    ) -> Result[str, ProjectError]:
-        """Run a CLI verb at this project and return its JSON stdout.
-
-        Exit 0 and 1 are results (1 means findings); anything else is `ProjectError`.
-        """
+    def _spawn(
+        self, verb: list[str], *, global_format: bool
+    ) -> subprocess.CompletedProcess[str]:
+        """Run a CLI verb at this project and capture its output."""
         argv = [sys.executable, "-m", "cadetta"]
         if global_format:
             argv += ["--format", "json"]
@@ -270,7 +265,17 @@ class Project:
         done = subprocess.run(argv, capture_output=True, text=True, check=False)
         if done.stderr:
             _log.debug("cadetta %s stderr: %s", verb[0], done.stderr.strip()[:2000])
-        if done.returncode not in _JSON_EXITS:
+        return done
+
+    def _run(
+        self, verb: list[str], *, global_format: bool = True
+    ) -> Result[str, ProjectError]:
+        """Run a CLI verb and return its text stdout; exit 0 and 1 are results.
+
+        Any other exit is `ProjectError`.
+        """
+        done = self._spawn(verb, global_format=global_format)
+        if done.returncode not in JSON_EXITS:
             _log.error("cadetta %s exited %d", verb[0], done.returncode)
             return Err(
                 ProjectError(
@@ -282,15 +287,16 @@ class Project:
     def _model(
         self, model: type[_M], verb: list[str], *, global_format: bool = True
     ) -> Result[_M, ProjectError]:
-        """Run a verb and validate its JSON stdout as the generated `model`."""
-        out = self._run(verb, global_format=global_format)
-        if isinstance(out, Err):
-            return out
-        try:
-            return Ok(model.model_validate(json.loads(out.unwrap())))
-        except (json.JSONDecodeError, ValidationError) as exc:
-            _log.error("unreadable %s output: %s", verb[0], exc)
-            return Err(ProjectError(message=f"unreadable {verb[0]} output: {exc}"))
+        """Run a verb and map its exit and JSON stdout via `report_from_exit`."""
+        done = self._spawn(verb, global_format=global_format)
+        return report_from_exit(
+            model,
+            verb[0],
+            done.returncode,
+            done.stdout,
+            done.stderr,
+            lambda message: ProjectError(message=message),
+        )
 
     def cite_list(
         self, format: str = "json", module: str | None = None

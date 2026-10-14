@@ -2,18 +2,18 @@
 id = "01M4SV2P2ZX7BMWKB98CJ14FY0"
 title = "Bridge Rust tracing to Python logging"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-13T05:17:04Z"
+updated = "2026-10-14T05:58:06Z"
 persona = "Python user"
 capability = "see cadetta core logs through the logging module"
 outcome_text = "diagnostics integrate with my application"
-labels = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py"]
-scope = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py"]
+labels = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py", "creates:bindings/python/tests/test_logging_bridge.py"]
+scope = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "bindings/python/tests/test_logging_bridge.py"]
 
 [[links]]
 kind = "blocked-by"

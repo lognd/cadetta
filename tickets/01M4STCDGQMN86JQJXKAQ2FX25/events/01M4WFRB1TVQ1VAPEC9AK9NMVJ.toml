@@ -1,0 +1,5 @@
+kind = "changelog-exempt"
+reason = "test-only conformance run, no user-visible change"
+at = "2026-10-14T05:56:24Z"
+actor = "Claude"
+rev = 1
