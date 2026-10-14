@@ -1,0 +1,7 @@
+kind = "field"
+field = "body"
+old = "found while working ~HWJP0GQ: use float::unconstrained_rotation; G005 relates to ~XZD1Y50"
+new = "Found while working ~HWJP0GQ. float::unconstrained_rotation is the G008 condition; this ticket emits the lint from the lowered EdgeFloat. G005 stays in ~XZD1Y50."
+at = "2026-10-14T20:53:30Z"
+actor = "lognd"
+rev = 1
