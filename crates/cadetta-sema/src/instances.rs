@@ -115,7 +115,7 @@ pub(super) fn materialise<'p>(
                     let MemberKind::Part(part) = &m.kind else {
                         continue;
                     };
-                    if part.count.is_some() || part.primary.is_some() {
+                    if part.primary.is_some() {
                         continue;
                     }
                     let Some((callee_path, callee)) =
@@ -124,6 +124,19 @@ pub(super) fn materialise<'p>(
                         continue;
                     };
                     if callee.params.is_empty() {
+                        continue;
+                    }
+                    if part.count.is_some() {
+                        if let Some(name) = pattern_arg(callee, part.args.as_deref().unwrap_or(&[])) {
+                            out.diagnostics.push(bind_error(
+                                m.span,
+                                format!(
+                                    "`{}` is one part per pattern: `{}[N]` repeats it, so each \
+                                     instance would take the whole `{name}` pattern",
+                                    callee.name.name, part.name.name
+                                ),
+                            ));
+                        }
                         continue;
                     }
                     let parent_ctx = Ctx {
@@ -395,12 +408,27 @@ impl<'p> Site<'_, 'p> {
     }
 }
 
+/// The first supplied argument whose parameter is a `Pattern2` or `Pattern3` (stdlib.md 3: one joint per pattern).
+// frob:ticket 01M4SWP814HCC088QRKJ7QGBNV
+fn pattern_arg(callee: &Component, args: &[ast::Arg]) -> Option<String> {
+    callee
+        .params
+        .iter()
+        .filter(|p| {
+            matches!(&p.ty.kind, TypeKind::Path(tp)
+                if tp.segments.last().is_some_and(|s| s.name.starts_with("Pattern")))
+        })
+        .map(|p| p.name.name.clone())
+        .find(|n| args.iter().any(|a| a.name.as_ref().is_some_and(|an| an.name == *n)))
+}
+
 fn is_part_type(ty: &ast::Type) -> bool {
     matches!(&ty.kind, TypeKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == "Part")
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
-    /// Reports E006 for each `#![requires(arg, when = cond)]` whose condition holds with `arg` absent.
+    /// Reports E006 for each `#![requires(arg, when = cond)]` whose condition holds with `arg` absent,
+    /// and for each `#![forbids(arg, when = cond)]` whose condition holds with `arg` given.
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     pub(super) fn check_requires(&mut self) {
         let work: Vec<(Rc<InstInfo>, &'p Component, Ctx, Span)> = self
@@ -413,8 +441,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             for attr in comp
                 .inner_attrs
                 .iter()
-                .filter(|a| a.name.name == "requires")
+                .filter(|a| matches!(a.name.name.as_str(), "requires" | "forbids"))
             {
+                let forbids = attr.name.name == "forbids";
                 let [AttrArg::Expr(arg), AttrArg::Named { name, value }] = attr.args.as_slice()
                 else {
                     continue;
@@ -428,7 +457,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let arg_name = &p.segments[0].name;
                 let mut key = info.prefix.clone();
                 key.members = vec![MemberSeg::Name(arg_name.clone())];
-                if self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key) {
+                let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+                if present != forbids {
                     continue;
                 }
                 let saved = self.cur_inst.replace(info.clone());
@@ -440,12 +470,13 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 self.cur_inst = saved;
                 match r {
                     Ok(Val::Bool(true)) => {
+                        let verb = if forbids { "forbids" } else { "requires" };
                         let d = diag(
                             "E006",
                             span,
                             format!(
-                                "`{}` requires `{arg_name}` when {}",
-                                comp.name.name, "its `requires` condition holds"
+                                "`{}` {verb} `{arg_name}` when its `{verb}` condition holds",
+                                comp.name.name
                             ),
                         );
                         if let Fail::Diag(d) = d {
@@ -674,5 +705,47 @@ mod tests {
             !got.iter().any(|(p, _)| p == "p::Top/k.extra_ok"),
             "{got:?}"
         );
+    }
+
+    // frob:tests pattern_argument_on_a_part_array_is_e006
+    // frob:ticket 01M4SWP814HCC088QRKJ7QGBNV
+    #[test]
+    fn pattern_argument_on_a_part_array_is_e006() {
+        let src = |slot: &str| {
+            format!(
+                "assembly Joint(at: Pattern2) {{ sum = 1mm }}\n\
+                 assembly Top {{ holes: [Point2 on origin; 2] = rect_pattern(2, 1, 30mm, 0mm)\n\
+                 part {slot}: Joint(at = holes) }}\n"
+            )
+        };
+        let ev = run(&file(&src("j[4]")));
+        assert!(
+            ev.diagnostics.iter().any(|d| d.code == "E006"),
+            "{:?}",
+            ev.diagnostics
+        );
+        let ev = run(&file(&src("j")));
+        assert!(
+            !ev.diagnostics.iter().any(|d| d.code == "E006"),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
+    // frob:tests forbids_reports_e006_when_the_argument_is_given
+    // frob:ticket 01M4SWP814HCC088QRKJ7QGBNV
+    #[test]
+    fn forbids_reports_e006_when_the_argument_is_given() {
+        let src = |args: &str| {
+            format!(
+                "assembly Joint(a: Length, count?: Count) {{\n\
+                 #![forbids(count, when = a > 1mm)]\n sum = a }}\n\
+                 assembly Top {{ part j: Joint({args}) }}\n"
+            )
+        };
+        let ev = run(&file(&src("a = 4mm, count = 2")));
+        assert!(ev.diagnostics.iter().any(|d| d.code == "E006"), "{:?}", ev.diagnostics);
+        let ev = run(&file(&src("a = 4mm")));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
     }
 }

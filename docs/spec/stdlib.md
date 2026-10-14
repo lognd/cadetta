@@ -192,6 +192,9 @@ A joint is one part per hole pattern, never one per hole: `part
 screws[4]: ScrewJoint(..., at = holes)` is E006 (argument mismatch),
 because each instance would check the whole pattern. The joint owns its screws
 internally.
+The rule is checked on the part site (any array slot whose callee takes a
+`Pattern` argument that the slot supplies) and as `#![forbids(count, when =
+given(at))]` in the joint, so `count` with `at` is E006 too.
 
 A heat-set insert in 0.1.0 is `tap = Vendor` with `into = Brass360` and
 `depth_available` the insert's length; the insert's own hole is a `fit`
