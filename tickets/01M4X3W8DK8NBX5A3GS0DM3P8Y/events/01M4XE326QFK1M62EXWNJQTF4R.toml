@@ -1,0 +1,117 @@
+kind = "evidence"
+captured_at = "2026-10-14T14:42:13Z"
+digest = "8eeb8ff02af47859f53c1f1dab2ca668d5b270ad883afe104be36d93f9fb301b"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4m 18s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d44cefef-3421-43a6-8ffc-347732ad5517 with nextest profile: default
+    Starting 82 tests across 21 binaries (337 tests skipped)
+        PASS [   0.015s] cadetta cmd::ack::tests::ack_attests_at_current_closure_digest
+        PASS [   0.016s] cadetta cmd::ack::tests::repeat_at_same_digest_changes_nothing
+        PASS [   0.017s] cadetta cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested
+        PASS [   0.018s] cadetta cmd::ack::tests::waiver_records_target_digest_without_a_reason
+        PASS [   0.019s] cadetta cmd::check::tests::bad_arguments_are_usage_errors
+        PASS [   0.027s] cadetta cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing
+        PASS [   0.032s] cadetta cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span
+        PASS [   0.048s] cadetta cmd::ack::tests::selector_matching_nothing_exits_two
+        PASS [   0.049s] cadetta cmd::check::tests::drift_lints_run_for_adapters_that_can_read
+        PASS [   0.041s] cadetta cmd::check::tests::obligations_no_role_covers_are_not_raised
+        PASS [   0.056s] cadetta cmd::check::tests::clean_project_exits_zero
+        PASS [   0.039s] cadetta cmd::check::tests::violated_check_is_c001_with_path
+        PASS [   0.040s] cadetta cmd::check::tests::stale_check_obligation_exits_one
+        PASS [   0.011s] cadetta cmd::check_watch::tests::requires_json_format
+        PASS [   0.066s] cadetta cmd::check::tests::ir_lint_families_run_in_check
+        PASS [   0.018s] cadetta cmd::import::tests::never_exits_one
+        PASS [   0.078s] cadetta cmd::check::tests::json_validates_against_check_and_diag_schemas
+        PASS [   0.023s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.030s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.065s] cadetta cmd::check_watch::tests::change_emits_sorted_ndjson_records
+        PASS [   0.055s] cadetta cmd::import::tests::propose_writes_only_the_proposal
+        PASS [   0.039s] cadetta cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record
+        PASS [   0.098s] cadetta cmd::check::tests::release_role_gates_open_obligations_only_with_release
+        PASS [   0.061s] cadetta cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently
+        PASS [   0.014s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.014s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.013s] cadetta cmd::update::tests::run_update_writes_the_lock_and_reports
+        PASS [   0.047s] cadetta cmd::sync::tests::design_change_pushes_regens_reads_back_and_saves
+        PASS [   0.083s] cadetta cmd::import::tests::json_validates_against_import_schema
+        PASS [   0.009s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.009s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.010s] cadetta cmd::why::tests::usage_errors_exit_two
+        PASS [   0.093s] cadetta cmd::check_watch::tests::unchanged_run_emits_nothing_twice
+        PASS [   0.013s] cadetta cmd::update::tests::update_name_touches_only_that_record
+        PASS [   0.115s] cadetta cmd::check::tests::waive_suppresses_through_the_engine_and_unused_waiver_is_w004
+        PASS [   0.071s] cadetta cmd::sync::tests::cad_side_edit_is_drift_and_both_sides_is_r001
+        PASS [   0.010s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.012s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.043s] cadetta cmd::sync::tests::unchanged_design_writes_nothing_and_never_regens
+        PASS [   0.168s] cadetta cmd::check::tests::flags_scope_as_of_watch_and_fail_on
+        PASS [   0.060s] cadetta cmd::sync::tests::read_back_mismatch_fails_and_skips_save
+        PASS [   0.022s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.080s] cadetta cmd::sync::tests::dry_run_and_no_regen_change_what_is_called
+        PASS [   0.012s] cadetta::lsp capabilities_and_exit_codes
+        PASS [   0.042s] cadetta universe::tests::obligations_lists_the_open_check
+        PASS [   0.042s] cadetta universe::tests::why_traces_a_lowered_member
+        PASS [   0.010s] cadetta::lsp format_returns_one_whole_document_edit
+        PASS [   0.011s] cadetta-obligations lock::tests::attest_holds_who_role_when_reason_and_digest_set
+        PASS [   0.010s] cadetta-obligations lock::tests::load_rebuilds_state_and_missing_file_is_empty
+        PASS [   0.009s] cadetta-obligations lock::tests::lock_has_no_solver_records_and_rejects_garbage
+        PASS [   0.009s] cadetta-obligations lock::tests::same_state_same_bytes_and_roundtrip
+        PASS [   0.021s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.071s] cadetta universe::tests::ack_records_an_attestation_for_the_check
+        PASS [   0.010s] cadetta-obligations lock::tests::unsorted_or_duplicate_text_is_not_canonical
+        PASS [   0.011s] cadetta-obligations lock::tests::save_is_byte_exact_and_skips_unchanged
+        PASS [   0.009s] cadetta-obligations lock_merge::tests::invalid_records_are_dropped
+        PASS [   0.014s] cadetta-obligations lock_merge::tests::differing_synced_values_conflict
+        PASS [   0.013s] cadetta-obligations lock_merge::tests::one_sided_synced_change_wins
+        PASS [   0.008s] cadetta-obligations lock_tidy::tests::drops_superseded_and_orphans_only
+        PASS [   0.016s] cadetta-obligations lock_merge::tests::unions_in_sorted_order_with_tie_rule
+        PASS [   0.012s] cadetta-obligations lock_package::tests::pin_writes_package_line_and_replaces
+        PASS [   0.093s] cadetta universe::tests::why_stale_names_the_changed_node_after_an_edit
+        PASS [   0.009s] cadetta-obligations lock_tidy::tests::live_lock_is_untouched_and_resorted
+        PASS [   0.012s] cadetta-obligations lock_verify::tests::current_lock_is_clean
+        PASS [   0.011s] cadetta-obligations lock_verify::tests::merged_lock_lists_invalidated_and_exits_1
+        PASS [   0.105s] cadetta universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone
+        PASS [   0.010s] cadetta-obligations lock_verify::tests::structural_and_policy_findings
+        PASS [   0.009s] cadetta-obligations lock_verify::tests::unknown_role_is_flagged
+        PASS [   0.012s] cadetta-obligations selector::tests::no_match_is_exit_2
+        PASS [   0.008s] cadetta-obligations swap::tests::builds_and_renders_a_swap_line
+        PASS [   0.009s] cadetta-solve results::tests::file_is_sorted_and_named_beside_script
+        PASS [   0.070s] cadetta::lsp save_publishes_package_lint_and_clears
+        PASS [   0.011s] cadetta-obligations staleness::tests::as_built_stale_when_design_changed_after_inspection
+        PASS [   0.006s] cadetta-solve transport::tests::unknown_solver_is_exit_2
+        PASS [   0.007s] cadetta-solve transport::tests::template_rejects_unknown_and_unavailable_placeholders
+        PASS [   0.018s] cadetta-solve transport::tests::failing_solver_error_names_solver
+        PASS [   0.037s] cadetta-obligations lock_verify::tests::json_report_validates_against_lock_schema
+        PASS [   0.141s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.161s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.240s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [   0.995s] cadetta::golden golden_corpus
+        PASS [  25.736s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  25.888s] 82 tests run: 82 passed, 337 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -p cadetta-obligations -p cadetta-solve -E '(package(=cadetta) & (test(=capabilities_and_exit_codes) | test(=cmd::ack::tests::ack_attests_at_current_closure_digest) | test(=cmd::ack::tests::baseline_uses_reason_baseline_and_skips_attested) | test(=cmd::ack::tests::no_match_or_undeclared_role_is_a_usage_error_and_writes_nothing) | test(=cmd::ack::tests::repeat_at_same_digest_changes_nothing) | test(=cmd::ack::tests::selector_matching_nothing_exits_two) | test(=cmd::ack::tests::waiver_records_target_digest_without_a_reason) | test(=cmd::check::tests::bad_arguments_are_usage_errors) | test(=cmd::check::tests::clean_project_exits_zero) | test(=cmd::check::tests::drift_lints_run_for_adapters_that_can_read) | test(=cmd::check::tests::flags_scope_as_of_watch_and_fail_on) | test(=cmd::check::tests::ir_lint_families_run_in_check) | test(=cmd::check::tests::json_validates_against_check_and_diag_schemas) | test(=cmd::check::tests::obligations_no_role_covers_are_not_raised) | test(=cmd::check::tests::q001_style_error_exits_one_with_code_path_and_span) | test(=cmd::check::tests::release_role_gates_open_obligations_only_with_release) | test(=cmd::check::tests::stale_check_obligation_exits_one) | test(=cmd::check::tests::violated_check_is_c001_with_path) | test(=cmd::check::tests::waive_suppresses_through_the_engine_and_unused_waiver_is_w004) | test(=cmd::check_watch::tests::change_emits_sorted_ndjson_records) | test(=cmd::check_watch::tests::requires_json_format) | test(=cmd::check_watch::tests::unchanged_run_emits_nothing_twice) | test(=cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently) | test(=cmd::import::tests::json_validates_against_import_schema) | test(=cmd::import::tests::never_exits_one) | test(=cmd::import::tests::propose_writes_only_the_proposal) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=cmd::swap::tests::unblocked_swap_edits_source_and_writes_lock_record) | test(=cmd::sync::tests::cad_side_edit_is_drift_and_both_sides_is_r001) | test(=cmd::sync::tests::design_change_pushes_regens_reads_back_and_saves) | test(=cmd::sync::tests::dry_run_and_no_regen_change_what_is_called) | test(=cmd::sync::tests::read_back_mismatch_fails_and_skips_save) | test(=cmd::sync::tests::unchanged_design_writes_nothing_and_never_regens) | test(=cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged) | test(=cmd::update::tests::e013_exits_one) | test(=cmd::update::tests::run_update_writes_the_lock_and_reports) | test(=cmd::update::tests::update_name_touches_only_that_record) | test(=cmd::why::tests::usage_errors_exit_two) | test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=format_returns_one_whole_document_edit) | test(=golden_corpus) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=save_publishes_package_lint_and_clears) | test(=syntax_error_then_format_refused) | test(=tests::diagnostics_are_closed_for_errors_and_warnings) | test(=tests::mismatch_names_the_suspect_side) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=universe::tests::ack_ots_records_citation_and_a_file_change_is_s004_alone) | test(=universe::tests::ack_records_an_attestation_for_the_check) | test(=universe::tests::obligations_lists_the_open_check) | test(=universe::tests::why_stale_names_the_changed_node_after_an_edit) | test(=universe::tests::why_traces_a_lowered_member) | test(=unmet_expectation_fails_naming_fixture_doc_and_code))) | (package(=cadetta-obligations) & (test(=lock::tests::attest_holds_who_role_when_reason_and_digest_set) | test(=lock::tests::load_rebuilds_state_and_missing_file_is_empty) | test(=lock::tests::lock_has_no_solver_records_and_rejects_garbage) | test(=lock::tests::same_state_same_bytes_and_roundtrip) | test(=lock::tests::save_is_byte_exact_and_skips_unchanged) | test(=lock::tests::unsorted_or_duplicate_text_is_not_canonical) | test(=lock_merge::tests::differing_synced_values_conflict) | test(=lock_merge::tests::invalid_records_are_dropped) | test(=lock_merge::tests::one_sided_synced_change_wins) | test(=lock_merge::tests::unions_in_sorted_order_with_tie_rule) | test(=lock_package::tests::pin_writes_package_line_and_replaces) | test(=lock_tidy::tests::drops_superseded_and_orphans_only) | test(=lock_tidy::tests::live_lock_is_untouched_and_resorted) | test(=lock_verify::tests::current_lock_is_clean) | test(=lock_verify::tests::json_report_validates_against_lock_schema) | test(=lock_verify::tests::merged_lock_lists_invalidated_and_exits_1) | test(=lock_verify::tests::structural_and_policy_findings) | test(=lock_verify::tests::unknown_role_is_flagged) | test(=selector::tests::no_match_is_exit_2) | test(=staleness::tests::as_built_stale_when_design_changed_after_inspection) | test(=swap::tests::builds_and_renders_a_swap_line))) | (package(=cadetta-solve) & (test(=results::tests::file_is_sorted_and_named_beside_script) | test(=transport::tests::failing_solver_error_names_solver) | test(=transport::tests::template_rejects_unknown_and_unavailable_placeholders) | test(=transport::tests::unknown_solver_is_exit_2)))'"
+size = 8849
+status = "measured"
+test_count = 82
+tests_digest = "7a223b32a28ea46ab289d4363fad1cdab37b81aa62cf3973e2b28a0b27c7d433"
+at = "2026-10-14T14:42:13Z"
+actor = "lognd"
+rev = 1
