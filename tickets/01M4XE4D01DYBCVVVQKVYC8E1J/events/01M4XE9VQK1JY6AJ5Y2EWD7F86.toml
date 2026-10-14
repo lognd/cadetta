@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the unknown-command test, when it runs a verb that does not exist, then run_cli returns usage error 2"]
+moved = []
+at = "2026-10-14T14:50:44Z"
+actor = "lognd"
+rev = 1
