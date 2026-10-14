@@ -60,6 +60,10 @@ path = "../../tests/conformance_lints.rs"
 name = "conformance_geometry"
 path = "../../tests/conformance_geometry.rs"
 
+[[test]]
+name = "conformance_emitters_json"
+path = "../../tests/conformance_emitters_json.rs"
+
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true
