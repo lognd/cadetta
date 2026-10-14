@@ -2,13 +2,14 @@
 id = "01M4SXSGQQHR6RMBNJQJ3392AZ"
 title = "Golden corpus runner"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T06:04:28Z"
-updated = "2026-10-14T03:04:02Z"
+updated = "2026-10-14T03:05:57Z"
 persona = "maintainer"
 capability = "check each golden design against its hand-evaluated expectations"
 labels = ["creates:crates/cadetta-cli/tests/golden/**"]
