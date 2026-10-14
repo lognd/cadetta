@@ -1,0 +1,8 @@
+kind = "land"
+base_ref = "refs/heads/main"
+commit = "fb4773a6d585efc9083423e92ecaeecad52c36af"
+branch = "ticket/NCHWEN4"
+pushed = false
+at = "2026-10-14T11:40:21Z"
+actor = "Claude"
+rev = 1
