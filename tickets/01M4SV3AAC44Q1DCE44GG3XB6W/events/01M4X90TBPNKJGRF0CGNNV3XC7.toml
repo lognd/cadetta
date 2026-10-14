@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T13:18:25Z"
+digest = "8ce947f7b605dc6361418b6409274773fc102fa102dd834631c41e97175c25c8"
+provider = "file"
+ref = "adapters/solidworks/src/Cadetta.SolidWorks.Tests/TranscriptTests.cs"
+size = 2495
+status = "measured"
+at = "2026-10-14T13:18:25Z"
+actor = "lognd"
+rev = 1
