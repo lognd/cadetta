@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Tried .cargo/config.toml [env] PYO3_PYTHON = .venv/bin/python (relative): build passes, nextest list fails exit 104 (libpython3.11.so.1.0 not found; uv python lib dir not on loader path). LD_LIBRARY_PATH workaround is machine-specific. Requested [tests] Rust exclude from frob-v2 on 2026-10-13. Workaround until then: frob test --base, or bind evidence with frob ticket evidence add."
+at = "2026-10-14T03:33:45Z"
+actor = "lognd"
+rev = 1
