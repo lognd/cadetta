@@ -2,7 +2,8 @@
 id = "01M4XDMA3MM10BF0THF8HVAT5X"
 title = "python: wire Project.sync to sync verb"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
