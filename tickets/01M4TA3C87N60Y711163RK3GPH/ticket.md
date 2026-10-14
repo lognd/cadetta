@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:12:40Z"
+updated = "2026-10-14T23:12:41Z"
 scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
@@ -31,7 +31,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check passes adapter-reported R009 diagnostics through"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. check drift is an injectable hook, default no-op.
