@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "Dropped: CLI wiring for import --update/--write landed inside ~Z1PNF3W (commit 2fb757a5) after review rejected the planner-only version."
+at = "2026-10-14T21:19:06Z"
+actor = "lognd"
+rev = 1
