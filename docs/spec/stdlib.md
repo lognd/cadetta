@@ -234,8 +234,10 @@ above. `float` is one clearance hole's half, `(clearance_hole - major) / 2`,
 taken from the ISO 273 class nominal and independent of any tolerance on
 the user's hole; with `nut = true` (`onto` is a second clearance pattern)
 both halves count, so `aligned` gets one half fixed and both halves with
-a nut. `locating` and the placement float are evaluated by
-`cadetta-geometry` (geometry.md 5.2). `ButtonHead` and `FlatHead` have no counterbore data yet, so
+a nut. `locating` is accepted, but the placement float it
+removes is not yet applied to a joint's edge: `cadetta-geometry`
+can evaluate it (geometry.md 5.2) and the lowering from a joint is
+still open. `ButtonHead` and `FlatHead` have no counterbore data yet, so
 `counterbore = true` is only meaningful for `SocketHead`.
 
 Change `into = base.material` from aluminium to stainless and the tap
