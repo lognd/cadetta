@@ -7,8 +7,9 @@ priority = "medium"
 points = 2
 reporter = "Claude"
 created = "2026-10-14T05:28:57Z"
-updated = "2026-10-14T05:41:44Z"
-scope = ["bindings/python/python/cadetta/project.py"]
+updated = "2026-10-14T05:51:59Z"
+labels = ["creates:bindings/python/tests/test_project_exit.py"]
+scope = ["bindings/python/python/cadetta/project.py", "bindings/python/tests/test_project_exit.py"]
 
 [[acceptance]]
 text = "Given a design with error diagnostics, when Project.check runs, then Ok(report) is returned via result.report_from_exit"
