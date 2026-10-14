@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T21:00:44Z"
+digest = "a33abc7b424b9c1e37a12077fc9aed3090214eb3b700084b43d37e07c90a9b58"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2ce2f0e0-81b6-4f0e-aabc-86faadef29e8 with nextest profile: default
+    Starting 1 test across 45 binaries (1189 tests skipped)
+        PASS [   0.005s] cadetta-lint rules::r_adapter::tests::r007_warns_off_plane_or_off_origin
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 1189 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "r007_warns_off_plane_or_off_origin"
+size = 620
+status = "measured"
+test_count = 1
+tests_digest = "1bf936cfa3d413ce1bcd41a6172fa018bf2d95105c95b6b9814390a686024820"
+at = "2026-10-14T21:00:44Z"
+actor = "lognd"
+rev = 1

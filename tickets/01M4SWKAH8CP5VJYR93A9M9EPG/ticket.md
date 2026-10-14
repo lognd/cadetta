@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
 reporter = "lognd"
 created = "2026-10-13T05:43:36Z"
-updated = "2026-10-13T05:46:31Z"
+updated = "2026-10-14T21:00:44Z"
 persona = "design engineer"
 capability = "see why the CAD tool refused a push"
 idempotency_key = "replan14:lint-r2"
@@ -33,5 +33,5 @@ bound = false
 
 [[acceptance]]
 text = "Given R007, when a bound coordinate's sketch is not on its datum plane or is not measured from the sketch origin, then a warning fires (lints.md 3 R; geometry.md 6)"
-bound = false
+bound = true
 +++
