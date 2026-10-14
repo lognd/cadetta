@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta check spawns each readable adapter and reports R001 when the CAD value and the design both moved from the lock base"]
+moved = []
+at = "2026-10-14T23:12:08Z"
+actor = "lognd"
+rev = 1
