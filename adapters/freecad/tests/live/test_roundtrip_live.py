@@ -1,17 +1,21 @@
 """Live round trip: emit, read, push, regen, save and read again under FreeCAD.
 
 Skipped unless the `FreeCAD` module imports, so plain `pytest` stays green;
-the freecad CI job runs it through run_under_freecadcmd.py.
+the freecad CI job runs it through run_under_freecadcmd.py. The skip is a
+module mark, not importorskip, so the tests stay collectable by node id.
 """
 
 # frob:ticket 01M4SPWSQQNCC23KA25TCFVQ98
 
+import importlib.util
 import sys
 from pathlib import Path
 
 import pytest
 
-pytest.importorskip("FreeCAD")
+pytestmark = pytest.mark.skipif(
+    importlib.util.find_spec("FreeCAD") is None, reason="FreeCAD is not importable"
+)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "unit"))
 
