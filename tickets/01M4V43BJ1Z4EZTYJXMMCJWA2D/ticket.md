@@ -2,7 +2,8 @@
 id = "01M4V43BJ1Z4EZTYJXMMCJWA2D"
 title = "Geometry evaluation: axis builtins, point ops, Q006 and joint checks"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
