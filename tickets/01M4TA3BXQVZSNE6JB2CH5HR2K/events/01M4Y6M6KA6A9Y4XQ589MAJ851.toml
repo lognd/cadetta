@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta check reports Q002 for a parameter assigned a cross-component read of the wrong dimension (Length = Plate.mass)", "cadetta check reports no Q or E diagnostic for a cross-component read of the matching dimension (Length = Plate.width)"]
+moved = []
+at = "2026-10-14T21:55:48Z"
+actor = "lognd"
+rev = 1

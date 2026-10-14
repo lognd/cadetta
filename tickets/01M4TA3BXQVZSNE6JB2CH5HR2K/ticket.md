@@ -6,8 +6,16 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:33Z"
-updated = "2026-10-14T21:55:44Z"
+updated = "2026-10-14T21:55:48Z"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli/src", "docs/spec/quantities.md", "changelog.d"]
+
+[[acceptance]]
+text = "cadetta check reports Q002 for a parameter assigned a cross-component read of the wrong dimension (Length = Plate.mass)"
+bound = false
+
+[[acceptance]]
+text = "cadetta check reports no Q or E diagnostic for a cross-component read of the matching dimension (Length = Plate.width)"
+bound = false
 +++
 
 found while working ~E631Y52. pipeline wires no TypeEnv.
