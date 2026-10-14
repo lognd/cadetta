@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-14T14:37:18Z"
+updated = "2026-10-14T14:38:35Z"
 persona = "design engineer"
 capability = "run the full compile, lint, push, regen, read back, drift loop"
 outcome_text = "one command replaces open, import, rebuild, check"
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Given an adapter without drive, when sync runs, then emit plus manual instructions are printed"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given sync flags and the line format push|skip|drift|converged|fail path locator old -> new, when run, then output and exit codes follow config-cli.md 3, 3.1"
