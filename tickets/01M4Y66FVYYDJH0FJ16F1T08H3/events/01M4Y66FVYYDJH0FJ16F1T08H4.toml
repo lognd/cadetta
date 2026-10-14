@@ -1,0 +1,11 @@
+kind = "create"
+title = "Remove span-heuristic diagnostic attribution in the check pipeline"
+type = "chore"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli", "crates/cadetta-sema"]
+acceptance = ["Every diagnostic reaching the pipeline carries a ModuleKey", "SourceIndex::attribute is removed"]
+body = "Follow-up of ~6KASY82. SourceIndex::attribute still guesses a file from the span for diagnostics with module None (lowering, lint and other producers). Stamp a ModuleKey on every remaining producer, then delete attribute and make file_for require a module."
+at = "2026-10-14T21:48:19Z"
+actor = "lognd"
+rev = 1
