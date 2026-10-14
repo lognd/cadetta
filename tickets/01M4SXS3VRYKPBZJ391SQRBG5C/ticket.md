@@ -36,5 +36,5 @@ bound = true
 
 [[acceptance]]
 text = "Given no trust key, when judged, then upstream attestations are information only and discharge nothing (packages.md 6)"
-bound = false
+bound = true
 +++
