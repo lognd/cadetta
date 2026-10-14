@@ -216,6 +216,7 @@ name = "cadetta-obligations"
 version = "0.0.0"
 dependencies = [
  "cadetta-ir",
+ "jsonschema",
  "serde_json",
  "thiserror",
  "tracing",

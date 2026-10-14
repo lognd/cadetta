@@ -332,8 +332,8 @@ mod tests {
         );
     }
 
-    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::VerifyReport::to_json
-    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::Finding::to_json
+    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::VerifyReport.to_json
+    // frob:tests crates/cadetta-obligations/src/lock_verify.rs::Finding.to_json
     #[test]
     fn json_report_validates_against_lock_schema() {
         let schema: serde_json::Value =
