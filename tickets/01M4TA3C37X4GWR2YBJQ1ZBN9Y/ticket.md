@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T22:08:39Z"
+updated = "2026-10-14T22:08:43Z"
 scope = ["crates/cadetta-ir", "crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lib.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/derived_fits.rs", "tests/conformance/known-gaps.toml", "docs/spec/**", "changelog.d/**"]
 
 [[acceptance]]
