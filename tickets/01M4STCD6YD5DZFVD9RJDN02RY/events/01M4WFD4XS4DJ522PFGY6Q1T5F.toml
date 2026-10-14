@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T05:44:03Z"
+digest = "a2e8f11ebc904a8964927b5a511b12f7aa30123a531d9fba6cc257741becc3b3"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test compare::tests::closed_list_and_duplicates ... ok
+test quantities_corpus_is_not_empty has been running for over 60 seconds
+test quantities_fixtures_match_the_spec has been running for over 60 seconds
+test quantities_fixtures_match_the_spec ... ok
+test quantities_corpus_is_not_empty ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 282.22s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 55s
+     Running ../../tests/conformance_quantities.rs (target/debug/deps/conformance_quantities-c20c7b3720461fbd)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_quantities"
+size = 668
+status = "measured"
+at = "2026-10-14T05:44:03Z"
+actor = "Claude"
+rev = 1
