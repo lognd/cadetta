@@ -2,7 +2,8 @@
 id = "01M4WGAD346CJ141PB5JK240ZV"
 title = "Wire instances.rs default_impl to defaults::resolve_default"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "Claude"
