@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T21:20:07Z"
+digest = "8904d2f36da2c8755bef82146130a163a2ae4dc1c01cf458a5b0eec4bf005e25"
+provider = "file"
+ref = "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Session/SessionConnectTests.cs"
+size = 2112
+status = "measured"
+at = "2026-10-14T21:20:07Z"
+actor = "lognd"
+rev = 1
