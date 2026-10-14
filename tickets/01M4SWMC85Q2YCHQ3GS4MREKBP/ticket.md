@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:04:28Z"
+updated = "2026-10-14T21:05:08Z"
 persona = "design engineer"
 capability = "never leave CAD half-pushed"
 idempotency_key = "replan14:ad-atomic"
 labels = ["creates:crates/cadetta-adapter/src/atomic.rs"]
-scope = ["crates/cadetta-adapter/src/atomic.rs"]
+scope = ["crates/cadetta-adapter/src/atomic.rs", "crates/cadetta-adapter/src/lib.rs", "docs/spec/adapters.md", "changelog.d/01M4SWMC85Q2YCHQ3GS4MREKBP.added.md"]
 
 [[links]]
 kind = "blocked-by"
