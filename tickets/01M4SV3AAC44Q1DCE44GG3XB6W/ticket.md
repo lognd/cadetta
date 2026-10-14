@@ -2,13 +2,13 @@
 id = "01M4SV3AAC44Q1DCE44GG3XB6W"
 title = "Recorded-COM-transcript fake for SOLIDWORKS CI tests"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-13T19:18:43Z"
+updated = "2026-10-14T13:17:16Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:.github/workflows/solidworks.yml", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording/**"]
