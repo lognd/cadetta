@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:45:11Z"
-updated = "2026-10-14T12:30:26Z"
+updated = "2026-10-14T12:30:36Z"
 persona = "maintainer"
 capability = "know the implementation matches the spec"
 idempotency_key = "replan14:cr-geo"
 labels = ["creates:tests/conformance_geometry.rs"]
-scope = ["tests/conformance_geometry.rs"]
+scope = ["tests/conformance_geometry.rs", "crates/cadetta-cli/Cargo.toml", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
