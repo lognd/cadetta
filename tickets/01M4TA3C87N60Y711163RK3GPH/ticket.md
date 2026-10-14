@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:12:16Z"
+updated = "2026-10-14T23:12:38Z"
 scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check is clean of R lints when the CAD value matches the design"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "cadetta check reports R003 for a bound locator missing from the native file, and R002 for an unbound native value"

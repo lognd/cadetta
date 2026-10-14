@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T23:12:38Z"
+digest = "861f9b9953dec6c51dfcd17bcb8ae86c28724aaac580a41d6e45209014e2130c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 204dad8c-6bbb-454e-8153-e7a27e46884b with nextest profile: default
+    Starting 1 test across 47 binaries (1229 tests skipped)
+        PASS [   0.055s] cadetta cmd::check_drift::tests::check_is_clean_when_cad_matches_design
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.057s] 1 test run: 1 passed, 1229 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "check_is_clean_when_cad_matches_design"
+size = 567
+status = "measured"
+test_count = 1
+tests_digest = "fccc2e9d68890bc85bd6823b289bf4592996e80c82514e22a33fae6ef9aecb29"
+at = "2026-10-14T23:12:38Z"
+actor = "lognd"
+rev = 1
