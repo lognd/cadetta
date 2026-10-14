@@ -29,7 +29,7 @@ bound = true
 
 [[acceptance]]
 text = "Given R011 (assembly holds a file other than the slot primary's), R012 ([*] binding over differing values) and R013 (one native name from two paths, fixed), when linted, then each fires (lints.md 3 R; adapters.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given R007, when a bound coordinate's sketch is not on its datum plane or is not measured from the sketch origin, then a warning fires (lints.md 3 R; geometry.md 6)"
