@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:12:38Z"
+updated = "2026-10-14T23:12:39Z"
 scope = ["crates/cadetta-adapter", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
