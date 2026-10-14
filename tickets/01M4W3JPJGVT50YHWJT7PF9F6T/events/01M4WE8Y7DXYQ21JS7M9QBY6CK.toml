@@ -1,0 +1,8 @@
+kind = "transition"
+from = "in-progress"
+to = "done"
+outcome = "done"
+reason = "build-config only, no user-visible effect; base CI unreadable (gh not installed)"
+at = "2026-10-14T05:29:52Z"
+actor = "Claude"
+rev = 1

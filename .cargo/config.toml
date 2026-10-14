@@ -1,0 +1,8 @@
+# The abi3-py311 pyo3 crate (cadetta-py) must build for a Rust-only run
+# (`cargo nextest --workspace` under `frob test --all`) on a machine whose
+# system Python is older than 3.11 or lacks libpython. Skip interpreter
+# discovery and do not link libpython (it is an extension module loaded by
+# Python); maturin sets the same variables for real wheel builds.
+[env]
+PYO3_NO_PYTHON = "1"
+PYO3_BUILD_EXTENSION_MODULE = "1"
