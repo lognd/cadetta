@@ -6,8 +6,8 @@ category = "todo"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-14T01:52:16Z"
-updated = "2026-10-14T01:52:16Z"
-scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+updated = "2026-10-14T20:46:24Z"
+scope = ["crates/cadetta-cli/src/cmd/sync.rs", "docs/spec/adapters.md", "docs/spec/config-cli.md"]
 
 [[links]]
 kind = "blocked-by"
