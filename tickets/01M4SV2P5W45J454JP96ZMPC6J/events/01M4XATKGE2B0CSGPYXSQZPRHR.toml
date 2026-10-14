@@ -1,0 +1,38 @@
+kind = "evidence"
+captured_at = "2026-10-14T13:46:16Z"
+digest = "20e962194007bb6ce1093bca53e7f404fa01971b8e58f6c1bab59685a9e8d227"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.30s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6c56504a-1197-4517-a1bb-c4a434562001 with nextest profile: default
+    Starting 16 tests across 19 binaries (276 tests skipped)
+        PASS [   0.015s] cadetta tests::usage_errors_exit_two_with_message
+        PASS [   0.015s] cadetta tests::unknown_argument_is_a_usage_error
+        PASS [   0.019s] cadetta::conformance empty_or_missing_corpus_is_tolerated
+        PASS [   0.023s] cadetta tests::no_args_and_version_flag_print_version
+        PASS [   0.029s] cadetta tests::run_with_logging_installs_once_and_runs
+        PASS [   0.019s] cadetta::lsp format_returns_one_whole_document_edit
+        PASS [   0.038s] cadetta cmd::solve::tests::fresh_results_run_nothing_and_exit_zero
+        PASS [   0.032s] cadetta::lsp capabilities_and_exit_codes
+        PASS [   0.028s] cadetta::lsp syntax_error_then_format_refused
+        PASS [   0.056s] cadetta cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store
+        PASS [   0.084s] cadetta::lsp save_publishes_package_lint_and_clears
+        PASS [   0.169s] cadetta::conformance nested_doc_directories_are_discovered
+        PASS [   0.175s] cadetta::conformance unmet_expectation_fails_naming_fixture_doc_and_code
+        PASS [   0.286s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+        PASS [   1.287s] cadetta::golden golden_corpus
+        PASS [  25.432s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  25.434s] 16 tests run: 16 passed, 276 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E '(package(=cadetta) & (test(=capabilities_and_exit_codes) | test(=cmd::impact_swap_report::tests::assembly_replace_action_and_alternate_locators) | test(=cmd::impact_swap_report::tests::attestations_count_affected_covered_nodes) | test(=cmd::impact_swap_report::tests::changed_bound_paths_list_files_and_unchanged_are_not_stale) | test(=cmd::impact_swap_report::tests::commercial_deltas_count_every_instance_and_list_missing_parts) | test(=cmd::impact_swap_report::tests::text_prints_sections_five_to_seven) | test(=cmd::solve::tests::fresh_results_run_nothing_and_exit_zero) | test(=cmd::solve::tests::missing_then_stale_results_run_the_solver_and_store) | test(=conformance_corpus_matches_the_spec) | test(=empty_or_missing_corpus_is_tolerated) | test(=format_returns_one_whole_document_edit) | test(=golden_corpus) | test(=known_gap_tolerates_failure_and_flags_stale_entry) | test(=nested_doc_directories_are_discovered) | test(=save_publishes_package_lint_and_clears) | test(=syntax_error_then_format_refused) | test(=tests::diagnostics_are_closed_for_errors_and_warnings) | test(=tests::mismatch_names_the_suspect_side) | test(=tests::no_args_and_version_flag_print_version) | test(=tests::run_with_logging_installs_once_and_runs) | test(=tests::unknown_argument_is_a_usage_error) | test(=tests::usage_errors_exit_two_with_message) | test(=unmet_expectation_fails_naming_fixture_doc_and_code)))'"
+size = 1766
+status = "measured"
+test_count = 16
+tests_digest = "5027845e9bf69110eddd7ce838067d68250963a779b71dbcf42edafb0d98d3fe"
+at = "2026-10-14T13:46:16Z"
+actor = "lognd"
+rev = 1
