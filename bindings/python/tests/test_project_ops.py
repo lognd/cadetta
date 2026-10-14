@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 from cadetta import Project, ProjectError, project_ops
-from cadetta.models import ack, emit, import_, update
+from cadetta.models import ack, emit, import_, sync, update
 from typani import Err, Ok
 
 
@@ -147,12 +147,39 @@ def test_solve_no_solvers(tmp_path: Path) -> None:
     assert got.unwrap().solved == []
 
 
+SYNC_PAYLOAD = {
+    "records": [
+        {
+            "adapter": "freecad",
+            "file": "rover.FCStd",
+            "path": "acme.rover::A.x",
+            "locator": "Sketch.x",
+            "verb": "push",
+            "old": "1mm",
+            "new": "5mm",
+        }
+    ],
+    "diagnostics": [{"code": "R004", "message": "stale"}],
+    "regen": [{"file": "rover.FCStd", "status": "ok"}],
+    "emitted": [],
+    "manual": [],
+    "lock_written": True,
+}
+
+
 # frob:tests bindings/python/python/cadetta/project_ops.py::sync_project
-def test_sync_flags_and_cli_gap(tmp_path: Path, monkeypatch) -> None:
-    """sync maps options to flags; the real CLI lacks the verb so it is Err."""
+def test_sync_flags_and_report(tmp_path: Path, monkeypatch) -> None:
+    """sync maps options to flags and parses the canned sync.json report."""
     p = make_pkg(tmp_path)
-    assert isinstance(p.sync(), Err)
-    s = spy(monkeypatch, {"records": [], "diagnostics": []})
+    s = spy(monkeypatch, SYNC_PAYLOAD)
+    got = p.sync()
+    assert isinstance(got, Ok) and isinstance(got.unwrap(), sync.SyncReport)
+    rep = got.unwrap()
+    assert rep.records[0].verb == sync.Verb.push
+    assert rep.records[0].new == "5mm"
+    assert rep.diagnostics[0].code == "R004"
+    assert rep.regen[0].status == sync.Status.ok
+    assert rep.lock_written is True
     assert p.sync(
         ["freecad"],
         dry_run=True,
@@ -161,7 +188,8 @@ def test_sync_flags_and_cli_gap(tmp_path: Path, monkeypatch) -> None:
         no_regen=True,
         module="m",
     ).is_ok
-    assert s.verbs == [
+    assert s.verbs[0] == ["sync"]
+    assert s.verbs[1:] == [
         [
             "sync",
             "--dry-run",
@@ -174,6 +202,14 @@ def test_sync_flags_and_cli_gap(tmp_path: Path, monkeypatch) -> None:
             "freecad",
         ]
     ]
+
+
+# frob:tests bindings/python/python/cadetta/project_ops.py::sync_project
+def test_sync_bad_payload_is_err(tmp_path: Path, monkeypatch) -> None:
+    """A payload that fails the sync.json schema is Err, not a loose dict."""
+    p = make_pkg(tmp_path)
+    spy(monkeypatch, {"records": [], "diagnostics": []})
+    assert isinstance(p.sync(), Err)
 
 
 def test_module_exports() -> None:

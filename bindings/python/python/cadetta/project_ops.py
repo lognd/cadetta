@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict
 from typani import Err, Ok, Result
 
 from cadetta.logging import get_logger
-from cadetta.models import ack, emit, import_, update
+from cadetta.models import ack, emit, import_, sync, update
 
 if TYPE_CHECKING:
     from cadetta.project import Project, ProjectError
@@ -43,13 +43,8 @@ class SolveReport(BaseModel):
     text: str
 
 
-class SyncReport(BaseModel):
-    """The `sync` JSON records and diagnostics, unvalidated until sync.json exists."""
-
-    model_config = ConfigDict(extra="allow")
-
-    records: list[dict] = []
-    diagnostics: list[dict] = []
+SyncReport = sync.SyncReport
+"""The generated `sync.json` model: records, diagnostics, regen, manual."""
 
 
 def update_lock(
@@ -148,7 +143,7 @@ def sync_project(
     no_regen: bool = False,
     module: str | None = None,
 ) -> Result[SyncReport, ProjectError]:
-    """Run `sync`; Err until the CLI gains the verb (usage exit 2)."""
+    """Run `sync [flags] [ADAPTER...]` and parse its `sync.json` report."""
     verb = ["sync"]
     if dry_run:
         verb.append("--dry-run")
@@ -162,4 +157,4 @@ def sync_project(
         verb += ["--module", module]
     verb += adapters or []
     _log.info("sync %s", verb[1:])
-    return project._model(SyncReport, verb)
+    return project._model(sync.SyncReport, verb)

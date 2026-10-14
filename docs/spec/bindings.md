@@ -172,13 +172,13 @@ so a binding returns exactly what the CLI's JSON returns.
 Decided in implementation (mutation and IO verbs): `update`, `emit`,
 `import_` and `ack` return the generated `Update`, `EmitReport`,
 `ImportReport` and `AckOutput` models; `import_(accept=True)` runs
-`import --accept` (the adapter and files are ignored). `solve` and `sync`
-have no JSON schema yet (the CLI prints `solve` as text and has no `sync`
-verb), so `solve` returns a hand-written `SolveReport` (`solved`, `fresh`,
-`text`) parsed from the `solved PATH` and `fresh PATH` lines, and `sync`
-returns a loose `SyncReport` (`records`, `diagnostics`) and is `Err` until
-the verb exists. Both are replaced by generated models when the schemas
-land. The code is `cadetta.project_ops`.
+`import --accept` (the adapter and files are ignored). `sync` returns the
+generated `SyncReport` (`sync.json`: records, diagnostics, regen, emitted,
+manual, lock_written) and a payload failing the schema is `Err`. `solve` has
+no JSON schema yet (the CLI prints it as text), so it returns a hand-written
+`SolveReport` (`solved`, `fresh`, `text`) parsed from the `solved PATH` and
+`fresh PATH` lines, replaced by a generated model when the schema
+lands. The code is `cadetta.project_ops`.
 
 `slot` is a canonical `Type/part` path (`acme.rover::Rover/wheel`) and
 `alternate` a component name, qualified when it lives in another

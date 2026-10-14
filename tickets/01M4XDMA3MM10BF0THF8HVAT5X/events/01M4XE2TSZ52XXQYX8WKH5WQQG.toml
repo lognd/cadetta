@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-14T14:46:53Z"
+digest = "2a8ba9b4bc7092c71e7dbf80e37aacc10486b2d68de64c49b66f56d1277bc858"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 2 items
+
+bindings/python/tests/test_project_ops.py ..                             [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1910214-0.xml --------------
+============================== 2 passed in 0.29s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_project_ops.py::test_sync_flags_and_report bindings/python/tests/test_project_ops.py::test_sync_bad_payload_is_err"
+size = 513
+status = "measured"
+test_count = 2
+tests_digest = "8b11b9615a80dc83d532d7875424b6f4af57f9efd747e43ddce394b9dbfee528"
+at = "2026-10-14T14:46:53Z"
+actor = "lognd"
+rev = 1
