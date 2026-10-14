@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:48:07Z"
+updated = "2026-10-14T12:48:08Z"
 persona = "design engineer"
 capability = "script the whole workflow"
 idempotency_key = "replan14:py-mut"
-labels = ["creates:bindings/python/python/cadetta/project_ops.py"]
-scope = ["bindings/python/python/cadetta/project_ops.py", "bindings/python/scripts/gen_models.py"]
+labels = ["creates:bindings/python/python/cadetta/project_ops.py", "creates:bindings/python/python/cadetta/models/{update,ack,emit,import_}.py"]
+scope = ["bindings/python/python/cadetta/project_ops.py", "bindings/python/scripts/gen_models.py", "bindings/python/python/cadetta/models/{update,ack,emit,import_}.py"]
 
 [[links]]
 kind = "blocked-by"
