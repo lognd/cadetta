@@ -74,6 +74,7 @@ MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="ack.json", module="ack"),
     ModelSpec(schema_file="emit.json", module="emit"),
     ModelSpec(schema_file="import.json", module="import_"),
+    ModelSpec(schema_file="sync.json", module="sync"),
 )
 
 
