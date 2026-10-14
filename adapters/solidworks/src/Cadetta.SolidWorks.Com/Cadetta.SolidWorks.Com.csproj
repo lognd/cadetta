@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The only library that references the interop assemblies. Not built in CI. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>Cadetta.SolidWorks.Com</RootNamespace>
+  </PropertyGroup>
+  <Import Project="..\..\Interop.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
+  </ItemGroup>
+</Project>

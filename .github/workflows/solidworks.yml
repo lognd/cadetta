@@ -1,0 +1,71 @@
+name: solidworks
+
+# The SOLIDWORKS adapter (adapters/solidworks). CI has no SOLIDWORKS and no
+# interop assemblies, so it builds only the projects that do not reference
+# them: Core, the executable (with -p:CadettaNoCom=true, run against the
+# fake session) and the tests. Cadetta.SolidWorks.Com and .AddIn are built
+# on a machine with SOLIDWORKS_API_DIR set. The hosted runners ship the
+# .NET 8 SDK and Python, so no setup action is used.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "adapters/solidworks/**"
+      - "docs/schemas/adapter-protocol.json"
+      - ".github/workflows/solidworks.yml"
+  pull_request:
+    paths:
+      - "adapters/solidworks/**"
+      - "docs/schemas/adapter-protocol.json"
+      - ".github/workflows/solidworks.yml"
+  workflow_call:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        shell: bash
+        working-directory: adapters/solidworks
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: protocol types are up to date
+        run: python3 tools/gen_protocol.py --check || python tools/gen_protocol.py --check
+      - name: build Core
+        run: dotnet build src/Cadetta.SolidWorks.Core -c Release
+      - name: build the executable (no COM)
+        run: dotnet build src/cadetta-solidworks -c Release -p:CadettaNoCom=true
+      - name: test
+        run: dotnet test src/Cadetta.SolidWorks.Tests -c Release
+      - name: executable answers initialize against the fake session
+        run: |
+          tfm=net8.0
+          if [ "$RUNNER_OS" = "Windows" ]; then tfm=net48; fi
+          printf '%s\n%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocol":"cadetta.adapter/1","client":{"name":"cadetta","version":"0.0.0"}}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"shutdown"}' |
+            dotnet run --project src/cadetta-solidworks -c Release -f "$tfm" \
+              -p:CadettaNoCom=true --no-build -- --fake > out.txt
+          cat out.txt
+          grep -q '"name":"solidworks"' out.txt
+          test "$(wc -l < out.txt | tr -d ' ')" = 2
