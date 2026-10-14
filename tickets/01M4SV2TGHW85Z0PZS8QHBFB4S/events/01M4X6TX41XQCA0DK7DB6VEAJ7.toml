@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: Claude in cadetta-wt/QHBFB4S; scope: .github/workflows/solidworks.yml, adapters/solidworks/Cadetta.SolidWorks.sln, adapters/solidworks/Directory.Build.props, adapters/solidworks/src/cadetta-solidworks/**, adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**, adapters/solidworks/README.md; ttl 7200s"
+at = "2026-10-14T12:40:10Z"
+actor = "Claude"
+rev = 1

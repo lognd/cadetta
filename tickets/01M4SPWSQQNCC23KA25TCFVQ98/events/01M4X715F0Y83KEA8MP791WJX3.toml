@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:43:34Z"
+digest = "d13d2d1d446b786dea980f07c490d8324de30207559830943cc009db12bbb4ed"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+collected 48 items / 1 skipped
+
+adapters/freecad/tests/unit/test_drive.py ..........                     [ 20%]
+adapters/freecad/tests/unit/test_emit.py .........................       [ 72%]
+adapters/freecad/tests/unit/test_freecad_adapter.py ......               [ 85%]
+adapters/freecad/tests/unit/test_main.py ..                              [ 89%]
+adapters/freecad/tests/unit/test_read.py .....                           [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1427520-0.xml --------------
+======================== 48 passed, 1 skipped in 2.21s =========================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests"
+size = 801
+status = "measured"
+test_count = 48
+tests_digest = "8cd820ca0aae4294968c80018336a133656af22c84ffc4f128eaaabad3f47cea"
+at = "2026-10-14T12:43:34Z"
+actor = "Claude"
+rev = 1
