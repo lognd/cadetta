@@ -2,11 +2,12 @@
 id = "01M4TA3C37X4GWR2YBJQ1ZBN9Y"
 title = "Component fits not derived for lowering"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T22:14:02Z"
+updated = "2026-10-14T22:14:13Z"
 scope = ["crates/cadetta-ir", "crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lib.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/derived_fits.rs", "tests/conformance/known-gaps.toml", "docs/spec/**", "changelog.d/**"]
 
 [[acceptance]]
