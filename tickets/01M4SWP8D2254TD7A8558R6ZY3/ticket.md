@@ -2,7 +2,8 @@
 id = "01M4SWP8D2254TD7A8558R6ZY3"
 title = "Result contract"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
