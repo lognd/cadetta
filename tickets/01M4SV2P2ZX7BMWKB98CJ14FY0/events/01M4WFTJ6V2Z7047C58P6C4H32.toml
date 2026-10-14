@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py"]
+new = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml"]
+at = "2026-10-14T05:58:04Z"
+actor = "Claude"
+rev = 1
