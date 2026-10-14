@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T11:48:06Z"
+updated = "2026-10-14T11:48:07Z"
 persona = "design engineer"
 capability = "import existing FCStd spreadsheet aliases and dimensions"
 outcome_text = "I can lint a design before any .cdt exists"
 labels = ["creates:adapters/freecad/src/read.py"]
-scope = ["adapters/freecad/src/read.py", "adapters/freecad/src/cadetta_freecad/adapter.py"]
+scope = ["adapters/freecad/src/read.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/src/cadetta_freecad/backend.py"]
 
 [[links]]
 kind = "blocks"
