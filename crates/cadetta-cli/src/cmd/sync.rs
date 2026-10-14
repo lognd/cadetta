@@ -200,7 +200,7 @@ struct Ctx<'a> {
 /// Normalize `text` to `{number}{unit}`; `default_unit` fills a missing unit.
 ///
 /// Text that does not start with a number is trimmed and kept as is.
-fn normalize(text: &str, default_unit: &str) -> String {
+pub(crate) fn normalize(text: &str, default_unit: &str) -> String {
     let t = text.trim();
     let b = t.as_bytes();
     let mut i = 0;

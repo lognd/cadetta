@@ -86,7 +86,7 @@ pub struct UpdatePlan {
     pub skipped: Vec<(String, Skip)>,
     /// Edited paths whose citation no longer matches the value.
     pub cite_flags: Vec<String>,
-    /// `(adapter, file, locator, value)` lock `synced` values to record on `--write`.
+    /// `(adapter, path, locator, value)` lock `synced` values to record on `--write`.
     pub lock_updates: Vec<(String, String, String, String)>,
 }
 
@@ -116,6 +116,9 @@ pub fn plan(entries: &[Entry], sources: &BTreeMap<String, Source>) -> UpdatePlan
                 out.skipped
                     .push((e.path.clone(), Skip::Toleranced(e.theirs.clone())));
             }
+            Definition::Literal { .. } if e.ours == e.theirs => {
+                tracing::debug!(path = %e.path, "update: literal already matches CAD");
+            }
             Definition::Literal { file, start, end } => {
                 tracing::info!(path = %e.path, new = %e.theirs, "update: literal edit");
                 out.edits.push(Edit {
@@ -131,7 +134,7 @@ pub fn plan(entries: &[Entry], sources: &BTreeMap<String, Source>) -> UpdatePlan
                 }
                 out.lock_updates.push((
                     e.adapter.clone(),
-                    e.file.clone(),
+                    e.path.clone(),
                     e.locator.clone(),
                     e.theirs.clone(),
                 ));
@@ -265,15 +268,5 @@ mod tests {
         assert_eq!(apply(text, "a.cdt", &plan).unwrap(), "a = 12mm\nb = 8mm\n");
         assert_eq!(apply(text, "other.cdt", &plan).unwrap(), text);
         assert!(apply("a = 6mm\nb = 7mm\n", "a.cdt", &plan).is_err());
-    }
-
-    // frob:tests write_is_opt_in_plan_is_pure
-    #[test]
-    fn write_is_opt_in_plan_is_pure() {
-        let text = "a = 5mm\n";
-        let entries = [entry("p::C.a", Some("5mm"), "5mm", "6mm")];
-        let sources = BTreeMap::from([("p::C.a".to_owned(), lit(4, 7, false))]);
-        let _ = render_diff(&plan(&entries, &sources));
-        assert_eq!(text, "a = 5mm\n");
     }
 }

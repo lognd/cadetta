@@ -17,19 +17,22 @@ use cadetta_adapter::import::naming::component_file;
 use cadetta_adapter::import::propose::{
     Item, PROPOSAL_DIR, PROPOSAL_TOML, Proposal, Status, propose, render_model, write_proposal,
 };
+use cadetta_adapter::import::update::{self, Definition, Source};
 use cadetta_adapter::rpc::client::ProcessClient;
-use cadetta_adapter::rpc::types::{ReadParams, ReadSource};
+use cadetta_adapter::rpc::types::{ReadParams, ReadResult, ReadSource};
+use cadetta_adapter::sync::Entry;
 use cadetta_ir::dim::DimWire;
 use cadetta_ir::model::{
     Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Sign,
 };
 use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
-use cadetta_obligations::lock::{Adopted, Lock, Record};
+use cadetta_obligations::lock::{Adopted, Lock, Record, SyncedValue};
 use cadetta_units::{Dim, Magnitude, Rational};
 use serde::Serialize;
 use serde_json::Value;
 
 use crate::cmd::ir::package_id;
+use crate::cmd::sync::normalize;
 use crate::config::Adapter;
 use crate::output::Format;
 use crate::project::{PackageDir, Project};
@@ -296,11 +299,7 @@ pub fn run_import(
         Err(e) => return fail(err, &e.to_string()),
     };
     let result = if parsed.update {
-        Ok(ImportReport {
-            mode: "update".to_owned(),
-            notes: vec!["`--update` is not implemented yet; nothing was changed".to_owned()],
-            ..ImportReport::default()
-        })
+        update_mode(&project, &scope, &parsed, globals)
     } else if parsed.accept {
         accept(&project, &scope, &parsed)
     } else {
@@ -328,7 +327,10 @@ fn render_text(r: &ImportReport) -> String {
     for w in &r.written {
         s.push_str(&format!("wrote {w}\n"));
     }
-    for i in &r.items {
+    for i in r.items.iter().filter(|_| r.mode == "update") {
+        s.push_str(&format!("{}\n", i.trim_end()));
+    }
+    for i in r.items.iter().filter(|_| r.mode != "update") {
         s.push_str(&format!(
             "  {} {i}\n",
             if r.mode == "accept" {
@@ -378,12 +380,13 @@ pub(crate) fn find_adapter<'a>(
     })
 }
 
-fn propose_mode(
-    project: &Project,
+/// Spawn the adapter named in `parsed` and read its FILES (relative ones against `globals.cwd`).
+fn read_adapter<'a>(
+    project: &'a Project,
     scope: &[usize],
     parsed: &ImportArgs,
     globals: &Globals,
-) -> Result<ImportReport, String> {
+) -> Result<(&'a PackageDir, &'a Adapter, ReadResult), String> {
     let id = parsed.adapter.as_deref().unwrap_or_default();
     let (pkg, adapter) = find_adapter(project, scope, id)
         .ok_or_else(|| format!("no adapter `{id}` in cadetta.toml"))?;
@@ -413,7 +416,16 @@ fn propose_mode(
     if let Err(e) = client.shutdown() {
         tracing::warn!(error = ?e, "import: adapter shutdown failed");
     }
-    let read = read?;
+    Ok((pkg, adapter, read?))
+}
+
+fn propose_mode(
+    project: &Project,
+    scope: &[usize],
+    parsed: &ImportArgs,
+    globals: &Globals,
+) -> Result<ImportReport, String> {
+    let (pkg, adapter, read) = read_adapter(project, scope, parsed, globals)?;
     let observed = decode_observed(
         &read.observed,
         adapter.id(),
@@ -449,6 +461,257 @@ fn propose_mode(
     }
     for d in &read.diagnostics {
         report.notes.push(d.0.to_string());
+    }
+    Ok(report)
+}
+
+/// Observed CAD values by native locator: `(native file, normalized `{number}{unit}`)`.
+fn observed_values(observed: &Value) -> BTreeMap<String, (String, String)> {
+    let projects: Vec<&Value> = match observed {
+        Value::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    let mut out = BTreeMap::new();
+    for project in projects {
+        let members = project
+            .get("components")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(|c| c.get("members").and_then(Value::as_array))
+            .flatten();
+        let bindings: Vec<&Value> = project
+            .get("bindings")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .collect();
+        for member in members {
+            let text = |v: Option<&Value>, k: &str| {
+                v.and_then(|v| v.get(k))
+                    .and_then(Value::as_str)
+                    .map(str::to_owned)
+            };
+            let Some(path) = text(Some(member), "path") else {
+                continue;
+            };
+            let value = member.get("value");
+            let (Some(authored), Some(file)) = (
+                text(value, "authored"),
+                text(
+                    member.get("provenance").and_then(|p| p.get("imported")),
+                    "file",
+                ),
+            ) else {
+                continue;
+            };
+            let assumed = text(value, "unit_assumed");
+            let locators = bindings
+                .iter()
+                .filter(|b| b.get("path").and_then(Value::as_str) == Some(path.as_str()))
+                .filter_map(|b| b.get("locators").and_then(Value::as_array))
+                .flatten();
+            for loc in locators {
+                let Some(name) = text(Some(loc), "locator") else {
+                    continue;
+                };
+                let unit = text(Some(loc), "native_unit")
+                    .or_else(|| assumed.clone())
+                    .unwrap_or_default();
+                out.insert(name, (file.clone(), normalize(&authored, &unit)));
+            }
+        }
+    }
+    out
+}
+
+/// Every `.cdt` of the package (`src/` modules and `cad/imported/`) as `(relative path, text)`.
+fn package_sources(pkg: &PackageDir) -> Vec<(String, String)> {
+    let mut out: Vec<(String, String)> = pkg
+        .modules
+        .iter()
+        .map(|m| (rel(&pkg.dir, &m.file), m.source.clone()))
+        .collect();
+    let imported = pkg.dir.join("cad/imported");
+    if let Ok(entries) = std::fs::read_dir(&imported) {
+        let mut paths: Vec<PathBuf> = entries
+            .filter_map(Result::ok)
+            .map(|e| e.path())
+            .filter(|p| p.extension().is_some_and(|e| e == "cdt"))
+            .collect();
+        paths.sort();
+        for path in paths {
+            match std::fs::read_to_string(&path) {
+                Ok(text) => out.push((rel(&pkg.dir, &path), text)),
+                Err(e) => {
+                    tracing::warn!(file = %path.display(), error = %e, "import: unreadable source")
+                }
+            }
+        }
+    }
+    out
+}
+
+/// Resolve each `Component.param` of the sources to its definition and literal text.
+fn resolve_sources(
+    pkg_name: &str,
+    sources: &[(String, String)],
+) -> BTreeMap<String, (Source, String)> {
+    use cadetta_syntax::ast::{ExprKind, MemberKind, UnOp};
+    let mut out = BTreeMap::new();
+    for (file, text) in sources {
+        let parsed = cadetta_syntax::parser::parse(text);
+        for component in parsed.file.components() {
+            for member in &component.members {
+                let (name, definition, cited, literal) = match &member.kind {
+                    MemberKind::Param(p) => {
+                        let mut e = &p.value;
+                        if let ExprKind::Unary(UnOp::Neg, inner) = &e.kind {
+                            e = inner;
+                        }
+                        let definition = match &e.kind {
+                            ExprKind::Number(_) | ExprKind::Quantity(_) => Definition::Literal {
+                                file: file.clone(),
+                                start: p.value.span.start,
+                                end: p.value.span.end,
+                            },
+                            ExprKind::Tolerance(..) | ExprKind::IsoClass(..) => {
+                                Definition::Toleranced
+                            }
+                            _ => Definition::Derived,
+                        };
+                        let literal = p.value.span.slice(text).to_owned();
+                        (
+                            p.name.name.clone(),
+                            definition,
+                            p.citation.is_some(),
+                            literal,
+                        )
+                    }
+                    MemberKind::Let(l) => (
+                        l.name.name.clone(),
+                        Definition::Derived,
+                        false,
+                        String::new(),
+                    ),
+                    _ => continue,
+                };
+                let path = format!("{pkg_name}::{}.{name}", component.name.name);
+                out.insert(path, (Source { definition, cited }, literal));
+            }
+        }
+    }
+    out
+}
+
+/// `import ADAPTER FILE... --update [--write]`: pull CAD edits back into `.cdt` literals.
+///
+/// Without `--write` nothing on disk changes; with it the literals are rewritten and the lock's
+/// `synced` values updated (adapters.md 7.4, config-cli.md 3).
+// frob:ticket 01M4SWMCWHXKA8K6VG7Z1PNF3W
+fn update_mode(
+    project: &Project,
+    scope: &[usize],
+    parsed: &ImportArgs,
+    globals: &Globals,
+) -> Result<ImportReport, String> {
+    let (pkg, adapter, read) = read_adapter(project, scope, parsed, globals)?;
+    let id = adapter.id();
+    let theirs = observed_values(&read.observed);
+    let bindings_text =
+        std::fs::read_to_string(pkg.dir.join(adapter.bindings_path())).unwrap_or_default();
+    let set = BindingSet::load_str(id, &bindings_text).map_err(|e| e.to_string())?;
+    let lock_path = project.root.join("cadetta.lock");
+    let mut lock = Lock::load(&lock_path).map_err(|e| e.to_string())?;
+    let bases: BTreeMap<(String, String), String> = lock
+        .records()
+        .filter_map(|r| match r {
+            Record::SyncedValue(v) if v.adapter == id => {
+                Some(((v.path.clone(), v.locator.clone()), v.value.clone()))
+            }
+            _ => None,
+        })
+        .collect();
+    let sources = package_sources(pkg);
+    let resolved = resolve_sources(&package_id(pkg).name, &sources);
+    let mut entries = Vec::new();
+    let mut defs = BTreeMap::new();
+    for binding in set.entries() {
+        let path = binding.path.to_string();
+        for loc in &binding.locators {
+            let Some((file, value)) = theirs.get(&loc.locator) else {
+                tracing::debug!(%path, locator = %loc.locator, "update: not observed");
+                continue;
+            };
+            let mut ours = value.clone();
+            if let Some((src, literal)) = resolved.get(&path) {
+                defs.insert(path.clone(), src.clone());
+                if normalize(literal, "") != *value {
+                    ours = literal.clone();
+                }
+            }
+            entries.push(Entry {
+                adapter: id.to_owned(),
+                file: file.clone(),
+                path: path.clone(),
+                locator: loc.locator.clone(),
+                base: bases.get(&(path.clone(), loc.locator.clone())).cloned(),
+                ours,
+                theirs: value.clone(),
+                replaces: None,
+                ours_tol: None,
+                theirs_tol: None,
+            });
+        }
+    }
+    let plan = update::plan(&entries, &defs);
+    let mut report = ImportReport {
+        mode: "update".to_owned(),
+        ..ImportReport::default()
+    };
+    let diff = update::render_diff(&plan);
+    if !diff.is_empty() {
+        report.items.push(diff);
+    }
+    for d in &read.diagnostics {
+        report.notes.push(d.0.to_string());
+    }
+    if !parsed.write {
+        tracing::info!(
+            edits = plan.edits.len(),
+            "import: update dry run, nothing written"
+        );
+        if !plan.edits.is_empty() {
+            report
+                .notes
+                .push("nothing written; pass --write to apply".to_owned());
+        }
+        return Ok(report);
+    }
+    let mut rewritten = Vec::new();
+    for (file, text) in &sources {
+        if !plan.edits.iter().any(|e| e.file == *file) {
+            continue;
+        }
+        rewritten.push((file, update::apply(text, file, &plan)?));
+    }
+    for (file, text) in rewritten {
+        std::fs::write(pkg.dir.join(file), text).map_err(|e| e.to_string())?;
+        tracing::info!(%file, "import: literals rewritten");
+        report.written.push(file.clone());
+    }
+    for (adapter, path, locator, value) in &plan.lock_updates {
+        let rec = Record::SyncedValue(SyncedValue {
+            adapter: adapter.clone(),
+            path: path.clone(),
+            locator: locator.clone(),
+            value: value.clone(),
+        });
+        lock.remove(&rec.key());
+        lock.insert(rec);
+    }
+    if lock.save(&lock_path).map_err(|e| e.to_string())? {
+        report.written.push("cadetta.lock".to_owned());
     }
     Ok(report)
 }
@@ -773,6 +1036,86 @@ for line in sys.stdin:
                 .iter()
                 .all(|i| i.unit.as_deref() == Some("in"))
         );
+    }
+
+    const BORE: &str = "acme.plate::CoverPlate.bore";
+
+    /// Propose and accept, then make CAD (12mm) differ from the adopted base and source (5mm).
+    fn adopted_at_5mm(source: &str) -> Dir {
+        let dir = project();
+        assert_eq!(run(&dir, &["fake", "cover_plate.FCStd"]).0, EXIT_OK);
+        assert_eq!(run(&dir, &["--accept"]).0, EXIT_OK);
+        std::fs::write(
+            dir.0.join("cad/imported/CoverPlate.cdt"),
+            format!("model CoverPlate {{\n  bore = {source}\n}}\n"),
+        )
+        .unwrap();
+        let lock_path = dir.0.join("cadetta.lock");
+        let mut lock = Lock::load(&lock_path).unwrap();
+        lock.insert(Record::SyncedValue(SyncedValue {
+            adapter: "fake".into(),
+            path: BORE.into(),
+            locator: "Sketch.Bore_mm".into(),
+            value: "5mm".into(),
+        }));
+        lock.save(&lock_path).unwrap();
+        dir
+    }
+
+    fn synced(dir: &Dir) -> Option<String> {
+        let lock = Lock::load(&dir.0.join("cadetta.lock")).unwrap();
+        lock.records().find_map(|r| match r {
+            Record::SyncedValue(v) if v.path == BORE => Some(v.value.clone()),
+            _ => None,
+        })
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::update_mode
+    #[test]
+    fn update_prints_diff_and_writes_nothing_without_write() {
+        let dir = adopted_at_5mm("5mm");
+        let cdt = dir.0.join("cad/imported/CoverPlate.cdt");
+        let (src_before, lock_before) = (
+            std::fs::read(&cdt).unwrap(),
+            std::fs::read(dir.0.join("cadetta.lock")).unwrap(),
+        );
+        let (code, out, e) = run(&dir, &["fake", "cover_plate.FCStd", "--update"]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(out.contains("- 5mm\n+ 12mm"), "{out}");
+        assert!(out.contains("CoverPlate.cdt"), "{out}");
+        assert_eq!(std::fs::read(&cdt).unwrap(), src_before);
+        assert_eq!(
+            std::fs::read(dir.0.join("cadetta.lock")).unwrap(),
+            lock_before
+        );
+        assert!(!out.contains("not implemented"), "{out}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::update_mode
+    #[test]
+    fn update_write_rewrites_literal_and_lock() {
+        let dir = adopted_at_5mm("5mm");
+        let (code, out, e) = run(&dir, &["fake", "cover_plate.FCStd", "--update", "--write"]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let cdt = std::fs::read_to_string(dir.0.join("cad/imported/CoverPlate.cdt")).unwrap();
+        assert_eq!(cdt, "model CoverPlate {\n  bore = 12mm\n}\n");
+        assert_eq!(synced(&dir).as_deref(), Some("12mm"));
+        assert!(out.contains("wrote cad/imported/CoverPlate.cdt"), "{out}");
+        let (_, again, _) = run(&dir, &["fake", "cover_plate.FCStd", "--update"]);
+        assert!(!again.contains("- "), "second run is a no-op: {again}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::update_mode
+    #[test]
+    fn update_write_never_edits_expressions() {
+        let dir = adopted_at_5mm("2 * 2.5mm");
+        let cdt = dir.0.join("cad/imported/CoverPlate.cdt");
+        let before = std::fs::read(&cdt).unwrap();
+        let (code, out, _) = run(&dir, &["fake", "cover_plate.FCStd", "--update", "--write"]);
+        assert_eq!(code, EXIT_OK, "{out}");
+        assert!(out.contains("derived"), "{out}");
+        assert_eq!(std::fs::read(&cdt).unwrap(), before);
+        assert_eq!(synced(&dir).as_deref(), Some("5mm"));
     }
 
     // frob:ticket 01M4SWN8G3QTQC5YK07VN1YQYC

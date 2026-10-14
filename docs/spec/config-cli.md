@@ -407,8 +407,14 @@ and writes `build/import/proposal.toml` and `proposal.cdt` only. Member names fo
 path), `cad/imported/<Component>.cdt` and an `adopted` lock record per file. It never overwrites:
 an existing `.cdt` is left alone, and bindings are appended to for paths and locators not yet
 bound; the rest are reported as `unchanged`. `skip` items are not adopted. Every import failure
-is exit 2, never 1. `--update` is parsed but not implemented yet: it reports a note and changes
-nothing.
+is exit 2, never 1.
+
+`import ADAPTER FILE... --update` re-reads the native files and, for each bound path whose CAD
+value differs from the lock's `synced` value, prints a diff of the `.cdt` literal edit (`- 5mm`
+/ `+ 12mm`). Only plain literals are edited, never expressions; tolerance/fit literals and
+`let`/derived paths are reported as skipped, and a cited literal is flagged. Without `--write`
+nothing on disk changes. With `--write` the literals are rewritten and the lock's `synced`
+values updated (adapters.md 7.4).
 
 ### 3.8 `lsp`
 
