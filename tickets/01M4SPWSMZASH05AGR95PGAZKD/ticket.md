@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "push changed params, regenerate and read back headless"
 outcome_text = "sync is hands-free"
 labels = ["creates:adapters/freecad/src/drive.py"]
-scope = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/README.md", "adapters/freecad/tests/unit/test_read.py"]
+scope = ["adapters/freecad/src/drive.py", "adapters/freecad/src/cadetta_freecad/backend.py", "adapters/freecad/src/cadetta_freecad/adapter.py", "adapters/freecad/README.md", "adapters/freecad/tests/unit/test_read.py", "docs/spec/adapters.md"]
 
 [[links]]
 kind = "blocks"
