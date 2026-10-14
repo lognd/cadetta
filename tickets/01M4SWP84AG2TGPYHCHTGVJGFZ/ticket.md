@@ -2,18 +2,18 @@
 id = "01M4SWP84AG2TGPYHCHTGVJGFZ"
 title = "[defaults] precedence"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-13T05:45:13Z"
+updated = "2026-10-14T05:53:11Z"
 persona = "design engineer"
 capability = "override policies per project"
 idempotency_key = "replan14:sd-defaults"
 labels = ["creates:crates/cadetta-sema/src/defaults.rs"]
-scope = ["crates/cadetta-sema/src/defaults.rs"]
+scope = ["crates/cadetta-sema/src/defaults.rs", "crates/cadetta-sema/src/lib.rs"]
 
 [[links]]
 kind = "blocked-by"

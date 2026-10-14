@@ -2,13 +2,14 @@
 id = "01M4VQXNA0BKA7HPM9GNWB8SVP"
 title = "Attribute role(hole) not honored for mmc/lmc emit point (E010)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-14T05:42:31Z"
+updated = "2026-10-14T05:51:40Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
