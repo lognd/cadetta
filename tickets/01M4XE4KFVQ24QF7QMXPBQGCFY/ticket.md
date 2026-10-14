@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T14:47:52Z"
-updated = "2026-10-14T14:52:25Z"
+updated = "2026-10-14T14:52:35Z"
 labels = ["creates:crates/cadetta-cli/src/cmd/lock.rs", "creates:changelog.d/01M4XE4KFVQ24QF7QMXPBQGCFY.added.md"]
 scope = ["crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/spec/config-cli.md", "crates/cadetta-cli/src/cmd/lock.rs", "changelog.d/01M4XE4KFVQ24QF7QMXPBQGCFY.added.md"]
 
