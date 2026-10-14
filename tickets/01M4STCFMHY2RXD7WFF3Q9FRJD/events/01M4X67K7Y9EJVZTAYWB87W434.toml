@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:28:28Z"
+digest = "daa5162ce66497fc0cb258fcd323fcbcbbfe4e1f510bbbf17e12c6d05854489c"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test lints_corpus_is_not_empty ... ok
+test lints_fixtures_match_the_spec ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 35.22s
+
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.76s
+     Running ../../tests/conformance_lints.rs (target/debug/deps/conformance_lints-4f94376455ff0df7)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_lints"
+size = 1387
+status = "measured"
+at = "2026-10-14T12:28:28Z"
+actor = "Claude"
+rev = 1
