@@ -56,7 +56,14 @@ pub(super) struct Instances<'p> {
     nodef: BTreeSet<CanonPath>,
 }
 
-impl Instances<'_> {
+impl<'p> Instances<'p> {
+    /// Each instance as (info, component, callee context, span).
+    pub fn members(&self) -> impl Iterator<Item = (Rc<InstInfo>, &'p Component, Ctx, Span)> + '_ {
+        self.list
+            .iter()
+            .map(|i| (i.info.clone(), i.component, i.callee_ctx.clone(), i.span))
+    }
+
     /// True when `path` is the prefix of an instance.
     pub fn is_instance(&self, path: &CanonPath) -> bool {
         self.list.iter().any(|i| i.info.prefix == *path)
@@ -445,6 +452,7 @@ mod tests {
     use super::super::{Evaluation, Val};
     use crate::resolve::{CanonPath, MemberSeg};
     use cadetta_ir::canon::PartSeg;
+    use cadetta_units::compare::Verdict;
     use cadetta_units::{Magnitude, Rational};
 
     fn key(comp: &str, part: &str, member: &str) -> CanonPath {
@@ -552,6 +560,53 @@ mod tests {
             ev.diagnostics.iter().any(|d| d.code == "E006"),
             "{:?}",
             ev.diagnostics
+        );
+    }
+
+    const CHECKED: &str = "assembly Joint(a: Length, extra?: Length) {\n\
+          check small: a < 10mm \"a stays small\"\n\
+          #[when(given(extra))]\n\
+          check extra_ok: extra < a \"extra is below a\"\n\
+        }\n";
+
+    fn verdicts(ev: &Evaluation) -> Vec<(String, Verdict)> {
+        ev.checks
+            .iter()
+            .map(|c| (c.path.to_string(), c.verdict))
+            .collect()
+    }
+
+    // frob:tests instance_checks_report_under_the_instance_path
+    // frob:ticket 01M4W5HM6SAY12P1J3R3G80Q7F
+    #[test]
+    fn instance_checks_report_under_the_instance_path() {
+        let f = file(&format!(
+            "{CHECKED}assembly Top {{ part j: Joint(a = 4mm); part k: Joint(a = 12mm) }}\n"
+        ));
+        let ev = run(&f);
+        let got = verdicts(&ev);
+        assert_eq!(got.len(), 2, "{got:?}");
+        assert!(got.contains(&("p::Top/j.small".to_owned(), Verdict::Holds)));
+        assert!(got.contains(&("p::Top/k.small".to_owned(), Verdict::Violates)));
+        assert!(ev.diagnostics.iter().any(|d| d.code == "C001"));
+    }
+
+    // frob:tests instance_check_when_gates_the_verdict
+    // frob:ticket 01M4W5HM6SAY12P1J3R3G80Q7F
+    #[test]
+    fn instance_check_when_gates_the_verdict() {
+        let f = file(&format!(
+            "{CHECKED}assembly Top {{ part j: Joint(a = 4mm, extra = 1mm); part k: Joint(a = 4mm) }}\n"
+        ));
+        let ev = run(&f);
+        let got = verdicts(&ev);
+        assert!(
+            got.contains(&("p::Top/j.extra_ok".to_owned(), Verdict::Holds)),
+            "{got:?}"
+        );
+        assert!(
+            !got.iter().any(|(p, _)| p == "p::Top/k.extra_ok"),
+            "{got:?}"
         );
     }
 }

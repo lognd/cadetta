@@ -453,26 +453,6 @@ ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
 [[gap]]
-fixture = "stdlib/check-depth-ok-drill"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-depth-ok-vendor"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-grip-positive"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-not-bottomed"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
 fixture = "stdlib/e006-count-with-pattern"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"

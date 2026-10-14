@@ -309,7 +309,12 @@ E006. An interface-typed argument that is omitted takes the scope default
 assembly, then the file, then (when the project is wired for it) the
 package `[defaults]`, then `std`'s `IsoDefault`. `#[when(cond)]` members
 exist only while `cond` holds, and `#![requires(arg, when = cond)]` is
-E006 when `cond` holds and `arg` was not given. Instances inside
+E006 when `cond` holds and `arg` was not given. The callee's `check`s and
+`require`s run once per instance, in the same scope, and report under the
+instance path (`Box/j.engaged`); a check carrying `#[when(cond)]` exists
+only while `cond` holds, and an absent check yields no verdict. The IR
+lowers each as an ordinary `Check` whose path is the instance path.
+Instances inside
 parameterized components, `Part`-typed arguments and part arrays inside
 an instance are not evaluated yet (ticketed).
 

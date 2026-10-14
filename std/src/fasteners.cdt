@@ -10,8 +10,8 @@ pub use self::screwjoint::ScrewJoint
 /// The screw interface and ISO 4762 socket head cap screw.
 pub use self::screw::{Iso4762, Screw}
 
-/// The fastener policy interface and the ISO default policy.
-pub use self::policy::{FastenerPolicy, IsoDefault}
+/// The fastener policy interface, the ISO default policy and its tables.
+pub use self::policy::{FastenerPolicy, IsoDefault, IsoDrills, IsoEngagement, IsoTapColumns}
 
 /// Thread and hole tables and the thread enum.
 pub use self::tables::{Iso273, Iso4032, Iso4762Head, Iso4762Len, MetricThread, TapDrill, Thread}
