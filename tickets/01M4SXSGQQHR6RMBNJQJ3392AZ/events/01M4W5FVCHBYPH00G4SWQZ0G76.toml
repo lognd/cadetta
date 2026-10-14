@@ -1,0 +1,58 @@
+kind = "evidence"
+accepts = [1, 2, 3, 4, 5, 6, 7, 8]
+captured_at = "2026-10-14T02:57:13Z"
+digest = "b9c3c2e418e6969ecad612dcf5f601cc3f5b60a2fe2cfa795104a5a5d280d0f1"
+exit_code = 100
+failed_tests = ["compare::tests::mismatch_names_the_suspect_side"]
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.50s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ea647909-e0c3-484e-bd82-4ba53a1998f3 with nextest profile: default
+    Starting 11 tests across 1 binary
+        PASS [   0.026s] cadetta::golden stale_spec_fails_until_ported
+        PASS [   0.019s] cadetta::golden compare::tests::artifact_command_redirect_is_split
+        PASS [   0.031s] cadetta::golden confirm::tests::adopt_requires_digest_only_difference
+        PASS [   0.028s] cadetta::golden compare::tests::diagnostics_are_closed_for_errors_and_warnings
+        PASS [   0.031s] cadetta::golden compare::tests::masks_replace_matches_in_both_files
+        PASS [   0.032s] cadetta::golden quantity::tests::literals_compare_exactly_in_any_unit
+        PASS [   0.042s] cadetta::golden confirm::tests::refuses_when_a_tbd_file_is_not_regenerated
+        PASS [   0.047s] cadetta::golden quantity::tests::range_adds_tolerance_terms
+        FAIL [   0.043s] cadetta::golden compare::tests::mismatch_names_the_suspect_side
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'compare::tests::mismatch_names_the_suspect_side' (2523343) panicked at crates/cadetta-cli/tests/golden/compare.rs:429:9:
+    assertion `left == right` failed
+      left: (1, 0, 2)
+     right: (1, 0, 1)
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test compare::tests::mismatch_names_the_suspect_side ... FAILED
+
+    failures:
+
+    failures:
+        compare::tests::mismatch_names_the_suspect_side
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.03s
+
+
+  Cancelling due to test failure: 2 tests still running
+        PASS [   0.077s] cadetta::golden confirm::tests::confirm_writes_digests_and_status_on_a_temp_copy
+        PASS [   1.093s] cadetta::golden golden_corpus
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.098s] 11 tests run: 10 passed, 1 failed, 0 skipped
+        FAIL [   0.043s] cadetta::golden compare::tests::mismatch_names_the_suspect_side
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-p cadetta --test golden"
+size = 2283
+status = "measured"
+test_count = 11
+tests_digest = "c897262644bdf4d917b2d532f1f85342aec223b4733d8b941719b47a19e608be"
+at = "2026-10-14T02:57:13Z"
+actor = "lognd"
+rev = 1
