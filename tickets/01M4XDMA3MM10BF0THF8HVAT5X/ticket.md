@@ -2,12 +2,12 @@
 id = "01M4XDMA3MM10BF0THF8HVAT5X"
 title = "python: wire Project.sync to sync verb"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T14:38:58Z"
-updated = "2026-10-14T14:39:43Z"
+updated = "2026-10-14T14:39:55Z"
 scope = ["bindings/python/python/cadetta/project_ops.py"]
 +++
 
