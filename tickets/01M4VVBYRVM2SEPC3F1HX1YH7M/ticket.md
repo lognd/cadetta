@@ -8,7 +8,7 @@ points = 2
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-14T00:00:35Z"
-updated = "2026-10-14T02:07:32Z"
+updated = "2026-10-14T02:14:34Z"
 scope = ["crates/cadetta-cli/src/scope.rs", "crates/cadetta-adapter/src/scope.rs"]
 
 [[acceptance]]
