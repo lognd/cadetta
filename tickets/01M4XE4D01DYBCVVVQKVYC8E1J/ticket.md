@@ -7,6 +7,6 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T14:47:45Z"
-updated = "2026-10-14T14:50:24Z"
+updated = "2026-10-14T14:50:30Z"
 scope = ["bindings/python/tests/unit/test_core.py"]
 +++
