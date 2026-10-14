@@ -174,7 +174,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
 | `import --accept` | Write bindings and `.cdt` scaffold from the proposal. | writes `bindings/`, `cad/imported/`, lock | never | `import.json` |
 | `import ADAPTER FILE... --update [--write]` | Diff of `.cdt` literal edits from observed values; `--write` applies. | writes sources with `--write` | never | `import.json` |
-| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
+| `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2), then geometry verification (R001) and, under `datums = "create"`, datum frame creation (adapters.md 3.4). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
 | `lsp` | Language server over stdio: diagnostics and formatting (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |

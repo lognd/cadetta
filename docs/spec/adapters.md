@@ -330,6 +330,15 @@ coordinates, and positions are verified by transform (geometry.md 6):
   and `sync` pushes the composed transform into it like a value, with
   a lock `synced` record. Then the datum's offsets need no dimension
   bindings at all.
+- `cadetta sync` runs this pass after every `read`, dry runs included:
+  the observed `frames` and `instances` are compared with the composed
+  design and each mismatch is an R001 in the sync report (a blocking
+  diagnostic). Under `datums = "create"`, and only when the adapter
+  announced the `create_frames` feature, the datum entries are added to
+  the sync entries and travel the same three-way loop as values. A
+  datum's document is the file of an observed member of its component,
+  else the document of its bound frame, else the adapter's only
+  configured file.
 - Coordinates derived from a generator are analysis-only unless the user
   lists them in the bindings by hand. R007 covers a dimension not
   measured from the sketch origin.

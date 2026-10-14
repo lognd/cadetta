@@ -14,25 +14,31 @@ use std::path::{Path as FsPath, PathBuf};
 use cadetta_adapter::builtin::sw_equations::{
     ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
 };
+use cadetta_adapter::geometry_bind::{datum_entries, verify_geometry};
 use cadetta_adapter::policy::resolve_point;
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, PushMode, PushStatus, ReadParams, ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, Feature, PushMode, PushStatus, ReadParams, ReadSource,
+    RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
 use cadetta_adapter::sync::{
     Backend, Entry, Lock as EngineLock, Options, PushItem, R003, ReadBack, Verb, run,
 };
-use cadetta_ir::model::{LocatorMode, Project as Ir, Sign};
+use cadetta_ir::model::{
+    Exact, LocatorKind, LocatorMode, Nominal, ObservedFrame, ObservedInstance, Project as Ir, Sign,
+    Value as IrValue,
+};
 use cadetta_obligations::lock::{Hex, Lock as FileLock, Record, SyncedFile, SyncedValue};
-use cadetta_units::UnitTable;
+use cadetta_units::dimension::Dim;
+use cadetta_units::{Magnitude, Rational, UnitTable};
 use serde::Serialize;
 use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
-    EmitArgs, EmitReport, attr_point, config_point, emit_package, kind_of, load_bindings,
-    locators_for, native_unit, negate_text, package_ir, written_for,
+    DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, attr_point, config_point, emit_package, kind_of,
+    load_bindings, locators_for, native_unit, negate_text, package_ir, written_for,
 };
 use crate::cmd::import::program;
 use crate::config::{Adapter, SaveMode};
@@ -456,6 +462,7 @@ fn build_entries(
     adapter: &Adapter,
     ir: &Ir,
     observed: &[Observed],
+    read: &Geometry<'_>,
     ctx: &mut Ctx<'_>,
 ) -> Option<(Vec<Entry>, UnitMap)> {
     let (set, _) = match load_bindings(pkg, adapter, ir) {
@@ -547,8 +554,236 @@ fn build_entries(
             });
         }
     }
+    entries.extend(geometry_pass(
+        adapter,
+        ir,
+        set.entries(),
+        observed,
+        read,
+        ctx,
+    ));
     tracing::info!(adapter = %adapter.id(), entries = entries.len(), "sync: entries built");
     clean.then_some((entries, units))
+}
+
+/// What an adapter's `read` reported that the geometry pass needs.
+struct Geometry<'a> {
+    /// The raw observed IR (carries `frames` and `instances`).
+    observed: &'a Json,
+    /// The features the adapter announced at initialize.
+    features: &'a [Feature],
+}
+
+/// One IR `Value` from a wire entry: a `{nominal}` Value, a bare `Exact`/`Inexact`, or a number.
+///
+/// Floats become exact decimals so the geometry comparison needs no inexact root.
+fn wire_value(v: &Json) -> Option<IrValue> {
+    let nominal = v.get("nominal").unwrap_or(v);
+    let exact = if let (Some(r), Some(pi)) = (
+        nominal.get("r").and_then(Json::as_str),
+        nominal.get("pi").and_then(Json::as_i64),
+    ) {
+        let (n, d) = r.split_once('/')?;
+        let rat = Rational::new(n.parse::<i64>().ok()?, d.parse::<i64>().ok()?).ok()?;
+        Magnitude::new(rat, i32::try_from(pi).ok()?)
+    } else {
+        let x = nominal
+            .get("f64")
+            .and_then(Json::as_f64)
+            .or_else(|| nominal.as_f64())?;
+        if !x.is_finite() {
+            return None;
+        }
+        Magnitude::new(Rational::parse_decimal(&format!("{x:e}")).ok()?, 0)
+    };
+    Some(IrValue::new(
+        Nominal::Exact(Exact(exact)),
+        Dim::default(),
+        v.to_string(),
+    ))
+}
+
+/// A 3x4 wire transform as rows of IR values; `None` when it is not rows of numbers.
+fn wire_transform(v: &Json) -> Option<Vec<Vec<IrValue>>> {
+    v.as_array()?
+        .iter()
+        .map(|row| row.as_array()?.iter().map(wire_value).collect())
+        .collect()
+}
+
+/// The observed `frames[]` and `instances[]` of an adapter's `read`; malformed items are skipped.
+fn observed_geometry(observed: &Json) -> (Vec<ObservedFrame>, Vec<ObservedInstance>) {
+    let projects: Vec<&Json> = match observed {
+        Json::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    let text = |v: &Json, k: &str| v.get(k).and_then(Json::as_str).map(str::to_owned);
+    let mut frames = Vec::new();
+    let mut instances = Vec::new();
+    for p in projects {
+        for f in p
+            .get("frames")
+            .and_then(Json::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let item = (|| {
+                Some(ObservedFrame {
+                    name: text(f, "name")?,
+                    document: text(f, "document")?,
+                    transform: wire_transform(f.get("transform")?)?,
+                })
+            })();
+            match item {
+                Some(i) => frames.push(i),
+                None => tracing::warn!("sync: malformed observed frame skipped"),
+            }
+        }
+        for i in p
+            .get("instances")
+            .and_then(Json::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let item = (|| {
+                Some(ObservedInstance {
+                    component: text(i, "component")?,
+                    document: text(i, "document")?,
+                    reference: text(i, "reference"),
+                    transform: wire_transform(i.get("transform")?)?,
+                })
+            })();
+            match item {
+                Some(i) => instances.push(i),
+                None => tracing::warn!("sync: malformed observed instance skipped"),
+            }
+        }
+    }
+    tracing::debug!(
+        frames = frames.len(),
+        instances = instances.len(),
+        "sync: observed geometry read"
+    );
+    (frames, instances)
+}
+
+/// The SI length of one native unit (0.001 for `mm`); 1.0 with a warning when it is unknown.
+fn native_scale(adapter: &Adapter) -> f64 {
+    let unit = adapter
+        .native_unit
+        .as_deref()
+        .unwrap_or(DEFAULT_NATIVE_UNIT);
+    UnitTable::builtin().lookup(unit).map_or_else(
+        || {
+            tracing::warn!(%unit, "sync: unknown native unit, geometry scale taken as 1");
+            1.0
+        },
+        |u| u.factor.to_f64(),
+    )
+}
+
+/// Geometry verification and datum driving (adapters.md 3.4) over one adapter's read.
+///
+/// Reports R001 for every frame or instance whose transform differs from the composed design,
+/// and returns the `datums = create` entries to append to the sync entries (empty under
+/// `verify` or without the `create_frames` feature). Each datum is driven in the document of its
+/// component: the file of any observed member of that component, else the frame's own document.
+// frob:ticket 01M4W1REG5EVCAD4NWWB6MN43Z
+fn geometry_pass(
+    adapter: &Adapter,
+    ir: &Ir,
+    bindings: &[cadetta_ir::model::Binding],
+    observed: &[Observed],
+    read: &Geometry<'_>,
+    ctx: &mut Ctx<'_>,
+) -> Vec<Entry> {
+    let id = adapter.id();
+    let mut project = ir.clone();
+    project.bindings = bindings.to_vec();
+    (project.frames, project.instances) = observed_geometry(read.observed);
+    let scale = native_scale(adapter);
+    let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
+    for d in verify_geometry(&project, id, scale, precision) {
+        ctx.report.diag(d.code, d.message);
+    }
+    let mut files: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for c in &ir.components {
+        let file = c
+            .members
+            .iter()
+            .filter_map(|m| {
+                bindings
+                    .iter()
+                    .find(|b| b.adapter == id && b.path == m.path)
+            })
+            .flat_map(|b| b.locators.iter())
+            .find_map(|l| observed.iter().find(|o| o.native == l.locator))
+            .map(|o| o.file.clone());
+        for d in &c.datums {
+            let frame = bindings
+                .iter()
+                .filter(|b| b.adapter == id && b.path == d.path)
+                .flat_map(|b| b.locators.iter())
+                .find(|l| l.kind == LocatorKind::Frame)
+                .map_or_else(
+                    || cadetta_adapter::bindings::mangle(&d.path, ""),
+                    |l| l.locator.clone(),
+                );
+            let file = file
+                .clone()
+                .or_else(|| {
+                    project
+                        .frames
+                        .iter()
+                        .find(|f| f.name == frame)
+                        .map(|f| f.document.clone())
+                })
+                .or_else(|| match adapter.files.as_slice() {
+                    [only] if !only.contains(['*', '?', '[']) => Some(only.clone()),
+                    _ => None,
+                });
+            match file {
+                Some(f) => {
+                    files.entry(f).or_default().insert(d.path.to_string());
+                }
+                None => {
+                    tracing::warn!(datum = %d.path, "sync: datum has no document to create its frame in")
+                }
+            }
+        }
+    }
+    let lock = &*ctx.lock;
+    let base = |path: &str, frame: &str| match lock.get(
+        &Record::SyncedValue(SyncedValue {
+            adapter: id.to_owned(),
+            path: path.to_owned(),
+            locator: frame.to_owned(),
+            value: String::new(),
+        })
+        .key(),
+    ) {
+        Some(Record::SyncedValue(v)) => Some(v.value.clone()),
+        _ => None,
+    };
+    let mut out = Vec::new();
+    for (file, paths) in &files {
+        out.extend(
+            datum_entries(
+                &project,
+                id,
+                file,
+                adapter.datums,
+                read.features,
+                scale,
+                precision,
+                &base,
+            )
+            .into_iter()
+            .filter(|e| paths.contains(&e.path)),
+        );
+    }
+    tracing::info!(adapter = %id, datums = out.len(), "sync: geometry pass done");
+    out
 }
 
 /// Store the engine's changed `synced` values into the lock file model.
@@ -615,7 +850,11 @@ fn drive_adapter<R: BufRead, W: Write>(
         }
     };
     let observed = observe(&read.observed);
-    let Some((entries, units)) = build_entries(pkg, adapter, ir, &observed, ctx) else {
+    let geometry = Geometry {
+        observed: &read.observed,
+        features: &client.info().features,
+    };
+    let Some((entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx) else {
         let _ = client.shutdown();
         return Ok(());
     };
@@ -1290,5 +1529,175 @@ mod tests {
         };
         assert!(validator.is_valid(&serde_json::to_value(&report).unwrap()));
         assert!(render_text(&report, false).starts_with("push  p  l  1mm -> 2mm\n"));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::observed_geometry
+    #[test]
+    fn observed_geometry_parses_frames_and_skips_malformed() {
+        let row = |x: f64| serde_json::json!([{"nominal":{"r":"1/1","pi":0}}, {"nominal":{"r":"0/1","pi":0}}, {"nominal":{"r":"0/1","pi":0}}, {"nominal":{"f64":x,"root":"p"}}]);
+        let t = serde_json::json!([row(5.0), row(0.0), row(0.0)]);
+        let j = serde_json::json!({
+            "frames": [{"name":"F","document":"a.step","transform":t}, {"name":"bad"}],
+            "instances": [{"component":"c","document":"a.step","transform":t}, {"document":"x"}]
+        });
+        let (frames, instances) = observed_geometry(&j);
+        assert_eq!(frames.len(), 1);
+        assert_eq!(frames[0].name, "F");
+        assert_eq!(frames[0].transform.len(), 3);
+        assert_eq!(frames[0].transform[0].len(), 4);
+        assert_eq!(instances.len(), 1);
+        assert!(instances[0].reference.is_none());
+        let (f2, _) = observed_geometry(&serde_json::json!([j]));
+        assert_eq!(f2.len(), 1);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::native_scale
+    #[test]
+    fn native_scale_defaults_to_millimetres() {
+        let a: Adapter = serde_json::from_value(serde_json::json!({"name":"x"})).unwrap();
+        assert!((native_scale(&a) - 0.001).abs() < 1e-12);
+    }
+
+    // --- geometry pass (ticket B6MN43Z) ---
+
+    fn gpath(t: &str) -> cadetta_ir::path::Path {
+        cadetta_ir::path::Path::parse(t, cadetta_ir::path::PathContext::General).unwrap()
+    }
+
+    /// An empty model component named `path`.
+    fn gcomponent(path: &str) -> cadetta_ir::model::Component {
+        let mut p = gpath(&format!("{path}.x"));
+        p.members.clear();
+        cadetta_ir::model::Component {
+            path: p,
+            class: cadetta_ir::model::ComponentClass::Model,
+            params_sig: None,
+            implements: vec![],
+            citation: None,
+            attrs: Default::default(),
+            members: vec![],
+            parts: vec![],
+            fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
+            span: None,
+            digest: None,
+        }
+    }
+
+    /// A design with one datum `a.b::Rail.site` offset 10 mm in x, bound to frame `Rail__site`.
+    fn datum_ir() -> (Ir, Vec<cadetta_ir::model::Binding>) {
+        use cadetta_ir::geometry::{Datum, OffsetArgs, Op};
+        use cadetta_ir::model::{Flavour, Member, MemberKind, PackageId};
+        let mut ir = Ir::new(
+            Flavour::Design,
+            PackageId {
+                name: "a.b".into(),
+                version: "1".into(),
+            },
+        );
+        let mut rail = gcomponent("a.b::Rail");
+        let mut m = Member::new(gpath("a.b::Rail.site.offset.x"), MemberKind::Datum);
+        m.value = wire_value(&json!({"r": "1/100", "pi": 0}));
+        rail.members.push(m);
+        rail.datums.push(Datum::new(
+            gpath("a.b::Rail.site"),
+            gpath("a.b::Rail.origin"),
+            vec![Op::Offset(Box::new(OffsetArgs {
+                x: Some(gpath("a.b::Rail.site.offset.x")),
+                ..Default::default()
+            }))],
+        ));
+        ir.components = vec![rail];
+        let loc = cadetta_ir::model::Locator {
+            locator: "Rail__site".into(),
+            kind: LocatorKind::Frame,
+            mode: LocatorMode::Value,
+            native_unit: "mm".into(),
+            ref_to: None,
+            for_alternate: None,
+            config: None,
+            sign: None,
+            component: None,
+            implicit: None,
+            tolerance: None,
+        };
+        let b = cadetta_ir::model::Binding {
+            path: gpath("a.b::Rail.site"),
+            adapter: "fc".into(),
+            locators: vec![loc],
+        };
+        (ir, vec![b])
+    }
+
+    /// `read.observed` JSON with the frame `Rail__site` at `milli` mm, or no frames when `None`.
+    fn frame_json(milli: Option<i64>) -> Json {
+        let n = |v: i64, d: i64| json!({"nominal": {"r": format!("{v}/{d}"), "pi": 0}});
+        let row = |r: usize| {
+            let mut c: Vec<Json> = (0..3).map(|i| n(i64::from(i == r), 1)).collect();
+            c.push(n(if r == 0 { milli.unwrap_or(0) } else { 0 }, 1000));
+            Json::Array(c)
+        };
+        match milli {
+            Some(_) => json!({"frames": [{"name": "Rail__site", "document": "rail.FCStd",
+                "transform": [row(0), row(1), row(2)]}]}),
+            None => json!({"components": []}),
+        }
+    }
+
+    /// Run the geometry pass; returns the diagnostic codes and the datum entries.
+    fn pass(milli: Option<i64>, extra: &str, features: &[Feature]) -> (Vec<String>, Vec<Entry>) {
+        let (ir, bindings) = datum_ir();
+        let adapter: Adapter = toml::from_str(&format!(
+            "name = \"fc\"\nfiles = [\"rail.FCStd\"]\nnative_unit = \"mm\"\n{extra}"
+        ))
+        .unwrap();
+        let args = parse_args(&[]).unwrap();
+        let run_scope = RunScope::new(&args.modules, &args.only).unwrap();
+        let mut lock = FileLock::default();
+        let mut report = SyncReport::default();
+        let mut ctx = Ctx {
+            args: &args,
+            run_scope: &run_scope,
+            lock: &mut lock,
+            lock_changed: false,
+            report: &mut report,
+        };
+        let observed = frame_json(milli);
+        let read = Geometry {
+            observed: &observed,
+            features,
+        };
+        let entries = geometry_pass(&adapter, &ir, &bindings, &[], &read, &mut ctx);
+        (
+            report.diagnostics.iter().map(|d| d.code.clone()).collect(),
+            entries,
+        )
+    }
+
+    // frob:ticket 01M4W1REG5EVCAD4NWWB6MN43Z
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::geometry_pass
+    #[test]
+    fn moved_frame_is_r001_and_matching_frame_is_silent() {
+        assert!(pass(Some(10), "", &[]).0.is_empty());
+        let (codes, entries) = pass(Some(12), "", &[]);
+        assert_eq!(codes, ["R001"]);
+        assert!(entries.is_empty(), "verify policy never drives");
+    }
+
+    // frob:ticket 01M4W1REG5EVCAD4NWWB6MN43Z
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::geometry_pass
+    #[test]
+    fn datums_create_appends_entries_only_with_the_feature() {
+        let create = "datums = \"create\"\n";
+        let (codes, entries) = pass(None, create, &[Feature::CreateFrames]);
+        assert!(codes.is_empty());
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].path, "a.b::Rail.site");
+        assert_eq!(entries[0].locator, "Rail__site");
+        assert_eq!(entries[0].file, "rail.FCStd");
+        assert!(pass(None, create, &[]).1.is_empty());
+        assert!(pass(None, "", &[Feature::CreateFrames]).1.is_empty());
     }
 }
