@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T20:55:11Z"
+updated = "2026-10-14T20:56:24Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
@@ -41,7 +41,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a one-point pattern or s = 0, when evaluated in cadetta-geometry, then theta is 180deg and float::unconstrained_rotation (the G008 condition) is true"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given several joints on one edge, when selected, then the edge takes the whole bound of the joint with the smallest theta, then smallest float, then first canonical path; any locating joint removes the float (float::select)"
