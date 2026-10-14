@@ -2,7 +2,8 @@
 id = "01M4SPWSFF7Z2K6FSGSZ1N30JH"
 title = "FreeCAD emit to Spreadsheet aliases"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
