@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-14T21:04:27Z"
+updated = "2026-10-14T21:04:28Z"
 persona = "design engineer"
 capability = "never leave CAD half-pushed"
 idempotency_key = "replan14:ad-atomic"
@@ -25,5 +25,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a read-back that differs from what was pushed, when recording, then a synced record is written only for locators whose read-back matches (adapters.md 2.3)"
-bound = false
+bound = true
 +++
