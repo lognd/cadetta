@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T20:57:38Z"
+digest = "39c96357383e9fa8b9a1be0cb77b933c0c5e0eb1d880597c764f172a664414ef"
+exit_code = 0
+passed = true
+provider = "nextest"
+ref = "joint_float_nut_sum or joint-float-nut-sum"
+size = 36925
+status = "measured"
+test_count = 393
+tests_digest = "015f8bb14a60b2a3f44467463290dcbef8c180bd6a756fa0b649671f4310318d"
+uri = "dir:.git/frob/artifacts/39c96357383e9fa8b9a1be0cb77b933c0c5e0eb1d880597c764f172a664414ef"
+at = "2026-10-14T20:57:38Z"
+actor = "lognd"
+rev = 1

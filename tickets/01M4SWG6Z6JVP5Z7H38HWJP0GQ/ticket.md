@@ -33,7 +33,7 @@ target = "01M4VQXPDA4TEKE455FNYB5TXC"
 
 [[acceptance]]
 text = "Given a ScrewJoint, when evaluated, then it exports float: Length equal to the allowance its aligned check uses (already met by std/src/fasteners/screwjoint.cdt; checked by tests/conformance/stdlib/joint-float-nut-sum; geometry.md 5.2)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a placement edge with non-locating joints between parent and child supplied as EdgeFloat, when placed by cadetta-geometry, then the edge carries [+-float] on x and y and a rotation [+-theta] about z through the onto centroid, theta = 2 * asin(float / s), 180deg when float >= s (float.rs; geometry.md 5.2)"
