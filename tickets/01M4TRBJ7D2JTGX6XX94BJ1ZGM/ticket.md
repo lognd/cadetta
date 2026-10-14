@@ -7,12 +7,12 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:48:42Z"
-updated = "2026-10-14T02:30:39Z"
+updated = "2026-10-14T02:30:50Z"
 scope = ["crates/cadetta-sema/**", "std/**", "tests/**", "docs/spec/**"]
 
 [[acceptance]]
 text = "Given T[x] with a non-literal integer/key index, when evaluated, then the table row is selected per language.md"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given IsoDefault table-by-name values (IsoDrills, IsoEngagement, IsoTapColumns, Iso4762Len), when resolved, then they resolve without E002"
