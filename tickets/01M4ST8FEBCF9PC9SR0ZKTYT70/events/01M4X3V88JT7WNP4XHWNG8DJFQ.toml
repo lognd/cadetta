@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-14T11:47:59Z"
+digest = "370016f77e681e2a4c9c3a71b2801e4107451eaeac36505c3680519789d81f0a"
+provider = "file"
+ref = "docs/schemas/swap.json"
+size = 6190
+status = "measured"
+at = "2026-10-14T11:47:59Z"
+actor = "Claude"
+rev = 1
