@@ -2,7 +2,8 @@
 id = "01M4W5F2S3S7EHKB0YXSSCR617"
 title = "golden README: document runner rules"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
