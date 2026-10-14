@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T11:58:48Z"
+digest = "038f601a9e7ee12036854350d5640ea09b9034344e5f74bea184667c06fedf34"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+adapters/freecad/tests/unit/test_drive.py .                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-594603-0.xml ---------------
+============================== 1 passed in 0.46s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_drive.py::test_push_updates_only_the_changed_alias"
+size = 513
+status = "measured"
+test_count = 1
+tests_digest = "b508f5df94170d048c07d1d85e5c85f64a2e1a90fc88194733a5acc6b0792796"
+at = "2026-10-14T11:58:48Z"
+actor = "Claude"
+rev = 1

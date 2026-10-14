@@ -17,6 +17,7 @@ use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};
 
 use super::{Def, EvalDiagnostic, Evaluator, Fail, R, Scope, Val, diag};
+use crate::defaults::{Layers, Source, resolve_default};
 use crate::deps::Severity;
 use crate::parts::{ArgSource, bind_args_injecting};
 use crate::resolve::{CanonPath, Ctx, ItemClass, MemberSeg, PackageSrc, Resolved, Resolver};
@@ -205,35 +206,46 @@ impl<'p> Site<'_, 'p> {
         }
     }
 
-    /// The scope default implementation of `iface` (assembly, file, then `std`).
+    /// The scope default implementation of `iface`, resolved by `defaults::resolve_default`.
+    // frob:ticket 01M4WGAD346CJ141PB5JK240ZV
     fn default_impl(&self, iface: &CanonPath) -> Option<CanonPath> {
         let name = iface.item.as_str();
-        let scoped = self
-            .parent
-            .inner_attrs
-            .iter()
-            .chain(self.parent_file.inner_attrs.iter())
-            .filter(|a| a.name.name == "default")
-            .flat_map(|a| a.args.iter())
-            .find_map(|g| match g {
-                AttrArg::Named { name: n, value } if n.name == name => Some(value),
-                _ => None,
-            });
-        if let Some(value) = scoped {
-            return match self.resolver.resolve_ref(self.parent_ctx, value, None) {
-                Ok(Resolved::Item {
-                    path,
-                    class: ItemClass::Component,
-                }) => Some(path),
-                _ => {
-                    warn!(
-                        iface = name,
-                        "instances: scope default does not name a component"
-                    );
-                    None
-                }
-            };
+        let component = default_entries(&self.parent.inner_attrs);
+        let file = default_entries(&self.parent_file.inner_attrs);
+        let std_impl = self.std_default(name);
+        let layers = Layers {
+            component: Some(&component.names),
+            file: Some(&file.names),
+            project: None,
+            std: std_impl.as_ref().map(|_| STD_DEFAULT),
+        };
+        let resolution = resolve_default(name, &layers)?;
+        let value = match resolution.source {
+            Source::Component => component.exprs.get(name),
+            Source::File => file.exprs.get(name),
+            Source::Project | Source::Std => None,
+        };
+        let Some(value) = value else {
+            debug!(iface = name, source = ?resolution.source, "instances: default from non-scope layer");
+            return std_impl;
+        };
+        match self.resolver.resolve_ref(self.parent_ctx, value, None) {
+            Ok(Resolved::Item {
+                path,
+                class: ItemClass::Component,
+            }) => Some(path),
+            _ => {
+                warn!(
+                    iface = name,
+                    "instances: scope default does not name a component"
+                );
+                None
+            }
         }
+    }
+
+    /// The `std` default component implementing the interface named `name`, if any.
+    fn std_default(&self, name: &str) -> Option<CanonPath> {
         self.packages
             .iter()
             .filter(|p| p.name == STD)
@@ -449,6 +461,40 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 }
 
+/// The `#![default(Iface = Impl)]` entries of one attribute layer (first entry per interface wins).
+struct DefaultEntries<'a> {
+    /// Interface name to the implementation as written, for `resolve_default`.
+    names: BTreeMap<String, String>,
+    /// Interface name to the implementation expression, for resolution.
+    exprs: BTreeMap<String, &'a Expr>,
+}
+
+/// Collect the `default` attribute entries from `attrs` into a `DefaultEntries`.
+fn default_entries(attrs: &[ast::Attr]) -> DefaultEntries<'_> {
+    let mut out = DefaultEntries {
+        names: BTreeMap::new(),
+        exprs: BTreeMap::new(),
+    };
+    for g in attrs
+        .iter()
+        .filter(|a| a.name.name == "default")
+        .flat_map(|a| a.args.iter())
+    {
+        if let AttrArg::Named { name, value } = g {
+            if out.exprs.contains_key(&name.name) {
+                continue;
+            }
+            let written = match &value.kind {
+                ExprKind::Path(p) => p.text(),
+                _ => String::from("<expr>"),
+            };
+            out.names.insert(name.name.clone(), written);
+            out.exprs.insert(name.name.clone(), value);
+        }
+    }
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::tests::{file, run};
@@ -549,6 +595,23 @@ mod tests {
         let ev = run(&f);
         assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
         assert_eq!(mm(&ev, "gapped"), m(9, 1000));
+    }
+
+    // frob:tests crates/cadetta-sema/src/instances.rs::default_impl kind=unit
+    // frob:ticket 01M4WGAD346CJ141PB5JK240ZV
+    #[test]
+    fn default_impl_delegates_file_layer_and_reports_missing() {
+        let f = file(&format!(
+            "{BASE}#![default(Pol = Loose)]\nassembly Top {{ part j: Joint(a = 4mm) }}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(mm(&ev, "gapped"), m(9, 1000));
+        let none = file(&format!(
+            "{BASE}assembly Top {{ part j: Joint(a = 4mm) }}\n"
+        ));
+        let ev = run(&none);
+        assert!(!ev.diagnostics.is_empty());
     }
 
     // frob:tests missing_required_argument_is_e006

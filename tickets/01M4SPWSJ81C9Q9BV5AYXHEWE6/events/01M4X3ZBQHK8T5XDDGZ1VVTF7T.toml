@@ -1,0 +1,31 @@
+kind = "evidence"
+captured_at = "2026-10-14T11:50:10Z"
+digest = "30a8368f6b004c2dff1024c4c31ac792c61c1b8db956e2e787d2d9be131b35cd"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/adapters/freecad
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 51 items
+
+adapters/freecad/tests/unit/test_emit.py ......................          [ 43%]
+adapters/freecad/tests/unit/test_freecad_adapter.py ......               [ 54%]
+adapters/freecad/tests/unit/test_main.py ..                              [ 58%]
+adapters/freecad/tests/unit/test_read.py .....                           [ 68%]
+adapters/freecad ................                                        [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-267848-0.xml ---------------
+============================== 51 passed in 2.01s ==============================
+"""
+passed = true
+provider = "pytest"
+ref = "adapters/freecad/tests/unit/test_emit.py::test_alternate_only_and_unwritten_locators_are_skipped adapters/freecad/tests/unit/test_emit.py::test_backend_failure_is_an_rpc_error adapters/freecad/tests/unit/test_emit.py::test_bad_policy_and_digestless_design_are_invalid_params adapters/freecad/tests/unit/test_emit.py::test_dependency_cycle_is_d003 adapters/freecad/tests/unit/test_emit.py::test_emit_over_json_rpc adapters/freecad/tests/unit/test_emit.py::test_emit_point_mid_mmc_lmc_and_notes adapters/freecad/tests/unit/test_emit.py::test_emit_twice_cells_are_identical_and_headed_by_digests adapters/freecad/tests/unit/test_emit.py::test_emit_twice_is_deterministic adapters/freecad/tests/unit/test_emit.py::test_invalid_and_colliding_aliases_are_diagnostics adapters/freecad/tests/unit/test_emit.py::test_live_backend_write_sheet_reports_missing_freecad adapters/freecad/tests/unit/test_emit.py::test_mmc_without_role_is_e010_and_withholds adapters/freecad/tests/unit/test_emit.py::test_paths_follow_dependencies_then_smallest_path adapters/freecad/tests/unit/test_emit.py::test_q004_respects_policy_precision adapters/freecad/tests/unit/test_emit.py::test_q004_withholds_the_file adapters/freecad/tests/unit/test_emit.py::test_ref_mode_follows_alias_of_to_the_referent_global adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_any_global_is_a_diagnostic adapters/freecad/tests/unit/test_emit.py::test_ref_mode_without_global_creates_the_mangled_global_once adapters/freecad/tests/unit/test_emit.py::test_ref_to_names_the_target_global adapters/freecad/tests/unit/test_emit.py::test_several_locators_each_written_and_ref_mode_references_global adapters/freecad/tests/unit/test_emit.py::test_sign_negates_and_dimensionless_is_bare adapters/freecad/tests/unit/test_emit.py::test_star_binding_emits_instance_zero adapters/freecad/tests/unit/test_emit.py::test_unknown_bound_path_is_r005 adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_rejects_unknown_protocol adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_returns_all_three_capabilities adapters/freecad/tests/unit/test_freecad_adapter.py::test_initialize_succeeds_without_freecad adapters/freecad/tests/unit/test_freecad_adapter.py::test_live_backend_errs_when_freecad_missing adapters/freecad/tests/unit/test_freecad_adapter.py::test_run_keeps_stdout_for_protocol_only adapters/freecad/tests/unit/test_freecad_adapter.py::test_served_by_adapter_base_and_shutdown_stops_loop adapters/freecad/tests/unit/test_main.py::test_no_arguments_serves_the_adapter adapters/freecad/tests/unit/test_main.py::test_version_prints_to_stdout adapters/freecad/tests/unit/test_read.py::test_driven_dimension_is_inexact_with_a_reason adapters/freecad/tests/unit/test_read.py::test_emit_then_read_round_trips_ir_values adapters/freecad/tests/unit/test_read.py::test_live_backend_read_errs_when_freecad_missing adapters/freecad/tests/unit/test_read.py::test_long_binary64_is_inexact_and_unit_less_dimension_is_assumed adapters/freecad/tests/unit/test_read.py::test_read_rejects_sessions_and_reports_backend_errors bindings/python/tests/test_adapter.py::test_drive_methods_are_overridable_and_open_save_close_work bindings/python/tests/test_adapter.py::test_handler_err_becomes_rpc_error_and_exception_is_internal bindings/python/tests/test_adapter.py::test_initialize_dispatches_and_result_is_schema_shaped bindings/python/tests/test_adapter.py::test_invalid_handler_result_is_internal_error bindings/python/tests/test_adapter.py::test_invalid_params_and_unknown_fields_are_refused bindings/python/tests/test_adapter.py::test_observed_ir_uses_the_ir_models bindings/python/tests/test_adapter.py::test_parse_error_and_notifications bindings/python/tests/test_adapter.py::test_run_keeps_stdout_for_protocol_and_logs_to_stderr bindings/python/tests/test_adapter.py::test_shutdown_ends_loop bindings/python/tests/test_adapter.py::test_unoverridden_and_non_drive_methods_are_method_not_found bindings/python/tests/test_gen_models.py::test_check_names_stale_file bindings/python/tests/test_solve.py::test_output_kind_mismatch_is_protocol_error_naming_output bindings/python/tests/test_solve.py::test_serve_writes_valid_response_with_version bindings/python/tests/unit/test_logging.py::test_below_level_filter_keeps_only_lower_levels bindings/python/tests/unit/test_logging.py::test_info_has_no_level_prefix bindings/python/tests/unit/test_logging.py::test_warning_and_show_level_add_prefix"
+size = 835
+status = "measured"
+test_count = 51
+tests_digest = "a9ac58135c2f350282c27a9abe512646374d2d6ce0211d89c3f17181cb289590"
+at = "2026-10-14T11:50:10Z"
+actor = "Claude"
+rev = 1

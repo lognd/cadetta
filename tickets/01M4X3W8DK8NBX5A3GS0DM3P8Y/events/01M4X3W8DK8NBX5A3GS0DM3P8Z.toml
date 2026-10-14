@@ -1,0 +1,9 @@
+kind = "create"
+title = "lock verify --format json report and docs/schemas/lock.json"
+type = "chore"
+category = "todo"
+priority = "low"
+points = 3
+at = "2026-10-14T11:48:32Z"
+actor = "Claude"
+rev = 1

@@ -16,6 +16,7 @@ pub mod lock_verify;
 pub mod pkg_closure;
 pub mod require;
 pub mod roles;
+pub mod schema;
 pub mod selector;
 pub mod staleness;
 pub mod swap;

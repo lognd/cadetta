@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T11:46:31Z"
+digest = "a02bcf2b3b25feee2e0a60e8410ff1e2a19a617676198d8fc9643b82b5b52831"
+exit_code = 0
+inline = '''
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.65s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4070e134-59eb-4c0e-aa17-eb4a1dbaa255 with nextest profile: default
+    Starting 2 tests across 1 binary (79 tests skipped)
+        PASS [   0.007s] cadetta-obligations schema::tests::compare_file_matches_definition
+        PASS [   0.008s] cadetta-obligations schema::tests::impact_file_matches_definition
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 2 tests run: 2 passed, 79 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-obligations schema"
+size = 953
+status = "measured"
+test_count = 2
+tests_digest = "dce6f851d58c7b494d3952c3296fdc8dee849f4c8fc8409b6f19e1ddb7a72e7a"
+at = "2026-10-14T11:46:31Z"
+actor = "Claude"
+rev = 1

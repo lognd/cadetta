@@ -1,0 +1,5 @@
+kind = "changelog-exempt"
+reason = "lint-only; gh and grimble absent"
+at = "2026-10-14T11:52:33Z"
+actor = "Claude"
+rev = 1

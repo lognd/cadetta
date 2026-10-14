@@ -9,6 +9,13 @@ protocol messages only and every log line goes to stderr
 so the JSON-RPC loop is the base class's. `initialize` reports
 capabilities emit, read and drive, native unit mm and precision 6. `emit`
 writes bound values as Spreadsheet aliases (`emit.py`, adapters.md 6.1);
-read and drive are planned in the FreeCAD adapter epic. FreeCAD is reached
+`read` imports Spreadsheet aliases and Sketcher dimensions of FCStd files
+into observed IR (`read.py`, adapters.md 6.2): one `<pkg>::Observed`
+component, imported provenance, driven dimensions and long binary64
+values `exact: false` with a reason (Q006); sessions are unsupported.
+`open`, `push`, `regen`, `save` and `close` drive (`drive.py`, adapters.md
+6.3): sessions attach to or hide-open FCStd files, refuse dirty or read-only
+ones (R009), push only changed locators, report rebuild failures as R004
+and restore the snapshot, and save only after a good rebuild. FreeCAD is reached
 through the `FreeCadBackend` seam (`backend.py`) so the protocol is
 testable without FreeCAD. `cadetta-freecad --version` prints the version.
