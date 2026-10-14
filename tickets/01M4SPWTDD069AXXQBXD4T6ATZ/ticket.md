@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T04:03:56Z"
-updated = "2026-10-14T14:06:26Z"
+updated = "2026-10-14T14:37:18Z"
 persona = "design engineer"
 capability = "run the full compile, lint, push, regen, read back, drift loop"
 outcome_text = "one command replaces open, import, rebuild, check"
@@ -17,7 +17,7 @@ scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/cmd/mod.r
 
 [[acceptance]]
 text = "Given no changed digest and matching read-back, when sync runs, then nothing is written and no regen is triggered"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given an adapter without drive, when sync runs, then emit plus manual instructions are printed"
