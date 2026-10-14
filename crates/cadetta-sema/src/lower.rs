@@ -316,10 +316,7 @@ impl Cx<'_> {
             &m.attrs,
             &m.trailing,
         );
-        out.role = ["hole", "shaft"]
-            .iter()
-            .find(|r| out.attrs.contains_key(**r))
-            .map(|r| (*r).to_owned());
+        out.role = role_from_attrs(&out.attrs);
         out.citation = effective(citation, c.citation.as_ref()).and_then(|cc| {
             match idx.lower_ref(&comp.package, &comp.modules, cc) {
                 Ok(r) => Some(r),
@@ -481,6 +478,23 @@ impl Cx<'_> {
             required: f.required.clone(),
         })
     }
+}
+
+/// The tolerance role a member plays: bare `#[hole]`/`#[shaft]` or `#[role(hole)]`/`#[role(shaft)]`.
+fn role_from_attrs(attrs: &BTreeMap<String, String>) -> Option<String> {
+    let role = ["hole", "shaft"]
+        .iter()
+        .find(|r| attrs.contains_key(**r))
+        .map(|r| (*r).to_owned())
+        .or_else(|| {
+            attrs
+                .get("role")
+                .map(|v| v.trim())
+                .filter(|v| matches!(*v, "hole" | "shaft"))
+                .map(str::to_owned)
+        });
+    trace!(role = ?role, "lower: member role resolved");
+    role
 }
 
 fn class_of(c: ast::ComponentClass) -> ComponentClass {
@@ -866,6 +880,17 @@ mod tests {
                 .per_alternate
                 .contains_key("Axle/wall=Thick")
         );
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::role_from_attrs kind=unit
+    #[test]
+    fn role_attribute_names_hole_or_shaft() {
+        let mk = |k: &str, v: &str| BTreeMap::from([(k.to_owned(), v.to_owned())]);
+        assert_eq!(role_from_attrs(&mk("hole", "")).as_deref(), Some("hole"));
+        assert_eq!(role_from_attrs(&mk("role", "hole")).as_deref(), Some("hole"));
+        assert_eq!(role_from_attrs(&mk("role", "shaft")).as_deref(), Some("shaft"));
+        assert_eq!(role_from_attrs(&mk("role", "other")), None);
+        assert_eq!(role_from_attrs(&BTreeMap::new()), None);
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit

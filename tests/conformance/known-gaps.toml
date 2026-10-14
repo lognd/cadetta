@@ -2013,11 +2013,6 @@ ticket = "~NDGXJQ1"
 reason = "solver failure, Q001 and variants handling not implemented"
 
 [[gap]]
-fixture = "emitters/sw-equations/comment-trailing-emit-point"
-ticket = "~NWB8SVP"
-reason = "role(hole) attribute not honored for emit point"
-
-[[gap]]
 fixture = "adapters/protocol-command-no-path-search"
 ticket = "~Q6AKDVQ"
 reason = "binding protocol entries have no executor yet"
