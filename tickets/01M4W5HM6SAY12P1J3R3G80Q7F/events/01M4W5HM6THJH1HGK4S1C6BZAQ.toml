@@ -1,0 +1,12 @@
+kind = "create"
+title = "Per-instance checks for parameterized components (engaged, not_bottomed)"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 5
+scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
+acceptance = ["Given a ScrewJoint instance, when cadetta check runs, then its named checks (Box/j.engaged ...) report verdicts"]
+body = "found while working ~646D1T7: checks.rs skips parameterized components; instance members now have values, so checks can run per instance."
+at = "2026-10-14T02:58:24Z"
+actor = "lognd"
+rev = 1
