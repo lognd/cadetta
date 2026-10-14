@@ -1,0 +1,63 @@
+name: freecad
+
+# Runs the FreeCAD adapter's live tests (adapters/freecad/tests/live) under
+# the headless freecadcmd interpreter. No license or display is needed.
+# The unit suite runs in ci.yml; this job covers what needs real FreeCAD:
+# emit, read, push, regen and save against actual FCStd files.
+
+on:
+  pull_request:
+    paths:
+      - adapters/freecad/**
+      - bindings/python/**
+      - .github/workflows/freecad.yml
+  push:
+    branches: [main]
+    paths:
+      - adapters/freecad/**
+      - bindings/python/**
+      - .github/workflows/freecad.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  QT_QPA_PLATFORM: offscreen
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  freecadcmd:
+    name: freecadcmd (live round trip)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - name: Install FreeCAD (headless)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends freecad python3-venv
+          freecadcmd --version
+      # freecadcmd embeds the system python3, so the venv must be built from
+      # it and see FreeCAD's modules through system-site-packages.
+      - name: Build the venv (cadetta, adapter, pytest)
+        run: |
+          python3 -m venv --system-site-packages "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install maturin pytest
+          "$RUNNER_TEMP/venv/bin/pip" install ./bindings/python
+          "$RUNNER_TEMP/venv/bin/pip" install ./adapters/freecad
+          "$RUNNER_TEMP/venv/bin/python" -c \
+            "import site; print(site.getsitepackages()[0])" > "$RUNNER_TEMP/site.txt"
+      - name: pytest under freecadcmd
+        run: |
+          CADETTA_SITE="$(cat "$RUNNER_TEMP/site.txt")" \
+            freecadcmd adapters/freecad/tests/live/run_under_freecadcmd.py
