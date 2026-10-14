@@ -62,6 +62,13 @@ MODELS: tuple[ModelSpec, ...] = (
     ModelSpec(schema_file="bind.json", module="bind"),
     ModelSpec(schema_file="units.json", module="units"),
     ModelSpec(schema_file="explain.json", module="explain"),
+    ModelSpec(schema_file="diag.json", module="diag"),
+    ModelSpec(schema_file="check.json", module="check"),
+    ModelSpec(schema_file="why.json", module="why"),
+    ModelSpec(schema_file="impact.json", module="impact"),
+    ModelSpec(schema_file="swap.json", module="swap"),
+    ModelSpec(schema_file="compare.json", module="compare"),
+    ModelSpec(schema_file="obligations.json", module="obligations"),
 )
 
 

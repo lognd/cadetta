@@ -14,10 +14,21 @@ from typing import TypeVar
 from pydantic import BaseModel, ConfigDict
 from typani import Err, Ok, Result
 
+from cadetta import queries
 from cadetta._core import Quantity
 from cadetta.logging import get_logger
 from cadetta.models import bind as bind_model
-from cadetta.models import cite_list, explain, ir, names
+from cadetta.models import (
+    cite_list,
+    compare,
+    explain,
+    impact,
+    ir,
+    names,
+    obligations,
+    swap,
+    why,
+)
 from cadetta.result import JSON_EXITS, report_from_exit
 
 __all__ = [
@@ -355,3 +366,50 @@ class Project:
         if isinstance(model, Err):
             return model
         return Ok(Design(model.unwrap()))
+
+    def check(
+        self,
+        release: bool = False,
+        as_of: str | None = None,
+        module: str | None = None,
+    ) -> Result[queries.CheckReport, ProjectError]:
+        """Diagnostics from `check`; error findings are still an Ok report."""
+        return queries.check(self, release, as_of, module)
+
+    def why(self, path: str) -> Result[why.Why, ProjectError]:
+        """The derivation of one member (`why PATH`)."""
+        return queries.why_path(self, path)
+
+    def why_stale(
+        self, obligation: str, role: str | None = None
+    ) -> Result[why.Why, ProjectError]:
+        """Why an obligation is stale (`why --stale`)."""
+        return queries.why_stale(self, obligation, role)
+
+    def impact(self, path: str) -> Result[impact.ImpactOutput, ProjectError]:
+        """The downstream dependents of a member (`impact PATH`)."""
+        return queries.impact_of(self, path)
+
+    def impact_swap(self, slot: str, alternate: str) -> Result[swap.Swap, ProjectError]:
+        """Preview swapping `slot` to `alternate` (`impact --swap`)."""
+        return queries.impact_swap(self, slot, alternate)
+
+    def swap(
+        self, slot: str, alternate: str, reason: str, as_: str | None = None
+    ) -> Result[swap.Swap, ProjectError]:
+        """Apply a part swap with a recorded reason (`swap`)."""
+        return queries.swap_part(self, slot, alternate, reason, as_)
+
+    def compare(self, interface: str) -> Result[compare.Compare, ProjectError]:
+        """The alternates of an interface side by side (`compare`)."""
+        return queries.compare_interface(self, interface)
+
+    def obligations(
+        self,
+        stale: bool = False,
+        role: str | None = None,
+        release: bool = False,
+        as_of: str | None = None,
+    ) -> Result[obligations.ObligationsOutput, ProjectError]:
+        """The obligation list (`obligations`)."""
+        return queries.obligations_of(self, stale, role, release, as_of)
