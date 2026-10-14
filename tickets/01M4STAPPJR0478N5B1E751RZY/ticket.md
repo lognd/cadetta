@@ -28,5 +28,5 @@ bound = true
 
 [[acceptance]]
 text = "Given a value without a citation, when found, then the audit fails (stdlib.md intro)"
-bound = false
+bound = true
 +++
