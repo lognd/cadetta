@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta lock verify reads cadetta.lock, checks it against live obligation digests and configured roles, and exits 0 when clean, 1 on any finding, 2 on usage or unreadable lock", "Format json emits the cadetta.lock/1 report from VerifyReport::to_json; text prints one line per finding or 'cadetta.lock: clean'", "docs/spec/config-cli.md documents the verb and a changelog fragment exists"]
+moved = []
+at = "2026-10-14T14:51:32Z"
+actor = "lognd"
+rev = 1
