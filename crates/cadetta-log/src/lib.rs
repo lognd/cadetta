@@ -12,8 +12,10 @@
 mod env;
 mod init;
 mod redact;
+mod sink;
 #[cfg(any(test, feature = "test-util"))]
 pub mod testing;
 
 pub use init::{InitError, LOG_ENV, init};
 pub use redact::{REDACTED, redact};
+pub use sink::{Sink, init_sink};

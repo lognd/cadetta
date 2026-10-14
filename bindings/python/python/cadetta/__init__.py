@@ -6,11 +6,14 @@ The interop API is specified in docs/spec/bindings.md.
 
 # frob:ticket 01M4SWP8BCQ00WCDJ5FQ2QMDX9
 
+from cadetta import _logging
 from cadetta._core import core_version
 from cadetta.errors import QuantityError
 from cadetta.project import Design, Member, PathNotFound, Project, ProjectError
 from cadetta.quantity import Quantity, quantity
 from cadetta.tools import format_source, units
+
+_logging.install_unless_cli()
 
 __all__ = [
     "Design",
