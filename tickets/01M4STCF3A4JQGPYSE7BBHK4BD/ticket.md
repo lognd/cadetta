@@ -2,7 +2,8 @@
 id = "01M4STCF3A4JQGPYSE7BBHK4BD"
 title = "Conformance run for adapters and sw-equations"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
