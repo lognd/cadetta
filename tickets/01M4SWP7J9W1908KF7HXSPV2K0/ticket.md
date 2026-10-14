@@ -2,7 +2,8 @@
 id = "01M4SWP7J9W1908KF7HXSPV2K0"
 title = "Conformance run for geometry"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
