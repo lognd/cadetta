@@ -23,4 +23,4 @@ def test_console_script_prints_version():
 
 # frob:tests bindings/python/python/cadetta/_core.pyi::run_cli kind=unit
 def test_unknown_command_is_usage_error():
-    assert run_cli(["sync"]) == 2
+    assert run_cli(["no-such-verb-xyzzy"]) == 2
