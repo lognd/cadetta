@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:44:11Z"
-updated = "2026-10-13T05:44:13Z"
+updated = "2026-10-14T21:07:03Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 idempotency_key = "replan14:ad-r8910"
 labels = ["creates:crates/cadetta-adapter/src/availability.rs"]
-scope = ["crates/cadetta-adapter/src/availability.rs"]
+scope = ["crates/cadetta-adapter/src/availability.rs", "crates/cadetta-adapter/src/lib.rs", "docs/spec/adapters.md", "changelog.d/*76RVDH2*"]
 
 [[links]]
 kind = "blocked-by"
