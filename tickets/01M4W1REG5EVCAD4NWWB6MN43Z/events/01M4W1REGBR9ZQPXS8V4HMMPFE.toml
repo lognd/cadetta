@@ -1,0 +1,14 @@
+kind = "create"
+title = "Call geometry_bind verify_geometry and datum_entries from cadetta sync"
+type = "task"
+category = "todo"
+priority = "high"
+scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+body = "found while working 645FHJZ: no cadetta sync verb exists yet (owned by ~D4T6ATZ). 645FHJZ landed the glue as cadetta_adapter::geometry_bind::{Composer, verify_geometry, datum_entries}; the verb must call verify_geometry after read (R001 diagnostics) and append datum_entries to the sync entries when datums = create. Also needs the unknown-verb test in lib.rs changed off 'sync'."
+at = "2026-10-14T01:52:16Z"
+actor = "lognd"
+rev = 1
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SPWTDD069AXXQBXD4T6ATZ"
