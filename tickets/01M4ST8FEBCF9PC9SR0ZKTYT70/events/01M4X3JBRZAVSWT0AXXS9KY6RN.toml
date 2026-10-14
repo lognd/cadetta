@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/schemas/impact.json", "docs/schemas/compare.json", "crates/cadetta-obligations/src/schema.rs"]
+new = ["docs/schemas/impact.json", "docs/schemas/compare.json", "crates/cadetta-obligations/src/schema.rs", "crates/cadetta-obligations/src/lib.rs", "crates/cadetta-obligations/Cargo.toml", "Cargo.lock"]
+at = "2026-10-14T11:43:07Z"
+actor = "Claude"
+rev = 1
