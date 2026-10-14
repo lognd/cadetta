@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "screw here and prove alignment"
 idempotency_key = "replan14:geo-screwpos"
 labels = ["creates:std/src/fasteners/screwjoint_position.cdt"]
-scope = ["std/src/fasteners/screwjoint_position.cdt", "std/**", "crates/cadetta-sema/**"]
+scope = ["std/src/fasteners/screwjoint_position.cdt", "std/**", "crates/cadetta-sema/**", "tests/conformance/**"]
 
 [[links]]
 kind = "blocked-by"
