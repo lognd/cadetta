@@ -23,6 +23,7 @@ use cadetta_lint::rules::{d, f, interface, m, n, q, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
+use cadetta_sema::fitderive;
 use cadetta_sema::kindcheck::{EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
@@ -595,7 +596,9 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
     let mut evaluator = Evaluator::new(&resolver, &units, &sources);
     let procs = Processes::compile(&mut evaluator, &sources);
+    let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let evaluation = evaluator.evaluate();
+    let derived_fits = fitderive::derive_fits(&resolver, &evaluation, &fit_ranges, &sources);
     let outcome = procs.apply(&evaluation);
     let renames = Renames::collect(&resolver, &sources);
     let graph = DepGraph::build(&resolver, &renames, &sources);
@@ -785,7 +788,7 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
             compensation: Some(&outcome),
             deps: &graph,
             variants: BTreeMap::new(),
-            fits: &[],
+            fits: &derived_fits,
         };
         let ir = lower(&input);
         let locate = |s: &cadetta_ir::model::SpanRef| index.locate_ref(&s.file, s.start, s.end);

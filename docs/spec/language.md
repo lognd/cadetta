@@ -438,6 +438,14 @@ x` the fitted parameter x may be untoleranced or carry exactly one of
 the two classes' deviations; any other tolerance on it is F003. A
 nominal that is not a whole number of nanometres has no table row (F002).
 
+Pipeline (cadetta-sema `fitderive`): `cadetta check` evaluates each
+component fit's operands and required range after the member values are
+known, runs the fit analysis, and hands the result to lowering, which
+records it in `Component.fits` (ir.md 3) so the IR lint F004 sees the
+clearance and `required` bound. Fits whose operands are not evaluated
+members (component arguments, part instances) or whose analysis fails
+are not yet lowered.
+
 ### 3.8 Functions, enums, processes
 
 - `fn name(a: Kind, ...) -> Kind { let x = ...; expr }`: pure, total, no

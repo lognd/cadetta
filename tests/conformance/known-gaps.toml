@@ -83,11 +83,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/f004-range-violated"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "language/fit-clearance-member"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"

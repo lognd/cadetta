@@ -8,6 +8,7 @@ pub mod cite;
 pub mod defaults;
 pub mod deps;
 pub mod eval;
+pub mod fitderive;
 pub mod fits;
 pub mod imports;
 pub mod kindcheck;
