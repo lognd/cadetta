@@ -155,6 +155,9 @@ pub struct SyncReport {
     pub manual: Vec<Manual>,
     /// Whether `cadetta.lock` was written.
     pub lock_written: bool,
+    /// Bound `(path, file, locator)` triples absent from the native files (structured R003).
+    #[serde(skip)]
+    pub missing: Vec<(String, String, String)>,
 }
 
 impl SyncReport {
@@ -516,6 +519,11 @@ fn build_entries(
                 String::new()
             };
             let Some(found) = observed.iter().find(|o| o.native == loc.locator) else {
+                ctx.report.missing.push((
+                    canonical.clone(),
+                    adapter.files.join(", "),
+                    loc.locator.clone(),
+                ));
                 ctx.report.diag(
                     R003,
                     format!(
@@ -1070,6 +1078,96 @@ fn sync_adapter(
         manual_adapter(pkg, adapter, ir, ctx);
         Ok(())
     }
+}
+
+/// What a check-time read of one adapter found: the three-way entries and everything the R lints
+/// need beyond them.
+// frob:ticket 01M4TA3C87N60Y711163RK3GPH
+#[derive(Debug, Default)]
+pub(crate) struct Probe {
+    /// Three-way entries of the bound, readable locators.
+    pub entries: Vec<Entry>,
+    /// Diagnostics `build_entries` raised (R001 geometry, R005, R013, ...), as `(code, message)`.
+    pub diagnostics: Vec<(String, String)>,
+    /// Bound `(path, file, locator)` triples missing from the native files.
+    pub missing: Vec<(String, String, String)>,
+    /// Native `(file, name)` values no binding covers.
+    pub unbound: Vec<(String, String)>,
+    /// The loaded bindings as `(path, locator)`, first locator of each path.
+    pub bindings: Vec<(String, String)>,
+    /// The adapter's own diagnostics from `read`, as `(code, message)`.
+    pub reports: Vec<(String, String)>,
+}
+
+/// Read an adapter's files over `client` and compare them with the design IR without writing
+/// anything: the data behind the `check` drift lints (adapters.md 2, 3, 7).
+///
+/// The lock is only read for bases; `Err` is a read failure the caller reports as R008.
+// frob:ticket 01M4TA3C87N60Y711163RK3GPH
+pub(crate) fn probe_adapter<R: BufRead, W: Write>(
+    client: &mut Client<R, W>,
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    lock: &FileLock,
+) -> Result<Probe, String> {
+    let id = adapter.id().to_owned();
+    let files = expand_files(pkg, adapter);
+    if files.is_empty() {
+        return Err(format!("adapter `{id}` has no `files` to read"));
+    }
+    let read = client
+        .read(&ReadParams {
+            source: ReadSource::Files(files),
+        })
+        .map_err(|e| format!("adapter `{id}` read failed: {e}"))?;
+    let observed = observe(&read.observed);
+    let geometry = Geometry {
+        observed: &read.observed,
+        features: &client.info().features,
+    };
+    let run_scope = RunScope::new(&[] as &[String], &[] as &[String]).map_err(|e| e.to_string())?;
+    let args = SyncArgs::default();
+    let mut scratch = lock.clone();
+    let mut report = SyncReport::default();
+    let mut ctx = Ctx {
+        args: &args,
+        run_scope: &run_scope,
+        lock: &mut scratch,
+        lock_changed: false,
+        report: &mut report,
+    };
+    let built = build_entries(pkg, adapter, ir, &observed, &geometry, &mut ctx);
+    let mut probe = Probe {
+        entries: built.map(|(entries, _)| entries).unwrap_or_default(),
+        reports: read.diagnostics.iter().map(|d| diag_parts(&d.0)).collect(),
+        ..Probe::default()
+    };
+    probe.diagnostics = report
+        .diagnostics
+        .iter()
+        .map(|d| (d.code.clone(), d.message.clone()))
+        .collect();
+    probe.missing = std::mem::take(&mut report.missing);
+    if let Ok((set, _)) = load_bindings(pkg, adapter, ir) {
+        let bound: BTreeSet<&str> = set
+            .entries()
+            .iter()
+            .flat_map(|b| b.locators.iter().map(|l| l.locator.as_str()))
+            .collect();
+        probe.unbound = observed
+            .iter()
+            .filter(|o| !bound.contains(o.native.as_str()))
+            .map(|o| (o.file.clone(), o.native.clone()))
+            .collect();
+        probe.bindings = set
+            .entries()
+            .iter()
+            .filter_map(|b| Some((b.path.to_string(), b.locators.first()?.locator.clone())))
+            .collect();
+    }
+    tracing::info!(adapter = %id, entries = probe.entries.len(), missing = probe.missing.len(), unbound = probe.unbound.len(), "check: adapter probed");
+    Ok(probe)
 }
 
 fn render_text(report: &SyncReport, dry_run: bool) -> String {

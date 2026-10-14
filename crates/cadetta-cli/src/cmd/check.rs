@@ -17,10 +17,11 @@ use cadetta_obligations::lock::Lock;
 use cadetta_obligations::roles::Policy;
 
 use super::ack::policy_of;
+use super::check_drift::process_drift;
 use super::obligations::{Candidate, ObligationsArgs, list};
 use crate::config::{Adapter, Config};
 use crate::pipeline::{Analysis, analyze};
-use crate::project::Project;
+use crate::project::{PackageDir, Project};
 use crate::scope::Scope;
 use crate::universe::{self, universes};
 use crate::{EXIT_USAGE, Globals, output};
@@ -66,12 +67,24 @@ pub fn parse_args(args: &[String]) -> Result<CheckArgs, String> {
     Ok(parsed)
 }
 
-/// A drift hook: lints comparing an adapter's observed IR with the design IR (adapters.md).
-pub type DriftHook<'a> = dyn Fn(&Adapter, &IrProject) -> Vec<Diagnostic> + 'a;
+/// Where a drift hook runs: the package, the adapter and the lock holding `synced` bases.
+// frob:ticket 01M4TA3C87N60Y711163RK3GPH
+pub struct DriftSite<'a> {
+    /// The package that configures the adapter.
+    pub pkg: &'a PackageDir,
+    /// The external adapter to read.
+    pub adapter: &'a Adapter,
+    /// The project lock (read only).
+    pub lock: &'a Lock,
+}
 
-/// The default drift hook: the adapter host is not wired, so no drift is observed.
-pub(crate) fn no_drift(adapter: &Adapter, _ir: &IrProject) -> Vec<Diagnostic> {
-    tracing::info!(adapter = %adapter.name, "check: adapter read/drift lints are not wired; skipped");
+/// A drift hook: lints comparing an adapter's observed IR with the design IR (adapters.md).
+pub type DriftHook<'a> = dyn Fn(&DriftSite<'_>, &IrProject) -> Vec<Diagnostic> + 'a;
+
+/// A hook that observes nothing (LSP refreshes must not spawn CAD adapters; tests).
+// frob:ticket 01M4TA3C87N60Y711163RK3GPH
+pub(crate) fn no_drift(site: &DriftSite<'_>, _ir: &IrProject) -> Vec<Diagnostic> {
+    tracing::info!(adapter = %site.adapter.name, "check: drift lints skipped by this hook");
     Vec::new()
 }
 
@@ -182,14 +195,14 @@ fn obligation_diagnostics(
         .collect()
 }
 
-/// Run `cadetta check` with the default (unwired) adapter drift hook.
+/// Run `cadetta check`; external adapters are read for the R drift lints.
 pub fn run_check(
     args: &[String],
     globals: &Globals,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> u8 {
-    run_check_with(args, globals, out, err, &no_drift)
+    run_check_with(args, globals, out, err, &process_drift)
 }
 
 /// Run `cadetta check` with an explicit drift hook, called once per adapter that can read.
@@ -249,18 +262,20 @@ pub fn run_check_with(
     let mut raw = analysis.diagnostics.clone();
     if !analysis.halted {
         for package in &analysis.packages {
-            let adapters = project
-                .packages
-                .iter()
-                .find(|p| {
-                    p.config.package.as_ref().and_then(|c| c.name.as_deref())
-                        == Some(package.name.as_str())
-                })
-                .map(|p| p.config.adapters.as_slice())
-                .unwrap_or(&[]);
-            for adapter in adapters.iter().filter(|a| a.command.is_some()) {
+            let Some(pkg) = project.packages.iter().find(|p| {
+                p.config.package.as_ref().and_then(|c| c.name.as_deref())
+                    == Some(package.name.as_str())
+            }) else {
+                continue;
+            };
+            for adapter in pkg.config.adapters.iter().filter(|a| a.command.is_some()) {
                 tracing::debug!(adapter = %adapter.name, "check: running drift lints");
-                raw.extend(drift(adapter, &package.ir));
+                let site = DriftSite {
+                    pkg,
+                    adapter,
+                    lock: &lock,
+                };
+                raw.extend(drift(&site, &package.ir));
             }
         }
     }
@@ -467,9 +482,9 @@ mod tests {
             "[[adapter]]\nname = \"ext\"\ncommand = [\"ext-adapter\"]\n[[adapter]]\nname = \"sw-equations\"\n",
         );
         let calls = Cell::new(0);
-        let hook = |a: &Adapter, _ir: &IrProject| {
+        let hook = |site: &DriftSite<'_>, _ir: &IrProject| {
             calls.set(calls.get() + 1);
-            assert_eq!(a.name, "ext");
+            assert_eq!(site.adapter.name, "ext");
             vec![Diagnostic::new("R001", Severity::Error, "drifted")]
         };
         let (code, json, _) = run_with(&dir, &[], &hook);

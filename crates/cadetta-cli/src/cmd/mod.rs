@@ -4,6 +4,7 @@
 pub mod ack;
 pub mod bind;
 pub mod check;
+pub(crate) mod check_drift;
 pub mod check_watch;
 pub mod cite;
 pub mod compare;

@@ -96,7 +96,8 @@ after `--accept` the structure lives in the source.
 
 The host side of R008-R010 lives in `cadetta_adapter::availability`: an
 unreachable or version-mismatched adapter is R008 (error with exit 2
-under `sync`; info under `check`, which uses the lock base as observed);
+under `sync`; info under `check`, which reports the R lints of the adapter's
+`read` and, when the adapter cannot start, only the info R008);
 each dirty or read-only document is an R009 of its own and is never
 touched; rejected locators are grouped into one R010 per file while the
 other locators proceed.

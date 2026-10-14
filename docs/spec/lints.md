@@ -382,6 +382,14 @@ come from the adapter's responses and are passed through unchanged
 R007, R011, R012 and R013 are pure functions over binding facts, and
 `pass_through` forwards the adapter codes unchanged.
 
+`cadetta check` runs the family for every `[[adapter]]` with a `command`
+that advertises `read` (hook: `cadetta-cli` `check_drift::process_drift`):
+the adapter is spawned, its files are read, and R001, R002, R003, R005 and
+the adapter's own R004/R009/R010 are reported; an adapter that cannot
+start is R008 at info. Nothing is pushed or written. R007, R011 and R012
+need observed facts (sketch planes, assembly slots, instance values) that
+`read` does not yet carry, so they are not run by `check`.
+
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
 | R001 | drift | error | | Observed value differs from the value last emitted for that path (the emit point, not the nominal; the base is the lock `synced` record). Says which side moved: cad, design or both. `sync --force-design` pushes over it. Also a dimension tolerance that differs (adapters.md 3.6), and a frame or component transform that differs from the composed datum or placement (adapters.md 3.4); a placement is verify-only, so it has no base. |

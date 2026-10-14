@@ -2,8 +2,9 @@
 //!
 //! The rules are pure functions over an observed-IR input: the facts an
 //! adapter `read` or `sync` produced, joined with the lock `synced` base.
-//! The adapter host is not wired into `check` yet, so these inputs are built
-//! by tests and, later, by the sync driver (adapters.md 2, 3, 3a, 7.4).
+//! `cadetta check` builds these inputs by spawning each adapter that can
+//! `read` (`cadetta-cli` `check_drift`), and `sync` builds them for its
+//! planner (adapters.md 2, 3, 3a, 7.4).
 //!
 //! Decisions: R001 compares `theirs` against the emitted point (`base` and
 //! `ours` are emit-point strings), never the nominal; with no base there is
