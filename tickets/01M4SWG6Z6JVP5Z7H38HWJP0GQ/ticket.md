@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-14T01:24:52Z"
+updated = "2026-10-14T20:51:14Z"
 persona = "design engineer"
 capability = "avoid false 'holds' answers"
 idempotency_key = "replan14:geo-float"
 labels = ["creates:std/fasteners/screwjoint_float.cdt", "creates:crates/cadetta-geometry/src/float.rs"]
-scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**"]
+scope = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md", "docs/spec/stdlib.md", "changelog.d/**"]
 
 [[links]]
 kind = "blocked-by"

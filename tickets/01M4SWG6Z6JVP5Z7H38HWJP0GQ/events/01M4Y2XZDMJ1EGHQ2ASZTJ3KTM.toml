@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**"]
+new = ["std/fasteners/screwjoint_float.cdt", "crates/cadetta-geometry/src/float.rs", "crates/cadetta-lint/src/rules/**", "tests/conformance/geometry/**", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/lib.rs", "docs/spec/geometry.md", "docs/spec/stdlib.md", "changelog.d/**"]
+at = "2026-10-14T20:51:14Z"
+actor = "lognd"
+rev = 1
