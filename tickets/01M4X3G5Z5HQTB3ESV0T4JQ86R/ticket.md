@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "Claude"
 created = "2026-10-14T11:41:57Z"
-updated = "2026-10-14T11:52:20Z"
+updated = "2026-10-14T11:52:33Z"
 idempotency_key = "clippy-resolve-339"
 scope = ["crates/cadetta-cli/src/pkg/resolve.rs"]
 
