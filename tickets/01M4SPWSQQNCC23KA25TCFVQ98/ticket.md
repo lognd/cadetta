@@ -2,7 +2,8 @@
 id = "01M4SPWSQQNCC23KA25TCFVQ98"
 title = "Headless freecadcmd CI job"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
