@@ -12,8 +12,8 @@ updated = "2026-10-14T06:07:28Z"
 persona = "Python user"
 capability = "see cadetta core logs through the logging module"
 outcome_text = "diagnostics integrate with my application"
-labels = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py", "creates:bindings/python/tests/test_logging_bridge.py"]
-scope = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "bindings/python/tests/test_logging_bridge.py", "crates/cadetta-log/src/lib.rs"]
+labels = ["creates:bindings/python/src/logging.rs", "creates:bindings/python/python/cadetta/_logging.py", "creates:bindings/python/tests/test_logging_bridge.py", "creates:crates/cadetta-log/src/sink.rs"]
+scope = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "bindings/python/tests/test_logging_bridge.py", "crates/cadetta-log/src/lib.rs", "crates/cadetta-log/src/sink.rs"]
 
 [[links]]
 kind = "blocked-by"

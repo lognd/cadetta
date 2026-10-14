@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "bindings/python/tests/test_logging_bridge.py", "crates/cadetta-log/src/lib.rs"]
+new = ["bindings/python/src/logging.rs", "bindings/python/python/cadetta/_logging.py", "bindings/python/Cargo.toml", "bindings/python/src/lib.rs", "bindings/python/python/cadetta/_core.pyi", "bindings/python/python/cadetta/__init__.py", "bindings/python/tests/test_logging_bridge.py", "crates/cadetta-log/src/lib.rs", "crates/cadetta-log/src/sink.rs"]
+at = "2026-10-14T06:07:28Z"
+actor = "Claude"
+rev = 1
