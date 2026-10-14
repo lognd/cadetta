@@ -2,7 +2,8 @@
 id = "01M4VS6WG57MAD0T8GK956NGG9"
 title = "Wire cadetta_geometry::aligned/distance into check evaluation and emit G004"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
