@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-14T12:31:37Z"
+digest = "9f71797d2ba35e0796a67f2878f5ff741d0d9d1c2fab9d83bdbc66c8b6a3baf7"
+exit_code = 0
+inline = """
+
+running 4 tests
+test compare::tests::closed_list_and_duplicates ... ok
+test compare::tests::path_must_match_when_given_and_exit_defaults ... ok
+test geometry_corpus_is_not_empty ... ok
+test geometry_fixtures_match_the_spec ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.09s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.29s
+     Running ../../tests/conformance_geometry.rs (target/debug/deps/conformance_geometry-20083585e40e79da)
+"""
+passed = true
+provider = "command"
+ref = "cargo test -p cadetta --test conformance_geometry"
+size = 508
+status = "measured"
+at = "2026-10-14T12:31:37Z"
+actor = "Claude"
+rev = 1
