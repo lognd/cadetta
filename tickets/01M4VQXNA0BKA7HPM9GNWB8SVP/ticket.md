@@ -8,8 +8,8 @@ points = 2
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-14T05:21:01Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-14T05:30:06Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "#[role(hole), emit(mmc)] evaluates and emits; the listed fixtures pass."
