@@ -44,6 +44,10 @@ path = "../../tests/conformance_config_cli.rs"
 name = "conformance_adapters"
 path = "../../tests/conformance_adapters.rs"
 
+[[test]]
+name = "conformance_solvers"
+path = "../../tests/conformance_solvers.rs"
+
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true
