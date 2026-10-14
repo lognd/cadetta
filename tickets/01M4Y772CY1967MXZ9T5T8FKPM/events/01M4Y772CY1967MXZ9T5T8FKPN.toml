@@ -1,0 +1,11 @@
+kind = "create"
+title = "Derive file-scope fit items (ItemKind::Fit) into lowering"
+type = "task"
+category = "todo"
+priority = "low"
+scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lower.rs"]
+acceptance = ["A file-scope fit item is evaluated and lowered into IR (location decided by the spec), with a test"]
+body = "Split from ~Q1ZBN9Y. ast.rs has a file-scope ItemKind::Fit (ast.rs:274/452) that fitderive does not handle; only MemberKind::Fit inside components is derived."
+at = "2026-10-14T22:06:07Z"
+actor = "lognd"
+rev = 1
