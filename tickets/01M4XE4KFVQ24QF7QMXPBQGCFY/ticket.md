@@ -4,7 +4,8 @@ title = "cadetta lock verify CLI verb with --format json (report and schema land
 type = "story"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-14T14:47:52Z"
-updated = "2026-10-14T14:47:52Z"
+updated = "2026-10-14T14:48:32Z"
 +++
