@@ -443,32 +443,12 @@ ticket = "~G5NT80Z"
 reason = "C002 not raised for inexact boundary"
 
 [[gap]]
-fixture = "stdlib/check-aligned"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/check-aligned-nut-floating"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
 fixture = "stdlib/e006-count-with-pattern"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
 [[gap]]
 fixture = "stdlib/e006-joint-per-pattern"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/g004-joint-pattern-count"
-ticket = "~N8G7AVG"
-reason = "ScrewJoint rule or check not implemented"
-
-[[gap]]
-fixture = "stdlib/g005-float-unlocated"
 ticket = "~N8G7AVG"
 reason = "ScrewJoint rule or check not implemented"
 
@@ -2987,6 +2967,7 @@ fixture = "adapters/geom-placement-verify-only"
 ticket = "~BC7S5KT"
 reason = "binding push-plan entries have no executor yet"
 
+
 [[gap]]
 fixture = "geometry/g005-check-looser-than-float"
 ticket = "~HWJP0GQ"
@@ -2998,16 +2979,6 @@ ticket = "~HWJP0GQ"
 reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
 
 [[gap]]
-fixture = "geometry/g004-joint-at-onto-count"
-ticket = "~6MJE3XF"
-reason = "ScrewJoint at/onto count check (G004) is not implemented; the pairing is the joint's, not a placement's"
-
-[[gap]]
-fixture = "geometry/joint-undecided-when-loosened"
-ticket = "~6MJE3XF"
-reason = "ScrewJoint at/onto aligned with the joint float is not evaluated; belongs to ~6MJE3XF"
-
-[[gap]]
-fixture = "geometry/joint-violated-over-allowance"
-ticket = "~6MJE3XF"
-reason = "ScrewJoint at/onto aligned with the joint float is not evaluated; belongs to ~6MJE3XF"
+fixture = "stdlib/g005-float-unlocated"
+ticket = "~HWJP0GQ"
+reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"

@@ -156,6 +156,7 @@ Checks inside the joint, with the names their verdicts carry
 grip`), `grip_positive`, `depth_ok` (only with `depth_available`) and
 `aligned` (only with `at` and `onto`, geometry.md 5). Optional arguments:
 
+- `nut` (`Bool`, default `false`): `onto` is a second clearance pattern, so `float` sums both halves.
 - `head` (`SocketHead` default, `ButtonHead`, `FlatHead`), `clearance`
   (`fine medium coarse`), `counterbore`, `policy`.
 - `tap` (`Cut` default, `Form`, `Vendor`). `Vendor` means the threaded
@@ -226,8 +227,11 @@ requires `depth_available`. `head` is an argument, so the internal head
 table row is `head_data`. `Iso4762` takes an optional `unit_cost`, which
 the joint fills from `screw_cost`. The `engaged` check is
 `screw_length - grip >= min_engagement`; the other checks are as listed
-above. `aligned` uses the fixed allowance only; the `nut` floating
-allowance, `locating` and the placement float arrive with the geometry
+above. `float` is one clearance hole's half, `(clearance_hole - major) / 2`,
+taken from the ISO 273 class nominal and independent of any tolerance on
+the user's hole; with `nut = true` (`onto` is a second clearance pattern)
+both halves count, so `aligned` gets one half fixed and both halves with
+a nut. `locating` and the placement float arrive with the geometry
 tickets. `ButtonHead` and `FlatHead` have no counterbore data yet, so
 `counterbore = true` is only meaningful for `SocketHead`.
 

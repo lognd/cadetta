@@ -1,0 +1,27 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 3",
+  "rule": "float-sums-both-halves-with-nut",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.float",
+        "nominal": "0.5mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::Box/j.float",
+        "nominal": "0.25mm"
+      }
+    ]
+  },
+  "note": "M5 medium: one half (5.5 - 5) / 2 = 0.25mm fixed; nut = true counts both clearance halves, 0.5mm; the allowance comes from the ISO 273 class nominal, never a hole tolerance"
+}

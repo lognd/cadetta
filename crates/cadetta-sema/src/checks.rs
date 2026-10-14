@@ -298,7 +298,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             match outcome {
                 Ok(rs) => out.extend(rs),
                 Err(Fail::Silent) => {}
-                Err(Fail::Diag(d)) => self.diagnostics.push(d),
+                Err(Fail::Diag(mut d)) => {
+                    if let Some(i) = &def.inst {
+                        // The callee's source is std or another package: report at the `part` site.
+                        debug!(check = %def.path, code = d.code, "checks: instance failure reported at the part");
+                        d.span = i.span;
+                    }
+                    self.diagnostics.push(d);
+                }
             }
         }
         debug!(checks = out.len(), "checks: evaluation finished");

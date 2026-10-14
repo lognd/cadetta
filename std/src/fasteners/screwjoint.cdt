@@ -10,8 +10,9 @@
 // Arguments (stdlib.md 3): thread, clamp, policy, head, clearance,
 // counterbore, tap (Cut, Form or Vendor), count, and the optional ones
 // into, host, depth_available, screw_cost, at and onto (`name?: Type`,
-// language.md 3.3: omitted means absent, tested with `given(name)`). `nut`
-// and `locating` arrive with the at/onto and placement stories.
+// language.md 3.3: omitted means absent, tested with `given(name)`), plus the
+// flags `nut` (onto is a second clearance pattern) and `locating`
+// (stdlib.md 3; the placement float of `locating` is geometry.md 5.2).
 //
 // Presence rules are written as `#[when(cond)]` on a member or check: it
 // exists only while cond holds. `into` defaults to `host.material`. Under
@@ -20,8 +21,10 @@
 // named verdicts of stdlib.md 3 (`Mount/screws.engaged`).
 //
 // Decisions: without a counterbore the pocket members are zero (no pocket,
-// no depth), so `grip` is simply `clamp`. `float` is the fixed-fastener
-// allowance (geometry.md 5): half the clearance over the thread major.
+// no depth), so `grip` is simply `clamp`. `float` is the allowance
+// `aligned(at, onto, float)` uses (geometry.md 5): one clearance hole's half,
+// `(clearance_hole - major) / 2`, from the ISO 273 class nominal and never the
+// user's hole tolerance; with `nut` both halves count.
 //
 // PROVENANCE WARNING: this file adds no figures of its own; every number is
 // read from tables.cdt, materials.cdt and the policy, and inherits their

@@ -34,6 +34,8 @@ pub(super) struct InstInfo {
     pub prefix: CanonPath,
     /// The instantiated component.
     pub callee: CanonPath,
+    /// The `part` declaration that creates the instance (where callee failures are reported).
+    pub span: Span,
 }
 
 /// One materialised instance.
@@ -266,6 +268,7 @@ impl<'p> Site<'_, 'p> {
         let info = Rc::new(InstInfo {
             prefix: self.prefix.clone(),
             callee: self.callee_path.clone(),
+            span: self.span,
         });
         let callee_ctx = self.callee_ctx();
         for (param, b) in self.callee.params.iter().zip(&bound) {

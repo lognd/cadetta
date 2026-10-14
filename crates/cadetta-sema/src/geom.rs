@@ -651,15 +651,49 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         span: Span,
     ) -> R<(Verdict, Vec<Note>)> {
         let xs = super::func::arity("aligned", args, 3, span)?;
-        let (here, comp) = self.enclosing("aligned", sc, span)?;
-        let a = self.point_operand(sc, comp, xs[0])?;
-        let b = self.point_operand(sc, comp, xs[1])?;
         let allowance = self.quant(sc, xs[2])?;
+        // Inside an instance, `at` and `onto` are arguments: read them where the caller wrote them.
+        let (a, b, here, comp) = match (self.caller_operand(xs[0]), self.caller_operand(xs[1])) {
+            (Some((ea, ctx)), Some((eb, _))) => {
+                trace!("geometry: aligned operands read from the instance's caller");
+                let mut caller = Scope {
+                    ctx,
+                    locals: Vec::new(),
+                };
+                let (here, comp) = self.enclosing("aligned", &caller, span)?;
+                let a = self.point_operand(&mut caller, comp, ea)?;
+                let b = self.point_operand(&mut caller, comp, eb)?;
+                (a, b, here, comp)
+            }
+            _ => {
+                let (here, comp) = self.enclosing("aligned", sc, span)?;
+                let a = self.point_operand(sc, comp, xs[0])?;
+                let b = self.point_operand(sc, comp, xs[1])?;
+                (a, b, here, comp)
+            }
+        };
         let (table, _) = self.frame_tables(&here, comp, span)?;
         let report =
             aligned(&table, &a, &b, &allowance.form).map_err(|e| aligned_diag(&e, span))?;
         debug!(verdict = ?report.verdict, pairs = report.pairs.len(), "geometry: aligned condition");
         Ok((report.verdict, report_notes(&report)))
+    }
+
+    /// A bare callee argument name as the caller's expression and context (inside an instance only).
+    // frob:ticket 01M4SWG6XQ2M0GR620Q6MJE3XF
+    fn caller_operand(&self, e: &Expr) -> Option<(&'p Expr, Ctx)> {
+        let inst = self.cur_inst.as_ref()?;
+        let chain = steps(e)?;
+        let [(name, None)] = chain.as_slice() else {
+            return None;
+        };
+        let mut key = inst.prefix.clone();
+        key.members = vec![MemberSeg::Name(name.clone())];
+        let def = self.defs.get(&key)?;
+        if def.inst.is_some() {
+            return None;
+        }
+        Some((def.expr, def.ctx.clone()))
     }
 
     /// The enclosing component of a geometry builtin, as its path and syntax.
