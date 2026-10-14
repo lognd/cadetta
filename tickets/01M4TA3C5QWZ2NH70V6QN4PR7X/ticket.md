@@ -1,13 +1,21 @@
 +++
 id = "01M4TA3C5QWZ2NH70V6QN4PR7X"
-title = "Obligation enumeration limited to check kind"
+title = "obligations lists ots and citation obligations"
 type = "bug"
 category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-13T09:39:34Z"
-scope = ["crates/cadetta-obligations"]
+updated = "2026-10-14T22:54:17Z"
+scope = ["crates/cadetta-obligations", "crates/cadetta-cli/src/universe.rs", "docs/spec/config-cli.md", "changelog.d/*"]
+
+[[acceptance]]
+text = "Given an ots component citing a file, when 'cadetta obligations' runs with no attestation, then ots:PATH and citation:PATH are listed open"
+bound = false
+
+[[acceptance]]
+text = "Given the ots acknowledged, when the cited file changes, then citation:PATH is listed stale and ots:PATH is not"
+bound = false
 +++
 
 found while working ~E631Y52. requires, fits, citations, ots, sync, waiver, S003/S004/O004 not enumerated; check closures lack read-member deps.

@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Obligation enumeration limited to check kind"
+new = "obligations lists ots and citation obligations"
+at = "2026-10-14T22:54:17Z"
+actor = "lognd"
+rev = 1

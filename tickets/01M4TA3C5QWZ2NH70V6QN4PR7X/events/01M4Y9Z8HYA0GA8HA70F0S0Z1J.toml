@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given an ots component citing a file, when 'cadetta obligations' runs with no attestation, then ots:PATH and citation:PATH are listed open", "Given the ots acknowledged, when the cited file changes, then citation:PATH is listed stale and ots:PATH is not"]
+moved = []
+at = "2026-10-14T22:54:17Z"
+actor = "lognd"
+rev = 1
