@@ -7,12 +7,12 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T02:58:24Z"
-updated = "2026-10-14T03:22:34Z"
+updated = "2026-10-14T03:32:04Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/**", "std/**"]
 
 [[acceptance]]
 text = "Given a ScrewJoint instance, when cadetta check runs, then its named checks (Box/j.engaged ...) report verdicts"
-bound = false
+bound = true
 +++
 
 found while working ~646D1T7: checks.rs skips parameterized components; instance members now have values, so checks can run per instance.
