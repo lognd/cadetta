@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: (1) g004-elementwise-count-mismatch must-fire declared a 3-point pattern against its own note of 2; set to 2. (2) g004-indexed-target-array-anchor fixtures placed only feet[2], which geometry.md 4 correctly reports as G007; they now place feet[0..2] individually. (3) Tolerance suffix on a point/array literal now gives each coordinate its own variable (geometry.md 3, already normative); this also cleared the geometry/tolerance-after-array-per-coordinate gap (~MCJWA2D), removed. (4) g004-joint-at-onto-count retargeted to ~6MJE3XF (ScrewJoint at/onto machinery). (5) A G004 placement is not instance-expanded, to avoid follow-on EVAL noise."
+at = "2026-10-14T01:39:09Z"
+actor = "lognd"
+rev = 1
