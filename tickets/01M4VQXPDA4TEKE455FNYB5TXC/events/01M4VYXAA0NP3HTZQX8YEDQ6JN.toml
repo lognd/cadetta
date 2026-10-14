@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T01:02:29Z"
+digest = "70b35eab474ac6328b03bd18ab0ee19d49d898ea1f2c020e3a8584110fa2b2c2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2ece5f90-ab16-44b2-9042-ccc00a942d7f with nextest profile: default
+    Starting 2 tests across 2 binaries (134 tests skipped)
+        PASS [   0.013s] cadetta-sema lower::tests::re_expression_out_of_an_unplaced_part_is_g003
+        PASS [   0.033s] cadetta-sema lower::tests::re_expression_composes_the_placement
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.037s] 2 tests run: 2 passed, 134 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E 'test(re_expression)'"
+size = 656
+status = "measured"
+test_count = 2
+tests_digest = "683228026ae3d403a05e2aeb502b591cb252c4d7d98bbc5985ac71fe0803ec2c"
+at = "2026-10-14T01:02:29Z"
+actor = "lognd"
+rev = 1

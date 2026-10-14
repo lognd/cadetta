@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-14T01:02:21Z"
+updated = "2026-10-14T01:02:29Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-geometry/src/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/geometry/**", "tests/conformance/known-gaps.toml", "tests/golden/**", "crates/cadetta-ir/**", "crates/cadetta-geometry/Cargo.toml", "Cargo.lock", "docs/spec/ir.md", "docs/spec/geometry.md", "docs/schemas/**", "bindings/python/**", "crates/cadetta-lint/**", "crates/cadetta-cli/src/cmd/**", "crates/cadetta-cli/Cargo.toml"]
 
 [[acceptance]]
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "Given p in D across placed parts, when evaluated in a check, then re-expression composes the placement tree as geometry.md 3 says, with G003 for an unplaced part"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given the geometry fixtures and golden cases that only needed evaluation, when the conformance corpus and golden tests run, then their known-gaps entries are removed and they pass"
