@@ -246,7 +246,7 @@ mod tests {
         assert_eq!(d[1].severity, Severity::Error);
     }
 
-    // frob:tests crates/cadetta-lint/src/engine.rs::LintConfig::severity
+    // frob:tests crates/cadetta-lint/src/engine.rs::LintConfig.severity
     #[test]
     fn r008_is_error_on_sync_and_info_on_check() {
         use crate::engine::{LintConfig, Mode};
