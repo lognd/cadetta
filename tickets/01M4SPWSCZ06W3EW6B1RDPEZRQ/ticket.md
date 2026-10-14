@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWHC2VWRX6V0G4NZKYPB9"
 reporter = "lognd"
 created = "2026-10-13T04:03:55Z"
-updated = "2026-10-14T03:07:26Z"
+updated = "2026-10-14T03:10:52Z"
 persona = "cadetta contributor"
 capability = "have a Python adapter that speaks the JSON-RPC protocol"
 outcome_text = "the reference adapter proves the protocol"
 labels = ["creates:adapters/freecad/src/**", "creates:adapters/freecad/pyproject.toml"]
-scope = ["adapters/freecad/src/**", "adapters/freecad/pyproject.toml"]
+scope = ["adapters/freecad/src/**", "adapters/freecad/pyproject.toml", "adapters/freecad/tests/**", "adapters/freecad/README.md"]
 
 [[links]]
 kind = "blocks"
