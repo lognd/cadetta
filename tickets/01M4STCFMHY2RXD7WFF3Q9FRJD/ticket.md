@@ -2,7 +2,8 @@
 id = "01M4STCFMHY2RXD7WFF3Q9FRJD"
 title = "Conformance run for lints"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
