@@ -7,15 +7,15 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T14:47:52Z"
-updated = "2026-10-14T14:51:35Z"
+updated = "2026-10-14T14:51:39Z"
 
 [[acceptance]]
 text = "cadetta lock verify reads cadetta.lock, checks it against live obligation digests and configured roles, and exits 0 when clean, 1 on any finding, 2 on usage or unreadable lock"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Format json emits the cadetta.lock/1 report from VerifyReport::to_json; text prints one line per finding or 'cadetta.lock: clean'"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "docs/spec/config-cli.md documents the verb and a changelog fragment exists"

@@ -1,0 +1,42 @@
+kind = "evidence"
+accepts = [1, 2]
+captured_at = "2026-10-14T14:51:39Z"
+digest = "e0b384cd611c7f88bfab2d5e4492909cb1827df5fb42dd473cdaeeb82150476c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.90s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 24abef03-5252-494a-8880-22b4a751d8ef with nextest profile: default
+    Starting 6 tests across 1 binary (225 tests skipped)
+        PASS [   0.007s] cadetta cmd::lock::tests::text_report_is_clean_or_one_line_per_finding
+        PASS [   0.007s] cadetta cmd::lock::tests::json_report_carries_schema_and_exit_code
+        PASS [   0.007s] cadetta cmd::lock::tests::usage_errors_exit_2
+        PASS [   0.007s] cadetta cmd::lock::tests::context_maps_roles_and_digests
+        PASS [   0.023s] cadetta cmd::lock::tests::malformed_lock_exits_2
+        PASS [   0.023s] cadetta cmd::lock::tests::absent_lock_is_clean_json
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.023s] 6 tests run: 6 passed, 225 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib -E 'test(cmd::lock)'"
+size = 1850
+status = "measured"
+test_count = 6
+tests_digest = "dc532273eec64a7bb2c9034e2ac5b1fcc2eba9c879bc5dce5f3a904bd3f5cffc"
+at = "2026-10-14T14:51:39Z"
+actor = "lognd"
+rev = 1
