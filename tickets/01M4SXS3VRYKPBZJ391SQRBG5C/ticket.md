@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SXQPADRSNTEY3J7PH899Y8"
 reporter = "lognd"
 created = "2026-10-13T06:04:15Z"
-updated = "2026-10-13T06:04:15Z"
+updated = "2026-10-14T21:24:00Z"
 persona = "product engineer"
 capability = "accept a library sign-off I did not make"
 labels = ["creates:crates/cadetta-obligations/src/trust.rs"]
-scope = ["crates/cadetta-obligations/src/trust.rs"]
+scope = ["crates/cadetta-obligations/src/trust.rs", "crates/cadetta-obligations/src/lib.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "docs/schemas/obligations.json", "docs/spec/packages.md", "changelog.d/01M4SXS3VRYKPBZJ391SQRBG5C.added.md"]
 
 [[links]]
 kind = "blocked-by"
