@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = 'Given `[dependencies."acme.shop"] trust = ["source", "tolerance_review"]`, when judged, then those roles discharge the dependent matching obligations on the dependency nodes (packages.md 6)'
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given no trust key, when judged, then upstream attestations are information only and discharge nothing (packages.md 6)"
