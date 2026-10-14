@@ -152,7 +152,13 @@ fn cad_resync(ir: &Ir, slot_path: &str, new: &str, changed: &BTreeSet<String>) -
             }
         }
     }
+    // Swapping to the slot's current primary replaces nothing (adapters.md 3.3).
+    // frob:ticket 01M4VQXMQ16RXW2ACNQHSDKA6V
+    let is_primary = ir.components.iter().flat_map(|c| &c.parts).any(|p| {
+        p.path.to_string() == slot_path && p.primary.rsplit("::").next() == new.rsplit("::").next()
+    });
     let replaces = new_file
+        .filter(|_| !is_primary)
         .map(|nf| {
             instances
                 .iter()

@@ -9,9 +9,10 @@ use serde_json::{Value as Json, json};
 
 use crate::output::Format;
 use crate::pipeline::analyze;
-use crate::project::Project;
+use crate::project::{PackageDir, Project};
 use crate::universe::Universe;
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
+use cadetta_adapter::bindings::BindingSet;
 use cadetta_obligations::lock::{Lock, Record};
 
 /// Schema tag of the JSON report; the schema is `docs/schemas/swap.json`.
@@ -364,6 +365,27 @@ fn attest_scopes(ir: &Ir, lock: &Lock) -> Vec<report::AttestScope> {
     scopes
 }
 
+/// Load every adapter's bindings file of `pkg` into `ir.bindings` so section 5 can see them.
+// frob:ticket 01M4VQXMQ16RXW2ACNQHSDKA6V
+fn load_bindings(ir: &mut Ir, pkg: &PackageDir) {
+    for adapter in &pkg.config.adapters {
+        let file = pkg.dir.join(adapter.bindings_path());
+        let Ok(text) = std::fs::read_to_string(&file) else {
+            tracing::debug!(file = %file.display(), "impact --swap: no bindings file");
+            continue;
+        };
+        match BindingSet::load_str(adapter.id(), &text) {
+            Ok(set) => {
+                tracing::debug!(adapter = %adapter.id(), n = set.entries().len(), "impact --swap: bindings loaded");
+                ir.bindings.extend(set.file_entries());
+            }
+            Err(e) => {
+                tracing::warn!(file = %file.display(), error = %e, "impact --swap: bindings unreadable")
+            }
+        }
+    }
+}
+
 /// Run `cadetta impact --swap PART NEW`; `args` are `PART NEW`. Returns the exit code.
 pub fn run_swap(
     args: &[String],
@@ -387,7 +409,7 @@ pub fn run_swap(
         Ok(o) => o,
         Err(e) => return fail(err, &e.to_string()),
     };
-    let analysis = analyze(&project, &members);
+    let mut analysis = analyze(&project, &members);
     if analysis.halted {
         return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
@@ -396,7 +418,12 @@ pub fn run_swap(
         Lock::new()
     });
     let mut last = SwapError::NoSlot(part.clone());
-    for package in &analysis.packages {
+    for package in &mut analysis.packages {
+        if let Some(pkg) = project.packages.iter().find(|p| {
+            p.config.package.as_ref().and_then(|c| c.name.as_deref()) == Some(package.name.as_str())
+        }) {
+            load_bindings(&mut package.ir, pkg);
+        }
         let scopes = attest_scopes(&package.ir, &lock);
         match preview_with(&package.ir, part, new, &scopes) {
             Ok(swap) => {
