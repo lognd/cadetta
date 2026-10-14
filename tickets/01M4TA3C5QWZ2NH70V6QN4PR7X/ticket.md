@@ -2,11 +2,12 @@
 id = "01M4TA3C5QWZ2NH70V6QN4PR7X"
 title = "obligations lists ots and citation obligations"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:04:03Z"
+updated = "2026-10-14T23:05:53Z"
 scope = ["crates/cadetta-obligations", "crates/cadetta-cli/src/universe.rs", "docs/spec/config-cli.md", "changelog.d/*", "tests/conformance/obligations/s004-citation-changed.must-fire/*", "crates/cadetta-cli/src/cmd/check.rs"]
 
 [[acceptance]]
