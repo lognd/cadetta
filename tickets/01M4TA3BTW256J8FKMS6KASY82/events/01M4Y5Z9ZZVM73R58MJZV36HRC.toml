@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Resolve errors (E002/E003/E004/E016/E017) carry the module they were raised in", "Evaluation diagnostics carry the module they were raised in", "Dependency diagnostics (D003, N004) carry the module they were raised in", "The check pipeline attributes a diagnostic to its own module's file, dropping std, instead of guessing from the span"]
+moved = []
+at = "2026-10-14T21:44:24Z"
+actor = "lognd"
+rev = 1
