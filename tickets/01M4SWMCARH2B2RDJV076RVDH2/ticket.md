@@ -2,7 +2,8 @@
 id = "01M4SWMCARH2B2RDJV076RVDH2"
 title = "Host handling of R008, R009 and R010"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
