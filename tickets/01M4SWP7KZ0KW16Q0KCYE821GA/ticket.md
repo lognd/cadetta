@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T05:45:12Z"
-updated = "2026-10-14T12:32:51Z"
+updated = "2026-10-14T12:34:02Z"
 persona = "maintainer"
 capability = "know the implementation matches the spec"
 idempotency_key = "replan14:cr-json"
@@ -21,5 +21,5 @@ target = "01M4SWP7EKGJHBGKHZG5RCYHAJ"
 
 [[acceptance]]
 text = "Given tests/conformance/emitters/json/ fixtures, when the harness runs, then every must-fire fixture produces its expected diagnostic and every must-not-fire fixture produces none (docs/spec/emitters/json.md)"
-bound = false
+bound = true
 +++
