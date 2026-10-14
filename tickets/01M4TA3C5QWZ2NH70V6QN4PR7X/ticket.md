@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-14T23:04:02Z"
+updated = "2026-10-14T23:04:03Z"
 scope = ["crates/cadetta-obligations", "crates/cadetta-cli/src/universe.rs", "docs/spec/config-cli.md", "changelog.d/*", "tests/conformance/obligations/s004-citation-changed.must-fire/*", "crates/cadetta-cli/src/cmd/check.rs"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the ots acknowledged, when the cited file changes, then citation:PATH is listed stale and ots:PATH is not"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. requires, fits, citations, ots, sync, waiver, S003/S004/O004 not enumerated; check closures lack read-member deps.
