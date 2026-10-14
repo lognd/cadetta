@@ -2,7 +2,8 @@
 id = "01M4VTJ6W0X6YHWEEHT645FHJZ"
 title = "Feed composed geometry transforms and observed frames into sync (geometry verification glue)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
