@@ -2,7 +2,8 @@
 id = "01M4W5HM6SAY12P1J3R3G80Q7F"
 title = "Per-instance checks for parameterized components (engaged, not_bottomed)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
