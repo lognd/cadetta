@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+"""Generate the C# protocol types from docs/schemas/adapter-protocol.json.
+
+Usage: gen_protocol.py [--check] [OUT]. With --check, exit 1 if OUT is stale.
+Stdlib only, ASCII only, deterministic output.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+SCHEMA = ROOT / "docs" / "schemas" / "adapter-protocol.json"
+DEFAULT_OUT = (
+    ROOT
+    / "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/Protocol.g.cs"
+)
+NAMESPACE = "Cadetta.SolidWorks.Protocol"
+# Types whose schema is a reference to another file or free-form: opaque JSON.
+OPAQUE = "JsonElement"
+
+
+def pascal(name: str) -> str:
+    """snake_case or lower-case wire name to PascalCase."""
+    return "".join(p[:1].upper() + p[1:] for p in name.split("_"))
+
+
+def doc(text: str | None, indent: str) -> list[str]:
+    """XML doc summary lines for a schema description."""
+    if not text:
+        return []
+    esc = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return [f"{indent}/// <summary>{' '.join(esc.split())}</summary>"]
+
+
+def ctype(schema: dict, defs: dict) -> tuple[str, bool]:
+    """Return (C# type, nullable) for a property schema."""
+    if "$ref" in schema:
+        name = schema["$ref"].rsplit("/", 1)[-1]
+        if "$ref" in defs.get(name, {}) or name not in defs:
+            return OPAQUE, True
+        if is_enum(defs[name]):
+            return "string", False
+        return name, False
+    if "anyOf" in schema:
+        inner = [s for s in schema["anyOf"] if s.get("type") != "null"]
+        t, _ = ctype(inner[0], defs)
+        return t, True
+    t = schema.get("type")
+    if isinstance(t, list):
+        base = [x for x in t if x != "null"][0]
+        return ctype({"type": base, **{k: v for k, v in schema.items() if k != "type"}}, defs)[0], True
+    if t == "string":
+        return "string", False
+    if t == "boolean":
+        return "bool", False
+    if t == "integer":
+        return "uint" if schema.get("format") == "uint32" else "long", False
+    if t == "number":
+        return "double", False
+    if t == "array":
+        inner, _ = ctype(schema["items"], defs)
+        return f"List<{inner}>", False
+    return OPAQUE, True
+
+
+def is_enum(schema: dict) -> bool:
+    """True for a oneOf of string consts."""
+    one = schema.get("oneOf")
+    return bool(one) and all("const" in s and s.get("type") == "string" for s in one)
+
+
+def object_variants(schema: dict) -> list[dict]:
+    """The object schemas of a plain object or a oneOf of objects."""
+    return schema["oneOf"] if "oneOf" in schema else [schema]
+
+
+def emit_enum(name: str, schema: dict, out: list[str]) -> None:
+    """A static class of string constants (wire values stay strings)."""
+    out += doc(schema.get("description"), "    ")
+    out.append(f"    public static class {name}")
+    out.append("    {")
+    for s in schema["oneOf"]:
+        out += doc(s.get("description"), "        ")
+        out.append(
+            f'        public const string {pascal(s["const"])} = "{s["const"]}";'
+        )
+    out.append("    }")
+    out.append("")
+
+
+def emit_class(name: str, schema: dict, defs: dict, out: list[str]) -> None:
+    """A class; oneOf-of-objects variants are merged into optional fields."""
+    variants = object_variants(schema)
+    props: dict[str, dict] = {}
+    required: set[str] | None = None
+    for v in variants:
+        for k, p in v.get("properties", {}).items():
+            props.setdefault(k, p)
+        r = set(v.get("required", []))
+        required = r if required is None else required & r
+    required = required or set()
+    out += doc(schema.get("description"), "    ")
+    out.append(f"    public sealed class {name}")
+    out.append("    {")
+    for k in sorted(props):
+        p = props[k]
+        t, nullable = ctype(p, defs)
+        nullable = nullable or (k not in required and "default" not in p)
+        default = ""
+        if t.startswith("List<") and not nullable:
+            default = " = new List<%s>();" % t[5:-1]
+        elif t == "string" and not nullable:
+            default = ' = "";'
+        out += doc(p.get("description"), "        ")
+        out.append(f'        [JsonPropertyName("{k}")]')
+        if default:
+            out.append(f"        public {t} {pascal(k)} {{ get; set; }}{default}")
+        elif t == "bool" or t in ("uint", "long", "double"):
+            q = "?" if nullable else ""
+            out.append(f"        public {t}{q} {pascal(k)} {{ get; set; }}")
+        else:
+            q = "?" if nullable and t != OPAQUE else ""
+            q = "?" if nullable and t == OPAQUE else q
+            out.append(f"        public {t}{q} {pascal(k)} {{ get; set; }}")
+    out.append("    }")
+    out.append("")
+
+
+def render(schema: dict) -> str:
+    """Render the whole C# file."""
+    defs = schema["$defs"]
+    out = [
+        "// <auto-generated>",
+        "// Generated by adapters/solidworks/tools/gen_protocol.py from",
+        "// docs/schemas/adapter-protocol.json. Do not edit.",
+        "// </auto-generated>",
+        "#nullable enable",
+        "using System.Collections.Generic;",
+        "using System.Text.Json;",
+        "using System.Text.Json.Serialization;",
+        "",
+        f"namespace {NAMESPACE}",
+        "{",
+        "    /// <summary>Protocol identifier sent in initialize.</summary>",
+        "    public static class ProtocolInfo",
+        "    {",
+        '        public const string Protocol = "cadetta.adapter/1";',
+        "    }",
+        "",
+    ]
+    for name in sorted(defs):
+        d = defs[name]
+        if "$ref" in d:
+            continue  # opaque, see ctype
+        if is_enum(d):
+            emit_enum(name, d, out)
+        else:
+            emit_class(name, d, defs, out)
+    out.append("}")
+    return "\n".join(out) + "\n"
+
+
+def main(argv: list[str]) -> int:
+    """CLI entry point."""
+    check = "--check" in argv
+    rest = [a for a in argv if not a.startswith("--")]
+    out = Path(rest[0]) if rest else DEFAULT_OUT
+    text = render(json.loads(SCHEMA.read_text(encoding="utf-8")))
+    if check:
+        if not out.exists() or out.read_text(encoding="utf-8") != text:
+            sys.stderr.write(f"{out} is stale; run tools/gen_protocol.py\n")
+            return 1
+        return 0
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8", newline="\n")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The protocol executable (solidworks.md 1). CI builds it with
+    -p:CadettaNoCom=true: no Cadetta.SolidWorks.Com reference (so no interop
+    assemblies) and a net8.0 target so the fake-session smoke test also runs
+    on Linux. A real build is net48 against the COM session.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <RootNamespace>Cadetta.SolidWorks.Cli</RootNamespace>
+    <AssemblyName>cadetta-solidworks</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CadettaNoCom)' == 'true'">
+    <TargetFramework></TargetFramework>
+    <TargetFrameworks>net48;net8.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CadettaNoCom)' != 'true'">
+    <DefineConstants>$(DefineConstants);CADETTA_COM</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
+    <ProjectReference Include="..\Cadetta.SolidWorks.Com\Cadetta.SolidWorks.Com.csproj" Condition="'$(CadettaNoCom)' != 'true'" />
+  </ItemGroup>
+</Project>

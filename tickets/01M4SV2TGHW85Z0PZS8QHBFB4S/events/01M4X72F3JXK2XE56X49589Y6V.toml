@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-14T12:44:21Z"
+digest = "2f519f68dd33b410a3d36ec05298476d8a8b4ecd6d4a195fc6aa4423a247cf1b"
+provider = "file"
+ref = "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/Protocol.g.cs"
+size = 15471
+status = "measured"
+at = "2026-10-14T12:44:21Z"
+actor = "Claude"
+rev = 1

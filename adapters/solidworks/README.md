@@ -1,0 +1,46 @@
+# cadetta-solidworks
+
+The SOLIDWORKS adapter (docs/spec/solidworks.md). One C# solution:
+
+| Project | Target | Built in CI |
+|---|---|---|
+| `Cadetta.SolidWorks.Core` | netstandard2.0 | yes |
+| `Cadetta.SolidWorks.Com` | net48 | no (needs the interop assemblies) |
+| `cadetta-solidworks` | net48 console | yes, with `-p:CadettaNoCom=true`, against the fake session |
+| `Cadetta.SolidWorks.AddIn` | net48 | no (needs the interop assemblies) |
+| `Cadetta.SolidWorks.Tests` | net8.0 | yes |
+
+Only `Com` and `AddIn` reference the SOLIDWORKS interop assemblies, via
+`Interop.props`, from `SOLIDWORKS_API_DIR` (default
+`C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist`). They are never
+committed.
+
+## Build and test
+
+```
+dotnet build src/Cadetta.SolidWorks.Core
+dotnet build src/cadetta-solidworks -p:CadettaNoCom=true
+dotnet test  src/Cadetta.SolidWorks.Tests
+```
+
+Do not build the whole `.sln` without SOLIDWORKS: `Com` and `AddIn` need
+the interop assemblies.
+
+## Protocol types
+
+`src/Cadetta.SolidWorks.Core/Protocol/Protocol.g.cs` is generated from
+`docs/schemas/adapter-protocol.json`:
+
+```
+python3 tools/gen_protocol.py          # regenerate
+python3 tools/gen_protocol.py --check  # CI: fail if stale
+```
+
+## Running
+
+`cadetta-solidworks [--fake] [--version]` speaks newline-delimited
+JSON-RPC 2.0 on stdio. Stdout is protocol only; logs go to stderr,
+filtered by `CADETTA_LOG` (`error|warn|info|debug|trace`, optionally
+`cadetta_solidworks=LEVEL`). `--fake` (or `CADETTA_SW_FAKE=1`) uses the
+in-memory session. Implemented so far: `initialize` and `shutdown`; other
+methods answer -32601 until their tickets land.

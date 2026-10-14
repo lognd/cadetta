@@ -1,0 +1,46 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.Core", "src\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj", "{0B094BC8-2C35-53D8-9A2F-B48054243E3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.Com", "src\Cadetta.SolidWorks.Com\Cadetta.SolidWorks.Com.csproj", "{F6699B2C-67E0-510D-9A95-4CD2BDC98597}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cadetta-solidworks", "src\cadetta-solidworks\cadetta-solidworks.csproj", "{6095DB63-B353-50BE-8C6E-5FEDE0FA7F86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.AddIn", "src\Cadetta.SolidWorks.AddIn\Cadetta.SolidWorks.AddIn.csproj", "{8D176A5F-0641-5832-98F3-994997385C12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.Tests", "src\Cadetta.SolidWorks.Tests\Cadetta.SolidWorks.Tests.csproj", "{55D0916E-758C-5D49-8824-7803A4D1132C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B094BC8-2C35-53D8-9A2F-B48054243E3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B094BC8-2C35-53D8-9A2F-B48054243E3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B094BC8-2C35-53D8-9A2F-B48054243E3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B094BC8-2C35-53D8-9A2F-B48054243E3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6699B2C-67E0-510D-9A95-4CD2BDC98597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6699B2C-67E0-510D-9A95-4CD2BDC98597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6699B2C-67E0-510D-9A95-4CD2BDC98597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6699B2C-67E0-510D-9A95-4CD2BDC98597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6095DB63-B353-50BE-8C6E-5FEDE0FA7F86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6095DB63-B353-50BE-8C6E-5FEDE0FA7F86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6095DB63-B353-50BE-8C6E-5FEDE0FA7F86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6095DB63-B353-50BE-8C6E-5FEDE0FA7F86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D176A5F-0641-5832-98F3-994997385C12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D176A5F-0641-5832-98F3-994997385C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D176A5F-0641-5832-98F3-994997385C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D176A5F-0641-5832-98F3-994997385C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55D0916E-758C-5D49-8824-7803A4D1132C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55D0916E-758C-5D49-8824-7803A4D1132C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55D0916E-758C-5D49-8824-7803A4D1132C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55D0916E-758C-5D49-8824-7803A4D1132C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

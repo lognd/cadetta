@@ -1,0 +1,19 @@
+<Project>
+  <!--
+    The SOLIDWORKS interop assemblies. Imported only by Cadetta.SolidWorks.Com
+    and Cadetta.SolidWorks.AddIn; they come from the local install
+    (SOLIDWORKS_API_DIR) and are never committed.
+  -->
+  <ItemGroup>
+    <Reference Include="SolidWorks.Interop.sldworks">
+      <HintPath>$(SOLIDWORKS_API_DIR)\SolidWorks.Interop.sldworks.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="SolidWorks.Interop.swconst">
+      <HintPath>$(SOLIDWORKS_API_DIR)\SolidWorks.Interop.swconst.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
