@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2NDDVYW3WN79XN9C707C"
 reporter = "lognd"
 created = "2026-10-13T05:17:02Z"
-updated = "2026-10-14T05:58:06Z"
+updated = "2026-10-14T06:06:47Z"
 persona = "Python user"
 capability = "see cadetta core logs through the logging module"
 outcome_text = "diagnostics integrate with my application"
@@ -21,5 +21,5 @@ target = "01M4SV2NMPSM42YZT9MXT4YVMW"
 
 [[acceptance]]
 text = "Given a Python logger configured at DEBUG, when a core call runs, then tracing events arrive as logging records with level and target preserved (bindings.md 3)"
-bound = false
+bound = true
 +++
