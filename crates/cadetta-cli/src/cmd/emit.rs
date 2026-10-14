@@ -548,11 +548,23 @@ fn digest_text(bytes: &[u8]) -> String {
     format!("blake3:{}", blake3::hash(bytes).to_hex())
 }
 
-fn write_file(path: &FsPath, text: &str) -> std::io::Result<()> {
+/// Write `text` to `path` unless the file already equals it modulo the header line (adapters.md 2).
+///
+/// Returns the text now on disk, so the reported digest matches the file; a skipped rewrite
+/// keeps the existing header.
+// frob:ticket 01M4W47VHXH1PBPKTF87FQCBH8
+fn write_file(path: &FsPath, text: &str) -> std::io::Result<String> {
+    if let Ok(existing) = std::fs::read_to_string(path)
+        && sw_equations::same_modulo_header(&existing, text)
+    {
+        tracing::info!(file = %path.display(), "emit: unchanged modulo header, not rewritten");
+        return Ok(existing);
+    }
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
-    std::fs::write(path, text)
+    std::fs::write(path, text)?;
+    Ok(text.to_owned())
 }
 
 /// Run `cadetta emit`; `args` are the words after the verb. Returns the exit code.
@@ -712,12 +724,12 @@ fn emit_package(
             .unwrap_or_else(|| format!("build/solidworks/{}.txt", adapter.id()));
         let target: PathBuf = pkg.dir.join(&rel);
         match write_file(&target, &text) {
-            Ok(()) => {
-                tracing::info!(file = %target.display(), "emit: wrote equations");
+            Ok(on_disk) => {
+                tracing::info!(file = %target.display(), "emit: equations up to date");
                 report.files.push(EmitFile {
                     adapter: adapter.id().to_owned(),
                     path: rel,
-                    digest: digest_text(text.as_bytes()),
+                    digest: digest_text(on_disk.as_bytes()),
                 });
             }
             Err(e) => report.diagnostics.push(diag(
@@ -929,5 +941,24 @@ mod tests {
         for v in ["6mm", "2mm", "9mm"] {
             assert!(text.contains(v), "{v} missing: {text}");
         }
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::write_file
+    #[test]
+    fn header_only_difference_is_not_rewritten() {
+        let dir = project(SOURCE, BINDINGS, "");
+        let target = dir.0.join("build/solidworks/equations.txt");
+        assert_eq!(run(&dir, &[]).0, EXIT_OK);
+        let fresh = std::fs::read_to_string(&target).unwrap();
+        let (header, body) = fresh.split_once('\n').unwrap();
+        assert!(header.starts_with("' cadetta emit"), "{header}");
+        let stale = format!("' cadetta emit sw-equations 0.0.1 ir=blake3:old\n{body}");
+        std::fs::write(&target, &stale).unwrap();
+        assert_eq!(run(&dir, &[]).0, EXIT_OK);
+        assert_eq!(std::fs::read_to_string(&target).unwrap(), stale);
+        let changed = stale.replace("6mm", "7mm");
+        std::fs::write(&target, &changed).unwrap();
+        assert_eq!(run(&dir, &[]).0, EXIT_OK);
+        assert_eq!(std::fs::read_to_string(&target).unwrap(), fresh);
     }
 }
