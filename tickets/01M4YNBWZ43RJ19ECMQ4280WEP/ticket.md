@@ -7,13 +7,13 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:13:25Z"
-updated = "2026-10-15T02:13:25Z"
+updated = "2026-10-15T02:35:21Z"
 idempotency_key = "fitside-roles-mmc-lmc"
 scope = ["crates/cadetta-sema/src/**"]
 
 [[acceptance]]
 text = "mmc/lmc on a member whose role comes only from a fit side resolves the material side without E010"
-bound = false
+bound = true
 +++
 
 Follow-up of ~7078TNV: RoleSource::FitSide is not yet consulted by mmc/lmc, so members whose role is only implied by a fit still raise E010.

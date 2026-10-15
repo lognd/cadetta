@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:35:21Z"
+digest = "0dcc3aeaeff5553421067ca205d6b1b198f084ada5890769f9bb8ad9c25e30c8"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.93s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3b198140-7ca3-4ee3-a1df-21ea0a496c85 with nextest profile: default
+    Starting 1 test across 57 binaries (1331 tests skipped)
+        PASS [   0.008s] cadetta-sema eval::tests::fit_side_role_resolves_mmc_lmc
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 1331 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "fit_side_role_resolves_mmc_lmc"
+size = 679
+status = "measured"
+test_count = 1
+tests_digest = "3e86a307ec7c18a306265dc43c705962b4beb7d5f51393bfb1c6a9db1a5ef254"
+at = "2026-10-15T02:35:21Z"
+actor = "lognd"
+rev = 1
