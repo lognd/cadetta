@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:13:47Z"
-updated = "2026-10-15T19:23:30Z"
-scope = ["crates/cadetta-cli/**"]
+updated = "2026-10-15T19:27:23Z"
+scope = ["crates/cadetta-cli/**", "docs/spec/packages.md"]
 
 [[acceptance]]
 text = "cadetta check loads git dependencies from the lock-pinned checkout"
