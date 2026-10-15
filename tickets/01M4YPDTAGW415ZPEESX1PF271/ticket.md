@@ -10,7 +10,7 @@ updated = "2026-10-15T03:05:36Z"
 
 [[acceptance]]
 text = "conformance_corpus_matches_the_spec passes"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "conformance_adapters, conformance_quantities, conformance_stdlib pass"
