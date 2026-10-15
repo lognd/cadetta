@@ -7,12 +7,12 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T07:53:53Z"
-updated = "2026-10-15T19:57:17Z"
+updated = "2026-10-15T19:57:27Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "docs/**"]
 
 [[acceptance]]
 text = "Reconciling native names against bindings reports R002 for an unbound name, R003 for a bound but absent one, and maps names via bindings only."
-bound = false
+bound = true
 
 [[acceptance]]
 text = "R007 fires for a dimension not measured from the sketch origin and R011 for an instance file that is not the slot file; a slots read records instance files."

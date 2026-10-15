@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T19:57:27Z"
+digest = "30b0a8cae9d0815994de1c59c1049c8081b10a92dda7c2cd453441ef2d3efe37"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.05s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 04200c3a-7784-467b-a496-f36e66862193 with nextest profile: default
+    Starting 1 test across 1 binary (165 tests skipped)
+        PASS [   0.005s] cadetta-adapter bindings::tests::reconcile_read_maps_bound_and_flags_unbound_and_missing
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 165 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter reconcile_read"
+size = 782
+status = "measured"
+test_count = 1
+tests_digest = "bd9f88ed0b9777547ce179ea7d56699a1090d5aecf12f40bd78c03372c6fdb52"
+at = "2026-10-15T19:57:27Z"
+actor = "lognd"
+rev = 1
