@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:29:17Z"
-updated = "2026-10-15T10:04:16Z"
+updated = "2026-10-15T10:04:18Z"
 idempotency_key = "sqrbg5c-git-upstream"
 scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/pkg/**", "crates/cadetta-cli/src/cmd/update.rs"]
 
@@ -21,7 +21,7 @@ bound = true
 
 [[acceptance]]
 text = "Candidate obligations include dependency nodes in the analysis universe so upstream matching by ObligationId is exercised end to end"
-bound = false
+bound = true
 +++
 
 Found while working ~SQRBG5C: upstream_of() reads only path dependencies; git deps are skipped with a debug log. pkg::resolve is not yet wired into the CLI, and it is unverified that dependency nodes appear in the candidate obligation universe.
