@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A driven dimension reads exact:false with a reason", "A unit of another dimension than the locator's native unit reads inexact, never Q001", "A call to an unknown equation function reads as an unparsed raw line"]
+moved = []
+at = "2026-10-15T21:55:40Z"
+actor = "lognd"
+rev = 1
