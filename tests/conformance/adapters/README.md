@@ -44,10 +44,4 @@ list.
 ## Configuration errors
 
 An invalid bindings file or locator is a configuration error: exit 2,
-naming the path and key, no diagnostic code (adapters.md 3). The binary
-currently reports R005 with exit 0 (ticket ~3F67WS1).
-
-## Known gaps
-
-`r008-check-adapter-unavailable` and `r008-no-path-search` are listed in
-`../known-gaps.toml` (ticket ~W41EHE6).
+naming the path and key, no diagnostic code (adapters.md 3).
