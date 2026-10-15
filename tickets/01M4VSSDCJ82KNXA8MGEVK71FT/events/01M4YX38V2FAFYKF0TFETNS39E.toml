@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["#![requires(arg, when = cond)] is E006 when cond holds and arg is absent", "requires is silent when arg is given"]
+moved = []
+at = "2026-10-15T04:28:31Z"
+actor = "lognd"
+rev = 1

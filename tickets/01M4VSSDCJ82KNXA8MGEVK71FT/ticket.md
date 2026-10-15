@@ -6,8 +6,16 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-13T23:32:59Z"
+updated = "2026-10-15T04:28:31Z"
 scope = ["crates/cadetta-sema/**"]
+
+[[acceptance]]
+text = "#![requires(arg, when = cond)] is E006 when cond holds and arg is absent"
+bound = false
+
+[[acceptance]]
+text = "requires is silent when arg is given"
+bound = false
 +++
 
 found while working ~XCK8EGP: tap = Vendor without depth_available must be E006; attribute is parsed only.
