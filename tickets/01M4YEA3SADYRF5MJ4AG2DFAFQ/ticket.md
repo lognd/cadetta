@@ -4,9 +4,10 @@ title = "U002 and I004 facts: resolution-based use, members, parameterized and i
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T00:10:07Z"
-updated = "2026-10-15T00:10:07Z"
+updated = "2026-10-15T10:06:29Z"
 scope = ["crates/cadetta-cli/src/lint_facts.rs"]
 
 [[links]]
