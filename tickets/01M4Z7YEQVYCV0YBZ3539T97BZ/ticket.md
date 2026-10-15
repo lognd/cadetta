@@ -4,9 +4,10 @@ title = "docs/spec/ir.md: note slot Part.path is Type/part with no member"
 type = "docs"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-15T07:38:07Z"
-updated = "2026-10-15T07:38:07Z"
+updated = "2026-10-15T07:46:09Z"
 scope = ["docs/spec/ir.md"]
 +++
 
