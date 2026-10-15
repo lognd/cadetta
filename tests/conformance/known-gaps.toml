@@ -744,158 +744,118 @@ reason = "quantities binding check (display formatter) has no executor yet"
 
 [[gap]]
 fixture = "adapters/contract-no-source-write"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-accept-writes-adoption-marker"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-active-config-only"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-assembly-parts"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-component-name"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-driven-dimension-skipped"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-equation-linked-property-skipped"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-expression-converted"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-item-keys"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-items-sorted-by-file-first"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-member-collision-suffixed"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-member-collision-third"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-member-snake-case"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-member-strips-unit-suffix"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-never-overwrites"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-property-quantity-needs-unit"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-property-types"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-propose-writes-proposal"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-prp-linked-property-skipped"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-rerun-adds-only-unbound"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/import-status-values"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-citation-flagged"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-derived-untouched"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-fit-skipped"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-next-sync-no-op"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-only-differing-from-lock-base"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-prints-diff"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-tolerance-skipped"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-update-write-applies"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/import-values-nominal-scalars"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "adapters/resolve-drift-import-update"
-ticket = "~JBHTKF3"
-reason = "binding import entries have no executor yet"
+ticket = "~KKVE13B"
+reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "solvers/output-decimal-exact"
