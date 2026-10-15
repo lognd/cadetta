@@ -285,7 +285,10 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     absent.
   - Not lowered yet: waivers, interfaces, tables, `require` obligations,
     solvers and bindings; parameterized components lower with valueless
-    members.
+    members. The datum and placement arguments of a parameterized
+    instance lower as `datum` / `place` Members of the instantiating
+    component (`Box/j.mount.offset.z`), derived, with the per-instance
+    value.
 
 ## 4. Digests
 

@@ -19,6 +19,7 @@
 // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::rc::Rc;
 
 use cadetta_geometry::aligned::{AlignedError, AlignedReport, aligned};
 use cadetta_geometry::axes;
@@ -44,6 +45,8 @@ use cadetta_units::{Affine, Dim, RootOp};
 use cadetta_variants::interface::{C001, I001, ResolvedInterface, resolve as resolve_interface};
 use tracing::{debug, trace, warn};
 
+use super::GeometryKind;
+use super::instances::InstInfo;
 use super::{
     EvalDiagnostic, Evaluated, Evaluator, Fail, Quant, R, Scope, Val, diag, func::Inex, owned,
     strip,
@@ -298,12 +301,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// Evaluates one datum or placement member, memoised under its canonical path.
     pub(super) fn geom_member(&mut self, m: &GeoMember) -> Option<Evaluated> {
-        if let Some(v) = self.done.get(&m.path) {
+        self.geom_member_at(m, m.path.clone(), None)
+    }
+
+    /// Evaluates the member `m` of a component under `key`; `inst` binds a parameterized
+    /// instance whose arguments the expression reads.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    fn geom_member_at(
+        &mut self,
+        m: &GeoMember,
+        key: CanonPath,
+        inst: Option<Rc<InstInfo>>,
+    ) -> Option<Evaluated> {
+        if let Some(v) = self.done.get(&key) {
             return v.clone();
         }
-        if !self.in_progress.insert(m.path.clone()) {
+        if !self.in_progress.insert(key.clone()) {
             return None;
         }
+        let saved = std::mem::replace(&mut self.cur_inst, inst);
         let mut sc = Scope {
             ctx: Ctx {
                 package: m.path.package.clone(),
@@ -316,7 +332,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let result = self
             .eval_param_expr(&mut sc, &m.value, m.value.span)
             .and_then(|ev| self.select_coordinate(m, ev));
-        self.in_progress.remove(&m.path);
+        self.cur_inst = saved;
+        self.in_progress.remove(&key);
         let out = match result {
             Ok(v) => Some(v),
             Err(Fail::Silent) => None,
@@ -326,7 +343,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 None
             }
         };
-        self.done.insert(m.path.clone(), out.clone());
+        self.done.insert(key, out.clone());
         out
     }
 
@@ -396,6 +413,50 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             self.record_part_counts(&id, comp);
             self.stamp_since(start, &ModuleKey::of_path(&item));
+        }
+        self.evaluate_instance_geometry();
+    }
+
+    /// Evaluates the datum and placement members of every parameterized instance, in the
+    /// instance's scope and keyed under its path (`Box/j.mount.offset.x`).
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    fn evaluate_instance_geometry(&mut self) {
+        let instances: Vec<_> = self.instances.members().map(|(i, c, ..)| (i, c)).collect();
+        for (info, comp) in instances {
+            let id = component_id(&info.callee);
+            let g = component_geometry(self.resolver, &id, comp);
+            debug!(instance = %info.prefix, datums = g.datums.len(), "geometry: instance");
+            for d in &g.datums {
+                for m in d.members() {
+                    self.instance_member(&info, m, GeometryKind::Datum);
+                }
+            }
+            let Some(a) = &g.assembly else { continue };
+            for p in &a.placements {
+                let counted = find_part(comp, &p.node).is_some_and(|x| x.count.is_some());
+                if counted && p.cover == Cover::Whole {
+                    debug!(instance = %info.prefix, node = %p.node, "geometry: part arrays in an instance are not evaluated");
+                    continue;
+                }
+                for m in p.members() {
+                    self.instance_member(&info, m, GeometryKind::Place);
+                }
+            }
+        }
+    }
+
+    /// Evaluates the callee member `m` for `info` and records its kind when it evaluated.
+    fn instance_member(&mut self, info: &Rc<InstInfo>, m: &GeoMember, kind: GeometryKind) {
+        let mut key = info.prefix.clone();
+        key.parts.extend(m.path.parts.iter().cloned());
+        key.members = m.path.members.clone();
+        if self
+            .geom_member_at(m, key.clone(), Some(info.clone()))
+            .is_some()
+        {
+            self.instance_geometry.insert(key, kind);
+        } else {
+            trace!(%key, "geometry: instance member has no value");
         }
     }
 

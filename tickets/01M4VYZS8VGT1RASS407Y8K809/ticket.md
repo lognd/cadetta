@@ -2,12 +2,13 @@
 id = "01M4VYZS8VGT1RASS407Y8K809"
 title = "Evaluate datums and placements of parameterized parts"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T01:03:51Z"
-updated = "2026-10-15T08:47:02Z"
+updated = "2026-10-15T08:49:34Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/ir.md", "docs/spec/language.md"]
 
 [[acceptance]]

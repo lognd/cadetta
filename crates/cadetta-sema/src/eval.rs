@@ -189,6 +189,19 @@ pub struct Evaluation {
     /// Instance members that are `priv` in their component (lowering marks them private).
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     pub instance_private: BTreeSet<CanonPath>,
+    /// Datum and placement members evaluated per parameterized instance (`Box/j.mount.offset.x`).
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    pub instance_geometry: BTreeMap<CanonPath, GeometryKind>,
+}
+
+/// Which geometry declaration an instance geometry member belongs to.
+// frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum GeometryKind {
+    /// An operation argument of a `datum`.
+    Datum,
+    /// An operation argument of a `place`.
+    Place,
 }
 
 impl Evaluation {
@@ -463,10 +476,14 @@ pub struct Evaluator<'r, 'p> {
     renames: crate::deps::Renames,
     units: &'r UnitTable,
     defs: BTreeMap<CanonPath, Def<'p>>,
-    /// Components whose datums and placements are evaluated (those without parameters).
+    /// Components whose own datums and placements are evaluated (those without parameters;
+    /// parameterized ones are evaluated per instance, see `instance_geometry`).
     geom_components: Vec<CanonPath>,
     /// Instance counts of evaluated `part name[N]` slots, by part path.
     part_counts: BTreeMap<CanonPath, u64>,
+    /// Geometry members evaluated per instance, by instance path.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    instance_geometry: BTreeMap<CanonPath, GeometryKind>,
     /// Part nodes of the current component whose placement raised G004 (not expanded).
     g004_nodes: BTreeSet<String>,
     done: BTreeMap<CanonPath, Option<Evaluated>>,
@@ -562,6 +579,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             defs,
             geom_components,
             part_counts: BTreeMap::new(),
+            instance_geometry: BTreeMap::new(),
             g004_nodes: BTreeSet::new(),
             done: BTreeMap::new(),
             selection: None,
@@ -623,6 +641,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let checks = self.run_checks();
         self.drop_shadowed_evals();
         let instance_private = self.instances.private.clone();
+        let instance_geometry = std::mem::take(&mut self.instance_geometry);
         let values = self
             .done
             .into_iter()
@@ -639,6 +658,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             var_count: self.next_var,
             part_counts: self.part_counts,
             instance_private,
+            instance_geometry,
         }
     }
 
