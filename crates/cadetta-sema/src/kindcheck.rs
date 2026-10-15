@@ -364,6 +364,38 @@ impl<'a> KindChecker<'a> {
         self.diags.append(&mut found);
     }
 
+    /// Check the untyped parameters of an implementer against the interface kinds `required`
+    /// (`(member, kind)`): a dimension mismatch is I001 (the member is not the declared kind),
+    /// a named-kind mismatch stays Q003 (stdlib.md 6). Run after [`check_component`](Self::check_component).
+    // frob:ticket 01M4V2J34YBSMM32SK26K58FR1
+    pub fn check_interface_members(&mut self, c: &Component, required: &[(String, String)]) {
+        for m in &c.members {
+            let MemberKind::Param(p) = &m.kind else {
+                continue;
+            };
+            let Some((_, kind)) = required.iter().find(|(n, _)| *n == p.name.name) else {
+                continue;
+            };
+            if p.ty.is_some() || self.kinds.dim_of(kind).is_none() {
+                continue;
+            }
+            let saved = std::mem::take(&mut self.diags);
+            self.check_assign(&p.value, kind);
+            let mut found = std::mem::replace(&mut self.diags, saved);
+            for d in &mut found {
+                if d.code == "Q002" {
+                    d.code = "I001";
+                    d.message = format!(
+                        "I001: member `{}` is not a {kind} as the interface requires ({})",
+                        p.name.name, d.message
+                    );
+                }
+            }
+            debug!(member = %p.name.name, kind, found = found.len(), "interface member kind checked");
+            self.diags.append(&mut found);
+        }
+    }
+
     fn check_member(&mut self, kind: &MemberKind) {
         match kind {
             MemberKind::Param(p) => {

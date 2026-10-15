@@ -1125,6 +1125,12 @@ fn evaluate_stages(
     // Kind-checker diagnostic spans per module; they shadow overlapping evaluator reports.
     // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
     let mut kind_spans: Vec<(ModuleKey, usize, usize)> = Vec::new();
+    // frob:ticket 01M4V2J34YBSMM32SK26K58FR1
+    // Interface member kinds, so a wrong kind on an implementer's member is I001 or Q003.
+    let iface_kinds: Vec<_> = parsed
+        .iter()
+        .flat_map(|q| lint_facts::interfaces(&q.name, &module_views(q)))
+        .collect();
     for p in &in_scope {
         for m in &p.modules {
             // One checker per component, each over an env that types cross-component names
@@ -1137,6 +1143,14 @@ fn evaluate_stages(
                 let env = EvalEnv::new(&resolver, &evaluation, &p.name, &m.path, &c.name.name);
                 let mut checker = KindChecker::new(&kinds, &units, &env);
                 checker.check_component(c);
+                let required: Vec<(String, String)> = c
+                    .implements
+                    .iter()
+                    .filter_map(|r| r.segments.last())
+                    .flat_map(|last| iface_kinds.iter().filter(move |i| i.path.item == last.name))
+                    .flat_map(|i| i.members.iter().map(|f| (f.name.clone(), f.type_name.clone())))
+                    .collect();
+                checker.check_interface_members(c, &required);
                 found.extend(checker.into_diagnostics());
             }
             let file = index.module(&p.name, &m.path);

@@ -337,8 +337,11 @@ roll-ups (`sum?(self, unit_cost)`, `mass`; language.md 3.5), the
 commercial deltas of `impact --swap` and the `compare` columns are
 exactly these members. A part family implements `Sourced` (or a
 component declares the members); a misspelling such as `leadtime` is
-simply not a commercial member, and a wrong kind on one of these names
-is an ordinary Q003. Every member is declared optional
+simply not a commercial member. A wrong kind on one of these names in a
+component that implements `Sourced` is I001 when the dimension is wrong
+(`unit_cost = 3 mm`) and Q003 when a named kind is wrong (`unit_cost`
+where `Money` is required and the value is a plain length); a component
+that does not implement the interface is not checked. Every member is declared optional
 (`unit_cost?: Money`, language.md 3.2), so a component lacking one is
 not I001; the `?` roll-up forms list it as missing, never defaulted.
 

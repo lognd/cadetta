@@ -159,7 +159,7 @@ reason = "solver member declarations are unresolved (E002) in check, so S003 nev
 
 [[gap]]
 fixture = "stdlib/commercial-misspelling-not-a-member"
-ticket = "~6K58FR1"
+ticket = "~A50KFBS"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
@@ -173,28 +173,13 @@ ticket = "~6K58FR1"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
-fixture = "stdlib/i001-sourced-optional-members"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/i001-sourced-wrong-kind"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
 fixture = "stdlib/materials-tap-class"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/q003-sourced-named-kind"
-ticket = "~6K58FR1"
+ticket = "~34KDRPA"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
 fixture = "stdlib/screw-price-not-in-iso4762"
-ticket = "~6K58FR1"
+ticket = "~A50KFBS"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
