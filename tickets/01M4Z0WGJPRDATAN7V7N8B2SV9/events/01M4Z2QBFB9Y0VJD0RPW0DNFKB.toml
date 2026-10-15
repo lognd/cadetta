@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T06:06:07Z"
+digest = "c75e6215c32134fd84c72dda38ebfe10dbc0ce4fcb24cbdf813f44a29ff47baa"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 43.65s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a7ee8d5b-51d4-4755-b2fa-adb67d2600fa with nextest profile: default
+    Starting 1 test across 68 binaries (1433 tests skipped)
+        PASS [   0.225s] cadetta::geom_unknown_datum unknown_datum_of_placed_part_is_e002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.228s] 1 test run: 1 passed, 1433 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "unknown_datum_of_placed_part_is_e002"
+size = 687
+status = "measured"
+test_count = 1
+tests_digest = "c8e4e77fc8b9b9a1cc5eda3515679ec50b80e61d20f8bf5488fe04fa2df57375"
+at = "2026-10-15T06:06:07Z"
+actor = "lognd"
+rev = 1

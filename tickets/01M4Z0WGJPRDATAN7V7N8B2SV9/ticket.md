@@ -7,13 +7,13 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:34:44Z"
-updated = "2026-10-15T06:05:34Z"
+updated = "2026-10-15T06:06:07Z"
 idempotency_key = "datum-unknown-placed-e002"
 scope = ["crates/**"]
 
 [[acceptance]]
 text = "Fixture geometry/datum-unknown-of-placed-part passes with E002 and no EVAL"
-bound = false
+bound = true
 +++
 
 Fixture geometry/datum-unknown-of-placed-part: 'a.pt in a.nothing' in an assembly check yields EVAL at acme.demo::A.c instead of E002.
