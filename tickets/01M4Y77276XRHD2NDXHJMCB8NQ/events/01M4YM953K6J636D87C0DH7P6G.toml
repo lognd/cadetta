@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/resolve.rs"]
+new = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/tests/interface_slots.rs", "docs/spec/language.md", "changelog.d/01M4Y77276XRHD2NDXHJMCB8NQ.fixed.md"]
+at = "2026-10-15T01:54:27Z"
+actor = "lognd"
+rev = 1

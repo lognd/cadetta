@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Reading a member through an interface-typed part slot evaluates against the slot's primary component (check load_ok: wheel.load_rating >= 440N with part wheel: Caster = Good yields a verdict, no E002)"]
+new = ["Reading a member through an interface-typed part slot evaluates against the slot's primary component (check load_ok: wheel.load_rating >= 440N with part wheel: Caster = Good yields a verdict, no E002)", 'An interface-typed slot with a primary resolves for a solver input read (part motor: Motor = MotorA alt [MotorB]; in m = motor.mass) to MotorA, not "the type of part is unknown"']
+moved = [1]
+at = "2026-10-15T01:54:27Z"
+actor = "lognd"
+rev = 1

@@ -6,11 +6,15 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:14:02Z"
-scope = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/resolve.rs"]
+updated = "2026-10-15T01:54:27Z"
+scope = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/tests/interface_slots.rs", "docs/spec/language.md", "changelog.d/01M4Y77276XRHD2NDXHJMCB8NQ.fixed.md"]
 
 [[acceptance]]
 text = "Reading a member through an interface-typed part slot evaluates against the slot's primary component (check load_ok: wheel.load_rating >= 440N with part wheel: Caster = Good yields a verdict, no E002)"
+bound = false
+
+[[acceptance]]
+text = 'An interface-typed slot with a primary resolves for a solver input read (part motor: Motor = MotorA alt [MotorB]; in m = motor.mass) to MotorA, not "the type of part is unknown"'
 bound = false
 +++
 
