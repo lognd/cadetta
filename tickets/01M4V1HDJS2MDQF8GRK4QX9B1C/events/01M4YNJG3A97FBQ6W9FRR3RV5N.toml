@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:17:00Z"
+digest = "eb6b798e98949c1b3dc8f31eaf8659cc152d8ccc6dc7358352036968f1f78218"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f52e5024-e0ef-41af-bff4-33f9f89b8772 with nextest profile: default
+    Starting 1 test across 54 binaries (1291 tests skipped)
+        PASS [   0.578s] cadetta::quantity_diag_once kind_fault_shadows_evaluator_report
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.581s] 1 test run: 1 passed, 1291 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "kind_fault_shadows_evaluator_report"
+size = 559
+status = "measured"
+test_count = 1
+tests_digest = "c8a7915882be5f68504df38687d347a0105a240fcc0b0884475d0cc96cbf765a"
+at = "2026-10-15T02:17:00Z"
+actor = "lognd"
+rev = 1
