@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-15T10:04:18Z"
+digest = "0fc8d36cae768e3f7b183e68793f12a768f64d97e89095f074e837049a06235d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e63a4185-55fb-477f-bc2b-9a27bf8578e4 with nextest profile: default
+    Starting 1 test across 41 binaries (488 tests skipped)
+        PASS [   0.533s] cadetta cmd::obligations::tests::git_dependency_nodes_join_the_candidate_universe
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.535s] 1 test run: 1 passed, 488 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta git_dependency_nodes_join_the_candidate_universe"
+size = 575
+status = "measured"
+test_count = 1
+tests_digest = "31832e65c8531a5a426f1da5d3e5af36b4bf5c71e344f493309a67bf13718700"
+at = "2026-10-15T10:04:18Z"
+actor = "lognd"
+rev = 1

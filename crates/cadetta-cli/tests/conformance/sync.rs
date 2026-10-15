@@ -10,6 +10,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 
+use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::classify::{Class, R001};
 use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options, PushItem, ReadBack, Verb};
 use serde_json::{Value, json};
@@ -52,33 +53,55 @@ struct Sim {
     regen: bool,
 }
 
-impl Backend for Sim {
-    fn push(
-        &mut self,
-        _adapter: &str,
-        file: &str,
-        items: &[PushItem],
-        regen: bool,
-    ) -> Vec<ReadBack> {
-        tracing::debug!(file, items = items.len(), regen, "sync: simulated push");
-        self.writes.push(file.to_owned());
-        self.regen |= regen;
+/// The simulated document of one file: writes land in [`Sim::native`] (or the fixture's read-back).
+struct SimDoc<'a> {
+    sim: &'a mut Sim,
+    file: String,
+}
+
+impl Document for SimDoc<'_> {
+    fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
         items
             .iter()
-            .map(|i| {
-                let got = self
-                    .readback
-                    .get(&i.locator)
-                    .cloned()
-                    .unwrap_or_else(|| i.value.clone());
-                self.native.insert(i.locator.clone(), got.clone());
-                ReadBack {
-                    locator: i.locator.clone(),
-                    value: Some(got),
-                    tolerance: None,
-                }
+            .map(|i| ReadBack {
+                locator: i.locator.clone(),
+                value: self.sim.native.get(&i.locator).cloned(),
+                tolerance: None,
             })
             .collect()
+    }
+
+    fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
+        tracing::debug!(file = %self.file, items = items.len(), "sync: simulated write");
+        self.sim.writes.push(self.file.clone());
+        for i in items {
+            let got = self
+                .sim
+                .readback
+                .get(&i.locator)
+                .cloned()
+                .unwrap_or_else(|| i.value.clone());
+            self.sim.native.insert(i.locator.clone(), got);
+        }
+        Ok(())
+    }
+
+    fn rebuild(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Backend for Sim {
+    fn document<'a>(&'a mut self, _adapter: &str, file: &str) -> Box<dyn Document + 'a> {
+        Box::new(SimDoc {
+            sim: self,
+            file: file.to_owned(),
+        })
+    }
+
+    fn pushed(&mut self, file: &str, regen: bool, _outcome: &AtomicOutcome) {
+        tracing::debug!(file, regen, "sync: simulated push done");
+        self.regen |= regen;
     }
 }
 
