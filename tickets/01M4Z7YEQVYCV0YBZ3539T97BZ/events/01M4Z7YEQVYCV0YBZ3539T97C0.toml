@@ -1,0 +1,10 @@
+kind = "create"
+title = "docs/spec/ir.md: note slot Part.path is Type/part with no member"
+type = "docs"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/ir.md"]
+body = "found while working ~137W4EE (slots lower to pkg::Type/part, member-less); ir.md lease held by ~C7DZBZH so not editable there. Add a note at Part { path ... } in section 4."
+at = "2026-10-15T07:38:07Z"
+actor = "lognd"
+rev = 1
