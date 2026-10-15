@@ -2,7 +2,8 @@
 id = "01M4VB64CJDA2CZ4WM4MNV70G6"
 title = "Import proposes datums from frames and placements from instances"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
