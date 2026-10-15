@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:00:18Z"
+digest = "20911b526e573419b348e901370aad2330f0f2195588c4ff4b6ca7cb58481b60"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.27s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9205bfa5-5564-48c3-80a0-5480bb840b46 with nextest profile: default
+    Starting 1 test across 51 binaries (1270 tests skipped)
+        PASS [   0.015s] cadetta-sema kindcheck::tests::unknown_declared_type_name_is_e002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.034s] 1 test run: 1 passed, 1270 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "unknown_declared_type_name_is_e002"
+size = 688
+status = "measured"
+test_count = 1
+tests_digest = "497815790338927f29b555dd44fe609af7e0fff4e15b542460c22e1bd4ee1d3d"
+at = "2026-10-15T02:00:18Z"
+actor = "lognd"
+rev = 1

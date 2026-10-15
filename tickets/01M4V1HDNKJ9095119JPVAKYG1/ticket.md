@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changel
 
 [[acceptance]]
 text = "A declared type that is neither a kind nor a known type is reported E002"
-bound = false
+bound = true
 +++
 
 found while working ~Z48GXKX. quantities.md 4.4. Fixture e002-kind.
