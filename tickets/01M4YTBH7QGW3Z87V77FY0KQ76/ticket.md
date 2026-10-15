@@ -2,11 +2,12 @@
 id = "01M4YTBH7QGW3Z87V77FY0KQ76"
 title = "sync: manual-adapter emit fallback does not raise R014 for bound Text params"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:40:36Z"
-updated = "2026-10-15T03:42:35Z"
+updated = "2026-10-15T03:42:44Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/r014_sync_manual_adapter.rs", "changelog.d/01M4YTBH7QGW3Z87V77FY0KQ76.fixed.md"]
 
 [[acceptance]]
