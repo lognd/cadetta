@@ -168,3 +168,33 @@ fn bare_adapter_command_is_not_run_from_path_and_finishes() {
     );
     assert!(start.elapsed() < std::time::Duration::from_secs(30));
 }
+
+// frob:ticket 01M4YR9ZE0N4CF36GDZT2WRCP1
+// frob:tests crates/cadetta-cli/tests/conformance/exec.rs::eval
+#[test]
+fn eval_entry_reports_q006_info_for_exact_trig_fixtures() {
+    // Only the five quantities fixtures of the ticket are run, in a scratch corpus.
+    let names = [
+        "c002-inexact-boundary",
+        "exact-zero-normalised",
+        "trig-exact-atan2",
+        "trig-exact-sin",
+        "trig-exact-tan",
+    ];
+    let scratch = std::env::temp_dir().join(format!("cadetta-q006-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let src = corpus_root().join("quantities");
+    let dest = scratch.join("quantities");
+    std::fs::create_dir_all(&dest).unwrap();
+    for entry in std::fs::read_dir(&src).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if names.iter().any(|n| file.starts_with(&format!("{n}."))) {
+            std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+        }
+    }
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), names.len(), "{report:?}");
+    assert!(report.failures.is_empty(), "{report:?}");
+}
