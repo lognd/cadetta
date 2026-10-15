@@ -2,7 +2,8 @@
 id = "01M4YM3CDA6F41F84EWPY1103W"
 title = "Lint engine resets diagnostic severity, undoing D001 downgrade"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "low"
 points = 2
 reporter = "lognd"
