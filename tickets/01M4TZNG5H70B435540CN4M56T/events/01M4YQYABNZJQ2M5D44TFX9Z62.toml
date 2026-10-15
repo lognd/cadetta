@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:57:41Z"
+digest = "c0bfcec834ced9346df902de9f402826f22c60f3aa060c292dbdd7698eee0aac"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 41.65s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 61e684eb-64d1-4293-87b3-20696dd56036 with nextest profile: default
+    Starting 1 test across 60 binaries (1358 tests skipped)
+        PASS [   0.092s] cadetta cmd::import::tests::accept_writes_bindings_cdt_and_lock_idempotently
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.095s] 1 test run: 1 passed, 1358 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "accept_writes_bindings_cdt_and_lock_idempotently"
+size = 687
+status = "measured"
+test_count = 1
+tests_digest = "b466d91444d266b60891caeb79d482b6f3a2bc2001bfc5c5bcf4e4a149a8edfa"
+at = "2026-10-15T02:57:41Z"
+actor = "lognd"
+rev = 1
