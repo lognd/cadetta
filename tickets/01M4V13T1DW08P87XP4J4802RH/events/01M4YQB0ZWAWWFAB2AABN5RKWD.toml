@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:47:53Z"
+digest = "83d25839e5dc5f5c0e9ce82c1a9514d10e33f3fd8b2e8fb4ff2e567290bcdf7a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2d5b900f-e5a2-4fe2-9660-fa98caa5b96b with nextest profile: default
+    Starting 1 test across 58 binaries (1342 tests skipped)
+        PASS [   0.005s] cadetta-lint rules::c::tests::interface_bound_straddling_is_c002_warning
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 1342 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "interface_bound_straddling_is_c002_warning"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "78b25a0ab075b99eb777bb962f8f84e1cb293aa38ba2d674d312d497d5f75b11"
+at = "2026-10-15T02:47:53Z"
+actor = "lognd"
+rev = 1
