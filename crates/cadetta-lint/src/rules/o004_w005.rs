@@ -3,6 +3,7 @@
 //! Specification: `docs/spec/lints.md` 2.1, 2.2 and 3 (O, W); `docs/spec/obligations.md` 2.3.
 
 // frob:ticket 01M4SWKAMS533AP2HRCNQG03WD
+// frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
 
 use cadetta_ir::entities::Waiver;
 use cadetta_obligations::graph::{ObligationId, ObligationKind, ObligationState};
@@ -20,7 +21,11 @@ pub const W005: &str = "W005";
 /// The default `[lint] expiry_warn_days`.
 pub const DEFAULT_EXPIRY_WARN_DAYS: u32 = 30;
 
-/// Run O004 over classified obligations; a `sync` kind with `required_for` gates as an error.
+/// The reason a `sync` obligation stays open for an adapter that lacks `drive`.
+pub const UNVERIFIABLE_REASON: &str = "unverifiable without drive";
+
+/// Run O004 over classified obligations (stale, or open without drive); a `sync` kind with
+/// `required_for` gates as an error.
 ///
 /// `release` is true for `check --release`, which also gates `required_for = "release"`.
 pub fn check_o004(
@@ -31,10 +36,20 @@ pub fn check_o004(
 ) -> Vec<Diagnostic> {
     let mut out = Vec::new();
     for (id, state) in obligations {
-        if id.kind() != ObligationKind::Sync || *state != ObligationState::Stale {
+        let message = match state {
+            _ if id.kind() != ObligationKind::Sync => None,
+            ObligationState::Stale => Some(format!(
+                "CAD file no longer reflects the design: `{id}` is stale; run `cadetta sync`"
+            )),
+            ObligationState::Open => Some(format!(
+                "CAD file reflects design: `{id}` is open, {UNVERIFIABLE_REASON}; attest it with `cadetta ack`"
+            )),
+            _ => None,
+        };
+        let Some(message) = message else {
             trace!(%id, ?state, "O004: not applicable");
             continue;
-        }
+        };
         let gating = match kinds.required_for(ObligationKind::Sync) {
             Some(RequiredFor::Check) => true,
             Some(RequiredFor::Release) => release,
@@ -45,12 +60,8 @@ pub fn check_o004(
         } else {
             cfg.severity(O004).expect("O004 is in the catalog")
         };
-        debug!(%id, gating, ?severity, "O004: sync stale");
-        let mut d = Diagnostic::new(
-            O004,
-            severity,
-            format!("CAD file no longer reflects the design: `{id}` is stale; run `cadetta sync`"),
-        );
+        debug!(%id, gating, ?severity, ?state, "O004: sync obligation not current");
+        let mut d = Diagnostic::new(O004, severity, message);
         d.path = Some(id.path().to_owned());
         out.push(d);
     }
@@ -216,6 +227,20 @@ mod tests {
         ];
         let d = check_o004(&obs, &KindPolicy::new(), &LintConfig::new(), false);
         assert!(d.is_empty());
+    }
+
+    // frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
+    // frob:tests crates/cadetta-lint/src/rules/o004_w005.rs::check_o004
+    #[test]
+    fn o004_open_sync_reports_unverifiable_without_drive() {
+        let obs = [(id("sync:fc/a"), ObligationState::Open)];
+        let d = check_o004(&obs, &KindPolicy::new(), &LintConfig::new(), false);
+        assert_eq!(d.len(), 1);
+        assert_eq!(d[0].severity, Severity::Info);
+        assert!(d[0].message.contains("unverifiable without drive"));
+        assert_eq!(d[0].path.as_deref(), Some("fc/a"));
+        let gated = check_o004(&obs, &sync_kinds("check"), &LintConfig::new(), false);
+        assert_eq!(gated[0].severity, Severity::Error);
     }
 
     // frob:tests crates/cadetta-lint/src/rules/o004_w005.rs::check_w005

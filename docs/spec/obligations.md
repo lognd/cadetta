@@ -104,7 +104,11 @@ Diagnostic rules:
 - Citation staleness is S004 only; O001 is not raised for the same
   node. O001 and O002 cover role attestations alone.
 - Solver staleness is S003; sync staleness is O004 (info by default,
-  because CI cannot read CAD).
+  because CI cannot read CAD). A synced file whose adapters are all
+  built-in without `drive` (`json`, `csv`, `sw-equations`) is an open
+  `sync` obligation, also O004, with the reason "unverifiable without
+  drive" (adapters.md 2); an external `drive` adapter that synced the
+  same file discharges it.
 - `[obligations.kinds.<kind>] required_for = "check" | "release"`
   makes `sync` and `solver` obligations gating, as for roles (4).
   Severity precedence is in lints.md 1.

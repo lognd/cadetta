@@ -540,17 +540,23 @@ fn emitted_values(
     out
 }
 
-/// The stale `sync` obligations (obligations.md 2.3, O004): for every native file an adapter
-/// last saved (`synced file=` record), the obligation `sync:FILE` is stale when a parameter the
-/// adapter binds now emits a value that differs from its `synced` lock value. The lock keeps
-/// values per adapter, so every saved file of a drifted adapter is reported.
+/// The O004 `sync` obligations (obligations.md 2.3): for every native file an adapter last
+/// saved (`synced file=` record), `sync:FILE` is stale when a parameter the adapter binds now
+/// emits a value that differs from its `synced` lock value (the lock keeps values per adapter,
+/// so every saved file of a drifted adapter is reported). A file synced only by built-in
+/// adapters, which lack `drive` (`json`, `csv`, `sw-equations`), is otherwise open,
+/// "unverifiable without drive" (adapters.md 2); an external adapter that synced the same
+/// file discharges it.
 // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+// frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
 pub fn sync_states(
     project: &Project,
     analysis: &Analysis,
     lock: &Lock,
 ) -> Vec<(ObligationId, ObligationState)> {
-    let mut out = Vec::new();
+    let mut out: Vec<(ObligationId, ObligationState)> = Vec::new();
+    let mut open: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
+    let mut driven: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
     for package in &analysis.packages {
         let Some(pkg) = project.packages.iter().find(|p| {
             p.config.package.as_ref().and_then(|c| c.name.as_deref()) == Some(package.name.as_str())
@@ -558,6 +564,18 @@ pub fn sync_states(
             continue;
         };
         for adapter in &pkg.config.adapters {
+            let files: Vec<&str> = lock
+                .records()
+                .filter_map(|r| match r {
+                    Record::SyncedFile(f) if f.adapter == adapter.id() => Some(f.file.as_str()),
+                    _ => None,
+                })
+                .collect();
+            if adapter.command.is_some() {
+                driven.extend(files.iter().map(|f| (*f).to_owned()));
+            } else {
+                open.extend(files.iter().map(|f| (*f).to_owned()));
+            }
             let synced: Vec<_> = lock
                 .records()
                 .filter_map(|r| match r {
@@ -577,17 +595,21 @@ pub fn sync_states(
             if !drifted {
                 continue;
             }
-            for r in lock.records() {
-                if let Record::SyncedFile(f) = r
-                    && f.adapter == adapter.id()
-                {
-                    out.push((
-                        ObligationId::new(ObligationKind::Sync, f.file.clone()),
-                        ObligationState::Stale,
-                    ));
-                }
+            for file in files {
+                out.push((
+                    ObligationId::new(ObligationKind::Sync, file.to_owned()),
+                    ObligationState::Stale,
+                ));
             }
         }
+    }
+    for file in open {
+        let id = ObligationId::new(ObligationKind::Sync, file.clone());
+        if driven.contains(&file) || out.iter().any(|(i, _)| *i == id) {
+            continue;
+        }
+        tracing::debug!(%file, "universe: sync open, unverifiable without drive");
+        out.push((id, ObligationState::Open));
     }
     out
 }
@@ -1106,9 +1128,28 @@ mod tests {
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
     // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
     #[test]
-    fn unchanged_emitted_value_raises_no_o004() {
+    fn unchanged_emitted_value_is_not_stale() {
         let (_, v) = check_json(&synced_project("6mm", ""), &[]);
-        assert!(o004(&v).is_none(), "{v}");
+        let d = o004(&v).unwrap_or_else(|| panic!("{v}"));
+        assert!(!d["message"].as_str().unwrap().contains("stale"), "{v}");
+    }
+
+    // frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn nondrive_adapter_leaves_o004_open_unverifiable_without_drive() {
+        let (code, v) = check_json(&synced_project("6mm", ""), &[]);
+        let d = o004(&v).unwrap_or_else(|| panic!("{v}"));
+        assert_eq!(d["path"], "part.FCStd", "{v}");
+        assert_eq!(d["severity"], "info", "{v}");
+        assert!(
+            d["message"]
+                .as_str()
+                .unwrap()
+                .contains("unverifiable without drive"),
+            "{v}"
+        );
+        assert_eq!(code, 0, "{v}");
     }
 
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
