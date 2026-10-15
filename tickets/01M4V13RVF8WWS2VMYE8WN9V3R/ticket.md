@@ -2,11 +2,12 @@
 id = "01M4V13RVF8WWS2VMYE8WN9V3R"
 title = "language: sema gaps (E002 use target, E003 diagnostic, E006 arg name)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:21:38Z"
-updated = "2026-10-15T02:58:27Z"
+updated = "2026-10-15T02:59:36Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/project.rs", "crates/cadetta-cli/tests/sema_gaps.rs", "docs/**", "changelog.d/01M4V13RVF8WWS2VMYE8WN9V3R.*", "tests/conformance/language/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
