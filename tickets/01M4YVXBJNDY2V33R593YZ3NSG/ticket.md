@@ -1,0 +1,13 @@
++++
+id = "01M4YVXBJNDY2V33R593YZ3NSG"
+title = "M003 not raised: IR Fit has no real hole/shaft operand paths"
+type = "bug"
+category = "todo"
+priority = "medium"
+reporter = "lognd"
+created = "2026-10-15T04:07:49Z"
+updated = "2026-10-15T04:07:49Z"
+scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lower.rs", "tests/conformance/stdlib/**"]
++++
+
+found while working ~PGR0M75. fitderive.rs derive_one sets Fit.hole/shaft to synthetic <fit>.hole/.shaft paths, so check_m003 never matches the real operand (j.clearance_hole in stdlib/m003-hole-fit-side, expected M003 at acme.demo::Box/j.clearance_hole). Needs an IR decision: carry the operand paths in ir::Fit (schema/digest/decode/json) or change what hole/shaft mean.
