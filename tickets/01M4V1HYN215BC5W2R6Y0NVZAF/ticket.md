@@ -2,11 +2,12 @@
 id = "01M4V1HYN215BC5W2R6Y0NVZAF"
 title = "CLI obligation universe omits fit, require, ots and citation obligations"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T03:03:55Z"
+updated = "2026-10-15T03:04:14Z"
 scope = ["crates/cadetta-cli/src/**", "changelog.d/01M4V1HYN215BC5W2R6Y0NVZAF.*"]
 
 [[acceptance]]
