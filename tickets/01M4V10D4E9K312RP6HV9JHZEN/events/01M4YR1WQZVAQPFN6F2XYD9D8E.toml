@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["R012 is specified as reserved and unreachable while instances share arguments (adapters.md 3, ir.md 2, lints.md 3)"]
+moved = []
+at = "2026-10-15T03:00:23Z"
+actor = "lognd"
+rev = 1
