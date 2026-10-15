@@ -1,5 +1,8 @@
 //! Lints R001-R006, the drift family (lints.md 3 R).
 //!
+//! R004 and R006 are raised by `cadetta-cli` `cmd/sync.rs` and the adapter
+//! sync path (they need push-time state), so only their codes live here.
+//!
 //! The rules are pure functions over an observed-IR input: the facts an
 //! adapter `read` or `sync` produced, joined with the lock `synced` base.
 //! `cadetta check` builds these inputs by spawning each adapter that can
@@ -160,35 +163,6 @@ pub fn check_r003(missing: &[(String, NativeRef)]) -> Vec<Diagnostic> {
         .collect()
 }
 
-/// A rebuild failure a drive adapter reported after a push.
-#[derive(Clone, Debug)]
-pub struct RebuildFailure {
-    /// The document that failed to rebuild.
-    pub native: NativeRef,
-    /// The tool's error text.
-    pub reason: String,
-}
-
-/// R004: the CAD tool failed to rebuild after a push; documents are restored.
-pub fn check_r004(failures: &[RebuildFailure]) -> Vec<Diagnostic> {
-    failures
-        .iter()
-        .map(|f| {
-            debug!(file = %f.native.file, "R004: regen failed");
-            let mut d = Diagnostic::new(
-                CODE_R004,
-                Severity::Error,
-                format!(
-                    "rebuild failed in `{}` ({}); document restored from snapshot",
-                    f.native.file, f.reason
-                ),
-            );
-            d.location = Some(f.native.location());
-            d
-        })
-        .collect()
-}
-
 /// A binding as declared: the IR path it targets.
 #[derive(Clone, Debug)]
 pub struct BindingFact {
@@ -254,41 +228,6 @@ pub fn check_r005(
         out.push(d);
     }
     out
-}
-
-/// A push that replaces a native expression or driving equation.
-#[derive(Clone, Debug)]
-pub struct Replacement {
-    /// Canonical IR path of the bound parameter.
-    pub path: String,
-    /// The locator being overwritten.
-    pub native: NativeRef,
-    /// The expression being replaced.
-    pub old_expression: String,
-    /// True when it comes from an `adopted` lock record (adapters.md 7.4).
-    pub adopted: bool,
-}
-
-/// R006: a push replaces a native expression; always a warning, lists the old expression.
-pub fn check_r006(replacements: &[Replacement]) -> Vec<Diagnostic> {
-    replacements
-        .iter()
-        .map(|r| {
-            debug!(path = %r.path, adopted = r.adopted, "R006: native expression replaced");
-            let origin = if r.adopted { " (adopted file)" } else { "" };
-            let mut d = Diagnostic::new(
-                CODE_R006,
-                Severity::Warning,
-                format!(
-                    "push replaces native expression `{}` on `{}`{origin}",
-                    r.old_expression, r.path
-                ),
-            );
-            d.path = Some(r.path.clone());
-            d.location = Some(r.native.location());
-            d
-        })
-        .collect()
 }
 
 #[cfg(test)]
@@ -364,18 +303,6 @@ mod tests {
         assert!(check_r003(&[]).is_empty());
     }
 
-    // frob:tests crates/cadetta-lint/src/rules/r.rs::check_r004
-    #[test]
-    fn r004_surfaces_rebuild_failure() {
-        let d = check_r004(&[RebuildFailure {
-            native: nref(),
-            reason: "sketch over-defined".into(),
-        }]);
-        assert_eq!(d[0].code, "R004");
-        assert_eq!(d[0].severity, Severity::Error);
-        assert!(d[0].message.contains("over-defined"));
-    }
-
     // frob:tests crates/cadetta-lint/src/rules/r.rs::check_r005
     #[test]
     fn r005_orphan_binding_and_was_and_wildcard() {
@@ -392,23 +319,5 @@ mod tests {
         assert!(check_r005(&[b("demo::old")], &ir, &was).is_empty());
         assert!(check_r005(&[b("demo::holes[*].d")], &ir, &was).is_empty());
         assert_eq!(check_r005(&[b("demo::holes[*].x")], &ir, &was).len(), 1);
-    }
-
-    // frob:tests crates/cadetta-lint/src/rules/r.rs::check_r006
-    #[test]
-    fn r006_warns_with_old_expression_and_adopted() {
-        let mut r = Replacement {
-            path: "demo::d".into(),
-            native: nref(),
-            old_expression: "\"A\" * 2".into(),
-            adopted: false,
-        };
-        let d = check_r006(std::slice::from_ref(&r));
-        assert_eq!(d[0].severity, Severity::Warning);
-        assert!(d[0].message.contains("\"A\" * 2"));
-        r.adopted = true;
-        let d = check_r006(&[r]);
-        assert_eq!(d[0].code, "R006");
-        assert!(d[0].message.contains("adopted"));
     }
 }
