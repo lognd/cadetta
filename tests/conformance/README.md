@@ -58,7 +58,7 @@ tests/conformance/<doc>/
 | `doc` | string | Spec document stem; equals the directory name. |
 | `section` | string | Normative section the rule comes from. |
 | `rule` | string | Rule or diagnostic code the pair tests. |
-| `kind` | `"source"`, `"ir"`, `"binding"`, `"compare"` | Fixture form: `.cdt`, IR JSON, binding-call JSON, or an input pair (see "Two-input comparisons"). |
+| `kind` | `"source"`, `"ir"`, `"binding"`, `"compare"` | Fixture form: `.cdt`, IR JSON, binding-call JSON (see "Binding fixtures"), or an input pair (see "Two-input comparisons"). |
 | `entry` | string, optional | Command to run: `check` (default), `eval`, `lint`, `emit <target>`. |
 | `must_fire` | object | Expectations for the must-fire fixture. |
 | `must_not_fire` | object | Expectations for the must-not-fire fixture. |
@@ -86,6 +86,29 @@ Matching rules:
 - A rule that is not a diagnostic (a pure evaluation rule) uses `rule`
   as a name and lists `values` instead: `{ "path", "nominal" }` with
   quantity source literals, compared as exact quantities.
+
+## Binding fixtures (`kind: "binding"`)
+
+Copied from `bindings/README.md` ("Entry and fixture form"). Binding
+pairs are `kind = "binding"`, `entry = "python"` and describe Python-API
+behaviour; the runner skips them except `classify` (see "Runner
+contract"). They are executable specifications for the Python binding
+test suite (ticket ~6ZMPC6J).
+
+A fixture is one API call:
+
+| key | meaning |
+|---|---|
+| `api` | dotted callable under `cadetta` (`Project.open`, `Quantity.__add__`, `cadetta.quantity`) |
+| `args` | positional arguments; quantity arguments are source literals parsed with `cadetta.quantity` |
+| `files` | optional package tree (relative path to contents) staged as the project directory |
+| other keys | call context (`role`, `edit`, `inputs`, `outputs`, `returns`, ...) |
+
+Expectation blocks use `result` (`Ok`, `Err`, `raises`, `value`,
+`protocol-error`) and descriptive keys (`QuantityError` = expected
+`.code`, `error`, `value`, `nominal`, `package`, `modules`, ...).
+`exit` is the CLI exit code the call maps to (0 clean, 1 error
+diagnostics, 2 I/O, configuration or usage).
 
 ## Two-input comparisons (`kind: "compare"`)
 
