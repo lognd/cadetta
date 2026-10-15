@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "I001 is quiet when the implementer has every member"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "I004 fires through check for a public parameterized root"
