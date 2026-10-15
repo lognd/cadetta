@@ -2,12 +2,12 @@
 id = "01M4Z28ZM6P20SZQ0X28NXQSDY"
 title = "language: I001-I003 interface and variant semantics"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-15T05:59:01Z"
+updated = "2026-10-15T06:08:38Z"
 idempotency_key = "split-0N41BNX-i001"
 scope = ["crates/cadetta-variants/**"]
 
