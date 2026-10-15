@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/spec/**"]
+new = ["docs/spec/**", "changelog.d/01M4V10DAWMDNT9PXEQZM6GZJ0.*"]
+at = "2026-10-15T01:58:38Z"
+actor = "lognd"
+rev = 1

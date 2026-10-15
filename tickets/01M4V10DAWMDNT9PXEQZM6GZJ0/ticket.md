@@ -6,8 +6,9 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:19:54Z"
-updated = "2026-10-15T01:58:25Z"
-scope = ["docs/spec/**"]
+updated = "2026-10-15T01:58:38Z"
+labels = ["creates:changelog.d/01M4V10DAWMDNT9PXEQZM6GZJ0.*"]
+scope = ["docs/spec/**", "changelog.d/01M4V10DAWMDNT9PXEQZM6GZJ0.*"]
 
 [[acceptance]]
 text = "config-cli.md 3.9 specifies ir-validate FILE (exit 0 valid, 2 invalid) and lint FILE on IR JSON (D003 reachable)"
