@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T09:54:04Z"
+digest = "eed75d36f81586158e7a1ac78bcff2dc6b4ad5f5074ec4174f3eba6099dd422a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 192e8cf0-0c62-4951-b3ad-7a02d964bee6 with nextest profile: default
+    Starting 1 test across 5 binaries (214 tests skipped)
+        PASS [   0.019s] cadetta-sema::bolt_float locating_joint_keeps_the_child_fixed
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.020s] 1 test run: 1 passed, 214 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema locating_joint_keeps_the_child_fixed"
+size = 554
+status = "measured"
+test_count = 1
+tests_digest = "08336381a1865f7dbabc1920a6db2bd5219a442b42ca577a79d2c9c8f600f3f8"
+at = "2026-10-15T09:54:04Z"
+actor = "lognd"
+rev = 1
