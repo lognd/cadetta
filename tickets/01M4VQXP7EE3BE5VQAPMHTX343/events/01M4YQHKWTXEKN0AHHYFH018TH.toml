@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:51:29Z"
+digest = "dd41062e0aaf3b0996a0313515243d4ba7337daf6e416244171f1725a490dd14"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3f799086-e8dc-49f4-84ff-c882754b97fa with nextest profile: default
+    Starting 1 test across 59 binaries (1348 tests skipped)
+        PASS [   0.114s] cadetta::quantity_zero_trig exact_atan2_points_raise_no_q006
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.117s] 1 test run: 1 passed, 1348 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "exact_atan2_points_raise_no_q006"
+size = 556
+status = "measured"
+test_count = 1
+tests_digest = "2a41e7b9ca1a92bfd54a0576c9ec352ae27a707251dfef5d92a5134000659bd8"
+at = "2026-10-15T02:51:29Z"
+actor = "lognd"
+rev = 1
