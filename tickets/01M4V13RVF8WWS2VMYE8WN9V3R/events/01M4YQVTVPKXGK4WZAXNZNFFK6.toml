@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "language: sema gaps (E002 use target, E003 diagnostic, E006 arg name, E016/E017 privacy, N001, N004, N006)"
+new = "language: sema gaps (E002 use target, E003 diagnostic, E006 arg name)"
+at = "2026-10-15T02:57:04Z"
+actor = "lognd"
+rev = 1

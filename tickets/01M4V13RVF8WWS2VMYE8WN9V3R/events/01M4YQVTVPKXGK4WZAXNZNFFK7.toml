@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["An unresolved use target is an E002 diagnostic even when the name is unused (e002-use-target)", "A duplicate type name is an E003 diagnostic, not a raw load failure (e003-duplicate-type)", "An argument name matching no parameter, or too many positional arguments, is a single E006 (e006-argument-mismatch)"]
+moved = []
+at = "2026-10-15T02:57:04Z"
+actor = "lognd"
+rev = 1
