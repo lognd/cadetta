@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:29:10Z"
+updated = "2026-10-15T04:29:12Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "reading an absent member is E002"
-bound = false
+bound = true
 +++
 
 found while working ~XCK8EGP: ScrewJoint now declares name?: Type params, given(), and #[when(cond)] members/checks (std/src/fasteners/screwjoint.cdt); sema binds ArgSource::Absent but nothing evaluates given(), #[when] presence or E002 on absent members yet.
