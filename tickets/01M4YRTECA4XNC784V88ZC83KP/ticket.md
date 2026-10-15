@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:13:47Z"
-updated = "2026-10-15T19:07:58Z"
+updated = "2026-10-15T19:23:30Z"
 scope = ["crates/cadetta-cli/**"]
 
 [[acceptance]]
 text = "cadetta check loads git dependencies from the lock-pinned checkout"
-bound = false
+bound = true
 +++
 
 found while working ~992PZ41: Project::load only loads path dependencies; git sources need an injected fetch (see cmd/update.rs git_checkout); use of a git dependency stays E002 in check.
