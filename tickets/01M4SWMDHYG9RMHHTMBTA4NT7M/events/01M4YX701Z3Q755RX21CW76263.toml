@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "C# never compiled (nova offline, no dotnet). Evidence is a file digest, not a test run. Guard not yet called from any push path. Needs compile+test on nova; SwComBusyProbe GetHWnd/IsWindowEnabled heuristic untested against real SOLIDWORKS."
+at = "2026-10-15T04:30:33Z"
+actor = "lognd"
+rev = 1
