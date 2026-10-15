@@ -1,0 +1,1 @@
+Regression tests now pin D001 info below `d001_min_digits`, D002 against fit clearance accessors and the geometry codes G002-G007 reaching `check`; D002 on fit hole/shaft accessors and path/path M003 remain open on the IR operand-path decision.
