@@ -1,0 +1,10 @@
+kind = "create"
+title = "IR Project model and schema lack requires[] and Project fields for interfaces/tables/waivers"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-ir/**"]
+body = "found while working ~RC9QR10: schema now allows optional Project interfaces/tables/waivers but the Project struct does not carry or serialize them, and no Require entity shape exists in ir.md 3."
+at = "2026-10-15T01:44:58Z"
+actor = "lognd"
+rev = 1
