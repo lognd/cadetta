@@ -7,7 +7,8 @@ priority = "medium"
 points = 3
 reporter = "Claude"
 created = "2026-10-14T11:50:39Z"
-updated = "2026-10-15T08:48:09Z"
+updated = "2026-10-15T08:50:13Z"
+scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "Concurrent fixture writes and adapter spawns in the conformance binary are ordered so exec cannot fail with ETXTBSY"
