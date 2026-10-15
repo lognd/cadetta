@@ -2,12 +2,12 @@
 id = "01M4ZS69MFPJDPD7782XAY9ZBA"
 title = "Wire initialize precision into CLI call sites via Client::effective_precision"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T12:39:30Z"
-updated = "2026-10-15T12:50:06Z"
+updated = "2026-10-15T13:07:33Z"
 scope = ["crates/cadetta-cli/**"]
 +++
 
