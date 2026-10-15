@@ -21,6 +21,10 @@ bound = false
 [[acceptance]]
 text = "A check inside a solver on its own recorded output yields C001"
 bound = false
+
+[[acceptance]]
+text = "A check reading an unsolved output yields C002 and not S003"
+bound = false
 +++
 
 Split from ~B645GTM. Fixtures solvers/s003-stale-{dep,inputs,script,still-evaluates}, trust-solver-own-check, unsolved-output-no-result still fail with S006 landed: S003 messages lack the changed name (analysis/material_db.csv, inputs, script); s003-stale-still-evaluates does not observe stale_output; C001 (trust-solver-own-check) and C002 (unsolved-output-no-result) are not produced. Make them pass and remove their known-gaps entries.
