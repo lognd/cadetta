@@ -4,9 +4,10 @@ title = "Load upstream locks of git dependencies in cadetta obligations"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-14T21:29:17Z"
-updated = "2026-10-14T21:29:17Z"
+updated = "2026-10-15T09:56:09Z"
 idempotency_key = "sqrbg5c-git-upstream"
 scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/pkg/**"]
 
