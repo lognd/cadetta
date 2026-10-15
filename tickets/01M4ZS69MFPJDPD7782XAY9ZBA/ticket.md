@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T12:39:30Z"
-updated = "2026-10-15T13:24:27Z"
+updated = "2026-10-15T13:24:34Z"
 scope = ["crates/cadetta-cli/**", "docs/spec/adapters.md"]
 
 [[acceptance]]
 text = "cadetta sync uses the precision reported by initialize unless [[adapter]] precision is set"
-bound = false
+bound = true
 +++
 
 found while working ~6N3JQAV: universe.rs:501, cmd/sync.rs (661/925/1153), cmd/names.rs:155, cmd/emit.rs:508 still use adapter.precision.map_or(DEFAULT_PRECISION, ...) instead of the initialize precision. cmd/sync.rs is owned by in-flight ~5HP91AE; sequence after it.
