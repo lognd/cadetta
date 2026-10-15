@@ -4,9 +4,10 @@ title = "I001: report a member present with a different kind"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T00:10:06Z"
-updated = "2026-10-15T00:10:06Z"
+updated = "2026-10-15T08:38:06Z"
 scope = ["crates/cadetta-lint/src/rules/interface.rs"]
 
 [[links]]
