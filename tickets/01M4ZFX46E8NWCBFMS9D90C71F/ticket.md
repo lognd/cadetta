@@ -2,12 +2,12 @@
 id = "01M4ZFX46E8NWCBFMS9D90C71F"
 title = "docs: adapters.md 2.3 still says Backend::push exists; sync is Document-only"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T09:57:13Z"
-updated = "2026-10-15T09:58:39Z"
+updated = "2026-10-15T10:03:49Z"
 scope = ["docs/spec/adapters.md"]
 
 [[acceptance]]
