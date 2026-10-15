@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["C001 error is raised when a member tolerance lies wholly outside an interface bound", "C002 warning is raised when a member tolerance straddles an interface bound", "C002 warning is raised when a fit clearance only partly meets its required range", "L001 stays an error once the EOL date has passed, even with a warning default", "Interface bounds are lowered to SI and inherited for lint"]
+moved = []
+at = "2026-10-15T02:47:28Z"
+actor = "lognd"
+rev = 1
