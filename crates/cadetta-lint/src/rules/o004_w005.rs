@@ -57,15 +57,35 @@ pub fn check_o004(
     out
 }
 
+/// The last day of month `m` in year `y`.
+fn last_day(y: i64, m: i64) -> i64 {
+    let leap = y % 400 == 0 || (y % 4 == 0 && y % 100 != 0);
+    match m {
+        2 if leap => 29,
+        2 => 28,
+        4 | 6 | 9 | 11 => 30,
+        _ => 31,
+    }
+}
+
 /// Days since 1970-01-01 for an ISO `YYYY-MM-DD` date, or `None` if malformed.
+///
+/// A month-only `YYYY-MM` date (a lifecycle date) counts as the last day of that month.
 fn day_number(s: &str) -> Option<i64> {
     let mut it = s.split('-');
-    let (y, m, d) = (it.next()?, it.next()?, it.next()?);
-    if it.next().is_some() || y.len() != 4 || m.len() != 2 || d.len() != 2 {
+    let (y, m, d) = (it.next()?, it.next()?, it.next());
+    if it.next().is_some() || y.len() != 4 || m.len() != 2 || d.is_some_and(|d| d.len() != 2) {
         return None;
     }
-    let (y, m, d): (i64, i64, i64) = (y.parse().ok()?, m.parse().ok()?, d.parse().ok()?);
-    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+    let (y, m): (i64, i64) = (y.parse().ok()?, m.parse().ok()?);
+    if !(1..=12).contains(&m) {
+        return None;
+    }
+    let d: i64 = match d {
+        Some(d) => d.parse().ok()?,
+        None => last_day(y, m),
+    };
+    if !(1..=31).contains(&d) {
         return None;
     }
     // Days-from-civil (proleptic Gregorian).
@@ -237,6 +257,11 @@ mod tests {
         assert_eq!(
             day_number("2028-03-01"),
             day_number("2028-02-29").map(|d| d + 1)
+        );
+        assert_eq!(
+            day_number("2028-02"),
+            day_number("2028-02-29"),
+            "month-only is the month's last day"
         );
         assert_eq!(day_number("2026-13-01"), None);
         assert_eq!(day_number("26-1-1"), None);

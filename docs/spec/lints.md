@@ -154,7 +154,11 @@ recorded, if a target's digest differs, the waiver is stale: W002 fires
 and the suppressed diagnostic reappears until re-reviewed. `cadetta check`
 compares the recorded digest with the combined closure digest of the
 waiver's current targets, and reports W005 for waivers expiring within
-`expiry_warn_days` of `--as-of` (`eol` dates are not yet carried by the IR).
+`expiry_warn_days` of `--as-of`, and for `#[lifecycle(eol, "date")]` components
+whose date (a month-only date counts as the month's last day) falls in the same
+window. A waiver glob whose literal prefix names a path moved by a `was`
+clause is rewritten to the current path (packages.md 5), so a waiver written
+before a rename keeps suppressing.
 
 | Code | Condition |
 |---|---|
