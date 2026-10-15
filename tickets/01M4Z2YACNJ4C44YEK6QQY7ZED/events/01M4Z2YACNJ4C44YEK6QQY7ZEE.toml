@@ -1,0 +1,13 @@
+kind = "create"
+title = "bindings.md: member.variant has no concrete alternate-part example"
+type = "task"
+category = "todo"
+priority = "low"
+points = 1
+idempotency_key = "dx2kssf-point4"
+scope = ["docs/spec/bindings.md"]
+acceptance = ["bindings.md gives a concrete member.variant example backed by a fixture package"]
+body = "Split from ~DX2KSSF point 4: no alternate-part package exists to base an example on; needs the language.md 3.2 alternate-part syntax and a fixture pair."
+at = "2026-10-15T06:10:40Z"
+actor = "lognd"
+rev = 1
