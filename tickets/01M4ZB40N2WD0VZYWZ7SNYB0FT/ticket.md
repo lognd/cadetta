@@ -7,7 +7,7 @@ priority = "high"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T08:33:35Z"
-updated = "2026-10-15T08:33:41Z"
+updated = "2026-10-15T08:37:21Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/emitters/sw-equations/naming-component-field.*/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
