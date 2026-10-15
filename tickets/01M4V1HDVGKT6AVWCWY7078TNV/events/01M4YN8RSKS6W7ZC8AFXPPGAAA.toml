@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["ISO 286 class literal (20mm H7) evaluates to its table tolerance; out-of-range is F002", "Class letter case gives hole/shaft role", ".mmc/.lmc use the role (#[role], class letter, inherited); E010 without one"]
+moved = []
+at = "2026-10-15T02:11:43Z"
+actor = "lognd"
+rev = 1
