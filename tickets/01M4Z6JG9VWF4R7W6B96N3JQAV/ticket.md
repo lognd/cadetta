@@ -8,8 +8,8 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-15T07:14:07Z"
-updated = "2026-10-15T11:41:24Z"
-scope = ["crates/cadetta-adapter/**", "tests/conformance/known-gaps.toml"]
+updated = "2026-10-15T11:42:34Z"
+scope = ["crates/cadetta-adapter/**", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/tests/conformance/protocol.rs"]
 
 [[acceptance]]
 text = "The host checks initialize platforms (R008), uses initialize precision, rejects summary-only push results with R008, sends shutdown after an R009 refusal, and declares capabilities for built-in adapters; the seven known-gaps entries for these fixtures are removed."
