@@ -2,12 +2,13 @@
 id = "01M4TRKD3ZG6X9SKKC8XN48PSV"
 title = "Lint config in check: precision, d001_min_digits, common_values, table cells"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T13:52:59Z"
-updated = "2026-10-15T01:50:36Z"
+updated = "2026-10-15T01:50:51Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs,crates/cadetta-cli/src/cmd/check.rs,crates/cadetta-cli/src/config.rs,docs/spec/lints.md"]
 
 [[acceptance]]
