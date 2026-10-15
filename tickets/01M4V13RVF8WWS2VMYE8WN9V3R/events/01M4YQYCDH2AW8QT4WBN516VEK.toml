@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-15T02:58:27Z"
+digest = "8c9d4ed6149368da6d0d6e1305beec529cd58134b06a4804214bf6d0d3258e33"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 95960b42-133b-4b79-9ed6-a8a32032b1bf with nextest profile: default
+    Starting 4 tests across 60 binaries (1355 tests skipped)
+        PASS [   0.023s] cadetta-sema eval::instances::tests::requires_reports_e006_when_the_argument_is_missing
+        PASS [   0.024s] cadetta-sema eval::instances::tests::forbids_reports_e006_when_the_argument_is_given
+        PASS [   0.264s] cadetta::sema_gaps e006_too_many_positional_arguments
+        PASS [   0.401s] cadetta::sema_gaps e006_argument_name_matches_no_parameter
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.404s] 4 tests run: 4 passed, 1355 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e006_"
+size = 858
+status = "measured"
+test_count = 4
+tests_digest = "e5cc14e1fdd1ac44df962a9e57a1d635cb943c2c89b3f977b04ede1563d238fd"
+at = "2026-10-15T02:58:27Z"
+actor = "lognd"
+rev = 1
