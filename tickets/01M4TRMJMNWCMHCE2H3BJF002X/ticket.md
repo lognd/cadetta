@@ -2,11 +2,12 @@
 id = "01M4TRMJMNWCMHCE2H3BJF002X"
 title = "Selection-aware solver input evaluation for solve --variants"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T13:53:37Z"
-updated = "2026-10-15T01:58:58Z"
+updated = "2026-10-15T02:00:30Z"
 scope = ["crates/cadetta-sema/src/eval.rs", "crates/cadetta-cli/src/cmd/solve.rs", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/tests/interface_slots.rs", "docs/spec/solvers.md", "changelog.d/01M4TRMJMNWCMHCE2H3BJF002X.fixed.md"]
 
 [[links]]
