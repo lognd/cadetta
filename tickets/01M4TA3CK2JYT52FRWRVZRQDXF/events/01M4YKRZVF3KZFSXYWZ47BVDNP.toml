@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta solve passes no enum declarations to the resolver, so a module with an enum yields no duplicate E003"]
+moved = []
+at = "2026-10-15T01:45:37Z"
+actor = "lognd"
+rev = 1
