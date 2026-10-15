@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T12:06:04Z"
-updated = "2026-10-15T13:06:28Z"
+updated = "2026-10-15T13:06:35Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs", "docs/spec/config-cli.md"]
 
 [[acceptance]]
