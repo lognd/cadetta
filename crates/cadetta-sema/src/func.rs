@@ -1139,6 +1139,15 @@ fn to_count(x: &Val, mode: Rounding, span: Span) -> R<Val> {
     }
     let n = round_value(&value, &dim, &one(), &Dim::default(), mode)
         .map_err(|e| round_diag(&e, span))?;
+    // A pi-carrying operand is irrational, so its integer is not exactly a Count (Q006).
+    if let Val::Quantity(q) = x
+        && q.nominal.pi_exp() != 0
+        && !q.nominal.is_zero()
+    {
+        debug!(pi_exp = q.nominal.pi_exp(), "func: rounding a pi factor is inexact (Q006)");
+        let f = n.to_f64();
+        return inex(Dim::default(), f, f, f, RootOp::PiRound, span);
+    }
     Ok(Val::Quantity(Quant::constant(Dim::default(), n)))
 }
 

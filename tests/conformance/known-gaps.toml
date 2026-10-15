@@ -233,16 +233,6 @@ ticket = "~JET4TC0"
 reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
 
 [[gap]]
-fixture = "quantities/q006-count-pi"
-ticket = "~7K6PYDX"
-reason = "angle/count pi handling differs from spec"
-
-[[gap]]
-fixture = "quantities/c002-inexact-boundary"
-ticket = "~G5NT80Z"
-reason = "C002 not raised for inexact boundary"
-
-[[gap]]
 fixture = "stdlib/commercial-misspelling-not-a-member"
 ticket = "~6K58FR1"
 reason = "std commercial/fits/materials diagnostic not raised"

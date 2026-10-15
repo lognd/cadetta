@@ -14,7 +14,11 @@ A quantity is `(magnitude, dimension, angle, kind, tolerance?)`.
   `127/5000 m`; `1deg` is exactly `1/180 * pi^1 rad`; pi cancels exactly
   (`360deg / 1.8deg` is exactly `200`). Exactness is preserved through
   `+ - * /`, integer powers and rounding. Adding two magnitudes with
-  different `k` is inexact unless one of them is zero.
+  different `k` is inexact unless one of them is zero: `1deg + 1rad` is an
+inexact value with a Q006 root (`mixed pi factors`), not an evaluation
+error; only affine (toleranced) forms reject it (5.4). `floor`, `ceil`
+and `round` of a value carrying a pi factor are likewise inexact with a
+Q006 root, since the integer result is not exact.
 - **Dimension** is an integer exponent vector over the seven SI base
   dimensions `[L, M, T, I, Theta, N, J]`, plus one base dimension per
   currency used (3).
@@ -458,7 +462,10 @@ negation. When an operand is inexact or the operands carry different
 nonzero `pi^k`, `d` is computed in binary64 and widened by 1e-9 of the
 largest operand magnitude on each side before deciding. C003 is raised
 for any `==`/`!=` with a toleranced operand, in addition to C002 when
-the result is undecided.
+the result is undecided. An inexact operand (`sqrt`, trigonometry) is
+accepted in a `check`/`require` comparison as such an interval, so
+`sqrt(2mm^2) >= 1.4142135623731mm` is undecided (C002) while
+`>= 1mm` holds.
 
 ## 6. Display
 

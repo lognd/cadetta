@@ -1114,6 +1114,17 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let (Val::Quantity(a), Val::Quantity(b)) = (&av, &bv) else {
                     return func::inex_binary(op, &av, &bv, span);
                 };
+                // Untoleranced operands with different pi exponents sum to an inexact
+                // value (Q006, quantities.md 1); only affine forms refuse (5.4).
+                let mixes_pi = match op {
+                    BinOp::Add => matches!(a.nominal.add(&b.nominal), Sum::Inexact(_)),
+                    BinOp::Sub => matches!(a.nominal.sub(&b.nominal), Sum::Inexact(_)),
+                    _ => false,
+                };
+                if mixes_pi && a.form.is_exact() && b.form.is_exact() {
+                    debug!(?op, "eval: sum across pi exponents is inexact");
+                    return func::inex_binary(op, &av, &bv, span);
+                }
                 let q = match op {
                     BinOp::Add => a.add(b, span)?,
                     BinOp::Sub => a.sub(b, span)?,

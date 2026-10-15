@@ -39,6 +39,8 @@ pub enum RootOp {
     Atan2,
     /// Addition across different nonzero powers of pi.
     MixedPiSum,
+    /// `floor`, `ceil` or `round` of a value that carries a pi factor.
+    PiRound,
 }
 
 impl RootOp {
@@ -52,6 +54,7 @@ impl RootOp {
             Self::Tan => "tan",
             Self::Atan2 => "atan2",
             Self::MixedPiSum => "sum across pi exponents",
+            Self::PiRound => "rounding of a pi-carrying value",
         }
     }
 }

@@ -25,7 +25,7 @@ use cadetta_syntax::ast::{
     self, BinOp, BoundKind, CmpOp as AstCmp, Component, Expr, ExprKind, MemberKind, UnOp,
 };
 use cadetta_syntax::span::Span;
-use cadetta_units::Bound;
+use cadetta_units::{Bound, InexactInterval};
 use cadetta_units::compare::{CmpOp, Note, Operand, Verdict, compare};
 use tracing::{debug, trace, warn};
 
@@ -444,10 +444,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(join(a, b, if *op == BinOp::And { and } else { or }))
             }
             ExprKind::Compare { first, rest } => {
-                let mut left = self.quant(sc, first)?;
+                let mut left = self.operand(sc, first)?;
                 let mut acc: Option<Outcome> = None;
                 for (op, rhs) in rest {
-                    let right = self.quant(sc, rhs)?;
+                    let right = self.operand(sc, rhs)?;
                     let o = self.compare_pair(units_op(*op), &left, &right, e.span)?;
                     acc = Some(match acc {
                         None => o,
@@ -483,13 +483,29 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
-    fn compare_pair(&mut self, op: CmpOp, a: &Quant, b: &Quant, span: Span) -> R<Outcome> {
-        let c = compare(
-            op,
-            &Operand::Form(a.form.clone()),
-            &Operand::Form(b.form.clone()),
-        )
-        .map_err(|e| tol_diag(&e, span))?;
+    /// Evaluates a comparison operand; an inexact value becomes an outer-bound interval so the
+    /// comparison is undecided near the boundary (quantities.md 5.8).
+    // frob:ticket 01M4V1HEA425D4RGFBSG5NT80Z
+    fn operand(&mut self, sc: &mut Scope, e: &Expr) -> R<Operand> {
+        match self.eval(sc, e)? {
+            Val::Quantity(q) => Ok(Operand::Form(q.form)),
+            Val::Inexact(i) => {
+                debug!(lo = i.lo, hi = i.hi, "check: inexact comparison operand");
+                Ok(Operand::Interval(
+                    i.dim.clone(),
+                    InexactInterval {
+                        lo: i.lo,
+                        hi: i.hi,
+                        conservative: true,
+                    },
+                ))
+            }
+            _ => Err(diag("EVAL", e.span, "a quantity is required here")),
+        }
+    }
+
+    fn compare_pair(&mut self, op: CmpOp, a: &Operand, b: &Operand, span: Span) -> R<Outcome> {
+        let c = compare(op, a, b).map_err(|e| tol_diag(&e, span))?;
         for d in c.diagnostics() {
             if d.code == "C003" {
                 self.diagnostics.push(EvalDiagnostic {
@@ -525,7 +541,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         for (op, limit) in [(CmpOp::Ge, bound.min()), (CmpOp::Le, bound.max())] {
             if let Some(m) = limit {
                 let lim = Quant::constant(bound.dim().clone(), m.clone());
-                let o = self.compare_pair(op, &x, &lim, span)?;
+                let o = self.compare_pair(
+                    op,
+                    &Operand::Form(x.form.clone()),
+                    &Operand::Form(lim.form.clone()),
+                    span,
+                )?;
                 acc = join(acc, o, and);
             }
         }
