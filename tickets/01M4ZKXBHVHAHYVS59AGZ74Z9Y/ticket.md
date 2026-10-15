@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T11:07:14Z"
-updated = "2026-10-15T12:41:35Z"
+updated = "2026-10-15T12:41:50Z"
 idempotency_key = "g008-halfturn-spec"
 scope = ["docs/spec/geometry.md"]
 
