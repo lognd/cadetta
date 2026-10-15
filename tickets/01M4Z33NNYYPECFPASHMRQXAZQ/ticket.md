@@ -2,7 +2,8 @@
 id = "01M4Z33NNYYPECFPASHMRQXAZQ"
 title = "sema: .drawn readable in checks (process-drawn-value)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
