@@ -65,7 +65,8 @@ fn priv_intermediates_are_e016_and_public_members_read() {
     for m in [
         "major",
         "pitch",
-        "head_data",
+        "pocket_dia",
+        "pocket_depth",
         "column",
         "drill_nominal",
         "material",

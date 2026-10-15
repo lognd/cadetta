@@ -22,6 +22,9 @@
 // patterned joint is `count(at)` (`n`), never a `part j[N]` array. The checks are the
 // named verdicts of stdlib.md 3 (`Mount/screws.engaged`).
 //
+// The pocket comes from the head's table (Iso4762Head, Iso7380Head, Iso10642Head);
+// a size a head standard does not cover is E007 only when counterbore = true.
+//
 // Decisions: without a counterbore the pocket members are zero (no pocket,
 // no depth), so `grip` is simply `clamp`. `float` is the allowance
 // `aligned(at, onto, float)` uses (geometry.md 5): one clearance hole's half,
@@ -35,12 +38,12 @@
 use package::materials::{Material, Materials, TapClass}
 use super::policy::{FastenerPolicy, TapColumn}
 use super::screw::Iso4762
-use super::tables::{Iso273, Iso4762Head, MetricThread, TapDrill, Thread}
+use super::tables::{Iso10642Head, Iso273, Iso4762Head, Iso7380Head, MetricThread, TapDrill, Thread}
 
 /// ISO 273 clearance hole series: fine, medium (default) or coarse.
 pub enum ClearanceClass { Fine, Medium, Coarse }
 
-/// The screw head: socket (default), button or flat; only socket has counterbore data in 0.1.0.
+/// The screw head: socket (ISO 4762, default), button (ISO 7380) or flat (ISO 10642).
 pub enum HeadKind { SocketHead, ButtonHead, FlatHead }
 
 /// How the threaded hole is made: a cutting tap, a forming tap, or a hole that already exists.
@@ -70,7 +73,18 @@ pub assembly ScrewJoint(
   priv material = if given(into) { into } else { host.material }
   priv major = Thread[thread].major
   priv pitch = Thread[thread].pitch
-  priv head_data = Iso4762Head[thread]
+  #[when(counterbore)]
+  priv pocket_dia = match head {
+    HeadKind::SocketHead => Iso4762Head[thread].counterbore_dia,
+    HeadKind::ButtonHead => Iso7380Head[thread].counterbore_dia,
+    HeadKind::FlatHead => Iso10642Head[thread].counterbore_dia,
+  }
+  #[when(counterbore)]
+  priv pocket_depth = match head {
+    HeadKind::SocketHead => Iso4762Head[thread].counterbore_depth,
+    HeadKind::ButtonHead => Iso7380Head[thread].counterbore_depth,
+    HeadKind::FlatHead => Iso10642Head[thread].counterbore_depth,
+  }
   #[when(tap != TapKind::Vendor)]
   priv column = match tap {
     TapKind::Cut => policy.tap_columns[Materials[material].tap_class].cut,
@@ -90,10 +104,10 @@ pub assembly ScrewJoint(
     ClearanceClass::Medium => Iso273[thread].medium,
     ClearanceClass::Coarse => Iso273[thread].coarse,
   }
-  /// Counterbore diameter from ISO 4762 (zero without a counterbore).
-  counterbore_dia = if counterbore { head_data.counterbore_dia } else { 0mm }
-  /// Counterbore depth from ISO 4762 (zero without a counterbore).
-  counterbore_depth = if counterbore { head_data.counterbore_depth } else { 0mm }
+  /// Counterbore diameter for the head's table (zero without a counterbore; E007 if the size has no row).
+  counterbore_dia = if counterbore { pocket_dia } else { 0mm }
+  /// Counterbore depth for the head's table (zero without a counterbore; E007 if the size has no row).
+  counterbore_depth = if counterbore { pocket_depth } else { 0mm }
   /// Least thread engagement: the policy factor for the host material times the thread major.
   min_engagement = policy.engagement[material].factor * major
   /// Material under the head: clamp less any counterbore depth.

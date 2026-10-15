@@ -98,7 +98,7 @@ fn public_members_are_exactly_the_spec_list() {
     want.sort();
     assert_eq!(public, want);
     assert!(!private.is_empty());
-    for p in ["major", "pitch", "head_data", "column", "drill_nominal"] {
+    for p in ["major", "pitch", "pocket_dia", "pocket_depth", "column", "drill_nominal"] {
         assert!(private.contains(&p.to_owned()), "{p}");
     }
 }
@@ -118,7 +118,9 @@ fn derived_formulas_match_the_spec() {
         "drill_depth = thread_depth + policy.tap_lead_in * pitch + policy.drill_point * tap_drill",
         "fmt(\"{} - 6H, {} DP; drill {} DP {}\", thread, thread_depth, tap_drill, drill_depth)",
         "Iso273[thread].medium",
-        "head_data.counterbore_depth",
+        "HeadKind::ButtonHead => Iso7380Head[thread].counterbore_depth",
+        "HeadKind::FlatHead => Iso10642Head[thread].counterbore_dia",
+        "HeadKind::SocketHead => Iso4762Head[thread].counterbore_depth",
     ] {
         assert!(SRC.contains(line), "{line}");
     }
@@ -205,4 +207,31 @@ fn m5_hand_cases_match_exactly() {
     );
     assert_eq!((s.tap_drill, s.thread_depth), (4300, 6400));
     assert_eq!(s.drill_depth_x1000, 10_090_000);
+}
+
+// frob:ticket 01M4VSSDQZJ13JHVPXB3CHC33P
+
+// frob:tests crates/cadetta-syntax/tests/std_fasteners_screwjoint.rs::pocket_members_select_the_table_by_head kind=unit
+#[test]
+fn pocket_members_select_the_table_by_head() {
+    let c = joint();
+    let when_counterbore = |name: &str| {
+        c.members.iter().any(|m| {
+            name_of(&m.kind).as_deref() == Some(name)
+                && m.attrs.iter().any(|a| a.name.name == "when")
+        })
+    };
+    // Rows are looked up only under counterbore = true, so a size a head standard lacks is not an error otherwise.
+    assert!(when_counterbore("pocket_dia") && when_counterbore("pocket_depth"));
+    for (kind, table) in [
+        ("SocketHead", "Iso4762Head"),
+        ("ButtonHead", "Iso7380Head"),
+        ("FlatHead", "Iso10642Head"),
+    ] {
+        for col in ["counterbore_dia", "counterbore_depth"] {
+            let arm = format!("HeadKind::{kind} => {table}[thread].{col}");
+            assert_eq!(SRC.matches(&arm).count(), 1, "{arm}");
+        }
+    }
+    assert!(SRC.contains("counterbore_dia = if counterbore { pocket_dia } else { 0mm }"));
 }

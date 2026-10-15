@@ -1,5 +1,6 @@
 // std::fasteners tables: metric coarse threads, ISO 273 clearance holes, tap drills,
-// ISO 4762 socket head cap screw heads and lengths, ISO 4032 nuts (stdlib.md 1, 2).
+// ISO 4762 socket head cap screw heads and lengths, ISO 7380 button heads, ISO 10642
+// countersunk heads, ISO 4032 nuts (stdlib.md 1, 2).
 //
 // Sizes M1.6 to M20, coarse pitch only (inch is std::fasteners::inch, 0.2.0).
 // An underscore between digits in a variant is the decimal mark (M1_6 is M1.6).
@@ -20,7 +21,13 @@
 // ISO 2306, ISO 4762, ISO 4032 and Machinery's Handbook, not transcribed from
 // the standards. Least certain: counterbore_dia/counterbore_depth for M1.6,
 // M2, M2.5 (ISO 4762 annex / DIN 974-1), the cut_65 and form drill columns,
-// the M16 and M20 form drills, and the nut height minima. The std citation
+// the M16 and M20 form drills, and the nut height minima. Iso7380Head and
+// Iso10642Head list only the sizes their standards cover (M3 to M16 and M3 to
+// M20); a counterbore on another size is E007 (no row). For ISO 7380 the
+// counterbore columns are derived, not published: diameter = head_dia + 1 mm
+// rounded up to 0.5 mm, depth = head_height + 0.5 mm. For ISO 10642 the
+// pocket is the countersink: diameter = head_dia and depth = head_height, so
+// the head sits flush. Verify both against DIN 974-2 / ISO 15065 in the audit. The std citation
 // audit must verify every row before release.
 
 /// The citation for the thread profile and coarse pitches: ISO 261 and ISO 724.
@@ -56,6 +63,24 @@ pub cite iso4762: standard {
     title = "Hexagon socket head cap screws"
     date = "2004"
     note = "Counterbore per ISO 4762 annex and DIN 974-1"
+}
+
+/// The citation for button head socket screws: ISO 7380.
+pub cite iso7380: standard {
+    organization = "ISO"
+    number = "ISO 7380-1:2011"
+    title = "Hexagon socket button head screws"
+    date = "2011"
+    note = "Counterbore derived from head dimensions (DIN 974-2 style)"
+}
+
+/// The citation for countersunk socket screws: ISO 10642.
+pub cite iso10642: standard {
+    organization = "ISO"
+    number = "ISO 10642:2004"
+    title = "Hexagon socket countersunk head screws"
+    date = "2004"
+    note = "Pocket is the countersink: head diameter by head height"
 }
 
 /// The citation for hexagon nuts: ISO 4032.
@@ -139,6 +164,35 @@ pub table Iso4762Head @iso4762:"table 1; counterbore annex" {
   MetricThread::M12 => 18mm, 12mm [+0 -0.43mm], 10mm, 20mm, 13mm
   MetricThread::M16 => 24mm, 16mm [+0 -0.43mm], 14mm, 26mm, 17.5mm
   MetricThread::M20 => 30mm, 20mm [+0 -0.52mm], 17mm, 33mm, 21.5mm
+}
+
+/// Button head screw head and counterbore dimensions, mm (ISO 7380-1); M3 to M16 only.
+pub table Iso7380Head @iso7380:"table 1; derived counterbore" {
+  key thread: MetricThread
+  cols head_dia: Length, head_height: Length, socket: Length, counterbore_dia: Length, counterbore_depth: Length
+  MetricThread::M3 => 5.7mm, 1.65mm, 2mm, 7mm, 2.2mm
+  MetricThread::M4 => 7.6mm, 2.2mm, 2.5mm, 9mm, 2.7mm
+  MetricThread::M5 => 9.5mm, 2.75mm, 3mm, 10.5mm, 3.3mm
+  MetricThread::M6 => 10.5mm, 3.3mm, 4mm, 11.5mm, 3.8mm
+  MetricThread::M8 => 14mm, 4.4mm, 5mm, 15mm, 4.9mm
+  MetricThread::M10 => 17.5mm, 5.5mm, 6mm, 18.5mm, 6mm
+  MetricThread::M12 => 21mm, 6.6mm, 8mm, 22mm, 7.1mm
+  MetricThread::M16 => 28mm, 8.8mm, 10mm, 29mm, 9.3mm
+}
+
+/// Countersunk socket screw head and countersink dimensions, mm (ISO 10642); M3 to M20 only.
+pub table Iso10642Head @iso10642:"table 1; countersink" {
+  key thread: MetricThread
+  cols head_dia: Length, head_height: Length, socket: Length, counterbore_dia: Length, counterbore_depth: Length
+  MetricThread::M3 => 6.72mm, 1.86mm, 2mm, 6.72mm, 1.86mm
+  MetricThread::M4 => 8.96mm, 2.48mm, 2.5mm, 8.96mm, 2.48mm
+  MetricThread::M5 => 11.2mm, 3.1mm, 3mm, 11.2mm, 3.1mm
+  MetricThread::M6 => 13.44mm, 3.72mm, 4mm, 13.44mm, 3.72mm
+  MetricThread::M8 => 17.92mm, 4.96mm, 5mm, 17.92mm, 4.96mm
+  MetricThread::M10 => 22.4mm, 6.2mm, 6mm, 22.4mm, 6.2mm
+  MetricThread::M12 => 26.88mm, 7.44mm, 8mm, 26.88mm, 7.44mm
+  MetricThread::M16 => 33.6mm, 8.8mm, 10mm, 33.6mm, 8.8mm
+  MetricThread::M20 => 40.32mm, 10.16mm, 12mm, 40.32mm, 10.16mm
 }
 
 /// Preferred nominal screw lengths, mm (ISO 4762); key only.

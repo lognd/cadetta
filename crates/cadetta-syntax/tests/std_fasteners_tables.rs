@@ -57,15 +57,17 @@ fn row(table: &str, size: &str) -> Vec<String> {
         .1
 }
 
-// frob:tests crates/cadetta-syntax/tests/std_fasteners_tables.rs::six_tables_parse_cited_with_spec_columns kind=unit
+// frob:tests crates/cadetta-syntax/tests/std_fasteners_tables.rs::eight_tables_parse_cited_with_spec_columns kind=unit
 #[test]
-fn six_tables_parse_cited_with_spec_columns() {
+fn eight_tables_parse_cited_with_spec_columns() {
     let t = tables();
     let want = [
         ("Thread", 4, 12),
         ("Iso273", 3, 12),
         ("TapDrill", 3, 12),
         ("Iso4762Head", 5, 12),
+        ("Iso7380Head", 5, 8),
+        ("Iso10642Head", 5, 9),
         ("Iso4762Len", 0, 36),
         ("Iso4032", 2, 12),
     ];
@@ -111,4 +113,33 @@ fn published_limits_are_kept_as_tolerances() {
         assert!(c[1].contains(" [+0 -"), "{c:?}");
     }
     assert_eq!(row("Iso4762Head", "M5")[1], "5mm [+0 -0.18mm]");
+}
+
+// frob:ticket 01M4VSSDQZJ13JHVPXB3CHC33P
+
+// frob:tests crates/cadetta-syntax/tests/std_fasteners_tables.rs::button_and_flat_head_pockets_follow_their_standards kind=unit
+#[test]
+fn button_and_flat_head_pockets_follow_their_standards() {
+    // ISO 7380 covers M3 to M16 only; ISO 10642 covers M3 to M20.
+    let button: Vec<String> = rows("Iso7380Head").into_iter().map(|(k, _)| k).collect();
+    assert!(button.contains(&"MetricThread::M16".to_owned()));
+    assert!(!button.contains(&"MetricThread::M20".to_owned()));
+    assert!(!button.contains(&"MetricThread::M2".to_owned()));
+    assert_eq!(rows("Iso10642Head").len(), 9);
+    // ISO 7380 M6: dk 10.5, k 3.3; derived pocket 11.5 x 3.8.
+    let b6 = row("Iso7380Head", "M6");
+    assert_eq!((b6[0].as_str(), b6[1].as_str()), ("10.5mm", "3.3mm"));
+    assert_eq!((b6[3].as_str(), b6[4].as_str()), ("11.5mm", "3.8mm"));
+    // ISO 10642 pocket is the countersink: head diameter by head height, flush.
+    for (key, c) in rows("Iso10642Head") {
+        assert_eq!((c[3].as_str(), c[4].as_str()), (c[0].as_str(), c[1].as_str()), "{key}");
+    }
+    assert_eq!(row("Iso10642Head", "M8")[0], "17.92mm");
+    // Every pocket is at least as large as its head.
+    for t in ["Iso7380Head", "Iso10642Head"] {
+        for (key, c) in rows(t) {
+            let n = |s: &str| s.trim_end_matches("mm").parse::<f64>().unwrap();
+            assert!(n(&c[3]) >= n(&c[0]) && n(&c[4]) >= n(&c[1]), "{t} {key}");
+        }
+    }
 }

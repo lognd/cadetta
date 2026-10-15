@@ -51,6 +51,8 @@ change and is recorded with `was`.
 | `std::fasteners::Thread` | `MetricThread` | `major pitch minor_ext minor_int` |
 | `std::fasteners::TapDrill` | `MetricThread` | `cut_75 cut_65 form` (cutting tap at about 75% and 65% thread, forming tap) |
 | `std::fasteners::Iso4762Head` | `MetricThread` | `head_dia head_height socket counterbore_dia counterbore_depth` |
+| `std::fasteners::Iso7380Head` | `MetricThread` (M3 to M16) | as `Iso4762Head`; the counterbore columns are derived from the head |
+| `std::fasteners::Iso10642Head` | `MetricThread` (M3 to M20) | as `Iso4762Head`; the pocket is the countersink (`head_dia` by `head_height`) |
 | `std::fasteners::Iso4762Len` | `Length` | (preferred lengths; key only) |
 | `std::fasteners::Iso4032` | `MetricThread` | `width_across_flats height` |
 | `std::materials::Materials` | `Material` | `density yield_strength tap_class engagement_factor` |
@@ -139,7 +141,7 @@ straight to the hole features in each part's CAD file:
 | Member | Computed from |
 |---|---|
 | `clearance_hole` | `Iso273[thread]` at the joint's `clearance` class (default `medium`) |
-| `counterbore_dia`, `counterbore_depth` | `Iso4762Head[thread]`, when `counterbore = true` |
+| `counterbore_dia`, `counterbore_depth` | the head's table (`Iso4762Head`, `Iso7380Head` or `Iso10642Head` by `head`), when `counterbore = true` |
 | `min_engagement` | `Materials[into].engagement_factor * thread.major` (steel 1.0, brass and cast iron 1.5, aluminium 2.0, ...) |
 | `grip` | `clamp` minus `counterbore_depth` when counterbored: the material actually under the head |
 | `screw_length` | `Iso4762Len.at_least(grip + min_engagement).key` |
@@ -206,7 +208,7 @@ member reads itself (D003 is per member, language.md 4).
 `HeadKind` (`SocketHead ButtonHead FlatHead`). Decisions:
 members are public unless written `priv`, so the public members are exactly
 the table above plus the arguments and the intermediates (`major`, `pitch`,
-`head_data`, `column`, `drill_nominal`, `material`, `n`, `depth_needed`)
+`pocket_dia`, `pocket_depth`, `column`, `drill_nominal`, `material`, `n`, `depth_needed`)
 are `priv`; the shop numbers (engagement factor, tap
 column, preferred lengths, drills, depth allowances) are read from the
 `policy` argument; without `counterbore` the pocket members are `0mm`, so
@@ -227,7 +229,7 @@ argument mandatory under a condition (E006 when missing). So `tap_drill`,
 TapKind::Vendor)]`, `depth_ok` carries `#[when(given(depth_available))]`,
 `aligned` carries `#[when(given(at) and given(onto))]`, and `tap = Vendor`
 requires `depth_available`. `head` is an argument, so the internal head
-table row is `head_data`. `Iso4762` takes an optional `unit_cost`, which
+pocket members are `pocket_dia` and `pocket_depth`, chosen by `head`. `Iso4762` takes an optional `unit_cost`, which
 the joint fills from `screw_cost`. The `engaged` check is
 `screw_length - grip >= min_engagement`; the other checks are as listed
 above. `float` is one clearance hole's half, `(clearance_hole - major) / 2`,
@@ -237,8 +239,11 @@ both halves count, so `aligned` gets one half fixed and both halves with
 a nut. `locating` is accepted, but the placement float it
 removes is not yet applied to a joint's edge: `cadetta-geometry`
 can evaluate it (geometry.md 5.2) and the lowering from a joint is
-still open. `ButtonHead` and `FlatHead` have no counterbore data yet, so
-`counterbore = true` is only meaningful for `SocketHead`.
+still open. `ButtonHead` (ISO 7380) and `FlatHead` (ISO 10642) have counterbore
+data for the sizes their standards cover (M3 to M16 and M3 to M20);
+`counterbore = true` on another size is E007 (no row). The ISO 7380
+pocket is derived from the head, and the ISO 10642 pocket is the
+countersink, flush with the head.
 
 Change `into = base.material` from aluminium to stainless and the tap
 drill, engagement, screw length, thread and drill depths and callout all

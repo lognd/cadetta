@@ -14,4 +14,4 @@ pub use self::screw::{Iso4762, Screw}
 pub use self::policy::{FastenerPolicy, IsoDefault, IsoDrills, IsoEngagement, IsoTapColumns}
 
 /// Thread and hole tables and the thread enum.
-pub use self::tables::{Iso273, Iso4032, Iso4762Head, Iso4762Len, MetricThread, TapDrill, Thread}
+pub use self::tables::{Iso273, Iso10642Head, Iso4032, Iso4762Head, Iso4762Len, Iso7380Head, MetricThread, TapDrill, Thread}
