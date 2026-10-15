@@ -2,11 +2,12 @@
 id = "01M4V10D4E9K312RP6HV9JHZEN"
 title = "R012 cannot be reached from source: instances share arguments"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:19:54Z"
-updated = "2026-10-15T03:00:27Z"
+updated = "2026-10-15T03:00:42Z"
 scope = ["docs/spec/**"]
 
 [[acceptance]]
