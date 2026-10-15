@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Criterion 1 means the corpus test terminates (no hang). Remaining conformance failures tracked in ~X1PF271. Reviewer APPROVE."
+at = "2026-10-15T02:38:56Z"
+actor = "lognd"
+rev = 1

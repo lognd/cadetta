@@ -7,7 +7,7 @@ outcome = "done"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-15T00:43:35Z"
-updated = "2026-10-15T02:38:54Z"
+updated = "2026-10-15T02:38:56Z"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/src/cmd/check_drift.rs", "crates/cadetta-adapter/src/rpc/client.rs", "crates/cadetta-cli/src/cmd/import.rs", "docs/spec/adapters.md", "changelog.d/01M4YG7D22XEEK9M3X678B88BT.fixed.md"]
 
 [[acceptance]]
