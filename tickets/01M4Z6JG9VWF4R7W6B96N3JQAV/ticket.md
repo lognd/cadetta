@@ -2,7 +2,8 @@
 id = "01M4Z6JG9VWF4R7W6B96N3JQAV"
 title = "Adapter host gaps found by protocol conformance: platforms, precision, push-status shape, R009 shutdown, builtin capabilities"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
