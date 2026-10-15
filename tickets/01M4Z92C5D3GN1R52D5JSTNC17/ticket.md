@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T07:57:44Z"
-updated = "2026-10-15T08:13:00Z"
+updated = "2026-10-15T08:16:09Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "docs/spec/emitters/sw-equations.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
