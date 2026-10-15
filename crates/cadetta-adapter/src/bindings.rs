@@ -983,7 +983,12 @@ pub fn discover(observed: &Project, table: &ForwardTable, placements: &[Placemen
             let Some(expr) = exprs.get(&b.path) else {
                 continue;
             };
-            match bare_reference(expr).and_then(|g| globals.get(g).map(|p| (g, p))) {
+            let bare = bare_reference(expr);
+            match bare.and_then(|g| globals.get(g).map(|p| (g, p))) {
+                None if bare.is_some() => tracing::debug!(
+                    dimension = %l.locator,
+                    "bare reference to a name that is not a bound global; not a link, silent"
+                ),
                 Some((g, path)) => add(
                     path,
                     Locator {
@@ -1399,6 +1404,22 @@ locators = [
         assert_eq!(d.bindings[0].locators.len(), 1);
         assert_eq!(d.diagnostics[0].code, R002);
         assert!(d.diagnostics[0].message.contains(&expr));
+    }
+
+    // frob:tests discover_bare_unbound_reference_is_silent
+    #[test]
+    fn discover_bare_unbound_reference_is_silent() {
+        let g = name_of("acme.gearbox::CoverPlate.thickness");
+        let d = discover(
+            &observed(vec![
+                native(&g, LocatorKind::Global, None),
+                native("D1@Boss", LocatorKind::Dimension, Some("\"Other\"")),
+            ]),
+            &table(),
+            &[],
+        );
+        assert!(d.diagnostics.is_empty());
+        assert_eq!(d.bindings[0].locators.len(), 1);
     }
 
     // frob:tests discover_frame_by_datum_name
