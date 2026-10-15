@@ -4,9 +4,10 @@ title = "Part slot canonical path uses '.' instead of '/' (Rover.wheel vs Rover/
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-14T02:35:38Z"
-updated = "2026-10-14T02:35:38Z"
+updated = "2026-10-15T07:08:16Z"
 scope = ["crates/cadetta-sema/src/lower.rs"]
 
 [[acceptance]]
