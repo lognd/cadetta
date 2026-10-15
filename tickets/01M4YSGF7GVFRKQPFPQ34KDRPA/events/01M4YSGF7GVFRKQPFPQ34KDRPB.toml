@@ -1,0 +1,10 @@
+kind = "create"
+title = "Materials index and enum compare in a check not evaluated (materials-tap-class C001)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~6K58FR1. Fixture stdlib/materials-tap-class expects C001 at acme.demo::P.steel_hard; both sides give EVAL a quantity is required here for Materials[Material::X].tap_class == TapClass::Hard."
+at = "2026-10-15T03:25:49Z"
+actor = "lognd"
+rev = 1
