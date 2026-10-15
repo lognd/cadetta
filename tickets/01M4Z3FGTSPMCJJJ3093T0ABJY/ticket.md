@@ -2,12 +2,12 @@
 id = "01M4Z3FGTSPMCJJJ3093T0ABJY"
 title = "language: waiver on an item path must cover diagnostics beneath it (i001-fixed must-not-fire: C001 waived on acme.demo::A, W004 + C001 still reported at A.load_rating)"
 type = "task"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-15T06:24:23Z"
+updated = "2026-10-15T06:24:41Z"
 scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/**"]
 +++
 
