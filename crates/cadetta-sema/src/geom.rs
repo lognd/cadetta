@@ -1070,6 +1070,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             None => FloatMode::With,
         };
         debug!(edges = a.floats.len(), own = ?own, "geometry: bolt floats in the frame tables");
+        // frob:ticket 01M4SWG70T71SNTZ2TWXZD1Y50
+        if own.is_none()
+            && a.floats
+                .iter()
+                .any(|e| e.joints.iter().all(|j| !j.locating))
+        {
+            self.float_reads += 1;
+        }
         tables(&asm, mode)
     }
 

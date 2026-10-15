@@ -1273,21 +1273,6 @@ ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
-fixture = "geometry/g005-check-looser-than-float"
-ticket = "~HWJP0GQ"
-reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
-
-[[gap]]
-fixture = "geometry/g005-locating-joint-no-float"
-ticket = "~HWJP0GQ"
-reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
-
-[[gap]]
-fixture = "stdlib/g005-float-unlocated"
-ticket = "~HWJP0GQ"
-reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
-
-[[gap]]
 fixture = "adapters/bind-invalid-component-form"
 ticket = "~CE627BF"
 reason = "binding-kind run does not observe names_path_or_key"

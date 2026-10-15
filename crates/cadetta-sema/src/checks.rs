@@ -444,6 +444,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(join(a, b, if *op == BinOp::And { and } else { or }))
             }
             ExprKind::Compare { first, rest } => {
+                let before = self.float_reads;
                 let mut left = self.operand(sc, first)?;
                 let mut acc: Option<Outcome> = None;
                 for (op, rhs) in rest {
@@ -455,7 +456,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     });
                     left = right;
                 }
-                acc.ok_or_else(|| diag("EVAL", e.span, "a comparison needs an operator"))
+                let out =
+                    acc.ok_or_else(|| diag("EVAL", e.span, "a comparison needs an operator"))?;
+                self.note_float_read(before, out.verdict, e.span);
+                Ok(out)
             }
             ExprKind::Satisfies(x, p) => self.satisfies(sc, x, p, e.span),
             // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
@@ -527,6 +531,28 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         })
     }
 
+    /// Emits G005 when an undecided comparison read through a floated placement edge since
+    /// `before` (geometry.md 5.2).
+    // frob:ticket 01M4SWG70T71SNTZ2TWXZD1Y50
+    fn note_float_read(&mut self, before: u32, verdict: Verdict, span: Span) {
+        if verdict != Verdict::Undecided || self.float_reads == before {
+            return;
+        }
+        warn!(
+            ?span,
+            "check: G005 check is tighter than a bolt float it reads through"
+        );
+        self.diagnostics.push(EvalDiagnostic {
+            module: None,
+            code: "G005",
+            severity: Severity::Warning,
+            message: "G005: this check is tighter than the float of a bolted joint it reads \
+                      through; fix with `locating = true` and a fit/dowel, or loosen the check"
+                .to_owned(),
+            span,
+        });
+    }
+
     fn satisfies(&mut self, sc: &mut Scope, x: &Expr, p: &Expr, span: Span) -> R<Outcome> {
         let Some(def) = self.find_bound(sc, p, true) else {
             return Err(diag(
@@ -536,6 +562,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ));
         };
         let bound = self.build_bound(&def, p.span)?;
+        let before = self.float_reads;
         let x = self.quant(sc, x)?;
         let mut acc = Outcome::of(Verdict::Holds);
         for (op, limit) in [(CmpOp::Ge, bound.min()), (CmpOp::Le, bound.max())] {
@@ -550,6 +577,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 acc = join(acc, o, and);
             }
         }
+        self.note_float_read(before, acc.verdict, span);
         Ok(acc)
     }
 

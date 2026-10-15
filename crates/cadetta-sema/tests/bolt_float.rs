@@ -83,7 +83,9 @@ fn floating_joint_frees_the_child_in_either_order() {
         let ev = run(&boxed(lid_child, J, FLUSH));
         // only the undecided flush check (C002) is reported
         assert!(
-            ev.diagnostics.iter().all(|d| d.code == "C002"),
+            ev.diagnostics
+                .iter()
+                .all(|d| d.code == "C002" || d.code == "G005"),
             "{:?}",
             ev.diagnostics
         );
@@ -106,7 +108,7 @@ fn float_applies_in_the_placement_datum_frame() {
     assert!(
         ev.diagnostics
             .iter()
-            .all(|d| d.code == "C002" || d.code == "C001"),
+            .all(|d| matches!(d.code, "C002" | "C001" | "G005")),
         "{:?}",
         ev.diagnostics
     );
@@ -167,4 +169,34 @@ fn joint_between_siblings_adds_no_float() {
     let ev = run(src);
     assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
     assert_eq!(verdict(&ev, "flush"), Verdict::Holds);
+}
+
+// frob:tests crates/cadetta-sema/tests/bolt_float.rs::g005_fires_for_a_check_tighter_than_the_float kind=unit
+#[test]
+fn g005_fires_for_a_check_tighter_than_the_float() {
+    for lid_child in [true, false] {
+        let ev = run(&boxed(lid_child, J, FLUSH));
+        let n = ev.diagnostics.iter().filter(|d| d.code == "G005").count();
+        assert_eq!(n, 1, "lid_child={lid_child}: {:?}", ev.diagnostics);
+    }
+}
+
+// frob:tests crates/cadetta-sema/tests/bolt_float.rs::g005_stays_quiet_when_locating_or_looser kind=unit
+#[test]
+fn g005_stays_quiet_when_locating_or_looser() {
+    let loose = "check flush: (lid.edge in origin).x - (base.edge in origin).x <= 2mm \"flush\"";
+    let ev = run(&boxed(true, J, loose));
+    assert_eq!(verdict(&ev, "flush"), Verdict::Holds);
+    assert!(
+        ev.diagnostics.iter().all(|d| d.code != "G005"),
+        "{:?}",
+        ev.diagnostics
+    );
+    let loc = "part j: ScrewJoint(at = lid.holes, onto = base.tapped, locating = true)";
+    let ev = run(&boxed(true, loc, FLUSH));
+    assert!(
+        ev.diagnostics.iter().all(|d| d.code != "G005"),
+        "{:?}",
+        ev.diagnostics
+    );
 }
