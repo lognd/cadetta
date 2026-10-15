@@ -2,7 +2,8 @@
 id = "01M4SWMDM7FRKACF83CT4H5X0H"
 title = "Save after sync and file digest"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
