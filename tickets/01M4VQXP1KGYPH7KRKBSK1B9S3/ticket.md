@@ -8,8 +8,8 @@ points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T09:09:12Z"
-scope = ["crates/cadetta-cli/tests/**"]
+updated = "2026-10-15T09:12:29Z"
+scope = ["crates/cadetta-cli/tests/**", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "results_order, r001_suppressed_by_force, unbound_params_not_written and runs are observed and compared; their gap entries are removed"
