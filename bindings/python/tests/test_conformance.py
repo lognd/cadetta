@@ -203,7 +203,8 @@ def _binding_call(case: Case, project: Project, tokens: list[str]) -> Any:
         return project.emit(names)
     if head == "solve":
         module = _flag(args, "--module")
-        if module is not None:
+        if module is not None or "--format" in args:
+            # Option values (e.g. `--format text`) are not solver names; pass raw.
             return project._run(["solve", *args], global_format=False)
         names = [a for a in args if not a.startswith("--")]
         return project.solve(names or None, variants="--variants" in args)
