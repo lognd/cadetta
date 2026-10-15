@@ -19,7 +19,7 @@ use crate::config::{Config, Gate};
 use crate::output::Format;
 use crate::pipeline::analyze;
 use crate::project::Project;
-use crate::universe::{ack_candidates, universes};
+use crate::universe::{ack_candidates, universes, waiver_candidates};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta ack SELECTOR --role R --reason \"...\" \
@@ -414,7 +414,9 @@ pub fn run_ack(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mu
     if analysis.halted {
         return fail(err, "a syntax error stopped analysis; run `cadetta check`");
     }
-    let candidates = ack_candidates(&universes(&analysis));
+    let universes = universes(&analysis);
+    let mut candidates = ack_candidates(&universes);
+    candidates.extend(waiver_candidates(&analysis, &universes));
     let author = |_: &ObligationId| None;
     let env = AckEnv {
         policy: &policy,
