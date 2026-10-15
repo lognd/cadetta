@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T00:10:07Z"
-updated = "2026-10-15T11:03:29Z"
+updated = "2026-10-15T11:04:25Z"
 scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/lint_entry_points.rs"]
 
 [[links]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "U002 reports an unused private param/let member of a component"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "I004 fires only for a model/assembly with a param lacking a default that no part instantiates"
