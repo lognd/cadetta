@@ -203,7 +203,7 @@ mod tests {
         plan_source_form(&parse_source_form(word).expect("known form"), listed)
     }
 
-    // frob:tests crate::geometry_plan::plan_source_form
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::plan_source_form kind=unit
     #[test]
     fn table_rows_bind_and_push() {
         assert_eq!(plan("datum", false).binds_to, Some("frame"));
@@ -221,7 +221,7 @@ mod tests {
         assert!(!plan("placement", false).push_writes);
     }
 
-    // frob:tests crate::geometry_plan::plan_source_form
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::plan_source_form kind=unit
     #[test]
     fn derived_coordinate_binds_only_when_listed() {
         assert_eq!(plan("derived-coordinate", false).binds_to, None);
@@ -229,7 +229,7 @@ mod tests {
         assert_eq!(plan("holes.derived_x", false).binds_to, None);
     }
 
-    // frob:tests crate::geometry_plan::read_report
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::read_report kind=unit
     #[test]
     fn drift_reports_by_form() {
         let flip = plan("flip", false);
@@ -241,14 +241,14 @@ mod tests {
         );
     }
 
-    // frob:tests crate::geometry_plan::parse_source_form
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::parse_source_form kind=unit
     #[test]
     fn unknown_form_is_an_error() {
         assert!(parse_source_form("holes.mystery").is_err());
         assert!(parse_source_form("rotate fast").is_err());
     }
 
-    // frob:tests crate::geometry_plan::native_written
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::native_written kind=unit
     #[test]
     fn sign_negates_on_write_and_restores_on_read() {
         assert_eq!(native_written("10mm", Some(-1)), "-10mm");
