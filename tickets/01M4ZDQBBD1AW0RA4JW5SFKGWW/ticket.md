@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T09:19:06Z"
-updated = "2026-10-15T09:22:07Z"
-scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/conformance/sync.rs"]
+updated = "2026-10-15T09:22:34Z"
+scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/conformance/sync.rs", "crates/cadetta-adapter/src/sync.rs"]
 
 [[acceptance]]
 text = "SessionBackend implements Document over DriveSession so sync push goes through push_atomic and restores on R004"
