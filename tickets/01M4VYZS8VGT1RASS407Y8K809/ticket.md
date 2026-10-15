@@ -2,7 +2,8 @@
 id = "01M4VYZS8VGT1RASS407Y8K809"
 title = "Evaluate datums and placements of parameterized parts"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
