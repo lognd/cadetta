@@ -45,6 +45,13 @@ pub enum CsvError {
     Parse(String),
     /// A value failed emit policy (Q004).
     Policy(PolicyError),
+    /// A row whose `name` matches no binding of this adapter (R016).
+    UnboundRow {
+        /// The unbound `name` column value.
+        name: String,
+        /// The file the row came from.
+        file: String,
+    },
 }
 
 impl std::fmt::Display for CsvError {
@@ -52,6 +59,9 @@ impl std::fmt::Display for CsvError {
         match self {
             Self::Parse(e) => write!(f, "csv file: {e}"),
             Self::Policy(e) => write!(f, "{e}"),
+            Self::UnboundRow { name, file } => {
+                write!(f, "R016: row `{name}` in `{file}` matches no binding")
+            }
         }
     }
 }
@@ -228,6 +238,25 @@ pub fn read(text: &str, units: &UnitPolicy) -> Result<Vec<ReadParam>, CsvError> 
     Ok(out)
 }
 
+/// Reads a CSV file against the adapter's bound names; the first row whose `name`
+/// is not in `bound` is R016 and no parameters are produced (emitters/csv.md 3).
+pub fn read_bound(
+    text: &str,
+    units: &UnitPolicy,
+    file: &str,
+    bound: &[&str],
+) -> Result<Vec<ReadParam>, CsvError> {
+    let params = read(text, units)?;
+    if let Some(p) = params.iter().find(|p| !bound.contains(&p.name.as_str())) {
+        tracing::error!(row = %p.name, file, "R016 unbound csv row");
+        return Err(CsvError::UnboundRow {
+            name: p.name.clone(),
+            file: file.into(),
+        });
+    }
+    Ok(params)
+}
+
 /// Compares two files ignoring the header comment (the `sync` no-op comparison, adapters.md 2).
 pub fn same_modulo_header(a: &str, b: &str) -> Result<bool, CsvError> {
     Ok(parse(a)? == parse(b)?)
@@ -325,5 +354,34 @@ mod tests {
         ));
         let crlf = read("name,value,unit,note\r\nx,1,mm,\r\n", &u).unwrap();
         assert_eq!(crlf[0].observed.literal, "1");
+    }
+
+    // frob:tests crates/cadetta-adapter/src/builtin/csv.rs::read_bound kind=unit
+    #[test]
+    fn unbound_row_is_r016_and_yields_nothing() {
+        let u = UnitPolicy::default();
+        let text = "name,value,unit,note\nB,5,mm,\nZ,7,mm,\n";
+        let ok = read_bound(text, &u, "f.csv", &["B", "Z"]).unwrap();
+        assert_eq!(ok.len(), 2);
+        let e = read_bound(text, &u, "f.csv", &["B"]).unwrap_err();
+        assert_eq!(
+            e,
+            CsvError::UnboundRow {
+                name: "Z".into(),
+                file: "f.csv".into()
+            }
+        );
+        assert!(e.to_string().starts_with("R016"));
+    }
+
+    // frob:tests crates/cadetta-adapter/src/builtin/csv.rs::read kind=unit
+    #[test]
+    fn hash_comment_only_at_record_start() {
+        let u = UnitPolicy::default();
+        let text = "# hdr\nname,value,unit,note\n# skipped,1,mm,\nA#b,1,mm,\"x\n#kept\"\n";
+        let got = read(text, &u).unwrap();
+        assert_eq!(got.len(), 1);
+        assert_eq!(got[0].name, "A#b");
+        assert_eq!(parse(text).unwrap()[0].note, "x\n#kept");
     }
 }
