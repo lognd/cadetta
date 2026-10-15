@@ -2,12 +2,12 @@
 id = "01M4Z9WQPNGBM5J14R2CDJGJMG"
 title = "Conformance: sync executor for binding sync fixtures"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
-updated = "2026-10-15T08:12:08Z"
+updated = "2026-10-15T08:15:28Z"
 scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
