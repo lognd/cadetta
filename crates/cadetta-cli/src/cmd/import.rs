@@ -352,14 +352,16 @@ fn render_text(r: &ImportReport) -> String {
     s
 }
 
-/// Resolve an adapter command: a `/`-bearing program is relative to the package directory.
+/// Resolve an adapter command relative to the package directory; there is no PATH search
+/// (adapters.md 5), so a bare name such as `sh` names `<pkg>/sh`, never the system `sh`.
+// frob:ticket 01M4YG7D22XEEK9M3X678B88BT
 pub(crate) fn program(pkg: &PackageDir, command: &[String]) -> Option<(PathBuf, Vec<String>)> {
     let (first, rest) = command.split_first()?;
-    let path = if first.contains('/') {
-        pkg.dir.join(first)
-    } else {
-        PathBuf::from(first)
-    };
+    let mut path = pkg.dir.join(first);
+    if path.components().count() == 1 {
+        // `Command` searches PATH for a path with no separator; anchor it explicitly.
+        path = FsPath::new(".").join(path);
+    }
     Some((path, rest.to_vec()))
 }
 

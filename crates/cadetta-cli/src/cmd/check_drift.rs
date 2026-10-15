@@ -13,6 +13,7 @@ use cadetta_lint::rules::r::{
 };
 use cadetta_lint::rules::r_adapter::{AdapterReport, pass_through};
 use std::io::{BufRead, Write};
+use std::time::Duration;
 
 use super::check::DriftSite;
 use super::import::program;
@@ -21,11 +22,24 @@ use super::sync::{Probe, probe_adapter};
 /// Codes `build_entries` reports that are R lints in their own right (R003 is structured).
 const FORWARDED_ERRORS: [&str; 3] = ["R001", "R005", "R013"];
 
+/// How long one adapter call may stay unanswered before `check` kills it (R008).
+const ADAPTER_TIMEOUT: Duration = Duration::from_secs(60);
+
 /// The default drift hook: spawn the adapter named by `command` and lint what it reads.
 ///
-/// A spawn or version failure is R008, which `check` downgrades to info (adapters.md 7).
+/// A spawn, version or timeout failure is R008, which `check` downgrades to info (adapters.md 7).
 // frob:ticket 01M4TA3C87N60Y711163RK3GPH
 pub(crate) fn process_drift(site: &DriftSite<'_>, ir: &IrProject) -> Vec<Diagnostic> {
+    process_drift_within(site, ir, ADAPTER_TIMEOUT)
+}
+
+/// [`process_drift`] with an explicit per-call `timeout`; a silent adapter is killed and is R008.
+// frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+pub(crate) fn process_drift_within(
+    site: &DriftSite<'_>,
+    ir: &IrProject,
+    timeout: Duration,
+) -> Vec<Diagnostic> {
     let adapter = site.adapter;
     let Some(command) = &adapter.command else {
         return Vec::new();
@@ -35,7 +49,12 @@ pub(crate) fn process_drift(site: &DriftSite<'_>, ir: &IrProject) -> Vec<Diagnos
         return r008(adapter.id(), "the adapter command is empty".to_owned());
     };
     tracing::info!(adapter = %adapter.id(), "check: starting adapter for drift lints");
-    let mut client = match ProcessClient::spawn(&path, &argv, adapter.version.as_deref()) {
+    let mut client = match ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(timeout),
+    ) {
         Ok(c) => c,
         Err(e) => {
             tracing::warn!(adapter = %adapter.id(), error = %e, "check: adapter did not start (R008)");
@@ -170,12 +189,14 @@ fn lint_probe(
 
 #[cfg(test)]
 mod tests {
+    use super::process_drift_within;
     use crate::cmd::Globals;
-    use crate::cmd::check::run_check;
+    use crate::cmd::check::{run_check, run_check_with};
     use crate::output::Format;
     use cadetta_obligations::lock::{Lock as FileLock, Record, SyncedValue};
     use serde_json::{Value, json};
     use std::path::PathBuf;
+    use std::time::Duration;
 
     const PATH: &str = "acme.plate::CoverPlate.thickness";
     const BINDINGS: &str = "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"Plate_Thk\", kind = \"global\", native_unit = \"mm\" } ]\n";
@@ -232,7 +253,12 @@ for line in sys.stdin:
         std::fs::write(dir.0.join("adapter.py"), ADAPTER).unwrap();
         std::fs::write(dir.0.join("scenario.json"), scenario.to_string()).unwrap();
         let cmd = command.map_or_else(
-            || format!("[\"python3\", \"{}\"]", dir.0.join("adapter.py").display()),
+            || {
+                format!(
+                    "[\"/usr/bin/env\", \"python3\", \"{}\"]",
+                    dir.0.join("adapter.py").display()
+                )
+            },
             str::to_owned,
         );
         std::fs::write(
@@ -375,5 +401,79 @@ for line in sys.stdin:
         let (_, diags) = check(&dir);
         assert!(has(&diags, "R009"), "{diags:?}");
         assert!(!has(&diags, "R008"), "{diags:?}");
+    }
+
+    /// Write an executable shell adapter `name` into `dir` and return its absolute path.
+    fn script(dir: &Dir, name: &str, body: &str) -> String {
+        use std::os::unix::fs::PermissionsExt;
+        let p = dir.0.join(name);
+        std::fs::write(&p, format!("#!/bin/sh\n{body}\n")).unwrap();
+        std::fs::set_permissions(&p, std::fs::Permissions::from_mode(0o755)).unwrap();
+        p.display().to_string()
+    }
+
+    /// `check` with a short adapter timeout, returning wall time as well.
+    fn check_within(dir: &Dir, timeout: Duration) -> (u8, Vec<(String, String)>, Duration) {
+        let globals = Globals {
+            format: Format::Json,
+            cwd: Some(dir.0.clone()),
+            config: None,
+        };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let start = std::time::Instant::now();
+        let code = run_check_with(&[], &globals, &mut out, &mut err, &|s, ir| {
+            process_drift_within(s, ir, timeout)
+        });
+        let took = start.elapsed();
+        let v: Value = serde_json::from_slice(&out).unwrap();
+        let diags = v["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|d| {
+                (
+                    d["code"].as_str().unwrap().to_owned(),
+                    d["severity"].as_str().unwrap().to_owned(),
+                )
+            })
+            .collect();
+        (code, diags, took)
+    }
+
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+    // frob:tests crates/cadetta-cli/src/cmd/check_drift.rs::process_drift_within
+    #[test]
+    fn check_reports_r008_within_bounded_time_for_a_silent_adapter() {
+        let obs = observed(&[(PATH, "Plate_Thk", "6mm")]);
+        let dir = project(&obs, Some("6mm"), BINDINGS, None);
+        let silent = script(&dir, "silent.sh", "sleep 300");
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        let adapter = format!("[\"{silent}\"]");
+        let cmd_line = toml.lines().find(|l| l.starts_with("command")).unwrap();
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            toml.replace(cmd_line, &format!("command = {adapter}")),
+        )
+        .unwrap();
+        let (code, diags, took) = check_within(&dir, Duration::from_millis(500));
+        let r008 = diags.iter().find(|(c, _)| c == "R008").expect("R008");
+        assert_eq!(r008.1, "info", "{diags:?}");
+        assert_eq!(code, 0);
+        assert!(took < Duration::from_secs(30), "took {took:?}");
+    }
+
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::program
+    #[test]
+    fn a_bare_system_command_is_not_found_on_path() {
+        // `sh` exists on PATH but must not be run: with no PATH search the command is
+        // `<pkg>/sh`, which is absent, so check reports R008 instead of piping JSON to sh.
+        let obs = observed(&[(PATH, "Plate_Thk", "6mm")]);
+        let dir = project(&obs, Some("6mm"), BINDINGS, Some("[\"sh\"]"));
+        let (code, diags, took) = check_within(&dir, Duration::from_secs(20));
+        let r008 = diags.iter().find(|(c, _)| c == "R008").expect("R008");
+        assert_eq!(r008.1, "info", "{diags:?}");
+        assert_eq!(code, 0);
+        assert!(took < Duration::from_secs(15), "took {took:?}");
     }
 }

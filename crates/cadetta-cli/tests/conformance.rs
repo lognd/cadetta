@@ -114,3 +114,57 @@ fn empty_or_missing_corpus_is_tolerated() {
     assert!(report.failures.is_empty());
     assert!(report.outcomes.is_empty());
 }
+
+/// Copy the directory `from` into `to`, recursively.
+fn copy_tree(from: &Path, to: &Path) {
+    std::fs::create_dir_all(to).unwrap();
+    for entry in std::fs::read_dir(from).unwrap() {
+        let entry = entry.unwrap();
+        let dest = to.join(entry.file_name());
+        if entry.file_type().unwrap().is_dir() {
+            copy_tree(&entry.path(), &dest);
+        } else {
+            std::fs::copy(entry.path(), &dest).unwrap();
+        }
+    }
+}
+
+// frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+// frob:tests crates/cadetta-cli/tests/conformance/corpus.rs::run_corpus
+#[test]
+fn bare_adapter_command_is_not_run_from_path_and_finishes() {
+    // The fixture's adapter is a bare `sh`; PATH-searching it ran the system shell on the
+    // initialize request and hung. Only that one fixture is run, in a scratch corpus.
+    let scratch = std::env::temp_dir().join(format!("cadetta-r008-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let src = corpus_root().join("adapters");
+    for entry in std::fs::read_dir(&src).unwrap() {
+        let entry = entry.unwrap();
+        if entry
+            .file_name()
+            .to_string_lossy()
+            .starts_with("r008-no-path-search")
+        {
+            let dest = scratch.join("adapters").join(entry.file_name());
+            if entry.file_type().unwrap().is_dir() {
+                copy_tree(&entry.path(), &dest);
+            } else {
+                std::fs::create_dir_all(dest.parent().unwrap()).unwrap();
+                std::fs::copy(entry.path(), &dest).unwrap();
+            }
+        }
+    }
+    let start = std::time::Instant::now();
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    // Unrelated lint noise (e.g. U002) is not this test's concern; a missing R008 is.
+    assert!(
+        report.failures.iter().all(|f| !f.contains("missing")),
+        "R008 was not raised: {report:?}"
+    );
+    assert!(
+        report.outcomes.contains_key("adapters/r008-no-path-search"),
+        "{report:?}"
+    );
+    assert!(start.elapsed() < std::time::Duration::from_secs(30));
+}

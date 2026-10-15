@@ -1,9 +1,11 @@
 //! The JSON-RPC 2.0 client that drives one external adapter over stdio.
 
 use std::fmt;
-use std::io::{BufRead, BufReader, Write};
+use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{Child, ChildStdin, Command, Stdio};
+use std::sync::mpsc::{self, Receiver, RecvTimeoutError};
+use std::time::Duration;
 
 use serde::Serialize;
 use serde::de::DeserializeOwned;
@@ -75,19 +77,105 @@ pub struct Client<R: BufRead, W: Write> {
     next_id: u64,
     info: InitializeResult,
     child: Option<Child>,
+    /// Set once a timed-out call killed the adapter; `shutdown` then only reaps it.
+    killed: bool,
+}
+
+/// The adapter's stdout, pumped by a thread so a read can give up after a timeout.
+///
+/// Reading the pipe directly would block for as long as any grandchild of the adapter holds
+/// it open, even after the adapter itself was killed.
+// frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+pub struct ChannelReader {
+    rx: Receiver<std::io::Result<Vec<u8>>>,
+    chunk: Vec<u8>,
+    pos: usize,
+    timeout: Option<Duration>,
+}
+
+impl ChannelReader {
+    /// Starts the pump thread over `source`; each read waits at most `timeout` for data.
+    fn new<S: Read + Send + 'static>(mut source: S, timeout: Option<Duration>) -> Self {
+        let (tx, rx) = mpsc::channel();
+        std::thread::spawn(move || {
+            let mut buf = [0_u8; 8192];
+            loop {
+                let msg = match source.read(&mut buf) {
+                    Ok(0) => return,
+                    Ok(n) => Ok(buf[..n].to_vec()),
+                    Err(e) => Err(e),
+                };
+                let failed = msg.is_err();
+                if tx.send(msg).is_err() || failed {
+                    return;
+                }
+            }
+        });
+        Self {
+            rx,
+            chunk: Vec::new(),
+            pos: 0,
+            timeout,
+        }
+    }
+}
+
+impl Read for ChannelReader {
+    /// Copies pumped bytes; EOF when the pump ends, `TimedOut` when none arrive in time.
+    fn read(&mut self, out: &mut [u8]) -> std::io::Result<usize> {
+        if self.pos >= self.chunk.len() {
+            let next = match self.timeout {
+                Some(t) => match self.rx.recv_timeout(t) {
+                    Ok(m) => m,
+                    Err(RecvTimeoutError::Timeout) => {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::TimedOut,
+                            format!("no answer from the adapter within {t:?}"),
+                        ));
+                    }
+                    Err(RecvTimeoutError::Disconnected) => return Ok(0),
+                },
+                None => match self.rx.recv() {
+                    Ok(m) => m,
+                    Err(_) => return Ok(0),
+                },
+            };
+            self.chunk = next?;
+            self.pos = 0;
+        }
+        let n = out.len().min(self.chunk.len() - self.pos);
+        out[..n].copy_from_slice(&self.chunk[self.pos..self.pos + n]);
+        self.pos += n;
+        Ok(n)
+    }
 }
 
 /// A client talking to a spawned adapter process.
-pub type ProcessClient = Client<BufReader<ChildStdout>, ChildStdin>;
+pub type ProcessClient = Client<BufReader<ChannelReader>, ChildStdin>;
 
 impl ProcessClient {
     /// Starts `command` (no PATH search) and runs `initialize`; stderr is inherited.
+    ///
+    /// No call is time-bounded; see [`ProcessClient::spawn_with_timeout`].
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
     pub fn spawn(
         command: &Path,
         args: &[String],
         expected_version: Option<&str>,
     ) -> Result<Self, RpcError> {
-        tracing::info!(command = %command.display(), "spawning adapter");
+        Self::spawn_with_timeout(command, args, expected_version, None)
+    }
+
+    /// Like [`ProcessClient::spawn`], but a call (including `initialize`) with no answer within
+    /// `timeout` kills the adapter and fails with an `Io` error of kind `TimedOut`.
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+    pub fn spawn_with_timeout(
+        command: &Path,
+        args: &[String],
+        expected_version: Option<&str>,
+        timeout: Option<Duration>,
+    ) -> Result<Self, RpcError> {
+        tracing::info!(command = %command.display(), ?timeout, "spawning adapter");
         let mut child = Command::new(command)
             .args(args)
             .stdin(Stdio::piped())
@@ -100,17 +188,9 @@ impl ProcessClient {
             })?;
         let stdin = child.stdin.take().expect("stdin was piped");
         let stdout = child.stdout.take().expect("stdout was piped");
-        match Self::connect_with(BufReader::new(stdout), stdin, expected_version, None) {
-            Ok(mut client) => {
-                client.child = Some(child);
-                Ok(client)
-            }
-            Err(e) => {
-                let _ = child.kill();
-                let _ = child.wait();
-                Err(e)
-            }
-        }
+        let reader = BufReader::new(ChannelReader::new(stdout, timeout));
+        // Hand the child to the client first so a failed `initialize` drops (kills) it.
+        Self::connect_with(reader, stdin, expected_version, Some(child))
     }
 }
 
@@ -140,6 +220,7 @@ impl<R: BufRead, W: Write> Client<R, W> {
                 features: Vec::new(),
             },
             child,
+            killed: false,
         };
         let params = InitializeParams {
             protocol: PROTOCOL.to_string(),
@@ -198,7 +279,17 @@ impl<R: BufRead, W: Write> Client<R, W> {
             .map_err(RpcError::Io)?;
         loop {
             let mut buf = String::new();
-            if self.reader.read_line(&mut buf).map_err(RpcError::Io)? == 0 {
+            let read = self.reader.read_line(&mut buf).map_err(|e| {
+                if e.kind() == std::io::ErrorKind::TimedOut {
+                    tracing::error!(method, error = %e, "adapter did not answer; killing it");
+                    self.killed = true;
+                    if let Some(child) = self.child.as_mut() {
+                        let _ = child.kill();
+                    }
+                }
+                RpcError::Io(e)
+            })?;
+            if read == 0 {
                 return Err(RpcError::Protocol("adapter closed stdout".into()));
             }
             if buf.trim().is_empty() {
@@ -304,7 +395,12 @@ impl<R: BufRead, W: Write> Client<R, W> {
 
     /// Sends `shutdown` and reaps the process, if one was spawned.
     pub fn shutdown(mut self) -> Result<(), RpcError> {
-        let res: Result<(), RpcError> = self.call("shutdown", &json!({}));
+        let res: Result<(), RpcError> = if self.killed {
+            tracing::info!("adapter was killed after a timeout; skipping shutdown");
+            Ok(())
+        } else {
+            self.call("shutdown", &json!({}))
+        };
         if let Some(mut child) = self.child.take() {
             match child.wait() {
                 Ok(status) => tracing::info!(%status, "adapter exited"),
@@ -610,6 +706,48 @@ mod tests {
         )
         .unwrap();
         assert_eq!(c.info().name, "mock");
+        c.shutdown().unwrap();
+    }
+
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::spawn_with_timeout kind=unit
+    #[cfg(unix)]
+    #[test]
+    fn silent_process_times_out_even_when_a_grandchild_holds_the_pipe() {
+        let start = std::time::Instant::now();
+        let r = ProcessClient::spawn_with_timeout(
+            Path::new("/bin/sh"),
+            &["-c".to_string(), "sleep 20; echo done".to_string()],
+            None,
+            Some(Duration::from_millis(300)),
+        );
+        assert!(
+            matches!(&r, Err(RpcError::Io(e)) if e.kind() == std::io::ErrorKind::TimedOut),
+            "{:?}",
+            r.err()
+        );
+        assert!(
+            start.elapsed() < Duration::from_secs(10),
+            "{:?}",
+            start.elapsed()
+        );
+    }
+
+    // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::spawn_with_timeout kind=unit
+    #[cfg(unix)]
+    #[test]
+    fn prompt_process_is_not_killed_by_a_generous_timeout() {
+        let reply1 = json!({"jsonrpc": "2.0", "id": 1, "result": init("0.1.0", &["emit"])});
+        let reply2 = json!({"jsonrpc": "2.0", "id": 2, "result": null});
+        let script = format!("read a; echo '{reply1}'; read b; echo '{reply2}'");
+        let c = ProcessClient::spawn_with_timeout(
+            Path::new("/bin/sh"),
+            &["-c".to_string(), script],
+            Some("0.1.0"),
+            Some(Duration::from_secs(30)),
+        )
+        .unwrap();
         c.shutdown().unwrap();
     }
 }

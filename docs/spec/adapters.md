@@ -500,7 +500,9 @@ system named by the locator when missing, to `create_frames` adapters
 only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
 unavailable (R008, exit 2). Adapters are located by `command` in
-`cadetta.toml`; there is no PATH search. Diagnostics in every result use
+`cadetta.toml`; there is no PATH search (a bare name such as `sh` names a file in the
+package directory, never a system program). `check` kills an adapter that leaves a call
+unanswered for 60 seconds and reports R008. Diagnostics in every result use
 `cadetta.diag/1`.
 
 Adapters are declared in `cadetta.toml` (`[[adapter]]`, config-cli.md
