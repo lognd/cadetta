@@ -2,11 +2,12 @@
 id = "01M4V10CXRBX5ZEVABVRC9QR10"
 title = "IR JSON Schema lacks Project interfaces/tables/requires/waivers and Component datums/points/placements"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:19:53Z"
-updated = "2026-10-15T01:45:05Z"
+updated = "2026-10-15T01:45:21Z"
 scope = ["docs/schemas/**", "crates/cadetta-ir/src/schema.rs", "docs/spec/ir.md", "changelog.d/01M4V10CXRBX5ZEVABVRC9QR10.*"]
 
 [[acceptance]]
