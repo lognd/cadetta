@@ -187,6 +187,15 @@ Rust.
 | rebuild errors after push | R004, then the snapshot restore of adapters.md 2.3 |
 | bound item missing | R003 |
 
+### 5.1 Save
+
+`Cadetta.SolidWorks.Save.SaveService` is the `save` step: with
+`save = "after-sync"` it writes only documents the adapter modified whose
+rebuild did not fail and records a `blake3:` digest of the saved bytes
+(`Blake3.Digest`); with `save = "never"`, or when any locator `failed`, it
+writes nothing and the documents stay dirty. `SwComSaveTarget` saves a
+`ModelDoc2` silently through `Save3`.
+
 ## 6. Testing
 
 - `Cadetta.SolidWorks.Tests` covers Core on Linux and Windows.
