@@ -2,7 +2,7 @@
 id = "01M4Y2Z95B99FTVX68T4XTSTXR"
 title = "Lower ScrewJoint at/onto to EdgeFloat in sema"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
