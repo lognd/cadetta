@@ -93,6 +93,8 @@ pub struct ProcessFact {
     pub path: CanonPath,
     /// The member's span.
     pub span: Span,
+    /// The name of the process the member sits under.
+    pub process: String,
     /// The human message.
     pub message: String,
 }
@@ -385,6 +387,7 @@ impl Processes {
                         code: "P001",
                         path,
                         span: p.name.span,
+                        process: name.to_string(),
                         message: format!(
                             "`{}` looks like a feature but has no role under process `{name}`",
                             p.name.name

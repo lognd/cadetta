@@ -10,11 +10,12 @@ use std::collections::BTreeMap;
 
 use cadetta_ir::model::{Bound, BoundOp, Exact};
 use cadetta_syntax::ast::{self, Component, Fit, FitSpec, MemberKind};
+use cadetta_syntax::span::Span;
 use cadetta_units::{Magnitude, ToleranceError, Toleranced};
 use tracing::{debug, trace, warn};
 
 use crate::eval::{Evaluation, Evaluator, Quant, Val};
-use crate::fits::analyze;
+use crate::fits::{FitFailure, analyze};
 use crate::lower::FitInput;
 use crate::resolve::{CanonPath, Ctx, MemberSeg, PackageSrc, Resolved, Resolver};
 
@@ -37,15 +38,30 @@ fn fit_path(package: &str, module: &[String], c: &Component, f: &Fit) -> CanonPa
     p
 }
 
+/// One fit member with where it lives: package, module path, component, fit and member span.
+type FitSite<'a> = (&'a str, &'a [String], &'a Component, &'a Fit, Span);
+
+/// An F001, F002 or F003 finding about one fit, for the F lift (lints.md F).
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct FitFinding {
+    /// `F001`, `F002` or `F003`.
+    pub code: &'static str,
+    /// One sentence, no trailing period.
+    pub message: String,
+    /// The fit member the finding is about.
+    pub path: CanonPath,
+    /// The fit member's span, in the module of `path`.
+    pub span: Span,
+}
+
 /// Every fit member of every component, with the component and its location.
-fn each_fit<'a>(
-    packages: &'a [PackageSrc<'a>],
-) -> impl Iterator<Item = (&'a str, &'a [String], &'a Component, &'a Fit)> {
+fn each_fit<'a>(packages: &'a [PackageSrc<'a>]) -> impl Iterator<Item = FitSite<'a>> {
     packages.iter().flat_map(|p| {
         p.modules.iter().flat_map(move |m| {
             m.file.components().flat_map(move |c| {
                 c.members.iter().filter_map(move |mem| match &mem.kind {
-                    MemberKind::Fit(f) => Some((p.name.as_str(), m.path.as_slice(), c, f)),
+                    MemberKind::Fit(f) => Some((p.name.as_str(), m.path.as_slice(), c, f, mem.span)),
                     _ => None,
                 })
             })
@@ -56,7 +72,7 @@ fn each_fit<'a>(
 /// Evaluates the required range of every fit; run before `Evaluator::evaluate` consumes it.
 pub fn eval_ranges(evaluator: &mut Evaluator, packages: &[PackageSrc]) -> FitRanges {
     let mut out = BTreeMap::new();
-    for (pkg, module, c, f) in each_fit(packages) {
+    for (pkg, module, c, f, _) in each_fit(packages) {
         let Some((lo, hi)) = &f.range else { continue };
         let ctx = ctx_of(pkg, module, c);
         let path = fit_path(pkg, module, c, f);
@@ -125,7 +141,8 @@ fn derive_one(
     resolver: &Resolver,
     evaluation: &Evaluation,
     ranges: &FitRanges,
-    (pkg, module, c, f): (&str, &[String], &Component, &Fit),
+    (pkg, module, c, f, span): FitSite,
+    findings: &mut Vec<FitFinding>,
 ) -> Option<FitInput> {
     let ctx = ctx_of(pkg, module, c);
     let path = fit_path(pkg, module, c, f);
@@ -155,9 +172,25 @@ fn derive_one(
         Ok(r) => r,
         Err(e) => {
             warn!(fit = %path, code = ?e.code(), error = ?e, "fits: fit could not be evaluated");
+            if let Some(code) = e.code() {
+                findings.push(FitFinding {
+                    code,
+                    message: format!("fit `{}` could not be evaluated: {}", f.name.name, failure_reason(&e)),
+                    path,
+                    span,
+                });
+            }
             return None;
         }
     };
+    for d in result.diagnostics.iter().filter(|d| d.code == crate::fits::F003) {
+        findings.push(FitFinding {
+            code: crate::fits::F003,
+            message: d.message.clone(),
+            path: path.clone(),
+            span,
+        });
+    }
     let member = |n: &str| {
         let mut m = path.clone();
         m.members.push(MemberSeg::Name(n.to_owned()));
@@ -173,6 +206,20 @@ fn derive_one(
     })
 }
 
+/// The reason of a fit failure without the leading lint code of the `cadetta-fits` message.
+fn failure_reason(e: &FitFailure) -> String {
+    match e {
+        FitFailure::Iso(inner) => {
+            let text = inner.to_string();
+            text.split_once(": ").map_or(text.clone(), |(_, rest)| rest.to_owned())
+        }
+        FitFailure::NominalNotNanometres => {
+            "the nominal size is not a whole number of nanometres".to_owned()
+        }
+        other => format!("{other:?}"),
+    }
+}
+
 /// Analyses every fit whose operands are evaluated values, for `LowerInput::fits`.
 pub fn derive_fits(
     resolver: &Resolver,
@@ -180,7 +227,20 @@ pub fn derive_fits(
     ranges: &FitRanges,
     packages: &[PackageSrc],
 ) -> Vec<FitInput> {
-    each_fit(packages)
-        .filter_map(|x| derive_one(resolver, evaluation, ranges, x))
-        .collect()
+    derive_fits_with_findings(resolver, evaluation, ranges, packages).0
+}
+
+/// [`derive_fits`] plus the F001/F002/F003 findings the analysis raised, for the F lift.
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+pub fn derive_fits_with_findings(
+    resolver: &Resolver,
+    evaluation: &Evaluation,
+    ranges: &FitRanges,
+    packages: &[PackageSrc],
+) -> (Vec<FitInput>, Vec<FitFinding>) {
+    let mut findings = Vec::new();
+    let fits = each_fit(packages)
+        .filter_map(|x| derive_one(resolver, evaluation, ranges, x, &mut findings))
+        .collect();
+    (fits, findings)
 }

@@ -46,6 +46,12 @@ impl Key {
             mag: format!("{mag:?}"),
         }
     }
+
+    /// True when both keys are of the same dimension (T001 compares like with like).
+    // frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+    pub fn same_dim(&self, other: &Key) -> bool {
+        self.dim == other.dim
+    }
 }
 
 /// A value the design offers by name, such as a table cell reachable from a component.

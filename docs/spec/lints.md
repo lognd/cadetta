@@ -332,6 +332,24 @@ before its date and an error once the date has passed `--as-of`
 whatever the configured severity; L002 lists viable alternates in its
 message. T001 and P001 use the configured severity.
 
+Wiring in `cadetta check` (0.1.0): `pipeline::analyze_at` feeds the lifts.
+Q007 comes from the lexer: it is lifted as a fixable error carrying the join
+fix, while E001 stays a halting syntax error. P001 comes from the process
+pass (one fact per feature-like parameter with no role). F001/F002 (fit
+class or size out of the ISO 286 tables) and F003 (side tolerance disagrees
+with the class) come from fit derivation. T001 compares each literal of a
+non-parameterized `ots` component (the member citation, else the component
+citation, when it names a `cite` path) with every key and cell of the
+tables carrying the same citation path; it fires only when a table holds
+values of the literal's dimension and none equals it. L001/L002 read the
+`lifecycle` attribute of the primary of each part slot. `--as-of` (else
+`[package] as_of`, else today) is the date for L001. Approximation: an
+alternate is viable when it names a known `ots` component that is not
+itself end-of-life; variants are not evaluated by `check`, so I002/I003
+failures under an alternate do not count against viability. E-family
+resolution errors keep their current fixed-error text and are not re-lifted
+through `lift_resolution`.
+
 ### S: sources and solvers
 
 | Code | Name | Default | Fixed | Meaning |

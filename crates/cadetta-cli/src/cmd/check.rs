@@ -21,7 +21,7 @@ use super::ack::policy_of;
 use super::check_drift::process_drift;
 use super::obligations::{Candidate, ObligationsArgs, list};
 use crate::config::{Adapter, Config};
-use crate::pipeline::{Analysis, analyze};
+use crate::pipeline::{Analysis, analyze_at};
 use crate::project::{PackageDir, Project};
 use crate::scope::Scope;
 use crate::universe::{self, universes};
@@ -259,7 +259,7 @@ pub fn run_check_with(
         Err(m) => return fail(err, &m),
     };
 
-    let analysis = analyze(&project, &members);
+    let analysis = analyze_at(&project, &members, &as_of.date.to_string());
     let mut raw = analysis.diagnostics.clone();
     if !analysis.halted {
         for package in &analysis.packages {

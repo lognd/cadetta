@@ -20,6 +20,7 @@ use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::d::{Key, NamedValue};
+use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableMiss};
 use cadetta_lint::rules::{d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
@@ -478,6 +479,26 @@ fn member_path_at(pkg: &str, module: &[String], file: &File, span: Span) -> Opti
     None
 }
 
+/// Convert a lexer fix-it (byte span and replacement) to a lint fix over `file`.
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+fn syntax_fix(file: &IndexedFile, fix: &cadetta_syntax::lexer::Fix) -> cadetta_lint::diag::Fix {
+    let Location::Source { start, end, .. } = SourceIndex::location(file, fix.span) else {
+        unreachable!("SourceIndex::location always yields a source location");
+    };
+    cadetta_lint::diag::Fix {
+        title: if fix.replacement.is_empty() {
+            "delete the text".to_owned()
+        } else {
+            format!("replace with `{}`", fix.replacement)
+        },
+        edits: vec![cadetta_lint::diag::Edit {
+            file: file.name.clone(),
+            range: cadetta_lint::diag::Range { start, end },
+            text: fix.replacement.clone(),
+        }],
+    }
+}
+
 fn parse_package(
     pkg: &RawPackage,
     root: &Path,
@@ -508,31 +529,39 @@ fn parse_package(
         let shown = display_name(root, &module.file);
         let source = SourceFile::new(shown.clone(), module.source.clone());
         let parsed = parse(&module.source);
+        let here = IndexedFile {
+            name: shown.clone(),
+            package: name.clone(),
+            module: path.clone(),
+            is_std,
+            source: source.clone(),
+        };
+        let lcfg = LintConfig::new();
+        let mut qfindings = Vec::new();
         for d in &parsed.diags {
-            let sev = if d.code.code() == "E001" {
-                *halted = true;
-                Severity::Error
-            } else {
-                Severity::Warning
-            };
             tracing::debug!(file = %shown, code = d.code.code(), "pipeline: syntax diagnostic");
-            out.push(diag_at(
-                d.code.code(),
-                sev,
-                d.message.clone(),
-                None,
-                Some(SourceIndex::location(
-                    &IndexedFile {
-                        name: shown.clone(),
-                        package: name.clone(),
-                        module: path.clone(),
-                        is_std,
-                        source: source.clone(),
-                    },
-                    d.span,
-                )),
-            ));
+            let location = SourceIndex::location(&here, d.span);
+            if d.code.code() == "E001" {
+                *halted = true;
+                out.push(diag_at(
+                    d.code.code(),
+                    Severity::Error,
+                    d.message.clone(),
+                    None,
+                    Some(location),
+                ));
+                continue;
+            }
+            // Lexer-found Q findings (Q007) go through the Q lift for catalog severity and fix-it.
+            qfindings.push(q::QFinding {
+                code: d.code.code().to_owned(),
+                message: d.message.clone(),
+                path: None,
+                location: Some(location),
+                fix: d.fix.as_ref().map(|f| syntax_fix(&here, f)),
+            });
         }
+        out.extend(q::lift(&qfindings, &lcfg));
         index.files.push(IndexedFile {
             name: shown.clone(),
             package: name.clone(),
@@ -563,6 +592,26 @@ fn parse_package(
 /// Stages: parse (a lexical error halts), resolve, evaluate, kind-check, dependency
 /// graph, lower the in-scope packages to IR, then the IR lints and check verdicts.
 pub fn analyze(project: &Project, scope: &[usize]) -> Analysis {
+    let config_as_of = project
+        .config
+        .package
+        .as_ref()
+        .and_then(|p| p.as_of.as_deref());
+    let as_of = cadetta_obligations::as_of::AsOf::resolve(
+        None,
+        config_as_of,
+        cadetta_obligations::as_of::Date::today(),
+    )
+    .map_or_else(
+        |_| cadetta_obligations::as_of::Date::today().to_string(),
+        |a| a.date.to_string(),
+    );
+    analyze_at(project, scope, &as_of)
+}
+
+/// Analyse with an explicit `--as-of` date (`YYYY-MM-DD`), which L001 reads.
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+pub fn analyze_at(project: &Project, scope: &[usize], as_of: &str) -> Analysis {
     let mut analysis = Analysis::default();
     let mut halted = false;
     let mut parsed: Vec<ParsedPackage> = Vec::new();
@@ -610,7 +659,7 @@ pub fn analyze(project: &Project, scope: &[usize]) -> Analysis {
         .iter()
         .map(|&i| package_name(&project.packages[i]))
         .collect();
-    evaluate_stages(&parsed, &scope_names, &project.config.lint, &mut analysis);
+    evaluate_stages(&parsed, &scope_names, &project.config.lint, as_of, &mut analysis);
     analysis
 }
 
@@ -656,10 +705,218 @@ fn table_cells(
     out
 }
 
+/// L001/L002: lifecycle facts for the primary of every part slot in scope.
+///
+/// An alternate counts as viable when it names a known `ots` component that is not itself
+/// end-of-life; `check` does not evaluate variants, so interface-bound failures under the
+/// alternate (I002/I003) are not folded in (lints.md L).
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+fn lifecycle_findings(
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    as_of: &str,
+    index: &SourceIndex,
+) -> Vec<LifecycleFinding> {
+    use cadetta_variants::lifecycle as vl;
+    let Some(as_of) = vl::LifecycleDate::parse(as_of) else {
+        tracing::warn!(as_of, "pipeline: unparsable as-of date; L001/L002 skipped");
+        return Vec::new();
+    };
+    // ots component name -> (package, its lifecycle)
+    let mut ots: BTreeMap<&str, Vec<(&str, Option<vl::Lifecycle>)>> = BTreeMap::new();
+    for p in parsed {
+        for m in &p.modules {
+            for item in m.file.items() {
+                if let ItemKind::Component(c) = &item.kind
+                    && c.class == cadetta_syntax::ast::ComponentClass::Ots
+                {
+                    let lc = vl::find(&item.attrs).and_then(Result::ok);
+                    ots.entry(c.name.name.as_str()).or_default().push((p.name.as_str(), lc));
+                }
+            }
+        }
+    }
+    let lookup = |pkg: &str, ctor: &cadetta_syntax::ast::Ctor| {
+        let name = ctor.path.segments.last()?.name.as_str();
+        let all = ots.get(name)?;
+        all.iter().find(|(p, _)| *p == pkg).or_else(|| all.first())
+    };
+    let mut out = Vec::new();
+    for p in parsed.iter().filter(|p| !p.is_std && scope.contains(&p.name)) {
+        for m in &p.modules {
+            for item in m.file.items() {
+                let ItemKind::Component(c) = &item.kind else {
+                    continue;
+                };
+                for mem in &c.members {
+                    let MemberKind::Part(part) = &mem.kind else {
+                        continue;
+                    };
+                    let Some(primary) = &part.primary else {
+                        continue;
+                    };
+                    let Some((_, lc)) = lookup(&p.name, primary) else {
+                        continue;
+                    };
+                    let alternates: Vec<vl::Alternate> = part
+                        .alts
+                        .iter()
+                        .map(|a| {
+                            let name = a
+                                .path
+                                .segments
+                                .last()
+                                .map_or_else(String::new, |s| s.name.clone());
+                            let found = lookup(&p.name, a);
+                            let lifecycle = found.and_then(|(_, l)| l.clone());
+                            let viable = found.is_some()
+                                && !lifecycle.as_ref().is_some_and(|l| l.status.is_end_of_life());
+                            vl::Alternate { name, lifecycle, viable }
+                        })
+                        .collect();
+                    let pname = primary
+                        .path
+                        .segments
+                        .last()
+                        .map_or_else(String::new, |s| s.name.clone());
+                    let Some(fact) = vl::analyse(&pname, lc.as_ref(), &alternates, &as_of) else {
+                        continue;
+                    };
+                    let mut path = CanonPath::item(&p.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(part.name.name.clone()));
+                    out.push(LifecycleFinding {
+                        code: fact.code.to_owned(),
+                        path: path.to_string(),
+                        status: fact.status.as_str().to_owned(),
+                        date: fact.date.to_string(),
+                        date_passed: fact.date_passed,
+                        candidates: fact.candidates,
+                        location: index
+                            .module(&p.name, &m.path)
+                            .map(|f| SourceIndex::location(f, primary.span)),
+                    });
+                }
+            }
+        }
+    }
+    out
+}
+
+/// T001: `ots` literals that equal no key and no cell of the table(s) sharing their citation.
+///
+/// Only non-parameterized `ots` components are checked, a literal is compared only against
+/// tables holding a value of its dimension, and citations match by written path.
+// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+fn table_misses(
+    evaluator: &mut Evaluator<'_, '_>,
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    index: &SourceIndex,
+) -> Vec<TableMiss> {
+    let cite_text = |c: &cadetta_syntax::ast::Citation| match &c.name {
+        cadetta_syntax::ast::CiteName::Named(p) => Some(
+            p.segments
+                .iter()
+                .map(|s| s.name.as_str())
+                .collect::<Vec<_>>()
+                .join("::"),
+        ),
+        cadetta_syntax::ast::CiteName::Literal(_) => None,
+    };
+    // citation text -> (table name, every key and cell value)
+    let mut tables: BTreeMap<String, Vec<(String, Vec<Key>)>> = BTreeMap::new();
+    for p in parsed {
+        for m in &p.modules {
+            let ctx = Ctx {
+                package: p.name.clone(),
+                module: m.path.clone(),
+                component: None,
+                locals: Vec::new(),
+            };
+            for item in m.file.items() {
+                let ItemKind::Table(t) = &item.kind else {
+                    continue;
+                };
+                let Some(cite) = t.citation.as_ref().and_then(cite_text) else {
+                    continue;
+                };
+                let mut keys = Vec::new();
+                for row in &t.rows {
+                    for expr in std::iter::once(&row.key).chain(row.values.iter().flatten()) {
+                        if let Ok(q) = evaluator.eval_input(ctx.clone(), expr) {
+                            keys.push(Key::new(q.dim(), &q.nominal));
+                        }
+                    }
+                }
+                tables.entry(cite).or_default().push((t.name.name.clone(), keys));
+            }
+        }
+    }
+    let mut out = Vec::new();
+    for p in parsed.iter().filter(|p| !p.is_std && scope.contains(&p.name)) {
+        for m in &p.modules {
+            let ctx = Ctx {
+                package: p.name.clone(),
+                module: m.path.clone(),
+                component: None,
+                locals: Vec::new(),
+            };
+            for item in m.file.items() {
+                let ItemKind::Component(c) = &item.kind else {
+                    continue;
+                };
+                if c.class != cadetta_syntax::ast::ComponentClass::Ots || !c.params.is_empty() {
+                    continue;
+                }
+                for mem in &c.members {
+                    let MemberKind::Param(par) = &mem.kind else {
+                        continue;
+                    };
+                    let Some(cite) = par
+                        .citation
+                        .as_ref()
+                        .or(c.citation.as_ref())
+                        .and_then(cite_text)
+                    else {
+                        continue;
+                    };
+                    let Some(cands) = tables.get(&cite) else {
+                        continue;
+                    };
+                    let Ok(q) = evaluator.eval_input(ctx.clone(), &par.value) else {
+                        continue;
+                    };
+                    let lit = Key::new(q.dim(), &q.nominal);
+                    let like: Vec<_> = cands
+                        .iter()
+                        .filter(|(_, ks)| ks.iter().any(|k| k.same_dim(&lit)))
+                        .collect();
+                    if like.is_empty() || like.iter().any(|(_, ks)| ks.contains(&lit)) {
+                        continue;
+                    }
+                    let mut path = CanonPath::item(&p.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(par.name.name.clone()));
+                    tracing::debug!(path = %path, table = %like[0].0, "pipeline: T001 literal matches no row");
+                    out.push(TableMiss {
+                        path: path.to_string(),
+                        table: like[0].0.clone(),
+                        column: par.name.name.clone(),
+                        location: index
+                            .module(&p.name, &m.path)
+                            .map(|f| SourceIndex::location(f, par.value.span)),
+                    });
+                }
+            }
+        }
+    }
+    out
+}
+
 fn evaluate_stages(
     parsed: &[ParsedPackage],
     scope: &BTreeSet<String>,
     lint: &Lint,
+    as_of: &str,
     analysis: &mut Analysis,
 ) {
     let sources: Vec<PackageSrc> = parsed
@@ -690,8 +947,10 @@ fn evaluate_stages(
     let procs = Processes::compile(&mut evaluator, &sources);
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let cells = table_cells(&mut evaluator, parsed);
+    let misses = table_misses(&mut evaluator, parsed, scope, &analysis.sources);
     let evaluation = evaluator.evaluate();
-    let derived_fits = fitderive::derive_fits(&resolver, &evaluation, &fit_ranges, &sources);
+    let (derived_fits, fit_findings) =
+        fitderive::derive_fits_with_findings(&resolver, &evaluation, &fit_ranges, &sources);
     let outcome = procs.apply(&evaluation);
     let renames = Renames::collect(&resolver, &sources);
     let graph = DepGraph::build(&resolver, &renames, &sources);
@@ -736,6 +995,43 @@ fn evaluate_stages(
         };
 
     let mut out: Vec<Diagnostic> = Vec::new();
+    let lift_cfg = LintConfig::new();
+    // frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+    out.extend(lifecycle::lift_missing_role(
+        &procs
+            .facts
+            .iter()
+            .filter(|f| scope.contains(&f.path.package))
+            .map(|f| MissingRole {
+                path: f.path.to_string(),
+                process: Some(f.process.clone()),
+                location: index
+                    .module(&f.path.package, &f.path.modules)
+                    .map(|file| SourceIndex::location(file, f.span)),
+            })
+            .collect::<Vec<_>>(),
+        &lift_cfg,
+    ));
+    out.extend(lifecycle::lift_not_in_table(&misses, &lift_cfg));
+    out.extend(lifecycle::lift_lifecycle(
+        &lifecycle_findings(parsed, scope, as_of, &analysis.sources),
+        &lift_cfg,
+    ));
+    out.extend(f::lift(
+        &fit_findings
+            .iter()
+            .filter(|x| scope.contains(&x.path.package))
+            .map(|x| f::FFinding {
+                code: x.code.to_owned(),
+                message: x.message.clone(),
+                path: Some(x.path.to_string()),
+                location: index
+                    .module(&x.path.package, &x.path.modules)
+                    .map(|file| SourceIndex::location(file, x.span)),
+            })
+            .collect::<Vec<_>>(),
+        &lift_cfg,
+    ));
     // Kind diagnostics are exact: they come from one module at a time.
     let mut kind_keys: BTreeSet<(String, usize, usize)> = BTreeSet::new();
     for p in &in_scope {

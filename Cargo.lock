@@ -127,6 +127,7 @@ dependencies = [
  "cadetta-solve",
  "cadetta-syntax",
  "cadetta-units",
+ "cadetta-variants",
  "crossbeam-channel",
  "jsonschema",
  "lsp-server",
