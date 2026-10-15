@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:32:55Z"
+digest = "adaa1a2644d861750b7bf057d9c4b5943a7ef1a80cba866113e1a144429f6416"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d1382e9d-c480-4a98-a4e8-81c796c5f47a with nextest profile: default
+    Starting 1 test across 57 binaries (1326 tests skipped)
+        PASS [   0.046s] cadetta::ir_lint_rules literal_unlike_every_table_cell_is_quiet_for_d002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.048s] 1 test run: 1 passed, 1326 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "literal_unlike_every_table_cell_is_quiet_for_d002"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "29bfca2c24bd4cff13fde57047a15517f4c866f4209ec70ac50ad8a63ebad4f1"
+at = "2026-10-15T02:32:55Z"
+actor = "lognd"
+rev = 1
