@@ -1,0 +1,37 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T08:48:09Z"
+digest = "5ddfd8afa4fe762461172c2e6d2804fdf4d15fdcf71193084d0ec6012017f5fa"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bbbbe97d-f2e4-4361-ad88-c5294133e001 with nextest profile: default
+    Starting 1 test across 40 binaries (480 tests skipped)
+        PASS [   0.124s] cadetta::conformance script_spawns_never_overlap_concurrent_script_writes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.128s] 1 test run: 1 passed, 480 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta script_spawns_never_overlap"
+size = 1458
+status = "measured"
+test_count = 1
+tests_digest = "7ee37a315c1bd1ff3b5164a0bdf28aa91d569d6cf4878060edad52204d22f78d"
+at = "2026-10-15T08:48:09Z"
+actor = "lognd"
+rev = 1
