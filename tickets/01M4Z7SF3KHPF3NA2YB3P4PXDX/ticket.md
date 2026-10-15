@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/config.rs", "docs/spec/lints.md", "changelog.d/
 
 [[acceptance]]
 text = "lint.precision.Money is accepted and sets the M001 limit for USD, EUR, GBP, CNY and JPY"
-bound = false
+bound = true
 +++
 
 found while working ~C7DZBZH
