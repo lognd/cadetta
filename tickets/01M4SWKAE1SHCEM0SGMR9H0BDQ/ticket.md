@@ -2,7 +2,8 @@
 id = "01M4SWKAE1SHCEM0SGMR9H0BDQ"
 title = "Lint family G001-G007 catalog entries"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "medium"
 points = 3
 parent = "01M4SPWH0ZE4G7KXRDA5M71GPS"
