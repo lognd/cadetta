@@ -13,7 +13,7 @@ scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/k
 
 [[acceptance]]
 text = "The fit-clearance-member fixture passes and its known-gaps entry is removed"
-bound = false
+bound = true
 +++
 
 Split from ~A0FQTVX. Fixture language/fit-clearance-member: check reports no C001 because fit analysis (sema/src/fits.rs, fitderive.rs) runs after member values and eval.rs cannot read it. Remove the known-gaps entry.
