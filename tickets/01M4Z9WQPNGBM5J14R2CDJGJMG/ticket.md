@@ -2,7 +2,8 @@
 id = "01M4Z9WQPNGBM5J14R2CDJGJMG"
 title = "Conformance: sync executor for binding sync fixtures"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
