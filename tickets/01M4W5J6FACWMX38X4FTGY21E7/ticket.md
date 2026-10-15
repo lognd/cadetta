@@ -2,7 +2,7 @@
 id = "01M4W5J6FACWMX38X4FTGY21E7"
 title = "Package [defaults] and dependency packages in the evaluator inputs"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
