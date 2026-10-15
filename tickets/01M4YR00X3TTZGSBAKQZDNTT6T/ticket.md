@@ -2,11 +2,12 @@
 id = "01M4YR00X3TTZGSBAKQZDNTT6T"
 title = "language: wire VisibilityChecker into check (E016/E017 privacy)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:02:30Z"
+updated = "2026-10-15T03:02:56Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/**", "crates/cadetta-cli/tests/privacy.rs", "changelog.d/01M4YR00X3TTZGSBAKQZDNTT6T.*"]
 
 [[acceptance]]
