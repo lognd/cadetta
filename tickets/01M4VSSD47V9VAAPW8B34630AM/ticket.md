@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:28:31Z"
+updated = "2026-10-15T04:29:10Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "#[when(cond)] members are absent while cond is false"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "reading an absent member is E002"
