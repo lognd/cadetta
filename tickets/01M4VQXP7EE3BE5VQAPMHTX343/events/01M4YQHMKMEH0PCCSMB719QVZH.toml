@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:51:30Z"
+digest = "117d10145661979ee64ee042ff60d80258903aeb28f4d96b2065372a9deb536b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f162868e-f161-4214-a12f-e1cf28cf2951 with nextest profile: default
+    Starting 1 test across 59 binaries (1348 tests skipped)
+        PASS [   0.140s] cadetta::quantity_zero_trig inexact_trig_point_raises_q006
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.142s] 1 test run: 1 passed, 1348 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "inexact_trig_point_raises_q006"
+size = 554
+status = "measured"
+test_count = 1
+tests_digest = "4103ad637d6bb81ebeda3cda23a460fb8718ef246e500d407554ffd3a25df0df"
+at = "2026-10-15T02:51:30Z"
+actor = "lognd"
+rev = 1
