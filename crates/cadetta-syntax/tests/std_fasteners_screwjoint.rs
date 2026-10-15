@@ -98,7 +98,14 @@ fn public_members_are_exactly_the_spec_list() {
     want.sort();
     assert_eq!(public, want);
     assert!(!private.is_empty());
-    for p in ["major", "pitch", "pocket_dia", "pocket_depth", "column", "drill_nominal"] {
+    for p in [
+        "major",
+        "pitch",
+        "pocket_dia",
+        "pocket_depth",
+        "column",
+        "drill_nominal",
+    ] {
         assert!(private.contains(&p.to_owned()), "{p}");
     }
 }

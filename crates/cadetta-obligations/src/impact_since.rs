@@ -205,16 +205,18 @@ pub fn diff(old: &Ir, new: &Ir) -> Diff {
             })
         })
         .collect();
-    tracing::debug!(nodes = nodes.len(), flips = flips.len(), "impact since: diffed");
+    tracing::debug!(
+        nodes = nodes.len(),
+        flips = flips.len(),
+        "impact since: diffed"
+    );
     Diff { nodes, flips }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cadetta_ir::model::{
-        Component, ComponentClass, Flavour, MemberKind, PackageId, Verdicts,
-    };
+    use cadetta_ir::model::{Component, ComponentClass, Flavour, MemberKind, PackageId, Verdicts};
     use cadetta_ir::path::{Path, PathContext};
 
     fn p(s: &str) -> Path {
@@ -278,7 +280,11 @@ mod tests {
             Some(VerdictState::Fail),
         );
         let d = diff(&old, &new);
-        let got: Vec<_> = d.nodes.iter().map(|n| (n.path.as_str(), n.change)).collect();
+        let got: Vec<_> = d
+            .nodes
+            .iter()
+            .map(|n| (n.path.as_str(), n.change))
+            .collect();
         assert_eq!(
             got,
             [

@@ -269,7 +269,11 @@ fn evaluate(
     if analysis.halted {
         return Err(format!("{what}: a syntax error stopped analysis"));
     }
-    let irs = analysis.packages.into_iter().map(|p| (p.name, p.ir)).collect();
+    let irs = analysis
+        .packages
+        .into_iter()
+        .map(|p| (p.name, p.ir))
+        .collect();
     Ok((irs, project.root))
 }
 
@@ -306,8 +310,11 @@ pub fn run_since(
         Ok(r) => r,
         Err(m) => return fail(err, &m, EXIT_USAGE),
     };
-    let (new, root) = match evaluate(globals.cwd.as_deref(), globals.config.as_deref(), "worktree")
-    {
+    let (new, root) = match evaluate(
+        globals.cwd.as_deref(),
+        globals.config.as_deref(),
+        "worktree",
+    ) {
         Ok(o) => o,
         Err(m) => return fail(err, &m, EXIT_USAGE),
     };
@@ -327,8 +334,8 @@ pub fn run_since(
 mod tests {
     use super::*;
     use cadetta_ir::model::{
-        Binding, Check, Component, ComponentClass, Flavour, Locator, LocatorKind, LocatorMode, Member,
-        MemberKind, PackageId, Verdicts, VerdictState,
+        Binding, Check, Component, ComponentClass, Flavour, Locator, LocatorKind, LocatorMode,
+        Member, MemberKind, PackageId, VerdictState, Verdicts,
     };
     use cadetta_ir::path::{Path as IrPath, PathContext};
 
@@ -395,11 +402,7 @@ mod tests {
     }
 
     fn pair(a: Ir, b: Ir) -> Report {
-        build(
-            "HEAD",
-            &[("pkg".to_owned(), a)],
-            &[("pkg".to_owned(), b)],
-        )
+        build("HEAD", &[("pkg".to_owned(), a)], &[("pkg".to_owned(), b)])
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/impact_since.rs::build
@@ -408,10 +411,7 @@ mod tests {
         let r = pair(ir("1mm", VerdictState::Pass), ir("2mm", VerdictState::Fail));
         let paths: Vec<_> = r.nodes.iter().map(|n| n.path.as_str()).collect();
         assert_eq!(paths, ["pkg::X.a", "pkg::X.ok"]);
-        assert_eq!(
-            r.obligations,
-            [("check:pkg::X.ok".to_owned(), "flipped")]
-        );
+        assert_eq!(r.obligations, [("check:pkg::X.ok".to_owned(), "flipped")]);
         assert_eq!(r.flips.len(), 1);
         assert_eq!(r.cad.len(), 1);
         assert_eq!(r.cad[0].file, "rover.FCStd");
@@ -425,10 +425,9 @@ mod tests {
         let mut out = Vec::new();
         render(&same, Format::Text, &mut out);
         assert_eq!(String::from_utf8(out).unwrap(), "since HEAD: no changes\n");
-        let schema: Json = serde_json::from_str(include_str!(
-            "../../../../docs/schemas/impact-since.json"
-        ))
-        .unwrap();
+        let schema: Json =
+            serde_json::from_str(include_str!("../../../../docs/schemas/impact-since.json"))
+                .unwrap();
         let validator = jsonschema::validator_for(&schema).unwrap();
         for r in [
             same,

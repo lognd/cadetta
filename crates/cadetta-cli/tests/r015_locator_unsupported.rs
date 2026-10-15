@@ -20,7 +20,9 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
             }
         }
     }
-    let from = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance").join(fixture);
+    let from = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/conformance")
+        .join(fixture);
     let to = std::env::temp_dir().join(format!("cadetta-r015-{tag}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&to);
     copy(&from, &to);
@@ -29,10 +31,16 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
 
 /// Runs `cadetta --format json emit` in `dir`; returns (exit, report).
 fn emit(dir: &Path) -> (u8, Value) {
-    let args: Vec<String> = ["--cwd", dir.to_str().expect("utf8"), "--format", "json", "emit"]
-        .iter()
-        .map(|s| (*s).to_owned())
-        .collect();
+    let args: Vec<String> = [
+        "--cwd",
+        dir.to_str().expect("utf8"),
+        "--format",
+        "json",
+        "emit",
+    ]
+    .iter()
+    .map(|s| (*s).to_owned())
+    .collect();
     let (mut out, mut err) = (Vec::new(), Vec::new());
     let exit = cadetta::run_with_env(&args, None, &mut out, &mut err);
     let report = serde_json::from_slice(&out).expect("json report");
@@ -61,8 +69,14 @@ fn unsupported_locator_on_json_or_csv_is_r015_and_exit_1() {
         assert_eq!(d["code"], "R015", "{fixture}: {report}");
         assert_eq!(d["severity"], "error", "{fixture}");
         assert!(d["path"].as_str().is_some(), "{fixture}: path named");
-        assert!(d["message"].as_str().expect("msg").contains("locator"), "{fixture}");
-        assert!(report["files"].as_array().is_none_or(Vec::is_empty), "{fixture}: withheld");
+        assert!(
+            d["message"].as_str().expect("msg").contains("locator"),
+            "{fixture}"
+        );
+        assert!(
+            report["files"].as_array().is_none_or(Vec::is_empty),
+            "{fixture}: withheld"
+        );
     }
 }
 
@@ -72,6 +86,9 @@ fn filtered_or_unbound_locator_is_not_r015() {
     for fixture in NAMES {
         let (_, report) = emit(&stage(&format!("{fixture}.must-not-fire"), "ok"));
         let diags = report["diagnostics"].as_array().expect("list");
-        assert!(diags.iter().all(|d| d["code"] != "R015"), "{fixture}: {report}");
+        assert!(
+            diags.iter().all(|d| d["code"] != "R015"),
+            "{fixture}: {report}"
+        );
     }
 }

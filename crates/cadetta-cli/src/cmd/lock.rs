@@ -174,7 +174,11 @@ mod tests {
                 "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n",
             )
             .unwrap();
-            std::fs::write(p.join("src/lib.cdt"), "model Plate {\n  t: Length = 6mm\n}\n").unwrap();
+            std::fs::write(
+                p.join("src/lib.cdt"),
+                "model Plate {\n  t: Length = 6mm\n}\n",
+            )
+            .unwrap();
             Self(p)
         }
     }

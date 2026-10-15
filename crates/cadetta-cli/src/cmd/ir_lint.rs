@@ -17,12 +17,12 @@ use std::path::Path;
 use cadetta_ir::decode::decode_project;
 use cadetta_ir::entities::Cell;
 use cadetta_ir::model::{Nominal, Project, SpanRef};
-use cadetta_syntax::span::SourceFile;
 use cadetta_lint::diag::{self, Diagnostic, Location, Position};
 use cadetta_lint::engine::LintConfig;
 use cadetta_lint::rules::d::{self, DConfig, Key, NamedValue};
 use cadetta_lint::rules::m::MConfig;
 use cadetta_lint::rules::{c, f, m, n, q, s};
+use cadetta_syntax::span::SourceFile;
 use serde_json::Value;
 
 use crate::cmd::ir_validate::{load_json, violations};
@@ -51,7 +51,9 @@ pub fn parse_args(args: &[String]) -> Result<LintArgs, String> {
         match arg.as_str() {
             "--format" => match it.next().map(String::as_str) {
                 Some("json") => json = true,
-                Some(other) => return Err(format!("`--format` accepts only `json`, got `{other}`")),
+                Some(other) => {
+                    return Err(format!("`--format` accepts only `json`, got `{other}`"));
+                }
                 None => return Err("`--format` needs a value".to_owned()),
             },
             flag if flag.starts_with("--") => return Err(format!("unknown flag `{flag}`")),
@@ -95,7 +97,11 @@ fn table_cells(ir: &Project) -> Vec<NamedValue> {
 /// A span's source location: byte offsets resolved against the file beside the IR document
 /// (`dir`), or line 1, column 1 when no such file is readable.
 // frob:ticket 01M4YP4QF161QNHCR0Y06GWDX5
-fn locate_span(span: &SpanRef, dir: Option<&Path>, cache: &RefCell<HashMap<String, Option<SourceFile>>>) -> Location {
+fn locate_span(
+    span: &SpanRef,
+    dir: Option<&Path>,
+    cache: &RefCell<HashMap<String, Option<SourceFile>>>,
+) -> Location {
     let mut files = cache.borrow_mut();
     let source = files.entry(span.file.clone()).or_insert_with(|| {
         let text = dir.and_then(|d| std::fs::read_to_string(d.join(&span.file)).ok());
@@ -107,11 +113,18 @@ fn locate_span(span: &SpanRef, dir: Option<&Path>, cache: &RefCell<HashMap<Strin
     let at = |offset: u32| match &*source {
         Some(f) => {
             let lc = f.line_col(offset as usize);
-            Position { line: u32::try_from(lc.line).unwrap_or(u32::MAX), col: u32::try_from(lc.col).unwrap_or(u32::MAX) }
+            Position {
+                line: u32::try_from(lc.line).unwrap_or(u32::MAX),
+                col: u32::try_from(lc.col).unwrap_or(u32::MAX),
+            }
         }
         None => Position { line: 1, col: 1 },
     };
-    Location::Source { file: span.file.clone(), start: at(span.start), end: at(span.end) }
+    Location::Source {
+        file: span.file.clone(),
+        start: at(span.start),
+        end: at(span.end),
+    }
 }
 
 /// The IR-only findings of a schema-valid document, sorted. `dir` is the directory span files
@@ -123,7 +136,10 @@ pub fn lint_document(doc: &Value, dir: Option<&Path>) -> Result<Vec<Diagnostic>,
     let locate = |span: &SpanRef| locate_span(span, dir, &cache);
     // Catalog severities and default rule settings: `lint FILE` has no `[lint]` table.
     let lcfg = LintConfig::new();
-    let dcfg = DConfig { table_cells: table_cells(&ir), ..DConfig::default() };
+    let dcfg = DConfig {
+        table_cells: table_cells(&ir),
+        ..DConfig::default()
+    };
     let mcfg = MConfig::default();
     let mut found = Vec::new();
     found.extend(d::check_d001(&ir, &lcfg, &dcfg, locate));
@@ -146,7 +162,12 @@ pub fn lint_document(doc: &Value, dir: Option<&Path>) -> Result<Vec<Diagnostic>,
 }
 
 /// Run `cadetta lint FILE`; `args` are the words after the verb. Returns the exit code.
-pub fn run_lint_ir(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mut dyn Write) -> u8 {
+pub fn run_lint_ir(
+    args: &[String],
+    globals: &Globals,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
     let fail = |err: &mut dyn Write, message: &str| {
         tracing::error!(%message, "lint failed");
         let _ = writeln!(err, "error: {message}");
@@ -165,13 +186,20 @@ pub fn run_lint_ir(args: &[String], globals: &Globals, out: &mut dyn Write, err:
         for line in &invalid {
             let _ = writeln!(err, "{line}");
         }
-        return fail(err, &format!("{}: not a valid cadetta.ir/1 document", parsed.file));
+        return fail(
+            err,
+            &format!("{}: not a valid cadetta.ir/1 document", parsed.file),
+        );
     }
     let diagnostics = match lint_document(&doc, Path::new(&parsed.file).parent()) {
         Ok(d) => d,
         Err(message) => return fail(err, &message),
     };
-    let format = if parsed.json { Format::Json } else { globals.format };
+    let format = if parsed.json {
+        Format::Json
+    } else {
+        globals.format
+    };
     let text = output::render(format, &diagnostics, &|_, _| None);
     if let Err(e) = out.write_all(text.as_bytes()) {
         return fail(err, &format!("could not write output: {e}"));

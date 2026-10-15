@@ -4,7 +4,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.
@@ -34,12 +34,16 @@ fn hits(tag: &str, src: &str, code: &str) -> Vec<Option<String>> {
         .collect()
 }
 
-const DERIVED: &str = "model P {\n  head = 8mm [+-0.1mm]\n  cb = head + 1mm\n  check c: cb >= 9mm\n}\n";
+const DERIVED: &str =
+    "model P {\n  head = 8mm [+-0.1mm]\n  cb = head + 1mm\n  check c: cb >= 9mm\n}\n";
 
 // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived kind=integration
 #[test]
 fn c004_fires_on_derived_parameter_read_by_a_check() {
-    assert_eq!(hits("fire", DERIVED, "C004"), vec![Some("acme.demo::P.cb".to_owned())]);
+    assert_eq!(
+        hits("fire", DERIVED, "C004"),
+        vec![Some("acme.demo::P.cb".to_owned())]
+    );
 }
 
 // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived kind=integration
@@ -65,8 +69,13 @@ fn e010_honours_role_attribute_for_mmc_and_lmc() {
     assert_eq!(hits("bare", bare, "E010").len(), 1);
     for role in ["hole", "shaft"] {
         for acc in ["mmc", "lmc"] {
-            let src = format!("model Part {{\n  #[role({role})]\n  w = 5mm [+-0.1mm]\n  x = w.{acc}\n}}\n");
-            assert!(hits(&format!("{role}{acc}"), &src, "E010").is_empty(), "{role} {acc}");
+            let src = format!(
+                "model Part {{\n  #[role({role})]\n  w = 5mm [+-0.1mm]\n  x = w.{acc}\n}}\n"
+            );
+            assert!(
+                hits(&format!("{role}{acc}"), &src, "E010").is_empty(),
+                "{role} {acc}"
+            );
         }
     }
 }

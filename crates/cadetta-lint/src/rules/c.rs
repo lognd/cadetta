@@ -331,19 +331,19 @@ pub fn check_interface_bounds(
     for c in components {
         let comp = item_text(&c.path.package, &c.path.modules, &c.path.item);
         for r in &c.implements {
-            let Some(iface) = interfaces
-                .iter()
-                .find(|i| names(r, &item_text(&i.path.package, &i.path.modules, &i.path.item)))
-            else {
+            let Some(iface) = interfaces.iter().find(|i| {
+                names(
+                    r,
+                    &item_text(&i.path.package, &i.path.modules, &i.path.item),
+                )
+            }) else {
                 trace!(implements = %r, "C001/C002: interface not in scope of this check");
                 continue;
             };
             for b in &iface.bounds {
-                let Some(m) = c
-                    .members
-                    .iter()
-                    .find(|m| m.path.member_root() == Some(b.name.as_str()) && m.path.members.len() == 1)
-                else {
+                let Some(m) = c.members.iter().find(|m| {
+                    m.path.member_root() == Some(b.name.as_str()) && m.path.members.len() == 1
+                }) else {
                     trace!(component = %comp, member = %b.name, "C001/C002: bounded member absent");
                     continue;
                 };
@@ -384,7 +384,10 @@ pub fn check_interface_bounds(
 /// Run C002 for fits whose clearance meets the declared required range for some values only
 /// (language.md 3.7); a clearance entirely outside is F004.
 // frob:ticket 01M4V13T1DW08P87XP4J4802RH
-pub fn check_fit_ranges(project: &Project, locate: impl Fn(&SpanRef) -> Location) -> Vec<Diagnostic> {
+pub fn check_fit_ranges(
+    project: &Project,
+    locate: impl Fn(&SpanRef) -> Location,
+) -> Vec<Diagnostic> {
     let mut out = Vec::new();
     for c in &project.components {
         for f in &c.fits {
@@ -549,7 +552,9 @@ mod tests {
     // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived
     #[test]
     fn c004_fires_on_derived_parameter() {
-        let d = check_derived(&project("d > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 });
+        let d = check_derived(&project("d > 1mm", VerdictState::Pass), |_| {
+            Location::Lock { line: 0 }
+        });
         assert_eq!(codes(&d), vec!["C004"]);
         assert_eq!(d[0].severity, Severity::Info);
         assert!(d[0].message.contains("let"));
@@ -560,8 +565,18 @@ mod tests {
     // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived
     #[test]
     fn c004_quiet_when_not_read_or_not_derived() {
-        assert!(check_derived(&project("a > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
-        assert!(check_derived(&project("w > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
+        assert!(
+            check_derived(&project("a > 1mm", VerdictState::Pass), |_| {
+                Location::Lock { line: 0 }
+            })
+            .is_empty()
+        );
+        assert!(
+            check_derived(&project("w > 1mm", VerdictState::Pass), |_| {
+                Location::Lock { line: 0 }
+            })
+            .is_empty()
+        );
     }
 
     fn ex(n: i64) -> Exact {
@@ -572,13 +587,21 @@ mod tests {
     fn spanning(nominal: i64, lo: i64, hi: i64) -> Value {
         let mut v = Value::new(Nominal::Exact(ex(nominal)), Dim::default(), "v");
         v.tol = Some(Affine {
-            terms: vec![AffineTerm { var: p("demo::Plate.w"), lo: ex(lo), hi: ex(hi) }],
+            terms: vec![AffineTerm {
+                var: p("demo::Plate.w"),
+                lo: ex(lo),
+                hi: ex(hi),
+            }],
         });
         v
     }
 
     fn at_least(n: i64) -> Bound {
-        Bound { op: cadetta_ir::model::BoundOp::Ge, lo: Some(ex(n)), hi: None }
+        Bound {
+            op: cadetta_ir::model::BoundOp::Ge,
+            lo: Some(ex(n)),
+            hi: None,
+        }
     }
 
     fn plate_with(member: &str, v: Value) -> Component {
@@ -599,13 +622,18 @@ mod tests {
                 item: "Rated".into(),
             },
             members: vec![],
-            bounds: vec![cadetta_ir::entities::InterfaceBound { name: "load".into(), bound: at_least(5) }],
+            bounds: vec![cadetta_ir::entities::InterfaceBound {
+                name: "load".into(),
+                bound: at_least(5),
+            }],
             datums: vec![],
         }
     }
 
     fn run_bounds(v: Value, member: &str) -> Vec<Diagnostic> {
-        check_interface_bounds(&[plate_with(member, v)], &[rated()], |_| Location::Lock { line: 0 })
+        check_interface_bounds(&[plate_with(member, v)], &[rated()], |_| Location::Lock {
+            line: 0,
+        })
     }
 
     // frob:tests crates/cadetta-lint/src/rules/c.rs::check_interface_bounds

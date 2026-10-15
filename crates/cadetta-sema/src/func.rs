@@ -1144,7 +1144,10 @@ fn to_count(x: &Val, mode: Rounding, span: Span) -> R<Val> {
         && q.nominal.pi_exp() != 0
         && !q.nominal.is_zero()
     {
-        debug!(pi_exp = q.nominal.pi_exp(), "func: rounding a pi factor is inexact (Q006)");
+        debug!(
+            pi_exp = q.nominal.pi_exp(),
+            "func: rounding a pi factor is inexact (Q006)"
+        );
         let f = n.to_f64();
         return inex(Dim::default(), f, f, f, RootOp::PiRound, span);
     }
@@ -1188,7 +1191,10 @@ mod tests {
             panic!("cbrt of a cube is exact");
         };
         assert_eq!(*q.nominal.rational(), Rational::new(2, 3).unwrap());
-        assert_eq!(*q.dim(), Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0));
+        assert_eq!(
+            *q.dim(),
+            Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0)
+        );
         // Not a perfect cube: an inexact value rooted at cbrt, never an error.
         let Ok(Val::Inexact(i)) = cbrt(&cube(2, 1), sp) else {
             panic!("cbrt of a non-cube is inexact");

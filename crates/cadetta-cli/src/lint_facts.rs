@@ -147,9 +147,12 @@ fn lower_bound(kind: &BoundKind) -> Option<InterfaceBound> {
     let (name, op, lo, hi) = match kind {
         BoundKind::Le { name, value } => (name, BoundOp::Le, None, Some(literal_si(value)?)),
         BoundKind::Ge { name, value } => (name, BoundOp::Ge, Some(literal_si(value)?), None),
-        BoundKind::In { name, lo, hi } => {
-            (name, BoundOp::In, Some(literal_si(lo)?), Some(literal_si(hi)?))
-        }
+        BoundKind::In { name, lo, hi } => (
+            name,
+            BoundOp::In,
+            Some(literal_si(lo)?),
+            Some(literal_si(hi)?),
+        ),
         BoundKind::Eq { .. } => return None,
     };
     tracing::trace!(member = %name.name, ?op, "lint_facts: interface bound lowered");
@@ -349,12 +352,22 @@ mod tests {
             "interface Base {\n  load >= 400N\n  dia in 2mm .. 5mm\n  gap == 3mm\n}\n\
              interface Child: Base {\n  mass <= 2kg\n}\n",
         );
-        let base = ifs.iter().find(|i| i.path.to_string().ends_with("Base")).expect("base");
+        let base = ifs
+            .iter()
+            .find(|i| i.path.to_string().ends_with("Base"))
+            .expect("base");
         assert_eq!(base.bounds.len(), 2, "Eq is skipped, Ge and In kept");
         assert_eq!(base.bounds[0].bound.op, BoundOp::Ge);
         assert!(base.bounds[0].bound.hi.is_none());
         assert_eq!(base.bounds[1].bound.op, BoundOp::In);
-        let child = ifs.iter().find(|i| i.path.to_string().ends_with("Child")).expect("child");
-        assert_eq!(child.bounds.len(), 3, "own Le plus the two inherited bounds");
+        let child = ifs
+            .iter()
+            .find(|i| i.path.to_string().ends_with("Child"))
+            .expect("child");
+        assert_eq!(
+            child.bounds.len(),
+            3,
+            "own Le plus the two inherited bounds"
+        );
     }
 }

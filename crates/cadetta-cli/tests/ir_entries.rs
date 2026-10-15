@@ -54,10 +54,20 @@ fn fixture(name: &str) -> String {
 // frob:tests crates/cadetta-cli/src/cmd/ir_lint.rs::run_lint_ir kind=unit
 #[test]
 fn lint_fires_d003_with_exit_1_and_stays_quiet_with_exit_0() {
-    let (code, out) = run(&["lint", &fixture("d003-ir.must-fire.json"), "--format", "json"]);
+    let (code, out) = run(&[
+        "lint",
+        &fixture("d003-ir.must-fire.json"),
+        "--format",
+        "json",
+    ]);
     assert_eq!(code, 1, "{out}");
     assert!(out.contains("D003"), "{out}");
-    let (code, out) = run(&["lint", &fixture("d003-ir.must-not-fire.json"), "--format", "json"]);
+    let (code, out) = run(&[
+        "lint",
+        &fixture("d003-ir.must-not-fire.json"),
+        "--format",
+        "json",
+    ]);
     assert_eq!(code, 0, "{out}");
     assert!(!out.contains("D003"), "{out}");
 }
@@ -87,9 +97,16 @@ fn ir_entries_reject_missing_unreadable_and_non_json_input_with_exit_2() {
     std::fs::write(&junk, "not json").unwrap();
     for verb in ["ir-validate", "lint"] {
         assert_eq!(run(&[verb, junk.to_str().unwrap()]).0, 2, "{verb} junk");
-        assert_eq!(run(&[verb, dir.join("absent.json").to_str().unwrap()]).0, 2, "{verb} absent");
+        assert_eq!(
+            run(&[verb, dir.join("absent.json").to_str().unwrap()]).0,
+            2,
+            "{verb} absent"
+        );
         assert_eq!(run(&[verb]).0, 2, "{verb} usage");
     }
-    assert_eq!(run(&["lint", junk.to_str().unwrap(), "--format", "xml"]).0, 2);
+    assert_eq!(
+        run(&["lint", junk.to_str().unwrap(), "--format", "xml"]).0,
+        2
+    );
     std::fs::remove_dir_all(&dir).unwrap();
 }

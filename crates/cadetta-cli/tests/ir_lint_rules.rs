@@ -8,7 +8,8 @@ use std::path::Path;
 use serde_json::{Value, json};
 
 fn base() -> Value {
-    let p = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance/ir/d003-ir.must-not-fire.json");
+    let p = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/conformance/ir/d003-ir.must-not-fire.json");
     serde_json::from_str(&std::fs::read_to_string(p).expect("base")).expect("json")
 }
 
@@ -18,7 +19,9 @@ fn lint(name: &str, doc: &Value) -> (u8, String) {
     std::fs::create_dir_all(&dir).expect("tmp");
     let file = dir.join(format!("{name}.json"));
     std::fs::write(&file, doc.to_string()).expect("write");
-    let args: Vec<String> = ["lint", file.to_str().unwrap(), "--format", "json"].map(str::to_owned).to_vec();
+    let args: Vec<String> = ["lint", file.to_str().unwrap(), "--format", "json"]
+        .map(str::to_owned)
+        .to_vec();
     let mut out = Vec::new();
     let code = cadetta::run(&args, &mut out);
     (code, String::from_utf8(out).expect("utf8"))
@@ -55,7 +58,13 @@ fn clean_document_is_quiet_after_full_decode() {
 #[test]
 fn inexact_nominal_fires_q006() {
     let inexact = json!({"f64": 0.5, "root": "acme.demo::Axle.r"});
-    let (code, out) = lint("q006", &with_members(vec![param("acme.demo::Axle.r", "sqrt(2) mm", inexact)], "model"));
+    let (code, out) = lint(
+        "q006",
+        &with_members(
+            vec![param("acme.demo::Axle.r", "sqrt(2) mm", inexact)],
+            "model",
+        ),
+    );
     assert!(out.contains("Q006"), "{code} {out}");
 }
 
@@ -63,7 +72,10 @@ fn inexact_nominal_fires_q006() {
 #[test]
 fn uncited_ots_value_fires_s001() {
     let exact = json!({"pi": 0, "r": "1/100"});
-    let (_, out) = lint("s001", &with_members(vec![param("acme.demo::Axle.r", "10mm", exact)], "ots"));
+    let (_, out) = lint(
+        "s001",
+        &with_members(vec![param("acme.demo::Axle.r", "10mm", exact)], "ots"),
+    );
     assert!(out.contains("S001"), "{out}");
 }
 
@@ -88,7 +100,13 @@ fn equal_literals_fire_d001() {
 #[test]
 fn long_literal_fires_m001() {
     let exact = json!({"pi": 0, "r": "123456789/1000000000000"});
-    let (_, out) = lint("m001", &with_members(vec![param("acme.demo::Axle.a", "0.123456789mm", exact)], "model"));
+    let (_, out) = lint(
+        "m001",
+        &with_members(
+            vec![param("acme.demo::Axle.a", "0.123456789mm", exact)],
+            "model",
+        ),
+    );
     assert!(out.contains("M001"), "{out}");
 }
 
@@ -151,7 +169,13 @@ fn clearance_inside_its_required_range_is_quiet_for_f004() {
 #[test]
 fn badly_cased_member_fires_n001() {
     let exact = json!({"pi": 0, "r": "1/100"});
-    let (_, out) = lint("n001", &with_members(vec![param("acme.demo::Axle.BadName", "10mm", exact)], "model"));
+    let (_, out) = lint(
+        "n001",
+        &with_members(
+            vec![param("acme.demo::Axle.BadName", "10mm", exact)],
+            "model",
+        ),
+    );
     assert!(out.contains("N001"), "{out}");
 }
 
@@ -169,7 +193,9 @@ fn span_offsets_become_line_and_column_of_the_source_beside_the_document() {
     let doc = with_members(vec![member], "model");
     let file = dir.join("doc.json");
     std::fs::write(&file, doc.to_string()).expect("write");
-    let args: Vec<String> = ["lint", file.to_str().unwrap(), "--format", "json"].map(str::to_owned).to_vec();
+    let args: Vec<String> = ["lint", file.to_str().unwrap(), "--format", "json"]
+        .map(str::to_owned)
+        .to_vec();
     let mut out = Vec::new();
     cadetta::run(&args, &mut out);
     let out = String::from_utf8(out).expect("utf8");
@@ -177,7 +203,10 @@ fn span_offsets_become_line_and_column_of_the_source_beside_the_document() {
     let text = report.to_string();
     assert!(text.contains("N001"), "{out}");
     assert!(text.contains("axle.cdt"), "{out}");
-    assert!(!text.contains("\"line\":1,"), "line 1 means the offset was not resolved: {out}");
+    assert!(
+        !text.contains("\"line\":1,"),
+        "line 1 means the offset was not resolved: {out}"
+    );
     assert!(text.contains("\"line\":2"), "{out}");
     assert!(text.contains("\"col\":11"), "{out}");
 }

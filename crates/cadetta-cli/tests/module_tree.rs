@@ -4,7 +4,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a package with the given `src`-relative files and analyzes it.

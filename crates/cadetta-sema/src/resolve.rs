@@ -18,9 +18,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    Arg, Block, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface, InterfaceMemberKind,
-    Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath,
-    UseRoot, UseTree, UseTreeKind, Vis,
+    Arg, Block, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface,
+    InterfaceMemberKind, Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind,
+    Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
 };
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace, warn};
@@ -541,11 +541,14 @@ impl<'a> Resolver<'a> {
     /// Whether any module declares a `kind` named `name` (user kinds are not indexed items).
     // frob:ticket 01M4V1HDNKJ9095119JPVAKYG1
     pub fn declares_kind(&self, name: &str) -> bool {
-        self.pkgs.values().flat_map(|p| p.modules.values()).any(|m| {
-            m.file
-                .items()
-                .any(|i| matches!(&i.kind, ItemKind::Kind(k) if k.name.name == name))
-        })
+        self.pkgs
+            .values()
+            .flat_map(|p| p.modules.values())
+            .any(|m| {
+                m.file
+                    .items()
+                    .any(|i| matches!(&i.kind, ItemKind::Kind(k) if k.name.name == name))
+            })
     }
 
     /// The component declared at `id`.

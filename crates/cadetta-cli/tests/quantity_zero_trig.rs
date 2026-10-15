@@ -3,7 +3,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a one-package project whose model `P` holds `body` and analyzes it.
@@ -16,7 +16,11 @@ fn analyze_body(tag: &str, body: &str) -> Analysis {
         "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
     )
     .expect("config");
-    fs::write(dir.join("src/lib.cdt"), format!("model P {{\n  {body}\n}}\n")).expect("source");
+    fs::write(
+        dir.join("src/lib.cdt"),
+        format!("model P {{\n  {body}\n}}\n"),
+    )
+    .expect("source");
     let (project, scope) = Project::open(Some(&dir), None).expect("project opens");
     let analysis = analyze_at(&project, &scope, "2026-10-14");
     let _ = fs::remove_dir_all(&dir);
@@ -48,7 +52,10 @@ fn exact_zero_then_rad_sum_is_not_q006_but_deg_rad_is() {
 // frob:tests crates/cadetta-sema/src/func.rs::to_count kind=integration
 #[test]
 fn exact_trig_points_raise_no_q006() {
-    let c = codes("trig-ok", "a = sin(90deg)\n  b = cos(60deg)\n  e = cos(180deg)\n  t = tan(45deg)\n  s = sin(30deg)");
+    let c = codes(
+        "trig-ok",
+        "a = sin(90deg)\n  b = cos(60deg)\n  e = cos(180deg)\n  t = tan(45deg)\n  s = sin(30deg)",
+    );
     assert_eq!(count(&c, "Q006"), 0, "{c:?}");
     assert_eq!(count(&c, "EVAL"), 0, "{c:?}");
 }

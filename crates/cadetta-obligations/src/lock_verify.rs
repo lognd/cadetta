@@ -186,7 +186,10 @@ impl VerifyReport {
     // frob:ticket 01M4X3W8DK8NBX5A3GS0DM3P8Y
     /// The `cadetta lock verify --format json` report (`docs/schemas/lock.json`).
     pub fn to_json(&self) -> serde_json::Value {
-        debug!(findings = self.findings.len(), "rendering lock verify report");
+        debug!(
+            findings = self.findings.len(),
+            "rendering lock verify report"
+        );
         serde_json::json!({
             "schema": REPORT_SCHEMA,
             "clean": self.is_clean(),

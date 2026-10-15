@@ -22,8 +22,8 @@ use crate::entities::{
 };
 use crate::geometry::{Axis, Datum, OffsetArgs, Op, Placement, Point};
 use crate::model::{
-    Affine, AffineTerm, Binding, Bound, BoundOp, CiteBuiltin, CiteField, CiteRef, Citation,
-    CitationType, Check, Component, ComponentClass, Dependency, Digest, Exact, Fit, Flavour,
+    Affine, AffineTerm, Binding, Bound, BoundOp, Check, Citation, CitationType, CiteBuiltin,
+    CiteField, CiteRef, Component, ComponentClass, Dependency, Digest, Exact, Fit, Flavour,
     Implicit, Inexact, Locator, LocatorKind, LocatorMode, Member, MemberKind, Nominal,
     ObservedFrame, ObservedInstance, PackageId, Part, Project, Provenance, Sign, Solver, SpanRef,
     TolerancePolicy, Value, VerdictState, Verdicts,
@@ -42,7 +42,8 @@ fn at(ptr: &str, what: impl std::fmt::Display) -> DecodeError {
 }
 
 fn field<'a>(o: &'a Json, ptr: &str, key: &str) -> Res<&'a Json> {
-    o.get(key).ok_or_else(|| at(ptr, format!("missing `{key}`")))
+    o.get(key)
+        .ok_or_else(|| at(ptr, format!("missing `{key}`")))
 }
 
 fn text(o: &Json, ptr: &str, key: &str) -> Res<String> {
@@ -61,7 +62,9 @@ fn flag(o: &Json, key: &str) -> bool {
 }
 
 fn items<'a>(o: &'a Json, key: &str) -> &'a [Json] {
-    o.get(key).and_then(Json::as_array).map_or(&[], Vec::as_slice)
+    o.get(key)
+        .and_then(Json::as_array)
+        .map_or(&[], Vec::as_slice)
 }
 
 fn string_map(o: &Json, key: &str) -> BTreeMap<String, String> {
@@ -74,7 +77,10 @@ fn string_map(o: &Json, key: &str) -> BTreeMap<String, String> {
 }
 
 fn strings(o: &Json, key: &str) -> Vec<String> {
-    items(o, key).iter().filter_map(|v| v.as_str().map(str::to_owned)).collect()
+    items(o, key)
+        .iter()
+        .filter_map(|v| v.as_str().map(str::to_owned))
+        .collect()
 }
 
 fn path_text(s: &str, ptr: &str) -> Res<Path> {
@@ -108,10 +114,14 @@ fn frame_path(o: &Json, ptr: &str, key: &str) -> Res<Path> {
 
 fn exact(o: &Json, ptr: &str) -> Res<Exact> {
     let r = text(o, ptr, "r")?;
-    let (n, d) = r.split_once('/').ok_or_else(|| at(ptr, "`r` is not `num/den`"))?;
+    let (n, d) = r
+        .split_once('/')
+        .ok_or_else(|| at(ptr, "`r` is not `num/den`"))?;
     let rat = |s: &str| Rational::parse_decimal(s).map_err(|e| at(ptr, e));
     let q = rat(n)?.div(&rat(d)?).map_err(|e| at(ptr, e))?;
-    let pi = field(o, ptr, "pi")?.as_i64().ok_or_else(|| at(ptr, "`pi` is not an integer"))?;
+    let pi = field(o, ptr, "pi")?
+        .as_i64()
+        .ok_or_else(|| at(ptr, "`pi` is not an integer"))?;
     let pi = i32::try_from(pi).map_err(|_| at(ptr, "`pi` out of range"))?;
     Ok(Exact(Magnitude::new(q, pi)))
 }
@@ -123,15 +133,28 @@ fn bound(o: &Json, ptr: &str) -> Res<Bound> {
         "in" => BoundOp::In,
         other => return Err(at(ptr, format!("unknown bound op `{other}`"))),
     };
-    let limit = |key: &str| o.get(key).map(|v| exact(v, &format!("{ptr}/{key}"))).transpose();
-    Ok(Bound { op, lo: limit("lo")?, hi: limit("hi")? })
+    let limit = |key: &str| {
+        o.get(key)
+            .map(|v| exact(v, &format!("{ptr}/{key}")))
+            .transpose()
+    };
+    Ok(Bound {
+        op,
+        lo: limit("lo")?,
+        hi: limit("hi")?,
+    })
 }
 
 fn value(o: &Json, ptr: &str) -> Res<Value> {
     let n = field(o, ptr, "nominal")?;
     let nominal = if n.get("f64").is_some() {
-        let f = n["f64"].as_f64().ok_or_else(|| at(ptr, "`nominal.f64` is not a number"))?;
-        Nominal::Inexact(Inexact { f64: f, root: path(n, &format!("{ptr}/nominal"), "root")? })
+        let f = n["f64"]
+            .as_f64()
+            .ok_or_else(|| at(ptr, "`nominal.f64` is not a number"))?;
+        Nominal::Inexact(Inexact {
+            f64: f,
+            root: path(n, &format!("{ptr}/nominal"), "root")?,
+        })
     } else {
         Nominal::Exact(exact(n, &format!("{ptr}/nominal"))?)
     };
@@ -159,7 +182,10 @@ fn value(o: &Json, ptr: &str) -> Res<Value> {
             .map_err(|_| at(ptr, "`angle` out of range"))?,
         tol,
         conservative: flag(o, "conservative"),
-        drawn: o.get("drawn").map(|d| exact(d, &format!("{ptr}/drawn"))).transpose()?,
+        drawn: o
+            .get("drawn")
+            .map(|d| exact(d, &format!("{ptr}/drawn")))
+            .transpose()?,
         exact: o.get("exact").and_then(Json::as_bool).unwrap_or(true),
         reason: opt_text(o, "reason"),
         unit_assumed: opt_text(o, "unit_assumed"),
@@ -181,14 +207,21 @@ fn digest(o: &Json, key: &str) -> Option<Digest> {
 }
 
 fn cite_ref(o: &Json, ptr: &str) -> Res<Option<CiteRef>> {
-    let Some(c) = o.get("citation") else { return Ok(None) };
+    let Some(c) = o.get("citation") else {
+        return Ok(None);
+    };
     let builtin = match opt_text(c, "builtin").as_deref() {
         None => None,
         Some("note") => Some(CiteBuiltin::Note),
         Some("measured") => Some(CiteBuiltin::Measured),
         Some("assumed") => Some(CiteBuiltin::Assumed),
         Some("estimate") => Some(CiteBuiltin::Estimate),
-        Some(other) => return Err(at(&format!("{ptr}/citation"), format!("unknown builtin `{other}`"))),
+        Some(other) => {
+            return Err(at(
+                &format!("{ptr}/citation"),
+                format!("unknown builtin `{other}`"),
+            ));
+        }
     };
     Ok(Some(CiteRef {
         cite: opt_text(c, "cite"),
@@ -203,7 +236,9 @@ fn provenance(o: &Json, ptr: &str) -> Res<Provenance> {
         Json::String(s) if s == "authored" => Ok(Provenance::Authored),
         Json::String(s) if s == "derived" => Ok(Provenance::Derived),
         other => {
-            let imp = other.get("imported").ok_or_else(|| at(ptr, "unknown provenance"))?;
+            let imp = other
+                .get("imported")
+                .ok_or_else(|| at(ptr, "unknown provenance"))?;
             let ip = format!("{ptr}/provenance/imported");
             Ok(Provenance::Imported {
                 adapter: text(imp, &ip, "adapter")?,
@@ -236,8 +271,14 @@ fn member(o: &Json, ptr: &str) -> Res<Member> {
         kind,
         analysis: flag(o, "analysis"),
         private: flag(o, "priv"),
-        value: o.get("value").map(|v| value(v, &format!("{ptr}/value"))).transpose()?,
-        bound: o.get("bound").map(|b| bound(b, &format!("{ptr}/bound"))).transpose()?,
+        value: o
+            .get("value")
+            .map(|v| value(v, &format!("{ptr}/value")))
+            .transpose()?,
+        bound: o
+            .get("bound")
+            .map(|b| bound(b, &format!("{ptr}/bound")))
+            .transpose()?,
         expr: opt_text(o, "expr"),
         deps: paths(o, ptr, "deps")?,
         role: opt_text(o, "role"),
@@ -257,7 +298,10 @@ fn part(o: &Json, ptr: &str) -> Res<Part> {
     Ok(Part {
         path: path(o, ptr, "path")?,
         type_name: text(o, ptr, "type")?,
-        count: o.get("count").and_then(Json::as_u64).and_then(|n| u32::try_from(n).ok()),
+        count: o
+            .get("count")
+            .and_then(Json::as_u64)
+            .and_then(|n| u32::try_from(n).ok()),
         primary: text(o, ptr, "primary")?,
         alternates: strings(o, "alternates"),
         args: string_map(o, "args"),
@@ -271,7 +315,10 @@ fn fit(o: &Json, ptr: &str) -> Res<Fit> {
         shaft: path(o, ptr, "shaft")?,
         clearance: value(field(o, ptr, "clearance")?, &format!("{ptr}/clearance"))?,
         fit_type: text(o, ptr, "type")?,
-        required: o.get("required").map(|b| bound(b, &format!("{ptr}/required"))).transpose()?,
+        required: o
+            .get("required")
+            .map(|b| bound(b, &format!("{ptr}/required")))
+            .transpose()?,
     })
 }
 
@@ -326,14 +373,23 @@ fn op(o: &Json, ptr: &str) -> Res<Op> {
                 .map(|s| path_text(s, &format!("{ptr}/offset/{k}")))
                 .transpose()
         };
-        return Ok(Op::Offset(Box::new(OffsetArgs { x: axis_path("x")?, y: axis_path("y")?, z: axis_path("z")? })));
+        return Ok(Op::Offset(Box::new(OffsetArgs {
+            x: axis_path("x")?,
+            y: axis_path("y")?,
+            z: axis_path("z")?,
+        })));
     }
     if let Some(rot) = o.get("rotate") {
         let rp = format!("{ptr}/rotate");
-        return Ok(Op::Rotate { axis: axis(&text(rot, &rp, "axis")?, &rp)?, angle: path(rot, &rp, "angle")? });
+        return Ok(Op::Rotate {
+            axis: axis(&text(rot, &rp, "axis")?, &rp)?,
+            angle: path(rot, &rp, "angle")?,
+        });
     }
     match o.get("flip").and_then(Json::as_str) {
-        Some(a) => Ok(Op::Flip { axis: axis(a, &format!("{ptr}/flip"))? }),
+        Some(a) => Ok(Op::Flip {
+            axis: axis(a, &format!("{ptr}/flip"))?,
+        }),
         None => Err(at(ptr, "unknown op")),
     }
 }
@@ -348,7 +404,9 @@ fn op_chain(arr: &Json, ptr: &str) -> Res<Vec<Op>> {
 }
 
 fn op_variants(o: &Json, ptr: &str) -> Res<Option<BTreeMap<String, Vec<Op>>>> {
-    let Some(m) = o.get("variants").and_then(Json::as_object) else { return Ok(None) };
+    let Some(m) = o.get("variants").and_then(Json::as_object) else {
+        return Ok(None);
+    };
     m.iter()
         .map(|(k, v)| Ok((k.clone(), op_chain(v, &format!("{ptr}/variants/{k}"))?)))
         .collect::<Res<BTreeMap<_, _>>>()
@@ -367,7 +425,11 @@ fn datum(o: &Json, ptr: &str) -> Res<Datum> {
 }
 
 fn point(o: &Json, ptr: &str) -> Res<Point> {
-    Ok(Point { path: path(o, ptr, "path")?, datum: frame_path(o, ptr, "datum")?, coords: many(o, ptr, "coords", value)? })
+    Ok(Point {
+        path: path(o, ptr, "path")?,
+        datum: frame_path(o, ptr, "datum")?,
+        coords: many(o, ptr, "coords", value)?,
+    })
 }
 
 fn placement(o: &Json, ptr: &str) -> Res<Placement> {
@@ -395,18 +457,33 @@ fn verdict(s: &str, ptr: &str) -> Res<VerdictState> {
 fn check(o: &Json, ptr: &str) -> Res<Check> {
     let v = field(o, ptr, "verdicts")?;
     let vp = format!("{ptr}/verdicts");
-    let primary = v.get("primary").and_then(Json::as_str).map(|s| verdict(s, &vp)).transpose()?;
+    let primary = v
+        .get("primary")
+        .and_then(Json::as_str)
+        .map(|s| verdict(s, &vp))
+        .transpose()?;
     let per_alternate = v
         .get("per_alternate")
         .and_then(Json::as_object)
         .into_iter()
         .flatten()
-        .map(|(k, s)| Ok((k.clone(), verdict(s.as_str().unwrap_or_default(), &format!("{vp}/per_alternate/{k}"))?)))
+        .map(|(k, s)| {
+            Ok((
+                k.clone(),
+                verdict(
+                    s.as_str().unwrap_or_default(),
+                    &format!("{vp}/per_alternate/{k}"),
+                )?,
+            ))
+        })
         .collect::<Res<BTreeMap<_, _>>>()?;
     Ok(Check {
         path: path(o, ptr, "path")?,
         expr: text(o, ptr, "expr")?,
-        verdicts: Verdicts { primary, per_alternate },
+        verdicts: Verdicts {
+            primary,
+            per_alternate,
+        },
         conservative: flag(o, "conservative"),
         waived_for: strings(o, "waived_for"),
     })
@@ -493,14 +570,20 @@ fn interface(o: &Json, ptr: &str) -> Res<Interface> {
             })
         })?,
         bounds: many(o, ptr, "bounds", |b, p| {
-            Ok(InterfaceBound { name: text(b, p, "name")?, bound: bound(field(b, p, "bound")?, &format!("{p}/bound"))? })
+            Ok(InterfaceBound {
+                name: text(b, p, "name")?,
+                bound: bound(field(b, p, "bound")?, &format!("{p}/bound"))?,
+            })
         })?,
         datums: strings(o, "datums"),
     })
 }
 
 fn col(o: &Json, ptr: &str) -> Res<TableCol> {
-    Ok(TableCol { name: text(o, ptr, "name")?, type_name: text(o, ptr, "type")? })
+    Ok(TableCol {
+        name: text(o, ptr, "name")?,
+        type_name: text(o, ptr, "type")?,
+    })
 }
 
 fn cell(o: &Json, ptr: &str) -> Res<Cell> {
@@ -516,19 +599,32 @@ fn table(o: &Json, ptr: &str) -> Res<Table> {
         key: col(field(o, ptr, "key")?, &format!("{ptr}/key"))?,
         cols: many(o, ptr, "cols", col)?,
         rows: many(o, ptr, "rows", |r, p| {
-            Ok(TableRow { key: cell(field(r, p, "key")?, &format!("{p}/key"))?, cells: many(r, p, "cells", cell)? })
+            Ok(TableRow {
+                key: cell(field(r, p, "key")?, &format!("{p}/key"))?,
+                cells: many(r, p, "cells", cell)?,
+            })
         })?,
         citation: cite_ref(o, ptr)?,
     })
 }
 
 fn waiver(o: &Json, ptr: &str) -> Res<Waiver> {
-    let mut w = Waiver::new(text(o, ptr, "code")?, text(o, ptr, "glob")?, text(o, ptr, "because")?);
+    let mut w = Waiver::new(
+        text(o, ptr, "code")?,
+        text(o, ptr, "glob")?,
+        text(o, ptr, "because")?,
+    );
     w.expires = opt_text(o, "expires");
     w.for_alt = opt_text(o, "for_alt")
-        .map(|s| s.parse::<VariantName>().map_err(|e| at(&format!("{ptr}/for_alt"), e)))
+        .map(|s| {
+            s.parse::<VariantName>()
+                .map_err(|e| at(&format!("{ptr}/for_alt"), e))
+        })
         .transpose()?;
-    w.targets_closure = string_map(o, "targets_closure").into_iter().map(|(k, v)| (k, Digest(v))).collect();
+    w.targets_closure = string_map(o, "targets_closure")
+        .into_iter()
+        .map(|(k, v)| (k, Digest(v)))
+        .collect();
     Ok(w)
 }
 
@@ -548,7 +644,11 @@ fn matrix(o: &Json, ptr: &str) -> Res<Vec<Vec<Value>>> {
 }
 
 fn frame(o: &Json, ptr: &str) -> Res<ObservedFrame> {
-    Ok(ObservedFrame { name: text(o, ptr, "name")?, document: text(o, ptr, "document")?, transform: matrix(o, ptr)? })
+    Ok(ObservedFrame {
+        name: text(o, ptr, "name")?,
+        document: text(o, ptr, "document")?,
+        transform: matrix(o, ptr)?,
+    })
 }
 
 fn instance(o: &Json, ptr: &str) -> Res<ObservedInstance> {
@@ -574,7 +674,8 @@ fn solver(o: &Json, ptr: &str) -> Res<Solver> {
 
 fn citation(o: &Json, ptr: &str) -> Res<Citation> {
     let ty_name = text(o, ptr, "type")?;
-    let ty = CitationType::parse(&ty_name).ok_or_else(|| at(ptr, format!("unknown citation type `{ty_name}`")))?;
+    let ty = CitationType::parse(&ty_name)
+        .ok_or_else(|| at(ptr, format!("unknown citation type `{ty_name}`")))?;
     let fields = o
         .get("fields")
         .and_then(Json::as_object)
@@ -583,7 +684,11 @@ fn citation(o: &Json, ptr: &str) -> Res<Citation> {
         .filter_map(|(k, v)| {
             let f = match v {
                 Json::String(s) => CiteField::Text(s.clone()),
-                Json::Array(a) => CiteField::List(a.iter().filter_map(|x| x.as_str().map(str::to_owned)).collect()),
+                Json::Array(a) => CiteField::List(
+                    a.iter()
+                        .filter_map(|x| x.as_str().map(str::to_owned))
+                        .collect(),
+                ),
                 _ => return None,
             };
             Some((k.clone(), f))
@@ -602,7 +707,10 @@ fn citation(o: &Json, ptr: &str) -> Res<Citation> {
 /// entities are carried. The error names the JSON pointer of the node that could not be read.
 pub fn decode_project(doc: &Json) -> Result<Project, DecodeError> {
     let pkg = field(doc, "", "package")?;
-    let package = PackageId { name: text(pkg, "/package", "name")?, version: text(pkg, "/package", "version")? };
+    let package = PackageId {
+        name: text(pkg, "/package", "name")?,
+        version: text(pkg, "/package", "version")?,
+    };
     let flavour = match text(doc, "", "flavour")?.as_str() {
         "design" => Flavour::Design,
         "observed" => Flavour::Observed,
@@ -641,11 +749,15 @@ mod tests {
     // frob:tests decode_roundtrips_a_serialized_project
     #[test]
     fn decode_roundtrips_a_serialized_project() {
-        let pkg = PackageId { name: "acme.rover".into(), version: "1.0.0".into() };
+        let pkg = PackageId {
+            name: "acme.rover".into(),
+            version: "1.0.0".into(),
+        };
         let mut p = Project::new(Flavour::Design, pkg);
         let mp: Path = "acme.rover::Axle.bore".parse().unwrap();
         let mut m = Member::new(mp, MemberKind::Param);
-        let dim = cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        let dim =
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
         let mag = Magnitude::new(Rational::new(25, 1000).unwrap(), 0);
         m.value = Some(Value::new(Nominal::Exact(Exact(mag)), dim, "25 mm"));
         m.expr = Some("25 mm".into());
@@ -662,7 +774,11 @@ mod tests {
             datums: Vec::new(),
             points: Vec::new(),
             placements: Vec::new(),
-            span: Some(SpanRef { file: "a.cdt".into(), start: 1, end: 9 }),
+            span: Some(SpanRef {
+                file: "a.cdt".into(),
+                start: 1,
+                end: 9,
+            }),
             digest: None,
         };
         c.attrs.insert("k".into(), "v".into());
@@ -686,9 +802,11 @@ mod tests {
     // frob:tests decode_roundtrips_every_top_level_entity
     #[test]
     fn decode_roundtrips_every_top_level_entity() {
-        let dim = cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        let dim =
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
         let mag = Magnitude::new(Rational::new(25, 1000).unwrap(), 0);
-        let cell = serde_json::to_value(Value::new(Nominal::Exact(Exact(mag)), dim, "25 mm")).unwrap();
+        let cell =
+            serde_json::to_value(Value::new(Nominal::Exact(Exact(mag)), dim, "25 mm")).unwrap();
         let digest = format!("sha256:{}", "ab".repeat(32));
         let doc = serde_json::json!({
             "package": {"name": "acme.rover", "version": "1.0.0"},
@@ -728,16 +846,35 @@ mod tests {
         assert_eq!(decoded.tables.len(), 1);
         assert_eq!(decoded.waivers.len(), 1);
         let c = &decoded.components[0];
-        assert_eq!((c.datums.len(), c.points.len(), c.placements.len()), (1, 1, 1));
+        assert_eq!(
+            (c.datums.len(), c.points.len(), c.placements.len()),
+            (1, 1, 1)
+        );
         assert_eq!(c.datums[0].ops.len(), 3);
         // Re-serializing the decoded model must reproduce every decoded entity.
         let back = serde_json::to_value(&decoded).unwrap();
-        for key in ["dependencies", "checks", "bindings", "interfaces", "tables", "waivers"] {
+        for key in [
+            "dependencies",
+            "checks",
+            "bindings",
+            "interfaces",
+            "tables",
+            "waivers",
+        ] {
             assert_eq!(back[key], doc[key], "{key}");
         }
-        assert_eq!(back["components"][0]["datums"], doc["components"][0]["datums"]);
-        assert_eq!(back["components"][0]["points"], doc["components"][0]["points"]);
-        assert_eq!(back["components"][0]["placements"], doc["components"][0]["placements"]);
+        assert_eq!(
+            back["components"][0]["datums"],
+            doc["components"][0]["datums"]
+        );
+        assert_eq!(
+            back["components"][0]["points"],
+            doc["components"][0]["points"]
+        );
+        assert_eq!(
+            back["components"][0]["placements"],
+            doc["components"][0]["placements"]
+        );
     }
 
     // frob:tests decode_rejects_a_bad_locator_kind

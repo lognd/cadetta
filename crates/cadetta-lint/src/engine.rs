@@ -1181,7 +1181,13 @@ mod tests {
         let mut before = d("L001", "a::B.d");
         before.severity = Severity::Warning;
         let out = apply(vec![passed, before], &c, &Suppressions::default());
-        let sev = |p: &str| out.diagnostics.iter().find(|x| x.path.as_deref() == Some(p)).unwrap().severity;
+        let sev = |p: &str| {
+            out.diagnostics
+                .iter()
+                .find(|x| x.path.as_deref() == Some(p))
+                .unwrap()
+                .severity
+        };
         assert_eq!(sev("a::B.c"), Severity::Error);
         assert_eq!(sev("a::B.d"), Severity::Warning);
     }

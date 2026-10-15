@@ -27,10 +27,16 @@ fn stage(name: &str) -> PathBuf {
 /// Error-severity codes `cadetta check` reports for the staged fixture.
 fn error_codes(name: &str) -> Vec<String> {
     let dir = stage(name);
-    let args: Vec<String> = ["--cwd", dir.to_str().expect("utf8"), "--format", "json", "check"]
-        .iter()
-        .map(|s| (*s).to_owned())
-        .collect();
+    let args: Vec<String> = [
+        "--cwd",
+        dir.to_str().expect("utf8"),
+        "--format",
+        "json",
+        "check",
+    ]
+    .iter()
+    .map(|s| (*s).to_owned())
+    .collect();
     let (mut out, mut err) = (Vec::new(), Vec::new());
     cadetta::run_with_env(&args, None, &mut out, &mut err);
     let _ = fs::remove_dir_all(&dir);
@@ -72,6 +78,9 @@ fn named_kind_mismatch_on_sourced_member_is_q003() {
 // frob:tests crates/cadetta-sema/src/kindcheck.rs::check_interface_members kind=integration
 #[test]
 fn optional_sourced_members_may_be_absent() {
-    assert_eq!(error_codes("i001-sourced-optional-members.must-fire"), ["I001"]);
+    assert_eq!(
+        error_codes("i001-sourced-optional-members.must-fire"),
+        ["I001"]
+    );
     assert!(error_codes("i001-sourced-optional-members.must-not-fire").is_empty());
 }

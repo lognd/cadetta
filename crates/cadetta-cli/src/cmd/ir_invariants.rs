@@ -17,7 +17,12 @@ pub fn check(doc: &Value) -> Vec<String> {
     }
     for (i, c) in arr(&doc["checks"]).iter().enumerate() {
         let at = format!("/checks/{i}/verdicts/per_alternate");
-        for key in c["verdicts"]["per_alternate"].as_object().into_iter().flatten().map(|(k, _)| k) {
+        for key in c["verdicts"]["per_alternate"]
+            .as_object()
+            .into_iter()
+            .flatten()
+            .map(|(k, _)| k)
+        {
             variant_key(key, &at, &mut out);
         }
     }
@@ -36,7 +41,13 @@ fn arr(v: &Value) -> &[Value] {
 fn sorted(doc: &Value, at: &str, key: &str, by_name: bool, out: &mut Vec<String>) {
     let names: Vec<&str> = arr(&doc[key])
         .iter()
-        .filter_map(|v| if by_name { v["name"].as_str() } else { v.as_str() })
+        .filter_map(|v| {
+            if by_name {
+                v["name"].as_str()
+            } else {
+                v.as_str()
+            }
+        })
         .collect();
     if names.windows(2).any(|w| w[0] > w[1]) {
         out.push(format!("{at}: not sorted"));
@@ -74,10 +85,17 @@ fn walk(v: &Value, at: &str, out: &mut Vec<String>) {
                 }
             }
             for (k, x) in map {
-                walk(x, &format!("{at}/{}", k.replace('~', "~0").replace('/', "~1")), out);
+                walk(
+                    x,
+                    &format!("{at}/{}", k.replace('~', "~0").replace('/', "~1")),
+                    out,
+                );
             }
         }
-        Value::Array(items) => items.iter().enumerate().for_each(|(i, x)| walk(x, &format!("{at}/{i}"), out)),
+        Value::Array(items) => items
+            .iter()
+            .enumerate()
+            .for_each(|(i, x)| walk(x, &format!("{at}/{i}"), out)),
         _ => {}
     }
 }
@@ -106,8 +124,9 @@ fn exact(map: &serde_json::Map<String, Value>, at: &str, out: &mut Vec<String>) 
 
 /// A full-form path: `package::Item...` with an uppercase item name.
 fn full_path(p: &str) -> bool {
-    p.rsplit_once("::")
-        .is_some_and(|(pkg, tail)| !pkg.is_empty() && tail.starts_with(|c: char| c.is_ascii_uppercase()))
+    p.rsplit_once("::").is_some_and(|(pkg, tail)| {
+        !pkg.is_empty() && tail.starts_with(|c: char| c.is_ascii_uppercase())
+    })
 }
 
 fn path_at(v: &Value, at: &str, out: &mut Vec<String>) {
@@ -120,10 +139,14 @@ fn path_at(v: &Value, at: &str, out: &mut Vec<String>) {
 /// `SLOT=ALT`: both sides full form, the slot side with a `/slot` step.
 fn variant_key(key: &str, at: &str, out: &mut Vec<String>) {
     let ok = key.split_once('=').is_some_and(|(slot, alt)| {
-        full_path(slot) && full_path(alt) && slot.rsplit_once("::").is_some_and(|(_, t)| t.contains('/'))
+        full_path(slot)
+            && full_path(alt)
+            && slot.rsplit_once("::").is_some_and(|(_, t)| t.contains('/'))
     });
     if !ok {
-        out.push(format!("{at}/{key}: variant key must be full-form SLOT=ALT with a /slot step"));
+        out.push(format!(
+            "{at}/{key}: variant key must be full-form SLOT=ALT with a /slot step"
+        ));
     }
 }
 
@@ -150,7 +173,9 @@ fn member(doc: &Value, m: &Value, parameterized: bool, at: &str, out: &mut Vec<S
     if doc["flavour"] != "observed" {
         let derived = m["provenance"] == "derived";
         if derived != has_deps {
-            out.push(format!("{at}/provenance: derived exactly when deps is non-empty"));
+            out.push(format!(
+                "{at}/provenance: derived exactly when deps is non-empty"
+            ));
         }
     }
     if m["analysis"] != Value::Bool(m["kind"] == "let") {
@@ -160,7 +185,9 @@ fn member(doc: &Value, m: &Value, parameterized: bool, at: &str, out: &mut Vec<S
         out.push(format!("{at}/tol: a derived member has no tol"));
     }
     if parameterized && m.get("value").is_some() {
-        out.push(format!("{at}/value: a parameterized component's members have no value"));
+        out.push(format!(
+            "{at}/value: a parameterized component's members have no value"
+        ));
     }
     if let Some(vs) = m["variants"].as_object() {
         for (key, v) in vs {
@@ -184,7 +211,14 @@ fn bound(b: &Value, at: &str, out: &mut Vec<String>) {
         _ => lo && hi,
     };
     if !ok {
-        out.push(format!("{at}: `{op}` carries {}", match op { "<=" => "hi only", ">=" => "lo only", _ => "both lo and hi" }));
+        out.push(format!(
+            "{at}: `{op}` carries {}",
+            match op {
+                "<=" => "hi only",
+                ">=" => "lo only",
+                _ => "both lo and hi",
+            }
+        ));
     }
 }
 
@@ -204,11 +238,17 @@ fn tol(t: &Value, at: &str, out: &mut Vec<String>) {
         }
     }
     for (i, term) in terms.iter().enumerate() {
-        let Some(stem) = term["var"].as_str().and_then(|v| v.strip_suffix(".u")) else { continue };
-        let partner = terms.iter().find(|o| o["var"].as_str() == Some(&format!("{stem}.v")));
+        let Some(stem) = term["var"].as_str().and_then(|v| v.strip_suffix(".u")) else {
+            continue;
+        };
+        let partner = terms
+            .iter()
+            .find(|o| o["var"].as_str() == Some(&format!("{stem}.v")));
         match partner {
             Some(p) if p["lo"] == term["lo"] && p["hi"] == term["hi"] => {}
-            _ => out.push(format!("{at}/terms/{i}: affine `.u` needs a `.v` partner with equal lo and hi")),
+            _ => out.push(format!(
+                "{at}/terms/{i}: affine `.u` needs a `.v` partner with equal lo and hi"
+            )),
         }
     }
 }
@@ -216,10 +256,15 @@ fn tol(t: &Value, at: &str, out: &mut Vec<String>) {
 /// Observed flavour: one `<package>::Observed` component of imported, dependency-free members
 /// with unique path-safe names and a binding each; no citations, parts, fits, checks, solvers.
 fn observed(doc: &Value, out: &mut Vec<String>) {
-    let want = format!("{}::Observed", doc["package"]["name"].as_str().unwrap_or_default());
+    let want = format!(
+        "{}::Observed",
+        doc["package"]["name"].as_str().unwrap_or_default()
+    );
     let comps = arr(&doc["components"]);
     if comps.len() != 1 || comps[0]["path"].as_str() != Some(want.as_str()) {
-        out.push(format!("/components: observed IR has exactly one component `{want}`"));
+        out.push(format!(
+            "/components: observed IR has exactly one component `{want}`"
+        ));
     }
     for key in ["citations", "checks", "solvers"] {
         if !arr(&doc[key]).is_empty() {
@@ -252,7 +297,9 @@ fn observed(doc: &Value, out: &mut Vec<String>) {
                 out.push(format!("{at}/path: member name `{name}` is not path-safe"));
             }
             if !seen.insert(path) {
-                out.push(format!("{at}/path: duplicate `{path}` (collisions take `_2`, `_3`)"));
+                out.push(format!(
+                    "{at}/path: duplicate `{path}` (collisions take `_2`, `_3`)"
+                ));
             }
             if !bound_paths.contains(path) {
                 out.push(format!("{at}/path: no binding with a locator for `{path}`"));

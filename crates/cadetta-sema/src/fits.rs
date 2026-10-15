@@ -502,7 +502,9 @@ mod tests {
     #[test]
     fn failure_codes_name_the_lint_rule() {
         assert_eq!(FitFailure::NominalNotNanometres.code(), Some("F002"));
-        let iso = FitFailure::Iso(FitError::UnknownClass { class: "Z9".to_owned() });
+        let iso = FitFailure::Iso(FitError::UnknownClass {
+            class: "Z9".to_owned(),
+        });
         assert_eq!(iso.code(), Some("F001"));
         assert_eq!(FitFailure::OperandMismatch.code(), None);
     }

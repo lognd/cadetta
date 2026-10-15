@@ -1058,7 +1058,8 @@ mod tests {
             "model Part {\n  thickness = 3mm  was Old.thk\n}\nmodel Other {\n  t = Old.thk\n}\n",
         );
         assert_eq!(codes(&analyse(&[(&[], &f)])), vec!["N004"]);
-        let f = file("model Part {\n  thickness = 3mm\n}\nmodel Other {\n  t = Part.thickness\n}\n");
+        let f =
+            file("model Part {\n  thickness = 3mm\n}\nmodel Other {\n  t = Part.thickness\n}\n");
         assert!(codes(&analyse(&[(&[], &f)])).is_empty());
     }
 
@@ -1187,17 +1188,27 @@ mod tests {
     fn priv_member_read_through_instance_is_e016() {
         let lib = file("pub model J { priv major = 3\n  minor = 2\n}\n");
         let build = |body: &str| {
-            let user = file(&format!("use lib::J\nmodel U {{\n  part j: J\n  {body}\n}}\n"));
+            let user = file(&format!(
+                "use lib::J\nmodel U {{\n  part j: J\n  {body}\n}}\n"
+            ));
             let pkgs = vec![
                 PackageSrc {
                     name: "lib".to_owned(),
                     deps: Vec::new(),
-                    modules: vec![ModuleSrc { path: Vec::new(), file: &lib, enums: &[] }],
+                    modules: vec![ModuleSrc {
+                        path: Vec::new(),
+                        file: &lib,
+                        enums: &[],
+                    }],
                 },
                 PackageSrc {
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
-                    modules: vec![ModuleSrc { path: Vec::new(), file: &user, enums: &[] }],
+                    modules: vec![ModuleSrc {
+                        path: Vec::new(),
+                        file: &user,
+                        enums: &[],
+                    }],
                 },
             ];
             let (resolver, _) = Resolver::new(pkgs.clone());
@@ -1213,21 +1224,29 @@ mod tests {
     // frob:tests priv_member_expression_path_across_packages_is_e016
     #[test]
     fn priv_member_expression_path_across_packages_is_e016() {
-        let lib = file(
-            "pub model W { priv bore = 5\n  hub = 2\n}\npub model R { part w: W\n}\n",
-        );
+        let lib = file("pub model W { priv bore = 5\n  hub = 2\n}\npub model R { part w: W\n}\n");
         let build = |body: &str| {
-            let user = file(&format!("use lib::R\nuse lib::W\nmodel U {{\n  {body}\n}}\n"));
+            let user = file(&format!(
+                "use lib::R\nuse lib::W\nmodel U {{\n  {body}\n}}\n"
+            ));
             let pkgs = vec![
                 PackageSrc {
                     name: "lib".to_owned(),
                     deps: Vec::new(),
-                    modules: vec![ModuleSrc { path: Vec::new(), file: &lib, enums: &[] }],
+                    modules: vec![ModuleSrc {
+                        path: Vec::new(),
+                        file: &lib,
+                        enums: &[],
+                    }],
                 },
                 PackageSrc {
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
-                    modules: vec![ModuleSrc { path: Vec::new(), file: &user, enums: &[] }],
+                    modules: vec![ModuleSrc {
+                        path: Vec::new(),
+                        file: &user,
+                        enums: &[],
+                    }],
                 },
             ];
             let (resolver, _) = Resolver::new(pkgs.clone());

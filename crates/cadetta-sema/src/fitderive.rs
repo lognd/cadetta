@@ -61,7 +61,9 @@ fn each_fit<'a>(packages: &'a [PackageSrc<'a>]) -> impl Iterator<Item = FitSite<
         p.modules.iter().flat_map(move |m| {
             m.file.components().flat_map(move |c| {
                 c.members.iter().filter_map(move |mem| match &mem.kind {
-                    MemberKind::Fit(f) => Some((p.name.as_str(), m.path.as_slice(), c, f, mem.span)),
+                    MemberKind::Fit(f) => {
+                        Some((p.name.as_str(), m.path.as_slice(), c, f, mem.span))
+                    }
                     _ => None,
                 })
             })
@@ -91,7 +93,8 @@ pub(crate) fn implied_roles(
             FitSpec::Pair(..) => continue,
         };
         for (path, role) in named {
-            let Ok(Resolved::Member { path: p, .. }) = resolver.resolve_path(&ctx, path, None) else {
+            let Ok(Resolved::Member { path: p, .. }) = resolver.resolve_path(&ctx, path, None)
+            else {
                 continue;
             };
             trace!(member = %p, ?role, fit = %f.name.name, "fits: fit implies a role");
@@ -207,7 +210,11 @@ fn derive_one(
             if let Some(code) = e.code() {
                 findings.push(FitFinding {
                     code,
-                    message: format!("fit `{}` could not be evaluated: {}", f.name.name, failure_reason(&e)),
+                    message: format!(
+                        "fit `{}` could not be evaluated: {}",
+                        f.name.name,
+                        failure_reason(&e)
+                    ),
                     path,
                     span,
                 });
@@ -215,7 +222,11 @@ fn derive_one(
             return None;
         }
     };
-    for d in result.diagnostics.iter().filter(|d| d.code == crate::fits::F003) {
+    for d in result
+        .diagnostics
+        .iter()
+        .filter(|d| d.code == crate::fits::F003)
+    {
         findings.push(FitFinding {
             code: crate::fits::F003,
             message: d.message.clone(),
@@ -243,7 +254,8 @@ fn failure_reason(e: &FitFailure) -> String {
     match e {
         FitFailure::Iso(inner) => {
             let text = inner.to_string();
-            text.split_once(": ").map_or(text.clone(), |(_, rest)| rest.to_owned())
+            text.split_once(": ")
+                .map_or(text.clone(), |(_, rest)| rest.to_owned())
         }
         FitFailure::NominalNotNanometres => {
             "the nominal size is not a whole number of nanometres".to_owned()

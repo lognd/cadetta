@@ -1847,11 +1847,18 @@ mod tests {
     #[test]
     fn package_and_super_paths_parse_in_expressions() {
         for (src, text) in [
-            ("model M {\n w = package::a::Thing.size\n}\n", "package::a::Thing"),
+            (
+                "model M {\n w = package::a::Thing.size\n}\n",
+                "package::a::Thing",
+            ),
             ("model M {\n w = super::Thing\n}\n", "super::Thing"),
         ] {
             let p = parse(src);
-            assert!(p.diags.is_empty(), "unexpected diagnostics for {src:?}: {:?}", p.diags);
+            assert!(
+                p.diags.is_empty(),
+                "unexpected diagnostics for {src:?}: {:?}",
+                p.diags
+            );
             assert!(format!("{:?}", p.file).contains(text.split("::").next().unwrap()));
         }
     }

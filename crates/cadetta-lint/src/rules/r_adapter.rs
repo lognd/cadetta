@@ -310,8 +310,9 @@ mod tests {
         };
         let d = check_r007(&[f(false, true), f(true, false), f(true, true)]);
         assert_eq!(d.len(), 2);
-        assert!(d
-            .iter()
-            .all(|d| d.code == "R007" && d.severity == Severity::Warning));
+        assert!(
+            d.iter()
+                .all(|d| d.code == "R007" && d.severity == Severity::Warning)
+        );
     }
 }

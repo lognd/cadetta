@@ -53,7 +53,10 @@ fn count_in(report: &corpus::Report, doc: &str) -> usize {
     report
         .outcomes
         .keys()
-        .filter(|k| k.strip_prefix(&format!("{doc}/")).is_some_and(|r| !r.contains('/')))
+        .filter(|k| {
+            k.strip_prefix(&format!("{doc}/"))
+                .is_some_and(|r| !r.contains('/'))
+        })
         .count()
 }
 
@@ -81,6 +84,9 @@ fn packages_fixtures_match_the_spec() {
 fn packages_corpus_is_not_empty() {
     for doc in DOCS {
         let (report, _) = doc_report(doc);
-        assert!(count_in(&report, doc) > 0, "no {doc} fixtures were discovered");
+        assert!(
+            count_in(&report, doc) > 0,
+            "no {doc} fixtures were discovered"
+        );
     }
 }

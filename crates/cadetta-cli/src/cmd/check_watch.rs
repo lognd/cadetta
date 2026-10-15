@@ -213,9 +213,7 @@ mod tests {
             .map(|r| {
                 (
                     r["location"]["file"].as_str().unwrap_or("").to_owned(),
-                    r["location"]["start"]["line"]
-                        .as_u64()
-                        .unwrap_or(0),
+                    r["location"]["start"]["line"].as_u64().unwrap_or(0),
                     r["code"].as_str().unwrap().to_owned(),
                 )
             })

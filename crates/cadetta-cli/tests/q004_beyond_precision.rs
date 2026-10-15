@@ -20,7 +20,9 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
             }
         }
     }
-    let from = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance").join(fixture);
+    let from = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/conformance")
+        .join(fixture);
     let to = std::env::temp_dir().join(format!("cadetta-q004-{tag}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&to);
     copy(&from, &to);
@@ -29,10 +31,16 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
 
 /// Runs `cadetta --format json emit` in `dir`; returns (exit, report, written file text).
 fn emit(dir: &Path, out_file: &str) -> (u8, Value, Option<String>) {
-    let args: Vec<String> = ["--cwd", dir.to_str().expect("utf8"), "--format", "json", "emit"]
-        .iter()
-        .map(|s| (*s).to_owned())
-        .collect();
+    let args: Vec<String> = [
+        "--cwd",
+        dir.to_str().expect("utf8"),
+        "--format",
+        "json",
+        "emit",
+    ]
+    .iter()
+    .map(|s| (*s).to_owned())
+    .collect();
     let (mut out, mut err) = (Vec::new(), Vec::new());
     let exit = cadetta::run_with_env(&args, None, &mut out, &mut err);
     let report = serde_json::from_slice(&out).expect("json report");
@@ -45,11 +53,23 @@ fn emit(dir: &Path, out_file: &str) -> (u8, Value, Option<String>) {
 #[test]
 fn q004_beyond_precision_fires_and_withholds_the_file() {
     for (fixture, path) in [
-        ("emitters/sw-equations/value-q004-beyond-precision", "acme.demo::Part.width"),
-        ("adapters/contract-q004-not-representable", "acme.demo::Part.third"),
-        ("adapters/contract-structured-failures", "acme.demo::Part.third"),
+        (
+            "emitters/sw-equations/value-q004-beyond-precision",
+            "acme.demo::Part.width",
+        ),
+        (
+            "adapters/contract-q004-not-representable",
+            "acme.demo::Part.third",
+        ),
+        (
+            "adapters/contract-structured-failures",
+            "acme.demo::Part.third",
+        ),
     ] {
-        let (exit, report, file) = emit(&stage(&format!("{fixture}.must-fire"), "fire"), "build/eq.txt");
+        let (exit, report, file) = emit(
+            &stage(&format!("{fixture}.must-fire"), "fire"),
+            "build/eq.txt",
+        );
         assert_eq!(exit, 1, "{fixture}");
         assert!(file.is_none(), "{fixture}: file must be withheld");
         let d = &report["diagnostics"][0];
@@ -64,7 +84,10 @@ fn q004_beyond_precision_fires_and_withholds_the_file() {
 #[test]
 fn representable_value_is_written_at_the_declared_precision() {
     let (exit, report, file) = emit(
-        &stage("emitters/sw-equations/value-q004-beyond-precision.must-not-fire", "ok"),
+        &stage(
+            "emitters/sw-equations/value-q004-beyond-precision.must-not-fire",
+            "ok",
+        ),
         "build/eq.txt",
     );
     assert_eq!(exit, 0, "{report}");
@@ -78,6 +101,9 @@ fn quantity_q004_fixture_fires_for_one_third_at_two_decimals() {
     let (exit, report, _) = emit(&stage("quantities/q004.must-fire", "qty"), "build/none");
     assert_eq!(exit, 1, "{report}");
     assert_eq!(report["diagnostics"][0]["path"], "acme.demo::P.w");
-    let (exit, _, _) = emit(&stage("quantities/q004.must-not-fire", "qty-ok"), "build/none");
+    let (exit, _, _) = emit(
+        &stage("quantities/q004.must-not-fire", "qty-ok"),
+        "build/none",
+    );
     assert_eq!(exit, 0);
 }

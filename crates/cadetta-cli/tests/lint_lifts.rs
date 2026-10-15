@@ -4,7 +4,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 use cadetta_lint::diag::Severity;
 
@@ -81,7 +81,8 @@ fn q007_is_quiet_for_an_attached_unit() {
 // frob:tests crates/cadetta-cli/src/pipeline.rs::evaluate_stages kind=unit
 #[test]
 fn p001_fires_for_a_feature_without_a_role_and_not_with_one() {
-    let proc = "process Fdm {\n  hole_comp = 0.2mm\n  rule hole(d: Length) -> Length = d + hole_comp\n}\n";
+    let proc =
+        "process Fdm {\n  hole_comp = 0.2mm\n  rule hole(d: Length) -> Length = d + hole_comp\n}\n";
     let bad = run(
         "p001",
         &format!("{proc}model Case {{\n  #![process(Fdm)]\n  insert_hole = 3.4mm\n}}\n"),
@@ -97,17 +98,30 @@ fn p001_fires_for_a_feature_without_a_role_and_not_with_one() {
 // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits_with_findings kind=unit
 #[test]
 fn f001_and_f002_fire_for_a_bad_class_and_an_out_of_range_size() {
-    let f001 = run("f001", "model Part {\n  bore = 20mm\n  fit seat = H19/p6 on bore\n}\n");
+    let f001 = run(
+        "f001",
+        "model Part {\n  bore = 20mm\n  fit seat = H19/p6 on bore\n}\n",
+    );
     assert!(has(&f001, "F001"), "{:?}", codes(&f001));
-    let f002 = run("f002", "model Part {\n  bore = 600mm\n  fit seat = H7/p6 on bore\n}\n");
+    let f002 = run(
+        "f002",
+        "model Part {\n  bore = 600mm\n  fit seat = H7/p6 on bore\n}\n",
+    );
     assert!(has(&f002, "F002"), "{:?}", codes(&f002));
 }
 
 // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits_with_findings kind=unit
 #[test]
 fn f001_and_f002_are_quiet_for_a_valid_fit() {
-    let a = run("fok", "model Part {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n}\n");
-    assert!(!has(&a, "F001") && !has(&a, "F002") && !has(&a, "F003"), "{:?}", codes(&a));
+    let a = run(
+        "fok",
+        "model Part {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n}\n",
+    );
+    assert!(
+        !has(&a, "F001") && !has(&a, "F002") && !has(&a, "F003"),
+        "{:?}",
+        codes(&a)
+    );
 }
 
 // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits_with_findings kind=unit
@@ -174,8 +188,7 @@ fn l001_is_an_error_once_the_date_has_passed_and_a_warning_before() {
 fn l001_is_quiet_for_an_active_primary_or_an_eol_one_with_a_viable_alternate() {
     let active = run("l001act", &rover("#[lifecycle(active, \"2026-09\")]"));
     assert!(!has(&active, "L001"), "{:?}", codes(&active));
-    let src = rover("#[lifecycle(eol, \"2026-09\")]")
-        .replace("= Old\n", "= Old alt [Good]\n");
+    let src = rover("#[lifecycle(eol, \"2026-09\")]").replace("= Old\n", "= Old alt [Good]\n");
     let alt = run("l001alt", &src);
     assert!(!has(&alt, "L001"), "{:?}", codes(&alt));
 }
@@ -199,7 +212,11 @@ fn swap_rover(alt: &str) -> String {
 #[test]
 fn l001_variant_evaluation_rejects_an_alternate_that_violates_a_check() {
     let bad = run("l001varbad", &swap_rover("Big"));
-    assert!(has(&bad, "L001"), "violating alternate is not viable: {:?}", codes(&bad));
+    assert!(
+        has(&bad, "L001"),
+        "violating alternate is not viable: {:?}",
+        codes(&bad)
+    );
     let good = run("l001vargood", &swap_rover("Good"));
     assert!(!has(&good, "L001"), "{:?}", codes(&good));
 }

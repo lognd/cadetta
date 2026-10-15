@@ -3,7 +3,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.

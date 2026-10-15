@@ -33,8 +33,8 @@ use cadetta_syntax::lexer::Segment;
 use cadetta_syntax::span::Span;
 use cadetta_units::square::{mul_checked, square};
 use cadetta_units::{
-    Affine, Dim, InexactError, Magnitude, Rational, Sum, Temperature, TemperatureUnit,
-    ToleranceError, Toleranced, UnitTable, VarId, Role, RoleInfo, RoleSource, resolve_role,
+    Affine, Dim, InexactError, Magnitude, Rational, Role, RoleInfo, RoleSource, Sum, Temperature,
+    TemperatureUnit, ToleranceError, Toleranced, UnitTable, VarId, resolve_role,
 };
 use tracing::{debug, trace, warn};
 
@@ -367,7 +367,9 @@ impl Quant {
                     return Err(diag(
                         "E010",
                         span,
-                        format!("`.{name}` needs a role (hole or shaft) to say which side is material"),
+                        format!(
+                            "`.{name}` needs a role (hole or shaft) to say which side is material"
+                        ),
                     ));
                 };
                 let (lo, hi) = self.form.bounds().map_err(|e| tol_diag(&e, span))?;
@@ -793,15 +795,19 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     fn classify(&self, sc: &Scope, e: &Expr) -> R<RefKind> {
         // frob:ticket 01M4YR00ZFABJQWKQJ3F3JFVY4
-        let resolved = self.renames.resolve_ref(self.resolver, &sc.ctx, e, None).map(|(r, _)| r).map_err(|re| {
-            Fail::Diag(EvalDiagnostic {
-                code: re.code,
-                severity: Severity::Error,
-                message: re.message,
-                span: re.span,
-                module: re.module.map(|m| *m),
-            })
-        })?;
+        let resolved = self
+            .renames
+            .resolve_ref(self.resolver, &sc.ctx, e, None)
+            .map(|(r, _)| r)
+            .map_err(|re| {
+                Fail::Diag(EvalDiagnostic {
+                    code: re.code,
+                    severity: Severity::Error,
+                    message: re.message,
+                    span: re.span,
+                    module: re.module.map(|m| *m),
+                })
+            })?;
         match resolved {
             Resolved::Local(n) => Ok(RefKind::Local(n)),
             // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
@@ -1036,7 +1042,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Tolerance(inner, terms) => Ok(self.tolerance_val(sc, inner, terms, span)?.0),
             ExprKind::IsoClass(inner, class) => {
                 let var = self.fresh_var();
-                Ok(Val::Quantity(self.iso_class(sc, inner, class, var, span)?.0))
+                Ok(Val::Quantity(
+                    self.iso_class(sc, inner, class, var, span)?.0,
+                ))
             }
             ExprKind::Call {
                 callee,
@@ -1315,10 +1323,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         span: Span,
     ) -> R<(Quant, RoleInfo)> {
         let base = self.quant(sc, inner)?;
-        let (side, _) = crate::fits::class_side(base.dim(), &base.nominal, &class.name).map_err(|e| {
-            let msg = crate::fits::failure_message(&e);
-            diag(e.code().unwrap_or("EVAL"), span, msg)
-        })?;
+        let (side, _) =
+            crate::fits::class_side(base.dim(), &base.nominal, &class.name).map_err(|e| {
+                let msg = crate::fits::failure_message(&e);
+                diag(e.code().unwrap_or("EVAL"), span, msg)
+            })?;
         let form = side.value.to_affine(var).map_err(|e| tol_diag(&e, span))?;
         trace!(class = %class.name, ?var, "evaluator: ISO class owns a source variable");
         Ok((
@@ -1932,7 +1941,9 @@ mod tests {
     // frob:tests iso_class_applies_table_deviations_and_hole_role
     #[test]
     fn iso_class_applies_table_deviations_and_hole_role() {
-        let ev = run(&file("model P {\n  a = 20mm H7\n  hi = a.max\n  lo = a.min\n  m = a.mmc\n}\n"));
+        let ev = run(&file(
+            "model P {\n  a = 20mm H7\n  hi = a.max\n  lo = a.min\n  m = a.mmc\n}\n",
+        ));
         assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
         assert_eq!(quant(&ev, "P", "hi").nominal, m(20_021, 1_000_000));
         assert_eq!(quant(&ev, "P", "lo").nominal, m(20, 1_000));
@@ -1964,7 +1975,9 @@ mod tests {
     // frob:tests mmc_without_role_is_e010
     #[test]
     fn mmc_without_role_is_e010() {
-        let ev = run(&file("model P {\n  a = 5mm [+-0.1mm]\n  b = a.mmc\n  c = a.lmc\n}\n"));
+        let ev = run(&file(
+            "model P {\n  a = 5mm [+-0.1mm]\n  b = a.mmc\n  c = a.lmc\n}\n",
+        ));
         assert_eq!(codes(&ev), vec!["E010", "E010"]);
     }
 

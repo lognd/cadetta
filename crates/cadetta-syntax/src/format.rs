@@ -751,12 +751,10 @@ impl Printer<'_> {
                         .collect();
                     format!("in {}", bs.join(", "))
                 }
-                SolverMemberKind::Out { name, ty } => {
-                    match ty {
-                        Some(ty) => format!("out {}: {}", name.name, self.ty(ty)),
-                        None => format!("out {}", name.name),
-                    }
-                }
+                SolverMemberKind::Out { name, ty } => match ty {
+                    Some(ty) => format!("out {}: {}", name.name, self.ty(ty)),
+                    None => format!("out {}", name.name),
+                },
                 SolverMemberKind::Deps(f) => format!("deps {}", quote(f)),
                 SolverMemberKind::Check(c) => self.check(c, ""),
                 SolverMemberKind::Error => m.span.slice(self.src).trim().to_owned(),

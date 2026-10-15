@@ -887,8 +887,14 @@ mod tests {
     fn role_attribute_names_hole_or_shaft() {
         let mk = |k: &str, v: &str| BTreeMap::from([(k.to_owned(), v.to_owned())]);
         assert_eq!(role_from_attrs(&mk("hole", "")).as_deref(), Some("hole"));
-        assert_eq!(role_from_attrs(&mk("role", "hole")).as_deref(), Some("hole"));
-        assert_eq!(role_from_attrs(&mk("role", "shaft")).as_deref(), Some("shaft"));
+        assert_eq!(
+            role_from_attrs(&mk("role", "hole")).as_deref(),
+            Some("hole")
+        );
+        assert_eq!(
+            role_from_attrs(&mk("role", "shaft")).as_deref(),
+            Some("shaft")
+        );
         assert_eq!(role_from_attrs(&mk("role", "other")), None);
         assert_eq!(role_from_attrs(&BTreeMap::new()), None);
     }
@@ -1102,14 +1108,18 @@ mod tests {
         let oob = LEGS_SRC.replace("leg[3].top", "leg[9].top");
         let (ev, _, _) = evaluate(&oob);
         assert!(
-            ev.diagnostics.iter().any(|d| d.message.contains("out of range")),
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("out of range")),
             "{:?}",
             ev.diagnostics
         );
         let cross = LEGS_SRC.replace("(leg[2].top in origin).y", "(leg[2].top in leg[1].top).y");
         let (ev, _, _) = evaluate(&cross);
         assert!(
-            ev.diagnostics.iter().any(|d| d.message.contains("between instances")),
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("between instances")),
             "{:?}",
             ev.diagnostics
         );

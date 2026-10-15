@@ -56,7 +56,9 @@ mod tests {
     // frob:tests crates/cadetta-sema/src/solverdecl.rs::check_solver_decls kind=unit
     #[test]
     fn bad_in_forms_and_legal_forms() {
-        let bad = |e: &str| format!("solver s {{\n  script \"s.py\"\n  in a = {e}\n  out o: Length\n}}\n");
+        let bad = |e: &str| {
+            format!("solver s {{\n  script \"s.py\"\n  in a = {e}\n  out o: Length\n}}\n")
+        };
         assert_eq!(codes(&bad("\"x\"")), ["S007"]);
         assert_eq!(codes(&bad("3")), ["Q001"]);
         assert!(codes(&bad("2 * x.y")).is_empty());

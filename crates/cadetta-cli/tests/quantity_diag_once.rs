@@ -4,7 +4,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.
@@ -37,8 +37,14 @@ fn codes(tag: &str, src: &str) -> Vec<String> {
 // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze_at kind=integration
 #[test]
 fn lexical_error_reports_one_e001() {
-    for (i, lit) in ["2ft3kg", "5.mm", ".5mm", "2.5ft6in", "6in2ft"].iter().enumerate() {
-        let c = codes(&format!("e001-{i}"), &format!("model P {{\n  a = {lit}\n}}\n"));
+    for (i, lit) in ["2ft3kg", "5.mm", ".5mm", "2.5ft6in", "6in2ft"]
+        .iter()
+        .enumerate()
+    {
+        let c = codes(
+            &format!("e001-{i}"),
+            &format!("model P {{\n  a = {lit}\n}}\n"),
+        );
         assert_eq!(c, vec!["E001"], "{lit}");
     }
 }
@@ -54,7 +60,11 @@ fn kind_fault_shadows_evaluator_report() {
     ];
     for (tag, body, want) in cases {
         let c = codes(tag, &format!("model P {{\n  {body}\n}}\n"));
-        assert_eq!(c.iter().filter(|x| x.as_str() == want).count(), 1, "{body}: {c:?}");
+        assert_eq!(
+            c.iter().filter(|x| x.as_str() == want).count(),
+            1,
+            "{body}: {c:?}"
+        );
         assert!(!c.iter().any(|x| x == "EVAL"), "{body}: {c:?}");
     }
 }
@@ -74,8 +84,14 @@ fn package_kind_is_distinct_and_explicit_conversion_is_quiet() {
     let head = "kind Stress = Pressure\nmodel Part {\n  s: Stress = 5MPa as Stress\n";
     let fire = codes("q003-fire", &format!("{head}  p: Pressure = s\n}}\n"));
     assert_eq!(fire.iter().filter(|c| *c == "Q003").count(), 1, "{fire:?}");
-    let quiet = codes("q003-quiet", &format!("{head}  p: Pressure = s as Pressure\n}}\n"));
+    let quiet = codes(
+        "q003-quiet",
+        &format!("{head}  p: Pressure = s as Pressure\n}}\n"),
+    );
     assert!(!quiet.iter().any(|c| c == "Q003"), "{quiet:?}");
-    let bare = codes("q003-bare", "kind Stress = Pressure\nmodel P {\n  s: Stress = 5MPa\n}\n");
+    let bare = codes(
+        "q003-bare",
+        "kind Stress = Pressure\nmodel P {\n  s: Stress = 5MPa\n}\n",
+    );
     assert_eq!(bare.iter().filter(|c| *c == "Q003").count(), 1, "{bare:?}");
 }

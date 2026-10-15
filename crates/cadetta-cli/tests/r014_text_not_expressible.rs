@@ -20,7 +20,9 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
             }
         }
     }
-    let from = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance").join(fixture);
+    let from = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../tests/conformance")
+        .join(fixture);
     let to = std::env::temp_dir().join(format!("cadetta-r014-{tag}-{}", std::process::id()));
     let _ = fs::remove_dir_all(&to);
     copy(&from, &to);
@@ -29,10 +31,16 @@ fn stage(fixture: &str, tag: &str) -> PathBuf {
 
 /// Runs `cadetta --format json emit` in `dir`; returns (exit, report, written file text).
 fn emit(dir: &Path, out_file: &str) -> (u8, Value, Option<String>) {
-    let args: Vec<String> = ["--cwd", dir.to_str().expect("utf8"), "--format", "json", "emit"]
-        .iter()
-        .map(|s| (*s).to_owned())
-        .collect();
+    let args: Vec<String> = [
+        "--cwd",
+        dir.to_str().expect("utf8"),
+        "--format",
+        "json",
+        "emit",
+    ]
+    .iter()
+    .map(|s| (*s).to_owned())
+    .collect();
     let (mut out, mut err) = (Vec::new(), Vec::new());
     let exit = cadetta::run_with_env(&args, None, &mut out, &mut err);
     let report = serde_json::from_slice(&out).expect("json report");
@@ -51,14 +59,20 @@ const NAMES: [&str; 3] = [
 #[test]
 fn bound_text_parameter_is_r014_and_withholds_the_file() {
     for fixture in NAMES {
-        let (exit, report, file) = emit(&stage(&format!("{fixture}.must-fire"), "fire"), "build/eq.txt");
+        let (exit, report, file) = emit(
+            &stage(&format!("{fixture}.must-fire"), "fire"),
+            "build/eq.txt",
+        );
         assert_eq!(exit, 1, "{fixture}: {report}");
         assert!(file.is_none(), "{fixture}: file must be withheld");
         let d = &report["diagnostics"][0];
         assert_eq!(d["code"], "R014", "{fixture}: {report}");
         assert_eq!(d["severity"], "error", "{fixture}");
         assert_eq!(d["path"], "acme.demo::Part.note", "{fixture}");
-        assert!(d["message"].as_str().expect("msg").contains("Text"), "{fixture}");
+        assert!(
+            d["message"].as_str().expect("msg").contains("Text"),
+            "{fixture}"
+        );
     }
 }
 
@@ -66,11 +80,20 @@ fn bound_text_parameter_is_r014_and_withholds_the_file() {
 #[test]
 fn filtered_or_unbound_text_parameter_is_not_emitted_and_not_an_error() {
     for fixture in NAMES {
-        let (exit, report, file) = emit(&stage(&format!("{fixture}.must-not-fire"), "ok"), "build/eq.txt");
+        let (exit, report, file) = emit(
+            &stage(&format!("{fixture}.must-not-fire"), "ok"),
+            "build/eq.txt",
+        );
         assert_eq!(exit, 0, "{fixture}: {report}");
-        assert!(report["diagnostics"].as_array().expect("list").is_empty(), "{fixture}");
+        assert!(
+            report["diagnostics"].as_array().expect("list").is_empty(),
+            "{fixture}"
+        );
         let text = file.expect("written");
         assert!(text.contains("\"W\" = 10mm"), "{fixture}: {text}");
-        assert!(!text.contains("Note") && !text.contains("anodize"), "{fixture}: {text}");
+        assert!(
+            !text.contains("Note") && !text.contains("anodize"),
+            "{fixture}: {text}"
+        );
     }
 }

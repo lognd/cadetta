@@ -132,7 +132,11 @@ fn button_and_flat_head_pockets_follow_their_standards() {
     assert_eq!((b6[3].as_str(), b6[4].as_str()), ("11.5mm", "3.8mm"));
     // ISO 10642 pocket is the countersink: head diameter by head height, flush.
     for (key, c) in rows("Iso10642Head") {
-        assert_eq!((c[3].as_str(), c[4].as_str()), (c[0].as_str(), c[1].as_str()), "{key}");
+        assert_eq!(
+            (c[3].as_str(), c[4].as_str()),
+            (c[0].as_str(), c[1].as_str()),
+            "{key}"
+        );
     }
     assert_eq!(row("Iso10642Head", "M8")[0], "17.92mm");
     // Every pocket is at least as large as its head.

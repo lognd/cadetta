@@ -25,8 +25,8 @@ use cadetta_syntax::ast::{
     self, BinOp, BoundKind, CmpOp as AstCmp, Component, Expr, ExprKind, MemberKind, UnOp,
 };
 use cadetta_syntax::span::Span;
-use cadetta_units::{Bound, InexactInterval};
 use cadetta_units::compare::{CmpOp, Note, Operand, Verdict, compare};
+use cadetta_units::{Bound, InexactInterval};
 use tracing::{debug, trace, warn};
 
 use super::instances::InstInfo;

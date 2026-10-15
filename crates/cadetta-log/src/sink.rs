@@ -109,7 +109,11 @@ mod tests {
         assert_eq!(
             got,
             vec![
-                (Level::WARN, "demo::part".to_owned(), "careful n=3".to_owned()),
+                (
+                    Level::WARN,
+                    "demo::part".to_owned(),
+                    "careful n=3".to_owned()
+                ),
                 (Level::TRACE, module_path!().to_owned(), "fine".to_owned()),
             ]
         );

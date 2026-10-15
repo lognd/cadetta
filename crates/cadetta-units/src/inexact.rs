@@ -569,7 +569,10 @@ mod tests {
     #[test]
     fn cbrt_is_exact_for_cubes_and_marked_inexact_otherwise() {
         let c = Value::Exact(Magnitude::new(Rational::new(-8, 27).unwrap(), 0)).cbrt();
-        assert_eq!(c, Value::Exact(Magnitude::new(Rational::new(-2, 3).unwrap(), 0)));
+        assert_eq!(
+            c,
+            Value::Exact(Magnitude::new(Rational::new(-2, 3).unwrap(), 0))
+        );
         let two = Value::Exact(Magnitude::new(Rational::new(2, 1).unwrap(), 0)).cbrt();
         assert_eq!(two.root(), Some(RootOp::Cbrt));
         assert!((two.to_f64() - 2f64.cbrt()).abs() < 1e-15);

@@ -25,10 +25,10 @@ use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
-use cadetta_geometry::interface_datum::check_interface_datums;
 use cadetta_geometry::instances::{
     Operand, check_elementwise, check_unplaced, expand_instances, operands,
 };
+use cadetta_geometry::interface_datum::check_interface_datums;
 use cadetta_geometry::placement::{
     Assembly, Cover, Node, PlacementCode, PointInfo, build_assembly, check_assembly,
 };
@@ -40,8 +40,8 @@ use cadetta_syntax::ast::{
 };
 use cadetta_syntax::span::Span;
 use cadetta_units::compare::{Note, Verdict};
-use cadetta_variants::interface::{C001, I001, ResolvedInterface, resolve as resolve_interface};
 use cadetta_units::{Affine, Dim, RootOp};
+use cadetta_variants::interface::{C001, I001, ResolvedInterface, resolve as resolve_interface};
 use tracing::{debug, trace, warn};
 
 use super::{
@@ -240,7 +240,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let mut cur = path.item_only();
         for seg in &path.parts {
             let (next, counted) =
-                step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name).map_err(|m| diag("EVAL", span, m))?;
+                step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name)
+                    .map_err(|m| diag("EVAL", span, m))?;
             // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
             match (counted, seg.index.is_some()) {
                 (true, false) => {
@@ -435,7 +436,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 
     /// The interface `path` names with its extended interfaces folded in (depth-capped).
-    fn resolved_interface(&self, ctx: &Ctx, path: &Path, depth: usize) -> Option<ResolvedInterface> {
+    fn resolved_interface(
+        &self,
+        ctx: &Ctx,
+        path: &Path,
+        depth: usize,
+    ) -> Option<ResolvedInterface> {
         const MAX_DEPTH: usize = 16;
         if depth >= MAX_DEPTH {
             return None;

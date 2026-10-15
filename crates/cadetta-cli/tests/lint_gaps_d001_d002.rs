@@ -5,7 +5,7 @@
 
 use std::fs;
 
-use cadetta::pipeline::{analyze_at, Analysis};
+use cadetta::pipeline::{Analysis, analyze_at};
 use cadetta::project::Project;
 
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.
@@ -53,7 +53,10 @@ fn d001_is_info_below_min_digits_and_warning_at_or_above() {
 fn d002_fires_for_a_literal_equal_to_a_fit_clearance_accessor() {
     let src = "pub model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n  y = -0.035mm\n}\n";
     let got = hits("d002", src, "D002");
-    assert_eq!(got, vec![("Warning".to_owned(), Some("acme.demo::P.y".to_owned()))]);
+    assert_eq!(
+        got,
+        vec![("Warning".to_owned(), Some("acme.demo::P.y".to_owned()))]
+    );
 }
 
 // frob:tests crates/cadetta-lint/src/rules/d.rs::check_d002 kind=integration

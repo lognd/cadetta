@@ -90,7 +90,13 @@ pub fn explicit_role(leading: &[Attr], trailing: &[Attr]) -> Option<RoleInfo> {
         .filter_map(|a| match (a.name.name.as_str(), a.args.first()) {
             ("hole", None) => Some(Role::Hole),
             ("shaft", None) => Some(Role::Shaft),
-            ("role", Some(AttrArg::Expr(Expr { kind: ExprKind::Path(p), .. }))) => p
+            (
+                "role",
+                Some(AttrArg::Expr(Expr {
+                    kind: ExprKind::Path(p),
+                    ..
+                })),
+            ) => p
                 .segments
                 .first()
                 .and_then(|s| Role::from_attribute(&s.name).ok()),

@@ -157,9 +157,10 @@ fn stated(m: &Member) -> Option<(Key, &Value)> {
 pub fn is_literal(m: &Member) -> bool {
     m.provenance == Provenance::Authored
         && m.deps.is_empty()
-        && m.value
-            .as_ref()
-            .is_none_or(|v| v.authored.starts_with(|c: char| c.is_ascii_digit() || "+-.".contains(c)))
+        && m.value.as_ref().is_none_or(|v| {
+            v.authored
+                .starts_with(|c: char| c.is_ascii_digit() || "+-.".contains(c))
+        })
         && match (&m.expr, &m.value) {
             (None, _) => true,
             (Some(e), Some(v)) => *e == v.authored,
@@ -672,7 +673,10 @@ mod tests {
     fn table_lookup_is_not_a_literal() {
         assert!(is_literal(&param("demo::A.x", val(1000, "1mm"))));
         assert!(is_literal(&param("demo::A.x", val(-1000, "-1mm"))));
-        assert!(!is_literal(&param("demo::A.x", val(1000, "Iso273[6mm].pitch"))));
+        assert!(!is_literal(&param(
+            "demo::A.x",
+            val(1000, "Iso273[6mm].pitch")
+        )));
     }
 
     // frob:tests crates/cadetta-lint/src/rules/d.rs::check_d002

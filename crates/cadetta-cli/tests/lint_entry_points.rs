@@ -4,9 +4,9 @@
 use std::fs;
 use std::path::PathBuf;
 
-use cadetta::pipeline::{analyze, Analysis};
+use cadetta::pipeline::{Analysis, analyze};
 use cadetta::project::Project;
-use cadetta_lint::engine::{apply, LintConfig};
+use cadetta_lint::engine::{LintConfig, apply};
 
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.
 fn analyze_src(tag: &str, src: &str) -> Analysis {

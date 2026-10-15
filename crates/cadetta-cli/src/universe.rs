@@ -21,11 +21,11 @@ use cadetta_obligations::staleness::Judgement;
 use cadetta_obligations::why_stale::{WhyStale, why_stale};
 
 use crate::cmd::ack::{Candidate as AckCandidate, Subject};
-use crate::cmd::obligations::Candidate;
 use crate::cmd::emit::{
     attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, negate_text,
     written_for,
 };
+use crate::cmd::obligations::Candidate;
 use crate::cmd::sync::normalize;
 use crate::config::Adapter;
 use crate::pipeline::Analysis;
@@ -149,11 +149,7 @@ impl Universe {
         // A fit is a node over its hole and shaft members (obligations.md 1, `evaluates`).
         for f in ir.components.iter().flat_map(|c| &c.fits) {
             let deps = vec![f.hole.to_string(), f.shaft.to_string()];
-            nodes.push((
-                f.path.to_string(),
-                cadetta_ir::digest::fit_digest(f),
-                deps,
-            ));
+            nodes.push((f.path.to_string(), cadetta_ir::digest::fit_digest(f), deps));
         }
         let mut g = DigestGraph::new();
         for c in &ir.components {
@@ -304,13 +300,15 @@ pub fn universes(analysis: &Analysis) -> Vec<Universe> {
     analysis
         .packages
         .iter()
-        .filter_map(|p| match Universe::of_with(&p.ir, &analysis.suppressions.require_paths) {
-            Ok(u) => Some(u),
-            Err(error) => {
-                tracing::warn!(package = %p.name, %error, "universe: digest graph unavailable");
-                None
-            }
-        })
+        .filter_map(
+            |p| match Universe::of_with(&p.ir, &analysis.suppressions.require_paths) {
+                Ok(u) => Some(u),
+                Err(error) => {
+                    tracing::warn!(package = %p.name, %error, "universe: digest graph unavailable");
+                    None
+                }
+            },
+        )
         .collect()
 }
 
@@ -329,13 +327,13 @@ pub fn candidates(universes: &[Universe]) -> Vec<Candidate> {
         .flat_map(|u| &u.checks)
         .filter(signable)
         .map(|e| Candidate {
-        id: e.id.clone(),
-        current: e.covered.clone(),
-        deps: e.deps.clone(),
-        judgement: Some(judgement(e)),
-        suppressed: false,
-        nearest_changed: None,
-    });
+            id: e.id.clone(),
+            current: e.covered.clone(),
+            deps: e.deps.clone(),
+            judgement: Some(judgement(e)),
+            suppressed: false,
+            nearest_changed: None,
+        });
     let ots = universes.iter().flat_map(|u| &u.ots).map(|e| Candidate {
         id: e.id.clone(),
         current: e.covered.clone(),
@@ -438,7 +436,8 @@ fn emitted_values(
             .filter(|l| l.for_alternate.is_none() && l.mode != LocatorMode::Ref)
         {
             let unit = native_unit(adapter, loc);
-            let Ok(Some(written)) = written_for(&table, value, member, &unit, kind, point, precision)
+            let Ok(Some(written)) =
+                written_for(&table, value, member, &unit, kind, point, precision)
             else {
                 continue;
             };
@@ -447,7 +446,11 @@ fn emitted_values(
             } else {
                 written
             };
-            let default_unit = if kind == ValueKind::Quantity { unit } else { String::new() };
+            let default_unit = if kind == ValueKind::Quantity {
+                unit
+            } else {
+                String::new()
+            };
             out.insert(
                 (canonical.clone(), loc.locator.clone()),
                 normalize(&written, &default_unit),
@@ -745,8 +748,13 @@ mod tests {
         use cadetta_obligations::lock::{Hex, Lock, Record, SyncedFile, SyncedValue};
         let dir = Dir::new();
         let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
-        let adapter = "[[adapter]]\nname = \"sw-equations\"\nid = \"equations\"\nfiles = [\"part.FCStd\"]\n";
-        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{adapter}{kinds}")).unwrap();
+        let adapter =
+            "[[adapter]]\nname = \"sw-equations\"\nid = \"equations\"\nfiles = [\"part.FCStd\"]\n";
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            format!("{toml}{adapter}{kinds}"),
+        )
+        .unwrap();
         std::fs::write(dir.0.join("src/lib.cdt"), SYNC_SRC).unwrap();
         std::fs::create_dir_all(dir.0.join("bindings")).unwrap();
         std::fs::write(dir.0.join("bindings/equations.toml"), SYNC_BINDINGS).unwrap();
@@ -768,14 +776,21 @@ mod tests {
 
     fn check_json(dir: &Dir, args: &[&str]) -> (u8, Value) {
         let args: Vec<String> = args.iter().map(|a| (*a).to_owned()).collect();
-        let globals = Globals { format: Format::Json, cwd: Some(dir.0.clone()), config: None };
+        let globals = Globals {
+            format: Format::Json,
+            cwd: Some(dir.0.clone()),
+            config: None,
+        };
         let (mut out, mut err) = (Vec::new(), Vec::new());
         let code = crate::cmd::check::run_check(&args, &globals, &mut out, &mut err);
         (code, serde_json::from_slice(&out).unwrap_or(Value::Null))
     }
 
     fn o004(v: &Value) -> Option<&Value> {
-        v["diagnostics"].as_array()?.iter().find(|d| d["code"] == "O004")
+        v["diagnostics"]
+            .as_array()?
+            .iter()
+            .find(|d| d["code"] == "O004")
     }
 
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
@@ -803,7 +818,11 @@ mod tests {
     fn sync_kind_required_for_check_makes_o004_gate() {
         let kinds = "[obligations.kinds.sync]\nrequired_for = \"check\"\n";
         let (code, v) = check_json(&synced_project("5mm", kinds), &[]);
-        assert_eq!(o004(&v).unwrap_or_else(|| panic!("{v}"))["severity"], "error", "{v}");
+        assert_eq!(
+            o004(&v).unwrap_or_else(|| panic!("{v}"))["severity"],
+            "error",
+            "{v}"
+        );
         assert_eq!(code, 1, "{v}");
     }
 
@@ -822,15 +841,18 @@ mod tests {
         let fit = "fit:acme.axle::Axle.seat";
         let v = run(obligations::run_obligations, &dir, &[]);
         let row = &v["obligations"][0];
-        assert_eq!((&row["id"], &row["state"]), (&Value::from(fit), &Value::from("open")), "{v}");
+        assert_eq!(
+            (&row["id"], &row["state"]),
+            (&Value::from(fit), &Value::from("open")),
+            "{v}"
+        );
         let text = run(crate::cmd::check::run_check, &dir, &[]).to_string();
         assert!(text.contains("O002") && text.contains(fit), "{text}");
         let sign = &[fit, "--role", "signoff", "--reason", "ok", "--as", "ana@x"];
         run(ack::run_ack, &dir, sign);
         let v = run(obligations::run_obligations, &dir, &[]);
         assert!(v["obligations"].as_array().unwrap().is_empty(), "{v}");
-        std::fs::write(dir.0.join("src/lib.cdt"), FIT_SRC.replace("H7/p6", "H7/g6"))
-            .unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), FIT_SRC.replace("H7/p6", "H7/g6")).unwrap();
         let v = run(obligations::run_obligations, &dir, &[]);
         assert_eq!(v["obligations"][0]["state"], "stale", "{v}");
     }
@@ -840,13 +862,19 @@ mod tests {
         use cadetta_ir::path::{Path, PathContext};
         let mut ir = IrProject::new(
             Flavour::Design,
-            PackageId { name: "a".into(), version: "0.1.0".into() },
+            PackageId {
+                name: "a".into(),
+                version: "0.1.0".into(),
+            },
         );
         for (name, state) in [("ok", VerdictState::Pass), ("bad", VerdictState::Fail)] {
             ir.checks.push(Check {
                 path: Path::parse(&format!("a::M.{name}"), PathContext::General).unwrap(),
                 expr: "x".into(),
-                verdicts: Verdicts { primary: Some(state), ..Verdicts::default() },
+                verdicts: Verdicts {
+                    primary: Some(state),
+                    ..Verdicts::default()
+                },
                 conservative: false,
                 waived_for: Vec::new(),
             });
@@ -862,7 +890,10 @@ mod tests {
         let ir = ir_with_requires();
         let reqs: BTreeSet<String> = ["a::M.ok", "a::M.bad"].map(String::from).into();
         let u = super::Universe::of_with(&ir, &reqs).unwrap();
-        let ids: Vec<String> = super::candidates(&[u]).iter().map(|c| c.id.to_string()).collect();
+        let ids: Vec<String> = super::candidates(&[u])
+            .iter()
+            .map(|c| c.id.to_string())
+            .collect();
         assert_eq!(ids, vec!["require:a::M.ok"]);
         let plain = super::Universe::of(&ir).unwrap();
         assert_eq!(plain.checks[0].id.to_string(), "check:a::M.ok");
