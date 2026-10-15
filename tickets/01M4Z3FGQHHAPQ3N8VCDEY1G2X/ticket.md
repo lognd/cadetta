@@ -7,8 +7,16 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-15T06:32:49Z"
+updated = "2026-10-15T06:40:38Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**"]
+
+[[acceptance]]
+text = "An interface bound (load_rating >= 400N) is a readable member of the interface, so no E002"
+bound = false
+
+[[acceptance]]
+text = "Per-alternate verdicts reach lowering so I002 is emitted at the variant key (i002-never-cross-product)"
+bound = false
 +++
 
 Found in ~8NXQSDY. Fixtures i002-alternate-not-viable, i002-never-cross-product, i003-alternate-undecided: 'part wheel[4]: Caster = Good alt [Bad]' with 'check load_ok: wheel.load_rating >= 440N' yields E002 (unresolved wheel.load_rating) and I002/I003 never emitted (lint rules exist in cadetta-lint/src/rules/interface.rs but no per-alternate verdicts are fed from check). cadetta-variants API (slot, viability, evaluate_variants) is already adequate; the gap is wiring in sema/cli. Path for I002 is Rover/back=acme.demo::B2 (one alternate at a time).
