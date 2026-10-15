@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-13T05:41:54Z"
-updated = "2026-10-15T10:13:19Z"
+updated = "2026-10-15T10:13:36Z"
 persona = "design engineer"
 capability = "see when a tight check ignores bolt float"
 idempotency_key = "replan14:geo-g005"
@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given locating = true or a looser check, when linted, then G005 does not fire (geometry.md 5.2)"
-bound = false
+bound = true
 +++
