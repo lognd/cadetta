@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Each E001 lexical error, Q001/Q002/Q008 and E002 quantity fault is reported exactly once (conformance quantities e001-*, e002-unit, q001-*, q002-*, q008-* pass)", "check and require conditions are kind-checked and carry a member path (q001-compare, q008-compare)"]
+moved = []
+at = "2026-10-15T02:14:22Z"
+actor = "lognd"
+rev = 1
