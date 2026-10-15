@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T20:31:19Z"
-updated = "2026-10-15T21:11:59Z"
+updated = "2026-10-15T21:50:45Z"
 scope = ["crates/cadetta-cli/src/**", "docs/spec/solvers.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Given a variant whose solver inputs change and has no recorded result, when checked, then S006 is raised and its dependent checks are undecided (solvers.md 4.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a variant whose solver inputs equal the primary or that has its own recorded result, when checked, then it reads that result and S006 does not fire"
