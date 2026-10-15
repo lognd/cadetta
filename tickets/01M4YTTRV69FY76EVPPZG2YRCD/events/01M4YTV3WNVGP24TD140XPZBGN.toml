@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "wont-fix"
+reason = "duplicate of the existing ~6ES67RW gap entries"
+at = "2026-10-15T03:49:07Z"
+actor = "lognd"
+rev = 1
