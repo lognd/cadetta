@@ -21,7 +21,9 @@ mod push_plan; // nested like `protocol`, for the same reason
 #[path = "read.rs"]
 mod read; // nested like `protocol`, for the same reason
 #[path = "sync.rs"]
-mod sync_exec; // nested like `protocol`, for the same reason
+mod sync_exec;
+#[path = "two_input.rs"]
+mod two_input; // nested like `protocol`, for the same reason // nested like `protocol`, for the same reason
 use crate::run::{Facts, Scratch, parse_json, run_cli, stage};
 
 /// What an executor is asked to run.
@@ -62,6 +64,8 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("binding", "emit-twice", binding::emit_twice),
     ("binding", "emit-compare", binding::emit_compare),
     ("binding", "impact-swap", binding::impact_swap),
+    ("compare", "digest", two_input::digest),
+    ("compare", "classify", two_input::classify_schema),
 ];
 
 /// Run the fixture with the executor registered for the expectation's kind and entry.

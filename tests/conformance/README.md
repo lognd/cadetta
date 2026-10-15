@@ -171,9 +171,11 @@ tests/conformance/ir/
   and differ only in `b`, by the smallest edit that flips the rule.
 - `diagnostics` is not used by `compare`; an input that fails to compile
   is a failure of the fixture, reported as such.
-- Until the executor for `(compare, digest)` and `(compare, classify)`
-  exists in `exec.rs`, such fixtures are failures ("no executor") and
-  must be listed in `known-gaps.toml` against the ticket adding it.
+- The executor lives in `crates/cadetta-cli/tests/conformance/two_input.rs`:
+  `digest` stages both sides, reads `cadetta ir` for each and reports the
+  observed `relation` per row; `classify` calls `cadetta_ir::schema::classify`
+  (`Breaking` is spelled `major`). A fixture for a rule the implementation does
+  not yet honour fails like any other and is listed in `known-gaps.toml`.
 
 ## Runner contract
 
@@ -190,7 +192,8 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 - Every `(kind, entry verb)` pair is dispatched through one table in
   `crates/cadetta-cli/tests/conformance/exec.rs`. Executors today:
   `source` with `check`, `config` (runs `check`), `ack`, `emit`, `solve`,
-  `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; and
+  `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; `compare` with
+  `digest` and `classify` (two inputs, `two_input.rs`); and
   `binding` with `classify` (sync dry-run) and `protocol` (the adapter host
   JSON-RPC over a scripted in-memory adapter; `protocol.rs` records `sent`,
   `refused`, `request`, `protocol_error` and the like), `read` and `emit-read`
