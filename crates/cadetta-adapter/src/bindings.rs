@@ -24,6 +24,9 @@ pub const R005: &str = "R005";
 pub const R013: &str = "R013";
 /// Diagnostic code for a bound `Text` parameter an equations file must emit but cannot express (emitters/sw-equations.md 1).
 pub const R014: &str = "R014";
+/// Diagnostic code for a locator a `json`/`csv` file cannot carry (emitters/json.md 1, emitters/csv.md 1).
+// frob:ticket 01M4V7WCM9TBRWY007WWS81S98
+pub const R015: &str = "R015";
 /// Diagnostic code for an unbound native item, including a non-bare-reference dimension (adapters.md 3.5).
 // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
 pub const R002: &str = "R002";

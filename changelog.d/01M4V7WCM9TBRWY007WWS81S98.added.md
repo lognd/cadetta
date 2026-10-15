@@ -1,0 +1,1 @@
+json and csv emit raise R015 (error, exit 1) for a dimension, property or frame locator or a ref-mode binding the run must emit; filtered or unbound locators stay silent. The json/csv file writers themselves are still ~TQMFETK.

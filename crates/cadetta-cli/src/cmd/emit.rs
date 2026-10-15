@@ -10,7 +10,8 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_adapter::bindings::{BindingSet, R013, R014, RefTarget, ScopeCandidate, mangle_all};
+use cadetta_adapter::bindings::{BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all};
+use cadetta_adapter::builtin::{csv, json};
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
@@ -346,9 +347,44 @@ fn alias_map(ir: &Ir) -> HashMap<Path, Path> {
     map
 }
 
-/// True for a diagnostic that withholds the file and fails the run (Q004, R013, R014).
+/// True for a diagnostic that withholds the file and fails the run (Q004, R013, R014, R015).
 fn is_withholding(d: &EmitDiag) -> bool {
-    d.code == "Q004" || d.code == R013 || d.code == R014
+    d.code == "Q004" || d.code == R013 || d.code == R014 || d.code == R015
+}
+
+/// R015 for every dimension, property or frame locator, or `ref`-mode binding, this run must emit
+/// to a `json` or `csv` file (emitters/json.md 1, emitters/csv.md 1).
+///
+/// Must-emit is as for R014: a non-alternate locator of a non-`let` member that the adapter and
+/// run filters accept; anything else is silently not emitted.
+// frob:ticket 01M4V7WCM9TBRWY007WWS81S98
+fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
+    let mut diagnostics = Vec::new();
+    for member in job.ir.components.iter().flat_map(|c| &c.members) {
+        let canonical = member.path.to_string();
+        if member.analysis
+            || (member.value.is_none() && !job.texts.contains(&canonical))
+            || !job.scope.accepts(&canonical)
+            || !job.run.contains(&canonical)
+        {
+            continue;
+        }
+        let Some(locators) = locators_for(job.set, &member.path) else {
+            continue;
+        };
+        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+            if loc.kind == LocatorKind::Global && loc.mode == LocatorMode::Value {
+                continue;
+            }
+            let message = format!(
+                "{R015}: `{canonical}` is bound to {:?} locator `{}` in {:?} mode; a `{}` file carries only global value rows",
+                loc.kind, loc.locator, loc.mode, job.adapter.name
+            );
+            tracing::warn!(path = %canonical, locator = %loc.locator, "emit: locator unsupported by value-row format (R015)");
+            diagnostics.push(diag(R015, message, Some(&member.path)));
+        }
+    }
+    diagnostics
 }
 
 /// R014 for every bound `Text` parameter this run must emit (emitters/sw-equations.md 1).
@@ -806,7 +842,8 @@ pub(crate) fn emit_package_texts(
             tracing::info!(adapter = %adapter.id(), "emit: external adapters are not run by the CLI yet");
             continue;
         }
-        if adapter.name != SW_EQUATIONS {
+        let value_row = adapter.name == json::ADAPTER || adapter.name == csv::ADAPTER;
+        if adapter.name != SW_EQUATIONS && !value_row {
             tracing::info!(adapter = %adapter.id(), "emit: built-in not implemented, skipped");
             continue;
         }
@@ -832,6 +869,11 @@ pub(crate) fn emit_package_texts(
             texts,
             bindings_digest: digest_text(bindings_text.as_bytes()),
         };
+        if value_row {
+            // The json/csv file writers are not wired into emit yet; R015 still applies.
+            report.diagnostics.extend(value_row_diagnostics(&job));
+            continue;
+        }
         let built = build_sw_equations(&job);
         report.diagnostics.extend(built.diagnostics);
         let Some(text) = built.text else {

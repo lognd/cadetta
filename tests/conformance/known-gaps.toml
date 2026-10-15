@@ -1964,43 +1964,43 @@ reason = "binding read entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/csv/r015-dimension-locator"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/csv/r015-filtered-out"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/csv/r015-property-locator"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/csv/r015-ref-mode"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/json/r015-dimension-locator"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/json/r015-filtered-out"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/json/r015-property-locator"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "emitters/json/r015-ref-mode"
-ticket = "~WS81S98"
-reason = "R015 not raised for json/csv locator kinds"
+ticket = "~TQMFETK"
+reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "ir/affine-term-ordered"
