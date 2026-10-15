@@ -2,11 +2,12 @@
 id = "01M4V7WCVKFGXHBZGDBBB49Z35"
 title = "csv read: R016 error for unbound-name row; # comment only at record start"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:02Z"
-updated = "2026-10-15T03:38:48Z"
+updated = "2026-10-15T03:38:59Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
