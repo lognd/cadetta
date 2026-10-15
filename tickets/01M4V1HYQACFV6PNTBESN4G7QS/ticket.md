@@ -2,11 +2,12 @@
 id = "01M4V1HYQACFV6PNTBESN4G7QS"
 title = "W003 not raised for waive or allow naming a require diagnostic"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T02:51:48Z"
+updated = "2026-10-15T02:52:34Z"
 scope = ["crates/cadetta-cli/src/**", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HYQACFV6PNTBESN4G7QS.fixed.md"]
 
 [[acceptance]]
