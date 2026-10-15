@@ -113,7 +113,16 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
   classes are not accepted by `Quantity` in 0.1. Only integer scalars
   mix with a Quantity in operators; floats never enter a stored value.
 - `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax and
-  returns a `Result`.
+  returns `Result[Quantity, QuantityError]`. A parse failure, including
+  a split literal such as `"12 mm"` (Q007), is `Err(QuantityError)`
+  with `.code` set; it is never `Ok` with a diagnostic, and the CLI
+  exit-code mapping is `Err` = 2.
+- Error types of operators. `QuantityError.code` is a Q-code for
+  dimension and kind violations and parse failures, and may also carry
+  an E-code where the compiler reports the same condition under a lint
+  code (`.mmc`/`.lmc` without a role: E010). A non-integer operand
+  (`q * 1.5`) is not a quantity error: `Quantity` returns
+  `NotImplemented` and Python raises `TypeError`, with no Q-code.
 - Interop: `.to_pint(registry)` with the optional `cadetta[pint]`
   extra (implemented as `cadetta.pint_interop.to_pint(q, registry)`,
   returning a `Result`; SI coherent units, nominal only, tolerance

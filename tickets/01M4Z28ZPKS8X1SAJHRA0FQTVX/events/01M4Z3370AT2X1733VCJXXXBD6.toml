@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "scope crates/cadetta-fits/** cannot deliver: all 3 fixtures need cadetta-sema changes (fit members in eval, .drawn reads in eval, F002 granularity); f002 fixture contradicts spec 3.7"
+at = "2026-10-15T06:13:21Z"
+actor = "lognd"
+rev = 1

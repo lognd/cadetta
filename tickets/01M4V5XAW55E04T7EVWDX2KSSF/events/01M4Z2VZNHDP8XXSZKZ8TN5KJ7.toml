@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["bindings.md 3.1 states: quantity() parse failure (incl. Q007 split literal) is Err(QuantityError); float operands raise TypeError; QuantityError.code may carry E010"]
+moved = []
+at = "2026-10-15T06:09:24Z"
+actor = "lognd"
+rev = 1
