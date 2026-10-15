@@ -1,0 +1,10 @@
+kind = "create"
+title = "Ack for waiver: and sync: obligations"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/ack.rs"]
+body = "found while working TNGHA7Q: ack_candidates emits no Subject::Waiver and sync/waiver rows have no attest path"
+at = "2026-10-15T10:39:43Z"
+actor = "lognd"
+rev = 1
