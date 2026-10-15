@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T12:41:15Z"
+digest = "278da2dbe38739751b381cebf5744c2f0eb1494e2cbd2bd94403e7c81bed45b0"
+provider = "file"
+ref = "docs/spec/adapters.md"
+size = 43220
+status = "measured"
+at = "2026-10-15T12:41:15Z"
+actor = "lognd"
+rev = 1
