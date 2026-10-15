@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:31:41Z"
+digest = "130d46477a78217e40a616a54efdbb05882a91270e9da1cbe8a5161d6b480e1c"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.28s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a162ffe3-05a8-495e-857a-c0bfa7f1d945 with nextest profile: default
+    Starting 1 test across 57 binaries (1320 tests skipped)
+        LEAK [   0.841s] cadetta cmd::check_drift::tests::check_reports_r008_within_bounded_time_for_a_silent_adapter
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.843s] 1 test run: 1 passed (1 leaky), 1320 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "check_reports_r008_within_bounded_time_for_a_silent_adapter"
+size = 652
+status = "measured"
+test_count = 1
+tests_digest = "27ffdfa487525cd220ecb9adeaf994906947f9c137401aa1a46e4874a57b7818"
+at = "2026-10-15T02:31:41Z"
+actor = "lognd"
+rev = 1
