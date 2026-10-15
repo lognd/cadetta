@@ -2,11 +2,12 @@
 id = "01M4YRTE99BY9YGQ7E19NFT8AX"
 title = "sema: member privacy (priv members) not enforced on expression paths across packages"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "fixed"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:13:47Z"
-updated = "2026-10-15T04:10:03Z"
+updated = "2026-10-15T04:11:34Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
