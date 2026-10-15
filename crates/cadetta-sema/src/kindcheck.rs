@@ -19,7 +19,8 @@
 use std::collections::BTreeMap;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, Ident, Let, MemberKind, Path, PathSep, Type, TypeKind,
+    BinOp, Block, Component, Expr, ExprKind, File, Ident, ItemKind, KindDecl, KindExpr, KindOp, Let,
+    MemberKind, Path, PathSep, Type, TypeKind,
     UnOp,
 };
 use cadetta_syntax::span::Span;
@@ -209,6 +210,62 @@ impl TypeEnv for EvalEnv<'_> {
     }
 }
 
+/// Textual form (`Power/Area^2`) of a kind expression, for [`KindTable::eval_expr`].
+// frob:ticket 01M4YMKH7NQW964KS1C2GJX813
+fn kind_expr_text(ke: &KindExpr) -> Option<String> {
+    let mut text = String::new();
+    for (i, t) in ke.terms.iter().enumerate() {
+        if i > 0 {
+            text.push(match t.op {
+                KindOp::Mul => '*',
+                KindOp::Div => '/',
+            });
+        }
+        text.push_str(&t.name.segments.last()?.name);
+        if let Some(e) = t.exp {
+            text.push_str(&format!("^{e}"));
+        }
+    }
+    Some(text)
+}
+
+/// Register every `kind NAME = expr` declared in `files` into `table`, so declared kinds are
+/// distinct targets (Q003); declarations may reference each other in any order.
+// frob:ticket 01M4YMKH7NQW964KS1C2GJX813
+pub fn register_user_kinds<'f>(table: &mut KindTable, files: impl IntoIterator<Item = &'f File>) {
+    let mut pending: Vec<(&KindDecl, String)> = Vec::new();
+    for file in files {
+        for item in file.items() {
+            let ItemKind::Kind(k) = &item.kind else { continue };
+            let text = match &k.def.kind {
+                TypeKind::Path(p) => p.segments.last().map(|s| s.name.clone()),
+                TypeKind::KindExpr(ke) => kind_expr_text(ke),
+                _ => None,
+            };
+            if let Some(t) = text {
+                pending.push((k, t));
+            }
+        }
+    }
+    while !pending.is_empty() {
+        let before = pending.len();
+        pending.retain(|(k, text)| match table.register(&k.name.name, text) {
+            Ok(()) => false,
+            Err(KindError::DuplicateKind(_)) => {
+                debug!(name = %k.name.name, "user kind already registered; skipped");
+                false
+            }
+            Err(_) => true,
+        });
+        if pending.len() == before {
+            for (k, text) in &pending {
+                debug!(name = %k.name.name, text, "user kind expression unresolved; skipped");
+            }
+            break;
+        }
+    }
+}
+
 /// What an `as` or declared type names.
 enum Target {
     Named(String),
@@ -363,19 +420,7 @@ impl<'a> KindChecker<'a> {
                 Some(Target::Named(name))
             }
             TypeKind::KindExpr(ke) => {
-                let mut text = String::new();
-                for (i, t) in ke.terms.iter().enumerate() {
-                    if i > 0 {
-                        text.push(match t.op {
-                            cadetta_syntax::ast::KindOp::Mul => '*',
-                            cadetta_syntax::ast::KindOp::Div => '/',
-                        });
-                    }
-                    text.push_str(&t.name.segments.last()?.name);
-                    if let Some(e) = t.exp {
-                        text.push_str(&format!("^{e}"));
-                    }
-                }
+                let text = kind_expr_text(ke)?;
                 match self.kinds.eval_expr(&text) {
                     Ok(kd) => Some(match kd.name() {
                         Some(n) => Target::Named(n.to_string()),
@@ -907,6 +952,39 @@ mod tests {
             c.check_component(comp);
         }
         c.into_diagnostics().iter().map(|d| d.code).collect()
+    }
+
+    /// Codes for `src` (declarations plus models) with user kinds registered.
+    fn codes_with_decls(src: &str) -> Vec<&'static str> {
+        let p = parse(src);
+        assert!(p.diags.is_empty(), "{src}: {:?}", p.diags);
+        let mut kinds = KindTable::builtin();
+        register_user_kinds(&mut kinds, [&p.file]);
+        let units = UnitTable::builtin();
+        let env = Env(kinds.clone());
+        let mut c = KindChecker::new(&kinds, &units, &env);
+        for comp in p.file.components() {
+            c.check_component(comp);
+        }
+        c.into_diagnostics().iter().map(|d| d.code).collect()
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::register_user_kinds
+    #[test]
+    fn user_kind_is_distinct_target_q003() {
+        let decl = "kind Sink = Length\n";
+        assert_eq!(
+            codes_with_decls(&format!("{decl}model M {{\n s: Sink = len\n}}\n")),
+            ["Q003"]
+        );
+        assert!(codes_with_decls(&format!("{decl}model M {{\n s: Length = len\n}}\n")).is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::register_user_kinds
+    #[test]
+    fn user_kinds_register_in_any_order() {
+        let src = "kind B = A\nkind A = Length\nmodel M {\n s: B = len\n}\n";
+        assert_eq!(codes_with_decls(src), ["Q003"]);
     }
 
     // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker

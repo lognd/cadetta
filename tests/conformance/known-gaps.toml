@@ -313,11 +313,6 @@ ticket = "~4QX9B1C"
 reason = "compound units and dimensional checks not implemented in the evaluator"
 
 [[gap]]
-fixture = "quantities/kind-row-length-from-cbrt"
-ticket = "~2GJX813"
-reason = "user-declared kinds are not registered in the KindTable"
-
-[[gap]]
 fixture = "quantities/f002"
 ticket = "~7078TNV"
 reason = "ISO 286 fit evaluation not implemented"

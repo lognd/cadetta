@@ -25,7 +25,7 @@ use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
 use cadetta_sema::fitderive;
-use cadetta_sema::kindcheck::{EvalEnv, KindChecker};
+use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
@@ -679,7 +679,12 @@ fn evaluate_stages(
         })
         .collect();
     let units = UnitTable::builtin();
-    let kinds = KindTable::builtin();
+    // frob:ticket 01M4YMKH7NQW964KS1C2GJX813
+    let mut kinds = KindTable::builtin();
+    kindcheck::register_user_kinds(
+        &mut kinds,
+        parsed.iter().flat_map(|p| p.modules.iter().map(|m| &m.file)),
+    );
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
     let mut evaluator = Evaluator::new(&resolver, &units, &sources);
     let procs = Processes::compile(&mut evaluator, &sources);
