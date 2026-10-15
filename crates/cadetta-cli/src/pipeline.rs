@@ -1105,8 +1105,9 @@ fn evaluate_stages(
         &lift_cfg,
     ));
     out.extend(lifecycle::lift_not_in_table(&misses, &lift_cfg));
+    let variant_env = VariantEnv::new(&resolver, &units, &sources);
     out.extend(lifecycle::lift_lifecycle(
-        &lifecycle_findings(parsed, scope, as_of, &analysis.sources),
+        &lifecycle_findings(parsed, scope, as_of, &analysis.sources, &variant_env),
         &lift_cfg,
     ));
     out.extend(f::lift(
