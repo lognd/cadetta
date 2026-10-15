@@ -2,13 +2,13 @@
 id = "01M4Y3WHS6G3MXMECY8ZMVJ6CV"
 title = "Wire availability (R008-R010) into the sync and check commands"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-14T21:07:56Z"
-updated = "2026-10-14T21:07:56Z"
+updated = "2026-10-15T10:06:33Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-adapter/src/session.rs"]
