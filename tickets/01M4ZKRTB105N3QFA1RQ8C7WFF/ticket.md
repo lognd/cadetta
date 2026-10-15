@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T11:04:46Z"
-updated = "2026-10-15T17:40:27Z"
-scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs"]
+updated = "2026-10-15T17:40:28Z"
+scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "An unused private part member yields a U002 Member row and a used one does not"
