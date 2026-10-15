@@ -320,6 +320,13 @@ closure digests in dep path order; an instance closure hashes the member
 closure, the instance path text and, for an interface-typed slot, the slot
 part's own digest. Part arguments are nodes keyed `<slot>.<arg>`.
 
+Digest graph additions (`digest.rs`): a component's formal arguments are
+nodes keyed `<component>.<param>` so a member reading one resolves; each
+fit contributes a fit node plus its `hole` and `shaft` nodes. A commercial
+roll-up (`deps.rs`) depends only on parts whose component declares the
+rolled member; an optional member such as `unit_cost` is skipped on a part
+lacking it instead of becoming a dangling dependency.
+
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
