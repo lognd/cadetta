@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["csv and json notes join the authored literal, emit=POINT (when not nominal) and the citation with single spaces"]
+moved = []
+at = "2026-10-15T04:09:13Z"
+actor = "lognd"
+rev = 1
