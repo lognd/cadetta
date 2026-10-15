@@ -2,11 +2,12 @@
 id = "01M4V6BZ91RQTVM8FDJKRVD0V6"
 title = "parser rejects 'package::' paths in expressions (reserved keyword)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:53:36Z"
-updated = "2026-10-15T03:12:27Z"
+updated = "2026-10-15T03:12:45Z"
 scope = ["crates/cadetta-syntax/**", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
