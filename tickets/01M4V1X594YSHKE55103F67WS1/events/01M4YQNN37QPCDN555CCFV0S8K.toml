@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:53:21Z"
+digest = "d861a469597db79ecae7adcef49ca158b3b434fba71d834b9ee59ef9a49946c7"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e52670ab-0c2c-47ee-9351-33977a972f34 with nextest profile: default
+    Starting 1 test across 59 binaries (1349 tests skipped)
+        PASS [   0.524s] cadetta cmd::emit::tests::invalid_bindings_config_error_exits_two
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.527s] 1 test run: 1 passed, 1349 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "invalid_bindings_config_error_exits_two"
+size = 688
+status = "measured"
+test_count = 1
+tests_digest = "126e0c9c64a5409d960a2fe37f1cd77e65b0200805cdcd202e90c951aa68620e"
+at = "2026-10-15T02:53:21Z"
+actor = "lognd"
+rev = 1
