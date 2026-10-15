@@ -11,6 +11,7 @@ pub mod geometry_bind;
 pub mod import;
 pub mod locator;
 pub mod policy;
+pub mod read_facts;
 pub mod read_units;
 pub mod rpc;
 pub mod scope;
