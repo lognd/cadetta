@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T21:23:13Z"
+digest = "b969bc61ff87f66a22d65cfbe4096ba69fe29c1f1f0668443547414e852dbf58"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.90s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 722148ed-3eb1-4257-89bf-14e80ee83125 with nextest profile: default
+    Starting 5 tests across 1 binary (166 tests skipped)
+        PASS [   0.008s] cadetta-adapter geometry_plan::tests::derived_coordinate_binds_only_when_listed
+        PASS [   0.008s] cadetta-adapter geometry_plan::tests::drift_reports_by_form
+        PASS [   0.008s] cadetta-adapter geometry_plan::tests::unknown_form_is_an_error
+        PASS [   0.008s] cadetta-adapter geometry_plan::tests::sign_negates_on_write_and_restores_on_read
+        PASS [   0.009s] cadetta-adapter geometry_plan::tests::table_rows_bind_and_push
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 5 tests run: 5 passed, 166 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter geometry_plan"
+size = 994
+status = "measured"
+test_count = 5
+tests_digest = "0bd9645e9e13b20c15042551c5173959c00e1c6cef5cf2546d60a7b6beb5e162"
+at = "2026-10-15T21:23:13Z"
+actor = "lognd"
+rev = 1

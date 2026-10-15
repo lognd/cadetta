@@ -413,51 +413,6 @@ ticket = "~A9M9EPG"
 reason = "R013/N005 mangling collision checks not implemented"
 
 [[gap]]
-fixture = "adapters/geom-derived-coordinates-analysis-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-flip-verified-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-for-placement-pattern"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-frame"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-pattern-generator"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-place-offset"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-rotate-90-verified-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-rotate-not-90"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-sign-write-and-read"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
 fixture = "adapters/adopted-cleared-by-first-sync"
 ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
@@ -873,23 +828,8 @@ ticket = "~B08JM3F"
 reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
-fixture = "adapters/read-driven-dimension-inexact"
-ticket = "~G0V5V7D"
-reason = "the library has no driven-dimension concept"
-
-[[gap]]
-fixture = "adapters/read-never-raises-q001"
-ticket = "~G0V5V7D"
-reason = "dimension-mismatch inexactness (kg vs mm) is not implemented in the library"
-
-[[gap]]
-fixture = "adapters/read-unparsable-expression-inexact"
-ticket = "~G0V5V7D"
-reason = "the equations parser accepts SWFN(1) as a call, so it reads exact"
-
-[[gap]]
 fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
-ticket = "~G0V5V7D"
+ticket = "~14758F0"
 reason = "the equations reader parses IIF(...) as a call, so it never yields an unparsed raw line"
 
 [[gap]]
@@ -1156,11 +1096,6 @@ reason = "ir-validate entry has no CLI form or executor yet"
 fixture = "ir/d003-ir"
 ticket = "~ZM6GZJ0"
 reason = "lint on IR JSON has no CLI form or executor yet"
-
-[[gap]]
-fixture = "adapters/geom-placement-verify-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/bind-invalid-component-form"

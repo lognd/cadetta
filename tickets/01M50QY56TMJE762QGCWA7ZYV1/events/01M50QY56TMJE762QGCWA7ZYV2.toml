@@ -1,0 +1,10 @@
+kind = "create"
+title = "Dedupe negate_text: use cadetta_adapter::geometry_plan::negate_text in cadetta-cli"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/**"]
+body = "found while working ~Y25XAXV: cadetta-cli cmd/emit.rs negate_text duplicates the new adapter geometry_plan::negate_text"
+at = "2026-10-15T21:36:49Z"
+actor = "lognd"
+rev = 1

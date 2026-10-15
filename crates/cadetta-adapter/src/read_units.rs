@@ -43,6 +43,22 @@ pub struct ObservedValue {
     pub reason: Option<String>,
 }
 
+/// What the locator tells the reader about the value it is about to extract.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct ReadContext<'a> {
+    /// The locator's native unit; an explicit unit of another dimension is inexact.
+    pub expected_unit: Option<&'a str>,
+    /// True when the tool computes the value (a driven dimension), so it cannot be pushed back.
+    pub driven: bool,
+}
+
+/// Whether two unit expressions share a dimension; `None` when either does not parse.
+fn same_dimension(a: &str, b: &str) -> Option<bool> {
+    let table = cadetta_units::UnitTable::builtin();
+    let (a, b) = (table.parse(a).ok()?, table.parse(b).ok()?);
+    Some(a.dim == b.dim)
+}
+
 /// Where assumed units come from for one read.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct UnitPolicy {
@@ -94,6 +110,38 @@ impl UnitPolicy {
                 reason: Some(reason),
             },
         }
+    }
+}
+
+impl UnitPolicy {
+    /// Reads a value against its locator: driven values and units of another dimension than
+    /// the locator's native unit are inexact with a reason, never a Q001 (adapters.md 4).
+    // frob:ticket 01M50J83ATKTE83FQVVG0V5V7D
+    pub fn read_in(&self, value: &NativeValue, ctx: &ReadContext<'_>) -> ObservedValue {
+        let mut o = self.read(value);
+        if ctx.driven {
+            tracing::warn!(
+                literal = o.literal.as_str(),
+                "driven dimension read inexact"
+            );
+            o.exact = false;
+            o.reason = Some("driven dimension: the tool computes this value".to_string());
+            return o;
+        }
+        if let (Some(have), Some(want)) = (value.unit.as_deref(), ctx.expected_unit)
+            && same_dimension(have, want) == Some(false)
+        {
+            tracing::warn!(
+                have,
+                want,
+                "unit dimension differs from the locator's; inexact"
+            );
+            o.exact = false;
+            o.reason = Some(format!(
+                "unit `{have}` does not have the dimension of the locator's native unit `{want}`"
+            ));
+        }
+        o
     }
 }
 
@@ -175,5 +223,48 @@ mod tests {
         });
         assert_eq!(v.unit.as_deref(), Some("in"));
         assert!(!v.unit_assumed);
+    }
+
+    // frob:ticket 01M50J83ATKTE83FQVVG0V5V7D
+    // frob:tests crates/cadetta-adapter/src/read_units.rs::UnitPolicy.read_in
+    #[test]
+    fn driven_value_is_inexact_with_reason() {
+        let p = UnitPolicy::default();
+        let v = NativeValue {
+            literal: "10".into(),
+            unit: Some("mm".into()),
+        };
+        let driven = p.read_in(
+            &v,
+            &ReadContext {
+                expected_unit: Some("mm"),
+                driven: true,
+            },
+        );
+        assert!(!driven.exact && driven.reason.is_some());
+        assert!(p.read_in(&v, &ReadContext::default()).exact);
+    }
+
+    // frob:ticket 01M50J83ATKTE83FQVVG0V5V7D
+    // frob:tests crates/cadetta-adapter/src/read_units.rs::UnitPolicy.read_in
+    #[test]
+    fn dimension_mismatch_is_inexact_not_q001() {
+        let p = UnitPolicy::default();
+        let read = |unit: &str| {
+            p.read_in(
+                &NativeValue {
+                    literal: "10".into(),
+                    unit: Some(unit.into()),
+                },
+                &ReadContext {
+                    expected_unit: Some("mm"),
+                    driven: false,
+                },
+            )
+        };
+        let bad = read("kg");
+        assert!(!bad.exact && bad.reason.is_some());
+        assert!(!format!("{bad:?}").contains("Q001"));
+        assert!(read("in").exact);
     }
 }
