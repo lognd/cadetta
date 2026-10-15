@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:50:35Z"
+digest = "3fc89c0e3f90e6725d9e3eb439b25d406f3f9e887cff93903687fe5032b0d0e1"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.59s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 24f0c811-b2ff-4539-a66c-6e1b811c2b67 with nextest profile: default
+    Starting 1 test across 59 binaries (1347 tests skipped)
+        PASS [   0.225s] cadetta::lint_lifts l001_variant_evaluation_rejects_an_alternate_that_violates_a_check
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.227s] 1 test run: 1 passed, 1347 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "l001_variant_evaluation_rejects"
+size = 643
+status = "measured"
+test_count = 1
+tests_digest = "6e812a5fde63dab37092b3f0db008578458521a1c1e38e0e0e40902981753a9c"
+at = "2026-10-15T02:50:35Z"
+actor = "lognd"
+rev = 1

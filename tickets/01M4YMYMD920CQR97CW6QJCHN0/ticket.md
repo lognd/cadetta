@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/lint_li
 
 [[acceptance]]
 text = "L001 treats an alternate that violates a check under its variant as non-viable"
-bound = false
+bound = true
 +++
 
 found while working ~4H7PTZX: L001/L002 approximate alternate viability as resolves-and-not-end-of-life; real viability needs variant evaluation.
