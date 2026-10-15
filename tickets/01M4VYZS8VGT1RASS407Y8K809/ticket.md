@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "docs/spec/ir.md", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Datums of a parameterized instance are evaluated per instance (given argument and default) and lower as datum Members of the instantiating component"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Placements inside a parameterized assembly instance are evaluated per instance and lower as place Members"
