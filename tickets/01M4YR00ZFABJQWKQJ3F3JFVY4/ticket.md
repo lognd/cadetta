@@ -2,11 +2,12 @@
 id = "01M4YR00ZFABJQWKQJ3F3JFVY4"
 title = "language: N001 case, N004 was, N006 type-read-beside-instance sema gaps"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:31:10Z"
+updated = "2026-10-15T03:31:29Z"
 labels = ["creates:changelog.d/01M4YR00ZFABJQWKQJ3F3JFVY4.fixed.md"]
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4YR00ZFABJQWKQJ3F3JFVY4.fixed.md"]
 
