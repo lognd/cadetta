@@ -692,7 +692,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         };
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], job.config_point);
-        let citation = citation_text(member);
+        let citation = source_citation(member);
         let mut own_global_written = false;
         for loc in locators {
             if loc.for_alternate.is_some() {
