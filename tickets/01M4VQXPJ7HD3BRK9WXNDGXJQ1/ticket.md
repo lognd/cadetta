@@ -8,12 +8,12 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T07:08:18Z"
+updated = "2026-10-15T07:15:48Z"
 scope = ["crates/cadetta-solve/**"]
 
 [[acceptance]]
 text = "solvers fixtures pass."
-bound = false
+bound = true
 
 [[acceptance]]
 text = "solve --format json reports a diagnostics list for failed solvers (S005, Q001)"
