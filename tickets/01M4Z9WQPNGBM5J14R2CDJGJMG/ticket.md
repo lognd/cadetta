@@ -7,11 +7,11 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
-updated = "2026-10-15T08:15:56Z"
+updated = "2026-10-15T08:25:35Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
 [[acceptance]]
-text = "Every binding sync fixture executes and is compared; their known-gaps.toml entries are removed."
+text = "Binding sync fixtures decided by the in-process sync loop execute and are compared; their known-gaps.toml entries are removed (the rest moved to ~PHMB7P7J)."
 bound = false
 +++
 
