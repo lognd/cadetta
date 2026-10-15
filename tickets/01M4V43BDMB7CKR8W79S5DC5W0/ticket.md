@@ -6,8 +6,28 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-13T17:13:56Z"
+updated = "2026-10-15T03:13:04Z"
 scope = ["crates/cadetta-sema/**"]
+
+[[acceptance]]
+text = "E002 fires for a datum based on a later or unknown datum"
+bound = false
+
+[[acceptance]]
+text = "E006 fires for flip(z)"
+bound = false
+
+[[acceptance]]
+text = "I001 fires only when an implementer omits a declared interface datum"
+bound = false
+
+[[acceptance]]
+text = "C001/C002 fire for reversed or undecided datum-bound rotations"
+bound = false
+
+[[acceptance]]
+text = "S001 fires for uncited ots datum offsets"
+bound = false
 +++
 
 found while working ~ZFM3633. Fixtures datum-bound-*, datum-built-from-earlier, datum-flip-z, datum-ots-needs-citation, datum-unknown-of-placed-part, datum-zero-count-pattern and i001-interface-datum-omitted expect C001/C002 on datum bounds, E002/E006 decisions (geometry.md conformance decisions), S001 and I001; the binary emits none of them.

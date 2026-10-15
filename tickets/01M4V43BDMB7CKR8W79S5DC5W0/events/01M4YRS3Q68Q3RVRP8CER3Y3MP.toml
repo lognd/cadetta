@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["E002 fires for a datum based on a later or unknown datum", "E006 fires for flip(z)", "I001 fires only when an implementer omits a declared interface datum", "C001/C002 fire for reversed or undecided datum-bound rotations", "S001 fires for uncited ots datum offsets"]
+moved = []
+at = "2026-10-15T03:13:04Z"
+actor = "lognd"
+rev = 1
