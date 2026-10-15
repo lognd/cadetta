@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T02:58:45Z"
-updated = "2026-10-15T09:04:35Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/**", "crates/cadetta-cli/src/pipeline.rs", "docs/**"]
+updated = "2026-10-15T09:14:46Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/**", "crates/cadetta-cli/src/pipeline.rs", "docs/**", "crates/cadetta-cli/src/cmd/solve.rs"]
 
 [[acceptance]]
 text = "Given [defaults] FastenerPolicy in cadetta.toml and a path dependency, when cadetta check runs, then the policy-default-* fixtures pass"
