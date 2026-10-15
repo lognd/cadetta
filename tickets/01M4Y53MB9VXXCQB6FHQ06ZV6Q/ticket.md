@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:29:17Z"
-updated = "2026-10-15T10:03:23Z"
+updated = "2026-10-15T10:04:16Z"
 idempotency_key = "sqrbg5c-git-upstream"
 scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/pkg/**", "crates/cadetta-cli/src/cmd/update.rs"]
 
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "trust roles on a git dependency discharge matching dependent obligations"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Candidate obligations include dependency nodes in the analysis universe so upstream matching by ObligationId is exercised end to end"
