@@ -2,7 +2,8 @@
 id = "01M4SWG70T71SNTZ2TWXZD1Y50"
 title = "Lint G005 bolted-float-unlocated"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
