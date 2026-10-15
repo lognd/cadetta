@@ -13,7 +13,7 @@ scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
 text = "results_order, r001_suppressed_by_force, unbound_params_not_written and runs are observed and compared; their gap entries are removed"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "json_diag_schema stays observed and compared"
