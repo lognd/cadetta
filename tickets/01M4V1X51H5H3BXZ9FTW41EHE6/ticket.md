@@ -2,11 +2,12 @@
 id = "01M4V1X51H5H3BXZ9FTW41EHE6"
 title = "check omits R008 info for unavailable external adapter"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-15T02:49:43Z"
+updated = "2026-10-15T02:53:38Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/**", "changelog.d/**"]
 
 [[acceptance]]
