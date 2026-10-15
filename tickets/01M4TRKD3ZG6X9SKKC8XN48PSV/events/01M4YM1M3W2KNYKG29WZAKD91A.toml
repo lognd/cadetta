@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:49:59Z"
+digest = "5b0a5e2f4d8caaded1fd8ff461c4d29b8a8d0c27330c2a8c76f6579c9da9a63f"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.34s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d2ac5be0-7bbc-4123-9955-4bb898c99ef8 with nextest profile: default
+    Starting 1 test across 49 binaries (1253 tests skipped)
+        PASS [   0.101s] cadetta cmd::check::tests::lint_precision_changes_m001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.103s] 1 test run: 1 passed, 1253 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "lint_precision_changes_m001"
+size = 611
+status = "measured"
+test_count = 1
+tests_digest = "28ee56a1a8a6f88295397f58c868b313adaf171241c499b76cd093235cf6aec7"
+at = "2026-10-15T01:49:59Z"
+actor = "lognd"
+rev = 1
