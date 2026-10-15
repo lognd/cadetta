@@ -45,6 +45,8 @@ use crate::resolve::{
 
 #[path = "array.rs"]
 pub mod array;
+#[path = "boltfloat.rs"]
+mod boltfloat;
 #[path = "checks.rs"]
 pub mod checks;
 #[path = "enums.rs"]
@@ -491,6 +493,8 @@ pub struct Evaluator<'r, 'p> {
     selection: Option<Selection>,
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
+    /// The x, y and rotation source variables of each bolt-float joint (geometry.md 5.2).
+    float_vars: BTreeMap<CanonPath, [VarId; 3]>,
     diagnostics: Vec<EvalDiagnostic>,
     index: checks::CheckIndex<'p>,
     /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
@@ -585,6 +589,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             selection: None,
             in_progress: BTreeSet::new(),
             next_var: 0,
+            float_vars: BTreeMap::new(),
             diagnostics,
             index,
             recursive,
