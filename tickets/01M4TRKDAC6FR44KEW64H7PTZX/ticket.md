@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:52:59Z"
-updated = "2026-10-15T02:06:13Z"
+updated = "2026-10-15T02:06:14Z"
 labels = ["creates:crates/cadetta-cli/tests/lint_lifts.rs", "creates:changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md"]
 scope = ["crates/cadetta-cli/Cargo.toml", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/tests/lint_lifts.rs", "docs/spec/lints.md", "changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/**", "crates/cadetta-variants/src/**", "crates/cadetta-lint/src/**"]
 
