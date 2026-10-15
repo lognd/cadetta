@@ -2,7 +2,8 @@
 id = "01M4ZEHS32JZ22BRSAKNN9SEAC"
 title = "Python binding conformance: 14 test_binding_meets_fixture_expectation failures"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "invalid"
 priority = "medium"
 points = 2
 reporter = "lognd"
