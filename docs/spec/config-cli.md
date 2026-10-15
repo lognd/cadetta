@@ -420,6 +420,23 @@ value differs from the lock's `synced` value, prints a diff of the `.cdt` litera
 nothing on disk changes. With `--write` the literals are rewritten and the lock's `synced`
 values updated (adapters.md 7.4).
 
+### 3.9 Conformance entries on IR JSON
+
+Decided (0.1.0). Two entries take a `cadetta.ir/1` document instead of a
+project; the conformance runner uses them for `kind = "ir"` fixtures
+(tests/conformance/README.md). They are not in the table of section 3
+because they read no project and need no `cadetta.toml`.
+
+| Entry | Does | Exit |
+|---|---|---|
+| `ir-validate FILE` | Load FILE and check it against the committed JSON Schema and the invariants of ir.md 6. Prints nothing on success and one line per violation (`<json pointer>: <message>`) on failure. No diagnostic code: an invalid document is not a design. | `0` valid; `2` invalid, unreadable or not JSON |
+| `lint FILE [--format json]` | Run the IR-only lint rules (lints.md 4; D001-D003, F004, M, N, Q006, S) on the IR in FILE with catalog severities and no `[lint]` overrides, waivers or project context. A document `ir-validate` rejects exits `2` before any rule runs. `--format json` prints the `check.json` diagnostics (5). | `0` no error; `1` an error-severity diagnostic; `2` as above |
+
+`lint FILE` is how D003 (ir.md 6, acyclic `deps`) is exercised on a
+hand-written graph: the IR is the input, so no source can be written that
+lowers to a cycle. Rules that need bindings, observed IR or the lock (R and
+O families) are not run by `lint FILE`.
+
 ### 3.8 `lsp`
 
 `cadetta lsp` is a Language Server Protocol 3.17 server on stdin and
