@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["assume-unit wins over the locator native_unit, then the adapter native unit, when reading a unitless value"]
+moved = []
+at = "2026-10-15T04:12:07Z"
+actor = "lognd"
+rev = 1
