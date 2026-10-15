@@ -4,9 +4,10 @@ title = "Dependency check digest differs between its own universe and the depend
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T10:03:14Z"
-updated = "2026-10-15T10:03:14Z"
+updated = "2026-10-15T10:40:18Z"
 scope = ["crates/cadetta-cli/src/universe.rs"]
 +++
 
