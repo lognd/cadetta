@@ -13,7 +13,9 @@ use std::io::{self, BufRead, Cursor, Read, Write};
 use std::path::Path;
 use std::rc::Rc;
 
+use cadetta_adapter::Capability;
 use cadetta_adapter::availability::{self, EXIT_UNAVAILABLE, Verb};
+use cadetta_adapter::builtin;
 use cadetta_adapter::rpc::{
     ChangedParam, Client, EmitParams, OpenParams, ProcessClient, PushMode, PushParams, ReadParams,
     ReadSource, RegenParams, RegenState, RpcError, SessionParams,
@@ -40,17 +42,35 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         return Ok(features(&spec));
     }
     if spec.get("request").is_some() {
-        return Err(format!(
-            "adapter `{}`: the host declares no capability set for built-in adapters, so a `{}` request cannot be observed",
-            spec["adapter"].as_str().unwrap_or("?"),
-            spec["request"].as_str().unwrap_or("?"),
-        ));
+        return builtin_request(&spec);
     }
     match spec["op"].as_str() {
         Some("launch") => launch(&spec),
         Some(op) => scripted(job, &spec, op),
         None => refusals(&spec),
     }
+}
+
+/// A request to a built-in adapter: refused with a config error (exit 2) when the host's
+/// capability set for it lacks the capability the request needs.
+fn builtin_request(spec: &Value) -> Result<Facts, String> {
+    let name = spec["adapter"].as_str().unwrap_or("?");
+    let cap = match spec["request"].as_str() {
+        Some("emit") => Capability::Emit,
+        Some("read") => Capability::Read,
+        Some("drive") => Capability::Drive,
+        other => return Err(format!("adapter `{name}`: unknown request {other:?}")),
+    };
+    let mut facts = Facts::default();
+    match builtin::require(name, cap) {
+        Ok(()) => {}
+        Err(e) => {
+            tracing::debug!(adapter = name, error = %e, "built-in request refused");
+            facts.messages.push(e.to_string());
+            facts.exit = EXIT_USAGE;
+        }
+    }
+    Ok(facts)
 }
 
 /// Scripted adapter output that reports how far the host has read.
@@ -258,7 +278,7 @@ fn features(spec: &Value) -> Facts {
     });
     let (input, out, _) = pipes(format!("{}\n", rpc(1, &result)));
     let mut facts = Facts::default();
-    match Client::connect(input, out.clone(), None) {
+    match Client::connect_for(input, out.clone(), None, "linux") {
         Ok(_) => {
             facts.observed.insert("protocol_error".into(), json!(false));
         }
@@ -272,7 +292,7 @@ fn refusals(spec: &Value) -> Result<Facts, String> {
     let (input, out, _) = pipes(format!("{}\n", rpc(1, &init_result(spec, "calls"))));
     let mut facts = Facts::default();
     let mut refused = Vec::new();
-    match Client::connect(input, out.clone(), None) {
+    match Client::connect_for(input, out.clone(), None, "linux") {
         Err(e) => fail(&mut facts, "mock", &e, true),
         Ok(mut client) => {
             let session = || SessionParams {
@@ -487,7 +507,8 @@ fn scripted(job: &Job, spec: &Value, op: &str) -> Result<Facts, String> {
     let mut facts = Facts::default();
     facts.observed.insert("protocol_error".into(), json!(false));
     let pin = spec["pinned_version"].as_str();
-    let connected = Client::connect(input, out.clone(), pin);
+    let host = spec["host"].as_str().unwrap_or("linux");
+    let connected = Client::connect_for(input, out.clone(), pin, host);
     match connected {
         Err(e) => fail(&mut facts, "mock", &e, true),
         Ok(client) => match op {
@@ -509,7 +530,16 @@ fn scripted(job: &Job, spec: &Value, op: &str) -> Result<Facts, String> {
             "push" => run_push(&mut facts, client, spec, &names),
             "regen" => run_regen(&mut facts, client),
             "sync" => run_sync(&mut facts, client, spec, &files),
-            _ => {} // `initialize`: connecting is the whole scenario
+            _ => {
+                // `initialize`: connecting is the whole scenario; record the precision in force.
+                let configured = spec["config_precision"]
+                    .as_u64()
+                    .and_then(|p| u32::try_from(p).ok());
+                facts.observed.insert(
+                    "effective_precision".into(),
+                    json!(client.effective_precision(configured)),
+                );
+            }
         },
     }
     let written = out.0.borrow().clone();
@@ -665,7 +695,15 @@ fn run_push<R: std::io::BufRead, W: Write>(
                 .insert("statuses".into(), Value::Object(statuses));
             take_diagnostics(facts, &r.diagnostics);
         }
-        Err(e) => fail(facts, "mock", &e, false),
+        Err(e) => {
+            if matches!(e, RpcError::Nonconforming(_)) {
+                // A push result without per-locator statuses (summary only) is nonconforming.
+                facts
+                    .observed
+                    .insert("reason".into(), json!("summary-only push result"));
+            }
+            fail(facts, "mock", &e, false);
+        }
     }
 }
 

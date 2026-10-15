@@ -15,7 +15,11 @@
       "marker": {
         "exists": false
       }
-    }
+    },
+    "args": [
+      "--format",
+      "text"
+    ]
   },
   "must_not_fire": {
     "diagnostics": [],
@@ -24,6 +28,10 @@
       "marker": {
         "exists": true
       }
-    }
+    },
+    "args": [
+      "--format",
+      "text"
+    ]
   }
 }

@@ -1293,16 +1293,6 @@ ticket = "~CE627BF"
 reason = "binding-kind run does not observe names_path_or_key"
 
 [[gap]]
-fixture = "solvers/result-file-committed-fresh-not-run"
-ticket = "~BV5FGCF"
-reason = "freshness stdout / S005 not produced"
-
-[[gap]]
-fixture = "solvers/solve-stale-result-runs"
-ticket = "~BV5FGCF"
-reason = "freshness stdout / S005 not produced"
-
-[[gap]]
 fixture = "geometry/pattern-count-structural"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
@@ -1311,41 +1301,6 @@ reason = "extra E002 / expected nonzero exit"
 fixture = "lints/w005-waiver-expiring"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
-
-[[gap]]
-fixture = "adapters/protocol-open-dirty-r009"
-ticket = "~6N3JQAV"
-reason = "DriveSession::open closes but never shuts the adapter down after an R009 refusal"
-
-[[gap]]
-fixture = "adapters/protocol-platforms-checked"
-ticket = "~6N3JQAV"
-reason = "the host does not check the initialize platforms list"
-
-[[gap]]
-fixture = "adapters/protocol-precision-from-initialize"
-ticket = "~6N3JQAV"
-reason = "the host ignores the initialize precision"
-
-[[gap]]
-fixture = "adapters/protocol-push-status-per-locator"
-ticket = "~6N3JQAV"
-reason = "a summary-only push result is a plain protocol error, not R008"
-
-[[gap]]
-fixture = "emitters/csv/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
-
-[[gap]]
-fixture = "emitters/json/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
-
-[[gap]]
-fixture = "emitters/sw-equations/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
 
 [[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"

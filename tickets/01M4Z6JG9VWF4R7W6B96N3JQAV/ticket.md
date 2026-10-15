@@ -2,13 +2,14 @@
 id = "01M4Z6JG9VWF4R7W6B96N3JQAV"
 title = "Adapter host gaps found by protocol conformance: platforms, precision, push-status shape, R009 shutdown, builtin capabilities"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-15T07:14:07Z"
-updated = "2026-10-15T11:57:43Z"
+updated = "2026-10-15T12:38:40Z"
 scope = ["crates/cadetta-adapter/**", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/tests/conformance/protocol.rs", "docs/spec/adapters.md"]
 
 [[acceptance]]

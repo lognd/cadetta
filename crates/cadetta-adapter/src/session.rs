@@ -94,7 +94,8 @@ pub struct DriveSession<R: BufRead, W: Write> {
 impl<R: BufRead, W: Write> DriveSession<R, W> {
     /// Opens `files`; dirty or read-only files are refused per file (R009) and the rest proceed.
     ///
-    /// The session is closed and `Refused` returned only when every file is refused.
+    /// The session is closed, the adapter shut down and `Refused` returned only when every file
+    /// is refused.
     // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
     pub fn open(mut client: Client<R, W>, files: &[String]) -> Result<Self, SessionError> {
         let res = client.open(&OpenParams {
@@ -103,7 +104,7 @@ impl<R: BufRead, W: Write> DriveSession<R, W> {
         let session = res.session;
         let handle = session.handle.clone();
         let (ready, busy) = partition_busy(&session.files);
-        let mut this = Self {
+        let this = Self {
             client,
             handle,
             busy,
@@ -116,7 +117,7 @@ impl<R: BufRead, W: Write> DriveSession<R, W> {
                 reason: first.reason,
             };
             tracing::warn!(refused = this.busy.len(), "every document refused (R009)");
-            this.close_quietly();
+            this.abandon();
             return Err(refused);
         }
         tracing::info!(handle = %this.handle, files = files.len(), busy = this.busy.len(), "session opened");
@@ -185,9 +186,13 @@ impl<R: BufRead, W: Write> DriveSession<R, W> {
         Ok(res)
     }
 
-    fn close_quietly(&mut self) {
+    /// Closes the session and shuts the adapter down, logging (not returning) failures (R009 path).
+    fn abandon(mut self) {
         if let Err(e) = self.client.close(&self.params()) {
             tracing::warn!(error = %e, "closing session failed");
+        }
+        if let Err(e) = self.client.shutdown() {
+            tracing::warn!(error = %e, "shutting the adapter down failed");
         }
     }
 
@@ -381,14 +386,14 @@ mod tests {
     // frob:tests crates/cadetta-adapter/src/session.rs::DriveSession kind=unit
     #[test]
     fn dirty_document_is_refused_r009_before_push() {
-        let results = [init(), opened(true), Value::Null];
+        let results = [init(), opened(true), Value::Null, Value::Null];
         let mut out = Vec::new();
         let c = Client::connect(script(&results), &mut out, None).unwrap();
         let code = DriveSession::open(c, &["a.FCStd".to_string()])
             .err()
             .and_then(|e| e.code());
         assert_eq!(code, Some("R009"));
-        assert_eq!(methods(&out), ["initialize", "open", "close"]);
+        assert_eq!(methods(&out), ["initialize", "open", "close", "shutdown"]);
     }
 
     // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV

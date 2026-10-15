@@ -386,10 +386,12 @@ float enters the placement.
   most `theta`. `asin` is inexact, so coordinates carried through the
   rotation are conservative intervals (section 2).
 - `s` is measured on `onto` (for a through bolt with `nut = true`
-  too). A one-point pattern, or one whose points all coincide (`s =
-  0`), does not fix rotation: `theta` is 180deg, any check whose value
-  depends on that rotation is undecided, and the joint is G008
-  (warning). Fix it with a second fastener, a locating feature and
+  too). A pattern that does not fix rotation has `theta` = 180deg, any
+  check whose value depends on that rotation is undecided, and the
+  joint is G008 (warning). That is the case for a one-point pattern,
+  for one whose points all coincide (`s = 0`), and for one whose
+  `float` is at or above its spread (`float >= s`), where the bolts may
+  turn a half turn. Fix it with a second fastener, a locating feature and
   `locating = true`, or accept it with a waiver.
 - If several non-locating joints hold one edge, each alone bounds the
   motion, so the edge takes one joint's whole bound (translation,
@@ -475,7 +477,7 @@ float enters the placement.
 | G005 | bolted-float-unlocated | warning | A check tighter than a joint's float reads through a placement carrying that float (section 5.2). |
 | G006 | double-placement | error, fixed | A part or instance is placed more than once. |
 | G007 | unplaced-instance | warning | A part array placed instance by instance leaves an instance without a placement. |
-| G008 | rotation-unconstrained | warning | A non-locating joint with a one-point pattern carries float onto a placement edge, so the part may turn freely about the screw (section 5.2). |
+| G008 | rotation-unconstrained | warning | A non-locating joint whose pattern does not fix rotation (one point, coincident points, or float at or above the spread) carries float onto a placement edge, so the part may turn freely about the screw (section 5.2). |
 | R007 | binding-datum-mismatch | warning | A bound coordinate's native sketch is not on its datum's plane, or its dimension is not measured from the sketch origin (adapters that can see it). |
 
 lints.md is the catalog; this table must agree with it.

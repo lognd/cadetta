@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["docs/spec/adapters.md states an external adapter declaring emit but not drive is sent emit and its reported files are listed as emitted"]
+moved = []
+at = "2026-10-15T12:41:08Z"
+actor = "lognd"
+rev = 1
