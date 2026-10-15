@@ -1,0 +1,38 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:49:43Z"
+digest = "648a4905f4904c8c3c549b3af65336960d3ae1233262ec8c8d0b77cf3582a9fe"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+warning: variable does not need to be mutable
+   --> crates/cadetta-cli/src/pipeline.rs:757:13
+    |
+757 |         let mut evaluator =
+    |             ----^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: `cadetta` (lib) generated 1 warning (run `cargo fix --lib -p cadetta` to apply 1 suggestion)
+warning: `cadetta` (lib test) generated 1 warning (1 duplicate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.71s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8120b8b0-6441-4d54-8584-b6eeea0a3cf7 with nextest profile: default
+    Starting 1 test across 58 binaries (1342 tests skipped)
+        PASS [   0.149s] cadetta cmd::check_drift::tests::a_bare_system_command_is_not_found_on_path
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.152s] 1 test run: 1 passed, 1342 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "a_bare_system_command_is_not_found_on_path"
+size = 1164
+status = "measured"
+test_count = 1
+tests_digest = "f4afaaf7e55563720d7a451f67e012406cca9532541fe10ec57b19d379bd6908"
+at = "2026-10-15T02:49:43Z"
+actor = "lognd"
+rev = 1
