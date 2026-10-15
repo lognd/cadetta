@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["package:: and super:: paths parse in expressions"]
+moved = []
+at = "2026-10-15T03:11:54Z"
+actor = "lognd"
+rev = 1
