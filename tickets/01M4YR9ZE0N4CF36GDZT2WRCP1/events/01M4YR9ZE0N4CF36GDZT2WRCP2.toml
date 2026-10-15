@@ -1,0 +1,9 @@
+kind = "create"
+title = "quantities: exact trig/zero/c002 fixtures miss expected Q006 info (5 fixtures)"
+type = "bug"
+category = "todo"
+priority = "medium"
+body = "Found while working ~X1PF271. quantities/{c002-inexact-boundary,exact-zero-normalised,trig-exact-atan2,trig-exact-sin,trig-exact-tan} must-not-fire: missing Q006 (info)."
+at = "2026-10-15T03:04:48Z"
+actor = "lognd"
+rev = 1
