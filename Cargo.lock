@@ -246,6 +246,7 @@ dependencies = [
  "cadetta-solve",
  "cadetta-syntax",
  "cadetta-units",
+ "cadetta-variants",
  "tracing",
 ]
 

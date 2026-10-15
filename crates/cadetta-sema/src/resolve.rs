@@ -557,6 +557,18 @@ impl<'a> Resolver<'a> {
         }
     }
 
+    /// The interface a path written in `ctx` (an `implements` or `extends` entry) names, and its id.
+    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+    pub fn interface_at(&self, ctx: &Ctx, path: &Path) -> Option<(CanonPath, &'a Interface)> {
+        let Ok(Resolved::Item { path: id, .. }) = self.resolve_path(ctx, path, None) else {
+            return None;
+        };
+        match self.entry(&id)?.kind {
+            EntryKind::Interface(i) => Some((id, i)),
+            _ => None,
+        }
+    }
+
     /// The component a part slot's declared type names, resolved from the slot's module.
     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
     pub fn part_type(

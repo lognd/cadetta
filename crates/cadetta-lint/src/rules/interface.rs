@@ -68,6 +68,11 @@ pub fn check_members(
                     .iter()
                     .any(|m| m.path.member_root() == Some(name) && kind.is_none_or(|k| m.kind == k))
             };
+            // Datums live in `Component.datums`; a bare `datum d = origin` has no members.
+            let has_datum = |name: &str| {
+                c.datums.iter().any(|d| d.path.member_root() == Some(name))
+                    || has(name, Some(MemberKind::Datum))
+            };
             let missing = iface
                 .members
                 .iter()
@@ -77,7 +82,7 @@ pub fn check_members(
                     iface
                         .datums
                         .iter()
-                        .filter(|d| !has(d, Some(MemberKind::Datum)))
+                        .filter(|d| !has_datum(d))
                         .map(String::as_str),
                 );
             for name in missing {
@@ -295,6 +300,27 @@ mod tests {
         c.members
             .push(Member::new(p("demo::Wheel.bore"), MemberKind::Param));
         assert!(check_members(&[c], &[iface()], |_| unreachable!()).is_empty());
+    }
+
+    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+    // frob:tests crates/cadetta-lint/src/rules/interface.rs::check_members
+    #[test]
+    fn i001_datum_is_found_in_component_datums_and_missing_one_fires() {
+        let mut i = iface();
+        i.datums.push("mount".into());
+        let mut c = comp("demo::Wheel.x");
+        c.implements.push("Caster".into());
+        c.members
+            .push(Member::new(p("demo::Wheel.bore"), MemberKind::Param));
+        let d = check_members(&[c.clone()], &[i.clone()], |_| unreachable!());
+        assert_eq!(d.len(), 1);
+        assert!(d[0].message.contains("mount"));
+        c.datums.push(cadetta_ir::geometry::Datum::new(
+            p("demo::Wheel.mount"),
+            p("demo::Wheel.origin"),
+            vec![],
+        ));
+        assert!(check_members(&[c], &[i], |_| unreachable!()).is_empty());
     }
 
     // frob:tests crates/cadetta-lint/src/rules/interface.rs::check_members

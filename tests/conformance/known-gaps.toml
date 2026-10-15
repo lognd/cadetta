@@ -243,41 +243,6 @@ ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
-fixture = "geometry/datum-bound-inexact-rotation-undecided"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-bound-reversed-normal"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-bound-toleranced-angle-undecided"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-built-from-earlier"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-flip-z"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-ots-needs-citation"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/i001-interface-datum-omitted"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
 fixture = "packages/e002-glob-imports-only-pub"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the privacy and use-target diagnostics yet"

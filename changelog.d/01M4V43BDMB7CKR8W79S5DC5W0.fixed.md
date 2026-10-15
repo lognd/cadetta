@@ -1,0 +1,1 @@
+Datum declaration checks now fire: E002/E006 for datums built from a later or unknown datum and flip(z), C001/C002 for reversed or undecided datum-bound rotations, S001 for uncited ots datum offsets, and I001 only when an implementer omits a declared interface datum.

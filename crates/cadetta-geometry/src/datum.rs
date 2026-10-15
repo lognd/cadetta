@@ -334,7 +334,7 @@ pub fn lower_datum(
         return err(
             value.span,
             format!(
-                "`{base}` is not `origin` or an earlier datum of this component (geometry.md 2)"
+                "E002: `{base}` is not `origin` or an earlier datum of this component (geometry.md 2)"
             ),
         );
     }
@@ -463,7 +463,7 @@ fn lower_flip(args: &[Arg], span: Span) -> Result<DatumOp, GeometryError> {
         }),
         _ => err(
             arg.span,
-            "`flip` takes x or y (flipping about z does not reverse the normal)",
+            "E006: `flip` takes x or y (flipping about z does not reverse the normal)",
         ),
     }
 }
@@ -560,6 +560,7 @@ mod tests {
         assert!(!about_z[0].reverses_normal());
         let (_, bad) = lower("model M {\n  datum d = origin.flip(z)\n}\n");
         assert_eq!(bad.len(), 1);
+        assert!(bad[0].message.starts_with("E006: "));
     }
 
     // frob:tests crates/cadetta-geometry/src/datum.rs::DatumScope.check_arg kind=unit
@@ -602,5 +603,6 @@ mod tests {
     fn unknown_or_later_base_is_an_error() {
         let (_, errs) = lower("model M {\n  datum a = b.offset(x = 1mm)\n  datum b = origin\n}\n");
         assert_eq!(errs.len(), 1);
+        assert!(errs[0].message.starts_with("E002: "));
     }
 }

@@ -19,6 +19,7 @@ cadetta-units.workspace = true
 cadetta-fits.workspace = true
 cadetta-ir.workspace = true
 cadetta-geometry.workspace = true
+cadetta-variants.workspace = true
 cadetta-solve.workspace = true
 tracing.workspace = true
 

@@ -282,7 +282,10 @@ pub(crate) fn s_facts(
             continue;
         }
         for m in &c.members {
-            if m.kind == IrMemberKind::Param && m.value.is_some() {
+            // Datum offsets of an `ots` are catalogue values too (geometry.md 2).
+            // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+            let is_value = matches!(m.kind, IrMemberKind::Param | IrMemberKind::Datum);
+            if is_value && m.value.is_some() {
                 // A member citation replaces the component's, never merges (language.md 3.9).
                 let applied = m.citation.as_ref().or(c.citation.as_ref());
                 values.push(OtsValueFacts {
@@ -1219,7 +1222,10 @@ fn evaluate_stages(
     }
     for d in &evaluation.diagnostics {
         // C001/C002 are reported once, from the structured check results below.
-        if d.code == "C001" || d.code == "C002" {
+        // Datum-bound findings (~S5DC5W0) have no structured check result and pass through.
+        if (d.code == "C001" || d.code == "C002")
+            && evaluation.checks.iter().any(|r| r.span == d.span)
+        {
             continue;
         }
         if kind_keys.contains(&(d.code.to_owned(), d.span.start, d.span.end)) {

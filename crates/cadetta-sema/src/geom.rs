@@ -22,6 +22,7 @@ use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
+use cadetta_geometry::interface_datum::check_interface_datums;
 use cadetta_geometry::instances::{
     Operand, check_elementwise, check_unplaced, expand_instances, operands,
 };
@@ -32,10 +33,11 @@ use cadetta_geometry::point::{DatumId, Point, Pos, point_type};
 use cadetta_geometry::reexpress::{FrameTable, Located, ReexpressError, Reexpressed};
 use cadetta_geometry::transform::Coord;
 use cadetta_syntax::ast::{
-    Arg, Component, ComponentClass, Expr, ExprKind, MemberKind, Part, Type, TypeKind,
+    Arg, Component, ComponentClass, Expr, ExprKind, MemberKind, Part, Path, Type, TypeKind,
 };
 use cadetta_syntax::span::Span;
 use cadetta_units::compare::{Note, Verdict};
+use cadetta_variants::interface::{C001, I001, ResolvedInterface, resolve as resolve_interface};
 use cadetta_units::{Affine, Dim, RootOp};
 use tracing::{debug, trace, warn};
 
@@ -375,6 +377,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             let g = component_geometry(self.resolver, &id, comp);
             // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
             self.report_geometry(&id, comp, &g);
+            self.check_datum_bounds(&id, comp, &g.datums);
             for d in &g.datums {
                 for m in d.members() {
                     self.geom_member(m);
@@ -387,6 +390,65 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Checks the datum bounds (`shaft.z == mount.z`) of every interface `comp` implements
+    /// against its datums: C001 when violated, C002 when undecided (geometry.md 2).
+    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+    fn check_datum_bounds(&mut self, id: &ComponentId, comp: &'p Component, datums: &[DatumDef]) {
+        let ctx = Ctx {
+            package: id.package.clone(),
+            module: id.modules.clone(),
+            component: None,
+            locals: Vec::new(),
+        };
+        for r in &comp.implements {
+            let Some(iface) = self.resolved_interface(&ctx, r, 0) else {
+                trace!(component = %id.item, "datum bounds: interface not resolved");
+                continue;
+            };
+            for d in check_interface_datums(&iface, &id.item, datums) {
+                if d.code == I001 {
+                    // I001 is a lint (interface.rs), not an evaluation finding.
+                    continue;
+                }
+                let severity = if d.code == C001 {
+                    Severity::Error
+                } else {
+                    Severity::Warning
+                };
+                warn!(component = %id.item, code = d.code, "datum bound not met");
+                self.diagnostics.push(EvalDiagnostic {
+                    module: None,
+                    code: d.code,
+                    severity,
+                    message: d.message,
+                    span: comp.name.span,
+                });
+            }
+        }
+    }
+
+    /// The interface `path` names with its extended interfaces folded in (depth-capped).
+    fn resolved_interface(&self, ctx: &Ctx, path: &Path, depth: usize) -> Option<ResolvedInterface> {
+        const MAX_DEPTH: usize = 16;
+        if depth >= MAX_DEPTH {
+            return None;
+        }
+        let (id, decl) = self.resolver.interface_at(ctx, path)?;
+        let inner = Ctx {
+            package: id.package.clone(),
+            module: id.modules.clone(),
+            component: None,
+            locals: Vec::new(),
+        };
+        let parents: Vec<ResolvedInterface> = decl
+            .extends
+            .iter()
+            .filter_map(|p| self.resolved_interface(&inner, p, depth + 1))
+            .collect();
+        // Value bounds are checked elsewhere; only the datum bounds matter here.
+        Some(resolve_interface(decl, &parents, |_| None))
+    }
+
     /// Emits G001 (lowering), G002, G003 and G006 (placement tree) and G007 (unplaced instances).
     // frob:ticket 01M4V436F7JRA8P832RH0EKNH2
     fn report_geometry(
@@ -396,13 +458,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         g: &ComponentGeometry<'_>,
     ) {
         for e in &g.errors {
-            if e.message.starts_with("G001") {
-                warn!(error = %e, "geometry: G001");
+            if let Some(code) = coded_prefix(&e.message) {
+                warn!(error = %e, code, "geometry: coded lowering error");
                 self.diagnostics.push(EvalDiagnostic {
                     module: None,
-                    code: "G001",
+                    code,
                     severity: Severity::Error,
-                    message: e.message.clone(),
+                    message: e
+                        .message
+                        .strip_prefix(code)
+                        .and_then(|m| m.strip_prefix(": "))
+                        .unwrap_or(&e.message)
+                        .to_owned(),
                     span: e.span,
                 });
             } else {
@@ -995,6 +1062,14 @@ fn report_notes(report: &AlignedReport) -> Vec<Note> {
         }
     }
     notes
+}
+
+/// The diagnostic code a lowering message carries as a `CODE: ` prefix, if it is one we route.
+// frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+fn coded_prefix(message: &str) -> Option<&'static str> {
+    ["G001", "E002", "E006"]
+        .into_iter()
+        .find(|c| message.starts_with(*c))
 }
 
 fn aligned_diag(e: &AlignedError, span: Span) -> Fail {
