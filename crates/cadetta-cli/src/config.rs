@@ -4,13 +4,16 @@
 //! Loading is strict: unknown keys are errors that name the key (so the
 //! retired `[project]` table and its `sources` and `roots` keys are
 //! rejected), and every value is validated. Numeric quantities such as
-//! `common_values` stay strings until sema parses them, so no inexact
-//! number is ever stored here.
+//! `common_values` stay strings in the model, so no inexact number is ever
+//! stored here; [`Lint::d_config`] parses them exactly when a lint needs them.
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadetta_ir::model::TolerancePolicy;
+use cadetta_lint::rules::d::{DConfig, Key, NamedValue};
+use cadetta_lint::rules::m::MConfig;
+use cadetta_units::{Dim, KindTable, Magnitude, Rational, UnitTable};
 use serde::Deserialize;
 
 /// Why a `cadetta.toml` could not be loaded (config-cli.md exit code 2).
@@ -259,6 +262,60 @@ impl Default for Lint {
     }
 }
 
+impl Lint {
+    /// The M001 settings: `precision` by kind name; empty keeps the documented defaults.
+    pub fn m_config(&self) -> Result<MConfig, ConfigError> {
+        if self.precision.is_empty() {
+            return Ok(MConfig::default());
+        }
+        let kinds = KindTable::builtin();
+        let mut precision = Vec::with_capacity(self.precision.len());
+        for (kind, decimals) in &self.precision {
+            let Some(dim) = kinds.dim_of(kind) else {
+                return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
+            };
+            precision.push((dim.clone(), u32::from(*decimals)));
+        }
+        tracing::debug!(kinds = precision.len(), "lint: M001 precision from config");
+        Ok(MConfig { precision })
+    }
+
+    /// The D001/D002 settings: `d001_min_digits`, parsed `common_values` and the caller's
+    /// table cells.
+    pub fn d_config(&self, table_cells: Vec<NamedValue>) -> Result<DConfig, ConfigError> {
+        let units = UnitTable::builtin();
+        let mut common_values = Vec::with_capacity(self.common_values.len());
+        for (i, text) in self.common_values.iter().enumerate() {
+            match parse_quantity(text, &units) {
+                Some((dim, mag)) => common_values.push(Key::new(&dim, &mag)),
+                None => {
+                    return invalid(
+                        format!("lint.common_values[{i}]"),
+                        format!("`{text}` is not a quantity literal such as `0.5in`"),
+                    );
+                }
+            }
+        }
+        Ok(DConfig {
+            min_digits: self.d001_min_digits,
+            common_values,
+            table_cells,
+        })
+    }
+}
+
+/// Parse a quantity literal (`0.5in`, `10mm`) into its dimension and exact SI magnitude.
+fn parse_quantity(text: &str, units: &UnitTable) -> Option<(Dim, Magnitude)> {
+    let text = text.trim();
+    let split = text
+        .find(|c: char| !(c.is_ascii_digit() || matches!(c, '.' | '-' | '+' | 'e' | 'E')))
+        .unwrap_or(text.len());
+    let (number, unit) = text.split_at(split);
+    let value = Rational::parse_decimal(number).ok()?;
+    let resolved = units.parse(unit).ok()?;
+    Some((resolved.dim, Magnitude::new(value, 0).mul(&resolved.factor)))
+}
+
 /// `[obligations.roles.NAME]` (obligations.md 4).
 #[derive(Debug, Clone, PartialEq, Eq, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -489,6 +546,8 @@ impl Config {
         if self.lint.d001_min_digits == 0 {
             return invalid("lint.d001_min_digits", "must be at least 1");
         }
+        self.lint.m_config()?;
+        self.lint.d_config(Vec::new())?;
         for (name, role) in &self.obligations.roles {
             if role.covers.is_empty() {
                 return invalid(
@@ -751,6 +810,20 @@ native_unit = "mm"
         assert!(err_text(&pkg("bogus = 1\n")).contains("bogus"));
         assert!(err_text(&pkg("[lint]\nfail_onn = \"error\"\n")).contains("fail_onn"));
         assert!(err_text(&pkg("[[adapter]]\nname = \"x\"\nwat = 1\n")).contains("wat"));
+    }
+
+    // frob:ticket 01M4TRKD3ZG6X9SKKC8XN48PSV
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_kinds_and_common_values_are_checked() {
+        assert!(err_text(&pkg("[lint]\nprecision = { Lenth = 2 }\n")).contains("Lenth"));
+        assert!(err_text(&pkg("[lint]\ncommon_values = [\"fast\"]\n")).contains("fast"));
+        let c = Config::parse(&pkg(
+            "[lint]\nprecision = { Length = 4 }\ncommon_values = [\"0.5in\"]\n",
+        ))
+        .unwrap();
+        assert_eq!(c.lint.m_config().unwrap().precision.len(), 1);
+        assert_eq!(c.lint.d_config(Vec::new()).unwrap().common_values.len(), 1);
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::Lint

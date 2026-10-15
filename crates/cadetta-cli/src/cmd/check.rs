@@ -7,13 +7,14 @@ use std::io::Write;
 
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
-use cadetta_lint::engine::{LintConfig, Suppressions, apply};
+use cadetta_lint::engine::{LintConfig, Suppressions, apply, bind_reviewed};
 use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
+use cadetta_lint::rules::o004_w005::check_w005;
 use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::citation::{SOURCE_ROLE, check_citation, citation_id};
 use cadetta_obligations::graph::{ObligationKind, ObligationState};
-use cadetta_obligations::lock::Lock;
+use cadetta_obligations::lock::{Lock, Record};
 use cadetta_obligations::roles::Policy;
 
 use super::ack::policy_of;
@@ -297,14 +298,42 @@ pub fn run_check_with(
     if !scope.is_all() {
         raw.retain(|d| d.path.as_deref().is_some_and(|p| scope.contains(p)));
     }
-    let sup = Suppressions {
+    let mut sup = Suppressions {
         as_of: Some(as_of.date.to_string()),
         ..analysis.suppressions.clone()
     };
+    if !analysis.halted {
+        bind_waiver_digests(&mut sup, &universes(&analysis), &lock);
+    }
+    // `apply` resets every severity to the configured one, which would undo the rule-level
+    // D001 downgrade for values under `[lint] d001_min_digits`; keep it unless the user set
+    // `D001` explicitly.
+    let demoted: Vec<Option<String>> = if project.config.lint.severity.contains_key("D001") {
+        Vec::new()
+    } else {
+        raw.iter()
+            .filter(|d| d.code == "D001" && d.severity == Severity::Info)
+            .map(|d| d.path.clone())
+            .collect()
+    };
     let mut outcome = apply(raw, &cfg, &sup);
+    for d in &mut outcome.diagnostics {
+        if d.code == "D001" && demoted.contains(&d.path) {
+            tracing::debug!(path = ?d.path, "check: D001 below d001_min_digits stays info");
+            d.severity = Severity::Info;
+        }
+    }
     // W001-W004 describe the waivers themselves, so they follow the engine run.
     let waiver_diags = w::check(&outcome, &sup, &cfg);
     outcome.diagnostics.extend(waiver_diags);
+    // W005: expiring waivers. No IR entity carries `eol` yet, so only waivers are reported.
+    outcome.diagnostics.extend(check_w005(
+        &sup.waivers,
+        &[],
+        sup.as_of.as_deref(),
+        project.config.lint.expiry_warn_days,
+        &cfg,
+    ));
     for d in &mut outcome.diagnostics {
         if (d.code == "O001" || d.code == "O002")
             && gating_keys.contains(&(d.code.clone(), d.path.clone()))
@@ -323,6 +352,35 @@ pub fn run_check_with(
     let code = output::exit_code(&diagnostics, project.config.lint.fail_on);
     tracing::info!(diagnostics = diagnostics.len(), code, "check finished");
     code
+}
+
+/// Record the current closure digests in `sup` and mark each reviewed waiver whose targets
+/// changed since its lock record (W002); waivers without a lock record stay open.
+// frob:ticket 01M4TRKDEST57137A1Y203JFR7
+fn bind_waiver_digests(sup: &mut Suppressions, universes: &[universe::Universe], lock: &Lock) {
+    for u in universes {
+        match u.closures() {
+            Ok(c) => sup.closures.extend(c),
+            Err(error) => tracing::warn!(%error, "check: closure digests unavailable"),
+        }
+    }
+    let closures = sup.closures.clone();
+    for w in &mut sup.waivers {
+        let recorded = lock.records().find_map(|r| match r {
+            Record::Waiver(l)
+                if l.code == w.code
+                    && l.glob == w.glob
+                    && l.alt.as_ref().map(|a| format!("{}={}", a.slot, a.alternate))
+                        == w.for_alt.as_ref().map(|v| v.short()) =>
+            {
+                Some(l.digest.as_str().to_owned())
+            }
+            _ => None,
+        });
+        if let Err(error) = bind_reviewed(w, &closures, recorded.as_deref()) {
+            tracing::warn!(%error, glob = %w.glob, "check: waiver not bound");
+        }
+    }
 }
 
 #[cfg(test)]
@@ -512,6 +570,57 @@ mod tests {
         assert_eq!(o["path"], "acme.axle::Axle.bore_ok");
     }
 
+    const RESTATED: &str = "model Axle {\n  a: Length = 6.35mm\n  b: Length = 6.35mm\n}\n";
+    const CELLED: &str = "table Bearings {\n  key od: Length\n  cols bore: Length\n  22mm => 7.777mm\n}\nmodel Axle {\n  hole: Length = 7.777mm\n}\n";
+
+    fn diag_severity(json: &Value, code: &str) -> Option<String> {
+        json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == code)
+            .map(|d| d["severity"].as_str().unwrap().to_owned())
+    }
+
+    // frob:ticket 01M4TRKD3ZG6X9SKKC8XN48PSV
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_changes_m001() {
+        let (_, json, _) = run(&project(AXLE_M001, ""), &[]);
+        assert!(codes(&json).contains(&"M001".to_owned()), "{json}");
+        let dir = project(AXLE_M001, "[lint]\nprecision = { Length = 4 }\n");
+        let (_, json, _) = run(&dir, &[]);
+        assert!(!codes(&json).contains(&"M001".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4TRKD3ZG6X9SKKC8XN48PSV
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_d001_min_digits_and_common_values_change_d001() {
+        let (_, json, _) = run(&project(RESTATED, ""), &[]);
+        assert_eq!(diag_severity(&json, "D001").as_deref(), Some("warning"), "{json}");
+        let dir = project(RESTATED, "[lint]\nd001_min_digits = 4\n");
+        let (_, json, _) = run(&dir, &[]);
+        assert_eq!(diag_severity(&json, "D001").as_deref(), Some("info"), "{json}");
+        let dir = project(RESTATED, "[lint]\ncommon_values = [\"6.35mm\"]\n");
+        let (_, json, _) = run(&dir, &[]);
+        assert_eq!(diag_severity(&json, "D001"), None, "{json}");
+    }
+
+    // frob:ticket 01M4TRKD3ZG6X9SKKC8XN48PSV
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze
+    #[test]
+    fn table_cells_feed_d002() {
+        let (_, json, _) = run(&project(CELLED, ""), &[]);
+        let d002 = json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == "D002")
+            .unwrap_or_else(|| panic!("D002 expected: {json}"));
+        assert!(d002["message"].as_str().unwrap().contains("Bearings[22mm].bore"), "{d002}");
+    }
+
     const AXLE_M001: &str = "model Axle {\n  od: Length = 20.1234mm\n}\n";
 
     // frob:ticket 01M4TQJJK40BJQTA59SMC5WD33
@@ -548,6 +657,46 @@ mod tests {
         let dir = project(&unused, "");
         let (_, json, _) = run(&dir, &[]);
         assert!(codes(&json).contains(&"W004".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4TRKDEST57137A1Y203JFR7
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::bind_waiver_digests
+    #[test]
+    fn waiver_with_a_changed_reviewed_digest_is_w002_and_stops_suppressing() {
+        let src = format!(
+            "{AXLE_M001}waive M001 on acme.axle::Axle.od {{ because \"measured\" }}\n"
+        );
+        let dir = project(&src, "");
+        let mut lock = Lock::new();
+        lock.insert(Record::Waiver(cadetta_obligations::lock::Waiver {
+            code: "M001".into(),
+            glob: "acme.axle::Axle.od".into(),
+            alt: None,
+            digest: Hex::new("ab").unwrap(),
+        }));
+        lock.save(&dir.0.join("cadetta.lock")).unwrap();
+        let (_, json, _) = run(&dir, &[]);
+        assert!(codes(&json).contains(&"W002".to_owned()), "{json}");
+        let m = json["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|d| d["code"] == "M001")
+            .expect("M001 reappears");
+        assert!(!m["waived"].is_object(), "{json}");
+    }
+
+    // frob:ticket 01M4TRKDEST57137A1Y203JFR7
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn waiver_on_a_require_is_w003_and_expiring_waiver_is_w005() {
+        let src = "model Axle {\n  od: Length = 20mm\n  require wide: od > 1mm\n}\n\
+waive C001 on acme.axle::Axle.wide { because \"x\" expires 2026-10-20 }\n";
+        let dir = project(src, "");
+        let (_, json, _) = run(&dir, &["--as-of", "2026-10-14"]);
+        let c = codes(&json);
+        assert!(c.contains(&"W003".to_owned()), "{json}");
+        assert!(c.contains(&"W005".to_owned()), "{json}");
     }
 
     fn attest(dir: &Dir, digest: &str) {

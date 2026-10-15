@@ -19,6 +19,7 @@ use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
+use cadetta_lint::rules::d::{Key, NamedValue};
 use cadetta_lint::rules::{d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
@@ -29,7 +30,7 @@ use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
 use cadetta_sema::resolve::{
-    CanonPath, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
+    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
@@ -37,6 +38,7 @@ use cadetta_syntax::parser::parse;
 use cadetta_syntax::span::SourceFile;
 use cadetta_units::{KindTable, UnitTable, Verdict};
 
+use crate::config::Lint;
 use crate::lint_facts::{self, ModuleView};
 use crate::project::{Module, PackageDir, Project};
 
@@ -608,11 +610,58 @@ pub fn analyze(project: &Project, scope: &[usize]) -> Analysis {
         .iter()
         .map(|&i| package_name(&project.packages[i]))
         .collect();
-    evaluate_stages(&parsed, &scope_names, &mut analysis);
+    evaluate_stages(&parsed, &scope_names, &project.config.lint, &mut analysis);
     analysis
 }
 
-fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis: &mut Analysis) {
+/// Every quantity-valued table cell of the parsed packages, by package name, named
+/// `Table[key].column` for D002 (the IR carries no cells, lints.md D).
+fn table_cells(
+    evaluator: &mut Evaluator<'_, '_>,
+    parsed: &[ParsedPackage],
+) -> BTreeMap<String, Vec<NamedValue>> {
+    let mut out: BTreeMap<String, Vec<NamedValue>> = BTreeMap::new();
+    for p in parsed {
+        for m in &p.modules {
+            let ctx = Ctx {
+                package: p.name.clone(),
+                module: m.path.clone(),
+                component: None,
+                locals: Vec::new(),
+            };
+            for item in m.file.items() {
+                let ItemKind::Table(t) = &item.kind else {
+                    continue;
+                };
+                for row in &t.rows {
+                    let key_text = m.text.get(row.key.span.start..row.key.span.end).unwrap_or("?");
+                    for (col, expr) in t.cols.iter().zip(row.values.iter().flatten()) {
+                        let Ok(q) = evaluator.eval_input(ctx.clone(), expr) else {
+                            tracing::trace!(table = %t.name.name, "pipeline: table cell is not a quantity");
+                            continue;
+                        };
+                        out.entry(p.name.clone()).or_default().push(NamedValue {
+                            name: format!("{}[{key_text}].{}", t.name.name, col.name.name),
+                            key: Key::new(q.dim(), &q.nominal),
+                        });
+                    }
+                }
+            }
+        }
+    }
+    tracing::debug!(
+        cells = out.values().map(Vec::len).sum::<usize>(),
+        "pipeline: table cells collected for D002"
+    );
+    out
+}
+
+fn evaluate_stages(
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    lint: &Lint,
+    analysis: &mut Analysis,
+) {
     let sources: Vec<PackageSrc> = parsed
         .iter()
         .map(|p| PackageSrc {
@@ -635,6 +684,7 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
     let mut evaluator = Evaluator::new(&resolver, &units, &sources);
     let procs = Processes::compile(&mut evaluator, &sources);
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
+    let cells = table_cells(&mut evaluator, parsed);
     let evaluation = evaluator.evaluate();
     let derived_fits = fitderive::derive_fits(&resolver, &evaluation, &fit_ranges, &sources);
     let outcome = procs.apply(&evaluation);
@@ -861,10 +911,20 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         // IR-only rule families run with the catalog severities; `check` applies `[lint]`
         // overrides afterwards through the engine.
         let lcfg = LintConfig::new();
-        out.extend(d::check_d001(&ir, &lcfg, &d::DConfig::default(), locate));
-        out.extend(d::check_d002(&ir, &lcfg, &d::DConfig::default(), locate));
+        // `[lint]` settings are validated when the configuration loads, so these cannot fail.
+        let dcfg = lint
+            .d_config(
+                std::iter::once(&p.name)
+                    .chain(&p.deps)
+                    .flat_map(|n| cells.get(n).into_iter().flatten().cloned())
+                    .collect(),
+            )
+            .expect("[lint] settings were validated at load");
+        let mcfg = lint.m_config().expect("[lint] settings were validated at load");
+        out.extend(d::check_d001(&ir, &lcfg, &dcfg, locate));
+        out.extend(d::check_d002(&ir, &lcfg, &dcfg, locate));
         out.extend(f::check_f004(&ir, &lcfg, locate));
-        out.extend(m::check_m001(&ir, &lcfg, &m::MConfig::default(), locate));
+        out.extend(m::check_m001(&ir, &lcfg, &mcfg, locate));
         out.extend(m::check_m002(&ir, &lcfg, locate));
         out.extend(m::check_m003(&ir, &lcfg, locate));
         out.extend(n::check(&ir, &lcfg, locate));
