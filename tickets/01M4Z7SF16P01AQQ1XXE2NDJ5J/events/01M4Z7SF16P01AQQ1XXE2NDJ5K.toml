@@ -1,0 +1,10 @@
+kind = "create"
+title = "cadetta ir: ScrewJoint.grip read through a part slot is an unknown node (golden 04); lower.rs held by 137W4EE"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/lower.rs"]
+body = "found while working ~C7DZBZH"
+at = "2026-10-15T07:35:24Z"
+actor = "lognd"
+rev = 1
