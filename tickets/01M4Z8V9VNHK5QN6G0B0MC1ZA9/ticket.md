@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "A read whose on-disk digest equals the lock digest reuses the lock values without opening the tool."
-bound = false
+bound = true
 +++
 
 found while working W796HD7: ten binding read fixtures need adapter-host behaviour that does not exist: adapters/read-driven-dimension-inexact, read-never-raises-q001, read-unparsable-expression-inexact (SWFN(1) parses as Call), r002-unbound-native-parameter, r003-read-bound-path-missing, read-maps-names-via-bindings-only, lock-digest-skips-open, slots-read-records-instance-file, r011-wrong-component-file, geom-r007-not-from-origin and geometry/r007-not-from-origin.
