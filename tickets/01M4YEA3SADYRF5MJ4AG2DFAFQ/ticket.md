@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T00:10:07Z"
-updated = "2026-10-15T11:04:36Z"
+updated = "2026-10-15T11:11:15Z"
 scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "docs/spec/lints.md", "docs/spec/packages.md"]
 
 [[links]]
