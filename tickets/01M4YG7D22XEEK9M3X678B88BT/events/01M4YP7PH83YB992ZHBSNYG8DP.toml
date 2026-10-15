@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/src/cmd/check_drift.rs"]
+new = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/src/cmd/check_drift.rs", "crates/cadetta-adapter/src/rpc/client.rs", "crates/cadetta-cli/src/cmd/import.rs", "docs/spec/adapters.md", "changelog.d/01M4YG7D22XEEK9M3X678B88BT.fixed.md"]
+at = "2026-10-15T02:28:36Z"
+actor = "lognd"
+rev = 1
