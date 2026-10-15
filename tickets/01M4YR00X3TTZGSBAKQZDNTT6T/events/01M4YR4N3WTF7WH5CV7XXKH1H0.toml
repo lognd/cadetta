@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["E016 fires for a use of a private item from a non-descendant module (language/e016-private-item)", "E017 fires for a private type in a public signature (language/e017-private-in-public)"]
+moved = []
+at = "2026-10-15T03:01:53Z"
+actor = "lognd"
+rev = 1
