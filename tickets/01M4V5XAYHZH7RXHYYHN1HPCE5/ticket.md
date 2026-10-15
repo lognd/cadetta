@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-13T17:45:36Z"
-updated = "2026-10-15T06:10:36Z"
+updated = "2026-10-15T06:10:59Z"
 scope = ["tests/conformance/README.md"]
 
 [[acceptance]]
