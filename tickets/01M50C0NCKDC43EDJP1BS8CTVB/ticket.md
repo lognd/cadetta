@@ -7,9 +7,13 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-15T18:08:29Z"
+updated = "2026-10-15T18:09:51Z"
 idempotency_key = "v2k95h5-slice-geometry"
 scope = ["crates/cadetta-geometry/src/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M50C0NA43G0H8N5YSRDMWEB8"
 
 [[acceptance]]
 text = "Projection, aligned and distance over position discs meet the exact and conservative bounds in the spec."
