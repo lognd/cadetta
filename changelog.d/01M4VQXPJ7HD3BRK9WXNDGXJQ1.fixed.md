@@ -1,0 +1,1 @@
+`cadetta solve --format json` now lists a `diagnostics` array (one error per failed solver, with code S005, Q001 or EVAL, severity and the solver path) in the shape `check` reports, so tools and the solvers conformance fixtures see S005 and Q001 failures; 22 solvers fixtures leave known-gaps, and the rest are re-pointed to ~K4JKH27 and ~0N5FY1T.

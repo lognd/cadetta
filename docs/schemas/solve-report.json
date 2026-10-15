@@ -24,9 +24,24 @@
         "required": ["solver", "status"],
         "type": "object"
       }
+    },
+    "diagnostics": {
+      "description": "One error per failed solver, in the shape `cadetta check` reports diagnostics.",
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "severity": { "const": "error" },
+          "path": { "description": "Canonical solver path.", "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["code", "severity", "path", "message"],
+        "type": "object"
+      }
     }
   },
-  "required": ["schema", "ok", "solvers"],
+  "required": ["schema", "ok", "solvers", "diagnostics"],
   "title": "SolveReport",
   "type": "object"
 }

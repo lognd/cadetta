@@ -1158,114 +1158,29 @@ ticket = "~JBHTKF3"
 reason = "binding import entries have no executor yet"
 
 [[gap]]
-fixture = "solvers/deps-missing-file-fails"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
 fixture = "solvers/output-decimal-exact"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/paths-resolve-against-package-dir"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/q001-output-bare-number-string"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/q001-output-expression-string"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/q001-output-json-number"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/result-file-beside-script"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
+ticket = "~K4JKH27"
+reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
 
 [[gap]]
 fixture = "solvers/role-bound-use-leaves-value"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
+ticket = "~K4JKH27"
+reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
 
 [[gap]]
 fixture = "solvers/role-driving-sets-value"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
+ticket = "~K4JKH27"
+reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
 
 [[gap]]
 fixture = "solvers/role-output-value-is-recorded"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-bad-json"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-error-names-solver"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-exit-nonzero"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-failed-keeps-previous"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-output-lexical-error"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-output-non-string"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-schema-different"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-schema-missing"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-timeout"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/transport-file"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/transport-stdio"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
+ticket = "~K4JKH27"
+reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
 
 [[gap]]
 fixture = "solvers/variants-flag-solves-alternates"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
+ticket = "~0N5FY1T"
+reason = "unindexed read of a counted part array in an in-expression is an EVAL error"
 
 [[gap]]
 fixture = "adapters/protocol-command-no-path-search"

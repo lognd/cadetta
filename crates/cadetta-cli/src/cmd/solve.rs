@@ -114,6 +114,9 @@ pub struct Entry {
     /// Failure message when `status` is `failed`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
+    /// True when the failure is a catalog diagnostic; config and usage errors (exit 2) are not.
+    #[serde(skip)]
+    pub diagnostic: bool,
 }
 
 impl Entry {
@@ -124,8 +127,32 @@ impl Entry {
             variants: Vec::new(),
             code: None,
             message: None,
+            diagnostic: false,
         }
     }
+}
+
+/// One catalog diagnostic of a failed solver, in the shape `check` reports them.
+#[derive(Debug, serde::Serialize)]
+struct Diagnostic<'a> {
+    code: &'a str,
+    severity: &'static str,
+    path: &'a str,
+    message: &'a str,
+}
+
+/// The diagnostics of every row that failed with a catalog diagnostic, so tools read `solve` like `check`.
+fn diagnostics_of(entries: &[Entry]) -> Vec<Diagnostic<'_>> {
+    entries
+        .iter()
+        .filter(|e| e.status == Status::Failed && e.diagnostic)
+        .map(|e| Diagnostic {
+            code: e.code.as_deref().unwrap_or_default(),
+            severity: "error",
+            path: &e.solver,
+            message: e.message.as_deref().unwrap_or_default(),
+        })
+        .collect()
 }
 
 /// The JSON report of a whole run.
@@ -134,6 +161,7 @@ struct Report<'a> {
     schema: &'static str,
     ok: bool,
     solvers: &'a [Entry],
+    diagnostics: Vec<Diagnostic<'a>>,
 }
 
 /// One module parsed and ready to resolve.
@@ -437,6 +465,7 @@ pub fn solve_project(
             let mut entry = Entry::new(&target.path, Status::Failed);
             entry.code = Some(code);
             entry.message = Some(message);
+            entry.diagnostic = !is_usage;
             entries.push(entry);
         }
     }
@@ -451,6 +480,7 @@ pub fn solve_project(
             schema: REPORT_SCHEMA,
             ok: !(usage || failed),
             solvers: &entries,
+            diagnostics: diagnostics_of(&entries),
         };
         match serde_json::to_string_pretty(&report) {
             Ok(text) => {
@@ -1084,6 +1114,19 @@ mod tests {
         assert_eq!(v["solvers"][0]["status"], "failed");
         assert_eq!(v["solvers"][0]["code"], "S005");
         assert!(err.contains("S005"));
+        let d = &v["diagnostics"][0];
+        assert_eq!(d["code"], "S005");
+        assert_eq!(d["severity"], "error");
+        assert_eq!(d["path"], "acme.t::Box.size");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_project
+    #[test]
+    fn json_report_has_no_diagnostics_when_all_solved() {
+        let (dir, _marker) = fixture("jsonok", "2kg");
+        let (_, v, _) = solve_json(&dir);
+        validate(&v);
+        assert_eq!(v["diagnostics"], serde_json::json!([]));
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::with_previous
