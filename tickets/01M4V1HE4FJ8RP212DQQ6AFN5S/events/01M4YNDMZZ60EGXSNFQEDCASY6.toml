@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Package-declared kinds are distinct Q003 targets (q003-package-kind and kind-row-* fixtures pass)"]
+moved = []
+at = "2026-10-15T02:14:22Z"
+actor = "lognd"
+rev = 1
