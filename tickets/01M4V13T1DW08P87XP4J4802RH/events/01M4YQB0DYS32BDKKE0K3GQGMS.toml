@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:47:28Z"
+digest = "5e1fa9c604daaaa45d0621fe2303300cd5267501a51374f0391d128f8d02ed8c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d5cf94a9-14c6-483f-a41f-48ba9ad01c78 with nextest profile: default
+    Starting 1 test across 58 binaries (1342 tests skipped)
+        PASS [   0.006s] cadetta-lint rules::c::tests::interface_bound_fully_outside_is_c001_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1342 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "interface_bound_fully_outside_is_c001_error"
+size = 830
+status = "measured"
+test_count = 1
+tests_digest = "3af846286c5313e80fd73211ce073a86631b95e697febda5e12ae58c24b421b0"
+at = "2026-10-15T02:47:28Z"
+actor = "lognd"
+rev = 1

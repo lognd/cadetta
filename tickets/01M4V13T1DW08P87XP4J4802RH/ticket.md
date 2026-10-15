@@ -12,7 +12,7 @@ scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs", "crat
 
 [[acceptance]]
 text = "C001 error is raised when a member tolerance lies wholly outside an interface bound"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "C002 warning is raised when a member tolerance straddles an interface bound"
