@@ -57,8 +57,10 @@ header line of an emitted file (which carries the IR digest and changes
 on any unrelated edit) is excluded.
 
 Without `drive`, `sync` degrades to `emit` plus instructions for the
-user's one manual step (relinking or reloading); there is no `theirs`,
-so no classification happens. `read` on a later run detects drift only
+user's one manual step (relinking or reloading). An external adapter that
+declares `emit` but not `drive` is sent the `emit` call (design IR, its
+bindings, the emit policy) and the files it reports are listed as emitted.
+There is no `theirs`, so no classification happens. `read` on a later run detects drift only
 if the adapter can read the live model.
 
 **CAD file reflects design.** Only a `drive` adapter (or a `read` of the
