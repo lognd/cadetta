@@ -2,12 +2,13 @@
 id = "01M4YQQPSNQ7TP3QFRWAYFH870"
 title = "sync and names: invalid bindings file should exit 2, not report R005 (adapters.md 3)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:54:49Z"
-updated = "2026-10-15T03:28:49Z"
+updated = "2026-10-15T03:29:54Z"
 idempotency_key = "sync-names-bindings-exit2"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/cmd/names.rs", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/tests/**", "changelog.d/**", "docs/**"]
 
