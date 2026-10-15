@@ -1,0 +1,37 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T10:11:03Z"
+digest = "e0083dcfb146fdd4b3e337140a9935859bfbeefc2888ced5675ab99332f0d3c1"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f572ff31-0890-4130-9114-1ce7837da616 with nextest profile: default
+    Starting 1 test across 42 binaries (494 tests skipped)
+        PASS [   0.114s] cadetta cmd::sync::tests::unavailable_adapter_exits_two_with_r008
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.116s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta unavailable_adapter_exits_two_with_r008"
+size = 1450
+status = "measured"
+test_count = 1
+tests_digest = "82ac0aa5b56fe063e9808c105d4252f0caa050080860d3eb4dbde6705db752e8"
+at = "2026-10-15T10:11:03Z"
+actor = "lognd"
+rev = 1

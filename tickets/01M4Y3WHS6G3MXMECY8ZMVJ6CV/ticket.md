@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-14T21:07:56Z"
-updated = "2026-10-15T10:06:33Z"
+updated = "2026-10-15T10:11:03Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-adapter/src/session.rs"]
@@ -19,7 +19,7 @@ target = "01M4SWMCARH2B2RDJV076RVDH2"
 
 [[acceptance]]
 text = "Given an unavailable adapter, when cadetta sync runs, then the process exits 2 with R008"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a dirty file among several, when sync runs, then only that file is refused (R009) and the rest are pushed"
