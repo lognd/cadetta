@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T07:45:27Z"
+digest = "204ef7170b0853ae8340d81df371eb6a64f28c3d1208dd37f06c779a7a144fbd"
+provider = "file"
+ref = "crates/cadetta-cli/tests/conformance/binding.rs"
+size = 11726
+status = "measured"
+at = "2026-10-15T07:45:27Z"
+actor = "lognd"
+rev = 1
