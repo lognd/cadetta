@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["All ir corpus must-not-fire fixtures validate (exit 0) with no skip list; observed-binding rule still enforced"]
+moved = []
+at = "2026-10-15T02:21:05Z"
+actor = "lognd"
+rev = 1
