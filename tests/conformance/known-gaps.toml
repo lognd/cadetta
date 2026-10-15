@@ -1423,34 +1423,14 @@ ticket = "~JBHTKF3"
 reason = "binding import entries have no executor yet"
 
 [[gap]]
-fixture = "adapters/contract-q004-not-representable"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
-
-[[gap]]
-fixture = "adapters/contract-structured-failures"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
-
-[[gap]]
 fixture = "emitters/csv/value-q004-beyond-precision"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
+ticket = "~TQMFETK"
+reason = "emit does not run built-in json/csv adapters yet"
 
 [[gap]]
 fixture = "emitters/json/value-q004-beyond-precision"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
-
-[[gap]]
-fixture = "emitters/sw-equations/value-q004-beyond-precision"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
-
-[[gap]]
-fixture = "quantities/q004"
-ticket = "~H29EAMF"
-reason = "Q004 diagnostic not raised"
+ticket = "~TQMFETK"
+reason = "emit does not run built-in json/csv adapters yet"
 
 [[gap]]
 fixture = "solvers/deps-missing-file-fails"

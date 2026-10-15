@@ -398,7 +398,8 @@ ids; `--module` repeats. For each configured adapter it writes the adapter's `ou
 non-`let` paths are emitted; a `[*]` binding is emitted once, at instance 0. The `sign = -1`
 negation is applied by `emit` to the written text of value and global lines (the adapter library
 leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
-to it. Q004, R013, R014 and R015 withhold that adapter's file and give exit 1; an unknown adapter id, a bad
+to it. Q004, R013, R014 and R015 withhold that adapter's file and give exit 1, each reported in the
+`--format json` `diagnostics` list as a `cadetta.diag/1` record (`schema`, `severity` `error`, `code`, `message`, `path`); an unknown adapter id, a bad
 flag or a halted analysis give exit 2. Not yet run by `emit`: the `json` and `csv` built-ins and
 external adapters (those with a `command`); they are skipped with a log line.
 

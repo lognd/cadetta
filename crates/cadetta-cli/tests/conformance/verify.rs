@@ -10,7 +10,7 @@ use serde_json::Value;
 use crate::compare::compare;
 use crate::exec::expected_members;
 use crate::expect::Block;
-use crate::run::Facts;
+use crate::run::{Facts, parse_json};
 
 /// Keys that are inputs or documentation, not observations.
 const IGNORED: &[&str] = &["note", "why", "args"];
@@ -32,6 +32,7 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "stderr_contains" => check_contains(want, &facts.stderr, "stderr"),
             "message_contains" => check_contains(want, &facts.messages.join("\n"), "messages"),
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
+            "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
             _ => check_observed(key, want, facts),
         };
@@ -209,5 +210,17 @@ fn check_observed(key: &str, want: &Value, facts: &Facts) -> Result<(), String> 
         Some(got) if got == want => Ok(()),
         Some(got) => Err(format!("{key}: observed {got}, expected {want}")),
         None => Err(format!("this entry does not observe `{key}`")),
+    }
+}
+
+/// Every record of the report's `diagnostics` list carries the wanted `schema` tag.
+fn check_diag_schema(want: &Value, facts: &Facts) -> Result<(), String> {
+    let report = parse_json(&facts.stdout).ok_or("json_diag_schema: stdout is not JSON")?;
+    let list = report["diagnostics"]
+        .as_array()
+        .ok_or("json_diag_schema: report has no `diagnostics` list")?;
+    match list.iter().find(|d| &d["schema"] != want) {
+        Some(d) => Err(format!("json_diag_schema: record {d} lacks schema {want}")),
+        None => Ok(()),
     }
 }
