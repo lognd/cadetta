@@ -6,10 +6,10 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:02:51Z"
-updated = "2026-10-13T17:02:57Z"
+updated = "2026-10-15T03:11:18Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[acceptance]]
 text = "solvers.md 3: the S005 message says whether a previous result stays in use (fixture solvers/s005-failed-keeps-previous; found while working ~KBYTYF0)"
-bound = false
+bound = true
 +++

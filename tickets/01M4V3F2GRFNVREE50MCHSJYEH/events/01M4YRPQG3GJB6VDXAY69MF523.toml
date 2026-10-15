@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:11:18Z"
+digest = "b6308406b018f9030034e12c72661a6ed3ad6ce9104f37670614078ae77aab67"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.34s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d54e9b47-9b1d-4c3f-a2e2-e7c3be970c85 with nextest profile: default
+    Starting 1 test across 62 binaries (1368 tests skipped)
+        PASS [   0.044s] cadetta cmd::solve::tests::failed_rerun_reports_previous_result_in_use
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.047s] 1 test run: 1 passed, 1368 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "failed_rerun_reports_previous_result_in_use"
+size = 979
+status = "measured"
+test_count = 1
+tests_digest = "57c934840438c56cf60379dfb509b00cea783ade057547dc0a064c0ddc89a96e"
+at = "2026-10-15T03:11:18Z"
+actor = "lognd"
+rev = 1
