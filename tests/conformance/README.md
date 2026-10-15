@@ -193,7 +193,11 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; and
   `binding` with `classify` (sync dry-run) and `protocol` (the adapter host
   JSON-RPC over a scripted in-memory adapter; `protocol.rs` records `sent`,
-  `refused`, `request`, `protocol_error` and the like). A pair with no executor is a
+  `refused`, `request`, `protocol_error` and the like), `read` and `emit-read`
+  (`read.rs`: the adapter host's read side in process, namely native-link
+  discovery, R003, name qualification, unit resolution, the csv, json and
+  sw-equations readers and the round-trip contract; the `observed` block is
+  subset-compared and `excludes` lists tokens that must be absent). A pair with no executor is a
   failure ("no executor for kind K entry V"), never a silent skip; the
   fixture must then be listed in `known-gaps.toml` against the ticket that
   adds the executor.

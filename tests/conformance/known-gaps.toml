@@ -1123,189 +1123,69 @@ ticket = "~B08JM3F"
 reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
-fixture = "adapters/contract-round-trip"
-ticket = "~W796HD7"
-reason = "binding emit-read entries have no executor yet"
-
-[[gap]]
 fixture = "adapters/geom-r007-not-from-origin"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "R007 has no producer in the library"
 
 [[gap]]
 fixture = "adapters/lock-digest-skips-open"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-dimension-link"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-expression-dimension-r002"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-frame-implicit"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-global-implicit"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-instance-reference"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-two-instances-r013"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-vanished-r003"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-link-was-and-current-r002"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/native-names-qualified-by-kind"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "lock digest of open members is not implemented"
 
 [[gap]]
 fixture = "adapters/r002-unbound-native-parameter"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "no producer of R002 for an unbound native parameter on read"
 
 [[gap]]
 fixture = "adapters/r003-read-bound-path-missing"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "no producer of R003 for a read-bound path that is missing"
 
 [[gap]]
 fixture = "adapters/r011-wrong-component-file"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "R011 has no producer in the library"
 
 [[gap]]
 fixture = "adapters/read-driven-dimension-inexact"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "the library has no driven-dimension concept"
 
 [[gap]]
 fixture = "adapters/read-maps-names-via-bindings-only"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "no read-side R002/R003 producer beyond discover and missing_implicit"
 
 [[gap]]
 fixture = "adapters/read-never-raises-q001"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/read-no-unit-info-inexact"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/read-unit-assumed"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "dimension-mismatch inexactness (kg vs mm) is not implemented in the library"
 
 [[gap]]
 fixture = "adapters/read-unparsable-expression-inexact"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "the equations parser accepts SWFN(1) as a call, so it reads exact"
 
 [[gap]]
 fixture = "adapters/slots-read-records-instance-file"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-every-locator-is-value"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-missing-unit-assume-unit"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-missing-unit-native"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-path-from-bindings"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-quoted-hash-continuation"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-skips-hash-lines"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/read-unbound-name-row"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/json/read-every-locator-is-value"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/json/read-missing-unit-assume-unit"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/json/read-missing-unit-native"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/sw-equations/read-expression-kept"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/sw-equations/read-own-file-reports-only-written"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/sw-equations/read-unitless-uses-assume-unit"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "slots read does not record the instance file"
 
 [[gap]]
 fixture = "geometry/r007-not-from-origin"
-ticket = "~W796HD7"
-reason = "binding read entries have no executor yet"
+ticket = "~0MC1ZA9"
+reason = "R007 has no producer in the library"
+
+[[gap]]
+fixture = "adapters/native-link-dimension-link"
+ticket = "~GYSN0Y3"
+reason = "discover() warns R002 for a bare reference to a name that is not a bound global; the must-not-fire case expects silence"
+
+[[gap]]
+fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
+ticket = "~0MC1ZA9"
+reason = "the equations reader parses IIF(...) as a call, so it never yields an unparsed raw line"
 
 [[gap]]
 fixture = "ir/affine-term-ordered"

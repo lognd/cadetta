@@ -13,6 +13,8 @@ use crate::compare::Produced;
 use crate::expect::{Block, Expect};
 #[path = "protocol.rs"]
 mod protocol; // nested so every conformance target gets it without a new `mod` line
+#[path = "read.rs"]
+mod read; // nested like `protocol`, for the same reason
 use crate::run::{Facts, Scratch, parse_json, run_cli, stage};
 
 /// What an executor is asked to run.
@@ -45,6 +47,8 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("binding", "classify", classify),
     ("binding", "emit", binding::emit_scope),
     ("binding", "protocol", protocol::run),
+    ("binding", "read", read::read),
+    ("binding", "emit-read", read::emit_read),
     ("binding", "emit-twice", binding::emit_twice),
     ("binding", "emit-compare", binding::emit_compare),
     ("binding", "impact-swap", binding::impact_swap),
