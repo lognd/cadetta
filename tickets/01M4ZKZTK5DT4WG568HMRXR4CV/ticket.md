@@ -4,9 +4,10 @@ title = "roll-ups do not read non-argument members of parts nested in a paramete
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T11:08:35Z"
-updated = "2026-10-15T11:08:35Z"
+updated = "2026-10-15T12:32:37Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
