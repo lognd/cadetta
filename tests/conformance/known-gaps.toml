@@ -8,42 +8,7 @@
 # reason = "Q006 not emitted for inexact pi products yet"
 
 [[gap]]
-fixture = "language/f001-it-grade"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f001-j-grade"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f001-mixed-case"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f001-unknown-letter"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f002-size-range"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "language/f002-sub-nanometre"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f002-upper-bound"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/f003-fit-tolerance-conflict"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
@@ -88,22 +53,7 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/i004-root-not-evaluated"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/p001-missing-role"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "language/process-drawn-value"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/t001-not-in-table"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
@@ -111,26 +61,6 @@ reason = "table/fit/variant pipeline not implemented yet"
 fixture = "language/u002-unused-private"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "config-cli/e003"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-no-cdt"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-member"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-path-dep"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
 fixture = "obligations/o003-require-signoff-open"
@@ -148,16 +78,6 @@ ticket = "~A50KFBS"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
-fixture = "stdlib/e002-module-not-shipped"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/f001-j-outside-it5-7"
-ticket = "~6K58FR1"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
 fixture = "stdlib/materials-tap-class"
 ticket = "~34KDRPA"
 reason = "std commercial/fits/materials diagnostic not raised"
@@ -168,19 +88,14 @@ ticket = "~A50KFBS"
 reason = "std commercial/fits/materials diagnostic not raised"
 
 [[gap]]
-fixture = "stdlib/e016-joint-priv-intermediate"
-ticket = "~PGR0M75"
-reason = "joint-level lint not raised"
-
-[[gap]]
 fixture = "stdlib/m003-hole-fit-side"
-ticket = "~PGR0M75"
-reason = "joint-level lint not raised"
+ticket = "~3YZ3NSG"
+reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
 
 [[gap]]
 fixture = "stdlib/policy-iso-default-silent"
-ticket = "~PGR0M75"
-reason = "joint-level lint not raised"
+ticket = "~Z0MJNAM5"
+reason = "S001 reports per member, fixture expects the component path"
 
 [[gap]]
 fixture = "solvers/s003-stale-dep"
@@ -248,47 +163,22 @@ ticket = "~6K58FR1"
 reason = "use std:: imports do not resolve yet"
 
 [[gap]]
-fixture = "packages/e005-dependency-without-manifest"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-empty-src"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-missing-src"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
 fixture = "packages/e005-registry-dependency-rejected"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+ticket = "~ZRN2H8S"
+reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
 
 [[gap]]
 fixture = "packages/e005-std-name-reserved"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+ticket = "~ZRN2H8S"
+reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
 
 [[gap]]
-fixture = "packages/e005-workspace-member-is-workspace"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-workspace-member-without-manifest"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+fixture = "packages/pub-use-private-item-not-reexported"
+ticket = "~992PZ41"
+reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
 fixture = "packages/u002-not-i004-for-private-component"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "packages/u002-private-unused"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
@@ -1868,11 +1758,6 @@ ticket = "~ZM6GZJ0"
 reason = "lint on IR JSON has no CLI form or executor yet"
 
 [[gap]]
-fixture = "quantities/acc-mmc-hole-shaft"
-ticket = "~ZV526KN"
-reason = "emit point members not observable"
-
-[[gap]]
 fixture = "adapters/geom-placement-verify-only"
 ticket = "~BC7S5KT"
 reason = "binding push-plan entries have no executor yet"
@@ -1893,3 +1778,63 @@ fixture = "stdlib/g005-float-unlocated"
 ticket = "~HWJP0GQ"
 reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
 
+[[gap]]
+fixture = "adapters/bind-invalid-component-form"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-empty-config"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-empty-for"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-empty-locator"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-ref-to-needs-dimension"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-ref-to-needs-ref-mode"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "adapters/bind-invalid-sign-not-on-property"
+ticket = "~CE627BF"
+reason = "binding-kind run does not observe names_path_or_key"
+
+[[gap]]
+fixture = "solvers/result-file-committed-fresh-not-run"
+ticket = "~BV5FGCF"
+reason = "freshness stdout / S005 not produced"
+
+[[gap]]
+fixture = "solvers/solve-stale-result-runs"
+ticket = "~BV5FGCF"
+reason = "freshness stdout / S005 not produced"
+
+[[gap]]
+fixture = "geometry/pattern-count-structural"
+ticket = "~32TR561"
+reason = "extra E002 / expected nonzero exit"
+
+[[gap]]
+fixture = "lints/w005-waiver-expiring"
+ticket = "~32TR561"
+reason = "extra E002 / expected nonzero exit"
+
+
+[[gap]]
+fixture = "geometry/datum-unknown-of-placed-part"
+ticket = "~N8B2SV9"
+reason = "unknown datum of a placed part yields EVAL, expected E002"
