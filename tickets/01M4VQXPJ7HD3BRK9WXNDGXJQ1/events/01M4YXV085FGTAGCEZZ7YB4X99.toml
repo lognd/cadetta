@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["solvers fixtures pass."]
+new = ["solvers fixtures pass.", "solve --format json reports a diagnostics list for failed solvers (S005, Q001)"]
+moved = [1]
+at = "2026-10-15T04:41:29Z"
+actor = "lognd"
+rev = 1
