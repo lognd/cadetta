@@ -1,0 +1,13 @@
+kind = "create"
+title = "Conformance: implement the compare executor (digest rules, schema classify)"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+idempotency_key = "compare-executor"
+scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/**", "changelog.d/**", "docs/**"]
+acceptance = ["exec.rs runs compare fixtures for digest and classify and at least one fixture per entry passes"]
+body = "Follow-up to ~MFYXJ4V: README specifies kind compare (entry digest, entry classify) but exec.rs has no executor, so such fixtures fail with no executor. Implement it and add fixtures for ir.md 4 digest rules and ir.md 5 classify."
+at = "2026-10-15T03:06:27Z"
+actor = "lognd"
+rev = 1
