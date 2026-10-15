@@ -11,7 +11,7 @@ scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "changelog.d/**",
 
 [[acceptance]]
 text = "Given a dimension, property or frame locator, or a mode=ref binding, bound to a path the json or csv adapter must emit, when emit runs, then it is the error R015 naming the path, the file is withheld and exit is 1"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given such a locator that is filtered out or unbound, when emit runs, then R015 is not raised"
