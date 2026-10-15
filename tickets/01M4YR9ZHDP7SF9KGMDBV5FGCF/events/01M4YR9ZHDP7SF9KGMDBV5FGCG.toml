@@ -1,0 +1,9 @@
+kind = "create"
+title = "solvers: freshness stdout and S005 fixtures fail (4 fixtures)"
+type = "bug"
+category = "todo"
+priority = "medium"
+body = "Found while working ~X1PF271. solvers/{result-file-committed-fresh-not-run,s005-output-missing,s005-output-wrong-kind,solve-stale-result-runs} fail: stdout lacks 'fresh ...' / missing S005."
+at = "2026-10-15T03:04:48Z"
+actor = "lognd"
+rev = 1
