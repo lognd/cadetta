@@ -1,0 +1,28 @@
+kind = "evidence"
+captured_at = "2026-10-15T01:44:08Z"
+digest = "55747605246fb9864f5b56b388dc765e34cee91229557b470313fe9b3bae3f95"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.49s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cf1c7ba5-43b3-49aa-ae3a-cde84d13d14e with nextest profile: default
+    Starting 1 test across 49 binaries (1242 tests skipped)
+        PASS [   0.043s] cadetta cmd::check::tests::json_validates_against_check_and_diag_schemas
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.044s] 1 test run: 1 passed, 1242 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "json_validates_against_check_and_diag_schemas"
+size = 901
+status = "measured"
+test_count = 1
+tests_digest = "5c297ae551b58c3ce1b35f4dc1e6e372b3a94c1dee655885908eb9343b231c13"
+at = "2026-10-15T01:44:08Z"
+actor = "lognd"
+rev = 1
