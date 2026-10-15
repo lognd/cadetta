@@ -22,6 +22,8 @@ use crate::{AdapterDiagnostic, Severity};
 pub const R005: &str = "R005";
 /// Diagnostic code for two emitted paths creating one native name (adapters.md 3.1).
 pub const R013: &str = "R013";
+/// Diagnostic code for a bound `Text` parameter an equations file must emit but cannot express (emitters/sw-equations.md 1).
+pub const R014: &str = "R014";
 /// Diagnostic code for an unbound native item, including a non-bare-reference dimension (adapters.md 3.5).
 // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
 pub const R002: &str = "R002";

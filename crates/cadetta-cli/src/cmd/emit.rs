@@ -10,7 +10,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_adapter::bindings::{BindingSet, R013, RefTarget, ScopeCandidate, mangle_all};
+use cadetta_adapter::bindings::{BindingSet, R013, R014, RefTarget, ScopeCandidate, mangle_all};
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
@@ -304,6 +304,8 @@ struct Job<'a> {
     config_point: PolicyPoint,
     scope: &'a AdapterScope,
     run: &'a RunScope,
+    /// Canonical paths of the package's `Text` parameters.
+    texts: &'a BTreeSet<String>,
     bindings_digest: String,
 }
 
@@ -342,6 +344,40 @@ fn alias_map(ir: &Ir) -> HashMap<Path, Path> {
         }
     }
     map
+}
+
+/// True for a diagnostic that withholds the file and fails the run (Q004, R013, R014).
+fn is_withholding(d: &EmitDiag) -> bool {
+    d.code == "Q004" || d.code == R013 || d.code == R014
+}
+
+/// R014 for every bound `Text` parameter this run must emit (emitters/sw-equations.md 1).
+///
+/// Must-emit means: bound by a non-alternate locator of this adapter, accepted by the adapter
+/// and run filters, and not a `let`; anything else is silently not emitted.
+// frob:ticket 01M4V7WC7QPQ4RH2902T8PTE0A
+fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
+    for member in job.ir.components.iter().flat_map(|c| &c.members) {
+        let canonical = member.path.to_string();
+        if member.analysis
+            || !job.texts.contains(&canonical)
+            || !job.scope.accepts(&canonical)
+            || !job.run.contains(&canonical)
+        {
+            continue;
+        }
+        let Some(loc) = locators_for(job.set, &member.path)
+            .and_then(|ls| ls.iter().find(|l| l.for_alternate.is_none()))
+        else {
+            continue;
+        };
+        let message = format!(
+            "{R014}: `{canonical}` is a Text parameter bound to `{}`; an equations file cannot express Text",
+            loc.locator
+        );
+        tracing::warn!(path = %canonical, locator = %loc.locator, "emit: bound Text parameter must be emitted (R014)");
+        diagnostics.push(diag(R014, message, Some(&member.path)));
+    }
 }
 
 /// Build the `sw-equations` file for one adapter.
@@ -474,10 +510,8 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
             blocks.insert(block.path.clone(), block);
         }
     }
-    if diagnostics
-        .iter()
-        .any(|d| d.code == "Q004" || d.code == R013)
-    {
+    text_diagnostics(job, &mut diagnostics);
+    if diagnostics.iter().any(is_withholding) {
         return Built {
             text: None,
             diagnostics,
@@ -634,15 +668,18 @@ pub fn run_emit(
             Ok(ir) => ir,
             Err(message) => return fail(err, &message),
         };
-        emit_package(pkg, &ir, &parsed, &run_scope, &mut report);
+        let texts = analysis
+            .packages
+            .iter()
+            .find(|l| l.name == package_id(pkg).name)
+            .map(|l| l.text_params.clone())
+            .unwrap_or_default();
+        emit_package_texts(pkg, &ir, &texts, &parsed, &run_scope, &mut report);
         if let Some(message) = report.config_error.take() {
             return fail(err, &message);
         }
     }
-    let failed = report
-        .diagnostics
-        .iter()
-        .any(|d| d.code == "Q004" || d.code == R013);
+    let failed = report.diagnostics.iter().any(is_withholding);
     let rendered = match globals.format {
         Format::Json => serde_json::to_string_pretty(&report).map_err(|e| e.to_string()),
         _ => Ok(render_text(&report)),
@@ -747,6 +784,19 @@ pub(crate) fn emit_package(
     run_scope: &RunScope,
     report: &mut EmitReport,
 ) {
+    emit_package_texts(pkg, ir, &BTreeSet::new(), parsed, run_scope, report);
+}
+
+/// [`emit_package`] that also knows the package's `Text` parameters, so R014 can fire.
+// frob:ticket 01M4V7WC7QPQ4RH2902T8PTE0A
+pub(crate) fn emit_package_texts(
+    pkg: &PackageDir,
+    ir: &Ir,
+    texts: &BTreeSet<String>,
+    parsed: &EmitArgs,
+    run_scope: &RunScope,
+    report: &mut EmitReport,
+) {
     let cfg_point = config_point(pkg.config.emit.point);
     for adapter in &pkg.config.adapters {
         if !parsed.adapters.is_empty() && !parsed.adapters.iter().any(|a| a == adapter.id()) {
@@ -779,6 +829,7 @@ pub(crate) fn emit_package(
             config_point: cfg_point,
             scope: &scope,
             run: run_scope,
+            texts,
             bindings_digest: digest_text(bindings_text.as_bytes()),
         };
         let built = build_sw_equations(&job);

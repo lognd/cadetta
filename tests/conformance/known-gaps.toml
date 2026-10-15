@@ -1568,21 +1568,6 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "emitters/sw-equations/r014-text-dimension-locator"
-ticket = "~T8PTE0A"
-reason = "R014 not raised for bound Text params"
-
-[[gap]]
-fixture = "emitters/sw-equations/r014-text-filtered-out"
-ticket = "~T8PTE0A"
-reason = "R014 not raised for bound Text params"
-
-[[gap]]
-fixture = "emitters/sw-equations/value-text-not-emitted"
-ticket = "~T8PTE0A"
-reason = "R014 not raised for bound Text params"
-
-[[gap]]
 fixture = "emitters/csv/columns-row"
 ticket = "~TQMFETK"
 reason = "emit does not run built-in json/csv adapters yet"

@@ -188,6 +188,8 @@ pub struct LoweredPackage {
     pub name: String,
     /// Its IR.
     pub ir: IrProject,
+    /// Canonical paths of its non-`let` `Text` parameters (the IR keeps no value for them).
+    pub text_params: std::collections::BTreeSet<String>,
 }
 
 /// Everything one analysis produced.
@@ -1400,9 +1402,20 @@ fn evaluate_stages(
             module_waivers(&m.file, &mut analysis.suppressions.waivers);
         }
         lowered.push(LoweredPackage {
+        let text_params = evaluation
+            .values
+            .iter()
+            .filter(|(k, e)| {
+                k.package == p.name
+                    && !e.analysis
+                    && matches!(e.value, cadetta_sema::eval::Val::Text(_))
+            })
+            .map(|(k, _)| k.to_string())
+            .collect();
             name: p.name.clone(),
             ir,
         });
+            text_params,
     }
     tracing::info!(
         diagnostics = out.len(),
