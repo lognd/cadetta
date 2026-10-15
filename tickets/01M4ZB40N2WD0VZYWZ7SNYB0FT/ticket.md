@@ -2,12 +2,12 @@
 id = "01M4ZB40N2WD0VZYWZ7SNYB0FT"
 title = "conformance emitters/sw-equations/naming-component-field fails: fixture uses dotted part path and out-of-range instance"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T08:33:35Z"
-updated = "2026-10-15T08:33:35Z"
+updated = "2026-10-15T08:33:41Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/emitters/sw-equations/naming-component-field.*/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
