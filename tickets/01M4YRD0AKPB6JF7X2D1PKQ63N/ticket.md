@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:06:27Z"
-updated = "2026-10-15T18:49:33Z"
+updated = "2026-10-15T18:51:36Z"
 idempotency_key = "compare-executor"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/**", "changelog.d/**", "docs/**"]
 
