@@ -534,7 +534,7 @@ fn parse_package(
             Err(error) => {
                 tracing::error!(file = %module.file.display(), %error, "pipeline: bad module path");
                 out.push(diag_at(
-                    "E001",
+                    error.code,
                     Severity::Error,
                     format!("bad module path: {error}"),
                     None,

@@ -403,26 +403,6 @@ ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
-fixture = "packages/e015-bad-module-directory"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
-
-[[gap]]
-fixture = "packages/e015-bad-module-file"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
-
-[[gap]]
-fixture = "packages/e015-hyphen-in-module-name"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
-
-[[gap]]
-fixture = "packages/e015-non-cdt-files-ignored"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
-
-[[gap]]
 fixture = "packages/e016-fully-qualified-path-checks-visibility"
 ticket = "~KRVD0V6"
 reason = "parser rejects package:: paths in expressions"
@@ -456,16 +436,6 @@ reason = "check does not load dependencies (E012-E014, cross-package use)"
 fixture = "packages/e016-pub-package-from-dependency"
 ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
-
-[[gap]]
-fixture = "packages/module-implicit-parent"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
-
-[[gap]]
-fixture = "packages/module-path-is-file-tree"
-ticket = "~THJT2H7"
-reason = "E015 is reported as E001 and N001 fires on valid nested modules"
 
 [[gap]]
 fixture = "packages/n004-reference-to-was-path"

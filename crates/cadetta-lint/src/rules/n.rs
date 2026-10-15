@@ -242,7 +242,10 @@ pub fn check(
     let pkg = &project.package.name;
     r.name(Canon::Package, "package", pkg, pkg, None);
     for m in &project.modules {
-        r.name(Canon::Snake, "module", m, m, None);
+        // The IR joins a nested module path with `::`; each segment is checked alone.
+        for seg in m.split("::") {
+            r.name(Canon::Snake, "module", seg, m, None);
+        }
     }
     for c in &project.components {
         let cpath = c.path.to_string();
@@ -432,6 +435,16 @@ mod tests {
         pr.package.name = "Acme.Rover".into();
         pr.modules = vec!["frame".into(), "FrameB".into()];
         assert_eq!(codes(&pr), vec!["N001", "N001"]);
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/n.rs::check
+    #[test]
+    fn n001_nested_module_checks_each_segment() {
+        let mut pr = proj(vec![]);
+        pr.modules = vec!["drive::motor".into()];
+        assert!(codes(&pr).is_empty());
+        pr.modules = vec!["drive::Motor".into()];
+        assert_eq!(codes(&pr), vec!["N001"]);
     }
 
     // frob:tests crates/cadetta-lint/src/rules/n.rs::check
