@@ -2,7 +2,7 @@
 //! `cadetta emit [ADAPTER...] [--module PATH] [GLOB...]`: run emit for the configured adapters
 //! and write their outputs (config-cli.md 3, adapters.md 3, emitters/sw-equations.md).
 //!
-//! Only the `sw-equations` built-in is implemented here; `json`, `csv` and external adapters
+//! The `sw-equations`, `json` and `csv` built-ins are implemented here; external adapters
 //! (those with a `command`) are skipped with a logged notice. Q004 (a value not representable
 //! at the declared precision) and R013 (two paths creating one native name) give exit 1.
 
@@ -16,7 +16,8 @@ use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
 use cadetta_adapter::policy::{
-    Designed, EmitPoint as PolicyPoint, Ratio, Role, build_request, resolve_point,
+    Designed, EmitPoint as PolicyPoint, EmitRequest, Ratio, Role, build_request, resolve_point,
+    to_decimal,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_ir::digest::digest_project;
@@ -36,6 +37,9 @@ use crate::scope::Scope as RunScope;
 use crate::{EXIT_FAIL, EXIT_OK, EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta emit [ADAPTER...] [--module PATH] [GLOB...]";
+
+/// Version recorded in the `json` and `csv` header.
+const VALUE_ROW_VERSION: &str = "0.1.0";
 
 /// Version recorded in the `sw-equations` header line.
 const SW_EQUATIONS_VERSION: &str = "0.1.0";
@@ -297,6 +301,20 @@ pub(crate) fn scope_candidates(ir: &Ir, scope: &AdapterScope) -> Vec<ScopeCandid
         .collect()
 }
 
+/// A package's non-`let` `Text` parameters: canonical path to text (the IR keeps no value).
+pub(crate) type TextParams = BTreeMap<String, String>;
+
+/// The `Text` parameters of `pkg` from an analysis (empty when the package lowered to nothing).
+// frob:ticket 01M4YTFX5TVXW370X2H5KHBBZD
+pub(crate) fn text_params_of(analysis: &crate::pipeline::Analysis, pkg: &PackageDir) -> TextParams {
+    analysis
+        .packages
+        .iter()
+        .find(|l| l.name == package_id(pkg).name)
+        .map(|l| l.text_params.clone())
+        .unwrap_or_default()
+}
+
 /// Everything one adapter's emit needs from its package.
 struct Job<'a> {
     adapter: &'a Adapter,
@@ -305,8 +323,8 @@ struct Job<'a> {
     config_point: PolicyPoint,
     scope: &'a AdapterScope,
     run: &'a RunScope,
-    /// Canonical paths of the package's `Text` parameters.
-    texts: &'a BTreeSet<String>,
+    /// The package's `Text` parameters: canonical path to text.
+    texts: &'a TextParams,
     bindings_digest: String,
 }
 
@@ -363,7 +381,7 @@ fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
     for member in job.ir.components.iter().flat_map(|c| &c.members) {
         let canonical = member.path.to_string();
         if member.analysis
-            || (member.value.is_none() && !job.texts.contains(&canonical))
+            || (member.value.is_none() && !job.texts.contains_key(&canonical))
             || !job.scope.accepts(&canonical)
             || !job.run.contains(&canonical)
         {
@@ -396,7 +414,7 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
     for member in job.ir.components.iter().flat_map(|c| &c.members) {
         let canonical = member.path.to_string();
         if member.analysis
-            || !job.texts.contains(&canonical)
+            || !job.texts.contains_key(&canonical)
             || !job.scope.accepts(&canonical)
             || !job.run.contains(&canonical)
         {
@@ -413,6 +431,200 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
         );
         tracing::warn!(path = %canonical, locator = %loc.locator, "emit: bound Text parameter must be emitted (R014)");
         diagnostics.push(diag(R014, message, Some(&member.path)));
+    }
+}
+
+/// `emitted` paths in dependency order, ties by canonical path (D003 on a cycle).
+fn dependency_order(job: &Job<'_>, emitted: &BTreeSet<String>) -> Result<Vec<String>, EmitDiag> {
+    let graph: BTreeMap<String, Vec<String>> = job
+        .ir
+        .components
+        .iter()
+        .flat_map(|c| &c.members)
+        .map(|m| {
+            (
+                m.path.to_string(),
+                m.deps.iter().map(ToString::to_string).collect(),
+            )
+        })
+        .collect();
+    sw_equations::order_paths(&graph, emitted).map_err(|e| diag("D003", e.to_string(), None))
+}
+
+/// A member's citation as written in source: `@"text"` for a note, `@Name` for a cited item.
+fn source_citation(member: &Member) -> Option<String> {
+    let text = citation_text(member)?;
+    let quoted = member
+        .citation
+        .as_ref()
+        .is_some_and(|c| c.cite.is_none() && c.text.is_some());
+    Some(if quoted {
+        format!("@\"{text}\"")
+    } else {
+        format!("@{text}")
+    })
+}
+
+/// One `json`/`csv` row before it is typed for its format.
+struct Row {
+    name: String,
+    path: String,
+    value: String,
+    unit: String,
+    note: String,
+}
+
+/// Build the `json` or `csv` file for one adapter (emitters/json.md, emitters/csv.md).
+///
+/// R015 and Q004 withhold the file; only `global` value-mode locators reach the rows.
+// frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+fn build_value_rows(job: &Job<'_>) -> Built {
+    let mut diagnostics = value_row_diagnostics(job);
+    if diagnostics.iter().any(is_withholding) {
+        return Built {
+            text: None,
+            diagnostics,
+        };
+    }
+    let is_json = job.adapter.name == json::ADAPTER;
+    let table = UnitTable::builtin();
+    let precision = job
+        .adapter
+        .precision
+        .map_or(json::DEFAULT_PRECISION, u32::from);
+    let mut by_path: BTreeMap<String, Vec<Row>> = BTreeMap::new();
+    for member in job.ir.components.iter().flat_map(|c| &c.members) {
+        let canonical = member.path.to_string();
+        if member.analysis
+            || (member.value.is_none() && !job.texts.contains_key(&canonical))
+            || !job.scope.accepts(&canonical)
+            || !job.run.contains(&canonical)
+        {
+            continue;
+        }
+        let Some(locators) = locators_for(job.set, &member.path) else {
+            continue;
+        };
+        let citation = source_citation(member);
+        let point = resolve_point(&[attr_point(member)], job.config_point);
+        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+            let row = match (&member.value, job.texts.get(&canonical)) {
+                (Some(value), _) => {
+                    let kind = kind_of(value);
+                    let unit = native_unit(job.adapter, loc);
+                    let numeric = request_for(&table, value, member, &unit, kind, point)
+                        .and_then(|req| {
+                            to_decimal(req.value, precision)
+                                .map(|decimal| (decimal, req.unit))
+                                .map_err(|e| ("Q004", e.to_string()))
+                        });
+                    let (decimal, unit) = match numeric {
+                        Ok(pair) => pair,
+                        Err((code, message)) => {
+                            tracing::warn!(path = %member.path, code, %message, "emit: value withheld");
+                            diagnostics.push(diag(code, message, Some(&member.path)));
+                            continue;
+                        }
+                    };
+                    let written = format!("{decimal}{unit}");
+                    let note = sw_equations::trailing_comment(
+                        Some(&value.authored),
+                        &written,
+                        point,
+                        citation.as_deref(),
+                    );
+                    Row {
+                        name: loc.locator.clone(),
+                        path: canonical.clone(),
+                        value: decimal,
+                        unit,
+                        note,
+                    }
+                }
+                (None, Some(text)) => Row {
+                    name: loc.locator.clone(),
+                    path: canonical.clone(),
+                    value: text.clone(),
+                    unit: String::new(),
+                    note: sw_equations::trailing_comment(
+                        None,
+                        "",
+                        PolicyPoint::Nominal,
+                        citation.as_deref(),
+                    ),
+                },
+                (None, None) => continue,
+            };
+            by_path.entry(canonical.clone()).or_default().push(row);
+        }
+    }
+    if diagnostics.iter().any(is_withholding) {
+        return Built {
+            text: None,
+            diagnostics,
+        };
+    }
+    let emitted: BTreeSet<String> = by_path.keys().cloned().collect();
+    let order = match dependency_order(job, &emitted) {
+        Ok(o) => o,
+        Err(d) => {
+            diagnostics.push(d);
+            return Built {
+                text: None,
+                diagnostics,
+            };
+        }
+    };
+    let mut rows: Vec<Row> = order
+        .iter()
+        .filter_map(|p| by_path.remove(p))
+        .flatten()
+        .collect();
+    rows.extend(by_path.into_values().flatten());
+    tracing::debug!(adapter = %job.adapter.id(), rows = rows.len(), "emit: value rows built");
+    let ir = format!(
+        "blake3:{}",
+        job.ir.digest.as_ref().map(|d| d.0.as_str()).unwrap_or("")
+    );
+    let text = if is_json {
+        json::emit(
+            &json::Header {
+                adapter: format!("{} {VALUE_ROW_VERSION}", json::ADAPTER),
+                ir,
+                bindings: job.bindings_digest.clone(),
+            },
+            &rows
+                .into_iter()
+                .map(|r| json::Param {
+                    name: r.name,
+                    path: r.path,
+                    value: r.value,
+                    unit: (!r.unit.is_empty()).then_some(r.unit),
+                    note: (!r.note.is_empty()).then_some(r.note),
+                })
+                .collect::<Vec<_>>(),
+        )
+    } else {
+        csv::emit(
+            &csv::Header {
+                adapter: format!("{} {VALUE_ROW_VERSION}", csv::ADAPTER),
+                ir,
+                bindings: job.bindings_digest.clone(),
+            },
+            &rows
+                .into_iter()
+                .map(|r| csv::Row {
+                    name: r.name,
+                    value: r.value,
+                    unit: r.unit,
+                    note: r.note,
+                })
+                .collect::<Vec<_>>(),
+        )
+    };
+    Built {
+        text: Some(text),
+        diagnostics,
     }
 }
 
@@ -554,23 +766,11 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         };
     }
 
-    let graph: BTreeMap<String, Vec<String>> = job
-        .ir
-        .components
-        .iter()
-        .flat_map(|c| &c.members)
-        .map(|m| {
-            (
-                m.path.to_string(),
-                m.deps.iter().map(ToString::to_string).collect(),
-            )
-        })
-        .collect();
     let emitted: BTreeSet<String> = blocks.keys().cloned().collect();
-    let order = match sw_equations::order_paths(&graph, &emitted) {
+    let order = match dependency_order(job, &emitted) {
         Ok(o) => o,
-        Err(e) => {
-            diagnostics.push(diag("D003", e.to_string(), None));
+        Err(d) => {
+            diagnostics.push(d);
             return Built {
                 text: None,
                 diagnostics,
@@ -593,6 +793,34 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
     }
 }
 
+/// The decided emit request of one numeric value in `unit`; `Err((code, message))` on Q004/E010.
+fn request_for(
+    table: &UnitTable,
+    value: &Value,
+    member: &Member,
+    unit: &str,
+    kind: ValueKind,
+    point: PolicyPoint,
+) -> Result<EmitRequest, (&'static str, String)> {
+    let (unit_factor, unit_text) = if kind == ValueKind::Quantity {
+        let resolved = table
+            .parse(unit)
+            .map_err(|e| ("Q004", format!("unit `{unit}`: {e}")))?;
+        (resolved.factor, unit)
+    } else {
+        (Magnitude::new(cadetta_units::Rational::one(), 0), "")
+    };
+    let d = designed(value, &unit_factor).map_err(|m| ("Q004", m))?;
+    build_request(
+        &member.path.to_string(),
+        &d,
+        point,
+        role_of(member),
+        unit_text,
+    )
+    .map_err(|e| (e.code(), e.to_string()))
+}
+
 /// The written text of one value, `Ok(None)` for a Text value, `Err((code, message))` on Q004.
 pub(crate) fn written_for(
     table: &UnitTable,
@@ -603,23 +831,7 @@ pub(crate) fn written_for(
     point: PolicyPoint,
     precision: u32,
 ) -> Result<Option<String>, (&'static str, String)> {
-    let (unit_factor, unit_text) = if kind == ValueKind::Quantity {
-        let resolved = table
-            .parse(unit)
-            .map_err(|e| ("Q004", format!("unit `{unit}`: {e}")))?;
-        (resolved.factor, unit)
-    } else {
-        (Magnitude::new(cadetta_units::Rational::one(), 0), "")
-    };
-    let d = designed(value, &unit_factor).map_err(|m| ("Q004", m))?;
-    let req = build_request(
-        &member.path.to_string(),
-        &d,
-        point,
-        role_of(member),
-        unit_text,
-    )
-    .map_err(|e| (e.code(), e.to_string()))?;
+    let req = request_for(table, value, member, unit, kind, point)?;
     sw_equations::written_value(kind, &req, precision).map_err(|e| ("Q004", e.to_string()))
 }
 
@@ -632,9 +844,13 @@ fn digest_text(bytes: &[u8]) -> String {
 /// Returns the text now on disk, so the reported digest matches the file; a skipped rewrite
 /// keeps the existing header.
 // frob:ticket 01M4W47VHXH1PBPKTF87FQCBH8
-fn write_file(path: &FsPath, text: &str) -> std::io::Result<String> {
+fn write_file(
+    path: &FsPath,
+    text: &str,
+    same_modulo_header: fn(&str, &str) -> bool,
+) -> std::io::Result<String> {
     if let Ok(existing) = std::fs::read_to_string(path)
-        && sw_equations::same_modulo_header(&existing, text)
+        && same_modulo_header(&existing, text)
     {
         tracing::info!(file = %path.display(), "emit: unchanged modulo header, not rewritten");
         return Ok(existing);
@@ -704,12 +920,7 @@ pub fn run_emit(
             Ok(ir) => ir,
             Err(message) => return fail(err, &message),
         };
-        let texts = analysis
-            .packages
-            .iter()
-            .find(|l| l.name == package_id(pkg).name)
-            .map(|l| l.text_params.clone())
-            .unwrap_or_default();
+        let texts = text_params_of(&analysis, pkg);
         emit_package_texts(pkg, &ir, &texts, &parsed, &run_scope, &mut report);
         if let Some(message) = report.config_error.take() {
             return fail(err, &message);
@@ -813,22 +1024,14 @@ pub(crate) fn load_bindings(
 }
 
 /// Run emit for every selected adapter of one package, appending to `report`.
-pub(crate) fn emit_package(
-    pkg: &PackageDir,
-    ir: &Ir,
-    parsed: &EmitArgs,
-    run_scope: &RunScope,
-    report: &mut EmitReport,
-) {
-    emit_package_texts(pkg, ir, &BTreeSet::new(), parsed, run_scope, report);
-}
-
-/// [`emit_package`] that also knows the package's `Text` parameters, so R014 can fire.
+///
+/// `texts` are the package's `Text` parameters, so R014 can fire and `json`/`csv` can write them.
 // frob:ticket 01M4V7WC7QPQ4RH2902T8PTE0A
+// frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
 pub(crate) fn emit_package_texts(
     pkg: &PackageDir,
     ir: &Ir,
-    texts: &BTreeSet<String>,
+    texts: &TextParams,
     parsed: &EmitArgs,
     run_scope: &RunScope,
     report: &mut EmitReport,
@@ -869,22 +1072,29 @@ pub(crate) fn emit_package_texts(
             texts,
             bindings_digest: digest_text(bindings_text.as_bytes()),
         };
-        if value_row {
-            // The json/csv file writers are not wired into emit yet; R015 still applies.
-            report.diagnostics.extend(value_row_diagnostics(&job));
-            continue;
-        }
-        let built = build_sw_equations(&job);
+        let built = if value_row {
+            build_value_rows(&job)
+        } else {
+            build_sw_equations(&job)
+        };
         report.diagnostics.extend(built.diagnostics);
         let Some(text) = built.text else {
             continue;
         };
-        let rel = adapter
-            .out
-            .clone()
-            .unwrap_or_else(|| format!("build/solidworks/{}.txt", adapter.id()));
+        let rel = adapter.out.clone().unwrap_or_else(|| {
+            if value_row {
+                format!("build/{}.{}", adapter.id(), adapter.name)
+            } else {
+                format!("build/solidworks/{}.txt", adapter.id())
+            }
+        });
         let target: PathBuf = pkg.dir.join(&rel);
-        match write_file(&target, &text) {
+        let same: fn(&str, &str) -> bool = match adapter.name.as_str() {
+            json::ADAPTER => |a, b| json::same_modulo_header(a, b).unwrap_or(false),
+            csv::ADAPTER => |a, b| csv::same_modulo_header(a, b).unwrap_or(false),
+            _ => sw_equations::same_modulo_header,
+        };
+        match write_file(&target, &text, same) {
             Ok(on_disk) => {
                 tracing::info!(file = %target.display(), "emit: equations up to date");
                 report.files.push(EmitFile {
@@ -1088,7 +1298,7 @@ mod tests {
         }
     }
 
-    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package_texts
     #[test]
     fn bind_scope_emits_every_in_scope_path_and_writes_no_bindings() {
         let src = "model CoverPlate {\n  thickness: Length = 6mm\n  offset: Length = 2mm\n  let twice = thickness * 2\n}\n";
@@ -1112,7 +1322,7 @@ mod tests {
         );
     }
 
-    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_package_texts
     #[test]
     fn bind_scope_creates_globals_for_unbound_paths() {
         let dir = project(SOURCE, "", "bind = \"scope\"\n");
@@ -1141,5 +1351,113 @@ mod tests {
         std::fs::write(&target, &changed).unwrap();
         assert_eq!(run(&dir, &[]).0, EXIT_OK);
         assert_eq!(std::fs::read_to_string(&target).unwrap(), fresh);
+    }
+
+    /// A package with one built-in `json`/`csv` adapter named `adapter` (id = name).
+    fn value_project(adapter: &str, source: &str, bindings: &str) -> Dir {
+        let dir = Dir::new();
+        let toml = format!(
+            "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"{adapter}\"\n"
+        );
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        std::fs::create_dir_all(dir.0.join("src")).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), source).unwrap();
+        std::fs::create_dir_all(dir.0.join("bindings")).unwrap();
+        std::fs::write(dir.0.join(format!("bindings/{adapter}.toml")), bindings).unwrap();
+        dir
+    }
+
+    const VALUE_SOURCE: &str = "model P {\n  thk: Length = 1/4in @\"ASTM B209\"\n  w: Length = 10mm\n  n: Count = 6\n}\n";
+    const VALUE_BINDINGS: &str = "[\"acme.plate::P.thk\"]\nlocators = [ { locator = \"Thk\", kind = \"global\", native_unit = \"mm\" } ]\n\n[\"acme.plate::P.w\"]\nlocators = [ { locator = \"W\", kind = \"global\", native_unit = \"mm\" } ]\n\n[\"acme.plate::P.n\"]\nlocators = [ { locator = \"N\", kind = \"global\" } ]\n";
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn json_writes_default_out_with_notes() {
+        let dir = value_project("json", VALUE_SOURCE, VALUE_BINDINGS);
+        let (code, out, e) = run(&dir, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/json.json")).unwrap();
+        assert!(text.contains("\"schema\": \"cadetta.params/1\""), "{text}");
+        assert!(text.contains("\"adapter\": \"json 0.1.0\""), "{text}");
+        assert!(text.contains("\"value\": \"6.35\""), "{text}");
+        assert!(text.contains("\"note\": \"1/4in @\\\"ASTM B209\\\"\""), "{text}");
+        assert!(text.contains("\"name\": \"N\""), "{text}");
+        assert!(!text.contains("\"note\": \"10mm\""), "equal literal has no note: {text}");
+        assert!(out.contains("build/json.json"), "{out}");
+    }
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn csv_writes_rows_with_quoted_notes() {
+        let dir = value_project("csv", VALUE_SOURCE, VALUE_BINDINGS);
+        let (code, out, e) = run(&dir, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/csv.csv")).unwrap();
+        assert!(text.contains("\nThk,6.35,mm,1/4in @\"\"ASTM B209\"\"\n") || text.contains("\"1/4in @\"\"ASTM B209\"\"\""), "{text}");
+        assert!(text.contains("\nW,10,mm,\n"), "{text}");
+        assert!(text.contains("\nN,6,,\n"), "{text}");
+    }
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn json_text_parameter_is_a_string_row() {
+        let dir = value_project(
+            "json",
+            "model P {\n  finish: Text = \"anodize\" @\"MIL-A-8625\"\n}\n",
+            "[\"acme.plate::P.finish\"]\nlocators = [ { locator = \"Finish\", kind = \"global\" } ]\n",
+        );
+        let (code, out, _) = run(&dir, &[]);
+        assert_eq!(code, EXIT_OK, "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/json.json")).unwrap();
+        assert!(text.contains("\"value\": \"anodize\""), "{text}");
+        assert!(text.contains("\"note\": \"@\\\"MIL-A-8625\\\"\""), "{text}");
+        assert!(!text.contains("\"unit\""), "{text}");
+    }
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::write_file
+    #[test]
+    fn unchanged_value_file_is_not_rewritten() {
+        let dir = value_project("json", VALUE_SOURCE, VALUE_BINDINGS);
+        assert_eq!(run(&dir, &[]).0, EXIT_OK);
+        let path = dir.0.join("build/json.json");
+        let first = std::fs::read_to_string(&path).unwrap();
+        let edited = first.replace("blake3:", "blake3:0");
+        std::fs::write(&path, &edited).unwrap();
+        assert_eq!(run(&dir, &[]).0, EXIT_OK);
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), edited, "header-only change rewrote");
+    }
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn value_row_dimension_locator_still_withholds_r015() {
+        let dir = value_project(
+            "csv",
+            VALUE_SOURCE,
+            "[\"acme.plate::P.w\"]\nlocators = [ { locator = \"D1@S\", kind = \"dimension\", native_unit = \"mm\" } ]\n",
+        );
+        let (code, out, _) = run(&dir, &[]);
+        assert_eq!(code, EXIT_FAIL, "{out}");
+        assert!(out.contains("R015"), "{out}");
+        assert!(!dir.0.join("build/csv.csv").exists());
+    }
+
+    // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn value_row_beyond_precision_withholds_q004() {
+        let dir = value_project(
+            "json",
+            "model A {\n  w: Length = 1/3mm\n}\n",
+            "[\"acme.plate::A.w\"]\nlocators = [ { locator = \"W\", kind = \"global\", native_unit = \"mm\" } ]\n",
+        );
+        let (code, out, _) = run(&dir, &[]);
+        assert_eq!(code, EXIT_FAIL, "{out}");
+        assert!(out.contains("Q004"), "{out}");
+        assert!(!dir.0.join("build/json.json").exists());
     }
 }

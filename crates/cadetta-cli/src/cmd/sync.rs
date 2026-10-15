@@ -37,11 +37,11 @@ use serde::Serialize;
 use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
-    DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, attr_point, config_point, emit_package_texts, kind_of,
-    LoadError, load_bindings, locators_for, native_unit, negate_text, package_ir, written_for,
+    DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
+    emit_package_texts, kind_of, load_bindings, locators_for, native_unit, negate_text, package_ir,
+    text_params_of, written_for,
 };
 use crate::cmd::import::program;
-use crate::cmd::ir::package_id;
 use crate::config::{Adapter, SaveMode};
 use crate::output::Format;
 use crate::pipeline::analyze;
@@ -203,7 +203,7 @@ struct Ctx<'a> {
     lock_changed: bool,
     report: &'a mut SyncReport,
     /// The package's bound `Text` parameters, so the manual emit fallback can raise R014.
-    texts: BTreeSet<String>,
+    texts: TextParams,
 }
 
 /// Normalize `text` to `{number}{unit}`; `default_unit` fills a missing unit.
@@ -1155,7 +1155,7 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
         lock: &mut scratch,
         lock_changed: false,
         report: &mut report,
-        texts: BTreeSet::new(),
+        texts: TextParams::new(),
     };
     let built = build_entries(pkg, adapter, ir, &observed, &geometry, &mut ctx);
     let mut probe = Probe {
@@ -1271,12 +1271,7 @@ pub fn run_sync(
             Ok(ir) => ir,
             Err(message) => return fail(err, &message),
         };
-        let texts = analysis
-            .packages
-            .iter()
-            .find(|l| l.name == package_id(pkg).name)
-            .map(|l| l.text_params.clone())
-            .unwrap_or_default();
+        let texts = text_params_of(&analysis, pkg);
         for adapter in &pkg.config.adapters {
             if !parsed.adapters.is_empty() && !parsed.adapters.iter().any(|a| a == adapter.id()) {
                 continue;
@@ -1443,7 +1438,7 @@ mod tests {
             lock: &mut lock,
             lock_changed: false,
             report: &mut report,
-            texts: BTreeSet::new(),
+            texts: TextParams::new(),
         };
         drive_adapter(client, pkg, &pkg.config.adapters[0], &ir, &mut ctx).unwrap();
         (report, methods(&out), lock)
@@ -1792,7 +1787,7 @@ mod tests {
             lock: &mut lock,
             lock_changed: false,
             report: &mut report,
-            texts: BTreeSet::new(),
+            texts: TextParams::new(),
         };
         let observed = frame_json(milli);
         let read = Geometry {

@@ -1183,16 +1183,6 @@ ticket = "~JBHTKF3"
 reason = "binding import entries have no executor yet"
 
 [[gap]]
-fixture = "emitters/csv/value-q004-beyond-precision"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-q004-beyond-precision"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
 fixture = "solvers/deps-missing-file-fails"
 ticket = "~NDGXJQ1"
 reason = "solver failure, Q001 and variants handling not implemented"
@@ -1528,214 +1518,14 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "emitters/csv/columns-row"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/default-out-path"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/header-comment-line"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/name-bound-global-locator"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/note-authored-literal"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/note-citation"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
 fixture = "emitters/csv/note-emit-point"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/note-fit-class"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/note-omitted-when-empty"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/note-text-citation-only"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/order-dependency-first"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/order-tie-canonical-path"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/order-within-path-bindings-order"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/quoting-rfc4180-comma-field"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/quoting-rfc4180-quote-doubling"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/serialisation-lf-final-newline"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/serialisation-utf8-no-bom"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/value-count-ratio-unit-empty"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/value-native-unit"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/value-text-unit-empty"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/csv/value-trailing-zeros-trimmed"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/default-out-path"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/header-fields"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/name-bound-global-locator"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/note-authored-literal"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/note-citation"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
+ticket = "~B08JM3F"
+reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
 fixture = "emitters/json/note-emit-point"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/note-fit-class"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/note-omitted-when-empty"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/note-text-citation-only"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/order-dependency-first"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/order-tie-canonical-path"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/order-within-path-bindings-order"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/param-key-order"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/serialisation-indent"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/serialisation-lf-final-newline"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/shape-schema-and-top-level-keys"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-count-ratio-unit-omitted"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-decimal-string"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-native-unit"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-text-json-string"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
-
-[[gap]]
-fixture = "emitters/json/value-trailing-zeros-trimmed"
-ticket = "~TQMFETK"
-reason = "emit does not run built-in json/csv adapters yet"
+ticket = "~B08JM3F"
+reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
 fixture = "adapters/contract-round-trip"
@@ -1921,46 +1711,6 @@ reason = "binding read entries have no executor yet"
 fixture = "geometry/r007-not-from-origin"
 ticket = "~W796HD7"
 reason = "binding read entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/r015-dimension-locator"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/csv/r015-filtered-out"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/csv/r015-property-locator"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/csv/r015-ref-mode"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/json/r015-dimension-locator"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/json/r015-filtered-out"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/json/r015-property-locator"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
-
-[[gap]]
-fixture = "emitters/json/r015-ref-mode"
-ticket = "~TQMFETK"
-reason = "R015 is raised (~WS81S98) but the not-fire side needs emit to write built-in json/csv files"
 
 [[gap]]
 fixture = "ir/affine-term-ordered"

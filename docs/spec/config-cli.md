@@ -395,14 +395,13 @@ carries `state` (`open`, `current`, `stale`) and, when stale, `nearest`
 
 Decided (0.1.0). `emit` words containing `*`, `::` or `.` are path globs and the rest are adapter
 ids; `--module` repeats. For each configured adapter it writes the adapter's `out` (default
-`build/solidworks/<id>.txt` for `sw-equations`) under the package directory. Only bound,
+`build/solidworks/<id>.txt` for `sw-equations`, `build/<id>.json` and `build/<id>.csv` for the built-in `json` and `csv`) under the package directory. Only bound,
 non-`let` paths are emitted; a `[*]` binding is emitted once, at instance 0. The `sign = -1`
 negation is applied by `emit` to the written text of value and global lines (the adapter library
 leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
 to it. Q004, R013, R014 and R015 withhold that adapter's file and give exit 1, each reported in the
 `--format json` `diagnostics` list as a `cadetta.diag/1` record (`schema`, `severity` `error`, `code`, `message`, `path`); an unknown adapter id, a bad
-flag or a halted analysis give exit 2. Not yet run by `emit`: the `json` and `csv` built-ins and
-external adapters (those with a `command`); they are skipped with a log line.
+flag or a halted analysis give exit 2. `json` and `csv` write one row per bound `global` value locator in dependency order (emitters/json.md, emitters/csv.md) and leave an unchanged file alone, comparing modulo the header. Not yet run by `emit`: external adapters (those with a `command`); they are skipped with a log line.
 
 `import ADAPTER FILE...` runs the external adapter's `read` (a `command` containing `/` is
 relative to the package directory; no PATH search), builds one observed project per native file
