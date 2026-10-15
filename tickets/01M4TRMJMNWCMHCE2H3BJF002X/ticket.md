@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T13:53:37Z"
-updated = "2026-10-15T01:58:43Z"
+updated = "2026-10-15T01:58:58Z"
 scope = ["crates/cadetta-sema/src/eval.rs", "crates/cadetta-cli/src/cmd/solve.rs", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/tests/interface_slots.rs", "docs/spec/solvers.md", "changelog.d/01M4TRMJMNWCMHCE2H3BJF002X.fixed.md"]
 
 [[links]]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "solve --variants evaluates solver inputs per alternate, runs once per distinct changed input set and stores results keyed SLOT=ALT"
-bound = false
+bound = true
 +++
 
 found while working ~1NJKGFE: Evaluator::eval_input cannot re-evaluate under a slot selection, so cmd/solve.rs variant_requests returns no variants
