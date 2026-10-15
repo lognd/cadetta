@@ -2,11 +2,12 @@
 id = "01M4V13T1DW08P87XP4J4802RH"
 title = "language: lint gaps (C001/C002 bounds, L001/L002 lifecycle)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-15T02:47:55Z"
+updated = "2026-10-15T02:48:19Z"
 labels = ["creates:changelog.d/01M4V13T1DW08P87XP4J4802RH.*"]
 scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs", "tests/conformance/known-gaps.toml", "tests/conformance/language/**", "docs/spec/lints.md", "changelog.d/01M4V13T1DW08P87XP4J4802RH.*"]
 
