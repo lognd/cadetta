@@ -65,6 +65,7 @@ class Case:
     entry: str
     fixture: Path
     expect: dict[str, Any]
+    lists_u002: bool = False
 
     @property
     def id(self) -> str:
@@ -113,6 +114,11 @@ def _cases() -> list[Case]:
                     entry=entry,
                     fixture=fixture,
                     expect=spec[side.replace("-", "_")],
+                    lists_u002=any(
+                        d["code"] == "U002"
+                        for blk in ("must_fire", "must_not_fire")
+                        for d in spec[blk].get("diagnostics", [])
+                    ),
                 )
             )
     return out
@@ -359,7 +365,11 @@ def test_binding_equals_cli_json(case: Case, replays: Callable[[Case], Replay]) 
 def _problems(case: Case, rep: Replay) -> list[str]:
     """Expectation mismatches for one case, via the binding's own diagnostics."""
     if case.entry.split()[0] in ("check", "config"):
-        return _compare(case.expect, rep.diagnostics, rep.exit)
+        produced = rep.diagnostics
+        if not case.lists_u002:
+            # Fixture components are private and unused by design (as in the Rust runner).
+            produced = [d for d in produced if d["code"] != "U002"]
+        return _compare(case.expect, produced, rep.exit)
     return _exit_problems(case.expect, rep.exit)
 
 
