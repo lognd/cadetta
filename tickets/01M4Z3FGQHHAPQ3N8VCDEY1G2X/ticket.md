@@ -2,12 +2,12 @@
 id = "01M4Z3FGQHHAPQ3N8VCDEY1G2X"
 title = "language: wire I002/I003 and part alt slots into check (E002 on slot members, per-alternate viability)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-15T06:20:04Z"
+updated = "2026-10-15T06:32:49Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**"]
 +++
 
