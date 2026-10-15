@@ -2,11 +2,12 @@
 id = "01M4YR9ZE0N4CF36GDZT2WRCP1"
 title = "quantities: exact trig/zero/c002 fixtures miss expected Q006 info (5 fixtures)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-15T03:39:22Z"
+updated = "2026-10-15T03:39:59Z"
 scope = ["crates/cadetta-cli/tests/conformance/exec.rs", "tests/conformance/known-gaps.toml", "tests/conformance/quantities/*", "changelog.d/01M4YR9ZE0N4CF36GDZT2WRCP1.*", "crates/cadetta-cli/tests/conformance.rs"]
 
 [[acceptance]]
