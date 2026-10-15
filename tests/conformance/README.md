@@ -200,7 +200,11 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   subset-compared and `excludes` lists tokens that must be absent) and
   `push-plan` (`push_plan.rs`: the tolerance planner, one printed line per
   written tolerance, checked by a flat `output` `contains`/`excludes` against
-  that plan text; geometry push-plan fixtures remain gaps). A pair with no executor is a
+  that plan text; geometry push-plan fixtures remain gaps) and `sync`
+  (`sync.rs`: the adapter host's sync loop against a simulated native
+  document, observing `class`, `writes`, `regen`, `lock_updated`,
+  `lock_synced_updated`, `push_status` and the next run's class; fixtures
+  needing a tool session are gaps). A pair with no executor is a
   failure ("no executor for kind K entry V"), never a silent skip; the
   fixture must then be listed in `known-gaps.toml` against the ticket that
   adds the executor.

@@ -529,203 +529,173 @@ reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/adopted-cleared-by-first-sync"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/adopted-r006-every-expression"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/drive-reports-regen-failures"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/o004-ack-attests"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/o004-sw-equations"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/o004-unsaved"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/push-status-per-locator"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r003-missing-native-skips-locator"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r004-rebuild-restores"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r004-restore-failure-reported"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r004-snapshot-all-locators"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r006-dimension-equation-removed"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r008-sync-tool-missing"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r008-version-mismatch"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r008-wrong-platform"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r009-dirty"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r009-locked"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r009-read-only"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r009-refuses-only-that-document"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r010-driven-dimension"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r010-equation-conflict"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/r010-unit-conflict"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/resolve-drift-force-design"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/save-after-sync"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/save-needs-matching-readback"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/session-attach-running"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/session-close-only-opened"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/sync-degrade-no-theirs-no-r001"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/sync-degrades-without-drive"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/sync-idempotent"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/sync-idempotent-converged"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/synced-only-for-matching-readback"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "adapters/tol-cad-edit-r001"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/csv/obligation-open-without-drive"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/csv/sync-header-excluded-from-noop"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/json/obligation-open-without-drive"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/json/sync-header-excluded-from-noop"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/sw-equations/obligation-open-unless-attested"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/sw-equations/obligation-open-without-drive"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "emitters/sw-equations/sync-header-excluded-from-noop"
-ticket = "~CDJGJMG"
-reason = "binding sync entries have no executor yet"
+ticket = "~PHMB7P7J"
+reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
 fixture = "quantities/display-fraction-spec"

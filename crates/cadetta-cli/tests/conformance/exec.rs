@@ -17,6 +17,8 @@ mod protocol; // nested so every conformance target gets it without a new `mod` 
 mod push_plan; // nested like `protocol`, for the same reason
 #[path = "read.rs"]
 mod read; // nested like `protocol`, for the same reason
+#[path = "sync.rs"]
+mod sync_exec; // nested like `protocol`, for the same reason
 use crate::run::{Facts, Scratch, parse_json, run_cli, stage};
 
 /// What an executor is asked to run.
@@ -51,6 +53,7 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("binding", "protocol", protocol::run),
     ("binding", "push-plan", push_plan::run),
     ("binding", "read", read::read),
+    ("binding", "sync", sync_exec::run),
     ("binding", "emit-read", read::emit_read),
     ("binding", "emit-twice", binding::emit_twice),
     ("binding", "emit-compare", binding::emit_compare),
@@ -307,7 +310,7 @@ fn classify(job: &Job) -> Result<Facts, String> {
 }
 
 /// The corpus spelling of a sync class (adapters.md 2 table).
-fn class_label(class: cadetta_adapter::classify::Class) -> &'static str {
+pub(super) fn class_label(class: cadetta_adapter::classify::Class) -> &'static str {
     use cadetta_adapter::classify::Class;
     match class {
         Class::NoOp => "no-op",
