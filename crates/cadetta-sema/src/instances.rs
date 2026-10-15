@@ -391,40 +391,14 @@ impl<'p> Site<'_, 'p> {
             }
             defs.insert(key, def);
         }
-        for m in &self.callee.members {
-            let (name, expr, is_let, span, ty) = match &m.kind {
-                MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span, p.ty.as_ref()),
-                MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span, l.ty.as_ref()),
-                _ => continue,
-            };
-            let when = m
-                .attrs
-                .iter()
-                .chain(m.trailing.iter())
-                .find(|a| a.name.name == "when")
-                .and_then(|a| match a.args.first() {
-                    Some(AttrArg::Expr(e)) => Some(e),
-                    _ => None,
-                });
-            let key = self.key(name);
-            if m.private {
-                out.private.insert(key.clone());
-            }
-            defs.insert(
-                key,
-                Def {
-                    expr,
-                    ty,
-                    is_let,
-                    ctx: callee_ctx.clone(),
-                    span,
-                    inst: Some(info.clone()),
-                    fixed: None,
-                    when,
-                    role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
-                },
-            );
-        }
+        index_members(
+            self.prefix,
+            self.callee,
+            &callee_ctx,
+            &info,
+            defs,
+            &mut out.private,
+        );
         out.list.push(Instance {
             info,
             component: self.callee,
@@ -435,21 +409,77 @@ impl<'p> Site<'_, 'p> {
 
     /// A given argument whose value needs the parameter's type: a bare variant or an `ots` name.
     fn fixed_value(&self, expr: &Expr, param: &ast::ParamDecl) -> Option<Val> {
-        match self.resolver.resolve_ref_in_param_type(
+        fixed_value(
+            self.resolver,
             self.parent_ctx,
-            expr,
-            &param.ty,
             self.callee_path,
-        ) {
-            Ok(Resolved::Variant { enum_path, variant }) => {
-                Some(Val::Variant { enum_path, variant })
-            }
-            Ok(Resolved::Item {
-                path,
-                class: ItemClass::Component,
-            }) => Some(Val::Component(path)),
-            _ => None,
+            expr,
+            param,
+        )
+    }
+}
+
+/// A given argument whose value needs the parameter's type: a bare variant or an `ots` name.
+fn fixed_value(
+    resolver: &Resolver<'_>,
+    parent_ctx: &Ctx,
+    callee_path: &CanonPath,
+    expr: &Expr,
+    param: &ast::ParamDecl,
+) -> Option<Val> {
+    match resolver.resolve_ref_in_param_type(parent_ctx, expr, &param.ty, callee_path) {
+        Ok(Resolved::Variant { enum_path, variant }) => Some(Val::Variant { enum_path, variant }),
+        Ok(Resolved::Item {
+            path,
+            class: ItemClass::Component,
+        }) => Some(Val::Component(path)),
+        _ => None,
+    }
+}
+
+/// Indexes the `param` and `let` members of `callee` under `prefix` as members of instance `info`.
+fn index_members<'p>(
+    prefix: &CanonPath,
+    callee: &'p Component,
+    callee_ctx: &Ctx,
+    info: &Rc<InstInfo>,
+    defs: &mut BTreeMap<CanonPath, Def<'p>>,
+    private: &mut BTreeSet<CanonPath>,
+) {
+    for m in &callee.members {
+        let (name, expr, is_let, span, ty) = match &m.kind {
+            MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span, p.ty.as_ref()),
+            MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span, l.ty.as_ref()),
+            _ => continue,
+        };
+        let when = m
+            .attrs
+            .iter()
+            .chain(m.trailing.iter())
+            .find(|a| a.name.name == "when")
+            .and_then(|a| match a.args.first() {
+                Some(AttrArg::Expr(e)) => Some(e),
+                _ => None,
+            });
+        let mut key = prefix.clone();
+        key.members = vec![MemberSeg::Name(name.clone())];
+        if m.private {
+            private.insert(key.clone());
         }
+        defs.insert(
+            key,
+            Def {
+                expr,
+                ty,
+                is_let,
+                ctx: callee_ctx.clone(),
+                span,
+                inst: Some(info.clone()),
+                fixed: None,
+                when,
+                role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
+            },
+        );
     }
 }
 
@@ -475,6 +505,95 @@ fn is_part_type(ty: &ast::Type) -> bool {
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// The instance of a parameterized `part` nested in instance `owner`, indexed on first use.
+    ///
+    /// Arguments the nested site gives are evaluated in the owner's callee scope; defaults and
+    /// callee members in the nested callee's scope. Interface arguments left to a scope default
+    /// are not injected (a nested site names what it needs).
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    pub(super) fn nested_instance(
+        &mut self,
+        owner: &Rc<InstInfo>,
+        owner_ctx: &Ctx,
+        prefix: &CanonPath,
+        part: &'p ast::Part,
+        callee_path: &CanonPath,
+        callee: &'p Component,
+    ) -> Option<(Rc<InstInfo>, &'p Component, Ctx)> {
+        if let Some(found) = self.instances.lookup(prefix) {
+            return Some(found);
+        }
+        let args = part.args.as_deref().unwrap_or(&[]);
+        let bound = match crate::parts::bind_args(&callee.name.name, &callee.params, args) {
+            Ok(b) => b,
+            Err(e) => {
+                debug!(%prefix, error = %e, "instances: nested binding failed");
+                return None;
+            }
+        };
+        let info = Rc::new(InstInfo {
+            prefix: prefix.clone(),
+            callee: callee_path.clone(),
+            span: part.name.span,
+        });
+        let callee_ctx = Ctx {
+            package: callee_path.package.clone(),
+            module: callee_path.modules.clone(),
+            component: Some(callee.name.name.clone()),
+            locals: Vec::new(),
+        };
+        for (param, b) in callee.params.iter().zip(&bound) {
+            let mut key = prefix.clone();
+            key.members = vec![MemberSeg::Name(b.name.to_owned())];
+            let mut def = Def {
+                expr: placeholder(),
+                ty: None,
+                is_let: false,
+                ctx: owner_ctx.clone(),
+                span: part.name.span,
+                inst: Some(owner.clone()),
+                fixed: None,
+                when: None,
+                role: None,
+            };
+            match &b.source {
+                ArgSource::Given(expr, span) => {
+                    if is_part_type(&param.ty) {
+                        self.instances.nodef.insert(key);
+                        continue;
+                    }
+                    def.expr = expr;
+                    def.span = *span;
+                    def.fixed = fixed_value(self.resolver, owner_ctx, callee_path, expr, param);
+                }
+                ArgSource::Default(expr) => {
+                    def.expr = expr;
+                    def.ctx = callee_ctx.clone();
+                    def.inst = Some(info.clone());
+                    def.span = param.span;
+                }
+                ArgSource::Absent | ArgSource::Injected => continue,
+            }
+            self.defs.insert(key, def);
+        }
+        index_members(
+            prefix,
+            callee,
+            &callee_ctx,
+            &info,
+            &mut self.defs,
+            &mut self.instances.private,
+        );
+        debug!(%prefix, callee = %callee_path, "instances: nested instance indexed");
+        self.instances.list.push(Instance {
+            info: info.clone(),
+            component: callee,
+            callee_ctx: callee_ctx.clone(),
+            span: part.name.span,
+        });
+        Some((info, callee, callee_ctx))
+    }
+
     /// Reports E006 for each `#![requires(arg, when = cond)]` whose condition holds with `arg` absent,
     /// and for each `#![forbids(arg, when = cond)]` whose condition holds with `arg` given.
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7

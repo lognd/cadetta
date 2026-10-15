@@ -9,13 +9,13 @@
 
 use std::rc::Rc;
 
-use cadetta_ir::canon::PartSeg;
+use cadetta_ir::canon::{Index, PartSeg};
 use cadetta_syntax::ast::{Component, MemberKind, Part};
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace};
 
 use super::{Evaluator, Fail, Quant, R, Scope, Val, diag, instances::InstInfo};
-use crate::parts::{self, ArgSource};
+use crate::parts;
 use crate::resolve::{CanonPath, Ctx, MemberSeg};
 use crate::rollup::{self, Contribution, RollOp};
 
@@ -117,7 +117,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 } else {
                     format!("{}/{}", owner.label, part.name.name)
                 };
-                self.roll_slot(owner, part, param, label, out, span)?;
+                self.roll_slot(owner, part, param, (label, counted.then_some(i)), out, span)?;
             }
         }
         Ok(())
@@ -139,28 +139,50 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 
     /// One instance of one slot: its value, or a search below it.
+    ///
+    /// `slot` is the instance label and, for a counted slot, its index.
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
     fn roll_slot(
         &mut self,
         owner: &Owner<'p>,
-        part: &Part,
+        part: &'p Part,
         param: &str,
-        label: String,
+        slot: (String, Option<u32>),
         out: &mut Vec<Contribution>,
         span: Span,
     ) -> R<()> {
+        let (label, index) = slot;
         let resolver = self.resolver;
-        // An instance of a parameterized callee, materialised under `Owner/part`.
-        let mut prefix = owner.path.clone();
+        // An instance of a parameterized callee lives under `Owner/part` (`Owner/part[i]` when
+        // nested in another instance, whose own members it reads).
+        let mut prefix = owner
+            .inst
+            .as_ref()
+            .map_or_else(|| owner.path.clone(), |i| i.prefix.clone());
         prefix.parts.push(PartSeg {
             name: part.name.name.clone(),
-            index: None,
+            index: owner
+                .inst
+                .as_ref()
+                .and(index)
+                .map(|i| Index::At(u64::from(i))),
         });
-        let (found, child) = if owner.inst.is_none()
-            && let Some((info, comp, ctx)) = self.instances.lookup(&prefix)
-        {
+        let slot_comp = resolver.slot_component(&owner.path.package, &owner.path.modules, part);
+        let instance = match (&owner.inst, &slot_comp) {
+            (None, _) => self.instances.lookup(&prefix),
+            (Some(oi), Some((cpath, ccomp))) if !ccomp.params.is_empty() => {
+                self.nested_instance(oi, &owner.ctx, &prefix, part, cpath, ccomp)
+            }
+            _ => None,
+        };
+        let (found, child) = if let Some((info, comp, ctx)) = instance {
             let mut key = prefix.clone();
             key.members = vec![MemberSeg::Name(param.to_owned())];
-            let found = self.roll_member(&key, param, span)?;
+            let found = if owner.inst.is_some() {
+                self.roll_nested_member(&key, param, span)?
+            } else {
+                self.roll_member(&key, param, span)?
+            };
             let child = Owner {
                 path: info.callee.clone(),
                 comp,
@@ -170,9 +192,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             };
             (found, Some(child))
         } else {
-            let Some((cpath, ccomp)) =
-                resolver.slot_component(&owner.path.package, &owner.path.modules, part)
-            else {
+            let Some((cpath, ccomp)) = slot_comp else {
                 trace!(slot = %part.name.name, "roll-up: slot type unknown");
                 out.push(Contribution {
                     path: label,
@@ -180,17 +200,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 });
                 return Ok(());
             };
-            let found = match (
-                &owner.inst,
-                ccomp.params.iter().any(|p| p.name.name == param),
-            ) {
-                (Some(info), true) => self.arg_value(owner, info.clone(), part, ccomp, param),
-                _ => {
-                    let mut key = cpath.clone();
-                    key.members = vec![MemberSeg::Name(param.to_owned())];
-                    self.roll_member(&key, param, span)?
-                }
-            };
+            let mut key = cpath.clone();
+            key.members = vec![MemberSeg::Name(param.to_owned())];
+            let found = self.roll_member(&key, param, span)?;
             let child = ccomp.params.is_empty().then(|| Owner {
                 ctx: Ctx {
                     package: cpath.package.clone(),
@@ -228,6 +240,22 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         Ok(())
     }
 
+    /// Like [`Self::roll_member`] for a member of an instance nested in another instance: one
+    /// that cannot be evaluated (an argument it forwards is absent) counts as missing, and the
+    /// roll-up reports that, not the evaluation failure.
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    fn roll_nested_member(&mut self, key: &CanonPath, param: &str, span: Span) -> R<Found> {
+        let seen = self.diagnostics.len();
+        match self.roll_member(key, param, span) {
+            Err(Fail::Silent) => {
+                self.diagnostics.truncate(seen);
+                debug!(%key, param, "roll-up: nested member not available");
+                Ok(Found::Lacks)
+            }
+            other => other,
+        }
+    }
+
     /// The quantity defined at `key`, if the member exists and is present.
     fn roll_member(&mut self, key: &CanonPath, param: &str, span: Span) -> R<Found> {
         if !self.defs.contains_key(key) || self.absent.contains(key) {
@@ -241,42 +269,6 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 format!("roll-up member `{param}` is not a quantity"),
             )),
             None => Err(Fail::Silent),
-        }
-    }
-
-    /// The argument a nested part of an instance passes for `param`, evaluated in the owner.
-    fn arg_value(
-        &mut self,
-        owner: &Owner<'p>,
-        info: Rc<InstInfo>,
-        part: &Part,
-        ccomp: &'p Component,
-        param: &str,
-    ) -> Found {
-        let args = part.args.as_deref().unwrap_or(&[]);
-        let Ok(bound) = parts::bind_args(&ccomp.name.name, &ccomp.params, args) else {
-            return Found::Lacks;
-        };
-        let Some(ArgSource::Given(expr, _)) = bound
-            .into_iter()
-            .find(|b| b.name == param)
-            .map(|b| b.source)
-        else {
-            return Found::Lacks;
-        };
-        let mut sc = Scope {
-            ctx: owner.ctx.clone(),
-            locals: Vec::new(),
-        };
-        let saved = self.cur_inst.replace(info);
-        let r = self.quant(&mut sc, expr);
-        self.cur_inst = saved;
-        match r {
-            Ok(q) => Found::Value(Box::new(q)),
-            Err(_) => {
-                debug!(param, slot = %part.name.name, "roll-up: argument not available");
-                Found::Lacks
-            }
         }
     }
 }
@@ -432,5 +424,48 @@ mod tests {
         ));
         let ev = run(&f);
         assert_eq!(eval_errors(&ev), 1, "{:?}", ev.diagnostics);
+    }
+
+    const BOLTED: &str = "assembly Bolt(len: Length, extra: Length = 1mm) { weight = len * 2 }\n\
+        assembly Joint(n: Length) {\n  part b[2]: Bolt(len = n)\n}\n";
+
+    // frob:tests nested_callee_member_is_read_without_an_argument
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    #[test]
+    fn nested_callee_member_is_read_without_an_argument() {
+        let f = file(&format!(
+            "{BOLTED}assembly Box {{\n  part j: Joint(n = 3mm)\n  \
+             let total = sum(self, weight)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "total"), m(12, 1000));
+    }
+
+    // frob:tests nested_callee_default_parameter_is_read
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    #[test]
+    fn nested_callee_default_parameter_is_read() {
+        let f = file(&format!(
+            "{BOLTED}assembly Box {{\n  part j: Joint(n = 3mm)\n  \
+             let total = sum(self, extra)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "total"), m(2, 1000));
+    }
+
+    // frob:tests two_levels_of_nesting_are_searched
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    #[test]
+    fn two_levels_of_nesting_are_searched() {
+        let f = file(&format!(
+            "{BOLTED}assembly Rack(k: Length) {{\n  part j: Joint(n = k)\n}}\n\
+             assembly Box {{\n  part r: Rack(k = 1mm)\n  \
+             let total = sum(self, weight)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "total"), m(4, 1000));
     }
 }

@@ -364,8 +364,11 @@ note.
 A part that has the parameter contributes it and the walk stops there; a
 part without it is searched through its own parts, and a part with
 neither contributes a lack. A part of a parameterized component
-contributes the argument its `part` site passes for the parameter (a
-nested part of a parameterized callee is read the same way), so
+contributes the argument its `part` site passes for the parameter; a
+nested part of a parameterized callee is an instance of its own (one per
+slot index), so its other members (a screw's `mass`) and its defaulted
+parameters are read as well, and a member that cannot be evaluated
+because an argument it forwards is absent counts as a lack. So
 `sum(self, unit_cost)` over a `ScrewJoint` counts its `screw_cost` once
 per screw and is an error when `screw_cost` is not given.
 
