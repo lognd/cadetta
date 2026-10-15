@@ -2,7 +2,7 @@
 id = "01M4Z7SEXW62CXBGNNHTC5DJ1M"
 title = "cadetta ir: fits on component-argument operands (Housing.bore_fit, MotorPlate.pilot) are not derived so dependents hit unknown node"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
