@@ -12,7 +12,7 @@ scope = ["crates/cadetta-ir/src/lib.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs"
 
 [[acceptance]]
 text = "IR JSON decodes into cadetta_ir::model::Project and round-trips"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "lint FILE runs D001, D002, D003, F004, M, N, Q006 and S over the decoded model"
