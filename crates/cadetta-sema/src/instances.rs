@@ -74,6 +74,15 @@ impl<'p> Instances<'p> {
         self.list.iter().any(|i| i.info.prefix == *path)
     }
 
+    /// The instance whose prefix is `path`: its info, component and callee context.
+    // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+    pub fn lookup(&self, path: &CanonPath) -> Option<(Rc<InstInfo>, &'p Component, Ctx)> {
+        self.list
+            .iter()
+            .find(|i| i.info.prefix == *path)
+            .map(|i| (i.info.clone(), i.component, i.callee_ctx.clone()))
+    }
+
     /// True when `key` is a supplied argument that has no definition.
     pub fn is_nodef_arg(&self, key: &CanonPath) -> bool {
         self.nodef.contains(key)

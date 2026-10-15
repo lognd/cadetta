@@ -13,10 +13,38 @@ use std::fmt;
 use cadetta_units::Sum;
 use tracing::{debug, trace, warn};
 
+use cadetta_syntax::ast::{Arg, Expr, ExprKind};
+
 use crate::eval::Quant;
 
 /// The roll-up parameter names, exactly the members of `std::commercial::Sourced`.
 pub const ROLLUP_NAMES: &[&str] = &["unit_cost", "lead_time", "moq", "supplier", "mass"];
+
+/// The roll-up a call expression spells, if any: `sum|max|min(self, m)` or `m(self)`.
+// frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+pub fn shape(callee: &Expr, args: &[Arg]) -> Option<(RollOp, String)> {
+    let ExprKind::Path(cp) = &callee.kind else {
+        return None;
+    };
+    let name = cp.segments.last()?.name.as_str();
+    let is_self = |a: &Arg| matches!(&a.value.kind, ExprKind::Path(p) if p.text() == "self");
+    let op = match name {
+        "sum" => Some(RollOp::Sum),
+        "max" => Some(RollOp::Max),
+        "min" => Some(RollOp::Min),
+        _ => None,
+    };
+    match (args, op) {
+        ([a], None) if ROLLUP_NAMES.contains(&name) && is_self(a) => {
+            Some((RollOp::Sum, name.to_owned()))
+        }
+        ([a, b], Some(op)) if is_self(a) => match &b.value.kind {
+            ExprKind::Path(p) if p.segments.len() == 1 => Some((op, p.text())),
+            _ => None,
+        },
+        _ => None,
+    }
+}
 
 /// Which reduction a roll-up applies.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

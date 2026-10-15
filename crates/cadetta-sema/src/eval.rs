@@ -61,6 +61,8 @@ mod instances;
 pub mod point;
 #[path = "posshape.rs"]
 mod posshape;
+#[path = "rolleval.rs"]
+mod rolleval;
 #[path = "tablevals.rs"]
 mod tablevals;
 
@@ -1186,6 +1188,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(Val::Quantity(
                     self.iso_class(sc, inner, class, var, span)?.0,
                 ))
+            }
+            // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } if crate::rollup::shape(callee, args).is_some() => {
+                let (op, param) = crate::rollup::shape(callee, args).expect("checked above");
+                self.roll_up_call(sc, op, &param, *optional, span)
             }
             ExprKind::Call {
                 callee,
