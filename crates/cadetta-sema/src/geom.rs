@@ -394,6 +394,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if let Some(a) = &g.assembly {
                 self.evaluate_placements(&id, comp, a);
             }
+            self.record_part_counts(&id, comp);
             self.stamp_since(start, &ModuleKey::of_path(&item));
         }
     }
@@ -528,6 +529,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 message: format!("G007: {}", d.message),
                 span: d.span,
             });
+        }
+    }
+
+    /// Records the evaluated count of every counted part not already recorded by a placement.
+    // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+    fn record_part_counts(&mut self, id: &ComponentId, comp: &'p Component) {
+        for m in &comp.members {
+            let MemberKind::Part(part) = &m.kind else {
+                continue;
+            };
+            let mut pp = item_path(id);
+            pp.members.push(MemberSeg::Name(part.name.name.clone()));
+            if self.part_counts.contains_key(&pp) {
+                continue;
+            }
+            if let Some(n) = self.part_count(id, part) {
+                debug!(part = %part.name.name, n, "geometry: recorded part count");
+                self.part_counts.insert(pp, n);
+            }
         }
     }
 

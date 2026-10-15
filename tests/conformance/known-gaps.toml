@@ -183,11 +183,6 @@ ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
 
 [[gap]]
-fixture = "emitters/sw-equations/comment-nothing-else"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
 fixture = "emitters/sw-equations/comment-trailing-authored-literal"
 ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
@@ -993,11 +988,6 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "stdlib/iso4762-any-length"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
 fixture = "stdlib/table-iso4032"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
@@ -1357,7 +1347,6 @@ fixture = "adapters/geom-placement-verify-only"
 ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
-
 [[gap]]
 fixture = "geometry/g005-check-looser-than-float"
 ticket = "~HWJP0GQ"
@@ -1428,7 +1417,6 @@ fixture = "lints/w005-waiver-expiring"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
 
-
 [[gap]]
 fixture = "adapters/protocol-open-dirty-r009"
 ticket = "~6N3JQAV"
@@ -1466,35 +1454,5 @@ reason = "built-in adapters declare no capability set the host can check"
 
 [[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5); the must-fire half is also unreachable from source until ~V9JHZEN"
-
-[[gap]]
-fixture = "adapters/star-binding-emitted-once-at-instance-0"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "adapters/star-mangle-drops-segment"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "emitters/csv/name-mangled-path"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "emitters/json/name-mangled-path"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "emitters/sw-equations/naming-component-field"
-ticket = "~9WDH9XE"
-reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "emitters/sw-equations/comment-trailing-order-and-citation"
-ticket = "~JSTNC17"
-reason = "sw-equations trailing comment drops the at-quoted form of the citation"
+ticket = "~V9JHZEN"
+reason = "part-array instance members now lower (~9WDH9XE), but the must-fire half (differing instance values) is unreachable from source until ~V9JHZEN"

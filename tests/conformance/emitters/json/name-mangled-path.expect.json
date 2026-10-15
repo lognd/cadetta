@@ -17,7 +17,7 @@
         "excludes": [
           "\"name\": \"Rover.axle",
           "\"name\": \"Rover/axle",
-          "[1]"
+          "\"name\": \"Rover__axle[1]"
         ]
       }
     }

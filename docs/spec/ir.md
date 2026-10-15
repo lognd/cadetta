@@ -112,6 +112,13 @@ reordering; they change only by rename or move, which `was` records.
   binding emits once, at the emit point of instance 0. Because the
   instances share arguments, no source makes another instance's
   emitted value differ; R012 is reserved for that case (adapters.md 3).
+- Part-array instance members: a counted part `part axle[2]: Axle` whose
+  callee has no parameters lowers one member per instance and per
+  parameter or `let` of the callee (`Rover/axle[0].len`,
+  `Rover/axle[1].len`; indexes are 0-based). Each carries the callee
+  definition's value and depends on the definition member
+  (`Axle.len`), with derived provenance. Arrays of parameterized
+  callees are not yet lowered.
 - Instance vs definition level: an obligation targets a definition path
   when its closure reads no component parameter or interface-typed slot,
   and an instance path otherwise; instances with identical argument

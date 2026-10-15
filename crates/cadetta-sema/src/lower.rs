@@ -239,6 +239,8 @@ fn evaluated_value(
     }
 }
 
+#[path = "lower_array.rs"]
+mod lower_array;
 #[path = "lower_geom.rs"]
 mod lower_geom;
 
@@ -664,6 +666,9 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 }
                 // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
                 comp.members.extend(cx.lower_instance_members(&canon));
+                // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+                comp.members
+                    .extend(cx.lower_array_members(&canon, &pkg.name, &module.path, c));
                 cx.lower_geometry(&canon, src, c, &mut comp);
                 comp.fits = input
                     .fits
@@ -1241,5 +1246,24 @@ mod tests {
             "{:?}",
             ev.diagnostics
         );
+    }
+
+    // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+    // frob:tests crates/cadetta-sema/src/lower_array.rs::lower_array_members kind=unit
+    #[test]
+    fn part_array_instance_members_lower_per_index() {
+        let src = "model Axle {\n  len = 10mm\n}\n\
+            model Rover {\n  part axle[2]: Axle\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let mut paths: Vec<String> = rover.members.iter().map(|m| m.path.to_string()).collect();
+        paths.sort();
+        assert_eq!(paths, ["p::Rover/axle[0].len", "p::Rover/axle[1].len"]);
+        assert!(rover.members.iter().all(|m| m.value.is_some()));
     }
 }
