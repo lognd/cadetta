@@ -2,7 +2,7 @@
 id = "01M4Z7YEQVYCV0YBZ3539T97BZ"
 title = "docs/spec/ir.md: note slot Part.path is Type/part with no member"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
