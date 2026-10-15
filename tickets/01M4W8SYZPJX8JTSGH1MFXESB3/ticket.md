@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T03:55:26Z"
-updated = "2026-10-15T07:37:02Z"
-scope = ["crates/cadetta-lint/src/rules/n.rs", "docs/spec/lints.md"]
+updated = "2026-10-15T07:37:03Z"
+scope = ["crates/cadetta-lint/src/rules/n.rs", "docs/spec/lints.md", "tests/conformance/stdlib/check-not-bottomed.expect.json"]
 
 [[acceptance]]
 text = "N003 does not fire on a dimensionless member whose name ends in a unit-like word (tap_lead_in = 3)"
