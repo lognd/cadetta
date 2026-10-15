@@ -107,7 +107,82 @@ fn cli(job: &Job) -> Result<Facts, String> {
     let scratch = stage(job.fixture)?;
     let mut args = cli_args(job);
     resolve_adapter_token(&scratch.0, &mut args);
-    run_cli(&scratch.0, &args)
+    let mut facts = run_cli(&scratch.0, &args)?;
+    observe_extras(job, &scratch, &mut facts)?;
+    Ok(facts)
+}
+
+/// Add the observations a block asks for by key: `runs` and `unbound_params_not_written`.
+fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(), String> {
+    let wants = |k: &str| job.block.extra.contains_key(k);
+    if wants("runs") {
+        let runs = solver_runs(&facts.after);
+        tracing::debug!(runs, "observed solver runs");
+        facts.observed.insert("runs".into(), json!(runs));
+    }
+    if wants("unbound_params_not_written") {
+        let clean = unbound_params_not_written(scratch, facts)?;
+        tracing::debug!(clean, "observed unbound params not written");
+        facts
+            .observed
+            .insert("unbound_params_not_written".into(), json!(clean));
+    }
+    Ok(())
+}
+
+/// Solver script runs: the lines of the `marker` file each script invocation appends to.
+fn solver_runs(after: &std::collections::BTreeMap<String, String>) -> usize {
+    after
+        .iter()
+        .filter(|(p, _)| p.rsplit('/').next() == Some("marker"))
+        .map(|(_, text)| text.lines().count())
+        .sum()
+}
+
+/// Canonical keys (top-level table names) of every `bindings/*.toml` in the staged package.
+fn bound_paths(after: &std::collections::BTreeMap<String, String>) -> Vec<String> {
+    after
+        .iter()
+        .filter(|(p, _)| p.starts_with("bindings/") && p.ends_with(".toml"))
+        .filter_map(|(_, text)| text.parse::<toml::Table>().ok())
+        .flat_map(|t| t.into_iter().map(|(k, _)| k))
+        .collect()
+}
+
+/// True when no file the run wrote names a member that no bindings file binds.
+///
+/// Members come from `cadetta ir`; a member is named by its last path segment.
+fn unbound_params_not_written(scratch: &Scratch, facts: &Facts) -> Result<bool, String> {
+    let ir = run_cli(&scratch.0, &["ir".to_owned()])?;
+    let doc = parse_json(&ir.stdout).ok_or("unbound_params_not_written: `ir` printed no JSON")?;
+    let bound = bound_paths(&facts.after);
+    let written: Vec<&String> = facts
+        .after
+        .iter()
+        .filter(|(p, text)| facts.before.get(*p) != Some(*text))
+        .map(|(_, text)| text)
+        .collect();
+    let mut unbound = 0;
+    for comp in doc["components"].as_array().into_iter().flatten() {
+        for member in comp["members"].as_array().into_iter().flatten() {
+            let Some(path) = member["path"].as_str() else {
+                continue;
+            };
+            if bound.iter().any(|b| b == path) {
+                continue;
+            }
+            unbound += 1;
+            let leaf = path.rsplit(['.', ':']).next().unwrap_or(path);
+            if written.iter().any(|t| t.contains(leaf)) {
+                tracing::debug!(path, "unbound member found in a written file");
+                return Ok(false);
+            }
+        }
+    }
+    if unbound == 0 {
+        return Err("unbound_params_not_written: the fixture has no unbound member".into());
+    }
+    Ok(true)
 }
 
 /// `emit TOKEN` names an adapter; the CLI wants its id, so map name to id via `cadetta.toml`.
@@ -290,7 +365,15 @@ fn classify(job: &Job) -> Result<Facts, String> {
         exit: i32::from(report.has_r001()),
         ..Facts::default()
     };
+    let refused = report.has_r001();
+    let mut overridden = false;
     for d in &report.diagnostics {
+        if d.code == cadetta_adapter::classify::R001 && !refused {
+            // `--force-design` pushed over the conflict: R001 is noted but no longer an error.
+            overridden = true;
+            tracing::debug!("R001 overridden by force-design");
+            continue;
+        }
         let severity = if d.code == sync::R006 {
             "warning"
         } else {
@@ -309,6 +392,12 @@ fn classify(job: &Job) -> Result<Facts, String> {
     facts
         .observed
         .insert("action".into(), json!(action_label(record.verb)));
+    // R001 is suppressed only when `--force-design` overrode a conflict that would be refused.
+    let suppressed = opts.force_design && overridden && !refused;
+    tracing::debug!(suppressed, "observed r001_suppressed_by_force");
+    facts
+        .observed
+        .insert("r001_suppressed_by_force".into(), json!(suppressed));
     Ok(facts)
 }
 

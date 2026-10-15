@@ -32,6 +32,7 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "stderr_contains" => check_contains(want, &facts.stderr, "stderr"),
             "message_contains" => check_contains(want, &facts.messages.join("\n"), "messages"),
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
+            "results_order" => check_results_order(want, facts),
             "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
             "observed" => check_observed_subset(want, facts),
@@ -298,5 +299,18 @@ fn check_diag_schema(want: &Value, facts: &Facts) -> Result<(), String> {
     match list.iter().find(|d| &d["schema"] != want) {
         Some(d) => Err(format!("json_diag_schema: record {d} lacks schema {want}")),
         None => Ok(()),
+    }
+}
+
+/// `results_order`: the solver ids appear in this order in the files the run wrote.
+fn check_results_order(want: &Value, facts: &Facts) -> Result<(), String> {
+    let ids = strings(want);
+    if ids.is_empty() {
+        return Err("results_order: expectation lists no solver ids".into());
+    }
+    if in_order(&written_text(facts), &ids) {
+        Ok(())
+    } else {
+        Err(format!("results_order: {ids:?} not found in this order"))
     }
 }

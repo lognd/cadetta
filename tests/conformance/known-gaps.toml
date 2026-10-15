@@ -243,11 +243,6 @@ ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"
 
 [[gap]]
-fixture = "adapters/force-design-cad-moved"
-ticket = "~50N0ZB6"
-reason = "R001-R006 not driven by observed IR and sync facts"
-
-[[gap]]
 fixture = "adapters/r005-binding-matches-no-path"
 ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"
@@ -883,44 +878,29 @@ ticket = "~0N5FY1T"
 reason = "unindexed read of a counted part array in an in-expression is an EVAL error"
 
 [[gap]]
-fixture = "adapters/force-design"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
-
-[[gap]]
-fixture = "adapters/r005-bindings-file-none-bound-check"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
-
-[[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
+ticket = "~6K6E7M4"
+reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"
 
 [[gap]]
 fixture = "adapters/slots-swap-changes-active-set"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
+ticket = "~6K6E7M4"
+reason = "fixture dirs are identical yet expect opposite output; active_alternate not exposed"
 
 [[gap]]
 fixture = "adapters/tol-locator-needs-dimension"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
-
-[[gap]]
-fixture = "solvers/result-shared-script-sorted-by-path"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
+ticket = "~E5M0X1Q"
+reason = "emit does not reject a tolerance locator without a dimension kind"
 
 [[gap]]
 fixture = "solvers/variants-equal-inputs-share-one-run"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
+ticket = "~420HBMQ"
+reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
 
 [[gap]]
 fixture = "solvers/variants-unchanged-inputs-read-primary"
-ticket = "~SK1B9S3"
-reason = "expectation key not observed by the runner yet"
+ticket = "~420HBMQ"
+reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
 
 [[gap]]
 fixture = "stdlib/fits-hole-mirrors-shaft"
