@@ -17,6 +17,10 @@ bound = false
 [[acceptance]]
 text = "A recorded solver output literal is evaluated exactly and appears in the IR as an analysis member"
 bound = false
+
+[[acceptance]]
+text = "A member driven by a solver output takes the recorded value; a bound use (check) leaves the value unchanged"
+bound = false
 +++
 
 found while working ~JET4TC0. resolve.rs/eval.rs have no notion of a solver member (MemberKind::Solver): wall_sizing.min_wall is E002 in check. Needed: resolver binds solver names as component members, evaluator yields the stored .out.json output (cadetta-solve outputs::use_output) and attaches S003 facts; cli pipeline then emits S003/S006. Unblocks the solvers/* and obligations/s003-solver-stale known-gaps.
