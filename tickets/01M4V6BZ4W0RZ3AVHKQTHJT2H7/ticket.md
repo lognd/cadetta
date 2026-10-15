@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/src/rules/n.rs", "crates
 
 [[acceptance]]
 text = "A bad module file or directory name is reported as code E015, not E001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Valid snake_case nested modules do not raise N001"
