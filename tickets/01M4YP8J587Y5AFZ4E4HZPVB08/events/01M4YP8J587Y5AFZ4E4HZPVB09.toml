@@ -1,0 +1,10 @@
+kind = "create"
+title = "solve --variants does not validate declared outputs (S005)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/solve.rs", "crates/cadetta-solve/src/variants.rs"]
+body = "found while working ~QDVP8JQ: check_outputs guards only the main solve path; variants::store accepts missing or wrong-kind outputs."
+at = "2026-10-15T02:29:04Z"
+actor = "lognd"
+rev = 1
