@@ -490,6 +490,19 @@ pub struct Evaluator<'r, 'p> {
     absent: BTreeSet<CanonPath>,
     /// Roles implied by `fit` members, for members with no explicit or class role.
     fit_roles: BTreeMap<CanonPath, Role>,
+    /// Every `fit` member of a component without parameters, by path.
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fit_defs: BTreeMap<CanonPath, FitDef<'p>>,
+    /// Fit clearances computed so far (`None` when the fit could not be analysed).
+    fit_done: BTreeMap<CanonPath, Option<Quant>>,
+}
+
+/// A `fit` member with the scope its operands resolve in.
+// frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+#[derive(Clone)]
+struct FitDef<'p> {
+    fit: &'p ast::Fit,
+    ctx: Ctx,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -500,6 +513,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         packages: &[PackageSrc<'p>],
     ) -> Self {
         let mut defs = BTreeMap::new();
+        let mut fit_defs = BTreeMap::new();
         let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
@@ -516,6 +530,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
+                    index_fits(&mut fit_defs, &p.name, &m.path, c);
                     if c.params.is_empty() {
                         geom_components.push(CanonPath::item(&p.name, &m.path, &c.name.name));
                     }
@@ -558,6 +573,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             cur_inst: None,
             absent: BTreeSet::new(),
             fit_roles: crate::fitderive::implied_roles(resolver, packages),
+            fit_defs,
+            fit_done: BTreeMap::new(),
         }
     }
 
@@ -874,12 +891,69 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
             RefKind::Table(path) => Ok(Val::Table(path)),
             RefKind::Component(path) => Ok(Val::Component(path)),
+            RefKind::Member { key, chain } if self.fit_defs.contains_key(&key) => {
+                self.fit_member(&key, &chain, e.span)
+            }
             RefKind::Member { key, chain } => {
                 let role = self.value_of(&key).and_then(|ev| ev.role).map(|r| r.role);
                 let v = self.member_value(&key, e.span)?;
                 self.apply_chain(v, role, &chain, e.span)
             }
         }
+    }
+
+    /// Reads `NAME.clearance` of a `fit` member (language.md 3.7): hole minus shaft, as an interval.
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fn fit_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
+        match chain {
+            [name] if name == "clearance" => {}
+            _ => {
+                return Err(diag(
+                    "EVAL",
+                    span,
+                    "only `.clearance` is readable on a fit here",
+                ));
+            }
+        }
+        if let Some(done) = self.fit_done.get(key) {
+            return done.clone().map(Val::Quantity).ok_or(Fail::Silent);
+        }
+        if !self.in_progress.insert(key.clone()) {
+            trace!(%key, "evaluator: fit cycle, left to D003");
+            return Err(Fail::Silent);
+        }
+        let out = self.fit_clearance(key);
+        self.in_progress.remove(key);
+        debug!(%key, ok = out.is_some(), "evaluator: fit clearance evaluated");
+        self.fit_done.insert(key.clone(), out.clone());
+        out.map(Val::Quantity).ok_or(Fail::Silent)
+    }
+
+    /// The clearance of fit `key`, or `None` when an operand or the analysis failed (F001/F002 are the lint's).
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fn fit_clearance(&mut self, key: &CanonPath) -> Option<Quant> {
+        let FitDef { fit, ctx } = self.fit_defs.get(key)?.clone();
+        let operand = |this: &mut Self, p: &ast::Path| -> Option<Toleranced> {
+            let Ok(Resolved::Member { path, .. }) = this.resolver.resolve_path(&ctx, p, None)
+            else {
+                return None;
+            };
+            match this.value_of(&path)?.value {
+                Val::Quantity(q) => crate::fitderive::toleranced(&q).ok(),
+                _ => None,
+            }
+        };
+        let (first, second) = match &fit.spec {
+            ast::FitSpec::Paths(a, b) => (operand(self, a)?, Some(operand(self, b)?)),
+            _ => (operand(self, &fit.on)?, None),
+        };
+        let result = crate::fits::analyze(&fit.spec, &first, second.as_ref(), None).ok()?;
+        let var = self.fresh_var();
+        let form = result.clearance.to_affine(var).ok()?;
+        Some(Quant {
+            form,
+            nominal: result.clearance.nominal().clone(),
+        })
     }
 
     /// The value of member `key`; a missing instance member is E002 (absent), a failed one is silent.
@@ -1462,6 +1536,39 @@ fn member_ref(path: CanonPath, span: Span) -> R<RefKind> {
     })
 }
 
+/// Indexes the `fit` members of a component without parameters.
+// frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+fn index_fits<'p>(
+    out: &mut BTreeMap<CanonPath, FitDef<'p>>,
+    package: &str,
+    module: &[String],
+    c: &'p Component,
+) {
+    if !c.params.is_empty() {
+        return;
+    }
+    let ctx = Ctx {
+        package: package.to_owned(),
+        module: module.to_vec(),
+        component: Some(c.name.name.clone()),
+        locals: Vec::new(),
+    };
+    for m in &c.members {
+        if let MemberKind::Fit(f) = &m.kind {
+            let mut key = CanonPath::item(package, module, &c.name.name);
+            key.members.push(MemberSeg::Name(f.name.name.clone()));
+            trace!(%key, "evaluator: fit indexed");
+            out.insert(
+                key,
+                FitDef {
+                    fit: f,
+                    ctx: ctx.clone(),
+                },
+            );
+        }
+    }
+}
+
 fn index_component<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
     package: &str,
@@ -2029,5 +2136,18 @@ mod tests {
         let r = ev.get(&at("P", "r")).expect("r").role.expect("inherited");
         assert_eq!(r.source, RoleSource::Inherited);
         assert_eq!(quant(&ev, "P", "rm").nominal, m(99, 10_000));
+    }
+
+    // frob:tests fit_clearance_member_is_readable
+    #[test]
+    fn fit_clearance_member_is_readable() {
+        let ev = run(&file(
+            "model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n  let c = seat.clearance\n  \
+             hi = c.max\n  lo = c.min\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        // H7 spans 0..+21um and p6 +22..+35um: clearance is -35um .. -1um.
+        assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
+        assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
     }
 }
