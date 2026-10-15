@@ -2,7 +2,8 @@
 id = "01M4YRTECA4XNC784V88ZC83KP"
 title = "check: resolve git dependencies (currently skipped with a warning)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
