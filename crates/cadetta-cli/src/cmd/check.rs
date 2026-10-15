@@ -8,8 +8,8 @@ use std::io::Write;
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply, bind_reviewed};
-use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
 use cadetta_lint::rules::o004_w005::check_w005;
+use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
 use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::citation::{SOURCE_ROLE, check_citation, citation_id};
@@ -370,7 +370,9 @@ fn bind_waiver_digests(sup: &mut Suppressions, universes: &[universe::Universe],
             Record::Waiver(l)
                 if l.code == w.code
                     && l.glob == w.glob
-                    && l.alt.as_ref().map(|a| format!("{}={}", a.slot, a.alternate))
+                    && l.alt
+                        .as_ref()
+                        .map(|a| format!("{}={}", a.slot, a.alternate))
                         == w.for_alt.as_ref().map(|v| v.short()) =>
             {
                 Some(l.digest.as_str().to_owned())
@@ -598,10 +600,18 @@ mod tests {
     #[test]
     fn lint_d001_min_digits_and_common_values_change_d001() {
         let (_, json, _) = run(&project(RESTATED, ""), &[]);
-        assert_eq!(diag_severity(&json, "D001").as_deref(), Some("warning"), "{json}");
+        assert_eq!(
+            diag_severity(&json, "D001").as_deref(),
+            Some("warning"),
+            "{json}"
+        );
         let dir = project(RESTATED, "[lint]\nd001_min_digits = 4\n");
         let (_, json, _) = run(&dir, &[]);
-        assert_eq!(diag_severity(&json, "D001").as_deref(), Some("info"), "{json}");
+        assert_eq!(
+            diag_severity(&json, "D001").as_deref(),
+            Some("info"),
+            "{json}"
+        );
         let dir = project(RESTATED, "[lint]\ncommon_values = [\"6.35mm\"]\n");
         let (_, json, _) = run(&dir, &[]);
         assert_eq!(diag_severity(&json, "D001"), None, "{json}");
@@ -618,7 +628,13 @@ mod tests {
             .iter()
             .find(|d| d["code"] == "D002")
             .unwrap_or_else(|| panic!("D002 expected: {json}"));
-        assert!(d002["message"].as_str().unwrap().contains("Bearings[22mm].bore"), "{d002}");
+        assert!(
+            d002["message"]
+                .as_str()
+                .unwrap()
+                .contains("Bearings[22mm].bore"),
+            "{d002}"
+        );
     }
 
     const AXLE_M001: &str = "model Axle {\n  od: Length = 20.1234mm\n}\n";
@@ -663,9 +679,8 @@ mod tests {
     // frob:tests crates/cadetta-cli/src/cmd/check.rs::bind_waiver_digests
     #[test]
     fn waiver_with_a_changed_reviewed_digest_is_w002_and_stops_suppressing() {
-        let src = format!(
-            "{AXLE_M001}waive M001 on acme.axle::Axle.od {{ because \"measured\" }}\n"
-        );
+        let src =
+            format!("{AXLE_M001}waive M001 on acme.axle::Axle.od {{ because \"measured\" }}\n");
         let dir = project(&src, "");
         let mut lock = Lock::new();
         lock.insert(Record::Waiver(cadetta_obligations::lock::Waiver {

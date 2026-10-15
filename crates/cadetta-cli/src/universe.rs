@@ -209,6 +209,12 @@ impl Universe {
         })
     }
 
+    /// The closure digest of every graph key (waiver target binding, W002).
+    // frob:ticket 01M4TRKDEST57137A1Y203JFR7
+    pub fn closures(&self) -> Result<std::collections::BTreeMap<String, Digest>, DigestError> {
+        self.graph.closures()
+    }
+
     /// The entry for the obligation `id`, when this package offers it.
     pub fn entry(&self, id: &ObligationId) -> Option<&CheckEntry> {
         self.checks.iter().find(|e| &e.id == id)

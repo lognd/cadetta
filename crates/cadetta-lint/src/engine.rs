@@ -943,6 +943,44 @@ pub fn bind_targets(
     Ok(waiver.targets_closure.len())
 }
 
+/// Bind a source waiver to the digest the lock recorded when it was reviewed (lints.md 2.1).
+///
+/// The lock stores one combined digest for all targets. When the combined digest of the current
+/// target closures differs from `recorded`, every target is bound to `recorded` so
+/// [`waiver_state`] reports it stale (W002); an unchanged or unreviewed waiver is left open.
+/// Returns whether the waiver was marked changed.
+// frob:ticket 01M4TRKDEST57137A1Y203JFR7
+pub fn bind_reviewed(
+    waiver: &mut Waiver,
+    closures: &BTreeMap<String, Digest>,
+    recorded: Option<&str>,
+) -> Result<bool, EngineError> {
+    let Some(recorded) = recorded else {
+        return Ok(false);
+    };
+    let glob = Glob::new(&waiver.glob).map_err(|_| EngineError::BadGlob(waiver.glob.clone()))?;
+    let targets: Vec<(&String, &Digest)> =
+        closures.iter().filter(|(p, _)| glob.matches(p)).collect();
+    if targets.is_empty() {
+        return Ok(false);
+    }
+    let current = cadetta_obligations::staleness::covered_digest(
+        &targets
+            .iter()
+            .map(|(_, d)| (*d).clone())
+            .collect::<Vec<_>>(),
+    );
+    if current.0 == recorded {
+        return Ok(false);
+    }
+    waiver.targets_closure = targets
+        .into_iter()
+        .map(|(p, _)| (p.clone(), Digest(recorded.to_owned())))
+        .collect();
+    tracing::debug!(id = %waiver_id(waiver), "lint: waiver targets changed since review");
+    Ok(true)
+}
+
 /// Whether a waiver currently suppresses.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum WaiverState {
@@ -1191,6 +1229,28 @@ mod tests {
         assert_eq!(waiver_state(&w, &cur, None), WaiverState::Active);
         cur.insert("a::B.x".into(), dg("99"));
         assert_eq!(waiver_state(&w, &cur, None), WaiverState::Stale);
+    }
+
+    // frob:tests crates/cadetta-lint/src/engine.rs::bind_reviewed kind=unit
+    #[test]
+    fn reviewed_waiver_is_stale_only_when_the_combined_digest_changed() {
+        let closures: BTreeMap<String, Digest> = [
+            ("a::B.x".to_owned(), dg("11")),
+            ("a::B.y".to_owned(), dg("22")),
+        ]
+        .into();
+        let recorded = cadetta_obligations::staleness::covered_digest(&[dg("11"), dg("22")]);
+        let mut w = Waiver::new("D001", "a::B.*", "ok");
+        assert_eq!(bind_reviewed(&mut w, &closures, None), Ok(false));
+        assert_eq!(
+            bind_reviewed(&mut w, &closures, Some(&recorded.0)),
+            Ok(false)
+        );
+        assert_eq!(waiver_state(&w, &closures, None), WaiverState::Active);
+        let mut changed = closures.clone();
+        changed.insert("a::B.y".into(), dg("99"));
+        assert_eq!(bind_reviewed(&mut w, &changed, Some(&recorded.0)), Ok(true));
+        assert_eq!(waiver_state(&w, &changed, None), WaiverState::Stale);
     }
 
     // frob:tests crates/cadetta-lint/src/engine.rs::explain kind=unit

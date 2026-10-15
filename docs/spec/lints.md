@@ -151,7 +151,10 @@ of the waiver's targets are stored in the lock as a `waiver` record
 (obligations.md 3). A waiver with no record yet is open: it suppresses,
 and its review is an open `waiver` obligation (O002) until `ack`. Once
 recorded, if a target's digest differs, the waiver is stale: W002 fires
-and the suppressed diagnostic reappears until re-reviewed.
+and the suppressed diagnostic reappears until re-reviewed. `cadetta check`
+compares the recorded digest with the combined closure digest of the
+waiver's current targets, and reports W005 for waivers expiring within
+`expiry_warn_days` of `--as-of` (`eol` dates are not yet carried by the IR).
 
 | Code | Condition |
 |---|---|
