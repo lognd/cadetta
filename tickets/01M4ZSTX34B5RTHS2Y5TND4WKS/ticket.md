@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T12:50:45Z"
-updated = "2026-10-15T16:29:45Z"
-scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-lint/src/rules/o004_w005.rs", "crates/cadetta-obligations/**"]
+updated = "2026-10-15T16:30:10Z"
+scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-lint/src/rules/o004_w005.rs", "crates/cadetta-obligations/**", "docs/spec/obligations.md"]
 
 [[acceptance]]
 text = "cadetta check reports O004 (info by default) with reason 'unverifiable without drive' for a json/csv binding whose adapter lacks drive after sync"
