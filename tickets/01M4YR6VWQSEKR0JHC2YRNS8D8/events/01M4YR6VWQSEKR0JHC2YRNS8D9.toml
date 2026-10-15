@@ -1,0 +1,10 @@
+kind = "create"
+title = "language: E016 on expression-level references and priv member reads (check_use not called)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~ZDNTT6T: only use targets (check_uses) and E017 signatures are wired; VisibilityChecker::check_use for expression paths and priv member chains is still uncalled."
+at = "2026-10-15T03:03:06Z"
+actor = "lognd"
+rev = 1
