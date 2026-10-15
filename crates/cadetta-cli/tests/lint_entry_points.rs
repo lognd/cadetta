@@ -86,6 +86,47 @@ fn u002_fires_for_an_unused_private_item_and_not_for_a_used_one() {
     assert!(!has(&a, "U002", "live"), "{:?}", codes(&a));
 }
 
+// frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
+// frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
+#[test]
+fn u002_use_is_by_resolution_so_a_shadowing_name_is_not_a_use() {
+    // `dead` is mentioned twice more, but only as `g`'s parameter, which shadows it.
+    let a = analyze_src(
+        "u002-shadow",
+        "fn dead(x: Length) -> Length { x }\n\nfn g(dead: Length) -> Length { dead }\n\npub model M {\n  a = g(2mm)\n}\n",
+    );
+    assert!(has(&a, "U002", "::dead"), "{:?}", codes(&a));
+    assert!(!has(&a, "U002", "::g"), "{:?}", codes(&a));
+}
+
+// frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
+// frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
+#[test]
+fn u002_reports_an_unused_private_member_and_not_a_read_one() {
+    let a = analyze_src(
+        "u002-member",
+        "pub model M {\n  priv spare = 1mm\n  priv used = 2mm\n  a = used\n}\n",
+    );
+    assert!(has(&a, "U002", "M.spare"), "{:?}", codes(&a));
+    assert!(!has(&a, "U002", "M.used"), "{:?}", codes(&a));
+}
+
+// frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
+// frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
+#[test]
+fn i004_needs_a_parameter_without_default_and_no_instantiating_part() {
+    let a = analyze_src(
+        "i004-facts",
+        "pub model Leaf(w: Length) {\n  area = w * w\n}\n\npub model Defaulted(w: Length = 1mm) {\n  area = w * w\n}\n\npub model Top {\n  part l: Leaf(w = 1mm)\n}\n",
+    );
+    assert!(!has(&a, "I004", "Leaf"), "instantiated: {:?}", codes(&a));
+    assert!(
+        !has(&a, "I004", "Defaulted"),
+        "all defaulted: {:?}",
+        codes(&a)
+    );
+}
+
 // frob:tests crates/cadetta-lint/src/engine.rs::apply kind=unit
 #[test]
 fn allow_attribute_suppresses_through_the_engine() {

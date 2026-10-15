@@ -1,0 +1,10 @@
+kind = "create"
+title = "roll-ups do not read non-argument members of parts nested in a parameterized callee (screw mass inside ScrewJoint)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "found while working ~A50KFBS: rolleval reads only the argument a nested part site passes for the roll-up parameter; other members (mass, lead_time of a nested Iso4762) need nested instances materialised."
+at = "2026-10-15T11:08:35Z"
+actor = "lognd"
+rev = 1
