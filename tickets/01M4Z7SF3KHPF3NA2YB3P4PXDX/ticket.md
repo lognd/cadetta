@@ -2,7 +2,7 @@
 id = "01M4Z7SF3KHPF3NA2YB3P4PXDX"
 title = "cadetta ir: config lint.precision.Money rejected as unknown quantity kind (golden 07)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
