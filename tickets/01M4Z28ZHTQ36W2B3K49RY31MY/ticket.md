@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-15T06:21:55Z"
+updated = "2026-10-15T06:22:30Z"
 idempotency_key = "split-0N41BNX-u002"
 scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs", "tests/conformance/**", "docs/spec/lints.md"]
 
