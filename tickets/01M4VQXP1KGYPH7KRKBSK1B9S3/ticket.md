@@ -2,7 +2,8 @@
 id = "01M4VQXP1KGYPH7KRKBSK1B9S3"
 title = "Conformance runner observes json_diag_schema, results_order, r001_suppressed_by_force, unbound_params_not_written, runs"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
