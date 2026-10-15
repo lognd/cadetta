@@ -11,22 +11,11 @@
         "code": "C001",
         "severity": "error",
         "path": "acme.demo::Box/j.not_bottomed"
-      },
-      {
-        "code": "N003",
-        "severity": "warning",
-        "path": "acme.demo::Shop.tap_lead_in"
       }
     ]
   },
   "must_not_fire": {
-    "diagnostics": [
-      {
-        "code": "N003",
-        "severity": "warning",
-        "path": "acme.demo::Shop.tap_lead_in"
-      }
-    ]
+    "diagnostics": []
   },
-  "note": "N003 fires on the std interface member tap_lead_in (lead 'in' read as inches); incidental to the custom shop policy needed for bottom_clearance = 0mm"
+  "note": "bottom_clearance = 0mm needs a custom shop policy; its dimensionless tap_lead_in member must not trip N003"
 }
