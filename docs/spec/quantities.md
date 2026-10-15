@@ -498,6 +498,11 @@ Q004 inexact-emit, Q006 inexact-value, Q007 quantity-literal-split, Q008
 angle-dropped, Q009 non-integer-count, Q010 ambiguous-rounding, C003
 toleranced-equality, C004 derived-feature-in-check. Q005 is retired.
 
+One fault yields one diagnostic: a lexical error is not followed by a parse
+error on the same line, and an evaluator report that overlaps a kind-check
+diagnostic in the same module is dropped. `check` and `require` conditions are
+kind-checked like any expression (`x >= 5` on a length is Q001).
+
 ## Open questions
 
 - OQ-1 (closed 2026-10-13, README): `5.in` replaced by `5in`; README rewritten.

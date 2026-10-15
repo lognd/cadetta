@@ -1,5 +1,5 @@
 kind Stress = Pressure
 model Part {
-  s: Stress = 5MPa
-  p: Pressure = s
+  s: Stress = 5MPa as Stress
+  p: Pressure = s as Pressure
 }

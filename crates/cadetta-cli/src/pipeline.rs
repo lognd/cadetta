@@ -457,6 +457,21 @@ fn sema_severity(s: SemaSeverity) -> Severity {
     }
 }
 
+/// True when an evaluator quantity report (`EVAL`/`Q001`..`Q003`) overlaps a kind-checker
+/// diagnostic in the same module, so the one underlying fault is reported once.
+// frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+fn shadowed_by_kind_diag(
+    d: &cadetta_sema::eval::EvalDiagnostic,
+    kind_spans: &[(ModuleKey, usize, usize)],
+) -> bool {
+    if !matches!(d.code, "EVAL" | "Q001" | "Q002" | "Q003") {
+        return false;
+    }
+    kind_spans.iter().any(|(k, s, e)| {
+        d.module.as_ref() == Some(k) && d.span.start < *e && *s < d.span.end
+    })
+}
+
 /// The member of a component whose name-to-value region covers `span`, as a canonical path.
 fn member_path_at(pkg: &str, module: &[String], file: &File, span: Span) -> Option<String> {
     for item in file.items() {
@@ -467,6 +482,8 @@ fn member_path_at(pkg: &str, module: &[String], file: &File, span: Span) -> Opti
             let (name, value) = match &m.kind {
                 MemberKind::Param(p) => (&p.name, &p.value),
                 MemberKind::Let(l) => (&l.name, &l.value),
+                MemberKind::Check(c) => (&c.name, &c.cond),
+                MemberKind::Require(r) => (&r.name, &r.cond),
                 _ => continue,
             };
             if name.span.start <= span.start && span.end <= value.span.end {
@@ -1034,6 +1051,9 @@ fn evaluate_stages(
     ));
     // Kind diagnostics are exact: they come from one module at a time.
     let mut kind_keys: BTreeSet<(String, usize, usize)> = BTreeSet::new();
+    // Kind-checker diagnostic spans per module; they shadow overlapping evaluator reports.
+    // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+    let mut kind_spans: Vec<(ModuleKey, usize, usize)> = Vec::new();
     for p in &in_scope {
         for m in &p.modules {
             // One checker per component, each over an env that types cross-component names
@@ -1051,6 +1071,7 @@ fn evaluate_stages(
             let file = index.module(&p.name, &m.path);
             for d in found {
                 kind_keys.insert((d.code.to_owned(), d.span.start, d.span.end));
+                kind_spans.push((ModuleKey::new(&p.name, &m.path), d.span.start, d.span.end));
                 let path = member_path_at(&p.name, &m.path, &m.file, d.span);
                 out.push(diag_at(
                     d.code,
@@ -1104,6 +1125,10 @@ fn evaluate_stages(
             continue;
         }
         if kind_keys.contains(&(d.code.to_owned(), d.span.start, d.span.end)) {
+            continue;
+        }
+        if shadowed_by_kind_diag(d, &kind_spans) {
+            tracing::debug!(code = d.code, "dropping evaluator report shadowed by a kind diagnostic");
             continue;
         }
         out.extend(located(

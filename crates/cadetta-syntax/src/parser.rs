@@ -98,6 +98,15 @@ type PResult<T> = Result<T, ParseErr>;
 /// Parses one .cdt file; total (never fails).
 pub fn parse(src: &str) -> Parsed {
     let lexed = lex(src);
+    // Lexical errors become `Bad` tokens that the parser never sees; remember where they were
+    // so the parse error their absence causes is not reported a second time.
+    // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+    let bad_starts: Vec<usize> = lexed
+        .tokens
+        .iter()
+        .filter(|t| t.tok == Tok::Bad)
+        .map(|t| t.span.start)
+        .collect();
     let mut toks: Vec<Token> = lexed
         .tokens
         .into_iter()
@@ -123,7 +132,15 @@ pub fn parse(src: &str) -> Parsed {
     let mut file = p.file();
     file.span = Span::new(0, src.len());
     let mut diags = lexed.diags;
-    diags.append(&mut p.diags);
+    diags.extend(p.diags.drain(..).filter(|d| {
+        let cascade = bad_starts.iter().any(|&b| {
+            b <= d.span.start && src.get(b..d.span.start).is_some_and(|s| !s.contains('\n'))
+        });
+        if cascade {
+            tracing::debug!(span = %d.span, "dropping parse error that cascades from a lexical error");
+        }
+        !cascade
+    }));
     tracing::info!(
         entries = file.entries.len(),
         diags = diags.len(),
@@ -1913,6 +1930,20 @@ mod tests {
         };
         assert!(matches!(&t[0].kind, UseTreeKind::Leaf { alias: Some(a) } if a.name == "I"));
         assert!(matches!(&t[1].kind, UseTreeKind::Group(g) if g.len() == 2));
+    }
+
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
+    // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+    #[test]
+    fn lexical_error_is_not_reported_twice() {
+        for lit in [".5mm", "2ft3kg", "2.5ft6in", "6in2ft"] {
+            let p = parse(&format!("model P {{\n  a = {lit}\n}}\n"));
+            let e001 = p.diags.iter().filter(|d| d.code == DiagCode::E001).count();
+            assert_eq!(e001, 1, "`{lit}`: {:?}", p.diags);
+        }
+        // A genuine parse error on a later line is still reported.
+        let p = parse("model P {\n  a = .5mm\n  b = = 1\n}\n");
+        assert_eq!(p.diags.len(), 2, "{:?}", p.diags);
     }
 
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit

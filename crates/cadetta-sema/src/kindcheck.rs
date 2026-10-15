@@ -373,6 +373,14 @@ impl<'a> KindChecker<'a> {
                 }
             }
             MemberKind::Let(l) => self.check_let(l),
+            // Conditions are typed expressions too: `x >= 5` on a length is Q001.
+            // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+            MemberKind::Check(c) => {
+                self.expr(&c.cond);
+            }
+            MemberKind::Require(r) => {
+                self.expr(&r.cond);
+            }
             _ => {}
         }
     }
@@ -993,6 +1001,15 @@ mod tests {
             c.check_component(comp);
         }
         c.into_diagnostics().iter().map(|d| d.code).collect()
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::check_member kind=unit
+    // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
+    #[test]
+    fn check_and_require_conditions_are_kind_checked() {
+        assert_eq!(codes("x = 3mm\ncheck c: x >= 5"), vec!["Q001"]);
+        assert_eq!(codes("x = 3mm\nrequire r: x >= 5"), vec!["Q001"]);
+        assert!(codes("x = 3mm\ncheck c: x >= 5mm").is_empty());
     }
 
     // frob:tests crates/cadetta-sema/src/kindcheck.rs::register_user_kinds
