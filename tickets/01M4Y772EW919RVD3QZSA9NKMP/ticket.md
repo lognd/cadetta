@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T09:52:01Z"
+updated = "2026-10-15T09:53:32Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "tests/conformance/language/f002-sub-nanometre.*"]
 
 [[acceptance]]
