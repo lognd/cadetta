@@ -670,9 +670,19 @@ impl<'a> KindChecker<'a> {
         if let [one] = segs
             && let Some(t) = self.locals.get(one)
         {
-            return Some(t.clone());
+            return Some(Self::mark_absolute_temperature(t.clone()));
         }
-        self.env.path_type(segs, seps).map(Ty::quantity)
+        self.env
+            .path_type(segs, seps)
+            .map(|kd| Self::mark_absolute_temperature(Ty::quantity(kd)))
+    }
+
+    /// A value of kind Temperature is absolute and so affine (quantities.md 3), whatever its unit.
+    fn mark_absolute_temperature(mut t: Ty) -> Ty {
+        if !t.bare && t.kd.name() == Some("Temperature") {
+            t.affine = true;
+        }
+        t
     }
 
     fn binary(&mut self, op: BinOp, l: &Expr, r: &Expr, span: Span) -> Option<Ty> {
@@ -1035,6 +1045,29 @@ mod tests {
     fn affine_multiply_is_q002_but_delta_unit_is_fine() {
         assert_eq!(codes("a = 20degC * 2"), ["Q002"]);
         assert_eq!(codes("a = 20degF / 2"), ["Q002"]);
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker
+    #[test]
+    fn q002_q003_fixtures_replay() {
+        let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/conformance/quantities/");
+        let run = |name: &str| {
+            let src = std::fs::read_to_string(format!("{dir}{name}.cdt")).expect("fixture");
+            codes_with_decls(&src)
+        };
+        assert_eq!(run("q002-affine-multiply.must-fire"), ["Q002"]);
+        assert!(run("q002-affine-multiply.must-not-fire").is_empty());
+        assert_eq!(run("q003-temperature-delta.must-fire"), ["Q003"]);
+        assert!(run("q003-temperature-delta.must-not-fire").is_empty());
+    }
+
+    #[test]
+    fn temperature_variable_multiply_is_q002() {
+        // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker
+        assert_eq!(codes("t: Temperature = 20degC\n a = t * 2"), ["Q002"]);
+        assert_eq!(codes("t: Temperature = 20degC\n a = 2 / t"), ["Q002"]);
+        assert!(codes("t: Temperature = 20degC\n a = t - t").is_empty());
+        assert!(codes("t: TemperatureDelta = 20dK\n a = t * 2").is_empty());
         assert!(codes("a = 20dK * 2").is_empty());
         assert!(codes("a = 20K * 2").is_empty());
     }
