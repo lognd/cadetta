@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T01:44:58Z"
-updated = "2026-10-15T01:46:39Z"
+updated = "2026-10-15T01:46:40Z"
 scope = ["crates/cadetta-ir/**", "docs/spec/ir.md", "changelog.d/01M4YKQSGPM7JTKPRTZXSHCDWP.*"]
 
 [[acceptance]]
 text = "Project carries interfaces, tables and waivers and serializes them when non-empty (omitted when empty)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Project with those collections validates against the IR JSON Schema"
