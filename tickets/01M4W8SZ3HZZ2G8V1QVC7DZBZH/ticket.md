@@ -7,5 +7,11 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T03:55:26Z"
-updated = "2026-10-15T07:24:36Z"
+updated = "2026-10-15T07:35:32Z"
+labels = ["creates:changelog.d/01M4W8SZ3HZZ2G8V1QVC7DZBZH.fixed.md"]
+scope = ["crates/cadetta-sema/src/deps.rs", "crates/cadetta-ir/src/digest.rs", "docs/spec/ir.md", "changelog.d/01M4W8SZ3HZZ2G8V1QVC7DZBZH.fixed.md"]
+
+[[acceptance]]
+text = "A commercial roll-up skips parts lacking the member, and a member reading a component argument digests"
+bound = false
 +++
