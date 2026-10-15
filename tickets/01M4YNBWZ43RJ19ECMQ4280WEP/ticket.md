@@ -7,9 +7,9 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:13:25Z"
-updated = "2026-10-15T02:35:21Z"
+updated = "2026-10-15T02:36:14Z"
 idempotency_key = "fitside-roles-mmc-lmc"
-scope = ["crates/cadetta-sema/src/**"]
+scope = ["crates/cadetta-sema/src/**", "docs/spec/quantities.md", "changelog.d/01M4YNBWZ43RJ19ECMQ4280WEP.*"]
 
 [[acceptance]]
 text = "mmc/lmc on a member whose role comes only from a fit side resolves the material side without E010"
