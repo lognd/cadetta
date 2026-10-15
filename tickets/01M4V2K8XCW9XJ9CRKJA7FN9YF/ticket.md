@@ -2,11 +2,12 @@
 id = "01M4V2K8XCW9XJ9CRKJA7FN9YF"
 title = "W003/W004/W005 waiver validation incomplete"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:40Z"
-updated = "2026-10-15T02:51:49Z"
+updated = "2026-10-15T02:52:17Z"
 scope = ["crates/cadetta-lint/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V2K8XCW9XJ9CRKJA7FN9YF.fixed.md"]
 
 [[acceptance]]
