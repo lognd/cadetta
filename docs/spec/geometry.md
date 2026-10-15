@@ -416,8 +416,9 @@ float enters the placement.
   joint is recorded on the child's edge with the pattern points read
   from the nominal placement. Each joint owns three source variables
   (x, y, theta), memoised per canonical path, so every table built for
-  the same joint shares them. Joints inside a sub-assembly component are
-  not lowered yet.
+  the same joint shares them. Joints inside a sub-assembly component
+  are lowered onto that sub-assembly's own placement edges, read through
+  the root frame table with the datum ids prefixed by the node path.
 
 ## 6. In the IR and in CAD
 

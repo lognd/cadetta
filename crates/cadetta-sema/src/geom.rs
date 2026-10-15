@@ -1052,11 +1052,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         let (ft_form, ft_nominal) = tables(&asm, FloatMode::With)?;
         // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
-        let floats = match (&asm, scope_assembly) {
+        let floats = match (asm.as_mut(), scope_assembly) {
             (Some(a), true) => self.bolt_floats(here, comp, a, &ft_nominal),
             _ => Vec::new(),
         };
-        let Some(a) = asm.as_mut().filter(|_| !floats.is_empty()) else {
+        let nested = asm
+            .as_ref()
+            .is_some_and(|a| !super::boltfloat::all_floats(a).is_empty());
+        let Some(a) = asm.as_mut().filter(|_| nested || !floats.is_empty()) else {
             return Ok((ft_form, ft_nominal));
         };
         a.floats = floats;
@@ -1071,14 +1074,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         debug!(edges = a.floats.len(), own = ?own, "geometry: bolt floats in the frame tables");
         // frob:ticket 01M4SWG70T71SNTZ2TWXZD1Y50
-        if own.is_none()
-            && a.floats
-                .iter()
-                .any(|e| e.joints.iter().all(|j| !j.locating))
-        {
+        let every = super::boltfloat::all_floats(a);
+        if own.is_none() && every.iter().any(|e| e.joints.iter().all(|j| !j.locating)) {
             self.float_reads += 1;
         }
-        self.report_unconstrained_rotation(&a.floats, span);
+        self.report_unconstrained_rotation(&every, span);
         tables(&asm, mode)
     }
 
