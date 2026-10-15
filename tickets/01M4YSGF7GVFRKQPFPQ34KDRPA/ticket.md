@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T12:28:11Z"
+updated = "2026-10-15T12:30:55Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Ordering enum variants is an EVAL error"
-bound = false
+bound = true
 +++
 
 found while working ~6K58FR1. Fixture stdlib/materials-tap-class expects C001 at acme.demo::P.steel_hard; both sides give EVAL a quantity is required here for Materials[Material::X].tap_class == TapClass::Hard.
