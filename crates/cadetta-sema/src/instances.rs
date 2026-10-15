@@ -630,6 +630,39 @@ mod tests {
         );
     }
 
+    // frob:tests absent_member_read_is_e002
+    // frob:ticket 01M4VSSD47V9VAAPW8B34630AM
+    #[test]
+    fn absent_member_read_is_e002() {
+        let f = file(&format!(
+            "{BASE}#![default(Pol = Std)]\nassembly Top {{\n  part j: Joint(a = 4mm)\n  \
+             bad = j.with_extra\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(
+            ev.diagnostics
+                .iter()
+                .any(|d| d.code == "E002" && d.message.contains("absent")),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
+    // frob:tests requires_is_silent_when_the_argument_is_given
+    // frob:ticket 01M4VSSDCJ82KNXA8MGEVK71FT
+    #[test]
+    fn requires_is_silent_when_the_argument_is_given() {
+        let f = file(&format!(
+            "{BASE}#![default(Pol = Std)]\nassembly Top {{ part j: Joint(a = 20mm, extra = 1mm) }}\n"
+        ));
+        let ev = run(&f);
+        assert!(
+            ev.diagnostics.iter().all(|d| d.code != "E006"),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
     // frob:tests assembly_default_beats_file_default
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     #[test]
