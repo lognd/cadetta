@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:02Z"
-updated = "2026-10-15T03:38:11Z"
+updated = "2026-10-15T03:38:48Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "A # comment is recognised only at record start"
-bound = false
+bound = true
 +++
 
 found while working ~6NZV18E. Implement per csv.md 1 and 3.
