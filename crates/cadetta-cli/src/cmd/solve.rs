@@ -579,7 +579,18 @@ fn solve_one(
             tracing::info!(solver = %t.path, "solve: result is fresh, not running");
             let _ = writeln!(out, "fresh {}", t.path);
             entries.push(Entry::new(&t.path, Status::Fresh));
-            return solve_variants(t, &script, &digests, run, entries, out, err);
+            return solve_variants(
+                &VariantCtx {
+                    t,
+                    script: &script,
+                    digests: &digests,
+                    decl: &decl,
+                },
+                run,
+                entries,
+                out,
+                err,
+            );
         }
         Lookup::Stale(_) => tracing::info!(solver = %t.path, "solve: result is stale, running"),
         Lookup::Missing => tracing::info!(solver = %t.path, "solve: no result, running"),
@@ -622,7 +633,18 @@ fn solve_one(
     tracing::info!(solver = %t.path, path = %results_path.display(), "solve: result stored");
     let _ = writeln!(out, "solved {}", t.path);
     entries.push(Entry::new(&t.path, Status::Solved));
-    solve_variants(t, &script, &digests_for_variants, run, entries, out, err)
+    solve_variants(
+        &VariantCtx {
+            t,
+            script: &script,
+            digests: &digests_for_variants,
+            decl: &decl,
+        },
+        run,
+        entries,
+        out,
+        err,
+    )
 }
 
 // frob:ticket 01M4V3F2DQTCGEAPVNHQDVP8JQ
@@ -741,16 +763,30 @@ fn variant_requests(t: &Target<'_>, run: &RunEnv<'_>) -> Vec<VariantRequest> {
     requests
 }
 
-/// Run and store one result per distinct changed input digest (solvers.md 4.1).
+/// What `solve_variants` needs about the solver whose primary row was just handled.
+struct VariantCtx<'a> {
+    t: &'a Target<'a>,
+    script: &'a Path,
+    digests: &'a CurrentDigests,
+    decl: &'a SolverDecl,
+}
+
+// frob:ticket 01M4YP8J587Y5AFZ4E4HZPVB08
+/// Run and store one result per distinct changed input digest (solvers.md 4.1),
+/// rejecting responses whose outputs fail `check_outputs` (S005) without storing them.
 fn solve_variants(
-    t: &Target<'_>,
-    script: &Path,
-    digests: &CurrentDigests,
+    ctx: &VariantCtx<'_>,
     run: &RunEnv<'_>,
     entries: &mut Vec<Entry>,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Outcome {
+    let VariantCtx {
+        t,
+        script,
+        digests,
+        decl,
+    } = *ctx;
     if !run.args.variants {
         return Outcome::Ok;
     }
@@ -770,6 +806,15 @@ fn solve_variants(
             &run.project.root,
         ) {
             Ok(response) => {
+                if let Err(message) = check_outputs(decl, &response.outputs, run.units) {
+                    outcome = fail(
+                        err,
+                        &t.path,
+                        "S005",
+                        &format!("variant [{}]: {message}", job.variants.join(", ")),
+                    );
+                    continue;
+                }
                 variants::store(&mut file, &t.path, digests, job, &response);
                 let _ = writeln!(out, "solved {} [{}]", t.path, job.variants.join(", "));
                 let mut entry = Entry::new(&t.path, Status::Solved);
@@ -916,6 +961,44 @@ mod tests {
                 .ends_with("Box/motor=acme.t::MotorB")
         );
         assert_eq!(alt.inputs["m"].lit, "5kg");
+    }
+
+    // frob:ticket 01M4YP8J587Y5AFZ4E4HZPVB08
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_variants
+    #[test]
+    fn variant_outputs_missing_or_wrong_kind_are_s005_and_not_stored() {
+        let (dir, _marker) = fixture("varbad", "2kg");
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            "interface Motor { mass: Mass }\n\
+             model MotorA { mass = 2kg }\n\
+             model MotorB { mass = 5kg }\n\
+             model Box {\n  part motor: Motor = MotorA alt [MotorB]\n  \
+             solver size {\n    script \"size.sh\"\n    in m = motor.mass\n    out w: Length\n  }\n}\n",
+        )
+        .unwrap();
+        // Good for the primary (2kg), bad for the variant (5kg).
+        std::fs::write(
+            dir.join("size.sh"),
+            "if grep -q 5kg; then echo '{\"schema\":\"cadetta.solve/1\",\"outputs\":{\"w\":\"3kg\"}}'; \
+             else echo '{\"schema\":\"cadetta.solve/1\",\"outputs\":{\"w\":\"1m\"}}'; fi\n",
+        )
+        .unwrap();
+        let globals = Globals {
+            format: crate::Format::Text,
+            cwd: Some(dir.clone()),
+            config: None,
+        };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = run_solve(&["--variants".to_owned()], &globals, &mut out, &mut err);
+        let text = String::from_utf8(err).unwrap();
+        assert_eq!(code, EXIT_FAILED, "{text}");
+        assert!(text.contains("S005") && text.contains("variant"), "{text}");
+        let stored = ResultFile::load(&dir.join("size.out.json")).unwrap();
+        assert!(
+            stored.results.iter().all(|r| r.variant.is_none()),
+            "stored a bad variant"
+        );
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::run_solve

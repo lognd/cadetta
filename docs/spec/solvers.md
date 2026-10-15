@@ -131,7 +131,7 @@ Response:
   are solver errors (S005) and leave the previous result in place.
   (Decided in `cadetta solve`: every declared output must be present, and when
   its kind is built in the value's dimension must match it; a user kind is
-  not checked at solve time. Variant runs under `--variants` are not yet checked.)
+  not checked at solve time. Variant runs under `--variants` are checked the same way and a bad one is not stored.)
 
 ## 4. Results and staleness
 
