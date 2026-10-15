@@ -317,9 +317,13 @@ E006 when `cond` holds and `arg` was not given. The callee's `check`s and
 instance path (`Box/j.engaged`); a check carrying `#[when(cond)]` exists
 only while `cond` holds, and an absent check yields no verdict. The IR
 lowers each as an ordinary `Check` whose path is the instance path.
+The callee's datums and placements are evaluated per instance too, in the
+same scope (`Box/j.mount.offset.z`, `Box/f/leg.place.offset.x`), and
+lower as `datum` / `place` Members of the instantiating component.
 Instances inside
-parameterized components, `Part`-typed arguments and part arrays inside
-an instance are not evaluated yet (ticketed).
+parameterized components, `Part`-typed arguments, part arrays inside
+an instance (their array placements) and the callee's points are not
+evaluated yet (ticketed).
 
 ### 3.4 Bounds
 

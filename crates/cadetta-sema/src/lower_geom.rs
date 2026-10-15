@@ -23,8 +23,8 @@ use cadetta_syntax::ast;
 use tracing::{debug, trace, warn};
 
 use super::{Cx, SourceText, evaluated_value, text_of};
-use crate::eval::Val;
 use crate::eval::geom::{component_geometry, component_id, find_part, unwrap_array};
+use crate::eval::{GeometryKind, Val};
 use crate::resolve::{CanonPath, MemberSeg};
 
 fn axis(a: cadetta_geometry::datum::Axis) -> IrAxis {
@@ -103,6 +103,33 @@ fn dotted_datum_path(ty: &CanonPath, text: &str) -> CanonPath {
 }
 
 impl Cx<'_> {
+    /// The datum and placement argument members of the parameterized instances declared in
+    /// `comp` (`Box/j.mount.offset.x`), valued from the per-instance evaluation.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    pub(super) fn lower_instance_geometry(&self, comp: &CanonPath) -> Vec<Member> {
+        let ev = self.input.evaluation;
+        let mut out = Vec::new();
+        for (k, kind) in &ev.instance_geometry {
+            if k.item_only() != *comp {
+                continue;
+            }
+            let (Some(e), Some(path)) = (ev.get(k), path_of(k)) else {
+                continue;
+            };
+            let kind = match kind {
+                GeometryKind::Datum => MemberKind::Datum,
+                GeometryKind::Place => MemberKind::Place,
+            };
+            let mut m = Member::new(path, kind);
+            m.provenance = Provenance::Derived;
+            self.fill_geometry_value(&mut m, k);
+            m.analysis = m.analysis || e.analysis;
+            out.push(m);
+        }
+        trace!(component = %comp, members = out.len(), "lower: instance geometry members");
+        out
+    }
+
     /// Fills a geometry member's value and variants from the evaluation of `canon`.
     fn fill_geometry_value(&self, out: &mut Member, canon: &CanonPath) {
         let ev = self.input.evaluation;

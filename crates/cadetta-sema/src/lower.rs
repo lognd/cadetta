@@ -666,6 +666,8 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 }
                 // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
                 comp.members.extend(cx.lower_instance_members(&canon));
+                // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+                comp.members.extend(cx.lower_instance_geometry(&canon));
                 // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
                 comp.members
                     .extend(cx.lower_array_members(&canon, &pkg.name, &module.path, c));
@@ -1265,5 +1267,50 @@ mod tests {
         paths.sort();
         assert_eq!(paths, ["p::Rover/axle[0].len", "p::Rover/axle[1].len"]);
         assert!(rover.members.iter().all(|m| m.value.is_some()));
+    }
+
+    const INST_GEOM_SRC: &str = "model Leg {\n  len = 10mm\n}\n\
+        model Box(depth: Length, lift: Length = 3mm) {\n  \
+        datum mount = origin.offset(z = depth + lift)\n}\n\
+        assembly Frame(w: Length) {\n  part leg: Leg\n  \
+        place leg.origin at origin.offset(x = w)\n}\n\
+        assembly Top {\n  part j: Box(depth = 7mm)\n  part f: Frame(w = 4mm)\n}\n";
+
+    fn top_member<'a>(b: &'a Built, path: &str) -> Option<&'a Member> {
+        let top = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Top")
+            .expect("Top");
+        top.members.iter().find(|m| m.path.to_string() == path)
+    }
+
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_instance_geometry kind=unit
+    #[test]
+    fn instance_datums_are_valued_from_args_and_defaults() {
+        let b = build(INST_GEOM_SRC, &[], &[]);
+        let m = top_member(&b, "p::Top/j.mount.offset.z").expect("datum member");
+        assert_eq!(m.kind, MemberKind::Datum);
+        let v = m.value.as_ref().expect("a value");
+        assert!(
+            format!("{v:?}").contains("Rational(1/100)"),
+            "7mm + 3mm default: {v:?}"
+        );
+    }
+
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_instance_geometry kind=unit
+    #[test]
+    fn instance_placements_are_valued_from_args() {
+        let b = build(INST_GEOM_SRC, &[], &[]);
+        let m = top_member(&b, "p::Top/f/leg.place.offset.x").expect("placement member");
+        assert_eq!(m.kind, MemberKind::Place);
+        let v = m.value.as_ref().expect("a value");
+        assert!(
+            format!("{v:?}").contains("Rational(1/250)"),
+            "w = 4mm: {v:?}"
+        );
     }
 }
