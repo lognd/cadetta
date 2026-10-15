@@ -2,7 +2,8 @@
 id = "01M4ZCHT2YJ2Z7F2E9TR77QY6K"
 title = "cadetta import: decode frames and instances from adapter observed JSON"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
