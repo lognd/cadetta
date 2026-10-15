@@ -1,17 +1,23 @@
 // frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y
 //! `cadetta names [ADAPTER-ID] [--module PATH] [GLOB...]`: list every in-scope bindable path with
 //! its kind, emitted value, citation, doc, the name the adapter would create and its binding
-//! state (config-cli.md 3, adapters.md 3, 3.1 and 3.5). Names never launches CAD: with no read
-//! adapter available the state of an unbound path is `unknown`, not `unbound`.
+//! state (config-cli.md 3, adapters.md 3, 3.1 and 3.5). An adapter that can read is asked for
+//! its CAD (listed `files` only): a path with no locator is then `unbound` and native-link
+//! discoveries show as implicit link, frame or reference. An adapter that cannot read (no
+//! `command`, no `read` capability, a failed spawn or read) keeps the state `unknown`.
 
 use std::collections::HashMap;
 use std::io::Write;
 
 use cadetta_adapter::bindings::{
-    BindingSet, R013, implicit_text, kind_text, mangle, mangle_all, mode_text,
+    BindingSet, ForwardTable, NameSource, Placement, R013, discover, implicit_text, kind_text,
+    mangle, mangle_all, mode_text,
 };
 use cadetta_adapter::builtin::sw_equations::DEFAULT_PRECISION;
 use cadetta_adapter::policy::resolve_point;
+use cadetta_adapter::rpc::CapabilityName;
+use cadetta_adapter::rpc::client::ProcessClient;
+use cadetta_adapter::rpc::types::{ReadParams, ReadSource};
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_ir::model::{Flavour, Locator, LocatorKind, Member, MemberKind, Project as Ir};
 use cadetta_ir::path::Path;
@@ -22,6 +28,7 @@ use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitDiag, attr_point, citation_text, config_point, diag, kind_of,
     locators_for, parse_args, scope_candidates, written_for,
 };
+use crate::cmd::import::{decode_observed, program};
 use crate::cmd::ir::package_id;
 use crate::config::{Adapter, BindMode};
 use crate::output::Format;
@@ -139,11 +146,12 @@ fn row(
     created: &str,
     locators: &[Locator],
     adapter: &Adapter,
+    can_read: bool,
     cfg_point: cadetta_adapter::policy::EmitPoint,
     diagnostics: &mut Vec<EmitDiag>,
 ) -> Option<NameRow> {
     let value = member.value.as_ref()?;
-    let (state, reason) = state_of(locators, false);
+    let (state, reason) = state_of(locators, can_read);
     let unit = locators
         .iter()
         .map(|l| l.native_unit.as_str())
@@ -191,6 +199,59 @@ fn row(
             })
             .collect(),
     })
+}
+
+/// Read the adapter's listed files and decode them to observed projects, one per native file.
+///
+/// `None` when the adapter cannot read on this machine (no command, no `read` capability,
+/// no literal `files`, a spawn, read or decode failure): the caller then reports `unknown`.
+// frob:ticket 01M4VPEFSVBXSEKWHTQ48SAEKA
+fn observe_cad(pkg: &PackageDir, adapter: &Adapter) -> Option<Vec<Ir>> {
+    let command = adapter.command.as_deref()?;
+    let (path, argv) = program(pkg, command)?;
+    let files: Vec<String> = adapter
+        .files
+        .iter()
+        .filter(|f| !f.contains('*'))
+        .map(|f| pkg.dir.join(f).to_string_lossy().into_owned())
+        .collect();
+    if files.is_empty() {
+        tracing::info!(adapter = %adapter.id(), "names: no literal `files` to read");
+        return None;
+    }
+    let mut client = match ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(adapter.timeout()),
+    ) {
+        Ok(c) => c,
+        Err(e) => {
+            tracing::warn!(adapter = %adapter.id(), error = %e, "names: adapter did not start; states stay unknown");
+            return None;
+        }
+    };
+    let observed = if client.info().capabilities.contains(&CapabilityName::Read) {
+        tracing::info!(adapter = %adapter.id(), files = files.len(), "names: reading CAD");
+        match client.read(&ReadParams {
+            source: ReadSource::Files(files),
+        }) {
+            Ok(r) => decode_observed(&r.observed, adapter.id(), package_id(pkg), None)
+                .map_err(|e| tracing::warn!(adapter = %adapter.id(), error = %e, "names: unreadable observed IR"))
+                .ok(),
+            Err(e) => {
+                tracing::warn!(adapter = %adapter.id(), error = %e, "names: read failed; states stay unknown");
+                None
+            }
+        }
+    } else {
+        tracing::info!(adapter = %adapter.id(), "names: adapter cannot read; states stay unknown");
+        None
+    };
+    if let Err(e) = client.shutdown() {
+        tracing::warn!(adapter = %adapter.id(), error = %e, "names: adapter shutdown failed");
+    }
+    observed
 }
 
 /// Names of one adapter in one package, appended to `report`.
@@ -248,6 +309,49 @@ fn adapter_names(
             true
         }
     };
+    let observed = observe_cad(pkg, adapter);
+    let can_read = observed.is_some();
+    if let (Some(observed), false) = (&observed, collided) {
+        let sources: Vec<NameSource> = bindable
+            .iter()
+            .map(|m| NameSource {
+                path: m.path.clone(),
+                was: {
+                    let text = m.path.to_string();
+                    let stem = text.rsplit_once('.').map_or("", |(s, _)| s).to_owned();
+                    m.was.iter().map(|w| format!("{stem}.{w}")).collect()
+                },
+                kind: m.kind,
+            })
+            .collect();
+        let placements: Vec<Placement> = bindable
+            .iter()
+            .filter(|m| m.kind == MemberKind::Place)
+            .filter_map(|m| {
+                let text = m.path.to_string();
+                let (head, _) = text.rsplit_once('.')?;
+                let reference = head.rsplit_once('/')?.1.to_owned();
+                Some(Placement {
+                    reference,
+                    node: m.path.clone(),
+                })
+            })
+            .collect();
+        match ForwardTable::build(&sources, &adapter.prefix) {
+            Ok(table) => {
+                for obs in observed {
+                    let found = discover(obs, &table, &placements);
+                    for d in &found.diagnostics {
+                        tracing::warn!(code = %d.code, message = %d.message, "names: discovery finding");
+                    }
+                    set.add_implicit(found.bindings);
+                }
+            }
+            Err(e) => {
+                report.diagnostics.push(diag(R013, e.to_string(), None));
+            }
+        }
+    }
     if adapter.bind == BindMode::Scope && !collided {
         let package = pkg.config.package.as_ref().and_then(|p| p.name.as_deref());
         let candidates = scope_candidates(ir, &scope);
@@ -272,6 +376,7 @@ fn adapter_names(
                 &created,
                 locators,
                 adapter,
+                can_read,
                 cfg_point,
                 &mut report.diagnostics,
             )
@@ -555,5 +660,83 @@ mod tests {
         assert_eq!(code, EXIT_USAGE, "{out} {e}");
         assert!(e.contains("equations.toml"), "{e}");
         assert!(!out.contains("R005"), "{out}");
+    }
+
+    /// A fake adapter answering `read` with `scenario.json`; `caps` lists its capabilities.
+    fn fake_adapter(dir: &Dir, scenario: &serde_json::Value, caps: &str) -> String {
+        const PY: &str = r#"
+import json, os, sys
+here = os.path.dirname(os.path.abspath(__file__))
+sc = json.load(open(os.path.join(here, "scenario.json")))
+info = {"name": "fake", "version": "0.1.0", "capabilities": CAPS,
+        "native_units": "mm", "precision": 6, "platforms": ["linux"]}
+for line in sys.stdin:
+    req = json.loads(line)
+    m = req["method"]
+    res = info if m == "initialize" else (sc if m == "read" else None)
+    sys.stdout.write(json.dumps({"jsonrpc": "2.0", "id": req["id"], "result": res}) + "\n")
+    sys.stdout.flush()
+    if m == "shutdown":
+        break
+"#;
+        std::fs::write(dir.0.join("adapter.py"), PY.replace("CAPS", caps)).unwrap();
+        std::fs::write(dir.0.join("scenario.json"), scenario.to_string()).unwrap();
+        format!(
+            "command = [\"/usr/bin/env\", \"python3\", \"{}\"]\nfiles = [\"part.sldprt\"]\n",
+            dir.0.join("adapter.py").display()
+        )
+    }
+
+    /// One observed native global named `native`, bound to nothing explicit.
+    fn global_scenario(native: &str) -> serde_json::Value {
+        serde_json::json!({"observed": {
+            "components": [{"members": [{
+                "path": "acme.plate::CoverPlate.thickness",
+                "provenance": {"imported": {"adapter": "fake", "file": "part.sldprt", "native_name": native}},
+                "value": {"nominal": {"r": "3/250", "pi": 0}, "dim": {"m": 1},
+                          "authored": "6", "exact": true, "unit_assumed": "mm"}
+            }]}],
+            "bindings": [{"path": "acme.plate::CoverPlate.thickness", "adapter": "fake", "locators": [
+                {"locator": native, "kind": "global", "mode": "value", "native_unit": "mm"}]}]
+        }, "diagnostics": []})
+    }
+
+    // frob:ticket 01M4VPEFSVBXSEKWHTQ48SAEKA
+    // frob:tests crates/cadetta-cli/src/cmd/names.rs::run_names
+    #[test]
+    fn reading_adapter_makes_unbound_and_discovered_implicit() {
+        let dir = project(SOURCE, "", "");
+        // Learn the created native name, then let the fake adapter "find" it in the CAD.
+        let created = mangle(
+            &Path::parse(
+                "acme.plate::CoverPlate.thickness",
+                cadetta_ir::path::PathContext::General,
+            )
+            .unwrap(),
+            "",
+        );
+        let extra = fake_adapter(&dir, &global_scenario(&created), "[\"read\"]");
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{extra}")).unwrap();
+        let v = json(&dir, &[]);
+        let names = &v["adapters"][0]["names"];
+        assert_eq!(names[0]["path"], "acme.plate::CoverPlate.offset");
+        assert_eq!(names[0]["state"], "unbound", "{v}");
+        assert_eq!(names[1]["state"], "implicit", "{v}");
+        assert_eq!(names[1]["locators"][0]["implicit"], "global", "{v}");
+    }
+
+    // frob:ticket 01M4VPEFSVBXSEKWHTQ48SAEKA
+    // frob:tests crates/cadetta-cli/src/cmd/names.rs::run_names
+    #[test]
+    fn adapter_without_read_capability_keeps_unknown() {
+        let dir = project(SOURCE, "", "");
+        let extra = fake_adapter(&dir, &global_scenario("X"), "[]");
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{extra}")).unwrap();
+        let v = json(&dir, &[]);
+        for n in v["adapters"][0]["names"].as_array().unwrap() {
+            assert_eq!(n["state"], "unknown", "{v}");
+        }
     }
 }
