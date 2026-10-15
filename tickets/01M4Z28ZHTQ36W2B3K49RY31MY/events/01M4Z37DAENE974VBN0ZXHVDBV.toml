@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-lint/**"]
+new = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs"]
+at = "2026-10-15T06:15:38Z"
+actor = "lognd"
+rev = 1
