@@ -2,12 +2,12 @@
 id = "01M4ZACVTPPWND6W694CNW9MJ0"
 title = "Emit a [*]-bound member under the star path's mangled name"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T08:20:57Z"
-updated = "2026-10-15T08:20:57Z"
+updated = "2026-10-15T08:23:14Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/known-gaps.toml"]
 
 [[links]]
