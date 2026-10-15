@@ -1,0 +1,67 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T09:51:17Z"
+digest = "6a7b5b07c8833b27739cc3215fa38d5477f31e48c5e4d83661eb02a9e808a178"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0053]: method `document` has an incompatible type for trait
+   --> crates/cadetta-cli/src/cmd/sync.rs:591:65
+    |
+591 |     fn document<'a>(&'a mut self, adapter: &str, file: &str) -> Box<dyn Document + 'a> {
+    |                                                                 ^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Box<dyn Document>>`, found `Box<dyn Document>`
+    |
+    = note: expected signature `fn(&'a mut SessionBackend<_, _>, &_, &_) -> std::option::Option<Box<(dyn cadetta_adapter::atomic::Document + 'a)>>`
+               found signature `fn(&mut SessionBackend<_, _>, &_, &_) -> Box<dyn cadetta_adapter::atomic::Document>`
+help: change the output type to match the trait
+    |
+591 -     fn document<'a>(&'a mut self, adapter: &str, file: &str) -> Box<dyn Document + 'a> {
+591 +     fn document<'a>(&'a mut self, adapter: &str, file: &str) -> std::option::Option<Box<(dyn cadetta_adapter::atomic::Document + 'a)>> {
+    |
+
+error[E0046]: not all trait items implemented, missing: `push`
+   --> crates/cadetta-cli/src/cmd/sync.rs:590:1
+    |
+590 | impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `push` in implementation
+    |
+    = help: implement the missing item: `fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> { todo!() }`
+
+error[E0053]: method `document` has an incompatible type for trait
+   --> crates/cadetta-cli/src/cmd/sync.rs:628:56
+    |
+628 |     fn document<'a>(&'a mut self, _: &str, _: &str) -> Box<dyn Document + 'a> {
+    |                                                        ^^^^^^^^^^^^^^^^^^^^^^ expected `Option<Box<dyn Document>>`, found `Box<dyn Document>`
+    |
+    = note: expected signature `fn(&'a mut NoBackend, &_, &_) -> std::option::Option<Box<(dyn cadetta_adapter::atomic::Document + 'a)>>`
+               found signature `fn(&mut NoBackend, &_, &_) -> Box<dyn cadetta_adapter::atomic::Document>`
+help: change the output type to match the trait
+    |
+628 -     fn document<'a>(&'a mut self, _: &str, _: &str) -> Box<dyn Document + 'a> {
+628 +     fn document<'a>(&'a mut self, _: &str, _: &str) -> std::option::Option<Box<(dyn cadetta_adapter::atomic::Document + 'a)>> {
+    |
+
+error[E0046]: not all trait items implemented, missing: `push`
+   --> crates/cadetta-cli/src/cmd/sync.rs:627:1
+    |
+627 | impl Backend for NoBackend {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^ missing `push` in implementation
+    |
+    = help: implement the missing item: `fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> { todo!() }`
+
+Some errors have detailed explanations: E0046, E0053.
+For more information about an error, try `rustc --explain E0046`.
+error: could not compile `cadetta` (lib) due to 4 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `cadetta` (lib test) due to 4 previous errors
+error: command `~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics --package cadetta` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-p cadetta failed_regen_restores_the_snapshot_and_reports_r004"
+size = 3232
+status = "measured"
+at = "2026-10-15T09:51:17Z"
+actor = "lognd"
+rev = 1

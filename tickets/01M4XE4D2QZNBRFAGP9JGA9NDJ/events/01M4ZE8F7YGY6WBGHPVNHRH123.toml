@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A single selected conformance case replays only selected cases, not the whole corpus"]
+moved = []
+at = "2026-10-15T09:28:27Z"
+actor = "lognd"
+rev = 1

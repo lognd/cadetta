@@ -26,6 +26,7 @@ use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
+use cadetta_geometry::float::FloatMode;
 use cadetta_geometry::instances::{
     Operand, check_elementwise, check_unplaced, expand_instances, operands,
 };
@@ -149,7 +150,7 @@ pub fn component_geometry<'a>(
 }
 
 /// A reference written in an `in` expression, resolved syntactically through part slots.
-enum Ref {
+pub(super) enum Ref {
     /// A datum: the part slots crossed and the datum name.
     Datum { parts: Vec<String>, name: String },
     /// A declared point value: the part slots crossed and the datum its type is on.
@@ -157,7 +158,7 @@ enum Ref {
 }
 
 /// Joins a part chain and a datum name into the frame table's id (`sub/bracket.base`).
-fn datum_id(parts: &[String], name: &str) -> String {
+pub(super) fn datum_id(parts: &[String], name: &str) -> String {
     if parts.is_empty() {
         return name.to_owned();
     }
@@ -199,7 +200,7 @@ pub fn find_part<'c>(comp: &'c Component, name: &str) -> Option<&'c Part> {
     })
 }
 
-fn nominal_form(q: &Quant) -> Affine {
+pub(super) fn nominal_form(q: &Quant) -> Affine {
     Quant::constant(q.dim().clone(), q.nominal.clone()).form
 }
 
@@ -705,7 +706,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// Walks a reference chain from `comp`, crossing part slots; `Ok(None)` when it is not a
     /// declared datum or point (the caller reports).
-    fn walk_ref(
+    pub(super) fn walk_ref(
         &self,
         comp: &'p Component,
         ctx: &Ctx,
@@ -865,8 +866,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let [(name, None)] = chain.as_slice() else {
             return None;
         };
-        let mut key = inst.prefix.clone();
-        key.members = vec![MemberSeg::Name(name.clone())];
+        self.given_arg(&inst.prefix, name)
+    }
+
+    /// The expression the caller wrote for argument `name` of the instance at `prefix`.
+    // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+    pub(super) fn given_arg(&self, prefix: &CanonPath, name: &str) -> Option<(&'p Expr, Ctx)> {
+        let mut key = prefix.clone();
+        key.members = vec![MemberSeg::Name(name.to_owned())];
         let def = self.defs.get(&key)?;
         if def.inst.is_some() {
             return None;
@@ -1030,18 +1037,40 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
         };
         let (form_eval, nominal_eval) = (lookup(&forms), lookup(&nominals));
-        let build = |eval: &dyn Fn(&GeoMember) -> Result<Affine, GeometryError>| match (
-            &asm,
-            scope_assembly,
-        ) {
-            (Some(a), true) => FrameTable::for_assembly(a, eval),
+        let build = |asm: &Option<Assembly>,
+                     eval: &dyn Fn(&GeoMember) -> Result<Affine, GeometryError>,
+                     mode: FloatMode<'_>| match (asm, scope_assembly) {
+            (Some(a), true) => FrameTable::for_assembly_reading(a, eval, mode),
             _ => FrameTable::for_part(&g.datums, eval),
         };
-        let (ft_form, ft_nominal) = match (build(&form_eval), build(&nominal_eval)) {
-            (Ok(f), Ok(n)) => (f, n),
-            (Err(e), _) | (_, Err(e)) => return Err(reexpress_diag(&e, span)),
+        let tables = |asm: &Option<Assembly>, mode: FloatMode<'_>| match (
+            build(asm, &form_eval, mode),
+            build(asm, &nominal_eval, mode),
+        ) {
+            (Ok(f), Ok(n)) => Ok((f, n)),
+            (Err(e), _) | (_, Err(e)) => Err(reexpress_diag(&e, span)),
         };
-        Ok((ft_form, ft_nominal))
+        let (ft_form, ft_nominal) = tables(&asm, FloatMode::With)?;
+        // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+        let floats = match (&asm, scope_assembly) {
+            (Some(a), true) => self.bolt_floats(here, comp, a, &ft_nominal),
+            _ => Vec::new(),
+        };
+        let Some(a) = asm.as_mut().filter(|_| !floats.is_empty()) else {
+            return Ok((ft_form, ft_nominal));
+        };
+        a.floats = floats;
+        let own = self
+            .cur_inst
+            .as_ref()
+            .filter(|i| super::boltfloat::is_joint(i))
+            .map(|i| i.prefix.to_string());
+        let mode = match &own {
+            Some(p) => FloatMode::Without(p),
+            None => FloatMode::With,
+        };
+        debug!(edges = a.floats.len(), own = ?own, "geometry: bolt floats in the frame tables");
+        tables(&asm, mode)
     }
 
     /// `p in D` (geometry.md 3): re-expresses a point, or an array of points, in datum `D`.
@@ -1269,7 +1298,7 @@ fn reexpress_diag(e: &ReexpressError, span: Span) -> Fail {
     diag(code, span, e.to_string())
 }
 
-fn to_pos(v: &Val, datum: &DatumId, nominal: bool, span: Span) -> R<Pos> {
+pub(super) fn to_pos(v: &Val, datum: &DatumId, nominal: bool, span: Span) -> R<Pos> {
     match v {
         Val::Point(cs) => {
             let mut coords = Vec::with_capacity(cs.len());

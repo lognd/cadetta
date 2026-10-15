@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-15T09:31:46Z"
+digest = "b1b61a3e63d544e4329845dc36912b3360f8823f34b679ff16bbc78b857c6b14"
+exit_code = 0
+inline = """
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_conformance.py .                              [100%]
+
+-------------- generated xml file: /tmp/frob-pytest-1884689-0.xml --------------
+============================== 1 passed in 8.83s ===============================
+"""
+passed = true
+provider = "pytest"
+ref = "bindings/python/tests/test_conformance.py::test_binding_equals_cli_json[stdlib/iso4762-any-length:must-fire]"
+size = 512
+status = "measured"
+test_count = 1
+tests_digest = "fd192ebec6e03cb60e2cea0b55046c9cc45d3ace0c22c064e456ac8afff6765f"
+at = "2026-10-15T09:31:46Z"
+actor = "lognd"
+rev = 1

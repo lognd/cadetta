@@ -30,6 +30,7 @@ use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
+use cadetta_sema::renames::Moves;
 use cadetta_sema::resolve::{
     CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
@@ -208,6 +209,31 @@ pub struct Analysis {
     pub halted: bool,
     /// The `waive` declarations of the in-scope packages, for the lint engine.
     pub suppressions: Suppressions,
+    /// `(entity path, date)` of every in-scope `#[lifecycle(eol, ..)]`, for W005.
+    pub eols: Vec<(String, String)>,
+}
+
+/// The `eol` lifecycle dates of the `ots` components of one package, keyed by canonical path.
+// frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+fn eol_dates(package: &str, modules: &[Parsed]) -> Vec<(String, String)> {
+    use cadetta_variants::lifecycle as vl;
+    let mut out = Vec::new();
+    for m in modules {
+        for item in m.file.items() {
+            let ItemKind::Component(c) = &item.kind else {
+                continue;
+            };
+            let Some(lc) = vl::find(&item.attrs).and_then(Result::ok) else {
+                continue;
+            };
+            if lc.status == vl::Status::Eol {
+                let path = CanonPath::item(package, &m.path, &c.name.name).to_string();
+                tracing::debug!(%path, date = %lc.date, "pipeline: eol date collected");
+                out.push((path, lc.date.to_string()));
+            }
+        }
+    }
+    out
 }
 
 /// The lint-facing view of every module of `p`.
@@ -224,7 +250,11 @@ fn module_views(p: &ParsedPackage) -> Vec<ModuleView<'_>> {
 }
 
 /// Lower the `waive` items of one parsed module to engine waivers (lints.md 2.1).
-fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
+///
+/// A glob whose literal prefix names a path moved by a `was` clause is rewritten to the current
+/// path through `moves`, so a waiver written before a rename still matches.
+// frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+fn module_waivers(file: &File, moves: &Moves, out: &mut Vec<Waiver>) {
     for item in file.items() {
         let ItemKind::Waive(w) = &item.kind else {
             continue;
@@ -242,7 +272,7 @@ fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
         tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
         out.push(Waiver {
             code: w.code.name.clone(),
-            glob: w.glob.text.clone(),
+            glob: moves.carry_glob(&w.glob.text),
             because: w.because.clone(),
             expires: w.expires.as_ref().map(|e| e.text.clone()),
             for_alt,
@@ -1161,6 +1191,7 @@ fn evaluate_stages(
         fitderive::derive_fits_with_findings(&resolver, &evaluation, &fit_ranges, &sources);
     let outcome = procs.apply(&evaluation);
     let renames = Renames::collect(&resolver, &sources);
+    let moves = Moves::new(&renames);
     let graph = DepGraph::build(&resolver, &renames, &sources);
     tracing::info!(
         packages = parsed.len(),
@@ -1562,8 +1593,9 @@ fn evaluate_stages(
         out.extend(s::check_s002(&cites, locate));
         out.extend(s::check_s008(&own_cites, &ots_values, locate));
         for m in &p.modules {
-            module_waivers(&m.file, &mut analysis.suppressions.waivers);
+            module_waivers(&m.file, &moves, &mut analysis.suppressions.waivers);
         }
+        analysis.eols.extend(eol_dates(&p.name, &p.modules));
         let text_params = evaluation
             .values
             .iter()

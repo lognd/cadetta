@@ -852,10 +852,17 @@ pub(crate) struct DatumFrames {
 
 /// Collects the frame of `origin` and of every datum of every placed node, recursing into
 /// subassemblies; an array placed in ranges keeps the first frames for a repeated id.
-pub(crate) fn datum_frames(a: &Assembly, eval: Eval<'_>) -> Result<DatumFrames, GeometryError> {
+///
+/// `mode` is the float read mode: a joint's own `aligned` check passes [`FloatMode::Without`].
+// frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+pub(crate) fn datum_frames(
+    a: &Assembly,
+    eval: Eval<'_>,
+    mode: FloatMode<'_>,
+) -> Result<DatumFrames, GeometryError> {
     let mut out = DatumFrames::default();
     out.frames.push((ORIGIN.to_owned(), Vec::new()));
-    frames_into(a, eval, Vec::new(), "", &mut out)?;
+    frames_into(a, eval, mode, Vec::new(), "", &mut out)?;
     debug!(assembly = %a.name, frames = out.frames.len(), "collected datum frames");
     Ok(out)
 }
@@ -863,6 +870,7 @@ pub(crate) fn datum_frames(a: &Assembly, eval: Eval<'_>) -> Result<DatumFrames, 
 fn frames_into(
     a: &Assembly,
     eval: Eval<'_>,
+    mode: FloatMode<'_>,
     base: Vec<FrameOp>,
     prefix: &str,
     out: &mut DatumFrames,
@@ -873,7 +881,7 @@ fn frames_into(
         base,
         memo: BTreeMap::new(),
         depth: 0,
-        mode: FloatMode::With,
+        mode,
     };
     for p in &a.placements {
         let inst = match p.cover {
@@ -899,7 +907,7 @@ fn frames_into(
             out.frames.push((format!("{rel}.{}", d.name), ops));
         }
         if let Some(sub) = &node.sub {
-            frames_into(sub, eval, frame, &rel, out)?;
+            frames_into(sub, eval, mode, frame, &rel, out)?;
         }
     }
     Ok(())

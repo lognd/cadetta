@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/4XTSTXR; scope: crates/cadetta-geometry/src/float.rs, docs/spec/geometry.md, changelog.d/**, crates/cadetta-sema/src/geom.rs, crates/cadetta-sema/src/eval.rs, crates/cadetta-geometry/src/placement.rs, crates/cadetta-geometry/src/reexpress.rs, crates/cadetta-sema/tests/**, crates/cadetta-sema/src/boltfloat.rs; ttl 7200s"
+at = "2026-10-15T09:45:21Z"
+actor = "lognd"
+rev = 1

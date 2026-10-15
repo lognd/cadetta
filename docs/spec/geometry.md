@@ -408,6 +408,14 @@ float enters the placement.
   G005 (warning). Fix it with `locating = true` and a `fit` or dowel
   that really does locate the part, or loosen the check. Dowel pins are
   not in `std` 0.1.0; the escape hatch is the same.
+- Implementation note. Sema lowers each joint while it builds the frame
+  tables (`boltfloat.rs`): the joint's `at` and `onto` datums resolve to
+  their owning parts, and when those are placement parent and child the
+  joint is recorded on the child's edge with the pattern points read
+  from the nominal placement. Each joint owns three source variables
+  (x, y, theta), memoised per canonical path, so every table built for
+  the same joint shares them. Joints inside a sub-assembly component are
+  not lowered yet.
 
 ## 6. In the IR and in CAD
 
