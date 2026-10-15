@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T01:03:51Z"
-updated = "2026-10-15T08:46:42Z"
+updated = "2026-10-15T08:47:02Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/ir.md", "docs/spec/language.md"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Placements inside a parameterized assembly instance are evaluated per instance and lower as place Members"
-bound = false
+bound = true
 +++
 
 found while working ~NYB5TXC: geom_components excludes parameterized components; they lower structurally with valueless geometry members.
