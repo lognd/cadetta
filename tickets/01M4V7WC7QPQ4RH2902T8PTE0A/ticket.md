@@ -11,7 +11,7 @@ scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "cra
 
 [[acceptance]]
 text = "A bound Text parameter that the run must emit raises R014 (error, exit 1, file withheld), for global and dimension locators"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A Text parameter filtered out by adapter paths or unbound is not emitted and not an error"

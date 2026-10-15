@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:40:03Z"
+digest = "c0f24184141b95d11fb4b7912a43d0cfdec3e6ba9ecf64588a50819a0b363170"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4dbddeac-057f-4200-a57a-989c73fb6aef with nextest profile: default
+    Starting 1 test across 64 binaries (1393 tests skipped)
+        PASS [   0.313s] cadetta::r014_text_not_expressible bound_text_parameter_is_r014_and_withholds_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.315s] 1 test run: 1 passed, 1393 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "bound_text_parameter_is_r014"
+size = 582
+status = "measured"
+test_count = 1
+tests_digest = "9cc8d23a2d7734f75fd85a543d0a5dc738326730abbf4a7b8c65f0febef9b72c"
+at = "2026-10-15T03:40:03Z"
+actor = "lognd"
+rev = 1
