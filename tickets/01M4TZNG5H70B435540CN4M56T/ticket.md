@@ -2,11 +2,12 @@
 id = "01M4TZNG5H70B435540CN4M56T"
 title = "Import CLI accept: use cadetta_adapter::import::accept::plan"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T15:56:28Z"
-updated = "2026-10-15T02:57:41Z"
+updated = "2026-10-15T02:58:35Z"
 scope = ["crates/cadetta-cli/src/cmd/import.rs"]
 
 [[acceptance]]
