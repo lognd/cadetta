@@ -16,6 +16,10 @@ bound = false
 [[acceptance]]
 text = "Whole-number values render without a fraction in json and csv"
 bound = false
+
+[[acceptance]]
+text = "An open sync obligation (O004) is reported for a json/csv binding without drive"
+bound = false
 +++
 
 found while working ~A4RA9PQ. See json.md 4, csv.md 4, adapters.md 2.
