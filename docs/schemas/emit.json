@@ -28,6 +28,8 @@
         "properties": {
           "code": { "description": "Rule code, e.g. Q004 or R013.", "type": "string" },
           "message": { "type": "string" },
+          "schema": { "description": "Diagnostic schema id, cadetta.diag/1.", "type": "string" },
+          "severity": { "description": "Diagnostic severity.", "type": "string", "enum": ["error", "warning", "info"] },
           "path": { "description": "Canonical path concerned, when there is one.", "type": "string" }
         }
       }
