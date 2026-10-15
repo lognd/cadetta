@@ -2,7 +2,7 @@
 id = "01M4YSGF7GVFRKQPFPQ34KDRPA"
 title = "Materials index and enum compare in a check not evaluated (materials-tap-class C001)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
