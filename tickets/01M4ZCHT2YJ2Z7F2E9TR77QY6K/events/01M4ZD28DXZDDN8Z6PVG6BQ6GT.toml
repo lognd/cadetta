@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["decode_observed pushes adapter-observed frames and instances into ObservedBuilder; unit test decodes JSON with frames+instances"]
+moved = []
+at = "2026-10-15T09:07:35Z"
+actor = "lognd"
+rev = 1

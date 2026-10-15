@@ -11,10 +11,12 @@ use std::fmt;
 use std::fs;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_ir::model::{LocatorKind, LocatorMode, Project, Provenance};
+use cadetta_ir::model::{LocatorKind, LocatorMode, Project, Provenance, Value};
 use serde::{Deserialize, Serialize};
 
-use super::naming::{MemberNames, component_name};
+use super::geometry::{unit_scale, write_transform};
+use super::naming::{MemberNames, component_name, member_name};
+use crate::geometry_bind::Mat34;
 
 /// Directory of the proposal files, relative to the package root.
 pub const PROPOSAL_DIR: &str = "build/import";
@@ -42,7 +44,7 @@ pub struct Item {
     pub file: String,
     /// The native locator.
     pub locator: String,
-    /// `global | dimension | property | frame`.
+    /// `global | dimension | property | frame | instance`.
     pub kind: String,
     /// The native name.
     pub native_name: String,
@@ -62,6 +64,9 @@ pub struct Item {
     /// The proposed component type.
     #[serde(rename = "type")]
     pub component: String,
+    /// The part type of an `instance` item (the component the instance places).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub part: Option<String>,
     /// Review status.
     pub status: Status,
     /// Why the item is skipped.
@@ -164,12 +169,14 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                         unit_assumed,
                         path: allocated.name.clone(),
                         component: component_name(file),
+                        part: None,
                         status,
                         reason,
                     });
                 }
             }
         }
+        propose_geometry(project, &mut names, &mut items);
     }
     items.sort_by(|a, b| (&a.file, &a.locator).cmp(&(&b.file, &b.locator)));
     tracing::info!(adapter, items = items.len(), "import: proposal built");
@@ -177,6 +184,133 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
         adapter: adapter.to_string(),
         items,
     }
+}
+
+/// The native unit of a project: the first one its bindings name, else millimetres.
+fn native_unit(project: &Project) -> String {
+    project
+        .bindings
+        .iter()
+        .flat_map(|b| &b.locators)
+        .map(|l| l.native_unit.as_str())
+        .find(|u| !u.is_empty())
+        .unwrap_or("mm")
+        .to_owned()
+}
+
+/// The native unit and its SI length; an unknown unit falls back to millimetres with a warning.
+fn unit_and_scale(project: &Project) -> (String, f64) {
+    let unit = native_unit(project);
+    match unit_scale(&unit) {
+        Some(s) => (unit, s),
+        None => {
+            tracing::warn!(%unit, "import: unknown native unit; reading transforms as mm");
+            ("mm".to_owned(), 0.001)
+        }
+    }
+}
+
+fn read_transform(
+    rows: &[Vec<Value>],
+    scale: f64,
+    unit: &str,
+) -> Result<super::geometry::Written, String> {
+    let m = Mat34::from_observed(rows, scale).map_err(|e| e.to_string())?;
+    write_transform(&m, unit).map_err(|e| e.to_string())
+}
+
+/// Proposes a datum per observed frame and a flagged place per observed instance (7.2).
+// frob:ticket 01M4VB64CJDA2CZ4WM4MNV70G6
+fn propose_geometry(
+    project: &Project,
+    names: &mut BTreeMap<String, MemberNames>,
+    items: &mut Vec<Item>,
+) {
+    let (unit, scale) = unit_and_scale(project);
+    for f in &project.frames {
+        let component = component_name(&f.document);
+        let allocated = names
+            .entry(component.clone())
+            .or_default()
+            .allocate(&f.name);
+        let (value, status, reason) = match read_transform(&f.transform, scale, &unit) {
+            _ if allocated.name == "origin" => (
+                String::new(),
+                Status::Skip,
+                Some("the origin datum is implicit".to_owned()),
+            ),
+            Ok(w) => (
+                w.expr,
+                Status::Accept,
+                w.inexact
+                    .then(|| "rotation is not a multiple of 90deg; written as read".to_owned()),
+            ),
+            Err(e) => (String::new(), Status::Skip, Some(e)),
+        };
+        tracing::debug!(frame = %f.name, datum = %allocated.name, ?status, "import: frame proposed");
+        items.push(Item {
+            file: f.document.clone(),
+            locator: f.name.clone(),
+            kind: "frame".to_owned(),
+            native_name: f.name.clone(),
+            expression: None,
+            value,
+            unit: Some(unit.clone()),
+            unit_assumed: false,
+            path: allocated.name,
+            component,
+            part: None,
+            status,
+            reason,
+        });
+    }
+    for i in &project.instances {
+        let assembly = component_name(&i.document);
+        let stem = instance_stem(&i.component);
+        let allocated = names
+            .entry(format!("asm:{assembly}"))
+            .or_default()
+            .allocate(&stem);
+        let part = component_name(i.reference.as_deref().unwrap_or(&stem));
+        let (value, status, reason) = match read_transform(&i.transform, scale, &unit) {
+            Ok(w) => (
+                w.expr,
+                Status::Accept,
+                Some(if w.inexact {
+                    "placed at the origin with the read transform (rotation as read); re-anchor on a datum of the host"
+                } else {
+                    "placed at the origin with the read transform; re-anchor on a datum of the host"
+                }
+                .to_owned()),
+            ),
+            Err(e) => (String::new(), Status::Skip, Some(e)),
+        };
+        tracing::debug!(instance = %i.component, part = %allocated.name, ?status, "import: instance proposed");
+        items.push(Item {
+            file: i.document.clone(),
+            locator: i.component.clone(),
+            kind: "instance".to_owned(),
+            native_name: i.component.clone(),
+            expression: None,
+            value,
+            unit: Some(unit.clone()),
+            unit_assumed: false,
+            path: allocated.name,
+            component: assembly,
+            part: Some(part),
+            status,
+            reason,
+        });
+    }
+}
+
+/// An instance name without its occurrence suffix (`bracket<2>` -> `bracket`).
+fn instance_stem(name: &str) -> String {
+    let base = name.split('<').next().unwrap_or(name);
+    let base = base.trim_end_matches(|c: char| c.is_ascii_digit());
+    let base = base.trim_end_matches(['-', ':', '_']);
+    let base = if base.is_empty() { name } else { base };
+    member_name(base)
 }
 
 /// Renders the `.cdt` scaffold: one `model` per file with its accepted items.
@@ -200,19 +334,43 @@ pub fn render_cdt(p: &Proposal) -> String {
     out
 }
 
-/// Renders one `model <component> { ... }` block for the given items.
+/// Renders the items of one native file: a `model` for members and frames, then an `assembly`
+/// with a `part` and a `place` per instance (7.2).
 pub fn render_model(component: &str, items: &[&Item]) -> String {
-    let mut out = format!("model {component} {{\n");
-    for i in items {
-        let unit = i.unit.as_deref().unwrap_or("");
-        let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
-            i.value.clone()
-        } else {
-            format!("{}{unit}", i.value)
-        };
-        out.push_str(&format!("  {} = {lit}\n", i.path));
+    let (instances, members): (Vec<&Item>, Vec<&Item>) =
+        items.iter().partition(|i| i.kind == "instance");
+    let mut out = String::new();
+    if !members.is_empty() || instances.is_empty() {
+        out.push_str(&format!("model {component} {{\n"));
+        for i in members {
+            if i.kind == "frame" {
+                out.push_str(&format!("  datum {} = {}\n", i.path, i.value));
+                continue;
+            }
+            let unit = i.unit.as_deref().unwrap_or("");
+            let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
+                i.value.clone()
+            } else {
+                format!("{}{unit}", i.value)
+            };
+            out.push_str(&format!("  {} = {lit}\n", i.path));
+        }
+        out.push_str("}\n");
     }
-    out.push_str("}\n");
+    if !instances.is_empty() {
+        if !out.is_empty() {
+            out.push('\n');
+        }
+        out.push_str(&format!("assembly {component} {{\n"));
+        for i in &instances {
+            let part = i.part.as_deref().unwrap_or(&i.component);
+            out.push_str(&format!("  part {}: {part}\n", i.path));
+        }
+        for i in &instances {
+            out.push_str(&format!("  place {}.origin at {}\n", i.path, i.value));
+        }
+        out.push_str("}\n");
+    }
     out
 }
 
@@ -237,7 +395,9 @@ pub fn write_proposal(root: &FsPath, p: &Proposal) -> Result<Vec<PathBuf>, Propo
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cadetta_ir::model::{Exact, Locator, Nominal, PackageId};
+    use cadetta_ir::model::{
+        Exact, Locator, Nominal, ObservedFrame, ObservedInstance, PackageId, Value,
+    };
     use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
     use cadetta_units::{Dim, Magnitude, Rational};
 
@@ -319,5 +479,119 @@ mod tests {
         assert!(text.contains("unit_assumed = true"));
         let q = propose("solidworks", &[observed(None)]);
         assert!(q.items.iter().all(|i| !i.unit_assumed));
+    }
+
+    fn num_value(n: i64, den: i64) -> Value {
+        Value::new(
+            Nominal::Exact(Exact(Magnitude::new(Rational::new(n, den).unwrap(), 0))),
+            Dim::default(),
+            n.to_string(),
+        )
+    }
+
+    /// A 3x4 transform: integer rotation entries and a translation in millimetres (as metres).
+    fn rows(rot: [[i64; 3]; 3], t_mm: [i64; 3]) -> Vec<Vec<Value>> {
+        (0..3)
+            .map(|r| {
+                let mut row: Vec<Value> = rot[r].iter().map(|n| num_value(*n, 1)).collect();
+                row.push(num_value(t_mm[r], 1000));
+                row
+            })
+            .collect()
+    }
+
+    const IDENT: [[i64; 3]; 3] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const RZ90: [[i64; 3]; 3] = [[0, -1, 0], [1, 0, 0], [0, 0, 1]];
+
+    fn geometry_project() -> Project {
+        let pkg = PackageId {
+            name: "acme.rover".into(),
+            version: "0.0.0".into(),
+        };
+        let mut b = ObservedBuilder::new(pkg, "solidworks", "drive.SLDASM").unwrap();
+        b.push(param("B", 5, None, LocatorMode::Value)).unwrap();
+        for (name, rot, t) in [
+            ("Mount", RZ90, [14, 0, 0]),
+            ("Rail__site", IDENT, [0, -3, 2]),
+            ("Origin", IDENT, [0, 0, 0]),
+        ] {
+            b.push_frame(ObservedFrame {
+                name: name.into(),
+                document: "rail.SLDPRT".into(),
+                transform: rows(rot, t),
+            })
+            .unwrap();
+        }
+        b.push_instance(ObservedInstance {
+            component: "bracket<1>".into(),
+            document: "drive.SLDASM".into(),
+            reference: Some("bracket".into()),
+            transform: rows(RZ90, [10, 20, 0]),
+        })
+        .unwrap();
+        b.push_instance(ObservedInstance {
+            component: "bracket<2>".into(),
+            document: "drive.SLDASM".into(),
+            reference: Some("bracket".into()),
+            transform: rows(IDENT, [0, 0, 5]),
+        })
+        .unwrap();
+        b.build()
+    }
+
+    // frob:ticket 01M4VB64CJDA2CZ4WM4MNV70G6
+    // frob:tests frames_become_datums
+    #[test]
+    fn frames_become_datums() {
+        let p = propose("solidworks", &[geometry_project()]);
+        let frame = |loc: &str| {
+            p.items
+                .iter()
+                .find(|i| i.kind == "frame" && i.locator == loc)
+        };
+        let mount = frame("Mount").unwrap();
+        assert_eq!(mount.component, "Rail");
+        assert_eq!(mount.path, "mount");
+        assert_eq!(mount.value, "origin.offset(x = 14mm).rotate(z = 90deg)");
+        assert_eq!(mount.status, Status::Accept);
+        assert_eq!(mount.reason, None);
+        let rail = frame("Rail__site").unwrap();
+        assert_eq!(rail.path, "rail_site");
+        assert_eq!(rail.value, "origin.offset(y = -3mm, z = 2mm)");
+        let origin = frame("Origin").unwrap();
+        assert_eq!(origin.status, Status::Skip);
+        assert!(origin.reason.as_deref().unwrap().contains("implicit"));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("model Rail {"));
+        assert!(cdt.contains("  datum mount = origin.offset(x = 14mm).rotate(z = 90deg)\n"));
+        assert!(!cdt.contains("datum origin"));
+    }
+
+    // frob:tests instances_become_flagged_places
+    #[test]
+    fn instances_become_flagged_places() {
+        let p = propose("solidworks", &[geometry_project()]);
+        let inst: Vec<&Item> = p.items.iter().filter(|i| i.kind == "instance").collect();
+        assert_eq!(inst.len(), 2);
+        assert_eq!(inst[0].locator, "bracket<1>");
+        assert_eq!(inst[0].component, "Drive");
+        assert_eq!(inst[0].path, "bracket");
+        assert_eq!(inst[1].path, "bracket_2");
+        assert_eq!(inst[0].part.as_deref(), Some("Bracket"));
+        assert_eq!(
+            inst[0].value,
+            "origin.offset(x = 10mm, y = 20mm).rotate(z = 90deg)"
+        );
+        assert_eq!(inst[0].status, Status::Accept);
+        assert!(inst[0].reason.as_deref().unwrap().contains("re-anchor"));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("assembly Drive {"));
+        assert!(cdt.contains("  part bracket: Bracket\n"));
+        assert!(cdt.contains(
+            "  place bracket.origin at origin.offset(x = 10mm, y = 20mm).rotate(z = 90deg)\n"
+        ));
+        let text = toml::to_string(&p).unwrap();
+        let back: Proposal = toml::from_str(&text).unwrap();
+        assert_eq!(back, p);
     }
 }
