@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:30:46Z"
+updated = "2026-10-15T03:30:47Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**"]
 
 [[acceptance]]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "N006: a type member read beside an instance is reported"
-bound = false
+bound = true
 +++
 
 Split from ~8WN9V3R. Fixtures tests/conformance/language/n001-case, n004-was, n006-type-read-beside-instance disagree with the binary (see tests/conformance/known-gaps.toml).
