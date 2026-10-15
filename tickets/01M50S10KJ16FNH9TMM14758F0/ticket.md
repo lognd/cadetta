@@ -4,9 +4,10 @@ title = "Conformance fixture emitters/sw-equations/read-unparsed-line-kept-raw c
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-15T21:55:52Z"
-updated = "2026-10-15T21:55:52Z"
+updated = "2026-10-15T22:07:57Z"
 scope = ["tests/conformance/**"]
 +++
 
