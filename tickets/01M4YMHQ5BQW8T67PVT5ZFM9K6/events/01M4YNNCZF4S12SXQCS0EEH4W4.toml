@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:18:19Z"
+digest = "71fd8c2720da9722b67f1218d5242dc5026119709eeeed73edbe913ef301caed"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.77s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f4798f50-bf4e-4581-a1d5-32035b0186ca with nextest profile: default
+    Starting 1 test across 55 binaries (1296 tests skipped)
+        PASS [   2.016s] cadetta::ir_entries ir_validate_corpus_matches_expected_exit_codes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   2.018s] 1 test run: 1 passed, 1296 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "ir_validate_corpus_matches"
+size = 989
+status = "measured"
+test_count = 1
+tests_digest = "5cde562d1409a6329900e94c16cf9cb77b8fa45a965463aa2c57c201c6bf6ca5"
+at = "2026-10-15T02:18:19Z"
+actor = "lognd"
+rev = 1

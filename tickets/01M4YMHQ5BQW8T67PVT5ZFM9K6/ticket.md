@@ -13,7 +13,7 @@ scope = ["crates/cadetta-cli/src/**", "docs/spec/config-cli.md", "crates/cadetta
 
 [[acceptance]]
 text = "ir-validate and lint FILE verbs exist with the exit codes in config-cli.md 3.9"
-bound = false
+bound = true
 +++
 
 Spec config-cli.md 3.9 (added by ~ZM6GZJ0) defines ir-validate and lint on IR JSON; neither verb exists in the CLI.
