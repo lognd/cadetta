@@ -2,11 +2,12 @@
 id = "01M4V1HE1BBZJAMC8BM0YYT3TP"
 title = "Quantities: 20degC - 5degC yields Temperature not TemperatureDelta; affine multiply not rejected"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-15T02:08:21Z"
+updated = "2026-10-15T02:08:31Z"
 idempotency_key = "Z48-affine"
 scope = ["crates/cadetta-sema/**", "changelog.d/01M4V1HE1BBZJAMC8BM0YYT3TP.fixed.md", "tests/conformance/known-gaps.toml"]
 
