@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T07:35:24Z"
-updated = "2026-10-15T07:54:08Z"
+updated = "2026-10-15T07:59:47Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/lower.rs"]
 
 [[acceptance]]
 text = "golden 04/07/08 cadetta ir succeed (fits on component-argument operands derived per instance)"
-bound = false
+bound = true
 +++
 
 found while working ~C7DZBZH
