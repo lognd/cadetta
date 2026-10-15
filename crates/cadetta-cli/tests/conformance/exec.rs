@@ -11,6 +11,8 @@ use serde_json::{Value, json};
 use crate::binding;
 use crate::compare::Produced;
 use crate::expect::{Block, Expect};
+#[path = "import.rs"]
+mod import_exec; // nested like `protocol`, for the same reason
 #[path = "protocol.rs"]
 mod protocol; // nested so every conformance target gets it without a new `mod` line
 #[path = "push_plan.rs"]
@@ -50,6 +52,7 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("source", "init", init),
     ("binding", "classify", classify),
     ("binding", "emit", binding::emit_scope),
+    ("binding", "import", import_exec::run),
     ("binding", "protocol", protocol::run),
     ("binding", "push-plan", push_plan::run),
     ("binding", "read", read::read),
