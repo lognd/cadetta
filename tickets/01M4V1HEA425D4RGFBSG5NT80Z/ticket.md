@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "an inexact operand clear of the boundary holds with no diagnostic"
-bound = false
+bound = true
 +++
 
 found while working ~Z48GXKX. quantities.md 5.8. Fixture c002-inexact-boundary.
