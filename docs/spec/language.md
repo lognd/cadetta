@@ -227,6 +227,9 @@ optionally, approved alternates: `part wheel[4]: Caster = Vendor4471B
 alt [Colson2Series]`. Code that reads `wheel.hub_bore` depends on the
 interface only, so:
 
+- **Reads resolve to the primary**: a read such as `wheel.hub_bore` (or a
+  solver `in` or `check` over it) evaluates against the slot's primary
+  implementer.
 - **Swapping is one edit**: change the primary. Nothing else is touched.
 - **Alternates are verified continuously** by variant evaluation: for
   each part slot and each of its alternates, the alternate replaces the

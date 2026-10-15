@@ -19,7 +19,7 @@ use std::fmt;
 
 use cadetta_syntax::ast::{
     Arg, Block, Component, Expr, ExprKind, File, FnDecl, Ident, Interface, InterfaceMemberKind,
-    Item, ItemKind, Member, MemberKind, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath,
+    Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath,
     UseRoot, UseTree, UseTreeKind, Vis,
 };
 use cadetta_syntax::span::Span;
@@ -567,6 +567,33 @@ impl<'a> Resolver<'a> {
         let Ok(Resolved::Item { path, .. }) = self.resolve_path(&scope, tp, None) else {
             return None;
         };
+        Some((path.clone(), self.component(&path)?))
+    }
+
+    /// The component a part slot stands for: its declared component type, or, for an
+    /// interface-typed slot, the component its primary constructor names.
+    // frob:ticket 01M4Y77276XRHD2NDXHJMCB8NQ
+    pub fn slot_component(
+        &self,
+        package: &str,
+        module: &[String],
+        part: &Part,
+    ) -> Option<(CanonPath, &'a Component)> {
+        if let Some(found) = self.part_type(package, module, &part.ty) {
+            return Some(found);
+        }
+        let primary = part.primary.as_ref()?;
+        let scope = Ctx {
+            package: package.to_owned(),
+            module: module.to_vec(),
+            component: None,
+            locals: Vec::new(),
+        };
+        let Ok(Resolved::Item { path, .. }) = self.resolve_path(&scope, &primary.path, None)
+        else {
+            return None;
+        };
+        trace!(slot = %part.name.name, primary = %path, "interface slot resolved to its primary");
         Some((path.clone(), self.component(&path)?))
     }
 

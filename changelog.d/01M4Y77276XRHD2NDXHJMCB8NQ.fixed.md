@@ -1,0 +1,1 @@
+Reading a member through an interface-typed part slot (`part motor: Motor = MotorA alt [MotorB]`, `motor.mass`) now evaluates against the slot's primary component instead of failing with "the type of part is unknown".

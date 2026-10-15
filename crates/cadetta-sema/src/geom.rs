@@ -205,7 +205,7 @@ fn step_part(
         .ok_or_else(|| format!("no component `{}`", cur.item))?;
     let part = find_part(comp, name).ok_or_else(|| format!("`{name}` is not a part"))?;
     let (next, _) = resolver
-        .part_type(&cur.package, &cur.modules, &part.ty)
+        .slot_component(&cur.package, &cur.modules, part)
         .ok_or_else(|| format!("the type of part `{name}` is unknown"))?;
     Ok((next, part.count.is_some()))
 }
