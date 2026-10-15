@@ -11,7 +11,7 @@ scope = ["tests/conformance/stdlib/**", "crates/cadetta-sema/src/deps.rs", "crat
 
 [[acceptance]]
 text = "A priv member read through an instance of an imported component (j.major) raises E016; pub members stay clean."
-bound = false
+bound = true
 +++
 
 Fixtures failing against the binary, gapped in known-gaps.toml: d003-joint-reads-itself e016-joint-priv-intermediate m003-hole-fit-side policy-iso-default-silent. Found while working ~GDYVJ8R.
