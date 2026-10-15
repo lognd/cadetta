@@ -19,18 +19,13 @@ reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
 fixture = "language/i002-alternate-not-viable"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/i002-never-cross-product"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
+ticket = "~0N5FY1T"
+reason = "variant verdicts are wired, but an unindexed read of a counted part array (wheel.load_rating on part wheel[4]) is an EVAL error pending ~0N5FY1T"
 
 [[gap]]
 fixture = "language/i003-alternate-undecided"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
+ticket = "~0N5FY1T"
+reason = "variant verdicts are wired, but an unindexed read of a counted part array (wheel.load_rating on part wheel[4]) is an EVAL error pending ~0N5FY1T"
 
 [[gap]]
 fixture = "obligations/o003-require-signoff-open"

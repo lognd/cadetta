@@ -315,8 +315,9 @@ I rule implementation notes (0.1.0): I001 checks every non-optional
 interface member and every interface datum by member-root name. I002
 and I003 read the per-alternate check verdicts only (fits, bounds and
 requires reach them through checks); I002 is raised per check and
-alternate, and only when the primary does not itself fail that check
-(then it is C001). I003 requires the alternate to fail no check. I004
+alternate, located at the alternate's variant key
+(`PKG::Owner/slot=PKG::Alt`) with the check named in the message, and
+only when the primary does not itself fail that check (then it is C001). I003 requires the alternate to fail no check. I004
 skips private components (U002) and components some part names as its
 type, primary or alternate. U002 skips assemblies: an assembly is an entry point,
 not dead code, even when private and unnamed.

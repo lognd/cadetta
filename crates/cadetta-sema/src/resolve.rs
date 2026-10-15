@@ -18,7 +18,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    Arg, Block, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface,
+    Arg, Block, BoundKind, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface,
     InterfaceMemberKind, Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind,
     Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
 };
@@ -841,10 +841,21 @@ impl<'a> Resolver<'a> {
         })
     }
 
+    /// True when interface `i` (or one it extends) declares `member` as a field or bound.
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
     fn interface_has(&self, id: &CanonPath, i: &Interface, member: &str, depth: usize) -> bool {
-        if i.members.iter().any(
-            |m| matches!(&m.kind, InterfaceMemberKind::Field { name, .. } if name.name == member),
-        ) {
+        // A bound (`load_rating >= 400N`) names a member every implementer carries (language.md 3.2).
+        let declares = |m: &cadetta_syntax::ast::InterfaceMember| match &m.kind {
+            InterfaceMemberKind::Field { name, .. } => name.name == member,
+            InterfaceMemberKind::Bound(b) => match &b.kind {
+                BoundKind::Le { name, .. }
+                | BoundKind::Ge { name, .. }
+                | BoundKind::In { name, .. } => name.name == member,
+                BoundKind::Eq { .. } => false,
+            },
+            _ => false,
+        };
+        if i.members.iter().any(declares) {
             return true;
         }
         if depth >= MAX_USE_DEPTH {
@@ -1633,6 +1644,27 @@ mod tests {
         assert!(matches!(arg, Resolved::Arg { ref name, .. } if name == "n"));
         let e = r.resolve_ref(&c, &expr_of("nothing"), None).unwrap_err();
         assert_eq!(e.code, "E002");
+    }
+
+    // frob:tests crates/cadetta-sema/src/resolve.rs::interface_has
+    #[test]
+    fn interface_bound_names_a_member() {
+        let f = file(
+            "interface Caster {\n  diameter: Length\n  load_rating >= 400N\n}\nmodel M { v = 1mm }\n",
+        );
+        let (r, errs) = Resolver::new(vec![pkg("p", &[], vec![(&[], &f)], &[])]);
+        assert!(errs.is_empty());
+        let iface = f
+            .items()
+            .find_map(|i| match &i.kind {
+                ItemKind::Interface(i) => Some(i),
+                _ => None,
+            })
+            .unwrap();
+        let id = CanonPath::item("p", &[], "Caster");
+        assert!(r.interface_has(&id, iface, "diameter", 0));
+        assert!(r.interface_has(&id, iface, "load_rating", 0));
+        assert!(!r.interface_has(&id, iface, "nothing", 0));
     }
 
     // frob:tests declaration_order_is_irrelevant

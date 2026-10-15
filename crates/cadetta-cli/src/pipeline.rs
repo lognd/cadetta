@@ -755,7 +755,7 @@ struct VariantEnv<'a, 'p> {
     resolver: &'a Resolver<'p>,
     units: &'a UnitTable,
     sources: &'a [PackageSrc<'a>],
-    cache: std::cell::RefCell<BTreeMap<String, bool>>,
+    cache: std::cell::RefCell<BTreeMap<String, std::rc::Rc<cadetta_sema::eval::Evaluation>>>,
 }
 
 impl<'a, 'p> VariantEnv<'a, 'p> {
@@ -773,6 +773,47 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         }
     }
 
+    /// The design evaluated with `alt` swapped into `owner`'s `slot`, cached per swap.
+    ///
+    /// Returns the swap key with the evaluation, or `None` when the alternate does not resolve.
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+    fn evaluation_for(
+        &self,
+        owner: &CanonPath,
+        slot: &str,
+        package: &str,
+        module: &[String],
+        alt: &cadetta_syntax::ast::Ctor,
+    ) -> Option<(String, std::rc::Rc<cadetta_sema::eval::Evaluation>)> {
+        let Some((alt_path, _)) = self.resolver.ctor_component(package, module, alt) else {
+            tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
+            return None;
+        };
+        let selection = Selection {
+            owner: owner.clone(),
+            slot: slot.to_owned(),
+            alt: alt_path,
+        };
+        let key = selection.key();
+        if let Some(cached) = self.cache.borrow().get(&key) {
+            return Some((key, cached.clone()));
+        }
+        let evaluator =
+            Evaluator::new(self.resolver, self.units, self.sources).with_selection(selection);
+        let evaluation = std::rc::Rc::new(evaluator.evaluate());
+        let violated: Vec<String> = evaluation
+            .checks
+            .iter()
+            .filter(|r| r.verdict == Verdict::Violates)
+            .map(|r| r.path.to_string())
+            .collect();
+        tracing::info!(variant = %key, viable = violated.is_empty(), ?violated, "pipeline: alternate viability evaluated");
+        self.cache
+            .borrow_mut()
+            .insert(key.clone(), evaluation.clone());
+        Some((key, evaluation))
+    }
+
     /// True when no check or require violates with `alt` swapped into `owner`'s `slot`.
     fn alternate_holds(
         &self,
@@ -782,33 +823,51 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         module: &[String],
         alt: &cadetta_syntax::ast::Ctor,
     ) -> bool {
-        let Some((alt_path, _)) = self.resolver.ctor_component(package, module, alt) else {
-            tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
-            return true;
-        };
-        let selection = Selection {
-            owner: owner.clone(),
-            slot: slot.to_owned(),
-            alt: alt_path,
-        };
-        let key = selection.key();
-        if let Some(held) = self.cache.borrow().get(&key) {
-            return *held;
-        }
-        let evaluator =
-            Evaluator::new(self.resolver, self.units, self.sources).with_selection(selection);
-        let evaluation = evaluator.evaluate();
-        let violated: Vec<String> = evaluation
-            .checks
-            .iter()
-            .filter(|r| r.verdict == Verdict::Violates)
-            .map(|r| r.path.to_string())
-            .collect();
-        let held = violated.is_empty();
-        tracing::info!(variant = %key, viable = held, ?violated, "pipeline: alternate viability evaluated");
-        self.cache.borrow_mut().insert(key, held);
-        held
+        self.evaluation_for(owner, slot, package, module, alt)
+            .is_none_or(|(_, e)| e.checks.iter().all(|r| r.verdict != Verdict::Violates))
     }
+}
+
+/// Evaluations of every one-alternate-at-a-time swap in the in-scope packages, by variant key.
+///
+/// Feeds `Check.verdicts.per_alternate` so I002/I003 see each alternate (language.md 3.2).
+// frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+fn alternate_evaluations(
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    env: &VariantEnv<'_, '_>,
+) -> BTreeMap<String, std::rc::Rc<cadetta_sema::eval::Evaluation>> {
+    let mut out = BTreeMap::new();
+    for p in parsed
+        .iter()
+        .filter(|p| !p.is_std && scope.contains(&p.name))
+    {
+        for m in &p.modules {
+            for item in m.file.items() {
+                let ItemKind::Component(c) = &item.kind else {
+                    continue;
+                };
+                let owner = CanonPath::item(&p.name, &m.path, &c.name.name);
+                for mem in &c.members {
+                    let MemberKind::Part(part) = &mem.kind else {
+                        continue;
+                    };
+                    for alt in &part.alts {
+                        if let Some((key, e)) =
+                            env.evaluation_for(&owner, &part.name.name, &p.name, &m.path, alt)
+                        {
+                            out.insert(key, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    tracing::debug!(
+        variants = out.len(),
+        "pipeline: alternate evaluations collected"
+    );
+    out
 }
 
 /// L001/L002: lifecycle facts for the primary of every part slot in scope.
@@ -1385,6 +1444,10 @@ fn evaluate_stages(
         ));
     }
 
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+    let alternates = alternate_evaluations(parsed, scope, &variant_env);
+    let variant_refs: BTreeMap<String, &cadetta_sema::eval::Evaluation> =
+        alternates.iter().map(|(k, e)| (k.clone(), &**e)).collect();
     // Lower each in-scope package and run the IR lints over it.
     let lower_one = |p: &ParsedPackage| {
         let texts: BTreeMap<Vec<String>, SourceText> = p
@@ -1409,7 +1472,7 @@ fn evaluate_stages(
             evaluation: &evaluation,
             compensation: Some(&outcome),
             deps: &graph,
-            variants: BTreeMap::new(),
+            variants: variant_refs.clone(),
             fits: &derived_fits,
         })
     };

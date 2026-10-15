@@ -7,9 +7,7 @@
 use std::collections::BTreeMap;
 
 use cadetta_ir::entities::Interface;
-use cadetta_ir::model::{
-    Check, Component, ComponentClass, MemberKind, Project, SpanRef, VerdictState,
-};
+use cadetta_ir::model::{Component, ComponentClass, MemberKind, Project, SpanRef, VerdictState};
 use tracing::{debug, trace};
 
 use crate::diag::{Diagnostic, Location, Severity};
@@ -124,7 +122,6 @@ pub fn check_alternates(project: &Project) -> Vec<Diagnostic> {
                     out.push(alt_diag(
                         I002,
                         Severity::Warning,
-                        k,
                         alt,
                         format!("approved alternate `{alt}` violates check `{}`", k.path),
                     ));
@@ -137,7 +134,6 @@ pub fn check_alternates(project: &Project) -> Vec<Diagnostic> {
                     out.push(alt_diag(
                         I003,
                         Severity::Info,
-                        k,
                         alt,
                         format!(
                             "approved alternate `{alt}` leaves check `{}` undecided",
@@ -152,10 +148,11 @@ pub fn check_alternates(project: &Project) -> Vec<Diagnostic> {
     out
 }
 
-/// Build an alternate diagnostic on `check`.
-fn alt_diag(code: &str, sev: Severity, check: &Check, alt: &str, msg: String) -> Diagnostic {
+/// Build an alternate diagnostic located at the alternate's variant key.
+// frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+fn alt_diag(code: &str, sev: Severity, alt: &str, msg: String) -> Diagnostic {
     let mut d = Diagnostic::new(code, sev, msg);
-    d.path = Some(check.path.to_string());
+    d.path = Some(alt.to_owned());
     d.alt = Some(alt.to_owned());
     d
 }
@@ -211,6 +208,7 @@ mod tests {
     use crate::engine::{LintConfig, Suppressions, apply};
     use cadetta_ir::entities::InterfaceMember;
     use cadetta_ir::entities::Waiver;
+    use cadetta_ir::model::Check;
     use cadetta_ir::model::{Flavour, Member, PackageId, Part, Verdicts};
     use cadetta_ir::path::{Path, PathContext};
     use cadetta_ir::variant_name::ComponentPath;
@@ -350,6 +348,7 @@ mod tests {
         assert_eq!(d[0].code, "I002");
         assert_eq!(d[0].severity, Severity::Warning);
         assert_eq!(d[0].alt.as_deref(), Some("wheel=Colson"));
+        assert_eq!(d[0].path.as_deref(), Some("wheel=Colson"));
         proj.checks[0] = check_with(VerdictState::Fail, VerdictState::Fail);
         assert!(check_alternates(&proj).is_empty());
     }
