@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["given(x) is true only when the optional argument was supplied", "#[when(cond)] members are absent while cond is false", "reading an absent member is E002"]
+moved = []
+at = "2026-10-15T04:28:31Z"
+actor = "lognd"
+rev = 1
