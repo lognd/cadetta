@@ -1,0 +1,10 @@
+kind = "create"
+title = "Lint E-family resolution errors through e::lift_resolution in check"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/pipeline.rs"]
+body = "found while working ~4H7PTZX: resolve errors surface as fixed errors via located(); routing through cadetta_lint e::lift_resolution changes message text."
+at = "2026-10-15T02:06:10Z"
+actor = "lognd"
+rev = 1
