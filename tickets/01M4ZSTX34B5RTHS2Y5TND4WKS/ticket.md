@@ -2,12 +2,12 @@
 id = "01M4ZSTX34B5RTHS2Y5TND4WKS"
 title = "O004 open sync obligation for a json/csv/sw-equations binding without drive"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T12:50:45Z"
-updated = "2026-10-15T16:08:48Z"
+updated = "2026-10-15T16:08:54Z"
 scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-lint/src/rules/o004_w005.rs", "crates/cadetta-obligations/**"]
 
 [[acceptance]]
