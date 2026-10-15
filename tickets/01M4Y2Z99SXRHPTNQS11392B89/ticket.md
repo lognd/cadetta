@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-15T10:19:39Z"
+updated = "2026-10-15T10:20:07Z"
 labels = ["creates:crates/cadetta-lint/src/rules/g008.rs", "creates:tests/conformance/lints/G008/**"]
 scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md", "tests/conformance/known-gaps.toml", "tests/conformance/geometry/g008-*"]
 
