@@ -2,11 +2,12 @@
 id = "01M4Y77276XRHD2NDXHJMCB8NQ"
 title = "Reads through a part slot (wheel.load_rating) fail with E002; slot primary is never consulted"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T01:54:48Z"
+updated = "2026-10-15T01:55:22Z"
 scope = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/resolve.rs", "crates/cadetta-sema/tests/interface_slots.rs", "docs/spec/language.md", "changelog.d/01M4Y77276XRHD2NDXHJMCB8NQ.fixed.md"]
 
 [[acceptance]]
