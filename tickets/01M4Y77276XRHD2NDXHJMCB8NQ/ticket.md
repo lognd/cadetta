@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "
 
 [[acceptance]]
 text = "Reading a member through an interface-typed part slot evaluates against the slot's primary component (check load_ok: wheel.load_rating >= 440N with part wheel: Caster = Good yields a verdict, no E002)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'An interface-typed slot with a primary resolves for a solver input read (part motor: Motor = MotorA alt [MotorB]; in m = motor.mass) to MotorA, not "the type of part is unknown"'
