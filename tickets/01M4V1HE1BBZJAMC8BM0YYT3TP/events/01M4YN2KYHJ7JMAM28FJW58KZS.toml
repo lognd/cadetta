@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:08:00Z"
+digest = "690a43d6a0bb0b1391ae66fdcd4dcb3a42265eb29b441204f4b408febf449cfb"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 56a10905-6c85-4ee4-80bf-084cce7d1569 with nextest profile: default
+    Starting 1 test across 52 binaries (1279 tests skipped)
+        PASS [   0.026s] cadetta-sema kindcheck::tests::affine_multiply_is_q002_but_delta_unit_is_fine
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.028s] 1 test run: 1 passed, 1279 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "affine_multiply_is_q002_but_delta_unit_is_fine"
+size = 784
+status = "measured"
+test_count = 1
+tests_digest = "3067141b99a8f73ad6782b38f12f4d79cefa7fe91825b04b048604d27c3db07e"
+at = "2026-10-15T02:08:00Z"
+actor = "lognd"
+rev = 1
