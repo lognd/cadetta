@@ -8,7 +8,7 @@ points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T09:12:29Z"
+updated = "2026-10-15T09:12:37Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/README.md"]
 
 [[acceptance]]
