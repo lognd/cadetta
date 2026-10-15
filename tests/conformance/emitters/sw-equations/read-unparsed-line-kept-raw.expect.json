@@ -11,7 +11,7 @@
     "observed": {
       "A": {
         "exact": false,
-        "raw": "\"A\" = IIF(\"B\" > 1, 2, 3)"
+        "raw": "\"A\" = FROB(\"B\" > 1, 2, 3)"
       }
     }
   },
