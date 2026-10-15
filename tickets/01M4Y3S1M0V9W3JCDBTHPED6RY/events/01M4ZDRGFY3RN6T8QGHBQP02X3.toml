@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T09:19:20Z"
+digest = "3ab03a56c66fc90b3f389f87f76c9f0c0a9540880e1a79d6dd4721176b0a7ef1"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.29s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a73a7315-c4d8-440b-a6a4-7cd49e0c2981 with nextest profile: default
+    Starting 1 test across 1 binary (155 tests skipped)
+        PASS [   0.006s] cadetta-adapter sync::tests::regen_failure_restores_snapshot_and_skips_lock
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 155 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter regen_failure_restores_snapshot_and_skips_lock"
+size = 823
+status = "measured"
+test_count = 1
+tests_digest = "3b88c74434d495127f84e7af082592c22fc7b64cbf5994ff943979fb5546612e"
+at = "2026-10-15T09:19:20Z"
+actor = "lognd"
+rev = 1
