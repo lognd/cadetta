@@ -2,7 +2,8 @@
 id = "01M4YR9ZHDP7SF9KGMDBV5FGCF"
 title = "solvers: freshness stdout and S005 fixtures fail (4 fixtures)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
