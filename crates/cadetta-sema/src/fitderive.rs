@@ -11,7 +11,7 @@ use std::collections::BTreeMap;
 use cadetta_ir::model::{Bound, BoundOp, Exact};
 use cadetta_syntax::ast::{self, Component, Fit, FitSpec, MemberKind};
 use cadetta_syntax::span::Span;
-use cadetta_units::{Magnitude, ToleranceError, Toleranced};
+use cadetta_units::{Magnitude, Role, ToleranceError, Toleranced};
 use tracing::{debug, trace, warn};
 
 use crate::eval::{Evaluation, Evaluator, Quant, Val};
@@ -67,6 +67,38 @@ fn each_fit<'a>(packages: &'a [PackageSrc<'a>]) -> impl Iterator<Item = FitSite<
             })
         })
     })
+}
+
+/// The tolerance role each fit implies for the member it names (quantities.md 5.6).
+///
+/// `hole / shaft` paths give the first the hole role and the second the shaft role; a single
+/// class fit gives its `on` member the mate of the class's role. A class pair names one member
+/// on both sides, so it implies nothing. The first fit to name a member wins.
+// frob:ticket 01M4YNBWZ43RJ19ECMQ4280WEP
+pub(crate) fn implied_roles(
+    resolver: &Resolver,
+    packages: &[PackageSrc],
+) -> BTreeMap<CanonPath, Role> {
+    let mut out = BTreeMap::new();
+    for (pkg, module, c, f, _) in each_fit(packages) {
+        let ctx = ctx_of(pkg, module, c);
+        let named: Vec<(&ast::Path, Role)> = match &f.spec {
+            FitSpec::Paths(a, b) => vec![(a, Role::Hole), (b, Role::Shaft)],
+            FitSpec::Class(class) => match cadetta_fits::parse_class(&class.name) {
+                Ok(parsed) => vec![(&f.on, crate::fits::role_of(parsed.side).mate())],
+                Err(_) => continue,
+            },
+            FitSpec::Pair(..) => continue,
+        };
+        for (path, role) in named {
+            let Ok(Resolved::Member { path: p, .. }) = resolver.resolve_path(&ctx, path, None) else {
+                continue;
+            };
+            trace!(member = %p, ?role, fit = %f.name.name, "fits: fit implies a role");
+            out.entry(p).or_insert(role);
+        }
+    }
+    out
 }
 
 /// Evaluates the required range of every fit; run before `Evaluator::evaluate` consumes it.

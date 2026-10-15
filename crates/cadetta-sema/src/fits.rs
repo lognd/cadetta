@@ -160,7 +160,7 @@ fn apply(dim: &Dim, nominal: &Magnitude, r: &Resolved) -> Result<Toleranced, Tol
     )
 }
 
-fn role_of(side: Side) -> Role {
+pub(crate) fn role_of(side: Side) -> Role {
     match side {
         Side::Hole => Role::Hole,
         Side::Shaft => Role::Shaft,
@@ -496,5 +496,14 @@ mod tests {
         .unwrap();
         let e = analyze(&FitSpec::Class(ident("p6")), &frac, None, None).unwrap_err();
         assert_eq!(e, FitFailure::NominalNotNanometres);
+    }
+
+    // frob:tests FitFailure.code
+    #[test]
+    fn failure_codes_name_the_lint_rule() {
+        assert_eq!(FitFailure::NominalNotNanometres.code(), Some("F002"));
+        let iso = FitFailure::Iso(FitError::UnknownClass { class: "Z9".to_owned() });
+        assert_eq!(iso.code(), Some("F001"));
+        assert_eq!(FitFailure::OperandMismatch.code(), None);
     }
 }

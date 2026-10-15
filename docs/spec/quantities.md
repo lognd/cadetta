@@ -108,7 +108,7 @@ and `kind` declarations, language.md 3.10):
 
 Every unit has an exact factor `r * pi^k` to SI; affine temperature units
 also carry an exact offset. Affine units cannot be multiplied or
-divided (Q002, decided in the conformance fixtures); subtracting two Temperatures yields a TemperatureDelta.
+divided (Q002, decided in the conformance fixtures), including a Temperature held in a variable or parameter; subtracting two Temperatures yields a TemperatureDelta.
 
 ## 4. Kinds
 
@@ -443,6 +443,13 @@ absent limit yields no value (the checker reports it), never an infinity.
 `x in lo..hi` requires `lo <= hi`. Role provenance is recorded (ISO class,
 fit side, attribute, inherited); an explicit role on a reference wins over
 the inherited one.
+
+A fit gives its operands a role that `mmc`/`lmc` use when nothing stronger
+says otherwise: in `a / b` the first path is the hole and the second the
+shaft; in a class fit (`p6 on x`) the `on` member plays the mate of the
+class letter. Precedence: `#[role]` attribute, then the member's own ISO
+class, then the fit side. A class pair (`H7/p6`) names one member for both
+sides and implies no role.
 
 ### 5.8 Comparisons are three-valued
 

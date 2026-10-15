@@ -484,6 +484,8 @@ pub struct Evaluator<'r, 'p> {
     cur_inst: Option<Rc<instances::InstInfo>>,
     /// Instance members whose `#[when]` condition was false.
     absent: BTreeSet<CanonPath>,
+    /// Roles implied by `fit` members, for members with no explicit or class role.
+    fit_roles: BTreeMap<CanonPath, Role>,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -550,6 +552,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             instances,
             cur_inst: None,
             absent: BTreeSet::new(),
+            fit_roles: crate::fitderive::implied_roles(resolver, packages),
         }
     }
 
@@ -701,7 +704,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         // An explicit `#[role(..)]` wins over a class-letter or inherited role.
         let result = result.map(|mut ev| {
-            ev.role = def.role.or(ev.role);
+            ev.role = def.role.or(ev.role).or_else(|| {
+                self.fit_roles.get(key).map(|&role| RoleInfo {
+                    role,
+                    source: RoleSource::FitSide,
+                })
+            });
             ev
         });
         match (result, def.ty) {
@@ -1952,6 +1960,39 @@ mod tests {
     fn mmc_without_role_is_e010() {
         let ev = run(&file("model P {\n  a = 5mm [+-0.1mm]\n  b = a.mmc\n  c = a.lmc\n}\n"));
         assert_eq!(codes(&ev), vec!["E010", "E010"]);
+    }
+
+    // frob:tests fit_side_role_resolves_mmc_lmc
+    #[test]
+    fn fit_side_role_resolves_mmc_lmc() {
+        let ev = run(&file(
+            "model P {\n  bore = 10mm [+-0.1mm]\n  pin = 10mm [+-0.1mm]\n  \
+             lone = 10mm [+-0.1mm]\n  fit seat = bore / pin\n  fit snug = p6 on lone\n  \
+             bm = bore.mmc\n  bl = bore.lmc\n  pm = pin.mmc\n  pl = pin.lmc\n  \
+             lm = lone.mmc\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let bore = ev.get(&at("P", "bore")).expect("bore").role.expect("role");
+        assert_eq!((bore.role, bore.source), (Role::Hole, RoleSource::FitSide));
+        assert_eq!(quant(&ev, "P", "bm").nominal, m(99, 10_000));
+        assert_eq!(quant(&ev, "P", "bl").nominal, m(101, 10_000));
+        assert_eq!(quant(&ev, "P", "pm").nominal, m(101, 10_000));
+        assert_eq!(quant(&ev, "P", "pl").nominal, m(99, 10_000));
+        // `p6 on lone` makes `lone` the hole (the mate of the shaft class).
+        assert_eq!(quant(&ev, "P", "lm").nominal, m(99, 10_000));
+    }
+
+    // frob:tests fit_side_role_yields_to_explicit_role
+    #[test]
+    fn fit_side_role_yields_to_explicit_role() {
+        let ev = run(&file(
+            "model P {\n  #[role(shaft)]\n  a = 10mm [+-0.1mm]\n  b = 10mm [+-0.1mm]\n  \
+             fit f = a / b\n  am = a.mmc\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let a = ev.get(&at("P", "a")).expect("a").role.expect("role");
+        assert_eq!(a.source, RoleSource::Attribute);
+        assert_eq!(quant(&ev, "P", "am").nominal, m(101, 10_000));
     }
 
     // frob:tests role_attribute_picks_material_side

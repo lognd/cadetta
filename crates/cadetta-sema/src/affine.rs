@@ -187,9 +187,11 @@ mod tests {
     }
 
     // frob:tests SourceVars.own
+    // frob:tests SourceVars.is_empty
     #[test]
     fn each_instance_parameter_is_independent() {
         let mut s = SourceVars::new();
+        assert!(s.is_empty());
         let a = s.own(VarKey::new("asm.a", "width"));
         let b = s.own(VarKey::new("asm.b", "width"));
         let c = s.own(VarKey::new("asm.a", "depth"));
@@ -197,6 +199,7 @@ mod tests {
         assert_eq!(s.own(VarKey::new("asm.a", "width")), a);
         assert_eq!(s.owner_of(a), Some(&VarKey::new("asm.a", "width")));
         assert_eq!(s.len(), 3);
+        assert!(!s.is_empty());
         // two instances vary independently: the difference keeps both spreads
         let d = form(10, 1, a).sub(&form(10, 1, b)).unwrap();
         let (lo, hi) = d.bounds().unwrap();
