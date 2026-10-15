@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-15T00:10:10Z"
+updated = "2026-10-15T00:10:11Z"
 labels = ["creates:crates/cadetta-cli/src/lint_facts.rs", "creates:crates/cadetta-cli/tests/lint_entry_points.rs", "creates:changelog.d/01M4TA3CABXHEZFA7BXA8J3XJW.fixed.md"]
 scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/cmd/check_watch.rs", "docs/spec/lints.md", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/01M4TA3CABXHEZFA7BXA8J3XJW.fixed.md"]
 
@@ -32,7 +32,7 @@ bound = true
 
 [[acceptance]]
 text = "require paths are collected so requires are never suppressed"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. M, N, R, U002 facts, interface check_members/check_roots; waivers, requires, interfaces not lowered.
