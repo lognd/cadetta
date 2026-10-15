@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-15T02:49:08Z"
+updated = "2026-10-15T02:49:25Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/**", "changelog.d/**"]
 
 [[acceptance]]
 text = "check reports R008 info (exit 0) when an external adapter command is missing"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "a bare adapter command name is not PATH-searched and yields R008 info"

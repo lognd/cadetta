@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:49:25Z"
+digest = "ce3f0c43c64c9b39117a640cff0a47ba7b7a7d9d7e99f5f421a5a1eaeaddd120"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.81s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c3b9ba01-9971-478a-ae68-c166af973cc6 with nextest profile: default
+    Starting 1 test across 58 binaries (1342 tests skipped)
+        PASS [   0.128s] cadetta cmd::check_drift::tests::check_downgrades_an_unstartable_adapter_to_r008_info
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.130s] 1 test run: 1 passed, 1342 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "check_downgrades_an_unstartable"
+size = 642
+status = "measured"
+test_count = 1
+tests_digest = "bad080cf4d608b7da4696376107af76ffec368bb658f66db905cd175fbae415b"
+at = "2026-10-15T02:49:25Z"
+actor = "lognd"
+rev = 1
