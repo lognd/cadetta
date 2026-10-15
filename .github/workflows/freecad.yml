@@ -44,6 +44,8 @@ jobs:
           rustup default 1.98.0
       - name: Install FreeCAD (headless)
         run: |
+          # noble ships no freecad package; use the upstream stable PPA.
+          sudo add-apt-repository -y ppa:freecad-maintainers/freecad-stable
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends freecad python3-venv
           freecadcmd --version
