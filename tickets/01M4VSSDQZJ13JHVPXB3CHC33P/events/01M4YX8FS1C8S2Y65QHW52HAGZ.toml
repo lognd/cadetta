@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:30:52Z"
+digest = "9b36e859fe9ca7587b64924d3033139e4bd26e2de4d5810d202935e9f5578a80"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.56s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3d8504fd-b894-4d4c-9d59-0a968a81cfb8 with nextest profile: default
+    Starting 1 test across 67 binaries (1421 tests skipped)
+        PASS [   0.005s] cadetta-syntax::std_fasteners_tables button_and_flat_head_pockets_follow_their_standards
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1421 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "button_and_flat_head_pockets"
+size = 781
+status = "measured"
+test_count = 1
+tests_digest = "623b9c6b6599ca79c8c287a9ff061dc5ed2f39f290a4a30d5b4c44a72cdaa87f"
+at = "2026-10-15T04:30:52Z"
+actor = "lognd"
+rev = 1
