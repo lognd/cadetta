@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Each listed fixture executes against the adapter host and its known-gaps.toml entry is removed."]
+new = ["Reconciling native names against bindings reports R002 for an unbound name, R003 for a bound but absent one, and maps names via bindings only.", "R007 fires for a dimension not measured from the sketch origin and R011 for an instance file that is not the slot file; a slots read records instance files.", "A read whose on-disk digest equals the lock digest reuses the lock values without opening the tool."]
+moved = [0]
+at = "2026-10-15T19:57:17Z"
+actor = "lognd"
+rev = 1

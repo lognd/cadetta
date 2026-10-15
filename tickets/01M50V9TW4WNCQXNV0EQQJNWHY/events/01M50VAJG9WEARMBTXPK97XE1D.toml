@@ -1,0 +1,8 @@
+kind = "field"
+field = "title"
+old = "Fix red conformance: geom-sign-write-and-read frame form, read-never-raises-q001 diagnostics_exclude"
+new = "Fix red conformance: geom-sign-write-and-read frame source form"
+reason = "verify.rs is leased by MGXDNYP; split diagnostics_exclude to its own ticket"
+at = "2026-10-15T22:36:02Z"
+actor = "lognd"
+rev = 1

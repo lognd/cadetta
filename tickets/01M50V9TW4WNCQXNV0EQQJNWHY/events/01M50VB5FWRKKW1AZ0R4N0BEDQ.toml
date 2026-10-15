@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T22:36:09Z"
+digest = "8297455a93cdc9eb0f368ee45f5cb64fc0655ce5d612367fb8524137ba108c7e"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.48s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6a6249fb-757f-4839-8075-8e404030ac6a with nextest profile: default
+    Starting 1 test across 1 binary (174 tests skipped)
+        PASS [   0.005s] cadetta-adapter geometry_plan::tests::frame_form_plans_as_a_datum_frame
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 174 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter frame_form_plans_as_a_datum_frame"
+size = 765
+status = "measured"
+test_count = 1
+tests_digest = "407d2f4bb9c4ffdb6c5f5dccf402e77baa2c85d11c76de5ae5b17b2f650676f9"
+at = "2026-10-15T22:36:09Z"
+actor = "lognd"
+rev = 1

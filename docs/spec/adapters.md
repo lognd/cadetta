@@ -366,6 +366,11 @@ coordinates, and positions are verified by transform (geometry.md 6):
 - Coordinates derived from a generator are analysis-only unless the user
   lists them in the bindings by hand. R007 covers a dimension not
   measured from the sketch origin.
+- The table above is executable: `cadetta_adapter::geometry_plan` maps a
+  source form to its native binding, whether `sync` may write it, and
+  what `read` reports on drift (R001 for a placement, a drift note for
+  `flip` and exact 90deg `rotate`). `sign = -1` negates the written
+  value and restores it on read.
 
 ### 3.5 Native links
 

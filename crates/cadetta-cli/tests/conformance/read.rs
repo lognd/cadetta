@@ -8,10 +8,11 @@ use std::collections::BTreeSet;
 use std::fs;
 use std::path::PathBuf;
 
-use cadetta_adapter::bindings::{ForwardTable, NameSource, Placement, discover};
+use cadetta_adapter::bindings::{ForwardTable, NameSource, Placement, discover, reconcile_read};
 use cadetta_adapter::builtin::{csv, json, sw_equations};
 use cadetta_adapter::locator::check_native_collisions;
-use cadetta_adapter::read_units::{NativeValue, ObservedValue, UnitPolicy};
+use cadetta_adapter::read_facts;
+use cadetta_adapter::read_units::{NativeValue, ObservedValue, ReadContext, UnitPolicy};
 use cadetta_adapter::sync::{self, Lock};
 use cadetta_adapter::testing::{Observed, ReadAdapter, check_round_trip};
 use cadetta_adapter::{
@@ -87,6 +88,14 @@ pub fn read(job: &Job) -> Result<Facts, String> {
         vanished(&spec)
     } else if has("locators") && spec["locators"][0].is_object() {
         qualified(&spec)
+    } else if has("measured_from") {
+        measured_from(&spec)
+    } else if has("lock_digest") {
+        lock_digest(&spec)
+    } else if has("slot_primary_file") {
+        slot_files(&spec)
+    } else if has("native_names") {
+        reconciled(&spec)
     } else if has("native") {
         unit_read(&spec)
     } else if has("text") && has("file") {
@@ -257,6 +266,79 @@ fn vanished(spec: &Value) -> Result<Facts, String> {
     ))
 }
 
+/// Native names map through bindings only: unbound is R002, a bound but absent one is R003.
+fn reconciled(spec: &Value) -> Result<Facts, String> {
+    let mut bound = Vec::new();
+    for l in strs(spec, "locators") {
+        bound.push((path(&format!("acme.demo::Plate.{l}"))?, l));
+    }
+    for (name, target) in spec["bindings"].as_object().into_iter().flatten() {
+        bound.push((path(target.as_str().unwrap_or_default())?, name.clone()));
+    }
+    let found = reconcile_read(&bound, &strs(spec, "native_names"));
+    let mapped: Map<String, Value> = found
+        .mapped
+        .iter()
+        .map(|(n, p)| (n.clone(), json!(p.to_string())))
+        .collect();
+    let mut facts = facts_of(found.diagnostics.iter().map(produced_adapter).collect());
+    facts
+        .observed
+        .insert("mapped".into(), Value::Object(mapped));
+    Ok(facts)
+}
+
+/// R007: a dimension locator whose `measured_from` is not the sketch origin.
+fn measured_from(spec: &Value) -> Result<Facts, String> {
+    let kind = kind_of(spec["locator"]["kind"].as_str().unwrap_or("global"))?;
+    let from = spec["measured_from"].as_str().unwrap_or_default();
+    let found = read_facts::check_measured_from(kind, from);
+    Ok(facts_of(found.iter().map(produced_adapter).collect()))
+}
+
+fn string_map(v: &Value) -> std::collections::BTreeMap<String, String> {
+    v.as_object()
+        .into_iter()
+        .flatten()
+        .map(|(k, x)| (k.clone(), x.as_str().unwrap_or_default().to_owned()))
+        .collect()
+}
+
+/// An unchanged saved file (equal digest) is read from the lock without opening the tool.
+fn lock_digest(spec: &Value) -> Result<Facts, String> {
+    let values = string_map(&spec["lock_values"]);
+    let reused = read_facts::reusable_values(
+        spec["on_disk_digest"].as_str().unwrap_or_default(),
+        spec["lock_digest"].as_str().unwrap_or_default(),
+        &values,
+    );
+    let mut facts = facts_of(Vec::new());
+    facts
+        .observed
+        .insert("opened_in_tool".into(), json!(reused.is_none()));
+    if let Some(v) = reused {
+        facts.observed.insert("observed_values".into(), json!(v));
+    }
+    Ok(facts)
+}
+
+/// A slots read records each component instance's file; R011 when it is not the slot's file.
+fn slot_files(spec: &Value) -> Result<Facts, String> {
+    let primary = spec["slot_primary_file"].as_str().unwrap_or_default();
+    let mut instances = string_map(&spec["instances"]);
+    if let Some(f) = spec["assembly_instance_file"].as_str() {
+        instances.insert("instance".into(), f.to_owned());
+    }
+    let (seen, diags) = read_facts::observe_instance_files(primary, &instances);
+    let mut facts = facts_of(diags.iter().map(produced_adapter).collect());
+    if spec.get("instances").is_some() {
+        facts
+            .observed
+            .insert("observed_instance_files".into(), json!(seen));
+    }
+    Ok(facts)
+}
+
 fn kind_of(word: &str) -> Result<LocatorKind, String> {
     match word {
         "global" => Ok(LocatorKind::Global),
@@ -326,10 +408,16 @@ fn unit_read(spec: &Value) -> Result<Facts, String> {
     let units = policy_of(spec["adapter"]["native_unit"].as_str(), assume);
     let native = &spec["native"];
     let number = native["number"].to_string();
-    let mut o = units.read(&NativeValue {
-        literal: number,
-        unit: native["unit"].as_str().map(str::to_owned),
-    });
+    let mut o = units.read_in(
+        &NativeValue {
+            literal: number,
+            unit: native["unit"].as_str().map(str::to_owned),
+        },
+        &ReadContext {
+            expected_unit: spec["adapter"]["native_unit"].as_str(),
+            driven: native["driven"].as_bool().unwrap_or(false),
+        },
+    );
     let mut out = Map::new();
     if let Some(expr) = native["expression"].as_str() {
         let line = format!(

@@ -78,7 +78,9 @@ src = "src"                  # module root (default "src")
   and E013 surface as diagnostics, each dependency's items are in scope
   for `use`, and E014 is reported when a dependency's content differs
   from its pinned lock digest (an unpinned dependency is not checked).
-  Git dependencies are not fetched by `check`.
+  Git dependencies are never fetched by `check`: it loads the checkout
+  `cadetta update` left under `build/deps`, and a git dependency with no
+  checkout is skipped with a warning.
 
 ## 2. Modules
 

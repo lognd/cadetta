@@ -3,14 +3,21 @@
 //!
 //! Tolerance fixtures run `plan_tolerance` per locator and print one line per written
 //! tolerance (`<locator> tolerance <form> <value>`) on `stdout` for `output` to check.
+//!
+//! Geometry fixtures carry a `source_form` instead and run `plan_source_form`; they observe
+//! `binds_to`, `binds`, `push_writes`, `read_reports`, `native_written` and `read_back_as`.
 
 use std::fs;
 
+use cadetta_adapter::geometry_plan::{
+    ReadReport, native_written, parse_source_form, plan_source_form, read_back_as, read_report,
+};
 use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_tolerance};
 use cadetta_ir::model::{Locator, LocatorKind, LocatorMode, TolerancePolicy};
-use serde_json::Value;
+use serde_json::{Value, json};
 
 use super::Job;
+use crate::compare::Produced;
 use crate::run::Facts;
 
 /// Run the push-plan executor on the fixture's JSON and collect the plan lines.
@@ -18,6 +25,9 @@ pub fn run(job: &Job) -> Result<Facts, String> {
     let text =
         fs::read_to_string(job.fixture).map_err(|e| format!("{}: {e}", job.fixture.display()))?;
     let spec: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+    if spec.get("source_form").is_some() {
+        return geometry(&spec);
+    }
     let adapter = &spec["adapter"];
     let has_feature = adapter["features"]
         .as_array()
@@ -74,6 +84,40 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         stdout: lines.join("\n"),
         ..Facts::default()
     })
+}
+
+/// Plan one geometry source form and record what the host would bind, push and report.
+fn geometry(spec: &Value) -> Result<Facts, String> {
+    let word = spec["source_form"]
+        .as_str()
+        .ok_or("`source_form` is not a string")?;
+    let form = parse_source_form(word).map_err(|e| e.to_string())?;
+    let listed = spec["listed_in_bindings"].as_bool().unwrap_or(false);
+    let plan = plan_source_form(&form, listed);
+    let differs = spec["observed_differs"].as_bool().unwrap_or(false);
+    let report = read_report(&plan, differs);
+    let mut facts = Facts::default();
+    let seen = &mut facts.observed;
+    seen.insert("binds_to".into(), json!(plan.binds_to));
+    seen.insert("binds".into(), json!(plan.binds_to.is_some()));
+    seen.insert("push_writes".into(), json!(plan.push_writes));
+    seen.insert("read_reports".into(), json!(report.word()));
+    if let Some(value) = spec["value"].as_str() {
+        let sign = spec["locator"]["sign"].as_i64();
+        let written = native_written(value, sign);
+        seen.insert("read_back_as".into(), json!(read_back_as(&written, sign)));
+        seen.insert("native_written".into(), json!(written));
+    }
+    if report == ReadReport::R001 {
+        facts.exit = 1;
+        facts.produced.push(Produced {
+            code: "R001".into(),
+            severity: "error".into(),
+            path: None,
+        });
+    }
+    tracing::debug!(word, ?plan, "push-plan: geometry source form planned");
+    Ok(facts)
 }
 
 /// A `drive`/`ignore` word, or `None` when absent.

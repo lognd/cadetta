@@ -71,6 +71,14 @@ solver and output name. A stale result (section 4) still evaluates in
 either role, carrying the S003 fact that names what changed (`inputs`,
 `script`, or a dep path). An output with no recorded value is unsolved.
 
+Solver outputs are evaluated from the recorded `.out.json` result file:
+`check` and the IR read each output's recorded value (parsed as an exact
+quantity) rather than re-running the script. `check` also recomputes the
+input, script and dep digests of each solver's primary result and reports
+S003 (naming what changed) when they differ; the outputs still evaluate. A
+solver with no recorded result is unsolved, not stale. S006 and the
+evaluation of variant results are still to come (follow-up ticket).
+
 ## 3. Protocol
 
 No library is needed in any language: inputs and outputs are JSON, and
@@ -199,6 +207,11 @@ when its input, script and every dep digest match the current ones; any
 difference makes it stale (S003) and its outputs still evaluate. A result is
 identified by (solver path, variant); storing replaces the entry with the
 same key, and the file is rewritten sorted.
+
+`cadetta check` applies the same reading: each approved alternate is evaluated
+with the solver outputs recorded for its inputs (the primary's when the inputs
+are unchanged, its own entry otherwise), and a changed-input variant with no
+entry raises S006 at the solver, carrying the variant as `alt`.
 
 S003 names what changed (`inputs`, `script` or a dep path) in notes and
 carries the variant as `alt`. S005 is raised for a failed run whose code is S005

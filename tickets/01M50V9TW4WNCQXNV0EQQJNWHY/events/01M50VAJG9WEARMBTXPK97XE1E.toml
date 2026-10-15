@@ -1,0 +1,9 @@
+kind = "field"
+field = "acceptance"
+old = ["parse_source_form accepts the frame form and plans it as a datum frame binding (adapters.md 3.4)", "the conformance verifier observes diagnostics_exclude: none of the listed codes may be produced"]
+new = ["parse_source_form accepts the frame form and plans it as a datum frame binding (adapters.md 3.4)"]
+reason = "verify.rs is leased by MGXDNYP; split diagnostics_exclude to its own ticket"
+moved = [1, 0]
+at = "2026-10-15T22:36:02Z"
+actor = "lognd"
+rev = 1

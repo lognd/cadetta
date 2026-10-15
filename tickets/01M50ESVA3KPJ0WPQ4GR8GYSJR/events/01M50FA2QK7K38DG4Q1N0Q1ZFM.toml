@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["must_not_fire value rows match the recorded outputs and the two known-gaps entries are removed (conformance passes on goway)", "docs/spec/solvers.md notes outputs are evaluated from the recorded .out.json"]
+moved = []
+at = "2026-10-15T19:06:03Z"
+actor = "lognd"
+rev = 1

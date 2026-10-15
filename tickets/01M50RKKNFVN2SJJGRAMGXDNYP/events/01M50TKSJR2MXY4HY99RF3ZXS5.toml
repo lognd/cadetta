@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["S003 message names what changed (dep path, inputs, script)"]
+new = ["S003 message names what changed (dep path, inputs, script)", "Conformance observes stale_output for a stale solver whose outputs still evaluate"]
+moved = [1]
+at = "2026-10-15T22:23:36Z"
+actor = "lognd"
+rev = 1

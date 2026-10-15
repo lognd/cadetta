@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T22:23:58Z"
+digest = "7dd1f79d5859b07047f871449b37cd2e53bb2ea8229a8d0ecfebb31b3165dd6b"
+provider = "file"
+ref = "tests/conformance/emitters/sw-equations/read-unparsed-line-kept-raw.expect.json"
+size = 470
+status = "measured"
+at = "2026-10-15T22:23:58Z"
+actor = "lognd"
+rev = 1
