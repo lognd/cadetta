@@ -13,7 +13,7 @@ scope = ["crates/cadetta-cli/tests/**", "tests/conformance/README.md", "tests/co
 
 [[acceptance]]
 text = "Every kind=binding entry=read and emit-read fixture executes against the adapter host and its expect.json is compared; their known-gaps.toml entries are removed."
-bound = false
+bound = true
 +++
 
 found while working ~6BCVN48: kind=binding entry=read (adapters 21, emitters 14, geometry 1 fixtures) has no executor in crates/cadetta-cli/tests/conformance/exec.rs; drive the test adapter (crates/cadetta-adapter/src/testing.rs) and compare with expect.json per tests/conformance/README.md.
