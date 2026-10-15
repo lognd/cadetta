@@ -4,9 +4,10 @@ title = "Enumerate fit, require, sync, solver and waiver obligations; read-membe
 type = "task"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-14T22:54:12Z"
-updated = "2026-10-14T22:54:17Z"
+updated = "2026-10-15T10:21:35Z"
 scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-ir", "crates/cadetta-obligations"]
 
 [[links]]
