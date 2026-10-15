@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-15T09:54:11Z"
+updated = "2026-10-15T09:54:12Z"
 labels = ["creates:crates/cadetta-sema/src/boltfloat.rs"]
 scope = ["crates/cadetta-geometry/src/float.rs", "docs/spec/geometry.md", "changelog.d/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/reexpress.rs", "crates/cadetta-sema/tests/**", "crates/cadetta-sema/src/boltfloat.rs"]
 
@@ -26,7 +26,7 @@ bound = true
 
 [[acceptance]]
 text = "Given several joints on one edge, when lowered, then the pattern points, variable ids and locating flags reach float::select unchanged (takes over the lowering half of ~HWJP0GQ acceptance 4)"
-bound = false
+bound = true
 +++
 
 Found while working ~HWJP0GQ. The geometry crate evaluates EdgeFloat (float.rs, Assembly.floats, place_assembly_reading); nothing yet builds EdgeFloat from a ScrewJoint at/onto: pattern points, parent/child detection in either order, variable ids, and FloatMode::Without(joint path) for the joint's own aligned check.
