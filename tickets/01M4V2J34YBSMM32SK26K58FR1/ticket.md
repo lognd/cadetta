@@ -2,11 +2,12 @@
 id = "01M4V2J34YBSMM32SK26K58FR1"
 title = "std commercial, fits, materials and module diagnostics not raised (I001 Q003 F001 E002)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T03:27:12Z"
+updated = "2026-10-15T03:28:13Z"
 scope = ["tests/conformance/stdlib/**", "crates/cadetta-sema/src/kindcheck.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/stdlib_interface_kinds.rs", "docs/spec/stdlib.md", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
