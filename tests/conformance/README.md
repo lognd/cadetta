@@ -77,6 +77,9 @@ Matching rules:
   warning the run produces that the list lacks is a failure, as is a
   listed one the run does not produce. Info diagnostics are compared
   only when listed.
+- U002 (unused private item) is the exception: fixtures declare private
+  components nothing instantiates, so the runner drops U002 from a run
+  unless the fixture's `expect.json` lists U002 in either block.
 - Order does not matter; duplicates count (two expected, two produced).
 - `must_fire.diagnostics` must contain the `rule` code (when `rule` is a
   diagnostic code). `must_not_fire.diagnostics` must not contain it.
@@ -84,9 +87,6 @@ Matching rules:
   as a name and lists `values` instead: `{ "path", "nominal" }` with
   quantity source literals, compared as exact quantities.
 
-## Runner contract
-
-The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 ## Two-input comparisons (`kind: "compare"`)
 
 The digest rules (ir.md 4: formatting never changes a digest, semantic
@@ -152,6 +152,9 @@ tests/conformance/ir/
   exists in `exec.rs`, such fixtures are failures ("no executor") and
   must be listed in `known-gaps.toml` against the ticket adding it.
 
+## Runner contract
+
+The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 `cargo test -p cadetta --test conformance`). It takes each
 `NAME.expect.json`, runs the `entry` command on each fixture through the
 `cadetta` library, and compares the result with the matching block.

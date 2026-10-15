@@ -124,6 +124,16 @@ fn check_pair(dir: &Path, name: &str, doc: &str) -> Result<Outcome, String> {
     })
 }
 
+/// The unused-private-item lint, ignored by fixtures that do not list it.
+const UNUSED_PRIVATE: &str = "U002";
+
+/// True when either block of `expect` lists a diagnostic with `code`.
+fn lists_code(expect: &Expect, code: &str) -> bool {
+    [&expect.must_fire, &expect.must_not_fire]
+        .iter()
+        .any(|b| b.diagnostics.iter().any(|d| d.code == code))
+}
+
 fn run_block(
     dir: &Path,
     name: &str,
@@ -135,7 +145,14 @@ fn run_block(
         .ok_or_else(|| format!("{which} fixture file is missing"))?;
     let prefix = |m: String| format!("{which}: {m}");
     match execute(expect, &path, block) {
-        Ok(facts) => Ok(verify(block, &facts).into_iter().map(prefix).collect()),
+        Ok(mut facts) => {
+            if !lists_code(expect, UNUSED_PRIVATE) {
+                // Fixture components are private and instantiated nowhere by design, so U002
+                // is style noise unless the fixture is about U002 itself.
+                facts.produced.retain(|p| p.code != UNUSED_PRIVATE);
+            }
+            Ok(verify(block, &facts).into_iter().map(prefix).collect())
+        }
         Err(message) => Ok(vec![prefix(message)]),
     }
 }

@@ -152,9 +152,14 @@ fn stated(m: &Member) -> Option<(Key, &Value)> {
 
 /// True for a literal as written: nothing read, and either no expression text or text that
 /// is just the authored token (lowering records the source text of a literal as `expr`).
+/// A table lookup such as `Iso273[6mm].pitch` reads a cell, so it is not a literal even
+/// though its evaluated value records the same text and it carries no member deps.
 pub fn is_literal(m: &Member) -> bool {
     m.provenance == Provenance::Authored
         && m.deps.is_empty()
+        && m.value
+            .as_ref()
+            .is_none_or(|v| v.authored.starts_with(|c: char| c.is_ascii_digit() || "+-.".contains(c)))
         && match (&m.expr, &m.value) {
             (None, _) => true,
             (Some(e), Some(v)) => *e == v.authored,
@@ -659,6 +664,15 @@ mod tests {
         let d = d002(&with_solver, &DConfig::default());
         assert_eq!(d.len(), 1);
         assert_eq!(d[0].path.as_deref(), Some("demo::P.d"));
+    }
+
+    // frob:ticket 01M4YPDTAGW415ZPEESX1PF271
+    // frob:tests crates/cadetta-lint/src/rules/d.rs::is_literal
+    #[test]
+    fn table_lookup_is_not_a_literal() {
+        assert!(is_literal(&param("demo::A.x", val(1000, "1mm"))));
+        assert!(is_literal(&param("demo::A.x", val(-1000, "-1mm"))));
+        assert!(!is_literal(&param("demo::A.x", val(1000, "Iso273[6mm].pitch"))));
     }
 
     // frob:tests crates/cadetta-lint/src/rules/d.rs::check_d002

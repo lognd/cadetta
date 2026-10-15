@@ -128,6 +128,26 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
+fixture = "config-cli/e003"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-no-cdt"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-member"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "config-cli/e005-path-dep"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
@@ -243,6 +263,41 @@ ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
+fixture = "geometry/datum-bound-inexact-rotation-undecided"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-bound-reversed-normal"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-bound-toleranced-angle-undecided"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-built-from-earlier"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-flip-z"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/datum-ots-needs-citation"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
+fixture = "geometry/i001-interface-datum-omitted"
+ticket = "~S5DC5W0"
+reason = "sema does not enforce the datum declaration rule yet"
+
+[[gap]]
 fixture = "packages/e002-glob-imports-only-pub"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the privacy and use-target diagnostics yet"
@@ -253,14 +308,39 @@ ticket = "~6K58FR1"
 reason = "use std:: imports do not resolve yet"
 
 [[gap]]
+fixture = "packages/e005-dependency-without-manifest"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-empty-src"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-missing-src"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
 fixture = "packages/e005-registry-dependency-rejected"
-ticket = "~ZRN2H8S"
-reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
 fixture = "packages/e005-std-name-reserved"
-ticket = "~ZRN2H8S"
-reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-workspace-member-is-workspace"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+
+[[gap]]
+fixture = "packages/e005-workspace-member-without-manifest"
+ticket = "~AN7BAC5"
+reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
 fixture = "packages/e012-bare-version-is-caret"
@@ -324,8 +404,8 @@ reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
 fixture = "packages/e016-fully-qualified-path-checks-visibility"
-ticket = "~PDPCRB2"
-reason = "sema does not raise E016 for package:: expression paths"
+ticket = "~KRVD0V6"
+reason = "parser rejects package:: paths in expressions"
 
 [[gap]]
 fixture = "packages/e016-member-public-by-default"
@@ -359,8 +439,8 @@ reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
 fixture = "packages/n004-reference-to-was-path"
-ticket = "~PDPCRB2"
-reason = "sema does not raise N004 for was-paths via package::"
+ticket = "~KRVD0V6"
+reason = "parser rejects package:: paths in expressions"
 
 [[gap]]
 fixture = "packages/pub-use-private-item-not-reexported"

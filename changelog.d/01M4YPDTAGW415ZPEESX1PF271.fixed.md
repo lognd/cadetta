@@ -1,0 +1,1 @@
+Conformance runner no longer counts the by-design U002 on private fixture components, D002 no longer fires on table lookups, and `quantities/eval-mixed-pi` now exercises the affine-form mixed-pi EVAL error.
