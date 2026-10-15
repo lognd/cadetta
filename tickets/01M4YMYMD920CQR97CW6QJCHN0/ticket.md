@@ -2,11 +2,12 @@
 id = "01M4YMYMD920CQR97CW6QJCHN0"
 title = "Evaluate variants for L001 alternate viability in check"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:06:10Z"
-updated = "2026-10-15T02:50:35Z"
+updated = "2026-10-15T02:51:45Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/lint_lifts.rs", "docs/spec/lints.md", "changelog.d/01M4YMYMD920CQR97CW6QJCHN0.fixed.md"]
 
 [[acceptance]]
