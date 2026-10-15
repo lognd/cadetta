@@ -4,9 +4,10 @@ title = "Lower interface bounds into lint_facts::interfaces"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T00:10:06Z"
-updated = "2026-10-15T00:10:06Z"
+updated = "2026-10-15T09:14:18Z"
 scope = ["crates/cadetta-cli/src/lint_facts.rs"]
 
 [[links]]
