@@ -2,12 +2,12 @@
 id = "01M4ZCHT2YJ2Z7F2E9TR77QY6K"
 title = "cadetta import: decode frames and instances from adapter observed JSON"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T08:58:36Z"
-updated = "2026-10-15T09:07:35Z"
+updated = "2026-10-15T09:07:37Z"
 scope = ["crates/cadetta-cli/src/cmd/import.rs"]
 
 [[acceptance]]
