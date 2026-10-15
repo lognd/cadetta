@@ -100,6 +100,13 @@ pub trait TypeEnv {
         self.name_type(segments)
     }
 
+    /// Whether a declared type name (a kind, interface, enum, component, prelude or user
+    /// `kind`) resolves; an environment that cannot tell answers `true` (no false E002).
+    // frob:ticket 01M4V1HDNKJ9095119JPVAKYG1
+    fn type_known(&self, _segments: &[String]) -> bool {
+        true
+    }
+
     /// The result type of a call to a user function, when known.
     fn call_type(&self, _name: &str, _args: &[Option<Ty>]) -> Option<Ty> {
         None
@@ -148,6 +155,28 @@ impl<'a> EvalEnv<'a> {
 }
 
 impl TypeEnv for EvalEnv<'_> {
+    // frob:ticket 01M4V1HDNKJ9095119JPVAKYG1
+    fn type_known(&self, segments: &[String]) -> bool {
+        let seps = vec![PathSep::Dot; segments.len().saturating_sub(1)];
+        let path = Path {
+            segments: segments
+                .iter()
+                .map(|name| Ident {
+                    name: name.clone(),
+                    span: Span::default(),
+                })
+                .collect(),
+            seps,
+            span: Span::default(),
+        };
+        match self.resolver.resolve_path(&self.ctx, &path, None) {
+            Err(e) if e.code == "E002" => segments
+                .last()
+                .is_some_and(|n| self.resolver.declares_kind(n)),
+            _ => true,
+        }
+    }
+
     fn name_type(&self, segments: &[String]) -> Option<KindedDim> {
         let seps = vec![PathSep::Dot; segments.len().saturating_sub(1)];
         self.path_type(segments, &seps)
@@ -317,6 +346,17 @@ impl<'a> KindChecker<'a> {
                 let name = p.segments.last()?.name.clone();
                 if self.kinds.dim_of(&name).is_none() {
                     // Interfaces, enums and components are not kinds; resolution owns them.
+                    // A name that resolves to nothing at all is E002 (quantities.md 4.4).
+                    // frob:ticket 01M4V1HDNKJ9095119JPVAKYG1
+                    let segs: Vec<String> = p.segments.iter().map(|s| s.name.clone()).collect();
+                    if !self.env.type_known(&segs) {
+                        self.report(
+                            "E002",
+                            Severity::Error,
+                            format!("E002 unresolved-name: type `{name}` is not a kind or type"),
+                            ty.span,
+                        );
+                    }
                     trace!(name, "declared type is not a kind; not checked");
                     return None;
                 }
@@ -939,5 +979,34 @@ mod tests {
         assert_eq!(codes("b: Mass = a\na = 1mm"), ["Q002"]);
         assert!(codes("a: Length = missing + 1mm").is_empty());
         assert!(codes("a: Length = len.max + 1mm").is_empty());
+    }
+
+    /// An environment that resolves no type name.
+    struct NoTypes;
+
+    impl TypeEnv for NoTypes {
+        fn name_type(&self, _s: &[String]) -> Option<KindedDim> {
+            None
+        }
+
+        fn type_known(&self, _s: &[String]) -> bool {
+            false
+        }
+    }
+
+    // frob:tests unknown_declared_type_name_is_e002
+    #[test]
+    fn unknown_declared_type_name_is_e002() {
+        let p = parse("model M {\n a: Foo = 5mm\n b: Length = 5mm\n}\n");
+        let kinds = KindTable::builtin();
+        let units = UnitTable::builtin();
+        let mut c = KindChecker::new(&kinds, &units, &NoTypes);
+        for comp in p.file.components() {
+            c.check_component(comp);
+        }
+        let got: Vec<_> = c.into_diagnostics().iter().map(|d| d.code).collect();
+        assert_eq!(got, ["E002"], "only `Foo` is unresolved, `Length` is a kind");
+        // An environment that cannot tell never reports it.
+        assert!(codes("a: Foo = 5mm").is_empty());
     }
 }

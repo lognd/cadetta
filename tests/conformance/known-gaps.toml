@@ -313,19 +313,9 @@ ticket = "~4QX9B1C"
 reason = "compound units and dimensional checks not implemented in the evaluator"
 
 [[gap]]
-fixture = "quantities/e002-kind"
-ticket = "~PVAKYG1"
-reason = "kind name diagnostic missing"
-
-[[gap]]
-fixture = "quantities/q011-cbrt"
-ticket = "~FP8V54M"
-reason = "cbrt not implemented"
-
-[[gap]]
 fixture = "quantities/kind-row-length-from-cbrt"
-ticket = "~FP8V54M"
-reason = "cbrt not implemented"
+ticket = "~2GJX813"
+reason = "user-declared kinds are not registered in the KindTable"
 
 [[gap]]
 fixture = "quantities/f002"

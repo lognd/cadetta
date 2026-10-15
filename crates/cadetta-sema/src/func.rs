@@ -218,6 +218,7 @@ fn is_builtin(name: &str) -> bool {
             | "max"
             | "abs"
             | "sqrt"
+            | "cbrt"
             | "sin"
             | "cos"
             | "tan"
@@ -403,6 +404,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let xs = arity(name, args, 1, span)?;
                 let v = self.eval(sc, xs[0])?;
                 sqrt(&v, span)
+            }
+            "cbrt" => {
+                let xs = arity(name, args, 1, span)?;
+                let v = self.eval(sc, xs[0])?;
+                cbrt(&v, span)
             }
             "sin" | "cos" | "tan" => {
                 let xs = arity(name, args, 1, span)?;
@@ -889,18 +895,22 @@ fn base_render(m: &Magnitude, dim: &Dim) -> String {
     }
 }
 
-fn sqrt_dim(d: &Dim, span: Span) -> R<Dim> {
-    match d.dimension.root(2) {
-        Some(r) if d.angle % 2 == 0 => Ok(Dim::new(r, d.angle / 2)),
+fn root_dim(name: &str, n: i32, d: &Dim, span: Span) -> R<Dim> {
+    match d.dimension.root(n) {
+        Some(r) if d.angle % n == 0 => Ok(Dim::new(r, d.angle / n)),
         _ => Err(diag(
             "Q011",
             span,
             format!(
-                "sqrt of dimension `{}` is not a whole dimension",
+                "{name} of dimension `{}` is not a whole dimension",
                 d.dimension.render()
             ),
         )),
     }
+}
+
+fn sqrt_dim(d: &Dim, span: Span) -> R<Dim> {
+    root_dim("sqrt", 2, d, span)
 }
 
 fn domain(e: &InexactError, span: Span) -> Fail {
@@ -940,6 +950,33 @@ pub(super) fn sqrt(v: &Val, span: Span) -> R<Val> {
             inex(dim, i.nominal.max(0.0).sqrt(), lo, hi, i.root, span)
         }
         _ => Err(diag("EVAL", span, "`sqrt` takes a number")),
+    }
+}
+
+/// `cbrt(x)`: the exact cube root of an exact perfect-cube quantity (quantities.md 4.1);
+/// a non-cube or toleranced value has no exact root and is an `EVAL` error.
+// frob:ticket 01M4V1HDRM35VQ2ZE35FP8V54M
+pub(super) fn cbrt(v: &Val, span: Span) -> R<Val> {
+    let Val::Quantity(q) = v else {
+        return Err(diag("EVAL", span, "`cbrt` takes an exact number"));
+    };
+    let dim = root_dim("cbrt", 3, q.dim(), span)?;
+    let m = &q.nominal;
+    let (num, den) = (m.rational().numer().cbrt(), m.rational().denom().cbrt());
+    let exact = q.form.is_exact()
+        && m.pi_exp() % 3 == 0
+        && num.pow(3) == *m.rational().numer()
+        && den.pow(3) == *m.rational().denom();
+    match Rational::new(num, den) {
+        Ok(r) if exact => Ok(Val::Quantity(Quant::constant(
+            dim,
+            Magnitude::new(r, m.pi_exp() / 3),
+        ))),
+        _ => Err(diag(
+            "EVAL",
+            span,
+            "`cbrt` is exact only for a perfect cube without tolerance",
+        )),
     }
 }
 
@@ -1117,5 +1154,35 @@ mod tests {
             ]
         );
         assert!(split_template("a { b").is_err());
+    }
+
+    fn cube_dim() -> Dim {
+        Dim::new(Dimension::from_si([3, 0, 0, 0, 0, 0, 0]), 0)
+    }
+
+    // frob:tests cbrt_is_exact_for_cubes_and_checks_the_dimension
+    #[test]
+    fn cbrt_is_exact_for_cubes_and_checks_the_dimension() {
+        let sp = Span::default();
+        let cube = |n: i64, d: i64| {
+            let r = Rational::new(n, d).unwrap();
+            Val::Quantity(Quant::constant(cube_dim(), Magnitude::new(r, 0)))
+        };
+        let Ok(Val::Quantity(q)) = cbrt(&cube(8, 27), sp) else {
+            panic!("cbrt of a cube is exact");
+        };
+        assert_eq!(*q.nominal.rational(), Rational::new(2, 3).unwrap());
+        assert_eq!(*q.dim(), Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0));
+        // Not a perfect cube: no exact root.
+        assert!(cbrt(&cube(2, 1), sp).is_err());
+        // Dimension L^2 is not a cube: Q011.
+        let sq = Val::Quantity(Quant::constant(
+            Dim::new(Dimension::from_si([2, 0, 0, 0, 0, 0, 0]), 0),
+            Magnitude::new(Rational::from_int(8), 0),
+        ));
+        let Err(Fail::Diag(d)) = cbrt(&sq, sp) else {
+            panic!("Q011 expected");
+        };
+        assert_eq!(d.code, "Q011");
     }
 }
