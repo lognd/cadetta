@@ -1,0 +1,4 @@
+model Part {
+  width = 11mm
+  height = width + 2mm
+}

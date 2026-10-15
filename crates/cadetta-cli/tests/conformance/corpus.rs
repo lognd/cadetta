@@ -91,6 +91,20 @@ fn json_error<T>(r: Result<T, impl std::fmt::Display>, what: &str) -> Result<T, 
 }
 
 fn fixture_path(dir: &Path, name: &str, which: &str, kind: &str) -> Option<std::path::PathBuf> {
+    if kind == "compare" {
+        // Two-input fixtures keep sides `NAME.<which>.a` and `.b`; the executor resolves them
+        // from this stem, so return it when side `a` exists in any accepted form.
+        let stem = dir.join(format!("{name}.{which}"));
+        let has_a = ["cdt", "json", ""].iter().any(|ext| {
+            let side = if ext.is_empty() {
+                "a".to_owned()
+            } else {
+                format!("a.{ext}")
+            };
+            dir.join(format!("{name}.{which}.{side}")).exists()
+        });
+        return has_a.then_some(stem);
+    }
     let ext = if kind == "source" { "cdt" } else { "json" };
     [format!("{name}.{which}.{ext}"), format!("{name}.{which}")]
         .iter()

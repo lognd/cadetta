@@ -1,0 +1,47 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-15T18:41:55Z"
+digest = "4d03d05585f6d7c1c230a9fee1ca84eed76cf2ca06a269eea8e65284859717cb"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling tracing-attributes v0.1.31
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling ref-cast-impl v1.0.27
+   Compiling serde_derive_internals v0.30.0
+   Compiling schemars_derive v1.2.3
+   Compiling ref-cast v1.0.27
+   Compiling tracing v0.1.44
+   Compiling thiserror v2.0.21
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling serde v1.0.229
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.59s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 52c8d22d-0ec3-4246-9020-8b27734895e1 with nextest profile: default
+    Starting 1 test across 5 binaries (241 tests skipped)
+        PASS [   0.007s] cadetta-sema eval::tests::driving_solver_output_sets_the_value
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 241 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema driving_solver_output"
+size = 1749
+status = "measured"
+test_count = 1
+tests_digest = "8bc873750bff19ef0e742487e67dc26891633457c5d5147fa2f228a35821b266"
+at = "2026-10-15T18:41:55Z"
+actor = "lognd"
+rev = 1
