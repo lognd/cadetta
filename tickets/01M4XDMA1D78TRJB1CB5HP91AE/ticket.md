@@ -4,9 +4,10 @@ title = "sync: run external non-drive adapter emit"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-14T14:38:58Z"
-updated = "2026-10-14T14:38:58Z"
+updated = "2026-10-15T11:09:14Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
 +++
 
