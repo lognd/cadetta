@@ -2,11 +2,12 @@
 id = "01M4V14BY8H42AS84MBAN7BAC5"
 title = "check reports E003/E005 as exit-2 load errors instead of diagnostics"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:22:03Z"
-updated = "2026-10-15T03:09:03Z"
+updated = "2026-10-15T03:09:49Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/known-gaps.toml", "changelog.d/**", "docs/**"]
 
 [[acceptance]]
