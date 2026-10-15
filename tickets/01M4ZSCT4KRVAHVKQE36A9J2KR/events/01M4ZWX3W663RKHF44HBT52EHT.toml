@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/6A9J2KR; scope: tests/conformance/geometry/g005-float-half-turn.*; ttl 7200s"
+at = "2026-10-15T13:44:22Z"
+actor = "lognd"
+rev = 1

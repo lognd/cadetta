@@ -898,6 +898,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Resolved::Part { path } if self.instances.is_instance(&path) => {
                 Ok(RefKind::Component(path))
             }
+            // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+            Resolved::Part { path } => match geom::definition_path(self.resolver, &path) {
+                Some(def) => {
+                    trace!(%path, %def, "evaluator: part reference reads its type");
+                    Ok(RefKind::Component(def))
+                }
+                None => Err(diag("EVAL", e.span, "the type of this part is unknown")),
+            },
             Resolved::Item {
                 path,
                 class: ItemClass::Component,
@@ -1197,6 +1205,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             } if crate::rollup::shape(callee, args).is_some() => {
                 let (op, param) = crate::rollup::shape(callee, args).expect("checked above");
                 self.roll_up_call(sc, op, &param, *optional, span)
+            }
+            // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } if self.slot_rollup(sc, callee, args).is_some() => {
+                let (op, path) = self.slot_rollup(sc, callee, args).expect("checked above");
+                self.roll_up_slot(sc, op, &path, *optional, span)
             }
             ExprKind::Call {
                 callee,

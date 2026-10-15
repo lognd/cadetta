@@ -10,13 +10,13 @@
 use std::rc::Rc;
 
 use cadetta_ir::canon::{Index, PartSeg};
-use cadetta_syntax::ast::{Component, MemberKind, Part};
+use cadetta_syntax::ast::{Arg, Component, Expr, ExprKind, MemberKind, Part};
 use cadetta_syntax::span::Span;
 use tracing::{debug, trace};
 
-use super::{Evaluator, Fail, Quant, R, Scope, Val, diag, instances::InstInfo};
+use super::{Evaluator, Fail, Quant, R, Scope, Val, diag, instances::InstInfo, strip};
 use crate::parts;
-use crate::resolve::{CanonPath, Ctx, MemberSeg};
+use crate::resolve::{CanonPath, Ctx, MemberSeg, Resolved};
 use crate::rollup::{self, Contribution, RollOp};
 
 /// The component whose parts are being walked, and how to evaluate expressions written in it.
@@ -52,31 +52,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         optional: bool,
         span: Span,
     ) -> R<Val> {
-        let resolver = self.resolver;
-        let Some(item) = sc.ctx.component.as_deref() else {
-            return Err(diag(
-                "EVAL",
-                span,
-                format!(
-                    "`{}(self, {param})` needs an enclosing component",
-                    op.name()
-                ),
-            ));
-        };
-        let path = CanonPath::item(&sc.ctx.package, &sc.ctx.module, item);
-        let Some(comp) = resolver.component(&path) else {
-            return Err(diag("EVAL", span, format!("no component `{item}`")));
-        };
-        let owner = Owner {
-            path,
-            comp,
-            ctx: Ctx {
-                locals: Vec::new(),
-                ..sc.ctx.clone()
-            },
-            inst: self.cur_inst.clone(),
-            label: item.to_owned(),
-        };
+        let owner = self.enclosing_owner(sc, &format!("`{}(self, {param})`", op.name()), span)?;
         let mut items = Vec::new();
         self.roll_walk(&owner, param, &mut items, span)?;
         debug!(
@@ -92,6 +68,163 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
                 Ok(Val::Quantity(r.value))
             }
+            Err(e) => Err(diag("EVAL", span, e.to_string())),
+        }
+    }
+
+    /// The part slot a path expression names (`j.screw`), if it names one.
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    pub(super) fn part_slot_ref(&self, sc: &Scope, e: &Expr) -> Option<CanonPath> {
+        let e = strip(e);
+        if !matches!(e.kind, ExprKind::Path(_) | ExprKind::Field(..)) {
+            return None;
+        }
+        match self.renames.resolve_ref(self.resolver, &sc.ctx, e, None) {
+            Ok((Resolved::Part { path }, _)) if !path.parts.is_empty() => Some(path),
+            _ => None,
+        }
+    }
+
+    /// The roll-up a call over one part array spells (`sum(j.screw.unit_cost)`), if it is one.
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    pub(super) fn slot_rollup(
+        &self,
+        sc: &Scope,
+        callee: &Expr,
+        args: &[Arg],
+    ) -> Option<(RollOp, CanonPath)> {
+        let (op, e) = rollup::slot_shape(callee, args)?;
+        match self
+            .renames
+            .resolve_ref(self.resolver, &sc.ctx, strip(e), None)
+        {
+            Ok((Resolved::Member { path, .. }, _))
+                if !path.parts.is_empty() && path.members.len() == 1 =>
+            {
+                Some((op, path))
+            }
+            _ => None,
+        }
+    }
+
+    /// The component `sc` is written in, as the owner of its own part slots.
+    fn enclosing_owner(&self, sc: &Scope, what: &str, span: Span) -> R<Owner<'p>> {
+        let Some(item) = sc.ctx.component.as_deref() else {
+            return Err(diag(
+                "EVAL",
+                span,
+                format!("{what} needs an enclosing component"),
+            ));
+        };
+        let path = CanonPath::item(&sc.ctx.package, &sc.ctx.module, item);
+        let Some(comp) = self.resolver.component(&path) else {
+            return Err(diag("EVAL", span, format!("no component `{item}`")));
+        };
+        Ok(Owner {
+            path,
+            comp,
+            ctx: Ctx {
+                locals: Vec::new(),
+                ..sc.ctx.clone()
+            },
+            inst: self.cur_inst.clone(),
+            label: item.to_owned(),
+        })
+    }
+
+    /// The owner and declaration of the part slot `slot` names (`j.screw`, or `screw`).
+    ///
+    /// The slot is the last part segment; what precedes it is the enclosing component or an
+    /// instance of a parameterized part.
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    fn slot_of(&self, sc: &Scope, slot: &CanonPath, span: Span) -> R<(Owner<'p>, &'p Part, bool)> {
+        let mut prefix = slot.clone();
+        prefix.members.clear();
+        let Some(last) = prefix.parts.pop() else {
+            return Err(diag("EVAL", span, "this is not a part slot"));
+        };
+        let owner = if prefix.parts.is_empty() {
+            self.enclosing_owner(sc, "a part array", span)?
+        } else if let Some((info, comp, ctx)) = self.instances.lookup(&prefix) {
+            Owner {
+                path: info.callee.clone(),
+                comp,
+                ctx,
+                label: prefix.to_string(),
+                inst: Some(info),
+            }
+        } else {
+            return Err(diag(
+                "EVAL",
+                span,
+                format!("`{prefix}` is not an instance whose parts can be read"),
+            ));
+        };
+        let comp: &'p Component = owner.comp;
+        let Some(part) = comp.members.iter().find_map(|m| match &m.kind {
+            MemberKind::Part(p) if p.name.name == last.name => Some(p),
+            _ => None,
+        }) else {
+            return Err(diag(
+                "EVAL",
+                span,
+                format!("`{}` is not a part of `{}`", last.name, owner.label),
+            ));
+        };
+        Ok((owner, part, last.index.is_none()))
+    }
+
+    /// `count(slot)`: how many instances the part slot `slot` makes.
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    pub(super) fn count_slot(&mut self, sc: &Scope, slot: &CanonPath, span: Span) -> R<u32> {
+        let (owner, part, _) = self.slot_of(sc, slot, span)?;
+        let n = self.slot_count(&owner, part, span)?;
+        debug!(%slot, n, "part slot counted");
+        Ok(n)
+    }
+
+    /// `sum|max|min(slot.member)`: rolls `member` up over the instances of one part array.
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    pub(super) fn roll_up_slot(
+        &mut self,
+        sc: &Scope,
+        op: RollOp,
+        path: &CanonPath,
+        optional: bool,
+        span: Span,
+    ) -> R<Val> {
+        let Some(MemberSeg::Name(param)) = path.members.first().cloned() else {
+            return Err(diag(
+                "EVAL",
+                span,
+                "a roll-up over a part array names a member",
+            ));
+        };
+        let (owner, part, whole) = self.slot_of(sc, path, span)?;
+        let counted = part.count.is_some();
+        if counted && !whole {
+            return Err(diag("EVAL", span, "a roll-up reads the whole part array"));
+        }
+        let n = self.slot_count(&owner, part, span)?;
+        let mut items = Vec::new();
+        for i in 0..n {
+            let label = if counted {
+                format!("{}/{}[{i}]", owner.label, part.name.name)
+            } else {
+                format!("{}/{}", owner.label, part.name.name)
+            };
+            self.roll_slot(
+                &owner,
+                part,
+                &param,
+                (label, counted.then_some(i)),
+                &mut items,
+                span,
+            )?;
+        }
+        debug!(op = op.name(), %param, parts = items.len(), "slot roll-up flattened");
+        match rollup::roll_up(op, &param, optional, &items) {
+            Ok(r) => Ok(Val::Quantity(r.value)),
             Err(e) => Err(diag("EVAL", span, e.to_string())),
         }
     }
@@ -467,5 +600,57 @@ mod tests {
         let ev = run(&f);
         assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
         assert_eq!(milli(&ev, "total"), m(4, 1000));
+    }
+
+    // frob:tests slot_rollup_sums_the_array_member
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    #[test]
+    fn slot_rollup_sums_the_array_member() {
+        let f = file(&format!(
+            "{JOINT}assembly Box {{\n  part j: Joint(n = 1mm, screw_cost = 3mm)\n  \
+             let total = sum(j.screw.unit_cost)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "total"), m(6, 1000));
+    }
+
+    // frob:tests slot_rollup_without_the_member_is_eval
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    #[test]
+    fn slot_rollup_without_the_member_is_eval() {
+        let f = file(&format!(
+            "{JOINT}assembly Box {{\n  part j: Joint(n = 1mm)\n  \
+             let total = sum(j.screw.unit_cost)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert_eq!(eval_errors(&ev), 1, "{:?}", ev.diagnostics);
+    }
+
+    // frob:tests count_of_a_nested_array_is_its_size
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    #[test]
+    fn count_of_a_nested_array_is_its_size() {
+        let f = file(&format!(
+            "{JOINT}assembly Box {{\n  part j: Joint(n = 1mm)\n  let k = count(j.screw)\n}}\n"
+        ));
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "k"), m(2, 1));
+    }
+
+    // frob:tests part_argument_reads_the_hosts_members
+    // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+    #[test]
+    fn part_argument_reads_the_hosts_members() {
+        let f = file(
+            "assembly Base { thick = 5mm }\n\
+             assembly Joint(host: Part) { reach = host.thick }\n\
+             assembly Box {\n  part base: Base\n  part j: Joint(host = base)\n  \
+             let r = j.reach\n}\n",
+        );
+        let ev = run(&f);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(milli(&ev, "r"), m(5, 1000));
     }
 }

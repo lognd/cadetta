@@ -46,6 +46,28 @@ pub fn shape(callee: &Expr, args: &[Arg]) -> Option<(RollOp, String)> {
     }
 }
 
+/// The roll-up over one part array a call spells, if any: `sum|max|min(slot.member)`.
+// frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+pub fn slot_shape<'a>(callee: &Expr, args: &'a [Arg]) -> Option<(RollOp, &'a Expr)> {
+    let ExprKind::Path(cp) = &callee.kind else {
+        return None;
+    };
+    let op = match cp.segments.last()?.name.as_str() {
+        "sum" => RollOp::Sum,
+        "max" => RollOp::Max,
+        "min" => RollOp::Min,
+        _ => return None,
+    };
+    match args {
+        [a] if a.name.is_none()
+            && matches!(&a.value.kind, ExprKind::Path(_) | ExprKind::Field(..)) =>
+        {
+            Some((op, &a.value))
+        }
+        _ => None,
+    }
+}
+
 /// Which reduction a roll-up applies.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum RollOp {

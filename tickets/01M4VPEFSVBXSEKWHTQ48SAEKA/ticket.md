@@ -4,9 +4,10 @@ title = "names reads CAD so unbound and implicit link/frame/reference states are
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-13T22:34:35Z"
-updated = "2026-10-13T22:34:35Z"
+updated = "2026-10-15T15:09:10Z"
 scope = ["crates/cadetta-cli/src/cmd/names.rs"]
 
 [[acceptance]]
