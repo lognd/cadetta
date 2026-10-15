@@ -25,6 +25,7 @@ fn read(member: &str) -> Result<(), &'static str> {
     ));
     let pkgs = vec![
         PackageSrc {
+            defaults: Default::default(),
             name: "std".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -34,6 +35,7 @@ fn read(member: &str) -> Result<(), &'static str> {
             }],
         },
         PackageSrc {
+            defaults: Default::default(),
             name: "q".to_owned(),
             deps: vec!["std".to_owned()],
             modules: vec![ModuleSrc {

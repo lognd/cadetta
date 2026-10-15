@@ -19,6 +19,7 @@ fn interface_slot_read_resolves_to_primary() {
     let p = parse(src);
     assert!(p.diags.is_empty(), "{:?}", p.diags);
     let pk = vec![PackageSrc {
+        defaults: Default::default(),
         name: "acme.rover".to_owned(),
         deps: Vec::new(),
         modules: vec![ModuleSrc {
@@ -55,6 +56,7 @@ fn check_through_interface_slot_yields_a_verdict() {
     let p = parse(src);
     assert!(p.diags.is_empty(), "{:?}", p.diags);
     let pk = vec![PackageSrc {
+        defaults: Default::default(),
         name: "acme.rover".to_owned(),
         deps: Vec::new(),
         modules: vec![ModuleSrc {
@@ -89,6 +91,7 @@ fn selection_redirects_slot_reads_to_the_alternate() {
     assert!(p.diags.is_empty(), "{:?}", p.diags);
     let modules = vec!["rig".to_owned()];
     let pk = vec![PackageSrc {
+        defaults: Default::default(),
         name: "acme.rover".to_owned(),
         deps: Vec::new(),
         modules: vec![ModuleSrc {

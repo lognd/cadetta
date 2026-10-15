@@ -228,16 +228,6 @@ ticket = "~QA1M8TZ"
 reason = "Text members are not lowered to IR members or compared by the runner"
 
 [[gap]]
-fixture = "stdlib/policy-default-file-over-package"
-ticket = "~TGY21E7"
-reason = "dependency packages and [defaults] are not passed to the evaluator"
-
-[[gap]]
-fixture = "stdlib/policy-default-package-over-std"
-ticket = "~TGY21E7"
-reason = "dependency packages and [defaults] are not passed to the evaluator"
-
-[[gap]]
 fixture = "adapters/bind-let-never-emitted"
 ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"

@@ -298,6 +298,7 @@ mod tests {
 
     fn pkg<'a>(name: &str, mods: &[(&[&str], &'a File)]) -> PackageSrc<'a> {
         PackageSrc {
+            defaults: Default::default(),
             name: name.to_owned(),
             deps: Vec::new(),
             modules: mods

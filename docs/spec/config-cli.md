@@ -138,7 +138,9 @@ Key notes:
   text until sema reads them. `transport` defaults to `stdio`, `save`
   to `after-sync`, a role's `covers` must be non-empty, and a repeated
   adapter `name` needs distinct `id`s.
-- `[defaults]` applies per package. `[package]`, `[dependencies]` and
+- `[defaults]` applies per package: each package's table is read by the
+  evaluator as the project layer, and a value may name a component of a
+  dependency (`acme.shop::AcmeShop`). `[package]`, `[dependencies]` and
   `[workspace]` are defined in packages.md 1; I004 applies only to the
   roots of the package being checked (packages.md 3).
 
