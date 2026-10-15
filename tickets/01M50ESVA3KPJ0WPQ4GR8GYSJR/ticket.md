@@ -4,9 +4,10 @@ title = "Conformance: must-not-fire value expectations in solvers/output-decimal
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-15T18:57:11Z"
-updated = "2026-10-15T18:57:11Z"
+updated = "2026-10-15T18:59:01Z"
 scope = ["tests/conformance/solvers/**", "tests/conformance/known-gaps.toml"]
 +++
 
