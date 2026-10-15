@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/src/rules/interface.rs",
 
 [[acceptance]]
 text = "E002 fires for a datum based on a later or unknown datum"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "E006 fires for flip(z)"

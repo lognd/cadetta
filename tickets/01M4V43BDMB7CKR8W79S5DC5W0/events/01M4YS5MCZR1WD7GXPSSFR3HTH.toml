@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:19:21Z"
+digest = "ed865036d73b5a8bb169c31a96556bcf6157046f906000c08c83b6e08c7d2d33"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 32.26s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8b86dcb4-1d3a-4419-be5d-83c634c904fc with nextest profile: default
+    Starting 1 test across 62 binaries (1375 tests skipped)
+        PASS [   0.005s] cadetta-geometry datum::tests::unknown_or_later_base_is_an_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 1375 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "unknown_or_later_base_is_an_error"
+size = 687
+status = "measured"
+test_count = 1
+tests_digest = "ddb014018b4f917fb68586a4bd609d7a2b3e25b16e764399c2c4d48aec8b3a69"
+at = "2026-10-15T03:19:21Z"
+actor = "lognd"
+rev = 1
