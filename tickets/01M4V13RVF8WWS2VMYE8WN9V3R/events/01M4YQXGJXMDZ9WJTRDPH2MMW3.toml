@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:57:05Z"
+digest = "11462da4556ee71f8f314de0fe0b7b978b788ed040b02ad57cbbd01353f8f3b2"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.44s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3bfea1b1-a543-4d47-a55d-2bb23338d8d7 with nextest profile: default
+    Starting 2 tests across 60 binaries (1357 tests skipped)
+        PASS [   0.188s] cadetta::sema_gaps e002_use_target_unknown_item_in_known_module
+        PASS [   0.340s] cadetta::sema_gaps e002_use_target_unknown_package
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.343s] 2 tests run: 2 passed, 1357 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e002_use_target"
+size = 752
+status = "measured"
+test_count = 2
+tests_digest = "f98725a82d57f60b91541a55e3e75c277bdd7e2355fe0759e8e6d3a4e062e40a"
+at = "2026-10-15T02:57:05Z"
+actor = "lognd"
+rev = 1

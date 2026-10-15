@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:21:38Z"
-updated = "2026-10-15T02:57:04Z"
+updated = "2026-10-15T02:57:05Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/project.rs", "crates/cadetta-cli/tests/sema_gaps.rs", "docs/**", "changelog.d/01M4V13RVF8WWS2VMYE8WN9V3R.*", "tests/conformance/language/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "An unresolved use target is an E002 diagnostic even when the name is unused (e002-use-target)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A duplicate type name is an E003 diagnostic, not a raw load failure (e003-duplicate-type)"
