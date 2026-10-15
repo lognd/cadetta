@@ -440,7 +440,22 @@ impl Parser<'_> {
         let because = self.expect_str()?;
         self.skip_blank();
         let expires = if self.eat_kw("expires") {
-            Some(self.date()?)
+            // frob:ticket 01M4YR011TKARTCKMXB4P8A6ST
+            // A bad date is reported here and parsing continues to the closing
+            // brace, so one malformed token yields one diagnostic (no cascade).
+            match self.date() {
+                Ok(d) => Some(d),
+                Err(e) => {
+                    tracing::debug!(span = %e.span, "bad waive date, reported in place");
+                    self.diags.push(Diagnostic {
+                        code: DiagCode::E001,
+                        span: e.span,
+                        message: e.message,
+                        fix: None,
+                    });
+                    None
+                }
+            }
         } else {
             None
         };
@@ -751,11 +766,9 @@ mod tests {
         assert_eq!(w.glob.text, "a::**.x[*]");
         assert_eq!(w.for_alt.expect("alt").slot.text, "Rover/wheel");
 
-        assert!(
-            !parse("waive C001 on a {\n because \"r\"\n expires 2027-6-3\n}\n")
-                .diags
-                .is_empty()
-        );
+        let bad = parse("waive C001 on a {\n because \"r\"\n expires 2027-6-3\n}\n");
+        assert_eq!(bad.diags.len(), 1, "{:?}", bad.diags);
+        assert_eq!(bad.diags[0].code, crate::lexer::DiagCode::E001);
         assert!(!parse("waive C001 on a { }\n").diags.is_empty());
     }
 
