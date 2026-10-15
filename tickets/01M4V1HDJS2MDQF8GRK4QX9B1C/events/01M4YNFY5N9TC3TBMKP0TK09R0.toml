@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:14:55Z"
+digest = "f0e3459590484e5bf20935316d5dfa830aa990d4ea5767aa092b10b8bbe2f536"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 82ff15cf-0ffb-4d13-911e-57cb5b3dac65 with nextest profile: default
+    Starting 1 test across 54 binaries (1291 tests skipped)
+        PASS [   0.105s] cadetta::quantity_diag_once check_condition_is_kind_checked_once_with_a_path
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.107s] 1 test run: 1 passed, 1291 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "check_condition_is_kind_checked_once_with_a_path"
+size = 687
+status = "measured"
+test_count = 1
+tests_digest = "0483894705c785d104284c87c3383576b6858eb3edd4f9c12a3e69796a3096ab"
+at = "2026-10-15T02:14:55Z"
+actor = "lognd"
+rev = 1
