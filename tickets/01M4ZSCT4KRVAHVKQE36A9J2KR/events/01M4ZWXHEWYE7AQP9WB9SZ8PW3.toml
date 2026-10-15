@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T13:44:38Z"
+digest = "fbe049d769263f5329b0c74218c2c8fcb68090b67f3730f161c42fe224355870"
+provider = "file"
+ref = "tests/conformance/geometry/g005-float-half-turn.expect.json"
+size = 666
+status = "measured"
+at = "2026-10-15T13:44:38Z"
+actor = "lognd"
+rev = 1
