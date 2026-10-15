@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T20:11:42Z"
+updated = "2026-10-15T20:11:43Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[links]]
@@ -16,6 +16,10 @@ target = "01M4YRH3G6F8EGQ5X5CK4JKH27"
 
 [[acceptance]]
 text = "check reports S003 naming what changed for a solver whose recorded primary result digests differ, outputs still evaluating; a solver with no result is not S003"
+bound = false
+
+[[acceptance]]
+text = "O004 sync obligations are produced by check from the lock (already landed with ~TND4WKS)"
 bound = false
 +++
 
