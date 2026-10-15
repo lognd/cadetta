@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
-updated = "2026-10-15T08:15:28Z"
-scope = ["crates/cadetta-cli/tests/**"]
+updated = "2026-10-15T08:15:55Z"
+scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Every binding sync fixture executes and is compared; their known-gaps.toml entries are removed."
