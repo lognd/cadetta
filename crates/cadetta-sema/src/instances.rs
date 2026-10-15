@@ -14,7 +14,7 @@ use std::sync::OnceLock;
 use cadetta_ir::canon::PartSeg;
 use cadetta_syntax::ast::{self, AttrArg, Component, Expr, ExprKind, MemberKind, TypeKind};
 use cadetta_syntax::span::Span;
-use tracing::{debug, trace, warn};
+use tracing::{debug, warn};
 
 use super::{Def, EvalDiagnostic, Evaluator, Fail, R, Scope, Val, diag};
 use crate::defaults::{Layers, Source, resolve_default};
@@ -57,8 +57,6 @@ pub(super) struct Instances<'p> {
     pub diagnostics: Vec<EvalDiagnostic>,
     /// Instance members declared `priv`.
     pub private: BTreeSet<CanonPath>,
-    /// Given arguments with no definition (a `Part` argument, evaluated by a later ticket).
-    nodef: BTreeSet<CanonPath>,
 }
 
 impl<'p> Instances<'p> {
@@ -81,11 +79,6 @@ impl<'p> Instances<'p> {
             .iter()
             .find(|i| i.info.prefix == *path)
             .map(|i| (i.info.clone(), i.component, i.callee_ctx.clone()))
-    }
-
-    /// True when `key` is a supplied argument that has no definition.
-    pub fn is_nodef_arg(&self, key: &CanonPath) -> bool {
-        self.nodef.contains(key)
     }
 }
 
@@ -353,11 +346,6 @@ impl<'p> Site<'_, 'p> {
             };
             match &b.source {
                 ArgSource::Given(expr, span) => {
-                    if is_part_type(&param.ty) {
-                        trace!(%key, "instances: Part argument kept without a value");
-                        out.nodef.insert(key);
-                        continue;
-                    }
                     def.expr = expr;
                     def.span = *span;
                     def.fixed = self.fixed_value(expr, param);
@@ -500,10 +488,6 @@ fn pattern_arg(callee: &Component, args: &[ast::Arg]) -> Option<String> {
         })
 }
 
-fn is_part_type(ty: &ast::Type) -> bool {
-    matches!(&ty.kind, TypeKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == "Part")
-}
-
 impl<'r, 'p> Evaluator<'r, 'p> {
     /// The instance of a parameterized `part` nested in instance `owner`, indexed on first use.
     ///
@@ -558,10 +542,6 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             };
             match &b.source {
                 ArgSource::Given(expr, span) => {
-                    if is_part_type(&param.ty) {
-                        self.instances.nodef.insert(key);
-                        continue;
-                    }
                     def.expr = expr;
                     def.span = *span;
                     def.fixed = fixed_value(self.resolver, owner_ctx, callee_path, expr, param);
@@ -624,7 +604,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let arg_name = &p.segments[0].name;
                 let mut key = info.prefix.clone();
                 key.members = vec![MemberSeg::Name(arg_name.clone())];
-                let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+                let present = self.defs.contains_key(&key);
                 if present != forbids {
                     continue;
                 }

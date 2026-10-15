@@ -446,6 +446,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             "given" => self.given(args, span),
             "count" => {
                 let xs = arity(name, args, 1, span)?;
+                // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+                if let Some(slot) = self.part_slot_ref(sc, xs[0]) {
+                    let n = self.count_slot(sc, &slot, span)?;
+                    return Ok(Val::Quantity(Quant::constant(
+                        Dim::default(),
+                        int(i64::from(n)),
+                    )));
+                }
                 match self.eval(sc, xs[0])? {
                     Val::Array(a) => {
                         let n = i64::try_from(a.len()).unwrap_or(i64::MAX);
@@ -478,7 +486,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         let mut key = inst.prefix.clone();
         key.members = vec![MemberSeg::Name(only.name.clone())];
-        let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+        let present = self.defs.contains_key(&key);
         trace!(%key, present, "func: given");
         Ok(Val::Bool(present))
     }

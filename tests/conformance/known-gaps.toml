@@ -183,26 +183,6 @@ ticket = "~QA1M8TZ"
 reason = "Text members are not lowered to IR members or compared by the runner"
 
 [[gap]]
-fixture = "stdlib/joint-count-from-pattern"
-ticket = "~1EBM7ZH"
-reason = "count(at) with Pattern2 and part arrays inside instances are not evaluated"
-
-[[gap]]
-fixture = "stdlib/joint-count-no-pattern"
-ticket = "~1EBM7ZH"
-reason = "count(at) with Pattern2 and part arrays inside instances are not evaluated"
-
-[[gap]]
-fixture = "stdlib/joint-host-default-into"
-ticket = "~1EBM7ZH"
-reason = "Part-typed host argument is not evaluated"
-
-[[gap]]
-fixture = "stdlib/joint-screw-cost"
-ticket = "~1EBM7ZH"
-reason = "part arrays and count(j.screw) are not evaluated"
-
-[[gap]]
 fixture = "stdlib/joint-vendor-callout"
 ticket = "~QA1M8TZ"
 reason = "Text members are not lowered to IR members or compared by the runner"

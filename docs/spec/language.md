@@ -349,6 +349,10 @@ iterates in checks. Every instance of an array has the same arguments,
 so `name.member` (no index) reads a member as `name[0].member` does, for
 use as an argument or in a `let`; checks over instances use `for`.
 `sum(name.member)` sums a member over the instances of one part array.
+`count(name)` and `sum|max|min(name.member)` also apply to an array nested
+in another part (`count(j.screw)`, `sum(j.screw.unit_cost)`), and a
+`Part`-typed argument (`host = base`) is an ordinary part reference whose
+members (`host.material`) the callee reads.
 `sum(self, mass)` (shorthand `mass(self)`) rolls a parameter up over all
 parts, recursively; `max(self, lead_time)` and `min(self, p)` do the
 same with maximum and minimum. Roll-ups count every instance: an array
