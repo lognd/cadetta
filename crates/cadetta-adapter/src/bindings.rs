@@ -1062,6 +1062,52 @@ pub fn discover(observed: &Project, table: &ForwardTable, placements: &[Placemen
     out
 }
 
+/// What reconciling a read's native names against the bindings found.
+// frob:ticket 01M4Z8V9VNHK5QN6G0B0MC1ZA9
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Reconciled {
+    /// Native name to the canonical path its binding gives it (never inferred from the name).
+    pub mapped: BTreeMap<String, Path>,
+    /// R002 for each unbound native name, R003 for each bound locator the read no longer finds.
+    pub diagnostics: Vec<AdapterDiagnostic>,
+}
+
+/// Maps a read's native names through `bound` `(path, locator)` pairs only (adapters.md 3, 3.1).
+///
+/// An unbound native name is an R002 warning; a bound locator whose native item is absent
+/// from `native` is an R003 error. Names are never parsed back into paths.
+// frob:ticket 01M4Z8V9VNHK5QN6G0B0MC1ZA9
+pub fn reconcile_read(bound: &[(Path, String)], native: &[String]) -> Reconciled {
+    let mut out = Reconciled::default();
+    for name in native {
+        match bound.iter().find(|(_, l)| l == name) {
+            Some((path, _)) => {
+                out.mapped.insert(name.clone(), path.clone());
+            }
+            None => out.diagnostics.push(finding(
+                R002,
+                Severity::Warning,
+                format!("native item `{name}` is not bound to any path"),
+            )),
+        }
+    }
+    for (path, locator) in bound {
+        if !native.contains(locator) {
+            out.diagnostics.push(finding(
+                crate::sync::R003,
+                Severity::Error,
+                format!("{path}: bound native item `{locator}` was not found in the read"),
+            ));
+        }
+    }
+    tracing::info!(
+        mapped = out.mapped.len(),
+        diagnostics = out.diagnostics.len(),
+        "read reconciled against bindings"
+    );
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1679,5 +1725,23 @@ locators = [
         assert!(s.unbind(&rover, "X"));
         assert!(s.get(&rover).is_none());
         assert!(!s.to_toml().contains("rover"));
+    }
+
+    // frob:tests reconcile_read
+    #[test]
+    fn reconcile_read_maps_bound_and_flags_unbound_and_missing() {
+        let bound = [(p("acme.demo::Part.width"), "Part__width".to_owned())];
+        let ok = reconcile_read(&bound, &["Part__width".to_owned()]);
+        assert!(ok.diagnostics.is_empty());
+        assert_eq!(ok.mapped["Part__width"], p("acme.demo::Part.width"));
+
+        let unbound = reconcile_read(&[], &["Orphan".to_owned()]);
+        assert!(unbound.mapped.is_empty());
+        assert_eq!(unbound.diagnostics[0].code, R002);
+        assert_eq!(unbound.diagnostics[0].severity, Severity::Warning);
+
+        let missing = reconcile_read(&bound, &[]);
+        assert_eq!(missing.diagnostics[0].code, crate::sync::R003);
+        assert_eq!(missing.diagnostics[0].severity, Severity::Error);
     }
 }

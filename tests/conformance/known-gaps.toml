@@ -873,63 +873,23 @@ ticket = "~B08JM3F"
 reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
-fixture = "adapters/geom-r007-not-from-origin"
-ticket = "~0MC1ZA9"
-reason = "R007 has no producer in the library"
-
-[[gap]]
-fixture = "adapters/lock-digest-skips-open"
-ticket = "~0MC1ZA9"
-reason = "lock digest of open members is not implemented"
-
-[[gap]]
-fixture = "adapters/r002-unbound-native-parameter"
-ticket = "~0MC1ZA9"
-reason = "no producer of R002 for an unbound native parameter on read"
-
-[[gap]]
-fixture = "adapters/r003-read-bound-path-missing"
-ticket = "~0MC1ZA9"
-reason = "no producer of R003 for a read-bound path that is missing"
-
-[[gap]]
-fixture = "adapters/r011-wrong-component-file"
-ticket = "~0MC1ZA9"
-reason = "R011 has no producer in the library"
-
-[[gap]]
 fixture = "adapters/read-driven-dimension-inexact"
-ticket = "~0MC1ZA9"
+ticket = "~G0V5V7D"
 reason = "the library has no driven-dimension concept"
 
 [[gap]]
-fixture = "adapters/read-maps-names-via-bindings-only"
-ticket = "~0MC1ZA9"
-reason = "no read-side R002/R003 producer beyond discover and missing_implicit"
-
-[[gap]]
 fixture = "adapters/read-never-raises-q001"
-ticket = "~0MC1ZA9"
+ticket = "~G0V5V7D"
 reason = "dimension-mismatch inexactness (kg vs mm) is not implemented in the library"
 
 [[gap]]
 fixture = "adapters/read-unparsable-expression-inexact"
-ticket = "~0MC1ZA9"
+ticket = "~G0V5V7D"
 reason = "the equations parser accepts SWFN(1) as a call, so it reads exact"
 
 [[gap]]
-fixture = "adapters/slots-read-records-instance-file"
-ticket = "~0MC1ZA9"
-reason = "slots read does not record the instance file"
-
-[[gap]]
-fixture = "geometry/r007-not-from-origin"
-ticket = "~0MC1ZA9"
-reason = "R007 has no producer in the library"
-
-[[gap]]
 fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
-ticket = "~0MC1ZA9"
+ticket = "~G0V5V7D"
 reason = "the equations reader parses IIF(...) as a call, so it never yields an unparsed raw line"
 
 [[gap]]

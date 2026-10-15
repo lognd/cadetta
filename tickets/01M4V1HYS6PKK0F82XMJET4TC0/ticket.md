@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T20:31:33Z"
-scope = ["crates/cadetta-cli/src/**", "tests/conformance/known-gaps.toml"]
+updated = "2026-10-15T20:57:12Z"
+scope = ["crates/cadetta-cli/src/**", "tests/conformance/known-gaps.toml", "docs/spec/solvers.md"]
 
 [[links]]
 kind = "blocked-by"

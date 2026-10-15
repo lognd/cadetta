@@ -2,12 +2,13 @@
 id = "01M4Z8V9VNHK5QN6G0B0MC1ZA9"
 title = "cadetta conformance: library behaviour for binding read fixtures (R002/R003 reconcile, R007, R011, lock digest, slots)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T07:53:53Z"
-updated = "2026-10-15T19:57:42Z"
+updated = "2026-10-15T20:56:12Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "docs/**"]
 
 [[acceptance]]
