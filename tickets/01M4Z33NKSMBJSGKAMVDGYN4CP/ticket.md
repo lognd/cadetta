@@ -2,12 +2,12 @@
 id = "01M4Z33NKSMBJSGKAMVDGYN4CP"
 title = "sema: evaluate a fit's .clearance as a member readable by checks"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:35Z"
-updated = "2026-10-15T06:13:35Z"
+updated = "2026-10-15T06:14:50Z"
 idempotency_key = "a0fq-fitmember"
 scope = ["crates/cadetta-sema/**"]
 
