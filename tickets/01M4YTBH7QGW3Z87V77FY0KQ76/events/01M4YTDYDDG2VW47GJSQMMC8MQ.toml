@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["sync manual-adapter fallback raises R014 for a bound Text param and withholds the file", "sync manual fallback emits cleanly when the Text param is filtered out"]
+moved = []
+at = "2026-10-15T03:41:55Z"
+actor = "lognd"
+rev = 1
