@@ -233,37 +233,7 @@ ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
-fixture = "geometry/datum-bound-inexact-rotation-undecided"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-bound-reversed-normal"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-bound-toleranced-angle-undecided"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-built-from-earlier"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/datum-flip-z"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
 fixture = "geometry/datum-ots-needs-citation"
-ticket = "~S5DC5W0"
-reason = "sema does not enforce the datum declaration rule yet"
-
-[[gap]]
-fixture = "geometry/i001-interface-datum-omitted"
 ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"
 
@@ -346,11 +316,6 @@ reason = "table/fit/variant pipeline not implemented yet"
 fixture = "packages/u002-used-in-descendant"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "packages/use-brace-tree"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
 
 [[gap]]
 fixture = "emitters/sw-equations/global-created-unit-from-locator"
@@ -446,11 +411,6 @@ reason = "part arrays and count(j.screw) are not evaluated"
 fixture = "stdlib/joint-vendor-callout"
 ticket = "~QA1M8TZ"
 reason = "Text members are not lowered to IR members or compared by the runner"
-
-[[gap]]
-fixture = "stdlib/policy-default-component-over-file"
-ticket = "~TGY21E7"
-reason = "dependency packages and [defaults] are not passed to the evaluator"
 
 [[gap]]
 fixture = "stdlib/policy-default-file-over-package"
@@ -2292,3 +2252,23 @@ reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md
 fixture = "stdlib/g005-float-unlocated"
 ticket = "~HWJP0GQ"
 reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
+
+[[gap]]
+fixture = "adapters/bind-scope-every-in-scope-path"
+ticket = "~X2PFH03"
+reason = "check exits 2 where exit 0 is expected"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-optional-members"
+ticket = "~ZHXK8Z8"
+reason = "extra S008 warning at acme.demo::src"
+
+[[gap]]
+fixture = "stdlib/i001-sourced-wrong-kind"
+ticket = "~ZHXK8Z8"
+reason = "extra S008 warning at acme.demo::src"
+
+[[gap]]
+fixture = "stdlib/q003-sourced-named-kind"
+ticket = "~ZHXK8Z8"
+reason = "extra S008 warning at acme.demo::src"
