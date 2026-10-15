@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T12:04:25Z"
+digest = "2783f7bfc7a8a0fc7f3cf9d30f73f9ff7b9e1375cbaa120e55fc5d7c16fd700b"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 48.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b1accd85-3cd1-4204-ada9-153ff0e5efa5 with nextest profile: default
+    Starting 1 test across 42 binaries (499 tests skipped)
+        PASS [   0.233s] cadetta cmd::sync::tests::external_adapter_without_drive_runs_emit_and_reports_files
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.236s] 1 test run: 1 passed, 499 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta external_adapter_without_drive"
+size = 639
+status = "measured"
+test_count = 1
+tests_digest = "621d05378239023782d4447db29892af5d3da53a3039a6a75614a457b34f8ef1"
+at = "2026-10-15T12:04:25Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["An external adapter declaring emit but not drive has emit run by cadetta sync and its files reported"]
+moved = []
+at = "2026-10-15T12:04:25Z"
+actor = "lognd"
+rev = 1

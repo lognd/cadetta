@@ -361,6 +361,14 @@ error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
 
+A part that has the parameter contributes it and the walk stops there; a
+part without it is searched through its own parts, and a part with
+neither contributes a lack. A part of a parameterized component
+contributes the argument its `part` site passes for the parameter (a
+nested part of a parameterized callee is read the same way), so
+`sum(self, unit_cost)` over a `ScrewJoint` counts its `screw_cost` once
+per screw and is an error when `screw_cost` is not given.
+
 The errors in this section and in 3.8 (a non-whole, dimensioned or
 negative count, an unindexed read of an empty array, an index out of
 range, a roll-up with no contributing part or over mixed dimensions, an

@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["A check comparing enum variants (e.g. a Materials table cell == TapClass::Hard) decides == and != instead of EVAL"]
+new = ["A check comparing enum variants (e.g. a Materials table cell == TapClass::Hard) decides == and != instead of EVAL", "Ordering enum variants is an EVAL error"]
+moved = [1]
+at = "2026-10-15T12:28:08Z"
+actor = "lognd"
+rev = 1

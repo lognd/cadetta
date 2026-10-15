@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T11:57:43Z"
+digest = "023e60c0fd2ca41f93f234f3f64ffbf5cc64d4ba3e0a0c561f8c13c840413110"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d7410f6f-897a-4b66-826f-519da3df6e91 with nextest profile: default
+    Starting 1 test across 1 binary (160 tests skipped)
+        PASS [   0.005s] cadetta-adapter session::tests::dirty_document_is_refused_r009_before_push
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 160 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter dirty_document_is_refused_r009"
+size = 565
+status = "measured"
+test_count = 1
+tests_digest = "640fb5592f8ad4c3d5b55e6ff1cfeb56c2b251db10bb01b11a67defa0e16da86"
+at = "2026-10-15T11:57:43Z"
+actor = "lognd"
+rev = 1

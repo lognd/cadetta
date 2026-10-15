@@ -348,7 +348,7 @@ W003.
 | `cadetta compare IFACE` | Every implementer of an interface side by side: interface members, bounds, commercial members, lifecycle, and which checks hold for each in this design. |
 | `cadetta obligations [--stale] [--role R] [--release] [--as-of DATE]` | The open and stale obligation list: the design's to-do list. Exit 1 if any obligation required for the chosen gate is stale or open. |
 | `cadetta ack SELECTOR --role R --reason "..." [--release] [--baseline] [--dry-run] [--as EMAIL]` | Discharge attestation obligations at current digests. |
-| `cadetta ack waiver:GLOB --role R` | Record (or re-review) the closure digests of waivers in the lock (lints.md 2). |
+| `cadetta ack waiver:GLOB --role R` | Record (or re-review) the closure digest of each matching waiver in the lock (lints.md 2); no `--reason` is needed. Every `waive` whose glob matches at least one node is offered, so it is reviewable as listed by `obligations`. `sync:FILE` has no ack: it is discharged by `cadetta sync`. |
 | `cadetta lock verify` / `tidy` / `merge` | Lock maintenance (3). |
 | `cadetta cite pin NAME` | Vendor a URL citation as a local file (2.3). |
 

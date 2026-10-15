@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**", "tests/conformance/known-gaps.toml", "tests/conformance/solvers/result-file-committed-fresh-not-run.expect.json"]
+new = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**", "tests/conformance/known-gaps.toml", "tests/conformance/solvers/result-file-committed-fresh-not-run.expect.json", "tests/conformance/solvers/solve-stale-result-runs.expect.json"]
+at = "2026-10-15T12:37:39Z"
+actor = "lognd"
+rev = 1
