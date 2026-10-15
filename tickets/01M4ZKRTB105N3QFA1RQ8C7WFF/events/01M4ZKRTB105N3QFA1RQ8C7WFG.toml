@@ -1,0 +1,10 @@
+kind = "create"
+title = "U002 rows for unused private part and datum members"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/lint_facts.rs"]
+body = "found while working ~G2DFAFQ: item_facts emits Member rows only for priv param/let members; part/datum members are excluded to avoid false positives and need a use analysis."
+at = "2026-10-15T11:04:46Z"
+actor = "lognd"
+rev = 1
