@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T09:57:13Z"
-updated = "2026-10-15T10:04:19Z"
+updated = "2026-10-15T10:04:34Z"
 scope = ["docs/spec/adapters.md"]
 
 [[acceptance]]
