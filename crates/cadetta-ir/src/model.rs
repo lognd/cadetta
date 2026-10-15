@@ -18,6 +18,7 @@ use std::collections::BTreeMap;
 use cadetta_units::{Dim, Magnitude};
 use tracing::debug;
 
+use crate::entities::{Interface, Table, Waiver};
 use crate::path::Path;
 
 /// Which producer built an IR (ir.md 1); the schema is the same for both.
@@ -755,6 +756,13 @@ pub struct Project {
     pub bindings: Vec<Binding>,
     /// Citations.
     pub citations: Vec<Citation>,
+    /// Interfaces (ir.md 3; omitted from JSON when empty).
+    // frob:ticket 01M4YKQSGPM7JTKPRTZXSHCDWP
+    pub interfaces: Vec<Interface>,
+    /// Lookup tables (ir.md 3; omitted from JSON when empty).
+    pub tables: Vec<Table>,
+    /// Waivers (ir.md 3; omitted from JSON when empty).
+    pub waivers: Vec<Waiver>,
     /// Observed frames (observed flavour only).
     // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
     pub frames: Vec<ObservedFrame>,
@@ -782,6 +790,9 @@ impl Project {
             solvers: Vec::new(),
             bindings: Vec::new(),
             citations: Vec::new(),
+            interfaces: Vec::new(),
+            tables: Vec::new(),
+            waivers: Vec::new(),
             frames: Vec::new(),
             instances: Vec::new(),
             digest: None,

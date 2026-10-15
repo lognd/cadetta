@@ -331,7 +331,7 @@ than a derive; `cadetta.ir.1.json` has `Project` at the root and every
 entity of section 3 under `$defs` (including `Dim` and the item entities
 `Interface`, `Table`, `Waiver`, `Process`). `Project` carries optional
 `interfaces[]`, `tables[]` and `waivers[]` (minor change; absent means
-empty); `requires[]` has no entity shape yet. Objects are closed
+empty; the model fields are omitted from JSON when empty); `requires[]` has no entity shape yet. Objects are closed
 (`additionalProperties: false`). A test regenerates the schema and
 compares it to the committed file, and validates a fully populated
 `Project` and each item entity against it, so a serializer change

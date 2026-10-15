@@ -516,6 +516,16 @@ impl Serialize for Project {
         m.serialize_entry("solvers", &self.solvers)?;
         m.serialize_entry("bindings", &self.bindings)?;
         m.serialize_entry("citations", &self.citations)?;
+        // frob:ticket 01M4YKQSGPM7JTKPRTZXSHCDWP
+        if !self.interfaces.is_empty() {
+            m.serialize_entry("interfaces", &self.interfaces)?;
+        }
+        if !self.tables.is_empty() {
+            m.serialize_entry("tables", &self.tables)?;
+        }
+        if !self.waivers.is_empty() {
+            m.serialize_entry("waivers", &self.waivers)?;
+        }
         // frob:ticket 01M4VB640810PZEZHQJ1T5WFTK
         if !self.frames.is_empty() {
             m.serialize_entry("frames", &self.frames)?;

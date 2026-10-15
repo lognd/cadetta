@@ -1144,6 +1144,39 @@ mod tests {
         assert_eq!(validate(None, &j), Vec::<String>::new());
     }
 
+    // frob:tests crates/cadetta-ir/src/json.rs::serialize kind=unit
+    // frob:ticket 01M4YKQSGPM7JTKPRTZXSHCDWP
+    #[test]
+    fn project_carries_and_serializes_item_collections() {
+        let mut pr = full_project();
+        let bare = serde_json::to_value(&pr).unwrap();
+        for k in ["interfaces", "tables", "waivers"] {
+            assert!(bare.get(k).is_none(), "empty {k} must be omitted");
+        }
+        pr.interfaces.push(Interface {
+            path: cp("a.b::I"),
+            members: vec![],
+            bounds: vec![],
+            datums: vec![],
+        });
+        pr.tables.push(Table {
+            path: cp("a.b::T"),
+            key: TableCol {
+                name: "size".into(),
+                type_name: "Size".into(),
+            },
+            cols: vec![],
+            rows: vec![],
+            citation: None,
+        });
+        pr.waivers.push(Waiver::new("R001", "a.b::*", "because"));
+        let j = serde_json::to_value(&pr).unwrap();
+        assert_eq!(j["interfaces"][0]["path"], "a.b::I");
+        assert_eq!(j["tables"][0]["path"], "a.b::T");
+        assert_eq!(j["waivers"][0]["code"], "R001");
+        assert_eq!(validate(None, &j), Vec::<String>::new());
+    }
+
     // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit
     #[test]
     fn schema_rejects_unknown_and_missing_fields() {
