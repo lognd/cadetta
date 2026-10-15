@@ -2,7 +2,8 @@
 id = "01M4ZQ92JVS7DMCGDSCWZAC967"
 title = "emit: run external adapters in cadetta emit"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
