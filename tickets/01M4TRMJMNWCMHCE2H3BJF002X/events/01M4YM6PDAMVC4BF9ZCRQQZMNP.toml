@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = 'Blocked: the evaluator cannot read through an interface-typed slot even at the primary (repro: model with "part motor: Motor = MotorA alt [MotorB]" and "in m = motor.mass" fails "the type of part motor is unknown"; step_part/part_type in geom.rs/resolve.rs only handle component types). Selection-aware eval_input needs ~JMCB8NQ (slot primary resolution) first; then add a selection (slot, alt) to the Evaluator that substitutes the alt for the primary in step_part, and a variant_requests in cmd/solve.rs that enumerates slots from the IR Part.alternates.'
+at = "2026-10-15T01:53:06Z"
+actor = "lognd"
+rev = 1
