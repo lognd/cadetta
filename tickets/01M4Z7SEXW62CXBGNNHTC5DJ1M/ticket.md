@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T07:35:24Z"
-updated = "2026-10-15T08:00:26Z"
+updated = "2026-10-15T08:00:38Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/lower.rs", "docs/spec/ir.md", "changelog.d/01M4Z7SF16P01AQQ1XXE2NDJ5J.fixed.md"]
 
 [[acceptance]]
