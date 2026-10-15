@@ -2,7 +2,8 @@
 id = "01M50S10KJ16FNH9TMM14758F0"
 title = "Conformance fixture emitters/sw-equations/read-unparsed-line-kept-raw contradicts spec: IIF is parseable"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
