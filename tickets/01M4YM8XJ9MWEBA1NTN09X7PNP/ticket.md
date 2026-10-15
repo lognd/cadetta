@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/**,crates/cadetta-lint/src/**", "docs/spec/lint
 
 [[acceptance]]
 text = "A waiver glob naming a path moved by a was clause still suppresses"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "W005 reports approaching #[lifecycle(eol)] dates"
