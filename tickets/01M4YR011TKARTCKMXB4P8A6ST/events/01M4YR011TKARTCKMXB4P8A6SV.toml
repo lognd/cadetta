@@ -1,0 +1,10 @@
+kind = "create"
+title = "parser: one bad waive date token emits two E001 (cascade)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-syntax/**", "crates/cadetta-syntax/**"]
+body = "Split from ~8WN9V3R. A single malformed waive date token yields two E001 diagnostics; expected one."
+at = "2026-10-15T02:59:22Z"
+actor = "lognd"
+rev = 1
