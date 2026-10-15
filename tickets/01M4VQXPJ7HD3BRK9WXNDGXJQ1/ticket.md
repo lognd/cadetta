@@ -2,13 +2,13 @@
 id = "01M4VQXPJ7HD3BRK9WXNDGXJQ1"
 title = "Solver S005 failures, Q001 outputs and variants flags not implemented in solve"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T04:41:29Z"
+updated = "2026-10-15T07:08:18Z"
 scope = ["crates/cadetta-solve/**"]
 
 [[acceptance]]
