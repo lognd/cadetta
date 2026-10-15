@@ -2,12 +2,12 @@
 id = "01M4Y772AZC00VRGAKXK8V6DSY"
 title = "Derive fits whose operands are component args or parameterized instances (Resolved::Arg), e.g. H7 on bearing.outer_diameter"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T18:59:27Z"
+updated = "2026-10-15T18:59:28Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs"]
 
 [[acceptance]]
