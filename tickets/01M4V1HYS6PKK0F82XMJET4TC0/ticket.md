@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T20:11:48Z"
+updated = "2026-10-15T20:15:01Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[links]]
