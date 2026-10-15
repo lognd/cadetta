@@ -2,7 +2,7 @@
 id = "01M4YEA3NHSS5JTGZRCCQ1ETZT"
 title = "I001: report a member present with a different kind"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
