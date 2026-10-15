@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T02:35:38Z"
-updated = "2026-10-15T07:08:16Z"
-scope = ["crates/cadetta-sema/src/lower.rs"]
+updated = "2026-10-15T07:23:32Z"
+scope = ["crates/cadetta-sema/src/lower.rs", "crates/cadetta-cli/src/cmd/impact_swap.rs", "crates/cadetta-ir/src/path.rs", "crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
 text = "a part slot lowers to pkg::Assembly/part and impact --swap accepts that form"

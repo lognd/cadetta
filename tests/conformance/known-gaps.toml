@@ -1028,146 +1028,6 @@ ticket = "~0N5FY1T"
 reason = "unindexed read of a counted part array in an in-expression is an EVAL error"
 
 [[gap]]
-fixture = "adapters/protocol-command-no-path-search"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-diag-must-be-cadetta-diag-1"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-drive-sync-order"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-features-validated"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-framing-newline-delimited"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-notifications-ignored"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-open-dirty-r009"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-platforms-checked"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-precision-from-initialize"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-push-mode-field"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-push-status-per-locator"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-read-without-session"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-close-without-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-emit-without-emit"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-open-without-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-push-without-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-regen-without-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-refuses-save-without-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-regen-failed-is-r004"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-regen-status"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-save-skipped-on-failed-locator"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-save-skipped-when-never"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-stdout-protocol-only"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-unknown-fields-refused"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/protocol-version-pin"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/csv/capabilities-emit-read-no-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/json/capabilities-emit-read-no-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
-fixture = "emitters/sw-equations/capabilities-emit-read-no-drive"
-ticket = "~Q6AKDVQ"
-reason = "binding protocol entries have no executor yet"
-
-[[gap]]
 fixture = "adapters/force-design"
 ticket = "~SK1B9S3"
 reason = "expectation key not observed by the runner yet"
@@ -1788,3 +1648,38 @@ fixture = "lints/w005-waiver-expiring"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
 
+
+[[gap]]
+fixture = "adapters/protocol-open-dirty-r009"
+ticket = "~6N3JQAV"
+reason = "DriveSession::open closes but never shuts the adapter down after an R009 refusal"
+
+[[gap]]
+fixture = "adapters/protocol-platforms-checked"
+ticket = "~6N3JQAV"
+reason = "the host does not check the initialize platforms list"
+
+[[gap]]
+fixture = "adapters/protocol-precision-from-initialize"
+ticket = "~6N3JQAV"
+reason = "the host ignores the initialize precision"
+
+[[gap]]
+fixture = "adapters/protocol-push-status-per-locator"
+ticket = "~6N3JQAV"
+reason = "a summary-only push result is a plain protocol error, not R008"
+
+[[gap]]
+fixture = "emitters/csv/capabilities-emit-read-no-drive"
+ticket = "~6N3JQAV"
+reason = "built-in adapters declare no capability set the host can check"
+
+[[gap]]
+fixture = "emitters/json/capabilities-emit-read-no-drive"
+ticket = "~6N3JQAV"
+reason = "built-in adapters declare no capability set the host can check"
+
+[[gap]]
+fixture = "emitters/sw-equations/capabilities-emit-read-no-drive"
+ticket = "~6N3JQAV"
+reason = "built-in adapters declare no capability set the host can check"
