@@ -2,12 +2,13 @@
 id = "01M4Z33NKSMBJSGKAMVDGYN4CP"
 title = "sema: evaluate a fit's .clearance as a member readable by checks"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:35Z"
-updated = "2026-10-15T06:22:03Z"
+updated = "2026-10-15T06:23:57Z"
 idempotency_key = "a0fq-fitmember"
 scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4Z33NKSMBJSGKAMVDGYN4CP.fixed.md"]
 

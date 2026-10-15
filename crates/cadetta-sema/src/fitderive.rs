@@ -133,7 +133,7 @@ fn exact(sum: cadetta_units::Sum) -> Result<Magnitude, ToleranceError> {
 }
 
 /// The toleranced value of an evaluated quantity: its nominal with the form's bounds as deviations.
-fn toleranced(q: &Quant) -> Result<Toleranced, ToleranceError> {
+pub(crate) fn toleranced(q: &Quant) -> Result<Toleranced, ToleranceError> {
     let dim = q.form.dim().clone();
     let (lo, hi) = q.form.bounds()?;
     let lower = exact(lo.sub(&q.nominal))?;

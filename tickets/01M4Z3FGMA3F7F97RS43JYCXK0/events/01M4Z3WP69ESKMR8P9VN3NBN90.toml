@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-15T06:27:15Z"
+digest = "b39e7a78ff7867478c35487722e474dc2b5d26f4147b1aac5c99cfe607f3c26d"
+provider = "file"
+ref = "tests/conformance/known-gaps.toml"
+size = 50582
+status = "measured"
+at = "2026-10-15T06:27:15Z"
+actor = "lognd"
+rev = 1

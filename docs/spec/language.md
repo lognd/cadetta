@@ -425,7 +425,9 @@ IT1..IT4 are tabulated to 0.1 um.
 A fit defines `NAME.hole`, `NAME.shaft`, `NAME.clearance` (toleranced)
 and a computed `NAME.type` (clearance, transition, interference), and
 gives each side its role. F003 when a side's own tolerance disagrees
-with the class it is declared to play. Against a required range, a
+with the class it is declared to play. A check or `let` can read
+`NAME.clearance` (an interval quantity, so `.min`/`.max` apply); the
+evaluator computes it on demand from the fit's operands. Against a required range, a
 clearance entirely outside it is F004 (violates); one that overlaps it
 only in part is C002 on the fit (undecided), like any check.
 

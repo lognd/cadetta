@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Needs owner decision: obligations.md 2.2 says exact globs (acme.rover::* does not match Axle.press), so waive on an item path does not cover descendants. Option 1: spec says item path covers descendants (touches shared Glob). Option 2: fix fixture i001-fixed to waive acme.demo::A.load_rating. Agent stopped rather than guess."
+at = "2026-10-15T06:24:50Z"
+actor = "lognd"
+rev = 1
