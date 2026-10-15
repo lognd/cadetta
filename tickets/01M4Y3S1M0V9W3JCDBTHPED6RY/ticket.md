@@ -2,7 +2,8 @@
 id = "01M4Y3S1M0V9W3JCDBTHPED6RY"
 title = "Route sync execute through push_atomic and matched_locators"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
