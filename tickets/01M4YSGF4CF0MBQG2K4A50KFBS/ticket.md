@@ -2,12 +2,12 @@
 id = "01M4YSGF4CF0MBQG2K4A50KFBS"
 title = "roll-up evaluation sum/max/min(self, member) not wired into the evaluator (commercial-misspelling, screw-price)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T10:40:24Z"
+updated = "2026-10-15T10:40:27Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
