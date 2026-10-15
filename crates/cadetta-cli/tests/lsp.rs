@@ -174,7 +174,7 @@ fn save_publishes_package_lint_and_clears() {
         "[package]\nname = \"acme.axle\"\nversion = \"0.1.0\"\n",
     )
     .unwrap();
-    let bad = "model Axle {\n  od: Length = 20mm\n  let bore: Length = 28mm\n  check bore_ok: bore < od \"bore fits\"\n}\n";
+    let bad = "pub model Axle {\n  od: Length = 20mm\n  let bore: Length = 28mm\n  check bore_ok: bore < od \"bore fits\"\n}\n";
     let file = dir.join("src/lib.cdt");
     std::fs::write(&file, bad).unwrap();
     let uri = format!("file://{}", file.display());
