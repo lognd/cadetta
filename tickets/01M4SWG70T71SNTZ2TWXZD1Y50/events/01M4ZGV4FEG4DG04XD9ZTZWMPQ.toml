@@ -1,0 +1,32 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T10:13:19Z"
+digest = "121a0f7e273c602ff9b1a895ca65fa4b7c1ba65fdf51b6b0ca7e0691222bccac"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f58805be-56a9-4066-8611-a7b2e314c78a with nextest profile: default
+    Starting 1 test across 5 binaries (216 tests skipped)
+        PASS [   0.016s] cadetta-sema::bolt_float g005_fires_for_a_check_tighter_than_the_float
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 1 test run: 1 passed, 216 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema g005_fires_for_a_check_tighter"
+size = 1128
+status = "measured"
+test_count = 1
+tests_digest = "cf42c8716d735095df4a78d39e1a5241329b776fdf0a8bb5a3235d4389969dbb"
+at = "2026-10-15T10:13:19Z"
+actor = "lognd"
+rev = 1
