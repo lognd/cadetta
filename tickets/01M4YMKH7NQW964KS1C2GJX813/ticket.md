@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "docs/s
 
 [[acceptance]]
 text = "A user-declared kind is registered so assigning a differently-kinded value reports Q003"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "The kind-row-length-from-cbrt known gap is removed"

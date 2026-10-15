@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:02:33Z"
+digest = "51e4ed4bb65ca1833dd0d4ff43cd86cb81610cd77e6313648fb9f7ce512e2dfb"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ec2e12e4-f1eb-4220-8612-9dd2116b66e5 with nextest profile: default
+    Starting 1 test across 52 binaries (1276 tests skipped)
+        PASS [   0.090s] cadetta::user_kinds user_declared_kind_fires_q003_on_anonymous_length
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.092s] 1 test run: 1 passed, 1276 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "user_declared_kind_fires_q003"
+size = 620
+status = "measured"
+test_count = 1
+tests_digest = "1b6bc2af9e68f0b7e9c0c2eb40b7532733637c016381fde88ba500ad1b70f562"
+at = "2026-10-15T02:02:33Z"
+actor = "lognd"
+rev = 1
