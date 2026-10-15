@@ -1,0 +1,10 @@
+kind = "create"
+title = "cadetta ir: config lint.precision.Money rejected as unknown quantity kind (golden 07)"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/**"]
+body = "found while working ~C7DZBZH"
+at = "2026-10-15T07:35:24Z"
+actor = "lognd"
+rev = 1

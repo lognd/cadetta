@@ -541,6 +541,29 @@ impl DigestGraph {
         self.add_node(m.path.to_string(), member_digest(m), deps);
     }
 
+    /// Add one input node `<component>.<param>` per name in `params_sig` (members read them).
+    pub fn add_params(&mut self, c: &Component) {
+        let Some(sig) = &c.params_sig else { return };
+        for name in sig.split(',').map(str::trim).filter(|n| !n.is_empty()) {
+            let key = format!("{}.{name}", c.path);
+            let mut e = Enc::new("param");
+            e.str(&key);
+            self.add_node(key, e.finish(), Vec::new());
+        }
+    }
+
+    /// Add a fit keyed by its path plus its `hole` and `shaft` read nodes, which derive from it.
+    pub fn add_fit(&mut self, f: &Fit) {
+        let own = fit_digest(f);
+        let key = f.path.to_string();
+        self.add_node(key.clone(), own.clone(), Vec::new());
+        for side in [&f.hole, &f.shaft] {
+            let mut e = Enc::new("fit-side");
+            e.str(&side.to_string()).digest(&own);
+            self.add_node(side.to_string(), e.finish(), vec![key.clone()]);
+        }
+    }
+
     /// Add a solver keyed by its path, reading `solver.deps`.
     pub fn add_solver(&mut self, s: &Solver) {
         let deps = s.deps.iter().map(ToString::to_string).collect();
@@ -719,11 +742,17 @@ fn op_paths(chain: &[crate::geometry::Op]) -> Vec<String> {
 pub fn digest_project(project: &mut Project) -> Result<(), DigestError> {
     let mut g = DigestGraph::new();
     for c in &project.components {
+        // frob:ticket 01M4W8SZ3HZZ2G8V1QVC7DZBZH
+        // A component argument is an input node: members that read it depend on it.
+        g.add_params(c);
         for m in &c.members {
             g.add_member(m);
         }
         for p in &c.parts {
             g.add_part(&p.path.to_string(), p);
+        }
+        for f in &c.fits {
+            g.add_fit(f);
         }
         // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
         for d in &c.datums {
@@ -772,6 +801,12 @@ mod tests {
 
     fn p(s: &str) -> Path {
         Path::parse(s, PathContext::General).unwrap()
+    }
+
+    fn item(s: &str) -> Path {
+        let mut path = p(&format!("{s}.x"));
+        path.members.clear();
+        path
     }
 
     fn ex(n: i64) -> Exact {
@@ -990,6 +1025,36 @@ mod tests {
             b.closure("a.b::Rover.reader")
         );
         assert_eq!(a.closure("a.b::Rover.other"), b.closure("a.b::Rover.other"));
+    }
+
+    // frob:tests DigestGraph.add_params
+    #[test]
+    fn member_reading_a_component_argument_digests() {
+        let mut pr = Project::new(
+            Flavour::Design,
+            PackageId {
+                name: "a.b".into(),
+                version: "1".into(),
+            },
+        );
+        pr.components.push(Component {
+            path: item("a.b::X"),
+            class: ComponentClass::Model,
+            params_sig: Some("motor, w".into()),
+            implements: vec![],
+            citation: None,
+            attrs: BTreeMap::new(),
+            members: vec![mem("a.b::X.a", 1, &["a.b::X.motor"])],
+            parts: vec![],
+            fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
+            span: None,
+            digest: None,
+        });
+        digest_project(&mut pr).unwrap();
+        assert!(pr.components[0].members[0].closure.is_some());
     }
 
     // frob:tests digest_project_fills_all
