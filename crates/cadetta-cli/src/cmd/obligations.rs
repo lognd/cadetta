@@ -21,7 +21,7 @@ use crate::pipeline::{Analysis, analyze};
 use crate::pkg::manifest::GitRef;
 use crate::pkg::resolve;
 use crate::project::{Dependency, PackageDir, Project};
-use crate::universe::{candidates, universes};
+use crate::universe::{candidates, sync_states, universes, waiver_states};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 /// Exit code when a gating obligation is open or stale (config-cli.md 3).
@@ -334,6 +334,38 @@ fn project_candidates(
     out
 }
 
+/// Append rows for obligations judged by state alone (`waiver`, `sync`) and re-gate the report.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+fn add_state_rows(
+    report: &mut Report,
+    states: Vec<(ObligationId, ObligationState)>,
+    policy: &Policy,
+    args: &ObligationsArgs,
+) {
+    for (id, state) in states {
+        if args.stale && state != ObligationState::Stale {
+            continue;
+        }
+        tracing::debug!(%id, ?state, "obligation listed");
+        report.rows.push(Row {
+            id,
+            state,
+            role: None,
+            attester: None,
+            age_days: None,
+            nearest_changed: None,
+            note: None,
+            upstream: Vec::new(),
+        });
+    }
+    let pending: Vec<_> = report
+        .rows
+        .iter()
+        .map(|r| (r.id.clone(), r.state))
+        .collect();
+    report.gated = !policy.gate(&pending, args.release).passed();
+}
+
 /// Read the lock of every dependency and the roles each is trusted for (packages.md 6).
 ///
 /// A path dependency is read in place; a git dependency is read from the checkout that
@@ -467,7 +499,7 @@ pub fn run_obligations(
         Ok(o) => o,
         Err(message) => return fail(err, &message),
     };
-    let report = list_with_upstream(
+    let mut report = list_with_upstream(
         &project_candidates(&analysis, &lock, &policy, &parsed),
         &lock,
         &policy,
@@ -476,6 +508,9 @@ pub fn run_obligations(
         &upstream,
         &trust,
     );
+    let mut states = waiver_states(&analysis, &universes(&analysis), &lock);
+    states.extend(sync_states(&project, &analysis, &lock));
+    add_state_rows(&mut report, states, &policy, &parsed);
     render(&report, &as_of, globals.format, out);
     if report.gated { EXIT_PENDING } else { EXIT_OK }
 }

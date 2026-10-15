@@ -88,7 +88,7 @@ pub struct Universe {
     graph: DigestGraph,
     /// Direct dependencies of every graph key (for the `why --stale` walk).
     edges: std::collections::BTreeMap<String, Vec<String>>,
-    /// One entry per IR check (`check` or `require`) in IR order, then one per fit.
+    /// One entry per IR check (`check` or `require`) in IR order, then one per fit and solver.
     pub checks: Vec<CheckEntry>,
     /// One entry per `ots` component (ack only).
     pub ots: Vec<OtsEntry>,
@@ -151,16 +151,36 @@ impl Universe {
             let deps = vec![f.hole.to_string(), f.shaft.to_string()];
             nodes.push((f.path.to_string(), cadetta_ir::digest::fit_digest(f), deps));
         }
+        // A table is a node a check can read (ir.md 4); editing a row stales its readers.
+        for t in &ir.tables {
+            nodes.push((
+                t.path.to_string(),
+                cadetta_ir::digest::table_digest(t),
+                Vec::new(),
+            ));
+        }
         let mut g = DigestGraph::new();
         for c in &ir.components {
             for p in &c.parts {
                 g.add_part(&p.path.to_string(), p);
             }
         }
+        // Part arguments (`<slot>.<arg>`) and tables are read by path, like members.
+        let read_targets: Vec<String> = members
+            .iter()
+            .map(|m| m.path.to_string())
+            .chain(ir.tables.iter().map(|t| t.path.to_string()))
+            .chain(ir.components.iter().flat_map(|c| {
+                c.parts.iter().flat_map(|p| {
+                    let slot = p.path.to_string();
+                    p.args.keys().map(move |k| format!("{slot}.{k}"))
+                })
+            }))
+            .collect();
         for c in &ir.checks {
-            let reads = members
+            let reads = read_targets
                 .iter()
-                .map(|m| m.path.to_string())
+                .cloned()
                 .filter(|m| check_reads(&c.path.to_string(), &c.expr, m))
                 .collect();
             nodes.push((c.path.to_string(), check_digest(c), reads));
@@ -206,6 +226,18 @@ impl Universe {
             tracing::debug!(%key, "universe: fit obligation");
             checks.push(CheckEntry {
                 id: ObligationId::new(ObligationKind::Fit, key.clone()),
+                covered: g.closure(&key)?,
+                deps: g.dep_owns(&key)?,
+                key,
+                verdict: Verdict::Holds,
+            });
+        }
+        // A solver result is current while its inputs are (obligations.md 2.3); `solve` discharges it.
+        for s in &ir.solvers {
+            let key = s.path.to_string();
+            tracing::debug!(%key, "universe: solver obligation");
+            checks.push(CheckEntry {
+                id: ObligationId::new(ObligationKind::Solver, key.clone()),
                 covered: g.closure(&key)?,
                 deps: g.dep_owns(&key)?,
                 key,
@@ -512,6 +544,65 @@ pub fn sync_states(
     out
 }
 
+/// The unreviewed or changed `waiver` obligations (obligations.md 2.3): `waiver:GLOB` is open
+/// until acked, and stale when the combined closure digest of its targets differs from the lock
+/// record. A waiver with no matching target or an unchanged review is not listed.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+pub fn waiver_states(
+    analysis: &Analysis,
+    universes: &[Universe],
+    lock: &Lock,
+) -> Vec<(ObligationId, ObligationState)> {
+    use cadetta_obligations::staleness::covered_digest;
+    let mut closures = std::collections::BTreeMap::new();
+    for u in universes {
+        if let Ok(c) = u.closures() {
+            closures.extend(c);
+        }
+    }
+    let mut out = Vec::new();
+    for w in &analysis.suppressions.waivers {
+        let Ok(glob) = cadetta_obligations::selector::Glob::new(&w.glob) else {
+            tracing::warn!(glob = %w.glob, "universe: waiver glob invalid");
+            continue;
+        };
+        let targets: Vec<Digest> = closures
+            .iter()
+            .filter(|(p, _)| glob.matches(p))
+            .map(|(_, d)| d.clone())
+            .collect();
+        if targets.is_empty() {
+            continue;
+        }
+        let current = covered_digest(&targets);
+        let alt = w.for_alt.as_ref().map(|a| a.short());
+        let recorded = lock.records().find_map(|r| match r {
+            Record::Waiver(l)
+                if l.code == w.code
+                    && l.glob == w.glob
+                    && l.alt
+                        .as_ref()
+                        .map(|a| format!("{}={}", a.slot, a.alternate))
+                        == alt =>
+            {
+                Some(l.digest.as_str().to_owned())
+            }
+            _ => None,
+        });
+        let state = match recorded {
+            None => ObligationState::Open,
+            Some(d) if d == current.0 => continue,
+            Some(_) => ObligationState::Stale,
+        };
+        tracing::debug!(glob = %w.glob, code = %w.code, ?state, "universe: waiver obligation");
+        out.push((
+            ObligationId::new(ObligationKind::Waiver, w.glob.clone()),
+            state,
+        ));
+    }
+    out
+}
+
 // frob:ticket 01M4TA3CEMSKPPZTY1CM2AFDDQ
 #[cfg(test)]
 mod tests {
@@ -530,6 +621,10 @@ mod tests {
 
     impl Dir {
         fn new() -> Self {
+            Self::with_src(AXLE)
+        }
+
+        fn with_src(src: &str) -> Self {
             static N: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
             let n = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let p = std::env::temp_dir().join(format!("cadetta-uni-{}-{n}", std::process::id()));
@@ -539,7 +634,7 @@ mod tests {
                 format!("[package]\nname = \"acme.axle\"\nversion = \"0.1.0\"\n{ROLES}"),
             )
             .unwrap();
-            std::fs::write(p.join("src/lib.cdt"), AXLE).unwrap();
+            std::fs::write(p.join("src/lib.cdt"), src).unwrap();
             Self(p)
         }
     }
@@ -612,6 +707,83 @@ mod tests {
                 .any(|r| r["id"] == CHECK && r["state"] == "open"),
             "{v}"
         );
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::waiver_states
+    #[test]
+    fn obligations_lists_an_unreviewed_waiver() {
+        let src = format!("{AXLE}waive C001 on acme.axle::Axle.bore {{ because \"x\" }}\n");
+        let v = run(obligations::run_obligations, &Dir::with_src(&src), &[]);
+        let rows = v["obligations"].as_array().unwrap();
+        assert!(
+            rows.iter()
+                .any(|r| r["id"] == "waiver:acme.axle::Axle.bore" && r["state"] == "open"),
+            "{v}"
+        );
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn obligations_lists_a_solver_with_its_closure() {
+        use cadetta_ir::model::{Flavour, PackageId, Solver};
+        use cadetta_ir::path::{Path, PathContext};
+        let mut ir = IrProject::new(
+            Flavour::Design,
+            PackageId {
+                name: "a".into(),
+                version: "0.1.0".into(),
+            },
+        );
+        ir.solvers.push(Solver {
+            path: Path::parse("a::M.sz", PathContext::General).unwrap(),
+            script: "sz.py".into(),
+            inputs: Default::default(),
+            outputs: Default::default(),
+            deps: Vec::new(),
+            result_digest: None,
+            stale: false,
+        });
+        let u = super::Universe::of(&ir).unwrap();
+        let ids: Vec<String> = super::candidates(&[u])
+            .iter()
+            .map(|c| c.id.to_string())
+            .collect();
+        assert!(ids.iter().any(|i| i.starts_with("solver:")), "{ids:?}");
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn editing_a_table_a_check_reads_changes_the_check_closure() {
+        use cadetta_ir::entities::{Cell, Table, TableCol, TableRow};
+        use cadetta_ir::variant_name::ComponentPath;
+        let covered = |row: &str| {
+            let mut ir = ir_with_requires();
+            ir.checks.truncate(1);
+            ir.checks[0].expr = "lookup(a::T, x)".into();
+            ir.tables.push(Table {
+                path: ComponentPath {
+                    package: "a".into(),
+                    modules: Vec::new(),
+                    item: "T".into(),
+                },
+                key: TableCol {
+                    name: "k".into(),
+                    type_name: "Key".into(),
+                },
+                cols: Vec::new(),
+                rows: vec![TableRow {
+                    key: Cell::Variant(row.into()),
+                    cells: Vec::new(),
+                }],
+                citation: None,
+            });
+            super::Universe::of(&ir).unwrap().checks[0].covered.clone()
+        };
+        assert_ne!(covered("r1"), covered("r2"));
+        assert_eq!(covered("r1"), covered("r1"));
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/ack.rs::run_ack
@@ -831,6 +1003,7 @@ mod tests {
     // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
     // frob:tests crates/cadetta-cli/src/universe.rs::candidates
     // frob:tests crates/cadetta-cli/src/universe.rs::ack_candidates
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.explain
     #[test]
     fn fit_obligation_is_listed_signed_off_and_stales_on_edit() {
         let dir = Dir::new();
