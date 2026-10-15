@@ -105,6 +105,17 @@ impl FitFailure {
     }
 }
 
+/// The human message of a failure (the lookup text, or the nanometre explanation).
+pub(crate) fn failure_message(e: &FitFailure) -> String {
+    match e {
+        FitFailure::Iso(inner) => inner.to_string(),
+        FitFailure::NominalNotNanometres => {
+            "F002: the nominal size is not a whole number of nanometres".to_owned()
+        }
+        other => format!("{other:?}"),
+    }
+}
+
 impl From<ToleranceError> for FitFailure {
     fn from(e: ToleranceError) -> Self {
         Self::Tolerance(e)
@@ -161,7 +172,7 @@ fn info(role: Role, source: RoleSource) -> RoleInfo {
 }
 
 /// A class applied to a nominal: the toleranced side and its resolved deviations.
-fn class_side(
+pub(crate) fn class_side(
     dim: &Dim,
     nominal: &Magnitude,
     class: &str,

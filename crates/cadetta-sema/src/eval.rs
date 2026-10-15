@@ -34,7 +34,7 @@ use cadetta_syntax::span::Span;
 use cadetta_units::square::{mul_checked, square};
 use cadetta_units::{
     Affine, Dim, InexactError, Magnitude, Rational, Sum, Temperature, TemperatureUnit,
-    ToleranceError, Toleranced, UnitTable, VarId,
+    ToleranceError, Toleranced, UnitTable, VarId, Role, RoleInfo, RoleSource, resolve_role,
 };
 use tracing::{debug, trace, warn};
 
@@ -127,6 +127,8 @@ pub struct Evaluated {
     pub alias_of: Option<CanonPath>,
     /// The definition's span.
     pub span: Span,
+    /// The hole/shaft role (quantities.md 5.6): explicit, from a class letter, or inherited.
+    pub role: Option<RoleInfo>,
 }
 
 /// A finding made while evaluating.
@@ -347,7 +349,8 @@ impl Quant {
     }
 
     /// The accessor `name` of this quantity as an untoleranced constant.
-    fn accessor(&self, name: &str, span: Span) -> R<Self> {
+    // frob:ticket 01M4V1HDVGKT6AVWCWY7078TNV
+    fn accessor(&self, name: &str, role: Option<Role>, span: Span) -> R<Self> {
         let dim = self.dim().clone();
         let m = match name {
             "nominal" => self.nominal.clone(),
@@ -360,11 +363,17 @@ impl Quant {
                 }
             }
             _ => {
-                return Err(diag(
-                    "E010",
-                    span,
-                    format!("`.{name}` needs a role (hole or boss) to say which side is material"),
-                ));
+                let Some(role) = role else {
+                    return Err(diag(
+                        "E010",
+                        span,
+                        format!("`.{name}` needs a role (hole or shaft) to say which side is material"),
+                    ));
+                };
+                let (lo, hi) = self.form.bounds().map_err(|e| tol_diag(&e, span))?;
+                // A hole's maximum material is its smallest size; a shaft's its largest.
+                let smallest = (name == "mmc") == (role == Role::Hole);
+                if smallest { lo } else { hi }
             }
         };
         Ok(Self::constant(dim, m))
@@ -403,6 +412,8 @@ struct Def<'p> {
     fixed: Option<Val>,
     /// The `#[when(cond)]` presence condition, evaluated in `ctx`.
     when: Option<&'p Expr>,
+    /// The explicit `#[role(hole|shaft)]` (or bare `#[hole]`/`#[shaft]`) of the member.
+    role: Option<RoleInfo>,
 }
 
 /// The names visible while evaluating one definition.
@@ -681,12 +692,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 var: None,
                 alias_of: None,
                 span: def.span,
+                role: None,
             })
         } else if def.is_let {
             self.eval_let(scope, def)
         } else {
             self.eval_param(scope, def, key)
         };
+        // An explicit `#[role(..)]` wins over a class-letter or inherited role.
+        let result = result.map(|mut ev| {
+            ev.role = def.role.or(ev.role);
+            ev
+        });
         match (result, def.ty) {
             (Ok(ev), Some(ty)) => self
                 .check_declared(scope, ty, &ev.value, def.span)
@@ -704,6 +721,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             var: None,
             alias_of: None,
             span: def.span,
+            role: None,
         })
     }
 
@@ -730,6 +748,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 var: ev.var,
                 alias_of: Some(ev.alias_of.unwrap_or(rk)),
                 span,
+                role: resolve_role(None, ev.role),
             });
         }
         match &e.kind {
@@ -741,6 +760,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let var = self.fresh_var();
                 let q = self.range(sc, l, r, var, e.span)?;
                 Ok(owned(Val::Quantity(q), Some(var), span))
+            }
+            // frob:ticket 01M4V1HDVGKT6AVWCWY7078TNV
+            ExprKind::IsoClass(inner, class) => {
+                let var = self.fresh_var();
+                let (q, role) = self.iso_class(sc, inner, class, var, e.span)?;
+                let mut ev = owned(Val::Quantity(q), Some(var), span);
+                ev.role = Some(role);
+                Ok(ev)
             }
             _ => match self.eval(sc, e)? {
                 Val::Quantity(q) => {
@@ -830,8 +857,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Table(path) => Ok(Val::Table(path)),
             RefKind::Component(path) => Ok(Val::Component(path)),
             RefKind::Member { key, chain } => {
+                let role = self.value_of(&key).and_then(|ev| ev.role).map(|r| r.role);
                 let v = self.member_value(&key, e.span)?;
-                self.apply_chain(v, &chain, e.span)
+                self.apply_chain(v, role, &chain, e.span)
             }
         }
     }
@@ -852,12 +880,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// Reads `chain` from `v`: accessors, component members, row columns, point coordinates.
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
-    fn apply_chain(&mut self, v: Val, chain: &[String], span: Span) -> R<Val> {
+    fn apply_chain(&mut self, v: Val, role: Option<Role>, chain: &[String], span: Span) -> R<Val> {
         let mut v = v;
         for name in chain {
             v = match v {
                 Val::Quantity(q) if ACCESSORS.contains(&name.as_str()) => {
-                    Val::Quantity(q.accessor(name, span)?)
+                    Val::Quantity(q.accessor(name, role, span)?)
                 }
                 Val::Component(mut p) => {
                     p.members = vec![MemberSeg::Name(name.clone())];
@@ -992,6 +1020,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Index(base, idx) => self.index(sc, base, idx, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
             ExprKind::Tolerance(inner, terms) => Ok(self.tolerance_val(sc, inner, terms, span)?.0),
+            ExprKind::IsoClass(inner, class) => {
+                let var = self.fresh_var();
+                Ok(Val::Quantity(self.iso_class(sc, inner, class, var, span)?.0))
+            }
             ExprKind::Call {
                 callee,
                 optional: false,
@@ -1246,6 +1278,36 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Applies an ISO 286 class to a nominal: the toleranced quantity and the role its letter gives
+    /// (quantities.md 5.1, 5.6). F001 and F002 come from the table lookup.
+    // frob:ticket 01M4V1HDVGKT6AVWCWY7078TNV
+    fn iso_class(
+        &mut self,
+        sc: &mut Scope,
+        inner: &Expr,
+        class: &ast::Ident,
+        var: VarId,
+        span: Span,
+    ) -> R<(Quant, RoleInfo)> {
+        let base = self.quant(sc, inner)?;
+        let (side, _) = crate::fits::class_side(base.dim(), &base.nominal, &class.name).map_err(|e| {
+            let msg = crate::fits::failure_message(&e);
+            diag(e.code().unwrap_or("EVAL"), span, msg)
+        })?;
+        let form = side.value.to_affine(var).map_err(|e| tol_diag(&e, span))?;
+        trace!(class = %class.name, ?var, "evaluator: ISO class owns a source variable");
+        Ok((
+            Quant {
+                form,
+                nominal: base.nominal,
+            },
+            RoleInfo {
+                role: side.role.role,
+                source: RoleSource::IsoClass,
+            },
+        ))
+    }
+
     fn range(&mut self, sc: &mut Scope, l: &Expr, r: &Expr, var: VarId, span: Span) -> R<Quant> {
         let lo = self.quant(sc, l)?;
         let hi = self.quant(sc, r)?;
@@ -1273,6 +1335,7 @@ fn owned(value: Val, var: Option<VarId>, span: Span) -> Evaluated {
         var,
         alias_of: None,
         span,
+        role: None,
     }
 }
 
@@ -1401,6 +1464,7 @@ fn index_component<'p>(
                 inst: None,
                 fixed: None,
                 when: None,
+                role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
             },
         );
     }
@@ -1834,5 +1898,65 @@ mod tests {
         assert_eq!(quant(&ev, "M", "near").nominal, m(4, 1000));
         assert_eq!(quant(&ev, "M", "via").nominal, m(5, 1000));
         assert!(matches!(val(&ev, "M", "drills"), Val::Table(_)));
+    }
+
+    fn codes(ev: &Evaluation) -> Vec<&'static str> {
+        ev.diagnostics.iter().map(|d| d.code).collect()
+    }
+
+    // frob:tests iso_class_applies_table_deviations_and_hole_role
+    #[test]
+    fn iso_class_applies_table_deviations_and_hole_role() {
+        let ev = run(&file("model P {\n  a = 20mm H7\n  hi = a.max\n  lo = a.min\n  m = a.mmc\n}\n"));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "P", "hi").nominal, m(20_021, 1_000_000));
+        assert_eq!(quant(&ev, "P", "lo").nominal, m(20, 1_000));
+        let role = ev.get(&at("P", "a")).expect("a").role.expect("role");
+        assert_eq!(role.role, Role::Hole);
+        assert_eq!(role.source, RoleSource::IsoClass);
+        assert_eq!(quant(&ev, "P", "m").nominal, m(20, 1_000));
+    }
+
+    // frob:tests iso_class_lowercase_letter_is_shaft
+    #[test]
+    fn iso_class_lowercase_letter_is_shaft() {
+        let ev = run(&file("model P {\n  a = 20mm g6\n  m = a.mmc\n}\n"));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let role = ev.get(&at("P", "a")).expect("a").role.expect("role");
+        assert_eq!(role.role, Role::Shaft);
+        // g6 at 20mm: upper deviation -7um, so the largest size is 19.993mm.
+        assert_eq!(quant(&ev, "P", "m").nominal, m(19_993, 1_000_000));
+    }
+
+    // frob:tests iso_class_out_of_range_is_f002
+    #[test]
+    fn iso_class_out_of_range_is_f002() {
+        let ev = run(&file("model P {\n  a = 20000mm H7\n}\n"));
+        assert_eq!(codes(&ev), vec!["F002"]);
+        assert!(ev.get(&at("P", "a")).is_none());
+    }
+
+    // frob:tests mmc_without_role_is_e010
+    #[test]
+    fn mmc_without_role_is_e010() {
+        let ev = run(&file("model P {\n  a = 5mm [+-0.1mm]\n  b = a.mmc\n  c = a.lmc\n}\n"));
+        assert_eq!(codes(&ev), vec!["E010", "E010"]);
+    }
+
+    // frob:tests role_attribute_picks_material_side
+    #[test]
+    fn role_attribute_picks_material_side() {
+        let ev = run(&file(
+            "model P {\n  #[role(hole)]\n  a = 10mm [+-0.1mm]\n  m = a.mmc\n  l = a.lmc\n  \
+             #[role(shaft)]\n  s = 10mm [+-0.1mm]\n  sm = s.mmc\n  sl = s.lmc\n  r = a\n  rm = r.mmc\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "P", "m").nominal, m(99, 10_000));
+        assert_eq!(quant(&ev, "P", "l").nominal, m(101, 10_000));
+        assert_eq!(quant(&ev, "P", "sm").nominal, m(101, 10_000));
+        assert_eq!(quant(&ev, "P", "sl").nominal, m(99, 10_000));
+        let r = ev.get(&at("P", "r")).expect("r").role.expect("inherited");
+        assert_eq!(r.source, RoleSource::Inherited);
+        assert_eq!(quant(&ev, "P", "rm").nominal, m(99, 10_000));
     }
 }

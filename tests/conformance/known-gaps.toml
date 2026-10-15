@@ -313,21 +313,6 @@ ticket = "~4QX9B1C"
 reason = "compound units and dimensional checks not implemented in the evaluator"
 
 [[gap]]
-fixture = "quantities/f002"
-ticket = "~7078TNV"
-reason = "ISO 286 fit evaluation not implemented"
-
-[[gap]]
-fixture = "quantities/e010"
-ticket = "~7078TNV"
-reason = "ISO 286 fit evaluation not implemented"
-
-[[gap]]
-fixture = "quantities/e010-lmc"
-ticket = "~7078TNV"
-reason = "ISO 286 fit evaluation not implemented"
-
-[[gap]]
 fixture = "quantities/c004"
 ticket = "~PDC7173"
 reason = "C004 not emitted"

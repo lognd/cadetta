@@ -7,6 +7,7 @@
 use std::collections::BTreeMap;
 
 use cadetta_syntax::ast::{Attr, AttrArg, Expr, ExprKind};
+use cadetta_units::{Role, RoleInfo, RoleSource};
 use tracing::{debug, trace};
 
 /// Attribute names that never inherit from a scope default (the tolerance role).
@@ -77,6 +78,30 @@ fn apply(src: &str, attrs: &[Attr], out: &mut BTreeMap<String, String>, inherit:
 /// True for a bare, argument-less attribute: a rule role (`#![hole]` is never a default).
 fn is_role_hint(a: &Attr) -> bool {
     a.args.is_empty() && !matches!(a.name.name.as_str(), "priv" | "pub")
+}
+
+/// The explicit tolerance role of a member: `#[role(hole|shaft)]` or a bare `#[hole]`/`#[shaft]`.
+// frob:ticket 01M4V1HDVGKT6AVWCWY7078TNV
+pub fn explicit_role(leading: &[Attr], trailing: &[Attr]) -> Option<RoleInfo> {
+    let role = leading
+        .iter()
+        .chain(trailing)
+        .filter(|a| !a.inner)
+        .filter_map(|a| match (a.name.name.as_str(), a.args.first()) {
+            ("hole", None) => Some(Role::Hole),
+            ("shaft", None) => Some(Role::Shaft),
+            ("role", Some(AttrArg::Expr(Expr { kind: ExprKind::Path(p), .. }))) => p
+                .segments
+                .first()
+                .and_then(|s| Role::from_attribute(&s.name).ok()),
+            _ => None,
+        })
+        .next_back()?;
+    trace!(?role, "attrs: explicit member role");
+    Some(RoleInfo {
+        role,
+        source: RoleSource::Attribute,
+    })
 }
 
 /// Resolves a member's attributes over its scopes, member attributes winning.

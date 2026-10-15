@@ -178,6 +178,7 @@ mod tests {
             var,
             alias_of: alias.then(unreachable_path),
             span: Span::default(),
+            role: None,
         }
     }
 

@@ -313,6 +313,7 @@ impl<'p> Site<'_, 'p> {
                 inst: None,
                 fixed: None,
                 when: None,
+                role: None,
             };
             match &b.source {
                 ArgSource::Given(expr, span) => {
@@ -384,6 +385,7 @@ impl<'p> Site<'_, 'p> {
                     inst: Some(info.clone()),
                     fixed: None,
                     when,
+                    role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
                 },
             );
         }
