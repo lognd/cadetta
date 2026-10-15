@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-15T04:14:32Z"
+digest = "2add340419731962cf54bbfb27f660d9de01aaa7cede247ad1c317364731b3b2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.46s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d12d6af7-d136-4e1c-9375-17434e90c125 with nextest profile: default
+    Starting 1 test across 67 binaries (1417 tests skipped)
+        PASS [   1.707s] cadetta::lint_gaps_d001_d002 geometry_codes_reach_check_and_stay_quiet_on_the_clean_twins
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.712s] 1 test run: 1 passed, 1417 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "geometry_codes_reach_check"
+size = 585
+status = "measured"
+test_count = 1
+tests_digest = "2ae8817893d4c3e16e860f84f4f7d575847cf74c50f337667e0f1603bdc1f7c3"
+at = "2026-10-15T04:14:32Z"
+actor = "lognd"
+rev = 1
