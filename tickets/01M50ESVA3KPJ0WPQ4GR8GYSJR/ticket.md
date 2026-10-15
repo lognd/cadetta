@@ -2,7 +2,8 @@
 id = "01M50ESVA3KPJ0WPQ4GR8GYSJR"
 title = "Conformance: must-not-fire value expectations in solvers/output-decimal-exact and role-output-value-is-recorded contradict their own .out.json"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
