@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:35Z"
-updated = "2026-10-15T06:14:50Z"
+updated = "2026-10-15T06:22:03Z"
 idempotency_key = "a0fq-fitmember"
-scope = ["crates/cadetta-sema/**"]
+scope = ["crates/cadetta-sema/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "The fit-clearance-member fixture passes and its known-gaps entry is removed"
