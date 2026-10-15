@@ -4,9 +4,10 @@ title = "Solver and sync obligations not produced by check (S003, O004)"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T04:04:04Z"
+updated = "2026-10-15T19:38:02Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[links]]
