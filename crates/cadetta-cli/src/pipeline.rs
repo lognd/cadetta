@@ -536,7 +536,7 @@ fn parse_package(
                 out.push(diag_at(
                     error.code,
                     Severity::Error,
-                    format!("bad module path: {error}"),
+                    error.message.clone(),
                     None,
                     None,
                 ));
