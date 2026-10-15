@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["tests/conformance/**"]
+new = ["tests/conformance/**", "tests/conformance/known-gaps.toml"]
+at = "2026-10-15T22:25:14Z"
+actor = "lognd"
+rev = 1

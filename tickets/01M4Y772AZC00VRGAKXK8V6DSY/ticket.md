@@ -7,12 +7,12 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T19:00:27Z"
-scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs", "crates/cadetta-sema/src/eval.rs"]
+updated = "2026-10-15T22:15:10Z"
+scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/ir.md"]
 
 [[acceptance]]
 text = "A fit whose operand is a parameterized component argument or an instance member is evaluated and lowered into Component.fits (or a documented diagnostic is emitted), with a test"
-bound = false
+bound = true
 +++
 
 Split from ~Q1ZBN9Y. fitderive::derive_fits skips (debug log) any fit whose operand resolves to Resolved::Arg or has no evaluated Member value; only component-member operands are derived.
