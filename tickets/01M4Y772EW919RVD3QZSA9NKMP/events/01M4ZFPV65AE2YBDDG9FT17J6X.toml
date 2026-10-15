@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T09:53:32Z"
+digest = "9ee933fbc18aa4eae39238748eb45238182f6ef1616b45d28f3e12945d917b01"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.85s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1db2eb3c-c806-4194-837f-d02985a28273 with nextest profile: default
+    Starting 1 test across 41 binaries (485 tests skipped)
+        PASS [   0.125s] cadetta::lint_lifts f003_fires_when_a_side_tolerance_disagrees_with_its_class
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.126s] 1 test run: 1 passed, 485 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta f003_fires"
+size = 626
+status = "measured"
+test_count = 1
+tests_digest = "46fa1666a37162a133e11dfada6467a262e1808db78c45d7c9413cf33b437572"
+at = "2026-10-15T09:53:32Z"
+actor = "lognd"
+rev = 1
