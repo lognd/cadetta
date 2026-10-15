@@ -1594,7 +1594,7 @@ impl Parser<'_> {
                 self.bump();
                 Ok(self.mk(ExprKind::Bool(k == "true"), start))
             }
-            Tok::Keyword("self" | "origin") | Tok::Ident(_) => {
+            Tok::Keyword("self" | "origin" | "package" | "super") | Tok::Ident(_) => {
                 let p = self.path(false, true)?;
                 Ok(self.mk(ExprKind::Path(p), start))
             }
@@ -1841,6 +1841,19 @@ mod tests {
         assert!(!parse("model M {\n a = 1 b = 2\n}\n").diags.is_empty());
         // A newline outside brackets ends the statement, so the bare operator is an error.
         assert!(!parse("model M {\n a = 1 +\n 2\n}\n").diags.is_empty());
+    }
+
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
+    #[test]
+    fn package_and_super_paths_parse_in_expressions() {
+        for (src, text) in [
+            ("model M {\n w = package::a::Thing.size\n}\n", "package::a::Thing"),
+            ("model M {\n w = super::Thing\n}\n", "super::Thing"),
+        ] {
+            let p = parse(src);
+            assert!(p.diags.is_empty(), "unexpected diagnostics for {src:?}: {:?}", p.diags);
+            assert!(format!("{:?}", p.file).contains(text.split("::").next().unwrap()));
+        }
     }
 
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit

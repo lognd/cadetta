@@ -515,6 +515,15 @@ fn fail(err: &mut dyn Write, solver: &str, code: &str, message: &str) -> Outcome
     }
 }
 
+/// Append whether a previous result stays in use to an S005 message (solvers.md 3).
+fn with_previous(message: &str, previous: bool) -> String {
+    if previous {
+        format!("{message}; the previous result is in use")
+    } else {
+        format!("{message}; no previous result exists")
+    }
+}
+
 fn solve_one(
     t: &Target<'_>,
     evaluator: &mut Evaluator<'_, '_>,
@@ -574,6 +583,7 @@ fn solve_one(
         Ok(f) => f,
         Err(e) => return fail(err, &t.path, "S005", &e.to_string()),
     };
+    let mut previous = false;
     match file.lookup(&t.path, None, &digests) {
         Lookup::Fresh(_) => {
             tracing::info!(solver = %t.path, "solve: result is fresh, not running");
@@ -592,13 +602,21 @@ fn solve_one(
                 err,
             );
         }
-        Lookup::Stale(_) => tracing::info!(solver = %t.path, "solve: result is stale, running"),
+        Lookup::Stale(_) => {
+            previous = true;
+            tracing::info!(solver = %t.path, "solve: result is stale, running");
+        }
         Lookup::Missing => tracing::info!(solver = %t.path, "solve: no result, running"),
     }
     let response = match transport::run_solver(configs, &t.path, &script, &request, &project.root) {
         Ok(r) => r,
         Err(e) => {
-            let outcome = fail(err, &t.path, e.code(), &e.to_string());
+            let message = if e.code() == "S005" {
+                with_previous(&e.to_string(), previous)
+            } else {
+                e.to_string()
+            };
+            let outcome = fail(err, &t.path, e.code(), &message);
             return match outcome {
                 Outcome::Failed { code, message }
                     if matches!(
@@ -613,7 +631,7 @@ fn solve_one(
         }
     };
     if let Err(message) = check_outputs(&decl, &response.outputs, table) {
-        return fail(err, &t.path, "S005", &message);
+        return fail(err, &t.path, "S005", &with_previous(&message, previous));
     }
     let digests_for_variants = digests.clone();
     file.upsert(SolveResult {
@@ -628,7 +646,12 @@ fn solve_one(
         diagnostics: response.diagnostics,
     });
     if let Err(e) = file.save(&results_path) {
-        return fail(err, &t.path, "S005", &e.to_string());
+        return fail(
+            err,
+            &t.path,
+            "S005",
+            &with_previous(&e.to_string(), previous),
+        );
     }
     tracing::info!(solver = %t.path, path = %results_path.display(), "solve: result stored");
     let _ = writeln!(out, "solved {}", t.path);
@@ -1061,6 +1084,36 @@ mod tests {
         assert_eq!(v["solvers"][0]["status"], "failed");
         assert_eq!(v["solvers"][0]["code"], "S005");
         assert!(err.contains("S005"));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::with_previous
+    #[test]
+    fn s005_message_says_whether_previous_result_stays() {
+        assert!(with_previous("boom", true).ends_with("the previous result is in use"));
+        assert!(with_previous("boom", false).ends_with("no previous result exists"));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_project
+    #[test]
+    fn failed_rerun_reports_previous_result_in_use() {
+        let (dir, _marker) = fixture("s005prev", "2kg");
+        let (code, _, _) = solve_json(&dir);
+        assert_eq!(code, EXIT_OK);
+        std::fs::write(dir.join("size.sh"), "exit 1\n").unwrap();
+        let (code, v, err) = solve_json(&dir);
+        assert_eq!(code, EXIT_FAILED);
+        assert_eq!(v["solvers"][0]["code"], "S005");
+        assert!(err.contains("the previous result is in use"), "{err}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_project
+    #[test]
+    fn first_run_failure_reports_no_previous_result() {
+        let (dir, _marker) = fixture("s005none", "2kg");
+        std::fs::write(dir.join("size.sh"), "exit 1\n").unwrap();
+        let (code, _, err) = solve_json(&dir);
+        assert_eq!(code, EXIT_FAILED);
+        assert!(err.contains("no previous result exists"), "{err}");
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::glob_match

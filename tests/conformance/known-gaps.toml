@@ -359,8 +359,8 @@ reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
 fixture = "packages/e016-fully-qualified-path-checks-visibility"
-ticket = "~KRVD0V6"
-reason = "parser rejects package:: paths in expressions"
+ticket = "~PDPCRB2"
+reason = "sema does not raise E016 for package:: expression paths"
 
 [[gap]]
 fixture = "packages/e016-member-public-by-default"
@@ -394,8 +394,8 @@ reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
 fixture = "packages/n004-reference-to-was-path"
-ticket = "~KRVD0V6"
-reason = "parser rejects package:: paths in expressions"
+ticket = "~PDPCRB2"
+reason = "sema does not raise N004 for was-paths via package::"
 
 [[gap]]
 fixture = "packages/pub-use-private-item-not-reexported"
