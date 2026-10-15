@@ -11,6 +11,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
+use crate::cmd::solve::{current_digests, eval_inputs};
 use cadetta_ir::entities::Waiver;
 use cadetta_ir::model::{
     Citation, CiteBuiltin, ComponentClass, MemberKind as IrMemberKind, Project as IrProject,
@@ -35,6 +36,9 @@ use cadetta_sema::resolve::{
     CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
 use cadetta_sema::visibility::VisibilityChecker;
+use cadetta_solve::decl::lower_solver;
+use cadetta_solve::lints as solver_lints;
+use cadetta_solve::protocol::Request;
 use cadetta_solve::results::{ResultFile, out_path};
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
@@ -1188,6 +1192,79 @@ fn recorded_solver_outputs(
     out
 }
 
+/// A solver whose recorded primary result is stale (S003), before it is located in a file.
+struct StaleSolver {
+    key: ModuleKey,
+    span: Span,
+    diag: Diagnostic,
+}
+
+/// S003: every in-scope solver member whose recorded primary result no longer matches the
+/// current input, script or dep digests (solvers.md 4); its outputs still evaluate.
+///
+/// A solver with no recorded result is unsolved, not stale; a solver whose inputs, script or
+/// declaration cannot be evaluated is reported by the stages that own those faults.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+fn stale_solvers(
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    evaluator: &mut Evaluator<'_, '_>,
+    units: &UnitTable,
+) -> Vec<StaleSolver> {
+    let mut out = Vec::new();
+    for pkg in parsed
+        .iter()
+        .filter(|p| !p.is_std && scope.contains(&p.name))
+    {
+        for m in &pkg.modules {
+            for c in m.file.components() {
+                for member in &c.members {
+                    let MemberKind::Solver(sv) = &member.kind else {
+                        continue;
+                    };
+                    let mut path = CanonPath::item(&pkg.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(sv.name.name.clone()));
+                    let key = path.to_string();
+                    let Ok(results) = ResultFile::load(&out_path(&pkg.dir.join(&sv.script))) else {
+                        continue;
+                    };
+                    let Ok(decl) = lower_solver(sv, &key) else {
+                        continue;
+                    };
+                    let ctx = Ctx {
+                        package: pkg.name.clone(),
+                        module: m.path.clone(),
+                        component: Some(c.name.name.clone()),
+                        locals: Vec::new(),
+                    };
+                    let Ok(inputs) = eval_inputs(sv, &ctx, evaluator, units) else {
+                        tracing::debug!(solver = %key, "pipeline: solver inputs unevaluable; staleness unjudged");
+                        continue;
+                    };
+                    let request = Request::new(key.clone(), inputs);
+                    let Ok(current) = current_digests(&request, &pkg.dir, &decl) else {
+                        tracing::debug!(solver = %key, "pipeline: solver script or dep unreadable; staleness unjudged");
+                        continue;
+                    };
+                    if let Some(diag) = solver_lints::lint_lookup(
+                        &key,
+                        None,
+                        &results.lookup(&key, None, &current),
+                        &current,
+                    ) {
+                        out.push(StaleSolver {
+                            key: ModuleKey::new(&pkg.name, &m.path),
+                            span: sv.name.span,
+                            diag,
+                        });
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
 fn evaluate_stages(
     parsed: &[ParsedPackage],
     scope: &BTreeSet<String>,
@@ -1230,6 +1307,7 @@ fn evaluate_stages(
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let cells = table_cells(&mut evaluator, parsed);
     let misses = table_misses(&mut evaluator, parsed, scope, &analysis.sources);
+    let stale = stale_solvers(parsed, scope, &mut evaluator, &units);
     let evaluation = evaluator.evaluate();
     let (derived_fits, fit_findings) =
         fitderive::derive_fits_with_findings(&resolver, &evaluation, &fit_ranges, &sources);
@@ -1456,6 +1534,15 @@ fn evaluate_stages(
                     Some(&key),
                 ));
             }
+        }
+    }
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    for s in stale {
+        let StaleSolver { key, span, diag } = s;
+        if let Some(mut d) = located("S003", Severity::Warning, diag.message, span, Some(&key)) {
+            d.notes = diag.notes;
+            d.path = diag.path.or(d.path);
+            out.push(d);
         }
     }
     for d in &evaluation.diagnostics {
@@ -1735,5 +1822,59 @@ mod tests {
         let ix = index();
         let got = ix.file_for(None, Span::new(0, 5), &|_: &IndexedFile| true);
         assert!(got.is_some_and(|f| !f.is_std));
+    }
+
+    /// A one-package project whose solver has a recorded result with the given digest.
+    fn solver_project(tag: &str, with_result: bool) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-stale-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            "model Box {\n  m: Mass = 2kg\n  solver size {\n    script \"size.sh\"\n    in m = m\n    out w: Length\n  }\n}\n",
+        )
+        .unwrap();
+        std::fs::write(dir.join("size.sh"), "true\n").unwrap();
+        if with_result {
+            let zero = format!("blake3:{}", "0".repeat(64));
+            std::fs::write(
+                dir.join("size.out.json"),
+                format!(
+                    "{{\"schema\":\"cadetta.solve-result/1\",\"results\":[{{\"solver\":\"acme.t::Box.size\",\"input_digest\":\"{zero}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"2m\"}},\"diagnostics\":[]}}]}}"
+                ),
+            )
+            .unwrap();
+        }
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::stale_solvers
+    #[test]
+    fn stale_recorded_result_reports_s003_naming_what_changed() {
+        let project = solver_project("stale", true);
+        let analysis = analyze(&project, &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "S003")
+            .expect("S003 for a result with other digests");
+        assert!(d.location.is_some());
+        assert!(d.notes.iter().any(|n| n.message == "changed: inputs"));
+        assert!(d.notes.iter().any(|n| n.message == "changed: script"));
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::stale_solvers
+    #[test]
+    fn solver_without_a_recorded_result_is_unsolved_not_stale() {
+        let project = solver_project("missing", false);
+        let analysis = analyze(&project, &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S003"));
     }
 }

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a variant whose solver inputs change and has no recorded result, when checked, then S006 is raised and its dependent checks are undecided (solvers.md 4.1)", "Given a variant whose solver inputs equal the primary or that has its own recorded result, when checked, then it reads that result and S006 does not fire"]
+moved = []
+at = "2026-10-15T21:11:59Z"
+actor = "lognd"
+rev = 1

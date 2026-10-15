@@ -73,8 +73,11 @@ either role, carrying the S003 fact that names what changed (`inputs`,
 
 Solver outputs are evaluated from the recorded `.out.json` result file:
 `check` and the IR read each output's recorded value (parsed as an exact
-quantity) rather than re-running the script. S003/S006 staleness reporting
-over those results is tracked separately (~JET4TC0).
+quantity) rather than re-running the script. `check` also recomputes the
+input, script and dep digests of each solver's primary result and reports
+S003 (naming what changed) when they differ; the outputs still evaluate. A
+solver with no recorded result is unsolved, not stale. S006 and the
+evaluation of variant results are still to come (follow-up ticket).
 
 ## 3. Protocol
 
