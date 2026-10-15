@@ -137,6 +137,7 @@ fn bare_adapter_command_is_not_run_from_path_and_finishes() {
     // initialize request and hung. Only that one fixture is run, in a scratch corpus.
     let scratch = std::env::temp_dir().join(format!("cadetta-r008-corpus-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
     let src = corpus_root().join("adapters");
     for entry in std::fs::read_dir(&src).unwrap() {
         let entry = entry.unwrap();
@@ -154,6 +155,7 @@ fn bare_adapter_command_is_not_run_from_path_and_finishes() {
             }
         }
     }
+    drop(writing);
     let start = std::time::Instant::now();
     let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
     let _ = std::fs::remove_dir_all(&scratch);
@@ -183,6 +185,7 @@ fn eval_entry_reports_q006_info_for_exact_trig_fixtures() {
     ];
     let scratch = std::env::temp_dir().join(format!("cadetta-q006-corpus-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
     let src = corpus_root().join("quantities");
     let dest = scratch.join("quantities");
     std::fs::create_dir_all(&dest).unwrap();
@@ -193,8 +196,41 @@ fn eval_entry_reports_q006_info_for_exact_trig_fixtures() {
             std::fs::copy(entry.path(), dest.join(&file)).unwrap();
         }
     }
+    drop(writing);
     let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
     let _ = std::fs::remove_dir_all(&scratch);
     assert_eq!(report.outcomes.len(), names.len(), "{report:?}");
     assert!(report.failures.is_empty(), "{report:?}");
+}
+
+// frob:ticket 01M4X4044493Y32A7Y146BS0GA
+// frob:tests crates/cadetta-cli/tests/conformance/run.rs::writing
+#[test]
+fn script_spawns_never_overlap_concurrent_script_writes() {
+    use std::os::unix::fs::PermissionsExt;
+    let base = std::env::temp_dir().join(format!("cadetta-etxtbsy-{}", std::process::id()));
+    std::fs::create_dir_all(&base).unwrap();
+    let workers: Vec<_> = (0..8)
+        .map(|w| {
+            let base = base.clone();
+            std::thread::spawn(move || {
+                for i in 0..25 {
+                    let script = base.join(format!("s{w}-{i}.sh"));
+                    {
+                        let _writing = run::writing();
+                        std::fs::write(&script, "#!/bin/sh\nexit 0\n").unwrap();
+                        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755))
+                            .unwrap();
+                    }
+                    let _spawning = run::spawning();
+                    let status = std::process::Command::new(&script).status();
+                    assert!(status.is_ok_and(|s| s.success()), "{script:?}");
+                }
+            })
+        })
+        .collect();
+    for worker in workers {
+        worker.join().unwrap();
+    }
+    let _ = std::fs::remove_dir_all(&base);
 }

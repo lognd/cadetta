@@ -12,7 +12,7 @@ use cadetta_adapter::builtin::sw_equations;
 use serde_json::{Value, json};
 
 use crate::exec::Job;
-use crate::run::{Facts, Scratch, parse_json, run_cli, snapshot};
+use crate::run::{Facts, Scratch, parse_json, run_cli, snapshot, writing};
 
 /// The emitted file every scenario writes (set by `out` in the generated `cadetta.toml`).
 const OUT: &str = "build/eq.txt";
@@ -24,6 +24,7 @@ fn read_spec(job: &Job) -> Result<Value, String> {
 }
 
 fn put(root: &Path, rel: &str, text: &str) -> Result<(), String> {
+    let _writing = writing();
     let path = root.join(rel);
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;

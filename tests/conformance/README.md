@@ -228,3 +228,7 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   (`fixture`, `ticket`, `reason`). A listed fixture may fail; a listed
   fixture that passes is a failure (stale entry).
 - Every spec rule must have a pair; a rule without one is a corpus gap.
+- The runner's test threads share one process: fixture files are written
+  under `run::writing()` and the CLI (which may spawn adapters) runs under
+  `run::spawning()`, so a spawn never inherits an open script handle
+  (ETXTBSY, flaky under load).
