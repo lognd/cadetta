@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T06:31:41Z"
+digest = "30627dc8df992909d36ef5a6a9c238a52b175d3a46f7a21927d8dcce068f7afb"
+provider = "file"
+ref = "tests/conformance/language/process-drawn-value.expect.json"
+size = 305
+status = "measured"
+at = "2026-10-15T06:31:41Z"
+actor = "lognd"
+rev = 1
