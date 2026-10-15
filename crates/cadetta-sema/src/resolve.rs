@@ -1214,6 +1214,25 @@ impl<'a> Resolver<'a> {
         Ok(cur)
     }
 
+    /// E002 for every `use` whose target does not exist, checked eagerly (not only when used).
+    // frob:ticket 01M4V13RVF8WWS2VMYE8WN9V3R
+    pub fn check_use_targets(&self) -> Vec<ResolveError> {
+        let mut out = Vec::new();
+        for (pkg, info) in &self.pkgs {
+            for (module, mi) in &info.modules {
+                let (named, globs) = collect_imports(mi.file);
+                for imp in named.iter().chain(globs.iter()) {
+                    if let Err(e) = self.resolve_import(pkg, module, imp, 0) {
+                        warn!(package = %pkg, code = e.code, "unresolved use target");
+                        out.push(e);
+                    }
+                }
+            }
+        }
+        out.sort_by_key(|e| (e.module.clone(), e.span));
+        out
+    }
+
     /// True when `path` is a module or the (possibly file-less) parent of one (packages.md 2).
     fn is_module(&self, pkg: &str, path: &[String]) -> bool {
         self.pkgs

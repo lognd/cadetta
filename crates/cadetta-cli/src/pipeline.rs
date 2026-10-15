@@ -1139,15 +1139,30 @@ fn evaluate_stages(
             }
         }
     }
-    for e in &resolve_errors {
-        out.extend(located(
+    // frob:ticket 01M4V13RVF8WWS2VMYE8WN9V3R
+    // Eager E002 use targets, beside the lazy resolver errors.
+    out.extend(resolve_errors.iter().flat_map(|e| {
+        located(
             e.code,
             Severity::Error,
             e.message.clone(),
             e.span,
             e.module.as_deref(),
-        ));
-    }
+        )
+    }));
+    let eager_diags: Vec<Diagnostic> = resolver
+        .check_use_targets()
+        .iter()
+        .flat_map(|e| {
+            located(
+                e.code,
+                Severity::Error,
+                e.message.clone(),
+                e.span,
+                e.module.as_deref(),
+            )
+        })
+        .collect();
     // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
     {
         let cites = CiteIndex::new(&sources);
@@ -1352,6 +1367,15 @@ fn evaluate_stages(
         packages = lowered.len(),
         "pipeline: analysis complete"
     );
+    // The eager pass repeats what a use site already reported: one fault, one diagnostic.
+    for d in eager_diags {
+        let twin = |o: &Diagnostic| {
+            o.code == d.code && o.message == d.message && o.path == d.path && o.location == d.location
+        };
+        if !out.iter().any(twin) {
+            out.push(d);
+        }
+    }
     analysis.diagnostics.extend(out);
     analysis.packages = lowered;
 }

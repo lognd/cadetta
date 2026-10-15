@@ -167,7 +167,9 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   5. the prelude (language.md 4).
 
   Two globs that bring the same name are E004 only where the name is
-  used. An unresolved name is E002.
+  used. An unresolved name is E002, and so is a `use` whose target
+  package, module or item does not exist, whether or not the imported
+  name is ever used.
 
   Decided: a glob imports only `pub` items and `pub use` re-exports of
   the module (a plain `use` is private and not re-exported); an explicit

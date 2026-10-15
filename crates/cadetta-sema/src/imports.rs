@@ -253,6 +253,24 @@ mod tests {
         );
     }
 
+    // frob:ticket 01M4V13RVF8WWS2VMYE8WN9V3R
+    // frob:tests crates/cadetta-sema/src/resolve.rs::check_use_targets kind=unit
+    #[test]
+    fn unused_use_with_missing_target_is_e002_eagerly() {
+        let shop = file("pub model Real { v = 1 }\n");
+        let user = file(
+            "use acme.shop::Real\nuse acme.shop::Ghost\nuse acme.nowhere::Thing\nuse acme.shop::*\nmodel User { x = 1 }\n",
+        );
+        let (r, errs) = Resolver::new(vec![
+            pkg("acme.rover", &["acme.shop"], vec![(&[], &user)]),
+            pkg("acme.shop", &[], vec![(&[], &shop)]),
+        ]);
+        assert!(errs.is_empty());
+        let got = r.check_use_targets();
+        assert_eq!(got.len(), 2, "{got:?}");
+        assert!(got.iter().all(|e| e.code == "E002"));
+    }
+
     // frob:tests crates/cadetta-sema/src/imports.rs::declaration_order_does_not_change_resolution kind=unit
     #[test]
     fn declaration_order_does_not_change_resolution() {

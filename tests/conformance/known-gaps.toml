@@ -8,16 +8,6 @@
 # reason = "Q006 not emitted for inexact pi products yet"
 
 [[gap]]
-fixture = "language/e002-use-target"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
-fixture = "language/e003-duplicate-type"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
 fixture = "language/e016-private-item"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the spec diagnostic yet"

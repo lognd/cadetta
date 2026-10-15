@@ -4,7 +4,6 @@
 
 use std::path::{Path, PathBuf};
 
-use cadetta_syntax::ast::Ident;
 use cadetta_syntax::lexer::Span;
 
 use crate::config::{Config, ConfigError};
@@ -40,21 +39,21 @@ pub enum ProjectError {
         /// The underlying I/O error.
         source: std::io::Error,
     },
-    /// A project diagnostic (E003 or E005).
+    /// A project diagnostic (E005).
     #[error("{0}")]
     Diag(ProjectDiag),
 }
 
-/// A project-level diagnostic with its code and, for E003, both spans.
+/// A project-level diagnostic with its code and spans.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProjectDiag {
-    /// `E003` or `E005`.
+    /// `E005`.
     pub code: &'static str,
     /// Human-readable message.
     pub message: String,
     /// The file or directory concerned.
     pub path: PathBuf,
-    /// Source spans in `path` (both definitions for E003; empty for E005).
+    /// Source spans in `path` (empty for E005).
     pub spans: Vec<Span>,
 }
 
@@ -236,7 +235,7 @@ fn load_config(path: &Path) -> Result<Config, ProjectError> {
 impl PackageDir {
     /// Load the package in `dir`: its config and its `.cdt` modules
     /// sorted by path (config-cli.md 1.3); E005 for a missing or empty
-    /// `src`, E003 for a duplicate component name in one module.
+    /// `src` (E003 is the resolver's, not the loader's).
     pub fn load(dir: &Path) -> Result<Self, ProjectError> {
         let config = load_config(&dir.join(CONFIG_FILE))?;
         let Some(package) = &config.package else {
@@ -258,7 +257,6 @@ impl PackageDir {
                 path: file.clone(),
                 source,
             })?;
-            check_duplicates(&file, &source)?;
             modules.push(Module {
                 rel_path,
                 file,
@@ -298,27 +296,6 @@ fn collect_sources(
                 .join("/");
             out.push((rel, path));
         }
-    }
-    Ok(())
-}
-
-/// E003: a component name defined twice in one file, with both spans.
-fn check_duplicates(file: &Path, source: &str) -> Result<(), ProjectError> {
-    let parsed = cadetta_syntax::parser::parse(source);
-    let mut seen: Vec<&Ident> = Vec::new();
-    for component in parsed.file.components() {
-        let name = &component.name;
-        if let Some(first) = seen.iter().find(|i| i.name == name.name) {
-            let message = format!("component `{}` is defined twice in one module", name.name);
-            tracing::warn!(code = "E003", file = %file.display(), %message, "project diagnostic");
-            return Err(ProjectError::Diag(ProjectDiag {
-                code: "E003",
-                message,
-                path: file.to_owned(),
-                spans: vec![first.span, name.span],
-            }));
-        }
-        seen.push(name);
     }
     Ok(())
 }
@@ -406,18 +383,11 @@ mod tests {
 
     // frob:tests crates/cadetta-cli/src/project.rs::PackageDir
     #[test]
-    fn duplicate_component_is_e003_with_both_spans() {
+    fn duplicate_component_loads_and_is_left_to_the_resolver() {
         let root = scratch();
         put(&root, "cadetta.toml", PKG);
         put(&root, "src/lib.cdt", "model A { }\nmodel A { }\n");
-        match PackageDir::load(&root).unwrap_err() {
-            ProjectError::Diag(d) => {
-                assert_eq!(d.code, "E003");
-                assert_eq!(d.spans.len(), 2);
-                assert!(d.spans[0].start < d.spans[1].start);
-            }
-            other => panic!("unexpected: {other}"),
-        }
+        assert!(PackageDir::load(&root).is_ok());
     }
 
     // frob:tests crates/cadetta-cli/src/project.rs::Project
