@@ -1,0 +1,45 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T07:40:27Z"
+digest = "21643529088fd2d21ee8e4656e34a8d2c706dda0a7ac74977f31cf07dfe779fe"
+exit_code = 100
+failed_tests = ["cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new"]
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4ce91746-8f01-4a21-ac2f-01521c1c2a5d with nextest profile: default
+    Starting 1 test across 68 binaries (1440 tests skipped)
+        FAIL [   0.013s] cadetta cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new' (1615160) panicked at crates/cadetta-cli/src/cmd/impact_swap.rs:455:46:
+    called `Result::unwrap()` on an `Err` value: Malformed { path: "pkg::Rover/wheel", reason: "missing `.member`" }
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new ... FAILED
+
+    failures:
+
+    failures:
+        cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 311 filtered out; finished in 0.01s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 1 test run: 0 passed, 1 failed, 1440 skipped
+        FAIL [   0.013s] cadetta cmd::impact_swap::tests::slash_slot_and_bare_alt_match_a_full_path_new
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "slash_slot_and_bare_alt_match_a_full_path_new"
+size = 1463
+status = "measured"
+test_count = 1
+tests_digest = "d91b31a510abf43969470af048fab4335584ef1cf66fa0163d595d309314510f"
+at = "2026-10-15T07:40:27Z"
+actor = "lognd"
+rev = 1

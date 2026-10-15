@@ -294,7 +294,7 @@ pub fn impact_swap(job: &Job) -> Result<Facts, String> {
     let args = [
         "impact".to_owned(),
         "--swap".into(),
-        format!("{package}::Rover.wheel"),
+        format!("{package}::Rover/wheel"),
         alternate.clone(),
     ];
     let mut facts = run_cli(root, &args)?;

@@ -2,13 +2,13 @@
 id = "01M4VQXM0V12H5JBPHWW796HD7"
 title = "Conformance runner: executor for binding read entries (adapter host)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:20Z"
-updated = "2026-10-13T23:00:20Z"
+updated = "2026-10-15T07:46:07Z"
 scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]

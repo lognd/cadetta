@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the conformance executor, when impact --swap runs, then binding.rs passes {package}::Rover/wheel (verified: conformance 9/9 on goway)"]
+moved = []
+at = "2026-10-15T07:45:27Z"
+actor = "lognd"
+rev = 1
