@@ -8,9 +8,9 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-15T10:15:41Z"
+updated = "2026-10-15T10:15:42Z"
 labels = ["creates:crates/cadetta-lint/src/rules/g008.rs", "creates:tests/conformance/lints/G008/**"]
-scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md"]
+scope = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md", "tests/conformance/known-gaps.toml"]
 
 [[links]]
 kind = "blocked-by"
