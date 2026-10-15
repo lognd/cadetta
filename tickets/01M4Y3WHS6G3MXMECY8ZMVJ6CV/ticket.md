@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-14T21:07:56Z"
-updated = "2026-10-15T10:12:18Z"
+updated = "2026-10-15T10:12:28Z"
 persona = "design engineer"
 capability = "get clear errors when the CAD tool is unavailable"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-adapter/src/session.rs"]
@@ -27,7 +27,7 @@ bound = true
 
 [[acceptance]]
 text = "Given rejected locators, when sync runs, then one R010 per file appears in sync output"
-bound = false
+bound = true
 +++
 
 cadetta_adapter::availability (T ~76RVDH2) is not yet called. Make sync use unavailable() for exit 2 and check for info plus lock base; make DriveSession::open use partition_busy so other files proceed; surface rejections() as R010 in sync output. Note: ticket criterion 3 says read-only is R010 but spec adapters.md 2.3 says R009; the module follows the spec (read-only is R009, adapter-rejected locators R010).
