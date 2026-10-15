@@ -81,7 +81,7 @@ fn cmp(a: &Magnitude, b: &Magnitude) -> Option<i8> {
 }
 
 /// Lowest and highest value of a toleranced quantity, when exact.
-fn bounds(v: &Value) -> Option<(Magnitude, Magnitude)> {
+pub(crate) fn bounds(v: &Value) -> Option<(Magnitude, Magnitude)> {
     let Nominal::Exact(nom) = &v.nominal else {
         return None;
     };
@@ -96,8 +96,23 @@ fn bounds(v: &Value) -> Option<(Magnitude, Magnitude)> {
     Some((lo, hi))
 }
 
+/// True when every value of the range lies inside the `bound`.
+// frob:ticket 01M4V13T1DW08P87XP4J4802RH
+pub(crate) fn holds(range: (&Magnitude, &Magnitude), bound: &Bound) -> bool {
+    let (min, max) = range;
+    let lo_ok = match (&bound.lo, bound.op) {
+        (Some(lo), BoundOp::Ge | BoundOp::In) => cmp(min, &lo.0).is_some_and(|s| s >= 0),
+        _ => true,
+    };
+    let hi_ok = match (&bound.hi, bound.op) {
+        (Some(hi), BoundOp::Le | BoundOp::In) => cmp(max, &hi.0).is_some_and(|s| s <= 0),
+        _ => true,
+    };
+    lo_ok && hi_ok
+}
+
 /// True when every clearance lies strictly outside the required `bound`.
-fn violates(clearance: (&Magnitude, &Magnitude), bound: &Bound) -> bool {
+pub(crate) fn violates(clearance: (&Magnitude, &Magnitude), bound: &Bound) -> bool {
     let (min, max) = clearance;
     let below = bound.lo.as_ref().is_some_and(|lo| {
         matches!(bound.op, BoundOp::Ge | BoundOp::In) && cmp(max, &lo.0) == Some(-1)

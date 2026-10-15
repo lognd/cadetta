@@ -5,12 +5,15 @@
 
 // frob:ticket 01M4SPWR7SG2GDJ254566CDH0B
 
+use cadetta_ir::entities::Interface;
 use cadetta_ir::model::{
-    Check, Component, Member, MemberKind, Project, SpanRef, VerdictState,
+    Bound, Check, Component, Member, MemberKind, Project, SpanRef, VerdictState,
 };
 use tracing::{debug, trace};
 
 use crate::diag::{Diagnostic, Location, Severity};
+use crate::rules::f::{bounds, holds, violates};
+use crate::rules::interface::{item_text, names};
 
 /// Rule code: a check is false for every value in tolerance (error).
 pub const C001: &str = "C001";
@@ -293,6 +296,120 @@ pub fn check_derived(project: &Project, locate: impl Fn(&SpanRef) -> Location) -
     out
 }
 
+/// Where a toleranced range sits against a required bound.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Range {
+    /// Every value in tolerance satisfies the bound.
+    Inside,
+    /// No value in tolerance satisfies the bound.
+    Outside,
+    /// Some values do and some do not.
+    Straddles,
+}
+
+/// Classify the `[min, max]` range of `value` against `bound`; `None` when it is not exact.
+fn classify(value: &cadetta_ir::model::Value, bound: &Bound) -> Option<Range> {
+    let (min, max) = bounds(value)?;
+    Some(if violates((&min, &max), bound) {
+        Range::Outside
+    } else if holds((&min, &max), bound) {
+        Range::Inside
+    } else {
+        Range::Straddles
+    })
+}
+
+/// Run C001/C002 for interface bounds (language.md 3.2): each implementer's bounded member,
+/// nominal plus tolerance, against the interface limit. Fully outside is C001, straddling C002.
+// frob:ticket 01M4V13T1DW08P87XP4J4802RH
+pub fn check_interface_bounds(
+    components: &[Component],
+    interfaces: &[Interface],
+    locate: impl Fn(&SpanRef) -> Location,
+) -> Vec<Diagnostic> {
+    let mut out = Vec::new();
+    for c in components {
+        let comp = item_text(&c.path.package, &c.path.modules, &c.path.item);
+        for r in &c.implements {
+            let Some(iface) = interfaces
+                .iter()
+                .find(|i| names(r, &item_text(&i.path.package, &i.path.modules, &i.path.item)))
+            else {
+                trace!(implements = %r, "C001/C002: interface not in scope of this check");
+                continue;
+            };
+            for b in &iface.bounds {
+                let Some(m) = c
+                    .members
+                    .iter()
+                    .find(|m| m.path.member_root() == Some(b.name.as_str()) && m.path.members.len() == 1)
+                else {
+                    trace!(component = %comp, member = %b.name, "C001/C002: bounded member absent");
+                    continue;
+                };
+                let Some(v) = &m.value else { continue };
+                let Some(state) = classify(v, &b.bound) else {
+                    trace!(member = %m.path, "C001/C002: value not exact, bound skipped");
+                    continue;
+                };
+                let (code, sev, what) = match state {
+                    Range::Inside => continue,
+                    Range::Outside => (C001, Severity::Error, "violates"),
+                    Range::Straddles => (C002, Severity::Warning, "may violate"),
+                };
+                debug!(member = %m.path, interface = %r, code, "interface bound {what}");
+                let mut d = Diagnostic::new(
+                    code,
+                    sev,
+                    format!(
+                        "`{}` {what} the bound `{}` of interface `{r}` {}",
+                        m.path,
+                        b.name,
+                        if state == Range::Outside {
+                            "for every value in tolerance"
+                        } else {
+                            "for some values in tolerance"
+                        }
+                    ),
+                );
+                d.path = Some(m.path.to_string());
+                d.location = m.span.as_ref().or(c.span.as_ref()).map(&locate);
+                out.push(d);
+            }
+        }
+    }
+    out
+}
+
+/// Run C002 for fits whose clearance meets the declared required range for some values only
+/// (language.md 3.7); a clearance entirely outside is F004.
+// frob:ticket 01M4V13T1DW08P87XP4J4802RH
+pub fn check_fit_ranges(project: &Project, locate: impl Fn(&SpanRef) -> Location) -> Vec<Diagnostic> {
+    let mut out = Vec::new();
+    for c in &project.components {
+        for f in &c.fits {
+            let Some(req) = &f.required else { continue };
+            if classify(&f.clearance, req) != Some(Range::Straddles) {
+                trace!(fit = %f.path, "C002: fit range not straddled");
+                continue;
+            }
+            debug!(fit = %f.path, "C002: clearance meets the required range for some values only");
+            let mut d = Diagnostic::new(
+                C002,
+                Severity::Warning,
+                format!(
+                    "clearance of `{}` meets its required range for some values in tolerance and not others",
+                    f.path
+                ),
+            );
+            d.path = Some(f.path.to_string());
+            d.location = c.span.as_ref().map(&locate);
+            out.push(d);
+        }
+    }
+    out
+}
+
 /// Run C001-C004 over `project`.
 pub fn check(project: &Project, locate: impl Fn(&SpanRef) -> Location) -> Vec<Diagnostic> {
     let mut out = check_verdicts(project);
@@ -445,5 +562,99 @@ mod tests {
     fn c004_quiet_when_not_read_or_not_derived() {
         assert!(check_derived(&project("a > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
         assert!(check_derived(&project("w > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
+    }
+
+    fn ex(n: i64) -> Exact {
+        Exact(Magnitude::new(Rational::new(n, 1).unwrap(), 0))
+    }
+
+    /// A value spanning `[nominal + lo, nominal + hi]`.
+    fn spanning(nominal: i64, lo: i64, hi: i64) -> Value {
+        let mut v = Value::new(Nominal::Exact(ex(nominal)), Dim::default(), "v");
+        v.tol = Some(Affine {
+            terms: vec![AffineTerm { var: p("demo::Plate.w"), lo: ex(lo), hi: ex(hi) }],
+        });
+        v
+    }
+
+    fn at_least(n: i64) -> Bound {
+        Bound { op: cadetta_ir::model::BoundOp::Ge, lo: Some(ex(n)), hi: None }
+    }
+
+    fn plate_with(member: &str, v: Value) -> Component {
+        let mut proj = project("a > 1mm", VerdictState::Pass);
+        let mut c = proj.components.remove(0);
+        let mut m = Member::new(p(member), MemberKind::Param);
+        m.value = Some(v);
+        c.members = vec![m];
+        c.implements = vec!["Rated".into()];
+        c
+    }
+
+    fn rated() -> Interface {
+        Interface {
+            path: cadetta_ir::variant_name::ComponentPath {
+                package: "demo".into(),
+                modules: vec![],
+                item: "Rated".into(),
+            },
+            members: vec![],
+            bounds: vec![cadetta_ir::entities::InterfaceBound { name: "load".into(), bound: at_least(5) }],
+            datums: vec![],
+        }
+    }
+
+    fn run_bounds(v: Value, member: &str) -> Vec<Diagnostic> {
+        check_interface_bounds(&[plate_with(member, v)], &[rated()], |_| Location::Lock { line: 0 })
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/c.rs::check_interface_bounds
+    #[test]
+    fn interface_bound_fully_outside_is_c001_error() {
+        let d = run_bounds(spanning(2, -1, 1), "demo::Plate.load");
+        assert_eq!(codes(&d), vec!["C001"]);
+        assert_eq!(d[0].severity, Severity::Error);
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/c.rs::check_interface_bounds
+    #[test]
+    fn interface_bound_straddling_is_c002_warning() {
+        let d = run_bounds(spanning(5, -1, 1), "demo::Plate.load");
+        assert_eq!(codes(&d), vec!["C002"]);
+        assert_eq!(d[0].severity, Severity::Warning);
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/c.rs::check_interface_bounds
+    #[test]
+    fn interface_bound_holding_or_absent_member_is_quiet() {
+        assert!(run_bounds(spanning(8, -1, 1), "demo::Plate.load").is_empty());
+        assert!(run_bounds(spanning(2, -1, 1), "demo::Plate.other").is_empty());
+    }
+
+    fn plate_with_fit(clearance: Value) -> Project {
+        let mut proj = project("a > 1mm", VerdictState::Pass);
+        proj.components[0].fits.push(cadetta_ir::model::Fit {
+            path: p("demo::Plate.f"),
+            hole: p("demo::Plate.f.hole"),
+            shaft: p("demo::Plate.f.shaft"),
+            clearance,
+            fit_type: "clearance".into(),
+            required: Some(Bound {
+                op: cadetta_ir::model::BoundOp::In,
+                lo: Some(ex(2)),
+                hi: Some(ex(4)),
+            }),
+        });
+        proj
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/c.rs::check_fit_ranges
+    #[test]
+    fn fit_range_straddle_is_c002_but_outside_and_inside_are_quiet() {
+        let loc = |_: &SpanRef| Location::Lock { line: 0 };
+        let d = check_fit_ranges(&plate_with_fit(spanning(3, -2, 2)), loc);
+        assert_eq!(codes(&d), vec!["C002"]);
+        assert!(check_fit_ranges(&plate_with_fit(spanning(10, -1, 1)), loc).is_empty());
+        assert!(check_fit_ranges(&plate_with_fit(spanning(3, -1, 1)), loc).is_empty());
     }
 }

@@ -1099,7 +1099,11 @@ pub fn apply(mut diags: Vec<Diagnostic>, cfg: &LintConfig, sup: &Suppressions) -
         }
     }
     for d in &mut diags {
-        if let Some(s) = cfg.severity(&d.code) {
+        // frob:ticket 01M4V13T1DW08P87XP4J4802RH
+        let date_passed_l001 = d.code == "L001" && d.severity == Severity::Error;
+        if date_passed_l001 {
+            tracing::debug!("lint: L001 date-passed error escalation kept");
+        } else if let Some(s) = cfg.severity(&d.code) {
             d.severity = resolve_severity(
                 d.severity,
                 s,
@@ -1165,6 +1169,21 @@ mod tests {
 
     fn dg(s: &str) -> Digest {
         Digest(s.into())
+    }
+
+    // frob:tests crates/cadetta-lint/src/engine.rs::apply kind=unit
+    #[test]
+    fn l001_date_passed_error_survives_warning_default() {
+        let c = LintConfig::new();
+        assert_eq!(c.severity("L001"), Some(Severity::Warning));
+        let mut passed = d("L001", "a::B.c");
+        passed.severity = Severity::Error;
+        let mut before = d("L001", "a::B.d");
+        before.severity = Severity::Warning;
+        let out = apply(vec![passed, before], &c, &Suppressions::default());
+        let sev = |p: &str| out.diagnostics.iter().find(|x| x.path.as_deref() == Some(p)).unwrap().severity;
+        assert_eq!(sev("a::B.c"), Severity::Error);
+        assert_eq!(sev("a::B.d"), Severity::Warning);
     }
 
     // frob:tests crates/cadetta-lint/src/engine.rs::apply kind=unit

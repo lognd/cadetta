@@ -377,7 +377,12 @@ the check verdicts. C001 and C002 are raised per verdict: once for the
 primary and once for each alternate that fails or is undecided, the
 latter with `alt` set and `for alt SLOT=ALT` in the message, so a waiver
 may be scoped to one alternate (language.md 3.2); I002 additionally
-warns when only an alternate fails. C003 inspects the operands of each
+warns when only an alternate fails. C001 and C002 are also raised
+for each interface bound (`load_rating >= 400N`) an implementing
+component's member tolerance range lies wholly outside (C001, error) or
+straddles (C002, warning), and C002 for a `fit` required range the
+resulting clearance only partly meets. L001 keeps its error severity
+once the EOL date has passed, whatever severity is configured. C003 inspects the operands of each
 `==`/`!=` in the check text and fires when one reads a toleranced member
 of the check's component other than through `.nominal`. C004 fires per
 derived parameter (a `param` with an expression and dependencies, no

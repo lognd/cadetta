@@ -9,12 +9,15 @@
 
 // frob:ticket 01M4TA3CABXHEZFA7BXA8J3XJW
 
-use cadetta_ir::entities::{Interface, InterfaceMember};
-use cadetta_ir::model::{Component, Project, SpanRef};
+use cadetta_ir::entities::{Interface, InterfaceBound, InterfaceMember};
+use cadetta_ir::model::{Bound, BoundOp, Component, Exact, Project, SpanRef};
 use cadetta_ir::variant_name::ComponentPath;
 use cadetta_lint::engine::Allow;
 use cadetta_lint::rules::u002::{ItemFacts, ItemKind as FactKind, Visibility};
-use cadetta_syntax::ast::{File, InterfaceMemberKind, Item, ItemKind, Vis};
+use cadetta_syntax::ast::{
+    BoundKind, Expr, ExprKind, File, InterfaceMemberKind, Item, ItemKind, UnOp, Vis,
+};
+use cadetta_units::{Magnitude, Rational, UnitTable};
 
 /// One parsed module: its path inside the package, its AST and its source text.
 pub struct ModuleView<'a> {
@@ -40,8 +43,9 @@ fn visibility(v: Vis) -> Visibility {
 /// Lower the `interface` items of `modules` (package `package`) to IR interfaces.
 ///
 /// `extends` is flattened by last path segment within the same list, so an
-/// implementer owes the members of every interface it inherits. Bounds are not
-/// needed by I001 and stay empty.
+/// implementer owes the members of every interface it inherits. Bounds with a
+/// plain quantity limit are lowered to SI for C001/C002 (~J4802RH); a limit that
+/// is not a literal is skipped with a debug log.
 pub fn interfaces(package: &str, modules: &[ModuleView<'_>]) -> Vec<Interface> {
     let mut found: Vec<(Interface, Vec<String>)> = Vec::new();
     for m in modules {
@@ -73,7 +77,8 @@ pub fn interfaces(package: &str, modules: &[ModuleView<'_>]) -> Vec<Interface> {
                         });
                     }
                     InterfaceMemberKind::Datum(d) => out.datums.push(d.name.name.clone()),
-                    InterfaceMemberKind::Bound(_) | InterfaceMemberKind::Error => {}
+                    InterfaceMemberKind::Bound(b) => out.bounds.extend(lower_bound(&b.kind)),
+                    InterfaceMemberKind::Error => {}
                 }
             }
             let parents = i
@@ -103,10 +108,54 @@ pub fn interfaces(package: &str, modules: &[ModuleView<'_>]) -> Vec<Interface> {
                         iface.datums.push(d.clone());
                     }
                 }
+                for b in &p.bounds {
+                    if !iface.bounds.contains(b) {
+                        iface.bounds.push(b.clone());
+                    }
+                }
             }
         }
     }
     found.into_iter().map(|(i, _)| i).collect()
+}
+
+/// The exact SI magnitude of a single-segment quantity literal (`400N`, `-5mm`); `None` otherwise.
+// frob:ticket 01M4V13T1DW08P87XP4J4802RH
+fn literal_si(e: &Expr) -> Option<Exact> {
+    match &e.kind {
+        ExprKind::Paren(inner) => literal_si(inner),
+        ExprKind::Unary(UnOp::Neg, inner) => {
+            let m = literal_si(inner)?.0;
+            Some(Exact(m.mul(&Magnitude::new(Rational::from_int(-1), 0))))
+        }
+        ExprKind::Quantity(segs) if segs.len() == 1 => {
+            let n = Rational::parse_decimal(&segs[0].number).ok()?;
+            let unit = UnitTable::builtin().parse(&segs[0].unit).ok()?;
+            Some(Exact(Magnitude::new(n, 0).mul(&unit.factor)))
+        }
+        _ => {
+            tracing::debug!("lint_facts: interface bound limit is not a plain quantity literal");
+            None
+        }
+    }
+}
+
+/// Lower one interface bound to its IR form, when its limits are plain quantity literals.
+// frob:ticket 01M4V13T1DW08P87XP4J4802RH
+fn lower_bound(kind: &BoundKind) -> Option<InterfaceBound> {
+    let (name, op, lo, hi) = match kind {
+        BoundKind::Le { name, value } => (name, BoundOp::Le, None, Some(literal_si(value)?)),
+        BoundKind::Ge { name, value } => (name, BoundOp::Ge, Some(literal_si(value)?), None),
+        BoundKind::In { name, lo, hi } => {
+            (name, BoundOp::In, Some(literal_si(lo)?), Some(literal_si(hi)?))
+        }
+        BoundKind::Eq { .. } => return None,
+    };
+    tracing::trace!(member = %name.name, ?op, "lint_facts: interface bound lowered");
+    Some(InterfaceBound {
+        name: name.name.clone(),
+        bound: Bound { op, lo, hi },
+    })
 }
 
 /// True when `name` occurs in `text` as a whole identifier, counted `n` times.
@@ -213,4 +262,36 @@ pub fn allows(ir: &Project) -> Vec<Allow> {
         }
     }
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn lowered(src: &str) -> Vec<Interface> {
+        let parsed = cadetta_syntax::parser::parse(src);
+        let m = ModuleView {
+            path: &[],
+            file: &parsed.file,
+            text: src,
+            display: "t.cdt",
+        };
+        interfaces("fx", &[m])
+    }
+
+    // frob:tests crates/cadetta-cli/src/lint_facts.rs::interfaces
+    #[test]
+    fn interface_bounds_lower_to_si_and_inherit() {
+        let ifs = lowered(
+            "interface Base {\n  load >= 400N\n  dia in 2mm .. 5mm\n  gap == 3mm\n}\n\
+             interface Child: Base {\n  mass <= 2kg\n}\n",
+        );
+        let base = ifs.iter().find(|i| i.path.to_string().ends_with("Base")).expect("base");
+        assert_eq!(base.bounds.len(), 2, "Eq is skipped, Ge and In kept");
+        assert_eq!(base.bounds[0].bound.op, BoundOp::Ge);
+        assert!(base.bounds[0].bound.hi.is_none());
+        assert_eq!(base.bounds[1].bound.op, BoundOp::In);
+        let child = ifs.iter().find(|i| i.path.to_string().ends_with("Child")).expect("child");
+        assert_eq!(child.bounds.len(), 3, "own Le plus the two inherited bounds");
+    }
 }

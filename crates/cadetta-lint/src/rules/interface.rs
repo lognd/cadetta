@@ -24,7 +24,7 @@ pub const I003: &str = "I003";
 pub const I004: &str = "I004";
 
 /// `pkg::mod::Item` text of a component or interface path (no member tail).
-fn item_text(package: &str, modules: &[String], item: &str) -> String {
+pub(crate) fn item_text(package: &str, modules: &[String], item: &str) -> String {
     let mut s = package.to_owned();
     for m in modules {
         s.push_str("::");
@@ -36,7 +36,7 @@ fn item_text(package: &str, modules: &[String], item: &str) -> String {
 }
 
 /// True when the reference `text` (full or short form) names the item `full`.
-fn names(text: &str, full: &str) -> bool {
+pub(crate) fn names(text: &str, full: &str) -> bool {
     text == full || full.ends_with(&format!("::{text}"))
 }
 

@@ -8,21 +8,6 @@
 # reason = "Q006 not emitted for inexact pi products yet"
 
 [[gap]]
-fixture = "language/c001-bound-violated"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
-fixture = "language/c002-bound-undecided"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
-fixture = "language/c002-fit-undecided"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
 fixture = "language/e002-use-target"
 ticket = "~8WN9V3R"
 reason = "sema does not emit the spec diagnostic yet"
@@ -126,26 +111,6 @@ reason = "table/fit/variant pipeline not implemented yet"
 fixture = "language/i004-root-not-evaluated"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/l001-date-passed"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
-fixture = "language/l001-eol-no-alternate"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
-fixture = "language/l001-month-grain"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
-
-[[gap]]
-fixture = "language/l002-nrnd"
-ticket = "~J4802RH"
-reason = "lint does not evaluate this check yet"
 
 [[gap]]
 fixture = "language/n001-case"

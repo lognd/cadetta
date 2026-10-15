@@ -1,4 +1,4 @@
-model Part {
+pub model Part {
   bore = 20mm
   fit seat = H7/p6 on bore [-0.02mm .. 0mm]
 }

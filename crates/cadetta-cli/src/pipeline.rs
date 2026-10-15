@@ -1237,6 +1237,7 @@ fn evaluate_stages(
             .flat_map(|q| lint_facts::interfaces(&q.name, &module_views(q)))
             .collect();
         out.extend(interface::check_members(&ir.components, &all_interfaces, locate));
+        out.extend(c::check_interface_bounds(&ir.components, &all_interfaces, locate));
         out.extend(interface::check_roots(
             &ir,
             |c| lint_facts::is_private(c, &own_views),
@@ -1265,6 +1266,7 @@ fn evaluate_stages(
         let mcfg = lint.m_config().expect("[lint] settings were validated at load");
         // C001-C003 come from the structured check results; C004 reads the lowered IR.
         out.extend(c::check_derived(&ir, locate));
+        out.extend(c::check_fit_ranges(&ir, locate));
         out.extend(d::check_d001(&ir, &lcfg, &dcfg, locate));
         out.extend(d::check_d002(&ir, &lcfg, &dcfg, locate));
         out.extend(f::check_f004(&ir, &lcfg, locate));

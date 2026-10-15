@@ -22,7 +22,7 @@ use cadetta_lint::diag::{self, Diagnostic, Location, Position};
 use cadetta_lint::engine::LintConfig;
 use cadetta_lint::rules::d::{self, DConfig, Key, NamedValue};
 use cadetta_lint::rules::m::MConfig;
-use cadetta_lint::rules::{f, m, n, q, s};
+use cadetta_lint::rules::{c, f, m, n, q, s};
 use serde_json::Value;
 
 use crate::cmd::ir_validate::{load_json, violations};
@@ -130,6 +130,7 @@ pub fn lint_document(doc: &Value, dir: Option<&Path>) -> Result<Vec<Diagnostic>,
     found.extend(d::check_d002(&ir, &lcfg, &dcfg, locate));
     found.extend(d::check_d003(&ir, locate));
     found.extend(f::check_f004(&ir, &lcfg, locate));
+    found.extend(c::check_fit_ranges(&ir, locate));
     found.extend(m::check_m001(&ir, &lcfg, &mcfg, locate));
     found.extend(m::check_m002(&ir, &lcfg, locate));
     found.extend(m::check_m003(&ir, &lcfg, locate));
