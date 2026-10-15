@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:50:20Z"
+digest = "837a56e7fc1662303d61b15842c5da029a36b7369a86fcd21eaa41faeae2a2b8"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5e26ab2d-2a91-40b6-84e2-205c66b747e1 with nextest profile: default
+    Starting 1 test across 49 binaries (1253 tests skipped)
+        PASS [   0.195s] cadetta cmd::check::tests::lint_d001_min_digits_and_common_values_change_d001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.197s] 1 test run: 1 passed, 1253 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "lint_d001_min_digits_and_common_values_change_d001"
+size = 688
+status = "measured"
+test_count = 1
+tests_digest = "cb590566032b8b53dc95c0465301492166a5c5b246bb69262463b386e1120dbd"
+at = "2026-10-15T01:50:20Z"
+actor = "lognd"
+rev = 1
