@@ -2,12 +2,12 @@
 id = "01M4Y77294QQTRF5TA9H360TSR"
 title = "Pipeline evaluates each part slot's approved alternates and fills Member.variants / Verdicts.per_alternate"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T09:56:13Z"
+updated = "2026-10-15T09:56:15Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/**"]
 
 [[links]]
