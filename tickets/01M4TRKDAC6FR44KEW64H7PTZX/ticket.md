@@ -7,8 +7,9 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-13T13:52:59Z"
-updated = "2026-10-15T02:00:24Z"
-scope = ["crates/cadetta-cli/src/pipeline.rs,crates/cadetta-sema/src/**,crates/cadetta-variants/src/**,crates/cadetta-lint/src/**", "crates/cadetta-cli/Cargo.toml", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/tests/lint_lifts.rs", "docs/spec/lints.md", "changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md"]
+updated = "2026-10-15T02:00:30Z"
+labels = ["creates:crates/cadetta-cli/tests/lint_lifts.rs", "creates:changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md"]
+scope = ["crates/cadetta-cli/Cargo.toml", "crates/cadetta-cli/src/cmd/check.rs", "crates/cadetta-cli/tests/lint_lifts.rs", "docs/spec/lints.md", "changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/**", "crates/cadetta-variants/src/**", "crates/cadetta-lint/src/**"]
 
 [[acceptance]]
 text = "L, T, F and Q lifts are fed real findings from sema and variants and appear in cadetta check output"

@@ -1,0 +1,6 @@
+kind = "field"
+field = "labels"
+new = ["creates:crates/cadetta-cli/tests/lint_lifts.rs", "creates:changelog.d/01M4TRKDAC6FR44KEW64H7PTZX.added.md"]
+at = "2026-10-15T02:00:30Z"
+actor = "lognd"
+rev = 1
