@@ -403,7 +403,7 @@ negation is applied by `emit` to the written text of value and global lines (the
 leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
 to it. Q004, R013, R014 and R015 withhold that adapter's file and give exit 1, each reported in the
 `--format json` `diagnostics` list as a `cadetta.diag/1` record (`schema`, `severity` `error`, `code`, `message`, `path`); an unknown adapter id, a bad
-flag or a halted analysis give exit 2. `json` and `csv` write one row per bound `global` value locator in dependency order (emitters/json.md, emitters/csv.md) and leave an unchanged file alone, comparing modulo the header. Not yet run by `emit`: external adapters (those with a `command`); they are skipped with a log line.
+flag or a halted analysis give exit 2. `json` and `csv` write one row per bound `global` value locator in dependency order (emitters/json.md, emitters/csv.md) and leave an unchanged file alone, comparing modulo the header. External adapters (those with a `command`) are spawned and sent `emit` (adapters.md 5); their files are listed in the report and an adapter failure gives exit 2.
 
 `import ADAPTER FILE...` runs the external adapter's `read` (a `command` containing `/` is
 relative to the package directory; no PATH search), builds one observed project per native file

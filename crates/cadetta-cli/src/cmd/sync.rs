@@ -21,8 +21,8 @@ use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, DimTolerance, EmitParams, Feature, LocatorStatus,
-    ObservedTolerance, PushMode, PushStatus, ReadParams, ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedTolerance,
+    PushMode, PushStatus, ReadParams, ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -41,8 +41,8 @@ use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
-    designed, emit_package_texts, kind_of, load_bindings, locators_for, native_unit, negate_text,
-    package_ir, text_params_of, to_ratio, written_for,
+    designed, emit_package_texts, emit_params, kind_of, load_bindings, locators_for, native_unit,
+    negate_text, package_ir, text_params_of, to_ratio, written_for,
 };
 use crate::cmd::import::program;
 use crate::config::{Adapter, SaveMode};
@@ -1331,26 +1331,6 @@ fn emit_external(
         tracing::warn!(error = %e, "sync: adapter shutdown failed");
     }
     failure.map_or(Ok(first), Err)
-}
-
-/// The `emit` params for an adapter: design IR, its bindings file text, and the emit policy.
-fn emit_params(pkg: &PackageDir, adapter: &Adapter, ir: &Ir) -> Result<EmitParams, String> {
-    let (set, _) = load_bindings(pkg, adapter, ir).map_err(|e| match e {
-        LoadError::Config(message) => message,
-        LoadError::Diag(d) => format!("{}: {}", d.code, d.message),
-    })?;
-    let design = serde_json::to_value(ir).map_err(|e| format!("cannot encode the IR: {e}"))?;
-    let point = match config_point(pkg.config.emit.point) {
-        EmitPoint::Nominal => "nominal",
-        EmitPoint::Mid => "mid",
-        EmitPoint::Mmc => "mmc",
-        EmitPoint::Lmc => "lmc",
-    };
-    Ok(EmitParams {
-        design,
-        bindings: json!({"adapter": adapter.id(), "toml": set.to_toml()}),
-        policy: json!({"point": point}),
-    })
 }
 
 /// Run one adapter of a package; `Err` is a usage/IO/adapter failure (exit 2).
