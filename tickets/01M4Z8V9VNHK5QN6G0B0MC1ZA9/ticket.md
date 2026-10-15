@@ -2,12 +2,12 @@
 id = "01M4Z8V9VNHK5QN6G0B0MC1ZA9"
 title = "cadetta conformance: library behaviour for the remaining binding read fixtures (R002 unbound, R003 read-bound, R007, R011, Q001 kg-vs-mm, driven dimensions, lock digest, slots)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T07:53:53Z"
-updated = "2026-10-15T07:53:53Z"
+updated = "2026-10-15T19:47:04Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
