@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:00:32Z"
+digest = "81fbb235a62a9660757f4754db999cb22692a9d2b6fd0554bb910150e3f48711"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 35cd4e31-4aaf-4b5e-8d1c-b4b3590600f2 with nextest profile: default
+    Starting 1 test across 51 binaries (1270 tests skipped)
+        PASS [   0.004s] cadetta-sema eval::func::tests::cbrt_is_exact_for_cubes_and_checks_the_dimension
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 1270 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cbrt_is_exact_for_cubes_and_checks_the_dimension"
+size = 576
+status = "measured"
+test_count = 1
+tests_digest = "ac0b43bf907f9eaef3892eb70ddd38679c36fae53f9f31353aae67767851771a"
+at = "2026-10-15T02:00:32Z"
+actor = "lognd"
+rev = 1
