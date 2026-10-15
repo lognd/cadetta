@@ -38,7 +38,7 @@ use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, attr_point, config_point, emit_package, kind_of,
-    load_bindings, locators_for, native_unit, negate_text, package_ir, written_for,
+    LoadError, load_bindings, locators_for, native_unit, negate_text, package_ir, written_for,
 };
 use crate::cmd::import::program;
 use crate::config::{Adapter, SaveMode};
@@ -158,6 +158,9 @@ pub struct SyncReport {
     /// Bound `(path, file, locator)` triples absent from the native files (structured R003).
     #[serde(skip)]
     pub missing: Vec<(String, String, String)>,
+    /// An invalid bindings file or locator: stops the run with exit 2 (adapters.md 3).
+    #[serde(skip)]
+    config_error: Option<String>,
 }
 
 impl SyncReport {
@@ -471,6 +474,9 @@ fn build_entries(
     let (set, _) = match load_bindings(pkg, adapter, ir) {
         Ok(loaded) => loaded,
         Err(e) => {
+            if let LoadError::Config(message) = &e {
+                ctx.report.config_error = Some(message.clone());
+            }
             let d = e.into_diag();
             ctx.report.diag(&d.code, d.message);
             return None;
@@ -1047,6 +1053,7 @@ fn manual_adapter(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_
             ctx.report.diag(&d.code, d.message);
         }
         if let Some(message) = report.config_error {
+            ctx.report.config_error = Some(message.clone());
             ctx.report.diag("R005", message);
         }
     }
@@ -1086,25 +1093,6 @@ fn sync_adapter(
         }
         manual_adapter(pkg, adapter, ir, ctx);
         Ok(())
-    }
-
-    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
-    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::sync_adapter
-    #[cfg(unix)]
-    #[test]
-    fn a_silent_adapter_fails_sync_within_the_configured_timeout() {
-        use std::os::unix::fs::PermissionsExt;
-        let dir = project("");
-        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"silent\"\ncommand = [\"./silent.sh\"]\ntimeout = 1\n";
-        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
-        let script = dir.0.join("silent.sh");
-        std::fs::write(&script, "#!/bin/sh\nsleep 300\n").unwrap();
-        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
-        let start = std::time::Instant::now();
-        let (code, _, err) = run(&dir, Format::Text, &[]);
-        assert_eq!(code, EXIT_USAGE, "{err}");
-        assert!(err.contains("R008"), "{err}");
-        assert!(start.elapsed() < std::time::Duration::from_secs(30));
     }
 }
 
@@ -1293,6 +1281,9 @@ pub fn run_sync(
             let result = sync_adapter(pkg, adapter, &ir, &mut ctx);
             lock_changed |= ctx.lock_changed;
             if let Err(message) = result {
+                return fail(err, &message);
+            }
+            if let Some(message) = report.config_error.take() {
                 return fail(err, &message);
             }
         }
@@ -1825,5 +1816,37 @@ mod tests {
         assert_eq!(entries[0].file, "rail.FCStd");
         assert!(pass(None, create, &[]).1.is_empty());
         assert!(pass(None, "", &[Feature::CreateFrames]).1.is_empty());
+    }
+
+    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::sync_adapter
+    #[cfg(unix)]
+    #[test]
+    fn a_silent_adapter_fails_sync_within_the_configured_timeout() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = project("");
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"silent\"\ncommand = [\"./silent.sh\"]\ntimeout = 1\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        let script = dir.0.join("silent.sh");
+        std::fs::write(&script, "#!/bin/sh\nsleep 300\n").unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let start = std::time::Instant::now();
+        let (code, _, err) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_USAGE, "{err}");
+        assert!(err.contains("R008"), "{err}");
+        assert!(start.elapsed() < std::time::Duration::from_secs(30));
+    }
+
+    // frob:ticket 01M4YQQPSNQ7TP3QFRWAYFH870
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::run_sync
+    #[test]
+    fn invalid_bindings_exit_two_naming_the_file() {
+        let dir = project("");
+        let bad = "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"\", kind = \"global\" } ]\n";
+        std::fs::write(dir.0.join("bindings/equations.toml"), bad).unwrap();
+        let (code, out, e) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_USAGE, "{out} {e}");
+        assert!(e.contains("equations.toml"), "{e}");
+        assert!(!out.contains("R005"), "{out}");
     }
 }
