@@ -65,7 +65,10 @@ An obligation id is `<kind>:<canonical path>`. Kinds:
 | `sync` | CAD file reflects design | native file bound by an adapter |
 | `waiver` | a waiver was reviewed against its targets' current digests | `waive` declaration |
 
-For `sync` the path is the repo-relative native file path.
+For `sync` the path is the repo-relative native file path. `cadetta check`
+derives the state from the lock: when an adapter's current emitted value
+differs from its last `synced` value, every file that adapter synced is
+stale and reports O004.
 
 A selector is `KIND:GLOB`, comma-separated for several:
 `fit:acme.rover::Axle.*,check:acme.rover::**`. GLOB is the path glob

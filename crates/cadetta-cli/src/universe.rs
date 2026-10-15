@@ -15,14 +15,21 @@ use cadetta_ir::model::{
     Check, Citation, ComponentClass, Digest, Project as IrProject, VerdictState,
 };
 use cadetta_obligations::citation::citation_id;
-use cadetta_obligations::graph::{ObligationId, ObligationKind, Verdict};
-use cadetta_obligations::lock::Attest;
+use cadetta_obligations::graph::{ObligationId, ObligationKind, ObligationState, Verdict};
+use cadetta_obligations::lock::{Attest, Lock, Record};
 use cadetta_obligations::staleness::Judgement;
 use cadetta_obligations::why_stale::{WhyStale, why_stale};
 
 use crate::cmd::ack::{Candidate as AckCandidate, Subject};
 use crate::cmd::obligations::Candidate;
+use crate::cmd::emit::{
+    attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, negate_text,
+    written_for,
+};
+use crate::cmd::sync::normalize;
+use crate::config::Adapter;
 use crate::pipeline::Analysis;
+use crate::project::{PackageDir, Project};
 
 /// Whether a check at `check` with expression `expr` reads the member at `member`: its full
 /// path occurs in the expression, or it lives in the check's scope and its name is an
@@ -392,6 +399,116 @@ pub fn ack_candidates(universes: &[Universe]) -> Vec<AckCandidate> {
         .collect()
 }
 
+/// The text `sync` would push for every bound locator of `adapter` now, keyed by
+/// `(parameter path, locator)`, normalized the way the `synced` lock values are.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+fn emitted_values(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &IrProject,
+) -> std::collections::BTreeMap<(String, String), String> {
+    use cadetta_adapter::builtin::sw_equations::{DEFAULT_PRECISION, ValueKind};
+    use cadetta_adapter::policy::resolve_point;
+    use cadetta_adapter::scope::Scope as AdapterScope;
+    use cadetta_ir::model::{LocatorMode, Sign};
+    use cadetta_units::UnitTable;
+
+    let mut out = std::collections::BTreeMap::new();
+    let Ok((set, _)) = load_bindings(pkg, adapter, ir) else {
+        tracing::debug!(adapter = %adapter.id(), "universe: bindings unavailable, no sync values");
+        return out;
+    };
+    let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
+    let table = UnitTable::builtin();
+    let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
+    let cfg_point = config_point(pkg.config.emit.point);
+    for member in ir.components.iter().flat_map(|c| &c.members) {
+        let canonical = member.path.to_string();
+        let Some(value) = &member.value else { continue };
+        if member.analysis || !scope.accepts(&canonical) {
+            continue;
+        }
+        let Some(locators) = locators_for(&set, &member.path) else {
+            continue;
+        };
+        let kind = kind_of(value);
+        let point = resolve_point(&[attr_point(member)], cfg_point);
+        for loc in locators
+            .iter()
+            .filter(|l| l.for_alternate.is_none() && l.mode != LocatorMode::Ref)
+        {
+            let unit = native_unit(adapter, loc);
+            let Ok(Some(written)) = written_for(&table, value, member, &unit, kind, point, precision)
+            else {
+                continue;
+            };
+            let written = if loc.sign == Some(Sign::Minus) {
+                negate_text(&written)
+            } else {
+                written
+            };
+            let default_unit = if kind == ValueKind::Quantity { unit } else { String::new() };
+            out.insert(
+                (canonical.clone(), loc.locator.clone()),
+                normalize(&written, &default_unit),
+            );
+        }
+    }
+    out
+}
+
+/// The stale `sync` obligations (obligations.md 2.3, O004): for every native file an adapter
+/// last saved (`synced file=` record), the obligation `sync:FILE` is stale when a parameter the
+/// adapter binds now emits a value that differs from its `synced` lock value. The lock keeps
+/// values per adapter, so every saved file of a drifted adapter is reported.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+pub fn sync_states(
+    project: &Project,
+    analysis: &Analysis,
+    lock: &Lock,
+) -> Vec<(ObligationId, ObligationState)> {
+    let mut out = Vec::new();
+    for package in &analysis.packages {
+        let Some(pkg) = project.packages.iter().find(|p| {
+            p.config.package.as_ref().and_then(|c| c.name.as_deref()) == Some(package.name.as_str())
+        }) else {
+            continue;
+        };
+        for adapter in &pkg.config.adapters {
+            let synced: Vec<_> = lock
+                .records()
+                .filter_map(|r| match r {
+                    Record::SyncedValue(v) if v.adapter == adapter.id() => Some(v),
+                    _ => None,
+                })
+                .collect();
+            if synced.is_empty() {
+                continue;
+            }
+            let now = emitted_values(pkg, adapter, &package.ir);
+            let drifted = synced.iter().any(|v| {
+                now.get(&(v.path.clone(), v.locator.clone()))
+                    .is_some_and(|text| *text != v.value)
+            });
+            tracing::debug!(adapter = %adapter.id(), drifted, "universe: sync drift judged");
+            if !drifted {
+                continue;
+            }
+            for r in lock.records() {
+                if let Record::SyncedFile(f) = r
+                    && f.adapter == adapter.id()
+                {
+                    out.push((
+                        ObligationId::new(ObligationKind::Sync, f.file.clone()),
+                        ObligationState::Stale,
+                    ));
+                }
+            }
+        }
+    }
+    out
+}
+
 // frob:ticket 01M4TA3CEMSKPPZTY1CM2AFDDQ
 #[cfg(test)]
 mod tests {
@@ -618,6 +735,76 @@ mod tests {
         let v = run(crate::cmd::check::run_check, &dir, &[]).to_string();
         assert!(v.contains("S004"), "{v}");
         assert!(!v.contains("O001"), "{v}");
+    }
+
+    const SYNC_SRC: &str = "model Plate {\n  thickness: Length = 6mm\n}\n";
+    const SYNC_BINDINGS: &str = "[\"acme.axle::Plate.thickness\"]\nlocators = [ { locator = \"Plate_Thk\", kind = \"global\", native_unit = \"mm\" } ]\n";
+
+    /// A project with a bound `sw-equations` adapter whose lock last synced `thickness` as `last`.
+    fn synced_project(last: &str, kinds: &str) -> Dir {
+        use cadetta_obligations::lock::{Hex, Lock, Record, SyncedFile, SyncedValue};
+        let dir = Dir::new();
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        let adapter = "[[adapter]]\nname = \"sw-equations\"\nid = \"equations\"\nfiles = [\"part.FCStd\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{adapter}{kinds}")).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), SYNC_SRC).unwrap();
+        std::fs::create_dir_all(dir.0.join("bindings")).unwrap();
+        std::fs::write(dir.0.join("bindings/equations.toml"), SYNC_BINDINGS).unwrap();
+        let mut lock = Lock::new();
+        lock.insert(Record::SyncedValue(SyncedValue {
+            adapter: "equations".into(),
+            path: "acme.axle::Plate.thickness".into(),
+            locator: "Plate_Thk".into(),
+            value: last.into(),
+        }));
+        lock.insert(Record::SyncedFile(SyncedFile {
+            adapter: "equations".into(),
+            file: "part.FCStd".into(),
+            digest: Hex::new("0a").unwrap(),
+        }));
+        lock.save(&dir.0.join("cadetta.lock")).unwrap();
+        dir
+    }
+
+    fn check_json(dir: &Dir, args: &[&str]) -> (u8, Value) {
+        let args: Vec<String> = args.iter().map(|a| (*a).to_owned()).collect();
+        let globals = Globals { format: Format::Json, cwd: Some(dir.0.clone()), config: None };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = crate::cmd::check::run_check(&args, &globals, &mut out, &mut err);
+        (code, serde_json::from_slice(&out).unwrap_or(Value::Null))
+    }
+
+    fn o004(v: &Value) -> Option<&Value> {
+        v["diagnostics"].as_array()?.iter().find(|d| d["code"] == "O004")
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn changed_emitted_value_is_o004_info_on_the_native_file() {
+        let (code, v) = check_json(&synced_project("5mm", ""), &[]);
+        let d = o004(&v).unwrap_or_else(|| panic!("{v}"));
+        assert_eq!(d["path"], "part.FCStd", "{v}");
+        assert_eq!(d["severity"], "info", "{v}");
+        assert_eq!(code, 0, "{v}");
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn unchanged_emitted_value_raises_no_o004() {
+        let (_, v) = check_json(&synced_project("6mm", ""), &[]);
+        assert!(o004(&v).is_none(), "{v}");
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn sync_kind_required_for_check_makes_o004_gate() {
+        let kinds = "[obligations.kinds.sync]\nrequired_for = \"check\"\n";
+        let (code, v) = check_json(&synced_project("5mm", kinds), &[]);
+        assert_eq!(o004(&v).unwrap_or_else(|| panic!("{v}"))["severity"], "error", "{v}");
+        assert_eq!(code, 1, "{v}");
     }
 
     const FIT_SRC: &str = "model Axle {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n}\n";

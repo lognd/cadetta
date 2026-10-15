@@ -8,7 +8,7 @@ use std::io::Write;
 use cadetta_ir::model::Project as IrProject;
 use cadetta_lint::diag::{self, Diagnostic, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions, apply, bind_reviewed};
-use cadetta_lint::rules::o004_w005::check_w005;
+use cadetta_lint::rules::o004_w005::{check_o004, check_w005};
 use cadetta_lint::rules::s::{CitationDrift, check_s004 as s004};
 use cadetta_lint::rules::w;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
@@ -315,8 +315,23 @@ pub fn run_check_with(
     } else {
         obligation_diagnostics(&analysis, &policy, &lock, &parsed, &as_of)
     };
+    let mut o004_gating: Vec<Option<String>> = Vec::new();
     if !analysis.halted {
         raw.extend(citation_diagnostics(&analysis, &lock));
+        // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+        let sync = check_o004(
+            &universe::sync_states(&project, &analysis, &lock),
+            &policy.kinds,
+            &cfg,
+            parsed.release,
+        );
+        // `apply` resets severity to the lint config, so remember which O004 gate.
+        o004_gating.extend(
+            sync.iter()
+                .filter(|d| d.severity == Severity::Error)
+                .map(|d| d.path.clone()),
+        );
+        raw.extend(sync);
     }
     let gating_keys: Vec<(String, Option<String>)> = gating
         .iter()
@@ -351,6 +366,9 @@ pub fn run_check_with(
         if (d.code == "O001" || d.code == "O002")
             && gating_keys.contains(&(d.code.clone(), d.path.clone()))
         {
+            d.severity = Severity::Error;
+        }
+        if d.code == "O004" && o004_gating.contains(&d.path) {
             d.severity = Severity::Error;
         }
     }
