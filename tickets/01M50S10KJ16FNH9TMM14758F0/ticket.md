@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T21:55:52Z"
-updated = "2026-10-15T22:23:58Z"
-scope = ["tests/conformance/**"]
+updated = "2026-10-15T22:25:14Z"
+scope = ["tests/conformance/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Fixture read-unparsed-line-kept-raw uses an unknown function call (kept raw per sw-equations.md 3) and its known-gaps entry is removed"
