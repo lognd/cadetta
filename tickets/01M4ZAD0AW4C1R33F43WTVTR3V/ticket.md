@@ -2,7 +2,8 @@
 id = "01M4ZAD0AW4C1R33F43WTVTR3V"
 title = "Part arrays of parameterized callees do not lower instance members"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
