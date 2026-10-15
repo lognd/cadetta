@@ -328,9 +328,13 @@ adapter, or R008), so the output never guesses. `bind` refuses a locator that fa
 validation of adapters.md 3 and is idempotent: binding an identical
 locator again changes nothing.
 
-Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y: `names` never
-launches CAD, so a path without a locator is `unknown`, not `unbound`,
-until a read adapter feeds it (follow-up ticket). A locator is
+Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y and
+01M4VPEFSVBXSEKWHTQ48SAEKA: `names` asks an adapter that can read (a
+`command`, the `read` capability and literal `files`) for its CAD, so a
+path without a locator is `unbound` and native-link discoveries
+(adapters.md 3.5) show as implicit `global`, `link`, `frame` or
+`reference`. An adapter that cannot read, or whose spawn or read fails,
+keeps every such path `unknown`. A locator is
 identified by kind, locator text, `--for`, `--config` and `--component`;
 `bind` of an existing identity with other fields is a conflict (exit 2:
 remove it first), and `bind --remove` of an absent locator is a no-op.
