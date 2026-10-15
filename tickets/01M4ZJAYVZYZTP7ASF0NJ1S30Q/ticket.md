@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T10:39:43Z"
-updated = "2026-10-15T11:18:59Z"
+updated = "2026-10-15T11:39:32Z"
 scope = ["crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/universe.rs"]
 
 [[acceptance]]
 text = "cadetta ack waiver:GLOB records the waiver at its targets' closure digest and removes it from the open obligations"
-bound = false
+bound = true
 +++
 
 found while working TNGHA7Q: ack_candidates emits no Subject::Waiver and sync/waiver rows have no attest path
