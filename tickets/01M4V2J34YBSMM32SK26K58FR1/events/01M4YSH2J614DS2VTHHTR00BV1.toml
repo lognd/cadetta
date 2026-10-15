@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A wrong dimension on an implementer interface member is I001 (stdlib/i001-sourced-wrong-kind fires, must-not-fire is clean)", "A wrong named kind on an implementer interface member is Q003 (stdlib/q003-sourced-named-kind)", "Optional Sourced members may be absent without I001 (stdlib/i001-sourced-optional-members)"]
+moved = []
+at = "2026-10-15T03:26:09Z"
+actor = "lognd"
+rev = 1
