@@ -11,7 +11,10 @@
 //! nominals, so a rotation of a toleranced value keeps the nominal exact where the nominal is
 //! exact and the form is an outer bound; the point form of a placement (`D.offset(p)`) reads its
 //! x, y and z from the one point expression, selecting the instance by the member path of an
-//! array placement; an indexed part instance (`leg[1].top in origin`) is not evaluated yet.
+//! array placement; an indexed part instance (`leg[1].top in origin`) is read from a frame table
+//! built with that one instance placed (one instance of a slot per expression: `leg[1].top in
+//! leg[0].top` is rejected, the frame table keys frames by datum, not by instance), and a read
+//! of a member through an indexed slot (`rail[0].length`) is the part type's member.
 
 // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
 
@@ -234,23 +237,27 @@ pub fn definition_path(resolver: &Resolver<'_>, path: &CanonPath) -> Option<Cano
 impl<'r, 'p> Evaluator<'r, 'p> {
     /// Resolves a read through part slots to the part type's own member (`bracket.holes`).
     pub(super) fn through_parts(&self, path: &CanonPath, span: Span) -> R<CanonPath> {
-        if path.parts.iter().any(|s| s.index.is_some()) {
-            return Err(diag(
-                "EVAL",
-                span,
-                "reading through an indexed part instance is not evaluated yet",
-            ));
-        }
         let mut cur = path.item_only();
         for seg in &path.parts {
             let (next, counted) =
                 step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name).map_err(|m| diag("EVAL", span, m))?;
-            if counted {
-                return Err(diag(
-                    "EVAL",
-                    span,
-                    format!("`{}` is a part array; read one instance of it", seg.name),
-                ));
+            // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+            match (counted, seg.index.is_some()) {
+                (true, false) => {
+                    return Err(diag(
+                        "EVAL",
+                        span,
+                        format!("`{}` is a part array; read one instance of it", seg.name),
+                    ));
+                }
+                (false, true) => {
+                    return Err(diag(
+                        "EVAL",
+                        span,
+                        format!("`{}` is not a part array and cannot be indexed", seg.name),
+                    ));
+                }
+                _ => {}
             }
             cur = next;
         }
@@ -629,11 +636,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let Some(part) = find_part(cur, name) else {
                     return Ok(None);
                 };
-                if idx.is_some() {
+                // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+                if idx.is_some() && (k > 0 || part.count.is_none()) {
                     return Err(diag(
                         "EVAL",
                         span,
-                        "re-expression through an indexed part instance is not evaluated yet",
+                        "only a slot of the enclosing component can be indexed, and only a part array",
                     ));
                 }
                 let Some((p, c)) = self.resolver.part_type(&package, &module, &part.ty) else {
@@ -755,7 +763,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 (a, b, here, comp)
             }
         };
-        let (table, _) = self.frame_tables(&here, comp, span)?;
+        let (table, _) = self.frame_tables(&here, comp, &[], span)?;
         let report =
             aligned(&table, &a, &b, &allowance.form).map_err(|e| aligned_diag(&e, span))?;
         debug!(verdict = ?report.verdict, pairs = report.pairs.len(), "geometry: aligned condition");
@@ -834,7 +842,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let b = self.axis_operand(sc, comp, xs[1])?;
         let allowance = self.quant(sc, xs[2])?;
         let over = self.quant(sc, xs[3])?;
-        let (table, _) = self.frame_tables(&here, comp, span)?;
+        let (table, _) = self.frame_tables(&here, comp, &[], span)?;
         let report = if name == "coaxial" {
             axes::coaxial(&table, &a, &b, &allowance.form, &over.form)
         } else {
@@ -852,7 +860,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let (here, comp) = self.enclosing("angle_between", sc, span)?;
         let a = self.axis_operand(sc, comp, xs[0])?;
         let b = self.axis_operand(sc, comp, xs[1])?;
-        let (form, nominal) = self.frame_tables(&here, comp, span)?;
+        let (form, nominal) = self.frame_tables(&here, comp, &[], span)?;
         let r = axes::angle_between(&form, &nominal, &a, &b).map_err(|e| aligned_diag(&e, span))?;
         let dim = Dim::new(cadetta_units::Dimension::dimensionless(), 1);
         if let Some(m) = r.exact {
@@ -892,6 +900,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         &mut self,
         here: &CanonPath,
         comp: &'p Component,
+        pick: &[(String, u64)],
         span: Span,
     ) -> R<(FrameTable, FrameTable)> {
         let id = component_id(here);
@@ -908,6 +917,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .collect();
         let mut asm = g.assembly.clone();
         if let Some(a) = asm.as_mut() {
+            self.pick_instances(&id, comp, a, pick, span)?;
             self.prune_assembly(&id, comp, a);
             collect_members(a, &mut members);
         }
@@ -996,7 +1006,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 ));
             }
         };
-        let (ft_form, ft_nominal) = self.frame_tables(&here, comp, span)?;
+        let pick = instance_pick(l, r, span)?;
+        let (ft_form, ft_nominal) = self.frame_tables(&here, comp, &pick, span)?;
         let from = DatumId::new(from_tag);
         let run = |ft: &FrameTable, nominal: bool| -> R<Reexpressed> {
             let pos = to_pos(&left_val, &from, nominal, l.span)?;
@@ -1005,6 +1016,48 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         let (rf, rn) = (run(&ft_form, false)?, run(&ft_nominal, true)?);
         merge(&rf, &rn, span)
+    }
+
+    /// Narrows each picked part array's placements to the one picked instance, so the table's
+    /// frames for that slot (`leg.top`) are that instance's.
+    // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+    fn pick_instances(
+        &mut self,
+        id: &ComponentId,
+        comp: &Component,
+        a: &mut Assembly,
+        pick: &[(String, u64)],
+        span: Span,
+    ) -> R<()> {
+        for (slot, k) in pick {
+            let part = find_part(comp, slot)
+                .ok_or_else(|| diag("EVAL", span, format!("`{slot}` is not a part")))?;
+            let n = self
+                .part_count(id, part)
+                .ok_or_else(|| diag("EVAL", span, format!("the count of `{slot}` is unknown")))?;
+            if *k >= n {
+                return Err(diag(
+                    "EVAL",
+                    span,
+                    format!("index {k} is out of range for part array `{slot}` of {n}"),
+                ));
+            }
+            debug!(slot = %slot, instance = k, "geometry: frame table for one part instance");
+            let mut kept = Vec::new();
+            for p in std::mem::take(&mut a.placements) {
+                if p.node != *slot {
+                    kept.push(p);
+                    continue;
+                }
+                kept.extend(
+                    expand_instances(&p, n)
+                        .into_iter()
+                        .filter(|q| q.cover == Cover::Instance(*k)),
+                );
+            }
+            a.placements = kept;
+        }
+        Ok(())
     }
 
     /// Drops the placements the table cannot evaluate: a point-form placement of a part array.
@@ -1030,6 +1083,33 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
         }
     }
+}
+
+/// The part-array instances an `in` expression names: the first step's index on each side.
+/// Two different instances of one slot cannot share a table, so that is an error.
+// frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+fn instance_pick(l: &Expr, r: &Expr, span: Span) -> R<Vec<(String, u64)>> {
+    let mut out: Vec<(String, u64)> = Vec::new();
+    for e in [l, r] {
+        let Some(chain) = steps(e) else { continue };
+        let Some((name, Some(k))) = chain.first() else {
+            continue;
+        };
+        match out.iter().find(|(n, _)| n == name) {
+            Some((_, j)) if j != k => {
+                return Err(diag(
+                    "EVAL",
+                    span,
+                    format!(
+                        "`in` between instances {j} and {k} of `{name}` is not evaluated; express each against a shared datum"
+                    ),
+                ));
+            }
+            Some(_) => {}
+            None => out.push((name.clone(), *k)),
+        }
+    }
+    Ok(out)
 }
 
 /// Every datum member of every node and every placement member of `a`, recursively.

@@ -424,8 +424,12 @@ float enters the placement.
   marked (Q006). A point-form placement reads x, y and z from one point
   expression. A read through a nested part chain
   (`sub.bracket.holes[1]`) composes each part's placement. Re-expression
-  of an indexed part instance (`leg[1].top in origin`) is not evaluated
-  yet.
+  of an indexed part instance (`leg[1].top in origin`) uses a frame
+  table with that one instance placed, so each side of `in` may name one
+  instance of a slot; two different instances of one slot in a single
+  `in` (`leg[2].top in leg[1].top`) is an error, as is an index outside
+  the array. A member read through an indexed slot (`rail[0].length`) is
+  the part type's own member.
 - CAD gets numbers, and positions are checked by transform. Cadetta
   never reconstructs geometry; reading a frame's or a component's
   transform is reading numbers the tool exposes. The mapping

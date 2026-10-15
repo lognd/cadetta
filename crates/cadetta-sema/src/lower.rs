@@ -1059,4 +1059,59 @@ mod tests {
         let codes: Vec<&str> = ev.diagnostics.iter().map(|d| d.code).collect();
         assert_eq!(codes, vec!["G003", "G003"], "{:?}", ev.diagnostics);
     }
+
+    const LEGS_SRC: &str = "model Leg {\n  length = 700mm\n  datum top = origin.offset(z = length)\n}\n\
+        assembly Frame {\n  part leg[4]: Leg\n  \
+        corners: [Point2 on origin; 4] = [Point2(0mm, 0mm), Point2(1000mm, 0mm), Point2(0mm, 500mm), Point2(1000mm, 500mm)]\n  \
+        place leg.origin at origin.offset(corners)\n  \
+        gx = (leg[1].top in origin).x - (leg[0].top in origin).x\n  \
+        gy = (leg[2].top in origin).y\n  hz = (leg[3].top in origin).z\n  \
+        reach = leg[2].length\n}\n";
+
+    fn exact_text(b: &Built, item: &str, name: &str) -> String {
+        let v = member(b, item, name).value.as_ref().expect("value");
+        let Nominal::Exact(Exact(m)) = &v.nominal else {
+            panic!("expected an exact nominal, got {v:?}");
+        };
+        m.rational().to_string()
+    }
+
+    // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+    // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
+    #[test]
+    fn indexed_part_instances_re_express_at_their_own_placement() {
+        let b = build(LEGS_SRC, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        assert_eq!(exact_text(&b, "Frame", "gx"), "1");
+        assert_eq!(exact_text(&b, "Frame", "gy"), "1/2");
+        assert_eq!(exact_text(&b, "Frame", "hz"), "7/10");
+    }
+
+    // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+    // frob:tests crates/cadetta-sema/src/geom.rs::through_parts kind=unit
+    #[test]
+    fn a_member_read_through_an_indexed_slot_is_the_part_types_member() {
+        let b = build(LEGS_SRC, &[], &[]);
+        assert_eq!(exact_text(&b, "Frame", "reach"), "7/10");
+    }
+
+    // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+    // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
+    #[test]
+    fn an_out_of_range_or_cross_instance_re_expression_is_an_error() {
+        let oob = LEGS_SRC.replace("leg[3].top", "leg[9].top");
+        let (ev, _, _) = evaluate(&oob);
+        assert!(
+            ev.diagnostics.iter().any(|d| d.message.contains("out of range")),
+            "{:?}",
+            ev.diagnostics
+        );
+        let cross = LEGS_SRC.replace("(leg[2].top in origin).y", "(leg[2].top in leg[1].top).y");
+        let (ev, _, _) = evaluate(&cross);
+        assert!(
+            ev.diagnostics.iter().any(|d| d.message.contains("between instances")),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
 }

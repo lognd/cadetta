@@ -957,13 +957,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 
     /// Evaluates the base of a `.x` access; a `p in D` re-expression that fails with G003 keeps
-    /// that diagnostic, any other failure falls through to reference classification.
+    /// that diagnostic, as does any other diagnosed failure (nothing else reads `(p in D).x`); a silent
+    /// failure falls through to reference classification.
     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
     fn point_base(&mut self, sc: &mut Scope, base: &Expr) -> R<Option<Val>> {
         let reexpress = matches!(&strip(base).kind, ExprKind::Binary(BinOp::In, ..));
         match self.eval(sc, base) {
             Ok(v) => Ok(Some(v)),
-            Err(Fail::Diag(d)) if reexpress && d.code == "G003" => Err(Fail::Diag(d)),
+            // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+            Err(Fail::Diag(d)) if reexpress => Err(Fail::Diag(d)),
             Err(_) => Ok(None),
         }
     }
