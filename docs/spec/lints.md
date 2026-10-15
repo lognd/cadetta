@@ -238,7 +238,8 @@ E003 and E004 attach the second definition or import span as a note on the diagn
 N002 matches the component name in `snake_case` or flattened lowercase
 followed by `_` (`Axle.axle_length`, `FrontAxle.front_axle_x`). N003 fires
 when the last `_` token of a member name is a unit symbol (`mm`, `in`,
-`kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
+`kg`, `deg`, `rpm`, `mpa`, and similar) and the member's value is not
+dimensionless (`tap_lead_in = 3` is a count, not inches). A name containing `__` raises
 N005 only, never also N001. N004 findings come from the resolver, since
 only it sees the `was` text; the lint turns them into diagnostics.
 A stale uppercase item name in a `was` path or a read (`Old.thk`) is

@@ -189,7 +189,14 @@ impl<F: Fn(&SpanRef) -> Location> Run<'_, F> {
                 span,
             );
         }
-        if let Some(u) = unit_suffix(name) {
+        // A dimensionless value cannot carry a unit, so `tap_lead_in = 3` is not unit-bearing.
+        let dimensionless = m
+            .value
+            .as_ref()
+            .is_some_and(|v| v.dim.dimension.is_dimensionless() && v.dim.angle == 0);
+        if dimensionless {
+            trace!(name, "N003: dimensionless value, unit-like suffix ignored");
+        } else if let Some(u) = unit_suffix(name) {
             self.emit(
                 N003,
                 format!("member `{name}` encodes the unit `{u}` in its name"),
@@ -374,6 +381,31 @@ mod tests {
             &["demo::Axle.diameter_mm"],
         )]);
         assert_eq!(codes(&pr), vec!["N003"]);
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/n.rs::check
+    #[test]
+    fn n003_skips_dimensionless_member() {
+        let mut c = comp(
+            "demo::Shop",
+            ComponentClass::Model,
+            &["demo::Shop.tap_lead_in"],
+        );
+        let three = || {
+            let m = cadetta_units::Magnitude::new(cadetta_units::Rational::new(3, 1).unwrap(), 0);
+            cadetta_ir::model::Nominal::Exact(cadetta_ir::model::Exact(m))
+        };
+        c.members[0].value = Some(cadetta_ir::model::Value::new(
+            three(),
+            Default::default(),
+            "3",
+        ));
+        assert!(codes(&proj(vec![c.clone()])).is_empty());
+        // Positive control: a length value keeps the finding.
+        let len =
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        c.members[0].value = Some(cadetta_ir::model::Value::new(three(), len, "3in"));
+        assert_eq!(codes(&proj(vec![c])), vec!["N003"]);
     }
 
     // frob:tests crates/cadetta-lint/src/rules/n.rs::check
