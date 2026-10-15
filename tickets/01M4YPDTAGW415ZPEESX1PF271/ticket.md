@@ -6,7 +6,7 @@ category = "todo"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-15T02:31:57Z"
-updated = "2026-10-15T03:05:36Z"
+updated = "2026-10-15T03:10:33Z"
 
 [[acceptance]]
 text = "conformance_corpus_matches_the_spec passes"
