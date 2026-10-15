@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:38:11Z"
+digest = "92bf9e292ebe0eb1b6dc418535d7842457fd0843f51b66b1f78feb9c0a6f3801"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.19s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 361f2145-c26d-4892-aee7-c1829d8ee022 with nextest profile: default
+    Starting 1 test across 63 binaries (1390 tests skipped)
+        PASS [   0.005s] cadetta-adapter builtin::csv::tests::unbound_row_is_r016_and_yields_nothing
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1390 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "unbound_row_is_r016"
+size = 904
+status = "measured"
+test_count = 1
+tests_digest = "4004131e447bda881428eda8732e1bcc4b8c054a5b11c8636a3a536d8217a9ca"
+at = "2026-10-15T03:38:11Z"
+actor = "lognd"
+rev = 1

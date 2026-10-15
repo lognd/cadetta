@@ -11,7 +11,7 @@ scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
 text = "A csv row whose name matches no binding is R016 and yields no observed values"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A # comment is recognised only at record start"
