@@ -155,7 +155,7 @@ namespace Cadetta.SolidWorks.Protocol
     {
         /// <summary>The calling host.</summary>
         [JsonPropertyName("client")]
-        public ClientInfo Client { get; set; }
+        public ClientInfo Client { get; set; } = default!;
         /// <summary>Protocol identifier, [`PROTOCOL`].</summary>
         [JsonPropertyName("protocol")]
         public string Protocol { get; set; } = "";
@@ -234,7 +234,7 @@ namespace Cadetta.SolidWorks.Protocol
         public List<JsonElement> Diagnostics { get; set; } = new List<JsonElement>();
         /// <summary>The new session.</summary>
         [JsonPropertyName("session")]
-        public Session Session { get; set; }
+        public Session Session { get; set; } = default!;
     }
 
     /// <summary>How `push` writes a dimension.</summary>
@@ -291,7 +291,7 @@ namespace Cadetta.SolidWorks.Protocol
     {
         /// <summary>Where to read from.</summary>
         [JsonPropertyName("source")]
-        public ReadSource Source { get; set; }
+        public ReadSource Source { get; set; } = default!;
     }
 
     /// <summary>Result of `read`.</summary>

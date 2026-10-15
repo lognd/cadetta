@@ -124,7 +124,8 @@ def emit_class(name: str, schema: dict, defs: dict, out: list[str]) -> None:
         else:
             q = "?" if nullable and t != OPAQUE else ""
             q = "?" if nullable and t == OPAQUE else q
-            out.append(f"        public {t}{q} {pascal(k)} {{ get; set; }}")
+            init = " = default!;" if not q else ""
+            out.append(f"        public {t}{q} {pascal(k)} {{ get; set; }}{init}")
     out.append("    }")
     out.append("")
 
