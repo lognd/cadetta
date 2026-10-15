@@ -283,26 +283,6 @@ ticket = "~AN7BAC5"
 reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
 
 [[gap]]
-fixture = "packages/e016-member-public-by-default"
-ticket = "~9NFT8AX"
-reason = "member privacy (priv members) is not enforced on expression paths"
-
-[[gap]]
-fixture = "packages/e016-priv-member-read-from-dependency"
-ticket = "~9NFT8AX"
-reason = "member privacy (priv members) is not enforced on expression paths"
-
-[[gap]]
-fixture = "packages/e016-priv-member-same-package"
-ticket = "~9NFT8AX"
-reason = "member privacy (priv members) is not enforced on expression paths"
-
-[[gap]]
-fixture = "packages/e016-priv-member-through-part-chain"
-ticket = "~9NFT8AX"
-reason = "member privacy (priv members) is not enforced on expression paths"
-
-[[gap]]
 fixture = "packages/u002-not-i004-for-private-component"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
