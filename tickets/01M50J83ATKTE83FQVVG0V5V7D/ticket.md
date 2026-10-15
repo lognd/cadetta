@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T19:57:24Z"
-updated = "2026-10-15T21:55:40Z"
+updated = "2026-10-15T21:55:41Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "A driven dimension reads exact:false with a reason"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A unit of another dimension than the locator's native unit reads inexact, never Q001"

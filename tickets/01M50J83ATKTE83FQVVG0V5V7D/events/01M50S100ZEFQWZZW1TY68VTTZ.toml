@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T21:55:41Z"
+digest = "db2a7ff4c0fabc1f5b08943556729a81d1084b4e42863c7679d9d956722fd5ef"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d12baf73-478f-42af-9fce-61f1cdfa3a88 with nextest profile: default
+    Starting 1 test across 1 binary (173 tests skipped)
+        PASS [   0.004s] cadetta-adapter read_units::tests::driven_value_is_inexact_with_reason
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 173 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter driven_value_is_inexact"
+size = 764
+status = "measured"
+test_count = 1
+tests_digest = "0391a1b2a108bf40bbfea7d179520ee1d6f4fc277cdc840e948fb2c50a4e36a8"
+at = "2026-10-15T21:55:41Z"
+actor = "lognd"
+rev = 1
