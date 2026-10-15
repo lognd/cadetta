@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Project carries interfaces, tables and waivers and serializes them when non-empty (omitted when empty)", "Project with those collections validates against the IR JSON Schema"]
+moved = []
+at = "2026-10-15T01:46:39Z"
+actor = "lognd"
+rev = 1
