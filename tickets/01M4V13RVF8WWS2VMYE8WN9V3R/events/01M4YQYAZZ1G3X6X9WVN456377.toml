@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:58:00Z"
+digest = "aec58168d7afb79de48c13a9612573988856c216b0ea1df02a6fbc17eb67bc87"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.61s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3acaa0c8-629c-4181-a289-197f188277d1 with nextest profile: default
+    Starting 1 test across 60 binaries (1358 tests skipped)
+        PASS [   0.444s] cadetta::sema_gaps e003_duplicate_type_is_a_diagnostic
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.447s] 1 test run: 1 passed, 1358 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e003_duplicate_type"
+size = 605
+status = "measured"
+test_count = 1
+tests_digest = "ef700844729913e6d013adcd78a0ca759276555ab5bc5236638f22a8ae322304"
+at = "2026-10-15T02:58:00Z"
+actor = "lognd"
+rev = 1
