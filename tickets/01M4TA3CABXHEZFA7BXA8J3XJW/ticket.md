@@ -6,13 +6,13 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-15T00:10:00Z"
+updated = "2026-10-15T00:10:09Z"
 labels = ["creates:crates/cadetta-cli/src/lint_facts.rs", "creates:crates/cadetta-cli/tests/lint_entry_points.rs", "creates:changelog.d/01M4TA3CABXHEZFA7BXA8J3XJW.fixed.md"]
 scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/src/cmd/check_watch.rs", "docs/spec/lints.md", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/01M4TA3CABXHEZFA7BXA8J3XJW.fixed.md"]
 
 [[acceptance]]
 text = "I001 fires through check when an implementer lacks an interface member"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "I001 is quiet when the implementer has every member"

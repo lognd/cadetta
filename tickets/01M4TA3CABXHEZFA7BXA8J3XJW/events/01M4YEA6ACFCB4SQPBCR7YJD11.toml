@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T00:10:09Z"
+digest = "33d9ffdcc08d609c0067dfad0385c0b16ecdf638a1aaa28f9b7fa45aa69d65de"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 423cd359-60bd-4982-b85d-40eb09687dc8 with nextest profile: default
+    Starting 1 test across 48 binaries (1235 tests skipped)
+        PASS [   0.018s] cadetta::lint_entry_points i001_fires_when_an_implementer_lacks_an_interface_member
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.019s] 1 test run: 1 passed, 1235 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "i001_fires_when"
+size = 579
+status = "measured"
+test_count = 1
+tests_digest = "a113b35d70254e01bacb03bf0b75d76acb0c4afea64d71145b65cc068e9f224b"
+at = "2026-10-15T00:10:09Z"
+actor = "lognd"
+rev = 1
