@@ -1663,8 +1663,3 @@ reason = "part-array instance members are not lowered to IR paths, so no row or 
 fixture = "emitters/sw-equations/naming-component-field"
 ticket = "~9WDH9XE"
 reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
-
-[[gap]]
-fixture = "emitters/sw-equations/comment-trailing-order-and-citation"
-ticket = "~JSTNC17"
-reason = "sw-equations trailing comment drops the at-quoted form of the citation"
