@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "Inexact or incompatible text is left unchanged"
-bound = false
+bound = true
 +++
 
 found while working ~D4T6ATZ: units compared textually
