@@ -1,0 +1,19 @@
++++
+id = "01M50C0NEZM1R9KYFTRJCJY1Z8"
+title = "Syntax/sema/IR: [position d] on Point2, E006 rules, Point.position and .u/.v schema"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+reporter = "lognd"
+created = "2026-10-15T18:08:29Z"
+updated = "2026-10-15T18:08:29Z"
+idempotency_key = "v2k95h5-slice-frontend"
+scope = ["crates/cadetta-syntax/src/**"]
+
+[[acceptance]]
+text = "A Point2 with [position d] lowers to paired .u/.v terms and the E006 cases fire."
+bound = false
++++
+
+Parse [position d], lower one disc per point, E006 for Point3 / coordinate tolerance on same value / toleranced generator member, Point.position in IR model and docs/schemas/cadetta.ir.1.json, holes[position] stays an index. Blocked by the units slice. Split from ~V2K95H5 (too large for one slice).
