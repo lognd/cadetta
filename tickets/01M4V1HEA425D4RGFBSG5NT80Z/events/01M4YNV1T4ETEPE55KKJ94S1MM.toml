@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["an inexact operand near the boundary in a check gives C002 (undecided), not EVAL", "an inexact operand clear of the boundary holds with no diagnostic"]
+moved = []
+at = "2026-10-15T02:21:42Z"
+actor = "lognd"
+rev = 1
