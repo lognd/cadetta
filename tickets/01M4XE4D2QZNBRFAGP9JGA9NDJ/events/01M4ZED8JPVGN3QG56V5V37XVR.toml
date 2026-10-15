@@ -1,0 +1,101 @@
+kind = "evidence"
+captured_at = "2026-10-15T09:30:58Z"
+digest = "c1cea4a664d38b873ac106b6dc6e10f9407ed3a1d7fb8b320404cb96635b5b31"
+exit_code = 1
+failed_tests = ["bindings/python/tests/test_conformance.py::test_binding_meets_fixture_expectation[stdlib/iso4762-any-length:must-not-fire]"]
+inline = '''
+============================= test session starts ==============================
+platform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.6.0
+rootdir: <worktree>/bindings/python
+configfile: pyproject.toml
+plugins: typeguard-4.6.0, platformdirs-4.13.0
+collected 1 item
+
+bindings/python/tests/test_conformance.py F                              [100%]
+
+=================================== FAILURES ===================================
+_ test_binding_meets_fixture_expectation[stdlib/iso4762-any-length:must-not-fire] _
+
+case = Case(name='stdlib/iso4762-any-length', side='must-not-fire', entry='eval', fixture=PosixPath('~/projects/cad... [{'path': 'acme.demo::Box.l', 'nominal': '25mm'}, {'path': 'acme.demo::Box.d', 'nominal': '10mm'}]}, lists_u002=False)
+replays = <function replays.<locals>.lookup at 0x739493b131a0>
+
+    @pytest.mark.parametrize("case", CASES, ids=[c.id for c in CASES])
+    def test_binding_meets_fixture_expectation(
+        case: Case, replays: Callable[[Case], Replay]
+    ) -> None:
+        """Diagnostics and exit status the fixture expects, observed via the binding."""
+        problems = _problems(case, replays(case))
+        if case.gap is not None:
+            if problems:
+                pytest.xfail(f"known gap {case.gap}: {problems}")
+            return
+>       assert not problems
+E       AssertionError: assert not ['exit 2, expected 0']
+
+bindings/python/tests/test_conformance.py:397: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+replaying 1 of 1346 corpus cases
+project root found: /tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650
+project opened: /tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650
+cli: ['<worktree>/.venv/bin/python', '-m', 'cadetta', '--format', 'json', '--cwd', '/tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650', 'ir']
+cadetta ir stderr: 2026-10-15T09:31:02.537862Z  WARN cadetta_sema::resolve: resolution error code="E002" not a reference
+2026-10-15T09:31:02.538056Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538070Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538076Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538081Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551389Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551487Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551518Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551543Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551573Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551600Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551626Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551650Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551675Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551704Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551727Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551751Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551873Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T
+---------------------------- Captured stderr setup -----------------------------
+ERROR: cadetta ir exited 2
+------------------------------ Captured log setup ------------------------------
+INFO     test_conformance:test_conformance.py:335 replaying 1 of 1346 corpus cases
+DEBUG    cadetta.project:project.py:187 project root found: /tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650
+INFO     cadetta.project:project.py:229 project opened: /tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650
+DEBUG    cadetta.project:project.py:280 cli: ['<worktree>/.venv/bin/python', '-m', 'cadetta', '--format', 'json', '--cwd', '/tmp/pytest-of-logan/pytest-8/conformance0/binding/4555297798425882650', 'ir']
+DEBUG    cadetta.project:project.py:283 cadetta ir stderr: 2026-10-15T09:31:02.537862Z  WARN cadetta_sema::resolve: resolution error code="E002" not a reference
+2026-10-15T09:31:02.538056Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538070Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538076Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.538081Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551389Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551487Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551518Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551543Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551573Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551600Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551626Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551650Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551675Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551704Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551727Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551751Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T09:31:02.551873Z  WARN cadetta_sema::eval: evaluation error code="EVAL" a quantity is required here
+2026-10-15T
+ERROR    cadetta.result:result.py:40 cadetta ir exited 2
+-------------- generated xml file: /tmp/frob-pytest-1880279-0.xml --------------
+=========================== short test summary info ============================
+FAILED bindings/python/tests/test_conformance.py::test_binding_meets_fixture_expectation[stdlib/iso4762-any-length:must-not-fire]
+============================== 1 failed in 4.05s ===============================
+'''
+passed = false
+provider = "pytest"
+ref = "bindings/python/tests/test_conformance.py::test_binding_meets_fixture_expectation[stdlib/iso4762-any-length:must-not-fire]"
+size = 7135
+status = "measured"
+test_count = 1
+tests_digest = "e24831686191829cb076e2bfde13a60825978943b1d7c9ed0b277fcb8713e77e"
+at = "2026-10-15T09:30:58Z"
+actor = "lognd"
+rev = 1
