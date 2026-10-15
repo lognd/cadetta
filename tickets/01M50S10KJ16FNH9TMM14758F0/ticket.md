@@ -7,12 +7,12 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T21:55:52Z"
-updated = "2026-10-15T22:23:57Z"
+updated = "2026-10-15T22:23:58Z"
 scope = ["tests/conformance/**"]
 
 [[acceptance]]
 text = "Fixture read-unparsed-line-kept-raw uses an unknown function call (kept raw per sw-equations.md 3) and its known-gaps entry is removed"
-bound = false
+bound = true
 +++
 
 The fixture expects IIF(...) to be kept raw, but emitters/sw-equations.md 3 says IIF parses to an expression (and a unit test asserts it). Change the fixture to a genuinely unparseable line, then remove its known-gaps.toml entry (currently pointed at ~G0V5V7D). Found while working ~G0V5V7D.
