@@ -2,12 +2,12 @@
 id = "01M4Z92C25BYMP5JYSX9WDH9XE"
 title = "Part-array instance members are not lowered to IR paths, so emitters and bindings see none"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T07:57:44Z"
-updated = "2026-10-15T08:03:40Z"
+updated = "2026-10-15T08:03:41Z"
 labels = ["creates:crates/cadetta-sema/src/lower_array.rs"]
 scope = ["crates/cadetta-sema/src/**", "docs/spec/ir.md", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/lower_array.rs"]
 
