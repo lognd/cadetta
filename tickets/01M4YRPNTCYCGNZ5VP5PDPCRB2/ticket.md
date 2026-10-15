@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:11:44Z"
-updated = "2026-10-15T03:36:59Z"
+updated = "2026-10-15T03:37:30Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/packages.md", "changelog.d/01M4YRPNTCYCGNZ5VP5PDPCRB2.fixed.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "A package::-qualified expression path through a was rename raises N004 (fixture n004-reference-to-was-path)"
-bound = false
+bound = true
 +++
 
 Follow-up of ~KRVD0V6 (parser now accepts package::/super:: in expressions). Fixtures packages/e016-fully-qualified-path-checks-visibility and n004-reference-to-was-path still do not fire E016/N004 (sema).
