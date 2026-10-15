@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-15T05:58:31Z"
+updated = "2026-10-15T05:59:27Z"
 persona = "design engineer"
 capability = "never leave a broken model"
 idempotency_key = "replan14:sw-restore"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Restore/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Restore/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Restore/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Restore/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Restore/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Restore/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Restore/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Restore/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Restore/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Restore/**", "adapters/solidworks/README.md", "changelog.d/01M4SWMDPP54TE0XZGJRTKN07N.*"]
 
 [[links]]
 kind = "blocked-by"
