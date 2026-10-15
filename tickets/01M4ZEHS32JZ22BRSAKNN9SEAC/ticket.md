@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T09:33:32Z"
-updated = "2026-10-15T09:33:32Z"
+updated = "2026-10-15T09:37:55Z"
 idempotency_key = "py-binding-fixture-fail-14"
 scope = ["bindings/python/**"]
 
