@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-15T00:10:10Z"
+digest = "c5e308efeeb8d7880f892dd8adaae885a46318fd8dde260646b101ae7d26f80a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f840f3c5-5887-49c4-977a-a04f03c97eff with nextest profile: default
+    Starting 1 test across 48 binaries (1235 tests skipped)
+        PASS [   0.016s] cadetta::lint_entry_points allow_attribute_suppresses_through_the_engine
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.017s] 1 test run: 1 passed, 1235 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "allow_attribute"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "ce638a187ad75a3c77667dada59ecee74259879c7aa061190d681f91489ef1dd"
+at = "2026-10-15T00:10:10Z"
+actor = "lognd"
+rev = 1

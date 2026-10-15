@@ -28,7 +28,7 @@ bound = true
 
 [[acceptance]]
 text = "An #[allow] attribute suppresses its diagnostic through the engine"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "require paths are collected so requires are never suppressed"
