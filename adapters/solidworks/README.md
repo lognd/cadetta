@@ -60,3 +60,13 @@ the push with R009 and nothing is written (adapters.md 2.3). The Com
 build's `SwComBusyProbe` uses `CommandInProgress` and a disabled main
 window. The guard is not yet wired into a `push` method (it does not
 exist yet).
+
+## Snapshot and atomic restore (R004)
+
+`AtomicPush.Run` (`Core/Restore`) snapshots every locator a push will
+change through an `IRestorableDocument`, writes the new values and
+rebuilds. When the rebuild fails it sets the snapshotted values back and
+rebuilds again, returning an R004 diagnostic that says whether the
+restore succeeded (adapters.md 2.3). The Com build's
+`SwComRestorableDocument` maps locators to dimension names and uses
+`SetSystemValue3` and `ForceRebuild3`.
