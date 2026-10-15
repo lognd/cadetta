@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T00:10:07Z"
-updated = "2026-10-15T11:04:25Z"
+updated = "2026-10-15T11:04:28Z"
 scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/lint_entry_points.rs"]
 
 [[links]]
@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "I004 fires only for a model/assembly with a param lacking a default that no part instantiates"
-bound = false
+bound = true
 +++
 
 Follow-up of ~A8J3XJW. U002 'used' is a lexical identifier count; priv Member rows are not produced; ItemFacts.parameterized/is_root are unset so I004 uses check_roots only. Drive these from sema name resolution.
