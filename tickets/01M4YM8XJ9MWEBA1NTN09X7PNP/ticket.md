@@ -2,7 +2,8 @@
 id = "01M4YM8XJ9MWEBA1NTN09X7PNP"
 title = "Carry waiver globs across renames and report eol W005"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
