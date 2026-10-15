@@ -1,0 +1,32 @@
+kind = "evidence"
+captured_at = "2026-10-15T01:44:50Z"
+digest = "a1f389dc0bf0cbfb56283837bbe6d7e3bfd2e5e2427084421c4ae9a77220fa31"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.53s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1eca41a0-04aa-4989-83da-3ba3bb4d0c73 with nextest profile: default
+    Starting 1 test across 49 binaries (1243 tests skipped)
+        PASS [   0.013s] cadetta cmd::solve::tests::enums_are_not_double_indexed_by_the_resolver
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 1243 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "enums_are_not_double_indexed_by_the_resolver"
+size = 1190
+status = "measured"
+test_count = 1
+tests_digest = "3e38ea2bd8f960036b75524e81e158ebead5c3d33cf8cf15913b6748c6e574ae"
+at = "2026-10-15T01:44:50Z"
+actor = "lognd"
+rev = 1
