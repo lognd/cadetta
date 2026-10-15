@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:55:21Z"
+digest = "db5f0b12c294e7219ff0ed4496f6ac5a03eb27e80d9c4b6cda7a88648125d585"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bab67684-df56-462f-8a41-c0840b626fb5 with nextest profile: default
+    Starting 1 test across 60 binaries (1357 tests skipped)
+        PASS [   0.527s] cadetta::q004_beyond_precision q004_beyond_precision_fires_and_withholds_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.530s] 1 test run: 1 passed, 1357 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "q004_beyond_precision_fires_and_withholds_the_file"
+size = 692
+status = "measured"
+test_count = 1
+tests_digest = "5e5e485faad43fdbea29fdb51e6d48c0bf21a8460829387ac8709dd97e8f694f"
+at = "2026-10-15T02:55:21Z"
+actor = "lognd"
+rev = 1

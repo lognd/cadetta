@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:50:31Z"
-updated = "2026-10-15T02:54:49Z"
+updated = "2026-10-15T02:55:21Z"
 idempotency_key = "mhtx-q004-split"
 labels = ["creates:changelog.d/01M4YQFTG7GPRHE6E1PH29EAMF.fixed.md"]
 scope = ["crates/cadetta-units/**", "crates/cadetta-sema/**", "crates/cadetta-emit*/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "docs/spec/config-cli.md", "changelog.d/01M4YQFTG7GPRHE6E1PH29EAMF.fixed.md"]
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "emit JSON diagnostics are cadetta.diag/1 records with severity"
-bound = false
+bound = true
 +++
 
 split from ~MHTX343 (Q006 exact-zero/trig now verified). Q004 error for values not representable at adapter precision is not emitted by emitters/contract.
