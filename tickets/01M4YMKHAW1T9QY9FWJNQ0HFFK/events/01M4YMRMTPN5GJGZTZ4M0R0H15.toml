@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:02:54Z"
+digest = "6ae113224d46f9ad2abc6bc2c009f72a5a1ada8e5da01eee84636a1879b03cb7"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 79cdb4d3-4782-4aca-9f03-69400811aaf4 with nextest profile: default
+    Starting 1 test across 52 binaries (1276 tests skipped)
+        PASS [   0.004s] cadetta-units inexact::tests::cbrt_is_exact_for_cubes_and_marked_inexact_otherwise
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 1276 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cbrt_is_exact_for_cubes_and_marked_inexact_otherwise"
+size = 578
+status = "measured"
+test_count = 1
+tests_digest = "14d69c3f18fbd7704fef690ee987cb059a98ca035bbb60e3230b83ddfe380a5e"
+at = "2026-10-15T02:02:54Z"
+actor = "lognd"
+rev = 1
