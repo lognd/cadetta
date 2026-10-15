@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T20:15:01Z"
+updated = "2026-10-15T20:15:02Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[links]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "O004 sync obligations are produced by check from the lock (already landed with ~TND4WKS)"
-bound = false
+bound = true
 +++
 
 solvers.md 4 / obligations.md 2.3: a solver member declaration is E002 unresolved in check, no S003 staleness from .out.json and no O004 sync obligation. found while working ~P3E2FR7
