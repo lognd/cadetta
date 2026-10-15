@@ -288,11 +288,6 @@ ticket = "~PGR0M75"
 reason = "joint-level lint not raised"
 
 [[gap]]
-fixture = "lints/s007-solver-untyped-port"
-ticket = "~YBFVYDC"
-reason = "untyped out port raises E001, not S007"
-
-[[gap]]
 fixture = "lints/w003-allow-fixed-code"
 ticket = "~A7FN9YF"
 reason = "allow of a fixed code is not rejected"
@@ -311,21 +306,6 @@ reason = "unused allow is not reported"
 fixture = "lints/w005-waiver-expiring"
 ticket = "~A7FN9YF"
 reason = "expiring waiver is not reported"
-
-[[gap]]
-fixture = "solvers/q001-in-bare-factor-legal"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/q001-in-bare-number"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/q001-in-bare-operand"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
 
 [[gap]]
 fixture = "solvers/s003-stale-dep"
@@ -366,61 +346,6 @@ reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 
 fixture = "solvers/s006-unsolved-variant"
 ticket = "~JET4TC0"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
-
-[[gap]]
-fixture = "solvers/s007-in-array"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-boolean"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-comparison"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-if"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-legal-forms"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-logic"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-match"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-range"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-in-string"
-ticket = "~CXE9G4M"
-reason = "solver in-expression forms raise neither S007 nor Q001 in check"
-
-[[gap]]
-fixture = "solvers/s007-out-kind-expression"
-ticket = "~YBFVYDC"
-reason = "untyped out port raises E001, not S007"
-
-[[gap]]
-fixture = "solvers/s007-out-without-kind"
-ticket = "~YBFVYDC"
-reason = "untyped out port raises E001, not S007"
 
 [[gap]]
 fixture = "solvers/trust-solver-own-check"
@@ -1733,17 +1658,7 @@ ticket = "~NDGXJQ1"
 reason = "solver failure, Q001 and variants handling not implemented"
 
 [[gap]]
-fixture = "solvers/s005-output-missing"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
 fixture = "solvers/s005-output-non-string"
-ticket = "~NDGXJQ1"
-reason = "solver failure, Q001 and variants handling not implemented"
-
-[[gap]]
-fixture = "solvers/s005-output-wrong-kind"
 ticket = "~NDGXJQ1"
 reason = "solver failure, Q001 and variants handling not implemented"
 

@@ -1119,6 +1119,22 @@ fn evaluate_stages(
             }
         }
     }
+    // frob:ticket 01M4V2K8RG8K1P774YVYBFVYDC
+    // Solver declarations: S007, Q001 and E003 (solvers.md 1).
+    for p in &in_scope {
+        for m in &p.modules {
+            let key = ModuleKey::new(&p.name, &m.path);
+            for d in cadetta_sema::solverdecl::check_solver_decls(&m.file) {
+                out.extend(located(
+                    d.code,
+                    Severity::Error,
+                    d.message,
+                    d.span,
+                    Some(&key),
+                ));
+            }
+        }
+    }
     for d in &evaluation.diagnostics {
         // C001/C002 are reported once, from the structured check results below.
         if d.code == "C001" || d.code == "C002" {

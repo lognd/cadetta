@@ -3,6 +3,7 @@ model Frame {
 }
 solver sizing {
   script "analysis/sizing.py"
+  in span = Frame.span
   in x = "abc"
   in y = 2mm
   out wall: Length

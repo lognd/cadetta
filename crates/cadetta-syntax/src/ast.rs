@@ -843,8 +843,8 @@ pub enum SolverMemberKind {
     Out {
         /// The output name.
         name: Ident,
-        /// Its kind or kind expression.
-        ty: Type,
+        /// Its kind or kind expression; `None` when the `: Kind` is missing (S007).
+        ty: Option<Type>,
     },
     /// `deps "file"`
     Deps(String),

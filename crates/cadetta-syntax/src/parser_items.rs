@@ -383,8 +383,12 @@ impl Parser<'_> {
             SolverMemberKind::In(binds)
         } else if self.eat_kw("out") {
             let name = self.expect_ident()?;
-            self.expect_p(Punct::Colon)?;
-            let ty = self.ty()?;
+            // A missing kind parses so the checker can raise S007 (solvers.md 1).
+            let ty = if self.eat_p(Punct::Colon) {
+                Some(self.ty()?)
+            } else {
+                None
+            };
             SolverMemberKind::Out { name, ty }
         } else if self.eat_kw("deps") {
             SolverMemberKind::Deps(self.expect_str()?)
@@ -671,7 +675,10 @@ mod tests {
         let SolverMemberKind::Out { ty, .. } = &s.members[2].kind else {
             panic!()
         };
-        assert!(matches!(ty.kind, TypeKind::KindExpr(_)));
+        assert!(matches!(
+            ty.as_ref().map(|t| &t.kind),
+            Some(TypeKind::KindExpr(_))
+        ));
         assert!(matches!(s.members[3].kind, SolverMemberKind::Deps(_)));
 
         let p = clean(&format!(

@@ -292,10 +292,10 @@ pub fn lower_solver(s: &Solver, path: &str) -> Result<SolverDecl, Vec<SolverDecl
                 }
             }
             SolverMemberKind::Out { name, ty } => {
-                let Some(kind) = render_kind(ty) else {
+                let Some(kind) = ty.as_ref().and_then(render_kind) else {
                     errs.push(fail(
                         "S007",
-                        ty.span,
+                        ty.as_ref().map_or(m.span, |t| t.span),
                         format!(
                             "solver output `{}` needs a kind or kind expression",
                             name.name

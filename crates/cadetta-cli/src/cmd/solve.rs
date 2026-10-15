@@ -20,6 +20,7 @@ use cadetta_syntax::ast::{Bind, File, ItemKind, MemberKind, Solver, SolverMember
 use cadetta_syntax::parser::parse;
 use cadetta_units::UnitTable;
 use cadetta_units::display::{DisplaySpec, format_value};
+use cadetta_units::kind::KindTable;
 
 use crate::config::Transport as CfgTransport;
 use crate::project::{Module, PackageDir, Project};
@@ -600,6 +601,9 @@ fn solve_one(
             };
         }
     };
+    if let Err(message) = check_outputs(&decl, &response.outputs, table) {
+        return fail(err, &t.path, "S005", &message);
+    }
     let digests_for_variants = digests.clone();
     file.upsert(SolveResult {
         solver: t.path.clone(),
@@ -619,6 +623,52 @@ fn solve_one(
     let _ = writeln!(out, "solved {}", t.path);
     entries.push(Entry::new(&t.path, Status::Solved));
     solve_variants(t, &script, &digests_for_variants, run, entries, out, err)
+}
+
+// frob:ticket 01M4V3F2DQTCGEAPVNHQDVP8JQ
+/// Check a response's outputs against the declaration (solvers.md 3): every declared
+/// output present and, when its kind is built in, a quantity of that dimension.
+fn check_outputs(
+    decl: &SolverDecl,
+    outputs: &BTreeMap<String, String>,
+    table: &UnitTable,
+) -> Result<(), String> {
+    let kinds = KindTable::builtin();
+    for (name, declared) in &decl.outputs {
+        let Some(lit) = outputs.get(name) else {
+            tracing::warn!(solver = %decl.path, output = %name, "solve: response lacks a declared output");
+            return Err(format!("response is missing declared output `{name}`"));
+        };
+        let Ok(want) = kinds.eval_expr(&declared.kind) else {
+            tracing::debug!(output = %name, kind = %declared.kind, "solve: kind not built in, value kind unchecked");
+            continue;
+        };
+        let lit = lit.trim();
+        let split = lit
+            .find(|c: char| !(c.is_ascii_digit() || matches!(c, '.' | '-' | '+' | 'e' | 'E')))
+            .unwrap_or(lit.len());
+        let (number, unit) = lit.split_at(split);
+        if number.parse::<f64>().is_err() {
+            return Err(format!("output `{name}` is not a quantity: `{lit}`"));
+        }
+        let unit = unit.trim();
+        let dimension = if unit.is_empty() {
+            cadetta_units::Dim::default().dimension
+        } else {
+            match table.parse(unit) {
+                Ok(r) => r.dim.dimension,
+                Err(_) => return Err(format!("output `{name}` has unknown unit in `{lit}`")),
+            }
+        };
+        if dimension != want.dim.dimension {
+            tracing::warn!(solver = %decl.path, output = %name, kind = %declared.kind, %lit, "solve: output has the wrong kind");
+            return Err(format!(
+                "output `{name}` is `{lit}`, not a {}",
+                declared.kind
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// The shared, read-only context of one `solve` run.
@@ -805,6 +855,28 @@ mod tests {
         std::fs::write(dir.join("src/lib.cdt"), src.replace("2kg", "3kg")).unwrap();
         assert_eq!(solve(&dir).0, EXIT_OK);
         assert_eq!(runs(&marker), 2);
+    }
+
+    // frob:ticket 01M4V3F2DQTCGEAPVNHQDVP8JQ
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::check_outputs
+    #[test]
+    fn missing_and_wrong_kind_outputs_are_s005_and_store_nothing() {
+        for (tag, body) in [("outmissing", "{}"), ("outwrongkind", "{\"w\":\"3kg\"}")] {
+            let (dir, _marker) = fixture(tag, "2kg");
+            std::fs::write(
+                dir.join("size.sh"),
+                format!("echo '{{\"schema\":\"cadetta.solve/1\",\"outputs\":{body}}}'\n"),
+            )
+            .unwrap();
+            let (code, text) = solve(&dir);
+            assert_eq!(code, EXIT_FAILED, "{tag}: {text}");
+            assert!(text.contains("S005"), "{tag}: {text}");
+            assert!(text.contains("acme.t::Box.size"), "{tag}: {text}");
+            assert!(
+                !dir.join("size.out.json").exists(),
+                "{tag}: stored a result"
+            );
+        }
     }
 
     // frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X

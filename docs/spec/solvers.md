@@ -129,6 +129,9 @@ Response:
   table is a usage error (exit 2).
 - Exit status non-zero, malformed JSON, a missing output or a wrong kind
   are solver errors (S005) and leave the previous result in place.
+  (Decided in `cadetta solve`: every declared output must be present, and when
+  its kind is built in the value's dimension must match it; a user kind is
+  not checked at solve time. Variant runs under `--variants` are not yet checked.)
 
 ## 4. Results and staleness
 

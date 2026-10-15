@@ -19,5 +19,6 @@ pub mod process;
 pub mod renames;
 pub mod resolve;
 pub mod rollup;
+pub mod solverdecl;
 pub mod tables;
 pub mod visibility;
