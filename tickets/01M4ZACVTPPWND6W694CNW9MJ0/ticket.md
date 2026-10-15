@@ -2,7 +2,8 @@
 id = "01M4ZACVTPPWND6W694CNW9MJ0"
 title = "Emit a [*]-bound member under the star path's mangled name"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
