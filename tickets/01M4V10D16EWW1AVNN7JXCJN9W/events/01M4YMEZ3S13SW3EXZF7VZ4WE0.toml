@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:57:00Z"
+digest = "e6e9da1e4e9bbc58c96530beda21efb2d48d8bd71b7d07484cefd38d61ee1c1c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.19s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e50307e5-ab51-4024-bb3c-4a67cc7cb7e3 with nextest profile: default
+    Starting 1 test across 50 binaries (1256 tests skipped)
+        PASS [   0.008s] cadetta-ir schema::tests::flip_op_schema_rejects_z_accepts_x_and_y
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 1256 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "flip_op_schema_rejects_z_accepts_x_and_y"
+size = 1185
+status = "measured"
+test_count = 1
+tests_digest = "d488b0422df2c143c7f825e634d9f21c5b8f4a5b9bc8c3ed109524209fa95489"
+at = "2026-10-15T01:57:00Z"
+actor = "lognd"
+rev = 1

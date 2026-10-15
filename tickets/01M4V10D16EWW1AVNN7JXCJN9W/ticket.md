@@ -12,7 +12,7 @@ scope = ["docs/schemas/**", "crates/cadetta-ir/src/schema.rs", "changelog.d/01M4
 
 [[acceptance]]
 text = "IR schema flip accepts x or y and rejects z"
-bound = false
+bound = true
 +++
 
 found while working ~99NMCBG: ir.md 3 wire form: flip takes x|y; schema reuses Axis (x|y|z). Fixture op-flip-axis.
