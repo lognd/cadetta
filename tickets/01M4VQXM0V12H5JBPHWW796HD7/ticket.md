@@ -8,7 +8,7 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:20Z"
-updated = "2026-10-15T08:02:57Z"
+updated = "2026-10-15T08:03:12Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/README.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4VQXM0V12H5JBPHWW796HD7.changed.md"]
 
 [[acceptance]]
