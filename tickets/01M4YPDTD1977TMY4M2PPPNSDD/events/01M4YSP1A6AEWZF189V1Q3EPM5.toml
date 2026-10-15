@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:28:27Z"
+digest = "ba07ba6e9a2b4bdc6c5a12a97d2f78a3f777a34cfa3f8c3ae3cbfba59f453a36"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.55s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 232a9851-fc14-40a9-ae86-7b0354eeb283 with nextest profile: default
+    Starting 1 test across 63 binaries (1382 tests skipped)
+        LEAK [   1.217s] cadetta cmd::import::tests::a_silent_adapter_fails_import_within_the_configured_timeout
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.219s] 1 test run: 1 passed (1 leaky), 1382 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "a_silent_adapter_fails_import_within"
+size = 774
+status = "measured"
+test_count = 1
+tests_digest = "5118aa85aad58588232e013f319e08af24a15e11c44cfe41913ef402e6e5daf3"
+at = "2026-10-15T03:28:27Z"
+actor = "lognd"
+rev = 1
