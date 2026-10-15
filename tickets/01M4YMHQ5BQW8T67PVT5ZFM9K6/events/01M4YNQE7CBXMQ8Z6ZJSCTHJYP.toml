@@ -1,0 +1,43 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:19:13Z"
+digest = "b5e1c1e6091bc764bb398b2c0b14ff262eda195f4583493254972284c348ce30"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.23s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 41258452-03d4-4593-b2af-a308185affd9 with nextest profile: default
+    Starting 1 test across 55 binaries (1296 tests skipped)
+        PASS [   0.174s] cadetta::ir_entries lint_of_an_invalid_document_exits_2_before_rules
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.176s] 1 test run: 1 passed, 1296 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "lint_of_an_invalid"
+size = 1245
+status = "measured"
+test_count = 1
+tests_digest = "0e826001b7c91d079bef48fae4ecb257694ca7d1441ce7dec1f024a56ce6c5a6"
+at = "2026-10-15T02:19:13Z"
+actor = "lognd"
+rev = 1

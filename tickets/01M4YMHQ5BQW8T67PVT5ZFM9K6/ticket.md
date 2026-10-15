@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T01:59:07Z"
-updated = "2026-10-15T02:18:36Z"
+updated = "2026-10-15T02:19:13Z"
 idempotency_key = "cli-ir-validate-lint-verbs"
 scope = ["crates/cadetta-cli/src/**", "docs/spec/config-cli.md", "crates/cadetta-cli/Cargo.toml", "Cargo.lock", "crates/cadetta-cli/tests/ir_entries.rs", "changelog.d/01M4YMHQ5BQW8T67PVT5ZFM9K6.added.md"]
 
