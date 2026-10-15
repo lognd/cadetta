@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Reads through a part slot under a (slot, alt) selection reach the alternate instead of the primary", "solve --variants evaluates solver inputs per alternate, runs once per distinct changed input set and stores results keyed SLOT=ALT"]
+moved = []
+at = "2026-10-15T01:58:41Z"
+actor = "lognd"
+rev = 1
