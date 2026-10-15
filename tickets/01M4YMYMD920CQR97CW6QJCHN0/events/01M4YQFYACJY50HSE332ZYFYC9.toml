@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["L001 treats an alternate that violates a check under its variant as non-viable"]
+moved = []
+at = "2026-10-15T02:50:35Z"
+actor = "lognd"
+rev = 1
