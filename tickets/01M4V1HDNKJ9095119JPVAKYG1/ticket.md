@@ -2,11 +2,12 @@
 id = "01M4V1HDNKJ9095119JPVAKYG1"
 title = "Quantities: unknown kind name accepted (a: Foo = 5mm should be E002)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:00:18Z"
+updated = "2026-10-15T02:00:47Z"
 idempotency_key = "Z48-kindname"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDNKJ9095119JPVAKYG1.*"]
 
