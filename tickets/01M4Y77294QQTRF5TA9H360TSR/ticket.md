@@ -4,9 +4,10 @@ title = "Pipeline evaluates each part slot's approved alternates and fills Membe
 type = "task"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:14:10Z"
+updated = "2026-10-15T09:56:13Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/**"]
 
 [[links]]
