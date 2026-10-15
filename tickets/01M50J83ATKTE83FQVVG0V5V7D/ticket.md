@@ -2,7 +2,8 @@
 id = "01M50J83ATKTE83FQVVG0V5V7D"
 title = "cadetta conformance: library behaviour for driven dimensions, Q001 kg-vs-mm and SWFN(1) unparsable read fixtures"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
