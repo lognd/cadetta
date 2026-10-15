@@ -13,9 +13,7 @@ use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::availability::{Verb as AvailVerb, rejections, unavailable};
-use cadetta_adapter::builtin::sw_equations::{
-    ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
-};
+use cadetta_adapter::builtin::sw_equations::{ADAPTER as SW_EQUATIONS, ValueKind};
 use cadetta_adapter::geometry_bind::{datum_entries, verify_geometry};
 use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_tolerance};
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
@@ -658,7 +656,7 @@ fn build_entries(
     };
     let scope = AdapterScope::new(adapter.modules.clone(), adapter.paths.clone());
     let table = UnitTable::builtin();
-    let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
+    let precision = read.precision;
     let cfg_point = config_point(pkg.config.emit.point);
     let has_tolerances = read.features.contains(&Feature::Tolerances);
     let mut entries = Vec::new();
@@ -792,6 +790,8 @@ struct Geometry<'a> {
     features: &'a [Feature],
     /// The dimension tolerances the adapter read (only `tolerances` adapters report any).
     tolerances: &'a [ObservedTolerance],
+    /// The decimal places in force: the configured precision, else the adapter's `initialize` one.
+    precision: u32,
 }
 
 /// One IR `Value` from a wire entry: a `{nominal}` Value, a bare `Exact`/`Inexact`, or a number.
@@ -922,7 +922,7 @@ fn geometry_pass(
     project.bindings = bindings.to_vec();
     (project.frames, project.instances) = observed_geometry(read.observed);
     let scale = native_scale(adapter);
-    let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
+    let precision = read.precision;
     for d in verify_geometry(&project, id, scale, precision) {
         ctx.report.diag(d.code, d.message);
     }
@@ -1074,7 +1074,9 @@ fn drive_adapter<R: BufRead, W: Write>(
         observed: &read.observed,
         features: &client.info().features,
         tolerances: &read.tolerances,
+        precision: client.effective_precision(adapter.precision.map(u32::from)),
     };
+    let precision = geometry.precision;
     let Some((mut entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx)
     else {
         let _ = client.shutdown();
@@ -1150,7 +1152,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     let mut backend = SessionBackend {
         session,
         default_unit: units,
-        precision: adapter.precision.map_or(DEFAULT_PRECISION, u32::from),
+        precision,
         regen: Vec::new(),
         diags: Vec::new(),
         failure: None,
@@ -1412,6 +1414,7 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
         observed: &read.observed,
         features: &client.info().features,
         tolerances: &read.tolerances,
+        precision: client.effective_precision(adapter.precision.map(u32::from)),
     };
     let run_scope = RunScope::new(&[] as &[String], &[] as &[String]).map_err(|e| e.to_string())?;
     let args = SyncArgs::default();
@@ -1815,6 +1818,29 @@ mod tests {
         assert!(report.regen.is_empty() && !report.failed(), "{report:?}");
         assert!(report.records.iter().all(|r| r.verb != "push"));
         assert_eq!(lock.records().count(), 1);
+    }
+
+    // frob:ticket 01M4ZS69MFPJDPD7782XAY9ZBA
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::build_entries
+    #[test]
+    fn initialize_precision_applies_unless_configured() {
+        let source = "model CoverPlate {\n  thickness: Length = 6.123mm\n}\n";
+        let init2 = json!({"name": "mock", "version": "1.0.0", "capabilities": ["drive"],
+                           "native_units": "mm", "precision": 2, "platforms": ["linux"]});
+        let results = [init2, observed("6.123mm"), Json::Null];
+        let q004 = |extra: &str| {
+            let dir = project_with(extra, source, BINDINGS);
+            let (report, _, _) = drive_in(&dir, &[], Some("6.123mm"), &results);
+            report.diagnostics.iter().any(|d| d.code == "Q004")
+        };
+        assert!(
+            q004("files = [\"part.FCStd\"]\n"),
+            "initialize precision 2 must withhold 6.123mm"
+        );
+        assert!(
+            !q004("files = [\"part.FCStd\"]\nprecision = 4\n"),
+            "configured precision wins"
+        );
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
@@ -2280,6 +2306,7 @@ mod tests {
             observed: &observed,
             features,
             tolerances: &[],
+            precision: cadetta_adapter::builtin::sw_equations::DEFAULT_PRECISION,
         };
         let entries = geometry_pass(&adapter, &ir, &bindings, &[], &read, &mut ctx);
         (
