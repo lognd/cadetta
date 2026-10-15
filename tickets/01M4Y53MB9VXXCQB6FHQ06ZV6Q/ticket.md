@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:29:17Z"
-updated = "2026-10-15T10:04:18Z"
+updated = "2026-10-15T10:04:42Z"
 idempotency_key = "sqrbg5c-git-upstream"
-scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/pkg/**", "crates/cadetta-cli/src/cmd/update.rs"]
+scope = ["crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-cli/src/pkg/**", "crates/cadetta-cli/src/cmd/update.rs", "docs/spec/packages.md"]
 
 [[acceptance]]
 text = "A git dependency's cadetta.lock is materialised (resolver Io.fetch) and its attestations show as attested upstream in cadetta obligations"
