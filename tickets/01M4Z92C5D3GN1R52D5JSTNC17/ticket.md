@@ -2,7 +2,8 @@
 id = "01M4Z92C5D3GN1R52D5JSTNC17"
 title = 'sw-equations trailing comment drops @"..." quoting of the citation'
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
