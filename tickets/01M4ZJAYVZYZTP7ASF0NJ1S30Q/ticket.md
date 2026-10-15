@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T10:39:43Z"
-updated = "2026-10-15T11:39:32Z"
-scope = ["crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/universe.rs"]
+updated = "2026-10-15T11:39:51Z"
+scope = ["crates/cadetta-cli/src/cmd/ack.rs", "crates/cadetta-cli/src/universe.rs", "docs/spec/obligations.md"]
 
 [[acceptance]]
 text = "cadetta ack waiver:GLOB records the waiver at its targets' closure digest and removes it from the open obligations"
