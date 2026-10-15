@@ -2,7 +2,8 @@
 id = "01M50V9TW4WNCQXNV0EQQJNWHY"
 title = "Fix red conformance: geom-sign-write-and-read frame source form"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 2
 reporter = "lognd"
