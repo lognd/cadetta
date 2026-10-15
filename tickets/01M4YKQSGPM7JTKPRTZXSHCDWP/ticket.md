@@ -2,11 +2,12 @@
 id = "01M4YKQSGPM7JTKPRTZXSHCDWP"
 title = "IR Project model and schema lack requires[] and Project fields for interfaces/tables/waivers"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T01:44:58Z"
-updated = "2026-10-15T01:47:31Z"
+updated = "2026-10-15T01:48:46Z"
 scope = ["crates/cadetta-ir/**", "docs/spec/ir.md", "changelog.d/01M4YKQSGPM7JTKPRTZXSHCDWP.*"]
 
 [[acceptance]]
