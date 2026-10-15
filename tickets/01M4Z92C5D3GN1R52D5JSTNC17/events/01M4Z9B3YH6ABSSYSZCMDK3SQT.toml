@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ['sw-equations trailing comment writes the citation as written in source (@"...")']
+moved = []
+at = "2026-10-15T08:02:31Z"
+actor = "lognd"
+rev = 1

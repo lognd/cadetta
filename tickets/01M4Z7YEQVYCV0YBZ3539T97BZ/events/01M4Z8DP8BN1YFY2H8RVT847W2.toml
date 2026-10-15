@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-15T07:46:27Z"
+digest = "bc02a785f63f25f2d67f068338da7bc198b1a411cda02ac99885baaf355c2c41"
+provider = "file"
+ref = "docs/spec/ir.md"
+size = 24279
+status = "measured"
+at = "2026-10-15T07:46:27Z"
+actor = "lognd"
+rev = 1

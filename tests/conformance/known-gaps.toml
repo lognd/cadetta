@@ -268,56 +268,6 @@ ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"
 
 [[gap]]
-fixture = "adapters/r012-star-binding-differing-instances"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "adapters/star-binding-emitted-once-at-instance-0"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "adapters/star-mangle-drops-segment"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "config-cli/init-sw-equations-bind-scope"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/csv/name-mangled-path"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/csv/note-order"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/json/name-mangled-path"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/json/note-order"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/sw-equations/comment-trailing-order-and-citation"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
-fixture = "emitters/sw-equations/naming-component-field"
-ticket = "~6ES67RW"
-reason = "fixture uses syntax invalid per language.md 3.5 or is missing a file"
-
-[[gap]]
 fixture = "bindings/adapter-logs-stderr-only"
 ticket = "~6ZMPC6J"
 reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
@@ -1563,3 +1513,38 @@ reason = "built-in adapters declare no capability set the host can check"
 fixture = "emitters/sw-equations/capabilities-emit-read-no-drive"
 ticket = "~6N3JQAV"
 reason = "built-in adapters declare no capability set the host can check"
+
+[[gap]]
+fixture = "adapters/r012-star-binding-differing-instances"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5); the must-fire half is also unreachable from source until ~V9JHZEN"
+
+[[gap]]
+fixture = "adapters/star-binding-emitted-once-at-instance-0"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
+
+[[gap]]
+fixture = "adapters/star-mangle-drops-segment"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
+
+[[gap]]
+fixture = "emitters/csv/name-mangled-path"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
+
+[[gap]]
+fixture = "emitters/json/name-mangled-path"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
+
+[[gap]]
+fixture = "emitters/sw-equations/naming-component-field"
+ticket = "~9WDH9XE"
+reason = "part-array instance members are not lowered to IR paths, so no row or binding matches (syntax is now valid per language.md 3.5)"
+
+[[gap]]
+fixture = "emitters/sw-equations/comment-trailing-order-and-citation"
+ticket = "~JSTNC17"
+reason = "sw-equations trailing comment drops the at-quoted form of the citation"

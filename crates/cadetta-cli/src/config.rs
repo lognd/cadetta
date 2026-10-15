@@ -262,6 +262,19 @@ impl Default for Lint {
     }
 }
 
+/// The currencies named by quantities.md 3 (`Money`); each is its own base dimension.
+const MONEY_CODES: [&str; 5] = ["USD", "EUR", "GBP", "CNY", "JPY"];
+
+/// The dimension of every documented currency, for a `Money` precision entry.
+fn money_dims() -> Vec<Dim> {
+    let units = UnitTable::builtin();
+    MONEY_CODES
+        .iter()
+        .filter_map(|code| units.lookup(code))
+        .map(|u| u.dim)
+        .collect()
+}
+
 impl Lint {
     /// The M001 settings: `precision` by kind name; empty keeps the documented defaults.
     pub fn m_config(&self) -> Result<MConfig, ConfigError> {
@@ -271,6 +284,13 @@ impl Lint {
         let kinds = KindTable::builtin();
         let mut precision = Vec::with_capacity(self.precision.len());
         for (kind, decimals) in &self.precision {
+            if kind == "Money" {
+                // Money has no single dimension: each currency is its own base dimension.
+                for dim in money_dims() {
+                    precision.push((dim, u32::from(*decimals)));
+                }
+                continue;
+            }
             let Some(dim) = kinds.dim_of(kind) else {
                 return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
             };
@@ -837,6 +857,16 @@ native_unit = "mm"
         .unwrap();
         assert_eq!(c.lint.m_config().unwrap().precision.len(), 1);
         assert_eq!(c.lint.d_config(Vec::new()).unwrap().common_values.len(), 1);
+    }
+
+    // frob:ticket 01M4Z7SF3KHPF3NA2YB3P4PXDX
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_accepts_money_for_every_currency() {
+        let c = Config::parse(&pkg("[lint]\nprecision = { Money = 2 }\n")).unwrap();
+        let m = c.lint.m_config().unwrap();
+        assert_eq!(m.precision.len(), 5);
+        assert!(m.precision.iter().all(|(_, n)| *n == 2));
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::Lint

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["lint.precision.Money is accepted and sets the M001 limit for USD, EUR, GBP, CNY and JPY"]
+moved = []
+at = "2026-10-15T07:49:38Z"
+actor = "lognd"
+rev = 1
