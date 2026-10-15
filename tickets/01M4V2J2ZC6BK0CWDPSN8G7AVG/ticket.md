@@ -2,11 +2,12 @@
 id = "01M4V2J2ZC6BK0CWDPSN8G7AVG"
 title = "ScrewJoint rules and checks not implemented (E006 G004 G005 joint C001 checks)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T04:24:27Z"
+updated = "2026-10-15T04:27:31Z"
 scope = ["tests/conformance/stdlib/**"]
 
 [[acceptance]]
