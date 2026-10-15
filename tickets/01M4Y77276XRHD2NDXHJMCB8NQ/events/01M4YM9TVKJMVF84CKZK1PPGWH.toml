@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T01:54:48Z"
+digest = "470eecb80a9ad461b2f95332a51c6224e2229b3a1b4ed922fa012b7b0bf3a0ff"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d6c5efbe-c989-4fef-87ad-5618e0d93004 with nextest profile: default
+    Starting 1 test across 50 binaries (1255 tests skipped)
+        PASS [   0.008s] cadetta-sema::interface_slots interface_slot_read_resolves_to_primary
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 1255 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "interface_slot_read_resolves_to_primary"
+size = 669
+status = "measured"
+test_count = 1
+tests_digest = "782d4a1c2f18f5fffc3ab452c1744d9700196e59e4d753faa27e1af96011899b"
+at = "2026-10-15T01:54:48Z"
+actor = "lognd"
+rev = 1
