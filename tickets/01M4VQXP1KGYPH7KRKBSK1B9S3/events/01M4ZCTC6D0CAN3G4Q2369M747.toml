@@ -1,0 +1,9 @@
+kind = "field"
+field = "acceptance"
+old = ["Each key is observed and compared; the gap entries are removed."]
+new = ["results_order, r001_suppressed_by_force, unbound_params_not_written and runs are observed and compared; their gap entries are removed", "json_diag_schema stays observed and compared"]
+reason = "active_alternate split to ~6K6E7M4"
+moved = [0]
+at = "2026-10-15T09:03:17Z"
+actor = "lognd"
+rev = 1
