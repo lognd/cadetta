@@ -118,10 +118,14 @@ fn component_of(text: &str) -> &str {
     &text[..end]
 }
 
-/// True when `name` denotes the component or interface `want` (full path or bare item name).
+/// True when `name` denotes the component or interface `want`; either side may be a full path or a
+/// bare item name, and the match is symmetric.
 fn names(name: &str, want: &str) -> bool {
     let (name, want) = (component_of(name), component_of(want));
-    name == want || name.rsplit("::").next() == Some(want)
+    let tail = |s: &str| s.rsplit("::").next().map(str::to_owned);
+    name == want
+        || (!want.contains("::") && tail(name).as_deref() == Some(want))
+        || (!name.contains("::") && tail(want).as_deref() == Some(name))
 }
 
 fn verdict_word(v: Option<VerdictState>) -> &'static str {
@@ -558,6 +562,18 @@ mod tests {
         assert_eq!(got, ["pkg::Colson.bore", "pkg::Rover.total"]);
         assert_eq!(s.values[0].old.as_deref(), Some("5"));
         assert_eq!(s.values[0].new, "6");
+    }
+
+    // frob:ticket 01M4W47VTBXFMC70Q2R137W4EE
+    // frob:tests crates/cadetta-cli/src/cmd/impact_swap.rs::preview
+    #[test]
+    fn slash_slot_and_bare_alt_match_a_full_path_new() {
+        let mut i = ir(&["Colson"]);
+        i.components[0].parts[0].path = p("pkg::Rover/wheel");
+        let s = preview(&i, "pkg::Rover/wheel", "pkg::Colson").unwrap();
+        assert!(s.approved);
+        assert!(names("Colson", "pkg::Colson") && names("pkg::Colson", "Colson"));
+        assert!(!names("Other", "pkg::Colson"));
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/impact_swap.rs::preview

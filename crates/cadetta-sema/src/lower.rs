@@ -38,7 +38,7 @@ use crate::deps::DepGraph;
 use crate::eval::{Evaluated, Evaluation, Quant, Val};
 use crate::fits::FitResult;
 use crate::process::ProcessOutcome;
-use crate::resolve::{CanonPath, MemberSeg, PackageSrc};
+use crate::resolve::{CanonPath, MemberSeg, PackageSrc, PartSeg};
 
 /// The text and name of one source file, for spans and expression text.
 #[derive(Clone, Copy, Debug)]
@@ -421,8 +421,13 @@ impl Cx<'_> {
         src: Option<&SourceText<'_>>,
         p: &ast::Part,
     ) -> Option<Part> {
-        let mut path = comp.clone();
-        path.members.push(MemberSeg::Name(p.name.name.clone()));
+        // A slot is a `/part` segment (`pkg::Assembly/wheel`), not a `.member`.
+        let mut path = comp.item_only();
+        path.parts.push(PartSeg {
+            name: p.name.name.clone(),
+            index: None,
+        });
+        debug!(slot = %path, "lower: part slot path");
         let ctor_text = |c: &ast::Ctor| {
             c.path
                 .segments
@@ -788,6 +793,25 @@ mod tests {
             .iter()
             .find(|m| m.path.members == vec![Seg::Name(name.to_owned())])
             .expect("member")
+    }
+
+    // frob:ticket 01M4W47VTBXFMC70Q2R137W4EE
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn part_slot_lowers_with_a_slash_segment() {
+        let src = "pub interface Caster {\n  diameter: Length\n}\n\
+            pub ots Good: Caster {\n  diameter = 5in\n}\n\
+            pub ots Bad: Caster {\n  diameter = 5in\n}\n\
+            pub assembly Rover {\n  part wheel[4]: Caster = Good alt [Bad]\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let paths: Vec<String> = rover.parts.iter().map(|p| p.path.to_string()).collect();
+        assert_eq!(paths, ["p::Rover/wheel"]);
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit

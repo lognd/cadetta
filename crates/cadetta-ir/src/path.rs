@@ -77,7 +77,7 @@ pub struct Path {
     pub item: String,
     /// Instance steps; empty for a definition path.
     pub steps: Vec<Step>,
-    /// The member tail; never empty.
+    /// The member tail; empty only for a slot path (`Type/part`, no member).
     pub members: Vec<Seg>,
 }
 
@@ -154,10 +154,13 @@ impl Path {
             }
         }
         // tail = Type [ "/" part[idx] ]* "." member...
-        let dot = tail
-            .find('.')
-            .ok_or_else(|| bad(text, "missing `.member`"))?;
-        let (head, mem) = (&tail[..dot], &tail[dot + 1..]);
+        // A slot path (`Type/part[idx]`, a `Part.path`) names the instance itself, so it has no
+        // member tail; any other path must carry one.
+        let (head, mem) = match tail.find('.') {
+            Some(dot) => (&tail[..dot], Some(&tail[dot + 1..])),
+            None if tail.contains('/') => (tail, None),
+            None => return Err(bad(text, "missing `.member`")),
+        };
         let mut hs = head.split('/');
         let item = hs.next().unwrap_or_default();
         if !is_ident(item) || !item.starts_with(|c: char| c.is_ascii_uppercase()) {
@@ -175,7 +178,7 @@ impl Path {
                 index,
             });
         }
-        let members = parse_members(text, mem, ctx)?;
+        let members = mem.map_or(Ok(Vec::new()), |m| parse_members(text, m, ctx))?;
         tracing::trace!(path = text, "path: parsed");
         Ok(Path {
             package: prefix.to_owned(),
@@ -342,6 +345,21 @@ mod tests {
         assert!(d.check_definition_read(false).is_ok());
         let i = rt("acme.rover::Rover/axle[0].end_diameter");
         assert!(i.check_definition_read(true).is_ok());
+    }
+
+    // frob:ticket 01M4W47VTBXFMC70Q2R137W4EE
+    // frob:tests crates/cadetta-ir/src/path.rs::Path.parse
+    #[test]
+    fn slot_path_has_no_member_but_a_bare_item_is_rejected() {
+        let p = rt("acme.rover::Rover/wheel");
+        assert_eq!(p.steps.len(), 1);
+        assert!(p.members.is_empty());
+        assert_eq!(p.to_string(), "acme.rover::Rover/wheel");
+        assert_eq!(
+            rt("acme.rover::Rover/wheel[2]").to_string(),
+            "acme.rover::Rover/wheel[2]"
+        );
+        assert!("acme.rover::Rover".parse::<Path>().is_err());
     }
 
     // frob:tests crates/cadetta-ir/src/path.rs::Path.parse
