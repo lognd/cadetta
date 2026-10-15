@@ -305,24 +305,7 @@ pub fn run_check_with(
     if !analysis.halted {
         bind_waiver_digests(&mut sup, &universes(&analysis), &lock);
     }
-    // `apply` resets every severity to the configured one, which would undo the rule-level
-    // D001 downgrade for values under `[lint] d001_min_digits`; keep it unless the user set
-    // `D001` explicitly.
-    let demoted: Vec<Option<String>> = if project.config.lint.severity.contains_key("D001") {
-        Vec::new()
-    } else {
-        raw.iter()
-            .filter(|d| d.code == "D001" && d.severity == Severity::Info)
-            .map(|d| d.path.clone())
-            .collect()
-    };
     let mut outcome = apply(raw, &cfg, &sup);
-    for d in &mut outcome.diagnostics {
-        if d.code == "D001" && demoted.contains(&d.path) {
-            tracing::debug!(path = ?d.path, "check: D001 below d001_min_digits stays info");
-            d.severity = Severity::Info;
-        }
-    }
     // W001-W004 describe the waivers themselves, so they follow the engine run.
     let waiver_diags = w::check(&outcome, &sup, &cfg);
     outcome.diagnostics.extend(waiver_diags);

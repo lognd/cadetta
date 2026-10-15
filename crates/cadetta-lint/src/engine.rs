@@ -870,6 +870,16 @@ impl LintConfig {
         Ok(())
     }
 
+    /// Whether `[lint] severity` set `code` explicitly (an override beats a rule-set severity).
+    pub fn is_overridden(&self, code: &str) -> bool {
+        self.overrides.contains_key(code)
+    }
+
+    /// Whether the `required_for` floor is active for `code`.
+    pub fn has_floor(&self, code: &str) -> bool {
+        self.floors.contains(code)
+    }
+
     /// The effective severity of `code` after lints.md 1 rules 1 to 3, or `None` if unknown.
     pub fn severity(&self, code: &str) -> Option<Severity> {
         let info = explain(code)?;
@@ -1056,6 +1066,26 @@ fn alt_matches(w: &Waiver, d: &Diagnostic) -> bool {
     }
 }
 
+/// Severity for a diagnostic: a rule-set downgrade (below the configured one, not `Hint`)
+/// survives unless the user overrode the code or a `required_for` floor is active.
+fn resolve_severity(
+    emitted: Severity,
+    configured: Severity,
+    overridden: bool,
+    floored: bool,
+) -> Severity {
+    if !overridden && !floored && emitted != Severity::Hint && rank(emitted) < rank(configured) {
+        tracing::debug!(
+            ?emitted,
+            ?configured,
+            "lint: rule-set severity downgrade kept"
+        );
+        emitted
+    } else {
+        configured
+    }
+}
+
 /// Apply severity precedence, then waivers and allows, to a run (lints.md 1 and 2).
 pub fn apply(mut diags: Vec<Diagnostic>, cfg: &LintConfig, sup: &Suppressions) -> Outcome {
     let mut out = Outcome::default();
@@ -1070,7 +1100,12 @@ pub fn apply(mut diags: Vec<Diagnostic>, cfg: &LintConfig, sup: &Suppressions) -
     }
     for d in &mut diags {
         if let Some(s) = cfg.severity(&d.code) {
-            d.severity = s;
+            d.severity = resolve_severity(
+                d.severity,
+                s,
+                cfg.is_overridden(&d.code),
+                cfg.has_floor(&d.code),
+            );
         }
         let fixed = explain(&d.code).is_some_and(|c| c.fixed);
         let protected = d
@@ -1130,6 +1165,20 @@ mod tests {
 
     fn dg(s: &str) -> Digest {
         Digest(s.into())
+    }
+
+    // frob:tests crates/cadetta-lint/src/engine.rs::apply kind=unit
+    #[test]
+    fn rule_set_downgrade_stays_info_unless_overridden() {
+        let mut x = d("D001", "a::B.c");
+        x.severity = Severity::Info;
+        let mut c = LintConfig::new();
+        assert_eq!(c.severity("D001"), Some(Severity::Warning));
+        let out = apply(vec![x.clone()], &c, &Suppressions::default());
+        assert_eq!(out.diagnostics[0].severity, Severity::Info);
+        c.set_severity("D001", "error").unwrap();
+        let out = apply(vec![x], &c, &Suppressions::default());
+        assert_eq!(out.diagnostics[0].severity, Severity::Error);
     }
 
     // frob:tests crates/cadetta-lint/src/engine.rs::LintConfig.set_severity kind=unit
