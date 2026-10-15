@@ -39,7 +39,8 @@ use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_solve::decl::lower_solver;
 use cadetta_solve::lints as solver_lints;
 use cadetta_solve::protocol::Request;
-use cadetta_solve::results::{ResultFile, out_path};
+use cadetta_solve::results::{CurrentDigests, ResultFile, input_digest, out_path};
+use cadetta_solve::variants::{VariantReading, read_variant};
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
 use cadetta_syntax::parser::parse;
@@ -797,7 +798,9 @@ struct VariantEnv<'a, 'p> {
     resolver: &'a Resolver<'p>,
     units: &'a UnitTable,
     sources: &'a [PackageSrc<'a>],
+    solvers: &'a [SolverSite<'a>],
     cache: std::cell::RefCell<BTreeMap<String, std::rc::Rc<cadetta_sema::eval::Evaluation>>>,
+    unsolved: std::cell::RefCell<Vec<UnsolvedVariant>>,
 }
 
 impl<'a, 'p> VariantEnv<'a, 'p> {
@@ -806,13 +809,55 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         resolver: &'a Resolver<'p>,
         units: &'a UnitTable,
         sources: &'a [PackageSrc<'a>],
+        solvers: &'a [SolverSite<'a>],
     ) -> Self {
         Self {
             resolver,
             units,
             sources,
+            solvers,
             cache: std::cell::RefCell::new(BTreeMap::new()),
+            unsolved: std::cell::RefCell::new(Vec::new()),
         }
+    }
+
+    /// The recorded outputs each solver reads under `selection` (solvers.md 4.1).
+    ///
+    /// A variant whose inputs equal the primary's reads the primary's result; one with changed
+    /// inputs reads its own, and with none its outputs stay unknown and S006 is recorded for
+    /// in-scope solvers. Solvers whose inputs do not evaluate under the swap are skipped.
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    fn variant_outputs(
+        &self,
+        selection: &Selection,
+    ) -> BTreeMap<CanonPath, BTreeMap<String, String>> {
+        let variant = selection.key();
+        let mut out = BTreeMap::new();
+        for site in self.solvers {
+            let mut probe = Evaluator::new(self.resolver, self.units, self.sources)
+                .with_selection(selection.clone());
+            let Ok(inputs) = eval_inputs(site.ast, &site.ctx, &mut probe, self.units) else {
+                tracing::debug!(solver = %site.key, %variant, "pipeline: variant inputs unevaluable; skipped");
+                continue;
+            };
+            let digest = input_digest(&Request::new(site.key.clone(), inputs));
+            match read_variant(&site.results, &site.key, &variant, &site.current, &digest) {
+                VariantReading::Outputs(r) => {
+                    tracing::debug!(solver = %site.key, %variant, "pipeline: variant outputs recorded");
+                    out.insert(site.path.clone(), r.outputs.clone());
+                }
+                VariantReading::Unknown => {
+                    if site.in_scope {
+                        self.unsolved.borrow_mut().push(UnsolvedVariant {
+                            key: site.module.clone(),
+                            span: site.ast.name.span,
+                            diag: solver_lints::unsolved_variant(&site.key, &variant),
+                        });
+                    }
+                }
+            }
+        }
+        out
     }
 
     /// The design evaluated with `alt` swapped into `owner`'s `slot`, cached per swap.
@@ -840,8 +885,10 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         if let Some(cached) = self.cache.borrow().get(&key) {
             return Some((key, cached.clone()));
         }
-        let evaluator =
-            Evaluator::new(self.resolver, self.units, self.sources).with_selection(selection);
+        let outputs = self.variant_outputs(&selection);
+        let evaluator = Evaluator::new(self.resolver, self.units, self.sources)
+            .with_selection(selection)
+            .with_solver_outputs(outputs);
         let evaluation = std::rc::Rc::new(evaluator.evaluate());
         let violated: Vec<String> = evaluation
             .checks
@@ -854,6 +901,14 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
             .borrow_mut()
             .insert(key.clone(), evaluation.clone());
         Some((key, evaluation))
+    }
+
+    /// The S006 findings gathered while evaluating swaps, deduplicated and drained.
+    fn take_unsolved(&self) -> Vec<UnsolvedVariant> {
+        let mut found = std::mem::take(&mut *self.unsolved.borrow_mut());
+        found.sort_by(|a, b| (&a.diag.path, &a.diag.alt).cmp(&(&b.diag.path, &b.diag.alt)));
+        found.dedup_by(|a, b| a.diag.path == b.diag.path && a.diag.alt == b.diag.alt);
+        found
     }
 
     /// True when no check or require violates with `alt` swapped into `owner`'s `slot`.
@@ -1192,30 +1247,33 @@ fn recorded_solver_outputs(
     out
 }
 
-/// A solver whose recorded primary result is stale (S003), before it is located in a file.
-struct StaleSolver {
-    key: ModuleKey,
-    span: Span,
-    diag: Diagnostic,
+/// A solver member with its recorded results and current primary digests, for staleness and
+/// variant readings (solvers.md 4, 4.1).
+struct SolverSite<'a> {
+    path: CanonPath,
+    key: String,
+    ast: &'a cadetta_syntax::ast::Solver,
+    ctx: Ctx,
+    module: ModuleKey,
+    in_scope: bool,
+    results: ResultFile,
+    current: CurrentDigests,
 }
 
-/// S003: every in-scope solver member whose recorded primary result no longer matches the
-/// current input, script or dep digests (solvers.md 4); its outputs still evaluate.
+/// The solver members whose result file, declaration, inputs, script and deps all load.
 ///
-/// A solver with no recorded result is unsolved, not stale; a solver whose inputs, script or
-/// declaration cannot be evaluated is reported by the stages that own those faults.
+/// A solver whose inputs, script or declaration cannot be evaluated is reported by the stages
+/// that own those faults and is left out here.
 // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
-fn stale_solvers(
-    parsed: &[ParsedPackage],
+// frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+fn solver_sites<'a>(
+    parsed: &'a [ParsedPackage],
     scope: &BTreeSet<String>,
     evaluator: &mut Evaluator<'_, '_>,
     units: &UnitTable,
-) -> Vec<StaleSolver> {
+) -> Vec<SolverSite<'a>> {
     let mut out = Vec::new();
-    for pkg in parsed
-        .iter()
-        .filter(|p| !p.is_std && scope.contains(&p.name))
-    {
+    for pkg in parsed.iter().filter(|p| !p.is_std) {
         for m in &pkg.modules {
             for c in m.file.components() {
                 for member in &c.members {
@@ -1246,23 +1304,55 @@ fn stale_solvers(
                         tracing::debug!(solver = %key, "pipeline: solver script or dep unreadable; staleness unjudged");
                         continue;
                     };
-                    if let Some(diag) = solver_lints::lint_lookup(
-                        &key,
-                        None,
-                        &results.lookup(&key, None, &current),
-                        &current,
-                    ) {
-                        out.push(StaleSolver {
-                            key: ModuleKey::new(&pkg.name, &m.path),
-                            span: sv.name.span,
-                            diag,
-                        });
-                    }
+                    out.push(SolverSite {
+                        path,
+                        key,
+                        ast: sv,
+                        ctx,
+                        module: ModuleKey::new(&pkg.name, &m.path),
+                        in_scope: scope.contains(&pkg.name),
+                        results,
+                        current,
+                    });
                 }
             }
         }
     }
     out
+}
+
+/// A solver whose recorded primary result is stale (S003), before it is located in a file.
+struct StaleSolver {
+    key: ModuleKey,
+    span: Span,
+    diag: Diagnostic,
+}
+
+/// S003: every in-scope solver member whose recorded primary result no longer matches the
+/// current input, script or dep digests (solvers.md 4); its outputs still evaluate.
+///
+/// A solver with no recorded result is unsolved, not stale.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+fn stale_solvers(sites: &[SolverSite<'_>]) -> Vec<StaleSolver> {
+    sites
+        .iter()
+        .filter(|s| s.in_scope)
+        .filter_map(|s| {
+            let lookup = s.results.lookup(&s.key, None, &s.current);
+            solver_lints::lint_lookup(&s.key, None, &lookup, &s.current).map(|diag| StaleSolver {
+                key: s.module.clone(),
+                span: s.ast.name.span,
+                diag,
+            })
+        })
+        .collect()
+}
+
+/// An in-scope solver with no result of its own under a variant that changes its inputs (S006).
+struct UnsolvedVariant {
+    key: ModuleKey,
+    span: Span,
+    diag: Diagnostic,
 }
 
 fn evaluate_stages(
@@ -1307,7 +1397,8 @@ fn evaluate_stages(
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let cells = table_cells(&mut evaluator, parsed);
     let misses = table_misses(&mut evaluator, parsed, scope, &analysis.sources);
-    let stale = stale_solvers(parsed, scope, &mut evaluator, &units);
+    let sites = solver_sites(parsed, scope, &mut evaluator, &units);
+    let stale = stale_solvers(&sites);
     let evaluation = evaluator.evaluate();
     let (derived_fits, fit_findings) =
         fitderive::derive_fits_with_findings(&resolver, &evaluation, &fit_ranges, &sources);
@@ -1374,7 +1465,7 @@ fn evaluate_stages(
         &lift_cfg,
     ));
     out.extend(lifecycle::lift_not_in_table(&misses, &lift_cfg));
-    let variant_env = VariantEnv::new(&resolver, &units, &sources);
+    let variant_env = VariantEnv::new(&resolver, &units, &sources, &sites);
     out.extend(lifecycle::lift_lifecycle(
         &lifecycle_findings(parsed, scope, as_of, &analysis.sources, &variant_env),
         &lift_cfg,
@@ -1616,6 +1707,15 @@ fn evaluate_stages(
 
     // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
     let alternates = alternate_evaluations(parsed, scope, &variant_env);
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    for u in variant_env.take_unsolved() {
+        let UnsolvedVariant { key, span, diag } = u;
+        if let Some(mut d) = located("S006", Severity::Warning, diag.message, span, Some(&key)) {
+            d.alt = diag.alt;
+            d.path = diag.path.or(d.path);
+            out.push(d);
+        }
+    }
     let variant_refs: BTreeMap<String, &cadetta_sema::eval::Evaluation> =
         alternates.iter().map(|(k, e)| (k.clone(), &**e)).collect();
     // Lower each in-scope package and run the IR lints over it.
@@ -1876,5 +1976,77 @@ mod tests {
         let project = solver_project("missing", false);
         let analysis = analyze(&project, &[0]);
         assert!(analysis.diagnostics.iter().all(|d| d.code != "S003"));
+    }
+
+    /// A package whose wheel slot has `alt` as its alternate and whose solver reads the wheel.
+    fn variant_project(tag: &str, alt: &str, with_variant_result: bool) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-s006-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            format!(
+                "cite src: web {{ url = \"https://x.example/a.pdf\" }}\n\
+                 pub interface Caster {{\n  load_rating: Force\n}}\n\
+                 pub ots Good: Caster @src {{\n  load_rating = 500N\n}}\n\
+                 pub ots Heavy: Caster @src {{\n  load_rating = 450N\n}}\n\
+                 pub ots Same: Caster @src {{\n  load_rating = 500N\n}}\n\
+                 pub assembly Rover {{\n  part wheel: Caster = Good alt [{alt}]\n  solver sizing {{\n    script \"size.sh\"\n    in load = wheel.load_rating\n    out w: Length\n  }}\n  check ok: 1mm >= sizing.w \"wall\"\n}}\n"
+            ),
+        )
+        .unwrap();
+        std::fs::write(dir.join("size.sh"), "true\n").unwrap();
+        let zero = format!("blake3:{}", "0".repeat(64));
+        let one = format!("blake3:{}", "1".repeat(64));
+        let variant = if with_variant_result {
+            format!(
+                ",{{\"solver\":\"acme.t::Rover.sizing\",\"variant\":\"acme.t::Rover/wheel=acme.t::{alt}\",\"input_digest\":\"{one}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"2m\"}},\"diagnostics\":[]}}"
+            )
+        } else {
+            String::new()
+        };
+        std::fs::write(
+            dir.join("size.out.json"),
+            format!(
+                "{{\"schema\":\"cadetta.solve-result/1\",\"results\":[{{\"solver\":\"acme.t::Rover.sizing\",\"input_digest\":\"{zero}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"1mm\"}},\"diagnostics\":[]}}{variant}]}}"
+            ),
+        )
+        .unwrap();
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_changed_inputs_and_no_result_is_s006() {
+        let analysis = analyze(&variant_project("unsolved", "Heavy", false), &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "S006")
+            .expect("S006 for an unsolved variant");
+        assert!(d.location.is_some());
+        assert!(d.message.contains("Heavy"), "{}", d.message);
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_unchanged_inputs_reads_the_primary_without_s006() {
+        let analysis = analyze(&variant_project("same", "Same", false), &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_its_own_recorded_result_is_not_s006() {
+        let analysis = analyze(&variant_project("solved", "Heavy", true), &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
     }
 }

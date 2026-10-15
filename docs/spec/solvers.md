@@ -208,6 +208,11 @@ difference makes it stale (S003) and its outputs still evaluate. A result is
 identified by (solver path, variant); storing replaces the entry with the
 same key, and the file is rewritten sorted.
 
+`cadetta check` applies the same reading: each approved alternate is evaluated
+with the solver outputs recorded for its inputs (the primary's when the inputs
+are unchanged, its own entry otherwise), and a changed-input variant with no
+entry raises S006 at the solver, carrying the variant as `alt`.
+
 S003 names what changed (`inputs`, `script` or a dep path) in notes and
 carries the variant as `alt`. S005 is raised for a failed run whose code is S005
 (a protocol failure with another code, such as Q001, keeps that code) and says

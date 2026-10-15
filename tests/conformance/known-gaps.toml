@@ -39,48 +39,48 @@ reason = "S001 reports per member, fixture expects the component path"
 
 [[gap]]
 fixture = "solvers/s003-stale-dep"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "solvers/s003-stale-inputs"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "solvers/s003-stale-script"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "solvers/s003-stale-still-evaluates"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "solvers/s006-primary-missing-is-not-s006"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~QH5PDHZ"
+reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
 
 [[gap]]
 fixture = "solvers/s006-unchanged-variant-reads-primary"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~QH5PDHZ"
+reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
 
 [[gap]]
 fixture = "solvers/s006-unsolved-variant"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~QH5PDHZ"
+reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
 
 [[gap]]
 fixture = "solvers/trust-solver-own-check"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "solvers/unsolved-output-no-result"
-ticket = "~B645GTM"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
+ticket = "~MGXDNYP"
+reason = "S003 messages, stale_output observation, C001 and C002 are not produced from solver outputs in check"
 
 [[gap]]
 fixture = "geometry/datum-ots-needs-citation"
