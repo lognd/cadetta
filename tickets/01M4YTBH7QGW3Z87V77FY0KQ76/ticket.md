@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/r014_sy
 
 [[acceptance]]
 text = "sync manual-adapter fallback raises R014 for a bound Text param and withholds the file"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "sync manual fallback emits cleanly when the Text param is filtered out"

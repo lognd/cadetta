@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:41:55Z"
+digest = "86e67182b94f1d8839ddbbae3343d7f7788ed44bc7f2339a12d88a956d357f0f"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: function `emit_package` is never used
+   --> crates/cadetta-cli/src/cmd/emit.rs:816:15
+    |
+816 | pub(crate) fn emit_package(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cadetta` (lib) generated 1 warning
+warning: `cadetta` (lib test) generated 1 warning (1 duplicate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.49s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cd17fc98-eb0c-491a-865f-be980ffdb5a7 with nextest profile: default
+    Starting 1 test across 65 binaries (1395 tests skipped)
+        PASS [   0.182s] cadetta::r014_sync_manual_adapter sync_manual_fallback_raises_r014_and_withholds_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.185s] 1 test run: 1 passed, 1395 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "sync_manual_fallback_raises_r014"
+size = 1278
+status = "measured"
+test_count = 1
+tests_digest = "dd84214fc3d2056b9c43123d220e6b2b7553bf264eb3722460a0b1bb6c1e19d6"
+at = "2026-10-15T03:41:55Z"
+actor = "lognd"
+rev = 1
