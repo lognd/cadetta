@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["count together with at/onto is E006 (ScrewJoint forbids count when at is given)", "a part array of a component taking a Pattern argument is E006 (one joint per pattern)"]
+moved = []
+at = "2026-10-15T04:32:28Z"
+actor = "lognd"
+rev = 1
