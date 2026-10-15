@@ -2,12 +2,13 @@
 id = "01M4YTGQ9BHMKS38GTGX2PFH03"
 title = "conformance: adapters/bind-scope-every-in-scope-path exits 2, expected 0"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:43:26Z"
-updated = "2026-10-15T04:11:07Z"
+updated = "2026-10-15T04:11:10Z"
 idempotency_key = "gap-bind-scope-every"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/**"]
 
