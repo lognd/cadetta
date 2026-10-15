@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A package::-qualified expression path to an invisible item raises E016 (fixture e016-fully-qualified-path-checks-visibility)", "A package::-qualified expression path through a was rename raises N004 (fixture n004-reference-to-was-path)"]
+moved = []
+at = "2026-10-15T03:36:56Z"
+actor = "lognd"
+rev = 1
