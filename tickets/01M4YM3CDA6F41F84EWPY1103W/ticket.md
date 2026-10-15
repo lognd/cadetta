@@ -13,7 +13,7 @@ scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/cmd/check.rs", "changelo
 
 [[acceptance]]
 text = "Engine preserves a rule-set severity; check.rs workaround removed; a test in cadetta-lint proves a downgraded D001 stays info"
-bound = false
+bound = true
 +++
 
 check.rs works around the engine resetting every diagnostic to its catalog severity (D001 downgrade below d001_min_digits). Move the fix into crates/cadetta-lint/src/engine.rs and drop the workaround.

@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:07:55Z"
+digest = "5c2c5c8bca3fb6e1354adcc0aa630187df02b65f3582d94a01fdb9228532813e"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.93s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9f670e36-a904-41ec-845e-a256299cf37f with nextest profile: default
+    Starting 1 test across 52 binaries (1279 tests skipped)
+        PASS [   0.005s] cadetta-lint engine::tests::rule_set_downgrade_stays_info_unless_overridden
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 1279 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "rule_set_downgrade_stays_info_unless_overridden"
+size = 886
+status = "measured"
+test_count = 1
+tests_digest = "d1240ee8edb94424b8c995ec96900740c18b6a3424b2645294895beb57594469"
+at = "2026-10-15T02:07:55Z"
+actor = "lognd"
+rev = 1
