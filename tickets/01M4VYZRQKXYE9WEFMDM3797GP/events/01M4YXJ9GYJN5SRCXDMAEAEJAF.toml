@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Re-expression of an indexed part instance (leg[1].top in origin) evaluates at that instance placement", "A member read through an indexed part slot (rail[0].length) resolves to the part type member", "An out-of-range index or two instances of one slot in one in-expression is a diagnosed error"]
+moved = []
+at = "2026-10-15T04:36:43Z"
+actor = "lognd"
+rev = 1
