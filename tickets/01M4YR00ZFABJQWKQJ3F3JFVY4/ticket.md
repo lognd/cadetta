@@ -6,8 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T02:59:22Z"
+updated = "2026-10-15T03:30:18Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**"]
+
+[[acceptance]]
+text = "N001: a lowercase component name is reported"
+bound = false
 +++
 
 Split from ~8WN9V3R. Fixtures tests/conformance/language/n001-case, n004-was, n006-type-read-beside-instance disagree with the binary (see tests/conformance/known-gaps.toml).
