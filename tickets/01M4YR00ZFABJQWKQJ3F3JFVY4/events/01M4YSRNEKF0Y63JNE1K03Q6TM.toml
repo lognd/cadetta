@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["N001: a lowercase component name is reported"]
+new = ["N001: a lowercase component name is reported", "N004: a stale item name in a was path or read is reported"]
+moved = [1]
+at = "2026-10-15T03:30:18Z"
+actor = "lognd"
+rev = 1
