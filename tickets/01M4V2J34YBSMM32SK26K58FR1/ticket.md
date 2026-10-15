@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T03:26:09Z"
+updated = "2026-10-15T03:26:12Z"
 scope = ["tests/conformance/stdlib/**", "crates/cadetta-sema/src/kindcheck.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/stdlib_interface_kinds.rs", "docs/spec/stdlib.md", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
 text = "A wrong dimension on an implementer interface member is I001 (stdlib/i001-sourced-wrong-kind fires, must-not-fire is clean)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A wrong named kind on an implementer interface member is Q003 (stdlib/q003-sourced-named-kind)"

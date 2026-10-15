@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:26:12Z"
+digest = "0b1a37e0d33994a382de2b616a335edc644e7aeaa718dc529063367e512abc2b"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.71s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3b6f6e2a-4830-4de9-b952-89f600bad3fb with nextest profile: default
+    Starting 1 test across 63 binaries (1382 tests skipped)
+        PASS [   0.250s] cadetta::stdlib_interface_kinds wrong_dimension_on_sourced_member_is_i001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.252s] 1 test run: 1 passed, 1382 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "wrong_dimension_on_sourced_member_is_i001"
+size = 830
+status = "measured"
+test_count = 1
+tests_digest = "ff8f1ac020ba5323f38d2387a8b51088caf895cf1688ce25268951fcc903df36"
+at = "2026-10-15T03:26:12Z"
+actor = "lognd"
+rev = 1
