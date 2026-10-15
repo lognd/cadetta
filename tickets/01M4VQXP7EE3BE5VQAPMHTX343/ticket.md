@@ -2,13 +2,14 @@
 id = "01M4VQXP7EE3BE5VQAPMHTX343"
 title = "Q004 beyond-precision and Q006 exact-zero/trig info not raised"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T02:51:30Z"
+updated = "2026-10-15T02:51:58Z"
 scope = ["crates/cadetta-units/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4VQXP7EE3BE5VQAPMHTX343.fixed.md", "crates/cadetta-cli/tests/quantity_zero_trig.rs"]
 
 [[acceptance]]
