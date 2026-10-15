@@ -2,7 +2,8 @@
 id = "01M4VQXM0V12H5JBPHWW796HD7"
 title = "Conformance runner: executor for binding read entries (adapter host)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
