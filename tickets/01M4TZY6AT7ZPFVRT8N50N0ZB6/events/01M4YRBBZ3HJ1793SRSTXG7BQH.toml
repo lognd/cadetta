@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Wire observed IR and sync facts into R001-R006 engine functions"
+new = "Remove dead check_r004/check_r006 engine functions (superseded by check_drift and sync)"
+at = "2026-10-15T03:05:33Z"
+actor = "lognd"
+rev = 1
