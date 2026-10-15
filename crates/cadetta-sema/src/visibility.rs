@@ -130,6 +130,20 @@ impl<'a> VisibilityChecker<'a> {
         Ok(())
     }
 
+    /// E016 over every `use` of the project whose target item is not visible to the importing module.
+    // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
+    pub fn check_uses(&self) -> Vec<ResolveError> {
+        let mut errors: Vec<ResolveError> = self
+            .resolver
+            .use_item_targets()
+            .into_iter()
+            .filter_map(|(ctx, path, span)| self.check_item(&ctx, &path, span).err())
+            .collect();
+        errors.sort_by_key(|e| (e.module.clone(), e.span));
+        debug!(count = errors.len(), "checked use visibility");
+        errors
+    }
+
     fn check_item(&self, from: &Ctx, path: &CanonPath, span: Span) -> Result<(), ResolveError> {
         let id = path.item_only();
         let Some(info) = self.items.get(&id) else {

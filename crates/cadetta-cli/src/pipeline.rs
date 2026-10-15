@@ -30,6 +30,7 @@ use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
+use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_sema::resolve::{
     CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
@@ -1163,6 +1164,16 @@ fn evaluate_stages(
             )
         })
         .collect();
+    // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
+    // Privacy: E016 on `use` targets and E017 on public signatures (packages.md 3).
+    {
+        let checker = VisibilityChecker::new(&resolver, &sources);
+        for e in checker.check_uses().iter().chain(checker.check_signatures().iter()) {
+            if e.module.as_ref().is_some_and(|k| scope.contains(&k.package)) {
+                out.extend(located(e.code, Severity::Error, e.message.clone(), e.span, e.module.as_deref()));
+            }
+        }
+    }
     // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
     {
         let cites = CiteIndex::new(&sources);

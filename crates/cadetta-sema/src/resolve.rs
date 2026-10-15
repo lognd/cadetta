@@ -1233,6 +1233,29 @@ impl<'a> Resolver<'a> {
         out
     }
 
+    /// Every `use` whose target is an item, as the importing context, the item and the span (for E016).
+    // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
+    pub fn use_item_targets(&self) -> Vec<(Ctx, CanonPath, Span)> {
+        let mut out = Vec::new();
+        for (pkg, info) in &self.pkgs {
+            for (module, mi) in &info.modules {
+                let (named, globs) = collect_imports(mi.file);
+                let ctx = Ctx {
+                    package: pkg.clone(),
+                    module: module.clone(),
+                    component: None,
+                    locals: Vec::new(),
+                };
+                for imp in named.iter().chain(globs.iter()) {
+                    if let Ok(Target::Item(path)) = self.resolve_import(pkg, module, imp, 0) {
+                        out.push((ctx.clone(), path, imp.span));
+                    }
+                }
+            }
+        }
+        out
+    }
+
     /// True when `path` is a module or the (possibly file-less) parent of one (packages.md 2).
     fn is_module(&self, pkg: &str, path: &[String]) -> bool {
         self.pkgs

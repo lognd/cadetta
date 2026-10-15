@@ -8,16 +8,6 @@
 # reason = "Q006 not emitted for inexact pi products yet"
 
 [[gap]]
-fixture = "language/e016-private-item"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
-fixture = "language/e017-private-in-public"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
 fixture = "language/f001-it-grade"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
@@ -463,39 +453,9 @@ ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
-fixture = "packages/e016-private-visible-in-descendants"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
 fixture = "packages/e016-pub-package-from-dependency"
 ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
-
-[[gap]]
-fixture = "packages/e016-pub-package-within-package"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
-fixture = "packages/e017-priv-member-implements-interface"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
-fixture = "packages/e017-private-function-signature"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
-fixture = "packages/e017-private-interface-member-type"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
-
-[[gap]]
-fixture = "packages/e017-pub-package-in-pub-signature"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the privacy and use-target diagnostics yet"
 
 [[gap]]
 fixture = "packages/module-implicit-parent"
