@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["IR JSON decodes into cadetta_ir::model::Project and round-trips", "lint FILE runs D001, D002, D003, F004, M, N, Q006 and S over the decoded model"]
+moved = []
+at = "2026-10-15T02:25:09Z"
+actor = "lognd"
+rev = 1
