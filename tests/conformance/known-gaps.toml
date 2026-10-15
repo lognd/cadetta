@@ -484,267 +484,247 @@ reason = "R013/N005 mangling collision checks not implemented"
 
 [[gap]]
 fixture = "adapters/geom-derived-coordinates-analysis-only"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-flip-verified-only"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-for-placement-pattern"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-frame"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-pattern-generator"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-place-offset"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-rotate-90-verified-only"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-rotate-not-90"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/geom-sign-write-and-read"
-ticket = "~BC7S5KT"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/tol-emit-point-limits"
-ticket = "~BC7S5KT"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/tol-ignore-not-written"
-ticket = "~BC7S5KT"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/tol-push-forms"
-ticket = "~BC7S5KT"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/tol-ref-mode-on-dimension"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/adopted-cleared-by-first-sync"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/adopted-r006-every-expression"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/drive-reports-regen-failures"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/o004-ack-attests"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/o004-sw-equations"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/o004-unsaved"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/push-status-per-locator"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r003-missing-native-skips-locator"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r004-rebuild-restores"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r004-restore-failure-reported"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r004-snapshot-all-locators"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r006-dimension-equation-removed"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r008-sync-tool-missing"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r008-version-mismatch"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r008-wrong-platform"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r009-dirty"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r009-locked"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r009-read-only"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r009-refuses-only-that-document"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r010-driven-dimension"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r010-equation-conflict"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/r010-unit-conflict"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/resolve-drift-force-design"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/save-after-sync"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/save-needs-matching-readback"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/session-attach-running"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/session-close-only-opened"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/sync-degrade-no-theirs-no-r001"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/sync-degrades-without-drive"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/sync-idempotent"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/sync-idempotent-converged"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/synced-only-for-matching-readback"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/tol-cad-edit-r001"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/csv/obligation-open-without-drive"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/csv/sync-header-excluded-from-noop"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/json/obligation-open-without-drive"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/json/sync-header-excluded-from-noop"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/sw-equations/obligation-open-unless-attested"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/sw-equations/obligation-open-without-drive"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
 fixture = "emitters/sw-equations/sync-header-excluded-from-noop"
-ticket = "~BC7S5KT"
+ticket = "~CDJGJMG"
 reason = "binding sync entries have no executor yet"
 
 [[gap]]
@@ -1404,7 +1384,7 @@ reason = "lint on IR JSON has no CLI form or executor yet"
 
 [[gap]]
 fixture = "adapters/geom-placement-verify-only"
-ticket = "~BC7S5KT"
+ticket = "~Y25XAXV"
 reason = "binding push-plan entries have no executor yet"
 
 
