@@ -7,7 +7,7 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T22:54:12Z"
-updated = "2026-10-15T10:35:56Z"
+updated = "2026-10-15T10:37:51Z"
 scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-ir", "crates/cadetta-obligations"]
 
 [[links]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a solver, sync binding or waiver in the design, when 'cadetta obligations' runs, then solver:, sync: and waiver: ids are listed with their closure digests"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a check that reads a table or part argument, when that input is edited, then the check's attestation is stale"
