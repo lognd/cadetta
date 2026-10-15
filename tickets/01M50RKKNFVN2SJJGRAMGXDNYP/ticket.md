@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-15T22:25:14Z"
-scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**"]
+updated = "2026-10-15T22:25:16Z"
+scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**", "docs/spec/solvers.md"]
 
 [[acceptance]]
 text = "S003 message names what changed (dep path, inputs, script)"
