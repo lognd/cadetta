@@ -2,12 +2,12 @@
 id = "01M50Z764H4P103XX06KB9GCES"
 title = "Fix s003-solver-stale conformance: must-fire loses S003 and gets C002"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T23:44:05Z"
-updated = "2026-10-15T23:44:05Z"
+updated = "2026-10-15T23:44:24Z"
 idempotency_key = "s003-solver-stale-fix"
 scope = ["tests/conformance/**", "crates/cadetta-cli/src/**"]
 
