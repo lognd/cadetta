@@ -29,5 +29,5 @@ bound = true
 
 [[acceptance]]
 text = "Given observed instances, when import proposes, then each becomes a flagged place anchored at the parent's origin with the read transform, and --accept writes explicit frame and instance locators (adapters.md 7.2)"
-bound = false
+bound = true
 +++
