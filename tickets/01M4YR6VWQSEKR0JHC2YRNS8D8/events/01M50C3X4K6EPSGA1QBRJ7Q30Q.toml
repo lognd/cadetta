@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "Already on main: crates/cadetta-sema/src/deps.rs calls VisibilityChecker::check_use for expression paths and priv member chains (E016), with tests in deps.rs (e.g. W.bore, R.w.bore, j.major)."
+at = "2026-10-15T18:10:15Z"
+actor = "lognd"
+rev = 1

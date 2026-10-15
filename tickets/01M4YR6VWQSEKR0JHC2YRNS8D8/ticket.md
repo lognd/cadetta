@@ -2,11 +2,12 @@
 id = "01M4YR6VWQSEKR0JHC2YRNS8D8"
 title = "language: E016 on expression-level references and priv member reads (check_use not called)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:03:06Z"
-updated = "2026-10-15T03:03:06Z"
+updated = "2026-10-15T18:10:15Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
