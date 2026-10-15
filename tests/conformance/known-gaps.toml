@@ -48,11 +48,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/process-drawn-value"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"

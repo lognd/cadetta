@@ -726,6 +726,7 @@ mod tests {
         let units = UnitTable::builtin();
         let mut ev = Evaluator::new(&resolver, &units, &pkgs);
         let procs = Processes::compile(&mut ev, &pkgs);
+        ev.set_processes(procs.clone());
         let evaluation = ev.evaluate();
         let outcome = procs.apply(&evaluation);
         let renames = Renames::collect(&resolver, &pkgs);

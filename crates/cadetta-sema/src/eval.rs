@@ -495,6 +495,9 @@ pub struct Evaluator<'r, 'p> {
     fit_defs: BTreeMap<CanonPath, FitDef<'p>>,
     /// Fit clearances computed so far (`None` when the fit could not be analysed).
     fit_done: BTreeMap<CanonPath, Option<Quant>>,
+    /// Compiled processes, so a check can read `x.drawn` (language.md 3.8).
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    processes: Option<Rc<crate::process::Processes>>,
 }
 
 /// A `fit` member with the scope its operands resolve in.
@@ -575,6 +578,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             fit_roles: crate::fitderive::implied_roles(resolver, packages),
             fit_defs,
             fit_done: BTreeMap::new(),
+            processes: None,
         }
     }
 
@@ -897,9 +901,45 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Member { key, chain } => {
                 let role = self.value_of(&key).and_then(|ev| ev.role).map(|r| r.role);
                 let v = self.member_value(&key, e.span)?;
+                if let [first, rest @ ..] = chain.as_slice()
+                    && first == "drawn"
+                {
+                    let v = self.drawn_member(&key, v, e.span)?;
+                    return self.apply_chain(v, role, rest, e.span);
+                }
                 self.apply_chain(v, role, &chain, e.span)
             }
         }
+    }
+
+    /// Reads `NAME.drawn` of a compensated member: the process rule applied to its nominal (language.md 3.8).
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    fn drawn_member(&mut self, key: &CanonPath, designed: Val, span: Span) -> R<Val> {
+        let drawn = match (&designed, &self.processes) {
+            (Val::Quantity(q), Some(procs)) => procs.drawn_of(key, q),
+            _ => None,
+        };
+        match drawn {
+            Some(Ok(q)) => {
+                debug!(%key, "evaluator: drawn value read");
+                Ok(Val::Quantity(q))
+            }
+            Some(Err(_)) => {
+                trace!(%key, "evaluator: drawn rule failed, reported by Processes::apply");
+                Err(Fail::Silent)
+            }
+            None => Err(diag(
+                "EVAL",
+                span,
+                "`.drawn` is not readable on this value",
+            )),
+        }
+    }
+
+    /// Hands the evaluator the compiled processes so checks can read `.drawn`.
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    pub fn set_processes(&mut self, processes: crate::process::Processes) {
+        self.processes = Some(Rc::new(processes));
     }
 
     /// Reads `NAME.clearance` of a `fit` member (language.md 3.7): hole minus shaft, as an interval.
@@ -2149,5 +2189,42 @@ mod tests {
         // H7 spans 0..+21um and p6 +22..+35um: clearance is -35um .. -1um.
         assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
         assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
+    }
+
+    // frob:tests drawn_member_reads_rule_applied_to_nominal
+    #[test]
+    fn drawn_member_reads_rule_applied_to_nominal() {
+        let f = file(
+            "process Fdm {\n  hole_comp = 0.2mm\n  rule hole(d: Length) -> Length = d + hole_comp\n}\n\
+             model Case {\n  #![process(Fdm)]\n  insert_hole = 3.4mm  #[hole]\n  \
+             let d = insert_hole.drawn\n  let m = insert_hole\n  let bad = m.drawn\n}\n",
+        );
+        let pkgs = vec![PackageSrc {
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &f,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty());
+        let units = UnitTable::builtin();
+        let mut e = Evaluator::new(&resolver, &units, &pkgs);
+        let procs = crate::process::Processes::compile(&mut e, &pkgs);
+        e.set_processes(procs);
+        let ev = e.evaluate();
+        // The drawn value is 3.4mm + 0.2mm = 3.6mm; the plain read stays the designed 3.4mm.
+        assert_eq!(quant(&ev, "Case", "d").nominal, m(36, 10_000));
+        assert_eq!(quant(&ev, "Case", "m").nominal, m(34, 10_000));
+        // `.drawn` on a member with no role is still not readable.
+        assert!(
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("`.drawn` is not readable")),
+            "{:?}",
+            ev.diagnostics
+        );
     }
 }

@@ -1085,6 +1085,7 @@ fn evaluate_stages(
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
     let mut evaluator = Evaluator::new(&resolver, &units, &sources);
     let procs = Processes::compile(&mut evaluator, &sources);
+    evaluator.set_processes(procs.clone());
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let cells = table_cells(&mut evaluator, parsed);
     let misses = table_misses(&mut evaluator, parsed, scope, &analysis.sources);
