@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "L001 stays an error once the EOL date has passed, even with a warning default"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Interface bounds are lowered to SI and inherited for lint"
