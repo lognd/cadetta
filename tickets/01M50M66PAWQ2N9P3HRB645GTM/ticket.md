@@ -2,12 +2,12 @@
 id = "01M50M66PAWQ2N9P3HRB645GTM"
 title = "S006 emission and recorded variant outputs in check and evaluators"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T20:31:19Z"
-updated = "2026-10-15T20:31:19Z"
+updated = "2026-10-15T20:59:26Z"
 scope = ["crates/cadetta-cli/src/**", "docs/spec/solvers.md", "tests/conformance/known-gaps.toml"]
 +++
 
