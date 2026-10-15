@@ -470,7 +470,8 @@ fn build_entries(
 ) -> Option<(Vec<Entry>, UnitMap)> {
     let (set, _) = match load_bindings(pkg, adapter, ir) {
         Ok(loaded) => loaded,
-        Err(d) => {
+        Err(e) => {
+            let d = e.into_diag();
             ctx.report.diag(&d.code, d.message);
             return None;
         }
@@ -1044,6 +1045,9 @@ fn manual_adapter(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_
         }
         for d in report.diagnostics {
             ctx.report.diag(&d.code, d.message);
+        }
+        if let Some(message) = report.config_error {
+            ctx.report.diag("R005", message);
         }
     }
     tracing::info!(adapter = %adapter.id(), "sync: no drive, manual instructions");

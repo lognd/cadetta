@@ -77,6 +77,10 @@ pub fn parse_args(args: &[String]) -> Result<EmitArgs, String> {
 /// A diagnostic produced while emitting.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct EmitDiag {
+    /// Record schema tag, always `cadetta.diag/1` (lints.md 1.1).
+    pub schema: &'static str,
+    /// Severity word; every emit diagnostic withholds its file, so `error`.
+    pub severity: &'static str,
     /// Rule code, e.g. `Q004` or `R013`.
     pub code: String,
     /// Human message.
@@ -104,10 +108,15 @@ pub struct EmitReport {
     pub files: Vec<EmitFile>,
     /// Diagnostics, errors first by occurrence.
     pub diagnostics: Vec<EmitDiag>,
+    /// A bindings configuration error that stops the run with exit 2 (adapters.md 3); not reported.
+    #[serde(skip)]
+    pub config_error: Option<String>,
 }
 
 pub(crate) fn diag(code: &str, message: impl Into<String>, path: Option<&Path>) -> EmitDiag {
     EmitDiag {
+        schema: crate::output::DIAG_SCHEMA,
+        severity: "error",
         code: code.to_owned(),
         message: message.into(),
         path: path.map(ToString::to_string),
@@ -626,6 +635,9 @@ pub fn run_emit(
             Err(message) => return fail(err, &message),
         };
         emit_package(pkg, &ir, &parsed, &run_scope, &mut report);
+        if let Some(message) = report.config_error.take() {
+            return fail(err, &message);
+        }
     }
     let failed = report
         .diagnostics
@@ -661,20 +673,45 @@ fn render_text(report: &EmitReport) -> String {
     s
 }
 
+/// Why an adapter's bindings could not be loaded.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum LoadError {
+    /// The bindings file or a locator is invalid: a configuration error with no code (adapters.md 3).
+    Config(String),
+    /// A lint-level failure (R013) that stops the adapter.
+    Diag(EmitDiag),
+}
+
+impl LoadError {
+    /// The error as a diagnostic; a configuration error keeps the legacy R005 code for callers
+    /// that do not yet stop with exit 2.
+    pub(crate) fn into_diag(self) -> EmitDiag {
+        match self {
+            Self::Config(message) => diag("R005", message, None),
+            Self::Diag(d) => d,
+        }
+    }
+}
+
 /// Load an adapter's bindings file (missing means nothing bound) and apply `bind = scope`.
 ///
-/// Returns the set and the file text, or the R005 / R013 diagnostic that stops the adapter.
+/// Returns the set and the file text, or the `LoadError` that stops the adapter.
 // frob:ticket 01M4SPWTDD069AXXQBXD4T6ATZ
+// frob:ticket 01M4V1X594YSHKE55103F67WS1
 pub(crate) fn load_bindings(
     pkg: &PackageDir,
     adapter: &Adapter,
     ir: &Ir,
-) -> Result<(BindingSet, String), EmitDiag> {
+) -> Result<(BindingSet, String), LoadError> {
     let bindings_file = pkg.dir.join(adapter.bindings_path());
     let (mut set, bindings_text) = match std::fs::read_to_string(&bindings_file) {
         Ok(text) => match BindingSet::load_str(adapter.id(), &text) {
             Ok(set) => (set, text),
-            Err(e) => return Err(diag("R005", e.to_string(), None)),
+            Err(e) => {
+                let message = format!("{}: {e}", bindings_file.display());
+                tracing::error!(%message, "bindings: invalid file or locator");
+                return Err(LoadError::Config(message));
+            }
         },
         Err(_) => {
             tracing::info!(file = %bindings_file.display(), "bindings: no file, nothing bound");
@@ -695,7 +732,7 @@ pub(crate) fn load_bindings(
             Ok(n) => tracing::info!(adapter = %adapter.id(), n, "bind = scope applied"),
             Err(e) => {
                 tracing::warn!(error = %e, "native name collision (R013)");
-                return Err(diag(R013, e.to_string(), None));
+                return Err(LoadError::Diag(diag(R013, e.to_string(), None)));
             }
         }
     }
@@ -725,7 +762,11 @@ pub(crate) fn emit_package(
         }
         let (set, bindings_text) = match load_bindings(pkg, adapter, ir) {
             Ok(loaded) => loaded,
-            Err(d) => {
+            Err(LoadError::Config(message)) => {
+                report.config_error = Some(message);
+                return;
+            }
+            Err(LoadError::Diag(d)) => {
                 report.diagnostics.push(d);
                 continue;
             }
@@ -885,6 +926,26 @@ mod tests {
         let (code, out, _) = run(&dir, &[]);
         assert_eq!(code, 0, "{out}");
         assert!(!out.contains("R013"), "{out}");
+    }
+
+    // frob:ticket 01M4V1X594YSHKE55103F67WS1
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::load_bindings
+    #[test]
+    fn invalid_bindings_config_error_exits_two() {
+        let bad = [
+            "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"\", kind = \"global\" } ]\n",
+            "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"W\", kind = \"global\", config = \"\" } ]\n",
+            "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"W\", kind = \"global\", sign = 1, ref_to = \"X\" } ]\n",
+        ];
+        for text in bad {
+            let dir = project(SOURCE, text, "");
+            let (code, out, err) = run(&dir, &[]);
+            assert_eq!(code, EXIT_USAGE, "{text}: {out} {err}");
+            assert!(err.contains("equations.toml"), "names the path: {err}");
+            assert!(!out.contains("R005"), "no diagnostic code: {out}");
+        }
+        let ok = project(SOURCE, BINDINGS, "");
+        assert_eq!(run(&ok, &[]).0, EXIT_OK);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit
