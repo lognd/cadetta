@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-15T06:09:34Z"
+digest = "79ad82365e31f810d35b4d58e148f0870ebc3744e8a5e9100f96537090aefdc3"
+provider = "file"
+ref = "docs/spec/bindings.md"
+size = 13117
+status = "measured"
+at = "2026-10-15T06:09:34Z"
+actor = "lognd"
+rev = 1
