@@ -341,7 +341,11 @@ lacking it instead of becoming a dangling dependency. A read of a bare part
 slot depends on the slot's `Type/slot` node; a read of a member of a
 dependency-package part depends on that slot too (the foreign component is
 not lowered). A dependency on a `fit` whose operands read component arguments
-is dropped, since that fit is not derived at the generic level.
+is dropped, since that fit is not derived at the generic level. Such a fit
+is instead derived once per instance of the parameterized component
+(`fitderive.rs`): `Top/h.seat` for `part h: Housing(bearing = b)`, its
+operands read through the instance's argument values; a fit whose argument
+is not evaluated for an instance is skipped for that instance.
 
 ## 5. Stability
 
