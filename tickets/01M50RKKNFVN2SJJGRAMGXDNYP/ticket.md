@@ -2,7 +2,8 @@
 id = "01M50RKKNFVN2SJJGRAMGXDNYP"
 title = "S003 stale messages, stale_output observation, C001/C002 from solver outputs in check"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
