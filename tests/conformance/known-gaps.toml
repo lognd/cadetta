@@ -1328,41 +1328,6 @@ ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
 
 [[gap]]
-fixture = "adapters/protocol-open-dirty-r009"
-ticket = "~6N3JQAV"
-reason = "DriveSession::open closes but never shuts the adapter down after an R009 refusal"
-
-[[gap]]
-fixture = "adapters/protocol-platforms-checked"
-ticket = "~6N3JQAV"
-reason = "the host does not check the initialize platforms list"
-
-[[gap]]
-fixture = "adapters/protocol-precision-from-initialize"
-ticket = "~6N3JQAV"
-reason = "the host ignores the initialize precision"
-
-[[gap]]
-fixture = "adapters/protocol-push-status-per-locator"
-ticket = "~6N3JQAV"
-reason = "a summary-only push result is a plain protocol error, not R008"
-
-[[gap]]
-fixture = "emitters/csv/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
-
-[[gap]]
-fixture = "emitters/json/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
-
-[[gap]]
-fixture = "emitters/sw-equations/capabilities-emit-read-no-drive"
-ticket = "~6N3JQAV"
-reason = "built-in adapters declare no capability set the host can check"
-
-[[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "part-array instance members now lower (~9WDH9XE), but the must-fire half (differing instance values) is unreachable from source until ~V9JHZEN"

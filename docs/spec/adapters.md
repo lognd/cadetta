@@ -95,11 +95,14 @@ after `--accept` the structure lives in the source.
 ### 2.3 Failure handling and atomicity
 
 The host side of R008-R010 lives in `cadetta_adapter::availability`: an
-unreachable or version-mismatched adapter is R008 (error with exit 2
+unreachable, version-mismatched or wrong-platform adapter (its `initialize`
+`platforms` list, when non-empty, must name the host's `linux`, `macos` or `windows`)
+is R008 (error with exit 2
 under `sync`; info under `check`, which reports the R lints of the adapter's
 `read` and, when the adapter cannot start, only the info R008);
 each dirty or read-only document is an R009 of its own and is never
-touched; rejected locators are grouped into one R010 per file while the
+touched (when every document is refused the host still sends `close` and
+`shutdown`); rejected locators are grouped into one R010 per file while the
 other locators proceed.
 
 | Failure | Code | Behaviour |
@@ -519,7 +522,11 @@ adapter how to write a dimension (`ref`: create or keep the link to
 system named by the locator when missing, to `create_frames` adapters
 only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
-unavailable (R008, exit 2). Adapters are located by `command` in
+unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
+`push` answers with a summary instead of a status per locator. The precision in force is
+`[[adapter]] precision` when set, else the one `initialize` reported. Built-in adapters
+(`csv`, `json`, `sw-equations`) declare `emit` and `read`; a `drive` request to one is a
+configuration error (exit 2). Adapters are located by `command` in
 `cadetta.toml`; there is no PATH search (a bare name such as `sh` names a file in the
 package directory, never a system program). `check`, `sync` and `import` kill an adapter that leaves a call
 unanswered for `[[adapter]] timeout` seconds (default 60); `check` reports R008 and
