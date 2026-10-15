@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Project schema accepts optional interfaces, tables and waivers", "Committed schema equals the generated schema"]
+moved = []
+at = "2026-10-15T01:44:55Z"
+actor = "lognd"
+rev = 1
