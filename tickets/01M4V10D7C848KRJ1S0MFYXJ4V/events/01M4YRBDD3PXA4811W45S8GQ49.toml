@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["tests/conformance/README.md defines a compare form for ir.md 4 digest rules and ir.md 5 classify(old,new)"]
+moved = []
+at = "2026-10-15T03:05:35Z"
+actor = "lognd"
+rev = 1
