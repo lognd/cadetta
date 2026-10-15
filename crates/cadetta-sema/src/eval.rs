@@ -525,6 +525,9 @@ pub struct Evaluator<'r, 'p> {
     /// Compiled processes, so a check can read `x.drawn` (language.md 3.8).
     // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
     processes: Option<Rc<crate::process::Processes>>,
+    /// Every `solver` member of a component without parameters, by path (`Comp.solver`).
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    solver_keys: BTreeSet<CanonPath>,
 }
 
 /// A `fit` member with the scope its operands resolve in.
@@ -544,6 +547,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     ) -> Self {
         let mut defs = BTreeMap::new();
         let mut fit_defs = BTreeMap::new();
+        let mut solver_keys = BTreeSet::new();
         let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
@@ -561,6 +565,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
                     index_fits(&mut fit_defs, &p.name, &m.path, c);
+                    index_solvers(&mut solver_keys, &p.name, &m.path, c);
                     if c.params.is_empty() {
                         geom_components.push(CanonPath::item(&p.name, &m.path, &c.name.name));
                     }
@@ -610,7 +615,60 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             fit_defs,
             fit_done: BTreeMap::new(),
             processes: None,
+            solver_keys,
         }
+    }
+
+    /// Gives the solver members their recorded output literals (solvers.md 3), keyed by solver path.
+    ///
+    /// Each literal is evaluated exactly (decimal text is an exact rational) and stored as the
+    /// value of `Comp.solver.output`, so checks read it and the IR records it.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    #[must_use]
+    pub fn with_solver_outputs(
+        mut self,
+        outputs: BTreeMap<CanonPath, BTreeMap<String, String>>,
+    ) -> Self {
+        for (solver, outs) in outputs {
+            if !self.solver_keys.contains(&solver) {
+                warn!(%solver, "evaluator: recorded outputs for an unknown solver ignored");
+                continue;
+            }
+            let ctx = Ctx {
+                package: solver.package.clone(),
+                module: solver.modules.clone(),
+                component: Some(solver.item.clone()),
+                locals: Vec::new(),
+            };
+            for (name, literal) in outs {
+                let Some(expr) = parse_output_literal(&literal) else {
+                    warn!(%solver, output = %name, %literal, "evaluator: output literal does not parse");
+                    continue;
+                };
+                match self.eval_input(ctx.clone(), &expr) {
+                    Ok(q) => {
+                        let mut key = solver.clone();
+                        key.members.push(MemberSeg::Name(name.clone()));
+                        debug!(%key, %literal, "evaluator: solver output recorded");
+                        self.done.insert(
+                            key,
+                            Some(Evaluated {
+                                value: Val::Quantity(q),
+                                analysis: true,
+                                var: None,
+                                alias_of: None,
+                                span: Span::new(0, 0),
+                                role: None,
+                            }),
+                        );
+                    }
+                    Err(d) => {
+                        warn!(%solver, output = %name, message = %d.message, "evaluator: output literal does not evaluate");
+                    }
+                }
+            }
+        }
+        self
     }
 
     /// This evaluator under `selection`: reads through the swapped slot reach the alternate.
@@ -939,6 +997,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Member { key, chain } if self.fit_defs.contains_key(&key) => {
                 self.fit_member(&key, &chain, e.span)
             }
+            RefKind::Member { key, chain } if self.solver_keys.contains(&key) => {
+                self.solver_member(&key, &chain, e.span)
+            }
             RefKind::Member { key, chain } => {
                 let role = self.value_of(&key).and_then(|ev| ev.role).map(|r| r.role);
                 let v = self.member_value(&key, e.span)?;
@@ -949,6 +1010,27 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     return self.apply_chain(v, role, rest, e.span);
                 }
                 self.apply_chain(v, role, &chain, e.span)
+            }
+        }
+    }
+
+    /// Reads `SOLVER.output`: the recorded value; unsolved is left to the solver lints.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn solver_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
+        let [name] = chain else {
+            return Err(diag(
+                "EVAL",
+                span,
+                "a solver output is read as `solver.output`",
+            ));
+        };
+        let mut out = key.clone();
+        out.members.push(MemberSeg::Name(name.clone()));
+        match self.done.get(&out) {
+            Some(Some(ev)) => Ok(ev.value.clone()),
+            _ => {
+                trace!(%out, "evaluator: solver output has no recorded value");
+                Err(Fail::Silent)
             }
         }
     }
@@ -1664,6 +1746,37 @@ fn index_fits<'p>(
     }
 }
 
+/// Indexes the `solver` members of a component without parameters.
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn index_solvers(out: &mut BTreeSet<CanonPath>, package: &str, module: &[String], c: &Component) {
+    if !c.params.is_empty() {
+        return;
+    }
+    for m in &c.members {
+        if let MemberKind::Solver(s) = &m.kind {
+            let mut key = CanonPath::item(package, module, &c.name.name);
+            key.members.push(MemberSeg::Name(s.name.name.clone()));
+            trace!(%key, "evaluator: solver indexed");
+            out.insert(key);
+        }
+    }
+}
+
+/// Parses a stored output literal such as `0.1mm` into an expression.
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn parse_output_literal(literal: &str) -> Option<Expr> {
+    let parsed = cadetta_syntax::parser::parse(&format!("model Out {{ v = {literal} }}"));
+    if !parsed.diags.is_empty() {
+        return None;
+    }
+    parsed.file.components().find_map(|c| {
+        c.members.iter().find_map(|m| match &m.kind {
+            MemberKind::Param(p) => Some(p.value.clone()),
+            _ => None,
+        })
+    })
+}
+
 fn index_component<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
     package: &str,
@@ -2283,5 +2396,64 @@ mod tests {
             "{:?}",
             ev.diagnostics
         );
+    }
+
+    const SOLVER_SRC: &str = "model Frame {\n  ref = 0.1mm\n  wall = round_to(wall_sizing.min_wall, 0.5mm)\n  \
+        solver wall_sizing {\n    script \"a.sh\"\n    out min_wall: Length\n  }\n}\n";
+
+    fn run_with_outputs(src: &str, outs: &[(&str, &str)]) -> Evaluation {
+        let f = file(src);
+        let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &f,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty(), "{errs:?}");
+        let units = UnitTable::builtin();
+        let outputs = BTreeMap::from([(
+            at("Frame", "wall_sizing"),
+            outs.iter()
+                .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                .collect(),
+        )]);
+        Evaluator::new(&resolver, &units, &pkgs)
+            .with_solver_outputs(outputs)
+            .evaluate()
+    }
+
+    // frob:tests solver_output_is_recorded_exactly
+    #[test]
+    fn solver_output_is_recorded_exactly() {
+        let ev = run_with_outputs(SOLVER_SRC, &[("min_wall", "0.1mm")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let mut out = at("Frame", "wall_sizing");
+        out.members.push(MemberSeg::Name("min_wall".to_owned()));
+        let got = match &ev.get(&out).expect("output value").value {
+            Val::Quantity(q) => q.clone(),
+            other => panic!("not a quantity: {other:?}"),
+        };
+        assert_eq!(got, quant(&ev, "Frame", "ref"));
+    }
+
+    // frob:tests driving_solver_output_sets_the_value
+    #[test]
+    fn driving_solver_output_sets_the_value() {
+        let ev = run_with_outputs(SOLVER_SRC, &[("min_wall", "3.3mm")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let want = run(&file("model Frame { wall = 3.5mm }"));
+        assert_eq!(quant(&ev, "Frame", "wall"), quant(&want, "Frame", "wall"));
+    }
+
+    // frob:tests unrecorded_solver_output_has_no_value
+    #[test]
+    fn unrecorded_solver_output_has_no_value() {
+        let ev = run_with_outputs(SOLVER_SRC, &[]);
+        assert!(ev.get(&at("Frame", "wall")).is_none());
     }
 }

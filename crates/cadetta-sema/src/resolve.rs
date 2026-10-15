@@ -1471,6 +1471,8 @@ fn member_name(m: &Member) -> Option<&str> {
         MemberKind::Fit(f) => &f.name.name,
         MemberKind::Check(c) => &c.name.name,
         MemberKind::Require(r) => &r.name.name,
+        // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+        MemberKind::Solver(s) => &s.name.name,
         _ => return None,
     })
 }

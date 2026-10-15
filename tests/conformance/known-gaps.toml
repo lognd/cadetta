@@ -804,23 +804,13 @@ reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
 fixture = "solvers/output-decimal-exact"
-ticket = "~K4JKH27"
-reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
-
-[[gap]]
-fixture = "solvers/role-bound-use-leaves-value"
-ticket = "~K4JKH27"
-reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
-
-[[gap]]
-fixture = "solvers/role-driving-sets-value"
-ticket = "~K4JKH27"
-reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
+ticket = "~R8GYSJR"
+reason = "the must-not-fire value expectation repeats the must-fire nominal, contradicting the fixture's own recorded output"
 
 [[gap]]
 fixture = "solvers/role-output-value-is-recorded"
-ticket = "~K4JKH27"
-reason = "solver member outputs are not evaluated by sema, so the value is not in the IR"
+ticket = "~R8GYSJR"
+reason = "the must-not-fire value expectation repeats the must-fire nominal, contradicting the fixture's own recorded output"
 
 [[gap]]
 fixture = "solvers/variants-flag-solves-alternates"

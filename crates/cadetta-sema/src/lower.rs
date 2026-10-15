@@ -253,6 +253,32 @@ struct Cx<'a> {
 }
 
 impl Cx<'_> {
+    /// A dependency on a solver node, widened to the solver's recorded output members; any other node as is.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn solver_output_nodes(&self, d: &CanonPath) -> Vec<CanonPath> {
+        let outputs: Vec<CanonPath> = self
+            .input
+            .evaluation
+            .values
+            .keys()
+            .filter(|k| {
+                k.parts.is_empty()
+                    && d.parts.is_empty()
+                    && k.item_only() == d.item_only()
+                    && k.members.len() == 2
+                    && d.members.len() == 1
+                    && k.members[0] == d.members[0]
+            })
+            .cloned()
+            .collect();
+        if outputs.is_empty() {
+            vec![d.clone()]
+        } else {
+            trace!(solver = %d, outputs = outputs.len(), "lower: solver dependency widened to its outputs");
+            outputs
+        }
+    }
+
     /// A dependency path with part-slot instances mapped to the part type's own member.
     // frob:ticket 01M4Z7SF16P01AQQ1XXE2NDJ5J
     fn dep_node(&self, p: CanonPath) -> Option<CanonPath> {
@@ -387,7 +413,8 @@ impl Cx<'_> {
             .input
             .deps
             .deps_of(&canon)
-            .filter_map(|d| self.dep_node(d.clone()))
+            .flat_map(|d| self.solver_output_nodes(d))
+            .filter_map(|d| self.dep_node(d))
             .filter_map(|d| ir_path(&d))
             .collect();
         out.provenance = if deps.is_empty() {
@@ -447,6 +474,41 @@ impl Cx<'_> {
             out.push(m);
         }
         trace!(component = %comp, members = out.len(), "lower: instance members");
+        out
+    }
+
+    /// The recorded outputs of the solver members of `c` as derived analysis members.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn lower_solver_outputs(&self, comp: &CanonPath, c: &ast::Component) -> Vec<Member> {
+        let ev = self.input.evaluation;
+        let solvers: BTreeSet<&str> = c
+            .members
+            .iter()
+            .filter_map(|m| match &m.kind {
+                ast::MemberKind::Solver(s) => Some(s.name.name.as_str()),
+                _ => None,
+            })
+            .collect();
+        let mut out = Vec::new();
+        for (k, e) in &ev.values {
+            let is_output = k.item_only() == *comp
+                && k.parts.is_empty()
+                && matches!(k.members.as_slice(),
+                    [MemberSeg::Name(s), MemberSeg::Name(_)] if solvers.contains(s.as_str()));
+            if !is_output {
+                continue;
+            }
+            let Some(path) = ir_path(k) else { continue };
+            let Some(value) = evaluated_value(ev, &self.owners, k, e, "") else {
+                continue;
+            };
+            let mut m = Member::new(path, MemberKind::Param);
+            m.analysis = true;
+            m.value = Some(value);
+            m.provenance = Provenance::Derived;
+            out.push(m);
+        }
+        trace!(component = %comp, members = out.len(), "lower: solver outputs");
         out
     }
 
@@ -671,6 +733,8 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
                 comp.members
                     .extend(cx.lower_array_members(&canon, &pkg.name, &module.path, c));
+                // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+                comp.members.extend(cx.lower_solver_outputs(&canon, c));
                 cx.lower_geometry(&canon, src, c, &mut comp);
                 comp.fits = input
                     .fits

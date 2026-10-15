@@ -35,6 +35,7 @@ use cadetta_sema::resolve::{
     CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
 use cadetta_sema::visibility::VisibilityChecker;
+use cadetta_solve::results::{ResultFile, out_path};
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
 use cadetta_syntax::parser::parse;
@@ -1146,6 +1147,47 @@ fn table_misses(
     out
 }
 
+/// The committed `.out.json` outputs of every solver member, by solver path (solvers.md 3, 4).
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn recorded_solver_outputs(
+    parsed: &[ParsedPackage],
+) -> BTreeMap<CanonPath, BTreeMap<String, String>> {
+    let mut out = BTreeMap::new();
+    for pkg in parsed {
+        for m in &pkg.modules {
+            for c in m.file.components() {
+                for member in &c.members {
+                    let MemberKind::Solver(sv) = &member.kind else {
+                        continue;
+                    };
+                    let mut path = CanonPath::item(&pkg.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(sv.name.name.clone()));
+                    let file = out_path(&pkg.dir.join(&sv.script));
+                    let results = match ResultFile::load(&file) {
+                        Ok(r) => r,
+                        Err(error) => {
+                            tracing::warn!(solver = %path, %error, "pipeline: solver result file unreadable");
+                            continue;
+                        }
+                    };
+                    let key = path.to_string();
+                    let Some(r) = results
+                        .results
+                        .iter()
+                        .find(|r| r.solver == key && r.variant.is_none())
+                    else {
+                        tracing::debug!(solver = %path, "pipeline: no recorded result for solver");
+                        continue;
+                    };
+                    tracing::debug!(solver = %path, outputs = r.outputs.len(), "pipeline: solver outputs loaded");
+                    out.insert(path, r.outputs.clone());
+                }
+            }
+        }
+    }
+    out
+}
+
 fn evaluate_stages(
     parsed: &[ParsedPackage],
     scope: &BTreeSet<String>,
@@ -1180,7 +1222,9 @@ fn evaluate_stages(
             .flat_map(|p| p.modules.iter().map(|m| &m.file)),
     );
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
-    let mut evaluator = Evaluator::new(&resolver, &units, &sources);
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    let mut evaluator = Evaluator::new(&resolver, &units, &sources)
+        .with_solver_outputs(recorded_solver_outputs(parsed));
     let procs = Processes::compile(&mut evaluator, &sources);
     evaluator.set_processes(procs.clone());
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);

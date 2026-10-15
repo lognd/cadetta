@@ -663,6 +663,17 @@ impl<'a> Builder<'_, 'a> {
                 self.add_part(p, own, stack);
                 return;
             }
+            // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+            MemberKind::Solver(sv) => {
+                for member in &sv.members {
+                    if let cadetta_syntax::ast::SolverMemberKind::In(binds) = &member.kind {
+                        for b in binds {
+                            self.reads(&b.value, &[], own, comp, &mut edges);
+                        }
+                    }
+                }
+                &sv.name.name
+            }
             _ => return,
         };
         self.graph.insert(inst.key(name), m.span, edges);
