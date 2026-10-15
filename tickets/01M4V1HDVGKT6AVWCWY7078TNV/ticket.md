@@ -2,11 +2,12 @@
 id = "01M4V1HDVGKT6AVWCWY7078TNV"
 title = "Quantities: ISO 286 classes not evaluated (F002, roles from class letter, mmc/lmc, #[role])"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:12:19Z"
+updated = "2026-10-15T02:12:58Z"
 idempotency_key = "Z48-iso286"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDVGKT6AVWCWY7078TNV.added.md"]
 
