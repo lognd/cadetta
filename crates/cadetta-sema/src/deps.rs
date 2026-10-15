@@ -32,6 +32,7 @@ use crate::resolve::{
     CanonPath, Ctx, Index, ItemClass, Level, MemberSeg, ModuleKey, PackageSrc, PartSeg,
     ResolveError, Resolved, Resolver,
 };
+use crate::visibility::VisibilityChecker;
 
 /// Members every part contributes to a `name(self)` roll-up (language.md 3.5).
 const ROLLUP_NAMES: &[&str] = &["unit_cost", "lead_time", "moq", "supplier", "mass"];
@@ -42,13 +43,13 @@ const ROLLUP_FNS: &[&str] = &["sum", "max", "min"];
 /// How serious a dependency diagnostic is.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Severity {
-    /// A fixed-severity error (D003).
+    /// A fixed-severity error (D003, E016).
     Error,
     /// A warning (N004, N006).
     Warning,
 }
 
-/// A D003, N004 or N006 finding.
+/// A D003, E016, N004 or N006 finding.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DepDiagnostic {
     /// The lint code.
@@ -260,6 +261,14 @@ fn chain(e: &Expr) -> Option<(Path, Vec<MemberSeg>)> {
     }
 }
 
+/// True when the reference names its item through `::` (`package::a::Thing.size`).
+///
+/// A bare imported name is judged once, at its `use` (E016 on the import), so
+/// only a path written out in full is checked again at the use site.
+fn is_qualified(e: &Expr) -> bool {
+    chain(e).is_some_and(|(p, _)| p.seps.contains(&PathSep::ColonColon))
+}
+
 fn is_pure_chain(e: &Expr) -> bool {
     chain(e).is_some()
 }
@@ -377,6 +386,7 @@ impl DepGraph {
             resolver,
             renames,
             comps,
+            vis: VisibilityChecker::new(resolver, packages),
             graph: DepGraph::default(),
         };
         let ids = b.comps.keys().cloned().collect::<Vec<_>>();
@@ -526,6 +536,7 @@ struct Builder<'r, 'a> {
     resolver: &'r Resolver<'r>,
     renames: &'r Renames,
     comps: BTreeMap<CanonPath, &'a Component>,
+    vis: VisibilityChecker<'r>,
     graph: DepGraph,
 }
 
@@ -834,6 +845,22 @@ impl<'a> Builder<'_, 'a> {
                 return;
             }
         };
+        // frob:ticket 01M4YRPNTCYCGNZ5VP5PDPCRB2
+        // E016 on a fully qualified expression path, `package::` / `super::` included.
+        let denied = is_qualified(e)
+            .then(|| self.vis.check_use(&ctx, &resolved, e.span).err())
+            .flatten();
+        if let Some(denied) = denied {
+            debug!(code = denied.code, span = ?e.span, "E016: reference to an invisible item");
+            self.graph.diagnostics.push(DepDiagnostic {
+                module: Some(ModuleKey::of_ctx(&ctx)),
+                code: "E016",
+                severity: Severity::Error,
+                message: denied.message,
+                span: e.span,
+                related: Vec::new(),
+            });
+        }
         if let Resolved::Member {
             path,
             beside_instance: Some(part),
@@ -1057,6 +1084,37 @@ mod tests {
         assert!(codes(&analyse(&[(&[], &f)])).is_empty());
     }
 
+    /// Analyses `lib` (the package root) beside a module `a` as package `p`.
+    fn analyse_lib_and_a(lib: &File, a: &File) -> DepGraph {
+        analyse(&[(&[], lib), (&["a"], a)])
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn package_path_to_private_item_is_e016() {
+        let lib = file("model Part {\n  w = package::a::Thing.size\n}\n");
+        let a = file("model Thing {\n  size = 3mm\n}\n");
+        let g = analyse_lib_and_a(&lib, &a);
+        assert_eq!(codes(&g), vec!["E016"]);
+        assert_eq!(g.diagnostics()[0].severity, Severity::Error);
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn package_path_to_pub_item_is_clean() {
+        let lib = file("model Part {\n  w = package::a::Thing.size\n}\n");
+        let a = file("pub model Thing {\n  size = 3mm\n}\n");
+        assert!(codes(&analyse_lib_and_a(&lib, &a)).is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn package_path_through_was_is_n004() {
+        let lib = file("model Part {\n  t = package::old::Bracket.thickness\n}\n");
+        let a = file("pub model Bracket {\n  thickness = 3mm was p::old::Bracket.thickness\n}\n");
+        assert_eq!(codes(&analyse_lib_and_a(&lib, &a)), vec!["N004"]);
+    }
+
     // frob:tests was_reference_resolves_with_n004
     #[test]
     fn was_reference_resolves_with_n004() {
@@ -1077,7 +1135,7 @@ mod tests {
         assert!(g.deps_of(&t).any(|k| *k == new), "{:?}", g.nodes());
 
         // A moved module path is read textually.
-        let moved = file("model Bracket {\n  t = 2mm was q::old::Bracket.thickness\n}\n");
+        let moved = file("pub model Bracket {\n  t = 2mm was q::old::Bracket.thickness\n}\n");
         let user = file("model U {\n  v = q::old::Bracket.thickness\n}\n");
         let pkgs = vec![PackageSrc {
             name: "q".to_owned(),

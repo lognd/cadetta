@@ -116,7 +116,10 @@ The module tree is the file tree under `src`:
   them and in its descendants. `pub` makes an item visible everywhere
   the module is reachable. `pub(package)` limits that to the declaring
   package.
-- An item may only be used where it is visible (E016). A `pub` item
+- An item may only be used where it is visible (E016). The check runs on
+  every `use` target and on every expression path written out with `::`
+  (`package::a::Thing.size`, `super::Thing.size`); a bare imported name
+  is judged once, at its `use`. A `pub` item
   whose signature names a private item is E017. This covers an
   interface member's type, a component parameter's type, and a
   function's argument and result types.
