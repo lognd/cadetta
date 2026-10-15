@@ -441,12 +441,15 @@ Implemented today: `ir-validate` checks the JSON Schema plus the ir.md 6
 invariants that read only the document (sorting, path and variant-key
 forms, bound shapes, exactness, observed-flavour shape, provenance, tol
 terms); `lint FILE` decodes the document (`cadetta_ir::decode`) and runs
-D001-D003, F004, M001-M003, N, Q006 and S001/S002/S008. The decoder carries
-components (members, parts, fits), solvers and citations; tables, checks,
-bindings, interfaces, waivers and a component's datums, points and placements
-are not decoded, so D002 sees no table cells and S002 (no package directory)
-treats every cited file as present. Locations are `1:1` of the span's file:
-IR spans are byte offsets with no line index.
+D001-D003, F004, M001-M003, N, Q006 and S001/S002/S008. The decoder reads
+every top-level entity: dependencies, components (members, parts, fits,
+datums, points, placements), checks, solvers, bindings, citations,
+interfaces, tables, waivers and the observed frames and instances. D002 sees
+the table cells of the document (named `Table[key].column`); S002 (no
+package directory) treats every cited file as present. A span's file is
+resolved against the directory of FILE and its byte offsets become the real
+line and column; when that file is unreadable the location falls back to
+`1:1`.
 
 ### 3.8 `lsp`
 
