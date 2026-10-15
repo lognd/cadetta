@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T11:06:03Z"
+digest = "3da4faec1edd407c5b1e940db03d09114d5d6cc43eaed7adb744c3d34ae1a77f"
+provider = "file"
+ref = "tests/conformance/geometry/g005-float-selects-smallest-theta.expect.json"
+size = 533
+status = "measured"
+at = "2026-10-15T11:06:03Z"
+actor = "lognd"
+rev = 1

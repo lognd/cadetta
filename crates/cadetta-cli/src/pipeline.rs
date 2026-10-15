@@ -1548,15 +1548,10 @@ fn evaluate_stages(
             &all_interfaces,
             locate,
         ));
-        out.extend(interface::check_roots(
-            &ir,
-            |c| lint_facts::is_private(c, &own_views),
-            locate,
-        ));
-        out.extend(u002::check(
-            &lint_facts::item_facts(&p.name, &own_views, &ir),
-            locate,
-        ));
+        // ~G2DFAFQ: U002 and I004 read one fact table built from name resolution.
+        let facts = lint_facts::item_facts(&p.name, &own_views, &ir, &resolver);
+        out.extend(u002::check(&facts, locate));
+        out.extend(u002::check_i004(&facts, locate));
         analysis.suppressions.allows.extend(lint_facts::allows(&ir));
         analysis
             .suppressions

@@ -1,0 +1,24 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 5.2",
+  "rule": "G005",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "G005",
+        "severity": "warning"
+      },
+      {
+        "code": "C002",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "two non-locating joints hold one edge; the edge takes the 200mm pattern's smaller theta, never the 30mm pattern's, so 3mm holds only on the wide bound"
+}

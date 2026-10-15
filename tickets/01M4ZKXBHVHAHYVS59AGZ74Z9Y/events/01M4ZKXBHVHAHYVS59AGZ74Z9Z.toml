@@ -1,0 +1,13 @@
+kind = "create"
+title = "Reconcile G008 half-turn (float >= spread) between geometry.md 5.2 and code"
+type = "chore"
+category = "todo"
+priority = "low"
+points = 1
+idempotency_key = "g008-halfturn-spec"
+scope = ["docs/spec/geometry.md"]
+acceptance = ["geometry.md 5.2 lists the float >= spread case for G008"]
+body = "float::unconstrained_rotation reports G008 when theta is 180deg (float at or above the point spread); geometry.md 5.2 names only a one-point pattern or coincident points. Update the spec text (code and fixture g005-float-half-turn already agree)."
+at = "2026-10-15T11:07:14Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,20 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 5.2",
+  "rule": "G005",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "a joint's own aligned check reads its edge without the float: a 0.5mm offset is violated (C001), not undecided; 0.2mm sits inside the 0.25mm allowance and nothing is reported"
+}

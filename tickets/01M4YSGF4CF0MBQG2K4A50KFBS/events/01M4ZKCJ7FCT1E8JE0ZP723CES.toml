@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["sum/max/min(self, m) and the ? forms evaluate over every part instance, counting arrays", "a roll-up over a misspelled member, a missing argument, no contributing part or mixed dimensions is EVAL, not E002", "a parameterized part contributes the argument its part site passes (ScrewJoint screw_cost)"]
+moved = []
+at = "2026-10-15T10:58:04Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta ack waiver:GLOB records the waiver at its targets' closure digest and removes it from the open obligations"]
+moved = []
+at = "2026-10-15T11:18:59Z"
+actor = "lognd"
+rev = 1

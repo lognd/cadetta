@@ -932,6 +932,20 @@ mod tests {
         assert!(rows.iter().all(|r| r["id"] != CHECK), "{v}");
     }
 
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with_deps
+    #[test]
+    fn dependency_own_ack_digest_matches_the_dependent_closure_digest() {
+        let w = GitWorld::new("");
+        let lock = Lock::load(&w.0.join("dep/cadetta.lock")).unwrap();
+        let own = lock
+            .attestation(&id("acme.axle::Axle.bore_ok"), "review")
+            .expect("dependency ack recorded")
+            .digest
+            .as_str()
+            .to_owned();
+        assert_eq!(own, w.dependent_digest());
+    }
+
     // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::attach_git_dependencies
     #[test]
     fn git_dependency_nodes_join_the_candidate_universe() {

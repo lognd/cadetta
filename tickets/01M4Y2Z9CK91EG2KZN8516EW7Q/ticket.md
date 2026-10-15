@@ -2,13 +2,14 @@
 id = "01M4Y2Z9CK91EG2KZN8516EW7Q"
 title = "Conformance fixtures for ScrewJoint placement float"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-15T10:38:45Z"
+updated = "2026-10-15T11:06:17Z"
 scope = ["tests/conformance/geometry/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
@@ -21,7 +22,7 @@ target = "01M4Y2Z99SXRHPTNQS11392B89"
 
 [[acceptance]]
 text = "Given fixtures under tests/conformance/geometry/** for the placement float, when run, then they cover float on x and y, theta, 180deg when float >= s, selection among joints, locating removal, either parent/child order, and the own-check read without the float (geometry.md 5.2; takes over ~HWJP0GQ acceptance 2 to 5 at fixture level)"
-bound = false
+bound = true
 +++
 
 Found while working ~HWJP0GQ. Fixtures need the sema lowering (~4XTSTXR) and G008 emission (~1392B89); remove the matching known-gaps entries when they pass.
