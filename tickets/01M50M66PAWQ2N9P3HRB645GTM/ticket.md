@@ -2,7 +2,8 @@
 id = "01M50M66PAWQ2N9P3HRB645GTM"
 title = "S006 emission and recorded variant outputs in check and evaluators"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
