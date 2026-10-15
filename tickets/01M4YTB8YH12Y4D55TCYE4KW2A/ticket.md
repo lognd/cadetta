@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:40:27Z"
-updated = "2026-10-15T03:40:27Z"
+updated = "2026-10-15T03:46:22Z"
 idempotency_key = "known-gaps-cleanup"
 scope = ["tests/conformance/**", "changelog.d/**"]
 

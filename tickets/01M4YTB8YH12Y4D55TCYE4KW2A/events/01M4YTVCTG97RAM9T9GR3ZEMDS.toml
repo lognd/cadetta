@@ -1,0 +1,96 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:46:22Z"
+digest = "0ff9f98da0147c7854e701b2d7c403a810fa0ae7ff05cdeb2a1ab00bf91861fb"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 34.61s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 58906f68-f288-49fb-a012-5ac387099e68 with nextest profile: default
+    Starting 1 test across 66 binaries (1397 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        FAIL [ 138.141s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    test conformance_corpus_matches_the_spec has been running for over 60 seconds
+
+    thread 'conformance_corpus_matches_the_spec' (766275) panicked at crates/cadetta-cli/tests/conformance.rs:44:5:
+    46 conformance failure(s):
+    emitters/csv/columns-row [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/default-out-path [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/header-comment-line [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/name-bound-global-locator [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/note-authored-literal [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/note-citation [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/note-fit-class [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/note-omitted-when-empty [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/order-dependency-first [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/order-tie-canonical-path [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/order-within-path-bindings-order [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/quoting-rfc4180-comma-field [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/r015-dimension-locator [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/r015-filtered-out [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/r015-property-locator [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/r015-ref-mode [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/serialisation-lf-final-newline [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/serialisation-utf8-no-bom [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/value-count-ratio-unit-empty [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/value-native-unit [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/value-q004-beyond-precision [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/value-text-unit-empty [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/csv/value-trailing-zeros-trimmed [emitters/csv]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/default-out-path [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/header-fields [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/name-bound-global-locator [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/note-authored-literal [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/note-fit-class [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/note-omitted-when-empty [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/order-dependency-first [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/order-tie-canonical-path [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/order-within-path-bindings-order [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/param-key-order [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/r015-dimension-locator [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/r015-filtered-out [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/r015-property-locator [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/r015-ref-mode [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/serialisation-indent [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/serialisation-lf-final-newline [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/shape-schema-and-top-level-keys [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-count-ratio-unit-omitted [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-decimal-string [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-native-unit [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-q004-beyond-precision [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-text-json-string [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    emitters/json/value-trailing-zeros-trimmed [emitters/json]: stale known-gaps entry (ticket ~TQMFETK); the fixture passes, remove the entry
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 8 filtered out; finished in 138.13s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 138.147s] 1 test run: 0 passed, 1 failed, 1397 skipped
+        FAIL [ 138.141s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "conformance_corpus_matches_the_spec"
+size = 7827
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-15T03:46:22Z"
+actor = "lognd"
+rev = 1
