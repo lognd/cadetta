@@ -72,7 +72,8 @@
         {
           "part": "acme.demo::Rover/feet[i]",
           "datum": "acme.demo::Rover.top",
-          "on": "acme.demo::Rover.top",
+          "at": "acme.demo::Rover.top",
+          "path": "acme.demo::Rover/feet[2].place",
           "ops": [
             {
               "offset": {

@@ -59,5 +59,18 @@
   "citations": [],
   "checks": [],
   "solvers": [],
-  "bindings": []
+  "bindings": [
+    {
+      "path": "acme.demo::Observed.D1_Sketch1",
+      "adapter": "freecad",
+      "locators": [
+        {
+          "locator": "D1@Sketch1",
+          "kind": "global",
+          "mode": "value",
+          "native_unit": "mm"
+        }
+      ]
+    }
+  ]
 }

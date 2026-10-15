@@ -3,24 +3,6 @@
 
 use std::path::{Path, PathBuf};
 
-/// Fixtures whose placement JSON disagrees with the committed schema (`on` for `at`/`path`) or that omit bindings;
-/// tracked as a fixture bug, not a validator defect.
-const SCHEMA_GAPS: &[&str] = &[
-    "datum-variants-chain.must-not-fire",
-    "op-flip-axis.must-not-fire",
-    "op-one-key.must-not-fire",
-    "op-rotate-axis.must-not-fire",
-    "path-star-bindings-only.must-not-fire",
-    // observed fixtures that omit the bindings ir.md 6 requires (one per observed member)
-    "observed-collision-suffix.must-not-fire",
-    "observed-component.must-not-fire",
-    "observed-deps-empty.must-not-fire",
-    "observed-no-citations.must-not-fire",
-    "observed-no-parts.must-not-fire",
-    "observed-path-safe.must-not-fire",
-    "observed-provenance.must-not-fire",
-];
-
 fn corpus() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance/ir")
 }
@@ -56,9 +38,6 @@ fn ir_validate_corpus_matches_expected_exit_codes() {
     for n in &names {
         for (side, want) in [("must-fire", 2), ("must-not-fire", 0)] {
             let file = corpus().join(format!("{n}.{side}.json"));
-            if SCHEMA_GAPS.contains(&format!("{n}.{side}").as_str()) {
-                continue;
-            }
             let (code, out) = run(&["ir-validate", file.to_str().unwrap()]);
             if code != want || (want == 0 && !out.is_empty()) || (want == 2 && out.is_empty()) {
                 bad.push(format!("{n}.{side}: exit {code}, output {out:?}"));
