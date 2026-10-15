@@ -1,0 +1,10 @@
+kind = "create"
+title = "IR decoder: tables, checks, bindings, interfaces, waivers, datums/points/placements; real line/col for lint FILE"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-ir/src/decode.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs"]
+body = "found while working ~71ZWJXV: decoder skips these entities, so D002 sees no table cells and lint FILE reports line 1."
+at = "2026-10-15T02:26:59Z"
+actor = "lognd"
+rev = 1
