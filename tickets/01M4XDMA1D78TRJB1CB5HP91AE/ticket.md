@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
 
 [[acceptance]]
 text = "An external adapter declaring emit but not drive has emit run by cadetta sync and its files reported"
-bound = false
+bound = true
 +++
 
 found while working ~D4T6ATZ: only built-in sw-equations emitted
