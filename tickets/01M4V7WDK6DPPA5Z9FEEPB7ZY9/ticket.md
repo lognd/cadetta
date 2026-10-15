@@ -6,11 +6,15 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-15T04:12:07Z"
+updated = "2026-10-15T04:12:12Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
 text = "assume-unit wins over the locator native_unit, then the adapter native unit, when reading a unitless value"
+bound = false
+
+[[acceptance]]
+text = "Whole-number values render without a fraction in json and csv"
 bound = false
 +++
 
