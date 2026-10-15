@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-15T02:47:53Z"
+updated = "2026-10-15T02:47:54Z"
 labels = ["creates:changelog.d/01M4V13T1DW08P87XP4J4802RH.*"]
 scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs", "tests/conformance/known-gaps.toml", "tests/conformance/language/**", "docs/spec/lints.md", "changelog.d/01M4V13T1DW08P87XP4J4802RH.*"]
 
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "C002 warning is raised when a fit clearance only partly meets its required range"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "L001 stays an error once the EOL date has passed, even with a warning default"
