@@ -1,0 +1,10 @@
+kind = "create"
+title = "conformance: emitters/json|csv name-mangled-path and note-order fixtures hit a syntax error"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/**"]
+body = "Found while working ~TQMFETK. emit json/csv on emitters/{json,csv}/name-mangled-path and note-order exits 2 with 'a syntax error stopped analysis' (expected 0). Inspect the fixture source vs. the grammar; either fixture or parser needs fixing."
+at = "2026-10-15T03:48:55Z"
+actor = "lognd"
+rev = 1
