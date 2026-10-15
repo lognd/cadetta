@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A waiver glob naming a path moved by a was clause still suppresses", "W005 reports approaching #[lifecycle(eol)] dates"]
+moved = []
+at = "2026-10-15T09:40:01Z"
+actor = "lognd"
+rev = 1
