@@ -2,12 +2,12 @@
 id = "01M4YRD0AKPB6JF7X2D1PKQ63N"
 title = "Conformance: implement the compare executor (digest rules, schema classify)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:06:27Z"
-updated = "2026-10-15T03:06:27Z"
+updated = "2026-10-15T18:08:19Z"
 idempotency_key = "compare-executor"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/**", "changelog.d/**", "docs/**"]
 
