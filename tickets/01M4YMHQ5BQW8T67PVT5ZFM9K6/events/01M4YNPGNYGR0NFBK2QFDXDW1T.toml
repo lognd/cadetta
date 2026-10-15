@@ -1,0 +1,48 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:18:36Z"
+digest = "dbf5626c0862c91195cf74cfcaee25f0ad64fd9380eb0e09f0d2bef3f4291e0d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.93s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5d80dea7-3552-4bd4-aa37-8e341980b6db with nextest profile: default
+    Starting 1 test across 55 binaries (1296 tests skipped)
+        PASS [   0.056s] cadetta::ir_entries lint_fires_d003_with_exit_1_and_stays_quiet_with_exit_0
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.058s] 1 test run: 1 passed, 1296 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "lint_fires_d003"
+size = 1628
+status = "measured"
+test_count = 1
+tests_digest = "a9cc0a4c3af7365f00a68961dd60c68eee47e8762edd4fde11a43682b6feeb4b"
+at = "2026-10-15T02:18:36Z"
+actor = "lognd"
+rev = 1
