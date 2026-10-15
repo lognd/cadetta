@@ -6,8 +6,16 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T14:38:57Z"
-updated = "2026-10-14T14:38:57Z"
+updated = "2026-10-15T05:06:01Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+
+[[acceptance]]
+text = "Same-dimension units convert exactly to the native unit before comparing"
+bound = false
+
+[[acceptance]]
+text = "Inexact or incompatible text is left unchanged"
+bound = false
 +++
 
 found while working ~D4T6ATZ: units compared textually
