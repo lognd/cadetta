@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Sema resolves solver member outputs (solver.out) so check and ir evaluate them without E002"]
+moved = []
+at = "2026-10-15T18:39:54Z"
+actor = "lognd"
+rev = 1
