@@ -8,8 +8,9 @@ points = 5
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-14T20:53:30Z"
-scope = ["crates/cadetta-sema/src/**", "crates/cadetta-geometry/src/float.rs", "docs/spec/geometry.md", "changelog.d/**"]
+updated = "2026-10-15T09:45:21Z"
+labels = ["creates:crates/cadetta-sema/src/boltfloat.rs"]
+scope = ["crates/cadetta-geometry/src/float.rs", "docs/spec/geometry.md", "changelog.d/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-geometry/src/placement.rs", "crates/cadetta-geometry/src/reexpress.rs", "crates/cadetta-sema/tests/**", "crates/cadetta-sema/src/boltfloat.rs"]
 
 [[links]]
 kind = "blocked-by"
