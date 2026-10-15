@@ -318,7 +318,8 @@ requires reach them through checks); I002 is raised per check and
 alternate, and only when the primary does not itself fail that check
 (then it is C001). I003 requires the alternate to fail no check. I004
 skips private components (U002) and components some part names as its
-type, primary or alternate.
+type, primary or alternate. U002 skips assemblies: an assembly is an entry point,
+not dead code, even when private and unnamed.
 
 Engine entry points (0.1.0): `cadetta check` runs I001 (`check_members`,
 interfaces lowered from the AST with `extends` flattened; bounds are not

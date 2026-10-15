@@ -15,8 +15,8 @@ use cadetta_ir::variant_name::ComponentPath;
 use cadetta_lint::engine::Allow;
 use cadetta_lint::rules::u002::{ItemFacts, ItemKind as FactKind, Visibility};
 use cadetta_syntax::ast::{
-    Attr, AttrArg, BoundKind, Expr, ExprKind, File, InterfaceMemberKind, Item, ItemKind,
-    MemberKind, UnOp, Vis,
+    Attr, AttrArg, BoundKind, ComponentClass, Expr, ExprKind, File, InterfaceMemberKind, Item,
+    ItemKind, MemberKind, UnOp, Vis,
 };
 use cadetta_units::{Magnitude, Rational, UnitTable};
 
@@ -223,6 +223,10 @@ pub fn item_facts(package: &str, modules: &[ModuleView<'_>], ir: &Project) -> Ve
                 visibility: visibility(item.vis),
                 in_checked_package: true,
                 used: total > 1,
+                entry_point: matches!(
+                    &item.kind,
+                    ItemKind::Component(c) if c.class == ComponentClass::Assembly
+                ),
                 parameterized: false,
                 is_root: false,
                 instances,

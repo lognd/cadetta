@@ -53,11 +53,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/u002-unused-private"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
@@ -171,16 +166,6 @@ reason = "registry dependency and reserved std name fail as config errors (exit 
 fixture = "packages/pub-use-private-item-not-reexported"
 ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
-
-[[gap]]
-fixture = "packages/u002-not-i004-for-private-component"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "packages/u002-used-in-descendant"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
 fixture = "adapters/adapter-id-keys-bindings"
