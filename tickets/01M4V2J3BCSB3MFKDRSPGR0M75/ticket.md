@@ -2,11 +2,12 @@
 id = "01M4V2J3BCSB3MFKDRSPGR0M75"
 title = "E016 not raised for priv member read through an instance (stdlib joint)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T04:08:00Z"
+updated = "2026-10-15T04:08:40Z"
 scope = ["tests/conformance/stdlib/**", "crates/cadetta-sema/src/deps.rs", "crates/cadetta-sema/src/visibility.rs", "docs/spec/packages.md", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
