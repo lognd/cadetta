@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
 text = "count together with at/onto is E006 (ScrewJoint forbids count when at is given)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "a part array of a component taking a Pattern argument is E006 (one joint per pattern)"
