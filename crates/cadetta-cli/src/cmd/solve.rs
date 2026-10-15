@@ -9,7 +9,7 @@ use std::path::Path;
 use cadetta_sema::eval::{Evaluator, Quant};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::resolve::{
-    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleSrc, PackageSrc, Resolver,
+    CanonPath, Ctx, MemberSeg, ModuleSrc, PackageSrc, Resolver,
 };
 use cadetta_solve::decl::{SolverDecl, lower_solver};
 use cadetta_solve::protocol::{InputValue, Request};
@@ -89,7 +89,6 @@ struct Parsed<'m> {
     module: &'m Module,
     path: Vec<String>,
     file: File,
-    enums: Vec<SemaEnum>,
 }
 
 /// One solver found in source, with the context its inputs evaluate in.
@@ -106,6 +105,32 @@ fn package_name(pkg: &PackageDir) -> String {
         .as_ref()
         .and_then(|p| p.name.clone())
         .unwrap_or_else(|| "unnamed".to_owned())
+}
+
+/// Build the resolver's package sources; enums are indexed by the resolver from the AST itself.
+fn package_sources<'a>(
+    project: &'a Project,
+    names: &[String],
+    all: &'a [Vec<Parsed<'_>>],
+) -> Vec<PackageSrc<'a>> {
+    project
+        .packages
+        .iter()
+        .zip(names)
+        .zip(all)
+        .map(|((pkg, name), parsed)| PackageSrc {
+            name: name.clone(),
+            deps: pkg.config.dependencies.keys().cloned().collect(),
+            modules: parsed
+                .iter()
+                .map(|m| ModuleSrc {
+                    path: m.path.clone(),
+                    file: &m.file,
+                    enums: &[],
+                })
+                .collect(),
+        })
+        .collect()
 }
 
 fn parse_package<'m>(pkg: &'m PackageDir, err: &mut dyn Write) -> Option<Vec<Parsed<'m>>> {
@@ -131,22 +156,10 @@ fn parse_package<'m>(pkg: &'m PackageDir, err: &mut dyn Write) -> Option<Vec<Par
             ok = false;
             continue;
         }
-        let enums = result
-            .file
-            .items()
-            .filter_map(|i| match &i.kind {
-                ItemKind::Enum(e) => Some(SemaEnum {
-                    name: e.name.clone(),
-                    variants: e.variants.iter().map(|v| v.name.clone()).collect(),
-                }),
-                _ => None,
-            })
-            .collect();
         parsed.push(Parsed {
             module,
             path,
             file: result.file,
-            enums,
         });
     }
     ok.then_some(parsed)
@@ -323,24 +336,7 @@ pub fn solve_project(
         }
     }
     let names: Vec<String> = project.packages.iter().map(package_name).collect();
-    let sources: Vec<PackageSrc> = project
-        .packages
-        .iter()
-        .zip(&names)
-        .zip(&all)
-        .map(|((pkg, name), parsed)| PackageSrc {
-            name: name.clone(),
-            deps: pkg.config.dependencies.keys().cloned().collect(),
-            modules: parsed
-                .iter()
-                .map(|m| ModuleSrc {
-                    path: m.path.clone(),
-                    file: &m.file,
-                    enums: &m.enums,
-                })
-                .collect(),
-        })
-        .collect();
+    let sources = package_sources(project, &names, &all);
     let table = UnitTable::builtin();
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
     for e in &resolve_errors {
@@ -658,5 +654,24 @@ mod tests {
     fn variants_flag_is_accepted() {
         assert!(parse_args(&["--variants".to_owned()]).unwrap().variants);
         assert_eq!(parse_args(&["a::*".to_owned()]).unwrap().globs, ["a::*"]);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::package_sources
+    #[test]
+    fn enums_are_not_double_indexed_by_the_resolver() {
+        let (dir, _marker) = fixture("enum", "2kg");
+        let lib = dir.join("src/lib.cdt");
+        let src = std::fs::read_to_string(&lib).unwrap();
+        std::fs::write(&lib, format!("enum Grade {{ A, B }}\n{src}")).unwrap();
+        let (project, _) = Project::open(Some(&dir), None).unwrap();
+        let names: Vec<String> = project.packages.iter().map(package_name).collect();
+        let all: Vec<_> = project
+            .packages
+            .iter()
+            .map(|p| parse_package(p, &mut Vec::new()).unwrap())
+            .collect();
+        let sources = package_sources(&project, &names, &all);
+        let (_, errors) = Resolver::new(sources);
+        assert!(errors.iter().all(|e| e.code != "E003"), "{errors:?}");
     }
 }
