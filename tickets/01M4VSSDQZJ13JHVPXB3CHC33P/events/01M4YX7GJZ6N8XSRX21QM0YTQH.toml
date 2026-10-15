@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given head = ButtonHead or FlatHead and counterbore = true, when evaluated, then the pocket comes from Iso7380Head or Iso10642Head (stdlib.md 3)"]
+moved = []
+at = "2026-10-15T04:30:50Z"
+actor = "lognd"
+rev = 1
