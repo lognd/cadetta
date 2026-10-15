@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:40:36Z"
-updated = "2026-10-15T03:41:55Z"
+updated = "2026-10-15T03:42:35Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/r014_sync_manual_adapter.rs", "changelog.d/01M4YTBH7QGW3Z87V77FY0KQ76.fixed.md"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "sync manual fallback emits cleanly when the Text param is filtered out"
-bound = false
+bound = true
 +++
 
 found while working ~T8PTE0A; sync.rs manual_adapter calls emit_package (empty Text set); should use emit_package_texts with LoweredPackage.text_params.
