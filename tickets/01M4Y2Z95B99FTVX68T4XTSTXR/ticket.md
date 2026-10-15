@@ -22,7 +22,7 @@ bound = true
 
 [[acceptance]]
 text = "Given the joint's own aligned check, when evaluated, then it places the tree with FloatMode::Without for that joint; joints between parts that are not parent and child add no float (geometry.md 5.2; takes over ~HWJP0GQ acceptance 5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given several joints on one edge, when lowered, then the pattern points, variable ids and locating flags reach float::select unchanged (takes over the lowering half of ~HWJP0GQ acceptance 4)"
