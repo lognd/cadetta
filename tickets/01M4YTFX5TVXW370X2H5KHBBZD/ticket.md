@@ -2,12 +2,13 @@
 id = "01M4YTFX5TVXW370X2H5KHBBZD"
 title = "Remove dead emit_package and share text_params lookup (sync.rs/emit.rs)"
 type = "chore"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T03:42:59Z"
-updated = "2026-10-15T03:56:12Z"
+updated = "2026-10-15T03:57:21Z"
 idempotency_key = "emit-dedup-text-params"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs"]
 
