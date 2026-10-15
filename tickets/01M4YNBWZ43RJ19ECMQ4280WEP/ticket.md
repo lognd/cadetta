@@ -2,12 +2,13 @@
 id = "01M4YNBWZ43RJ19ECMQ4280WEP"
 title = "mmc/lmc: feed fit-side roles (RoleSource::FitSide) into material-side selection"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:13:25Z"
-updated = "2026-10-15T02:36:14Z"
+updated = "2026-10-15T02:36:42Z"
 idempotency_key = "fitside-roles-mmc-lmc"
 scope = ["crates/cadetta-sema/src/**", "docs/spec/quantities.md", "changelog.d/01M4YNBWZ43RJ19ECMQ4280WEP.*"]
 
