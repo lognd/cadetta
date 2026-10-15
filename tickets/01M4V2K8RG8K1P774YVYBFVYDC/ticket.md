@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:40Z"
-updated = "2026-10-15T02:28:01Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-15T02:28:02Z"
+scope = ["crates/cadetta-sema/**", "crates/cadetta-syntax/**"]
 
 [[acceptance]]
 text = "solvers.md 1: an out port without a kind raises S007, not a syntax error (fixtures lints/s007-solver-untyped-port, solvers/s007-out-without-kind, s007-out-kind-expression)"
