@@ -33,7 +33,7 @@ use serde::Serialize;
 use serde_json::Value;
 
 use crate::cmd::ir::package_id;
-use crate::cmd::sync::normalize;
+use crate::cmd::sync::{normalize, observed_geometry};
 use crate::config::Adapter;
 use crate::output::Format;
 use crate::project::{PackageDir, Project};
@@ -235,14 +235,7 @@ pub fn decode_observed(
                 .get("unit_assumed")
                 .and_then(Value::as_str)
                 .map(|u| assume_unit.unwrap_or(u).to_owned());
-            let builder = match by_file.get_mut(file) {
-                Some(b) => b,
-                None => {
-                    let b = ObservedBuilder::new(package.clone(), adapter, file)
-                        .map_err(|e| e.to_string())?;
-                    by_file.entry(file.to_owned()).or_insert(b)
-                }
-            };
+            let builder = builder_for(&mut by_file, &package, adapter, file)?;
             for loc in locators {
                 let param = ObservedParam {
                     native_name: native_name.to_owned(),
@@ -275,7 +268,41 @@ pub fn decode_observed(
             }
         }
     }
+    // frob:ticket 01M4ZCHT2YJ2Z7F2E9TR77QY6K
+    let (frames, instances) = observed_geometry(observed);
+    tracing::debug!(
+        frames = frames.len(),
+        instances = instances.len(),
+        "import: observed geometry decoded"
+    );
+    for f in frames {
+        let doc = f.document.clone();
+        builder_for(&mut by_file, &package, adapter, &doc)?
+            .push_frame(f)
+            .map_err(|e| e.to_string())?;
+    }
+    for i in instances {
+        let doc = i.document.clone();
+        builder_for(&mut by_file, &package, adapter, &doc)?
+            .push_instance(i)
+            .map_err(|e| e.to_string())?;
+    }
     Ok(by_file.into_values().map(ObservedBuilder::build).collect())
+}
+
+/// The per-file observed builder for `file`, created on first use.
+// frob:ticket 01M4ZCHT2YJ2Z7F2E9TR77QY6K
+fn builder_for<'a>(
+    by_file: &'a mut BTreeMap<String, ObservedBuilder>,
+    package: &cadetta_ir::model::PackageId,
+    adapter: &str,
+    file: &str,
+) -> Result<&'a mut ObservedBuilder, String> {
+    if !by_file.contains_key(file) {
+        let b = ObservedBuilder::new(package.clone(), adapter, file).map_err(|e| e.to_string())?;
+        by_file.insert(file.to_owned(), b);
+    }
+    Ok(by_file.get_mut(file).expect("inserted above"))
 }
 
 fn fail(err: &mut dyn Write, message: &str) -> u8 {
@@ -1016,6 +1043,24 @@ for line in sys.stdin:
                 .iter()
                 .all(|i| i.unit.as_deref() == Some("in"))
         );
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::decode_observed
+    #[test]
+    fn decodes_frames_and_instances_into_the_builder() {
+        let id = cadetta_ir::model::PackageId {
+            name: "acme.plate".into(),
+            version: "0.1.0".into(),
+        };
+        let mut obs = observed();
+        let t = serde_json::json!([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]);
+        obs["frames"] =
+            serde_json::json!([{"name": "F", "document": "cover_plate.FCStd", "transform": t}]);
+        obs["instances"] = serde_json::json!([{"component": "c", "document": "cover_plate.FCStd", "transform": t}]);
+        let projects = decode_observed(&obs, "fake", id, None).unwrap();
+        assert_eq!(projects.len(), 1);
+        assert_eq!(projects[0].frames.len(), 1);
+        assert_eq!(projects[0].instances.len(), 1);
     }
 
     const BORE: &str = "acme.plate::CoverPlate.bore";

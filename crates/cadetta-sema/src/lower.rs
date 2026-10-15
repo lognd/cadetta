@@ -780,6 +780,7 @@ mod tests {
         let p = parse(src);
         assert!(p.diags.is_empty(), "{:?}", p.diags);
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -809,6 +810,7 @@ mod tests {
             .collect();
         let p = parse(src);
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {

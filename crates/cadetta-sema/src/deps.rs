@@ -979,6 +979,7 @@ mod tests {
 
     fn analyse(files: &[(&[&str], &File)]) -> DepGraph {
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: files
@@ -1179,6 +1180,7 @@ mod tests {
         let moved = file("pub model Bracket {\n  t = 2mm was q::old::Bracket.thickness\n}\n");
         let user = file("model U {\n  v = q::old::Bracket.thickness\n}\n");
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "q".to_owned(),
             deps: Vec::new(),
             modules: vec![
@@ -1229,6 +1231,7 @@ mod tests {
             ));
             let pkgs = vec![
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "lib".to_owned(),
                     deps: Vec::new(),
                     modules: vec![ModuleSrc {
@@ -1238,6 +1241,7 @@ mod tests {
                     }],
                 },
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
                     modules: vec![ModuleSrc {
@@ -1267,6 +1271,7 @@ mod tests {
             ));
             let pkgs = vec![
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "lib".to_owned(),
                     deps: Vec::new(),
                     modules: vec![ModuleSrc {
@@ -1276,6 +1281,7 @@ mod tests {
                     }],
                 },
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
                     modules: vec![ModuleSrc {

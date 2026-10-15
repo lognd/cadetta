@@ -201,6 +201,7 @@ fn package_sources<'a>(
         .map(|((pkg, name), parsed)| PackageSrc {
             name: name.clone(),
             deps: pkg.config.dependencies.keys().cloned().collect(),
+            defaults: pkg.config.defaults.clone(),
             modules: parsed
                 .iter()
                 .map(|m| ModuleSrc {

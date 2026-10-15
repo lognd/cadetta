@@ -357,6 +357,7 @@ mod tests {
         assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
         let enums: &[crate::resolve::EnumDecl] = &[];
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".into(),
             deps: vec![],
             modules: vec![ModuleSrc {
@@ -424,6 +425,7 @@ mod tests {
         let parsed = parse(src);
         let enums: &[crate::resolve::EnumDecl] = &[];
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".into(),
             deps: vec![],
             modules: vec![ModuleSrc {

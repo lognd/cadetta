@@ -54,6 +54,7 @@ mod tests {
     fn pkg<'a>(name: &str, deps: &[&str], mods: Vec<(&[&str], &'a File)>) -> PackageSrc<'a> {
         let no_enums: &'a [EnumDecl] = &[];
         PackageSrc {
+            defaults: Default::default(),
             name: name.to_owned(),
             deps: deps.iter().map(|s| (*s).to_owned()).collect(),
             modules: mods

@@ -19,6 +19,7 @@ fn file(src: &str) -> File {
 /// One package `acme.rover` whose modules are the given `(path, file)` pairs.
 fn pkgs<'a>(mods: &[(&str, &'a File)]) -> Vec<PackageSrc<'a>> {
     vec![PackageSrc {
+        defaults: Default::default(),
         name: "acme.rover".to_owned(),
         deps: Vec::new(),
         modules: mods
