@@ -2,11 +2,12 @@
 id = "01M4V1X594YSHKE55103F67WS1"
 title = "adapters.md 3: invalid bindings file or locator behavior unspecified and binary diverges"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
-updated = "2026-10-15T02:53:21Z"
+updated = "2026-10-15T02:53:57Z"
 scope = ["docs/spec/adapters.md", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs", "tests/conformance/known-gaps.toml", "tests/conformance/adapters/README.md", "changelog.d/01M4V1X594YSHKE55103F67WS1.fixed.md"]
 
 [[acceptance]]
