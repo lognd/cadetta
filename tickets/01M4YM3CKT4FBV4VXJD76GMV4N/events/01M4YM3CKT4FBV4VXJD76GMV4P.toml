@@ -1,0 +1,13 @@
+kind = "create"
+title = "Lint precision config accepts custom quantity kinds"
+type = "story"
+category = "todo"
+priority = "low"
+points = 3
+idempotency_key = "followup-xn48psv-custom-kinds"
+scope = ["crates/cadetta-cli/src/config.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md"]
+acceptance = ["A precision entry naming a package-declared kind is accepted and changes M001; unknown kinds still rejected, with tests"]
+body = "[lint] precision only consults the built-in kind table; custom quantity kinds declared in a package are rejected at config load. Resolve kinds from the package quantity table too."
+at = "2026-10-15T01:51:18Z"
+actor = "lognd"
+rev = 1
