@@ -2,7 +2,8 @@
 id = "01M4V1HYS6PKK0F82XMJET4TC0"
 title = "Solver and sync obligations not produced by check (S003, O004)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
