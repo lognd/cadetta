@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T22:54:12Z"
-updated = "2026-10-15T10:38:26Z"
-scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-ir", "crates/cadetta-obligations", "crates/cadetta-ir/**"]
+updated = "2026-10-15T10:38:27Z"
+scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/obligations.rs", "crates/cadetta-ir", "crates/cadetta-obligations", "crates/cadetta-ir/**", "docs/spec/obligations.md"]
 
 [[links]]
 kind = "blocked-by"
