@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A priv member read through an instance of an imported component (j.major) raises E016; pub members stay clean."]
+moved = []
+at = "2026-10-15T04:08:00Z"
+actor = "lognd"
+rev = 1

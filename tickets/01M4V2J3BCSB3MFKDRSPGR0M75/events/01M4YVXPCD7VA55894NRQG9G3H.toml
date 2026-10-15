@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "joint-level lints not raised (D003 E016 M003 S001 user policy)"
+new = "E016 not raised for priv member read through an instance (stdlib joint)"
+at = "2026-10-15T04:08:00Z"
+actor = "lognd"
+rev = 1
