@@ -1,0 +1,6 @@
+kind = "field"
+field = "scope"
+new = ["bindings/python/tests/test_conformance.py"]
+at = "2026-10-15T09:28:27Z"
+actor = "lognd"
+rev = 1
