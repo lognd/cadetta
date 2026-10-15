@@ -2,7 +2,8 @@
 id = "01M4ZB40N2WD0VZYWZ7SNYB0FT"
 title = "conformance emitters/sw-equations/naming-component-field fails: fixture uses dotted part path and out-of-range instance"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 1
 reporter = "lognd"
