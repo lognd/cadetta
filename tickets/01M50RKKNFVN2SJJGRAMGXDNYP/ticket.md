@@ -2,12 +2,12 @@
 id = "01M50RKKNFVN2SJJGRAMGXDNYP"
 title = "S003 stale messages, stale_output observation, C001/C002 from solver outputs in check"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-15T21:59:24Z"
+updated = "2026-10-15T21:59:26Z"
 scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml"]
 +++
 
