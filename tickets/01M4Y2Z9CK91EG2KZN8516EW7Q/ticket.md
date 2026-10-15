@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
 reporter = "lognd"
 created = "2026-10-14T20:51:57Z"
-updated = "2026-10-15T11:06:03Z"
+updated = "2026-10-15T11:06:17Z"
 scope = ["tests/conformance/geometry/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
