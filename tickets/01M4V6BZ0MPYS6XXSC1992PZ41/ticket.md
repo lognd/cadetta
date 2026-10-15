@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/**", "tests/conformance/known-gaps.toml", "docs/spe
 
 [[acceptance]]
 text = "check reports E012 and E013 for unmet or conflicting dependency version requirements"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "check reports E014 when a dependency's content differs from its lock digest"
