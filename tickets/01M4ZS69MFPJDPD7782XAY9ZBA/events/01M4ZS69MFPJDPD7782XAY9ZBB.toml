@@ -1,0 +1,10 @@
+kind = "create"
+title = "Wire initialize precision into CLI call sites via Client::effective_precision"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/**"]
+body = "found while working ~6N3JQAV: universe.rs:501, cmd/sync.rs (661/925/1153), cmd/names.rs:155, cmd/emit.rs:508 still use adapter.precision.map_or(DEFAULT_PRECISION, ...) instead of the initialize precision. cmd/sync.rs is owned by in-flight ~5HP91AE; sequence after it."
+at = "2026-10-15T12:39:30Z"
+actor = "lognd"
+rev = 1

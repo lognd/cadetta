@@ -1,4 +1,7 @@
-cite shop: document { title = "shop price list 2026" }
+cite shop: document {
+  title = "shop price list 2026"
+  number = "SS-104"
+}
 use std::fasteners::ScrewJoint
 use std::materials::Material
 assembly Box {

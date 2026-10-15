@@ -38,6 +38,15 @@ pub enum RpcError {
         /// Version the adapter reported.
         found: String,
     },
+    /// `initialize` listed platforms that exclude the host's (R008, exit 2).
+    PlatformMismatch {
+        /// Platform the host runs on (`linux`, `macos`, `windows`).
+        host: String,
+        /// Platforms the adapter declared.
+        platforms: Vec<String>,
+    },
+    /// A result broke the protocol schema in a way the spec makes an unusable adapter (R008).
+    Nonconforming(String),
     /// The method needs a capability the adapter did not declare.
     Unsupported(&'static str),
 }
@@ -46,7 +55,9 @@ impl RpcError {
     /// The diagnostic code this error maps to, if any.
     pub fn code(&self) -> Option<&'static str> {
         match self {
-            Self::VersionMismatch { .. } => Some(R008),
+            Self::VersionMismatch { .. }
+            | Self::PlatformMismatch { .. }
+            | Self::Nonconforming(_) => Some(R008),
             _ => None,
         }
     }
@@ -63,6 +74,11 @@ impl fmt::Display for RpcError {
                 f,
                 "{R008}: adapter version {found} does not match configured {expected}"
             ),
+            Self::PlatformMismatch { host, platforms } => write!(
+                f,
+                "{R008}: adapter runs on {platforms:?}, not on this host ({host})"
+            ),
+            Self::Nonconforming(m) => write!(f, "{R008}: adapter does not conform: {m}"),
             Self::Unsupported(m) => write!(f, "adapter does not declare the capability for `{m}`"),
         }
     }
@@ -190,20 +206,40 @@ impl ProcessClient {
         let stdout = child.stdout.take().expect("stdout was piped");
         let reader = BufReader::new(ChannelReader::new(stdout, timeout));
         // Hand the child to the client first so a failed `initialize` drops (kills) it.
-        Self::connect_with(reader, stdin, expected_version, Some(child))
+        Self::connect_with(
+            reader,
+            stdin,
+            expected_version,
+            std::env::consts::OS,
+            Some(child),
+        )
     }
 }
 
 impl<R: BufRead, W: Write> Client<R, W> {
-    /// Runs `initialize` over the pipes and refuses a version mismatch (R008).
+    /// Runs `initialize` over the pipes and refuses a version or platform mismatch (R008).
+    ///
+    /// The host platform is [`std::env::consts::OS`]; see [`Client::connect_for`].
     pub fn connect(reader: R, writer: W, expected_version: Option<&str>) -> Result<Self, RpcError> {
-        Self::connect_with(reader, writer, expected_version, None)
+        Self::connect_for(reader, writer, expected_version, std::env::consts::OS)
+    }
+
+    /// Like [`Client::connect`], for an explicit `host` platform (`linux`, `macos`, `windows`).
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    pub fn connect_for(
+        reader: R,
+        writer: W,
+        expected_version: Option<&str>,
+        host: &str,
+    ) -> Result<Self, RpcError> {
+        Self::connect_with(reader, writer, expected_version, host, None)
     }
 
     fn connect_with(
         reader: R,
         writer: W,
         expected_version: Option<&str>,
+        host: &str,
         child: Option<Child>,
     ) -> Result<Self, RpcError> {
         let mut client = Self {
@@ -237,6 +273,14 @@ impl<R: BufRead, W: Write> Client<R, W> {
             return Err(RpcError::VersionMismatch {
                 expected: want.to_string(),
                 found: info.version,
+            });
+        }
+        // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+        if !info.platforms.is_empty() && !info.platforms.iter().any(|p| p == host) {
+            tracing::error!(host, platforms = ?info.platforms, "adapter does not run on this platform (R008)");
+            return Err(RpcError::PlatformMismatch {
+                host: host.to_string(),
+                platforms: info.platforms,
             });
         }
         tracing::info!(name = %info.name, version = %info.version, "adapter initialized");
@@ -364,9 +408,25 @@ impl<R: BufRead, W: Write> Client<R, W> {
             for p in &mut stripped.params {
                 p.tolerance = None;
             }
-            return self.call("push", &stripped);
+            return self.push_call(&stripped);
         }
-        self.call("push", params)
+        self.push_call(params)
+    }
+
+    /// Sends `push`; a result without a status per locator (summary only) is R008.
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    fn push_call(&mut self, params: &PushParams) -> Result<PushResult, RpcError> {
+        let raw: Value = self.call("push", params)?;
+        serde_json::from_value(raw).map_err(|e| {
+            tracing::error!(error = %e, "push result lacks per-locator statuses (R008)");
+            RpcError::Nonconforming(format!("`push` result: {e}"))
+        })
+    }
+
+    /// The precision to use: the configured `[[adapter]] precision` wins over `initialize`'s.
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    pub fn effective_precision(&self, configured: Option<u32>) -> u32 {
+        configured.unwrap_or(self.info.precision)
     }
 
     /// Whether the adapter reported `feature` at `initialize`.
@@ -749,5 +809,57 @@ mod tests {
         )
         .unwrap();
         c.shutdown().unwrap();
+    }
+
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::Client.connect_for kind=unit
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::RpcError.code kind=unit
+    #[test]
+    fn platform_mismatch_is_r008_and_a_listed_host_connects() {
+        let mut out = Vec::new();
+        let err = Client::connect_for(
+            script(&[init("1.0.0", &["drive"])]),
+            &mut out,
+            None,
+            "windows",
+        )
+        .err()
+        .unwrap();
+        assert_eq!(err.code(), Some("R008"));
+        assert!(matches!(err, RpcError::PlatformMismatch { .. }));
+        let ok = Client::connect_for(
+            script(&[init("1.0.0", &["drive"])]),
+            &mut out,
+            None,
+            "linux",
+        );
+        assert!(ok.is_ok());
+        drop(ok);
+        // An adapter that lists no platforms is not restricted.
+        let mut open = init("1.0.0", &["drive"]);
+        open["platforms"] = json!([]);
+        let mut out2 = Vec::new();
+        assert!(Client::connect_for(script(&[open]), &mut out2, None, "macos").is_ok());
+    }
+
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::Client.push kind=unit
+    #[test]
+    fn summary_only_push_result_is_r008() {
+        let results = [init("1.0.0", &["drive"]), json!({"summary": "ok"})];
+        let mut out = Vec::new();
+        let mut c = Client::connect(script(&results), &mut out, None).unwrap();
+        let err = c.push(&tol_push()).err().unwrap();
+        assert_eq!(err.code(), Some("R008"));
+    }
+
+    // frob:ticket 01M4Z6JG9VWF4R7W6B96N3JQAV
+    // frob:tests crates/cadetta-adapter/src/rpc/client.rs::Client.effective_precision kind=unit
+    #[test]
+    fn configured_precision_overrides_initialize() {
+        let mut out = Vec::new();
+        let c = Client::connect(script(&[init("1.0.0", &["drive"])]), &mut out, None).unwrap();
+        assert_eq!(c.effective_precision(None), 6);
+        assert_eq!(c.effective_precision(Some(2)), 2);
     }
 }

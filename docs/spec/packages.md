@@ -147,7 +147,9 @@ The module tree is the file tree under `src`:
 - A private item that nothing uses is U002 (warning), the analogue of
   Rust's dead-code lint. A private parameterized component with no
   instances is U002, not I004. I004 applies only to roots of the
-  package being checked.
+  package being checked. "Used" is decided by name resolution, so a
+  shadowing local is not a use; unused private param/let members of a
+  component are U002 too.
 
 ## 4. Use
 

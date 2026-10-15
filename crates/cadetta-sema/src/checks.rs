@@ -209,6 +209,49 @@ fn is_named(callee: &Expr, name: &str) -> bool {
     matches!(&strip(callee).kind, ExprKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == name)
 }
 
+/// One side of a check comparison: a numeric operand or an enum variant.
+enum CmpOperand {
+    /// A quantity or outer-bound interval.
+    Num(Operand),
+    /// An enum variant (enum path, variant name).
+    Variant((CanonPath, String)),
+}
+
+/// Decides `==`/`!=` between two enum variants; ordering enums is an error.
+// frob:ticket 01M4YSGF7GVFRKQPFPQ34KDRPA
+fn variant_pair(
+    op: AstCmp,
+    a: &(CanonPath, String),
+    b: &(CanonPath, String),
+    span: Span,
+) -> R<Outcome> {
+    if a.0 != b.0 {
+        return Err(diag(
+            "EVAL",
+            span,
+            "variants of different enums are not comparable",
+        ));
+    }
+    let same = a.1 == b.1;
+    let holds = match op {
+        AstCmp::Eq => same,
+        AstCmp::Ne => !same,
+        _ => {
+            return Err(diag(
+                "EVAL",
+                span,
+                "enum variants compare with `==` or `!=` only",
+            ));
+        }
+    };
+    debug!(variant = %a.1, other = %b.1, holds, "check: enum variant comparison");
+    Ok(Outcome::of(if holds {
+        Verdict::Holds
+    } else {
+        Verdict::Violates
+    }))
+}
+
 fn units_op(op: AstCmp) -> CmpOp {
     match op {
         AstCmp::Eq => CmpOp::Eq,
@@ -445,11 +488,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             ExprKind::Compare { first, rest } => {
                 let before = self.float_reads;
-                let mut left = self.operand(sc, first)?;
+                let mut left = self.cmp_operand(sc, first)?;
                 let mut acc: Option<Outcome> = None;
                 for (op, rhs) in rest {
-                    let right = self.operand(sc, rhs)?;
-                    let o = self.compare_pair(units_op(*op), &left, &right, e.span)?;
+                    let right = self.cmp_operand(sc, rhs)?;
+                    let o = match (&left, &right) {
+                        (CmpOperand::Num(a), CmpOperand::Num(b)) => {
+                            self.compare_pair(units_op(*op), a, b, e.span)?
+                        }
+                        (CmpOperand::Variant(a), CmpOperand::Variant(b)) => {
+                            variant_pair(*op, a, b, e.span)?
+                        }
+                        _ => {
+                            return Err(diag(
+                                "EVAL",
+                                e.span,
+                                "both sides of a comparison must be quantities or variants of one enum",
+                            ));
+                        }
+                    };
                     acc = Some(match acc {
                         None => o,
                         Some(prev) => join(prev, o, and),
@@ -487,11 +544,22 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
-    /// Evaluates a comparison operand; an inexact value becomes an outer-bound interval so the
-    /// comparison is undecided near the boundary (quantities.md 5.8).
+    /// Evaluates a comparison operand that may be a quantity or an enum variant.
+    // frob:ticket 01M4YSGF7GVFRKQPFPQ34KDRPA
+    fn cmp_operand(&mut self, sc: &mut Scope, e: &Expr) -> R<CmpOperand> {
+        let v = self.eval(sc, e)?;
+        if let Val::Variant { enum_path, variant } = v {
+            trace!(%variant, "check: enum variant comparison operand");
+            return Ok(CmpOperand::Variant((enum_path, variant)));
+        }
+        self.val_operand(v, e.span).map(CmpOperand::Num)
+    }
+
+    /// Converts an evaluated value to a comparison operand; an inexact value becomes an
+    /// outer-bound interval so the comparison is undecided near the boundary (quantities.md 5.8).
     // frob:ticket 01M4V1HEA425D4RGFBSG5NT80Z
-    fn operand(&mut self, sc: &mut Scope, e: &Expr) -> R<Operand> {
-        match self.eval(sc, e)? {
+    fn val_operand(&mut self, v: Val, span: Span) -> R<Operand> {
+        match v {
             Val::Quantity(q) => Ok(Operand::Form(q.form)),
             Val::Inexact(i) => {
                 debug!(lo = i.lo, hi = i.hi, "check: inexact comparison operand");
@@ -504,7 +572,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     },
                 ))
             }
-            _ => Err(diag("EVAL", e.span, "a quantity is required here")),
+            _ => Err(diag("EVAL", span, "a quantity is required here")),
         }
     }
 
@@ -667,6 +735,26 @@ mod tests {
         let v = ev.checks.iter().map(|c| c.verdict).collect();
         let codes = ev.diagnostics.iter().map(|d| d.code).collect();
         (v, codes, ev)
+    }
+
+    // frob:tests enum_compare_on_a_table_cell_decides_equality
+    #[test]
+    fn enum_compare_on_a_table_cell_decides_equality() {
+        let (v, codes, _) = verdicts(
+            "enum Th { A, B }\ntable T { key t: Th\n cols cls: Th\n Th::A => Th::A\n Th::B => Th::A }\n\
+             model M {\n  check hit: T[Th::B].cls == Th::A\n  check miss: T[Th::B].cls == Th::B\n  \
+             check ne: T[Th::B].cls != Th::B\n}\n",
+        );
+        assert_eq!(v, vec![Verdict::Holds, Verdict::Violates, Verdict::Holds]);
+        assert_eq!(codes, vec!["C001"]);
+    }
+
+    // frob:tests enum_ordering_is_an_eval_error
+    #[test]
+    fn enum_ordering_is_an_eval_error() {
+        let (v, codes, _) = verdicts("enum Th { A, B }\nmodel M {\n  check o: Th::A < Th::B\n}\n");
+        assert!(v.is_empty(), "{v:?}");
+        assert_eq!(codes, vec!["EVAL"]);
     }
 
     // frob:tests check_false_everywhere_violates_c001

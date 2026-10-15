@@ -12,7 +12,11 @@
       "marker": {
         "exists": true
       }
-    }
+    },
+    "args": [
+      "--format",
+      "text"
+    ]
   },
   "must_not_fire": {
     "diagnostics": [],
@@ -24,6 +28,10 @@
       "marker": {
         "exists": false
       }
-    }
+    },
+    "args": [
+      "--format",
+      "text"
+    ]
   }
 }

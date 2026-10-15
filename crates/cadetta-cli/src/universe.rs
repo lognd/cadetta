@@ -16,7 +16,7 @@ use cadetta_ir::model::{
 };
 use cadetta_obligations::citation::citation_id;
 use cadetta_obligations::graph::{ObligationId, ObligationKind, ObligationState, Verdict};
-use cadetta_obligations::lock::{Attest, Lock, Record};
+use cadetta_obligations::lock::{AltBinding, Attest, Lock, Record};
 use cadetta_obligations::staleness::Judgement;
 use cadetta_obligations::why_stale::{WhyStale, why_stale};
 
@@ -592,15 +592,13 @@ pub fn sync_states(
     out
 }
 
-/// The unreviewed or changed `waiver` obligations (obligations.md 2.3): `waiver:GLOB` is open
-/// until acked, and stale when the combined closure digest of its targets differs from the lock
-/// record. A waiver with no matching target or an unchanged review is not listed.
-// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
-pub fn waiver_states(
-    analysis: &Analysis,
+/// Each waiver whose glob matches at least one node, with the combined closure digest of its
+/// targets (the digest a review of it records).
+// frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+fn reviewed_waivers<'a>(
+    analysis: &'a Analysis,
     universes: &[Universe],
-    lock: &Lock,
-) -> Vec<(ObligationId, ObligationState)> {
+) -> Vec<(&'a cadetta_ir::entities::Waiver, Digest)> {
     use cadetta_obligations::staleness::covered_digest;
     let mut closures = std::collections::BTreeMap::new();
     for u in universes {
@@ -622,7 +620,46 @@ pub fn waiver_states(
         if targets.is_empty() {
             continue;
         }
-        let current = covered_digest(&targets);
+        out.push((w, covered_digest(&targets)));
+    }
+    out
+}
+
+/// The `ack` candidates for waivers: one reviewable `waiver:GLOB` per waiver with targets,
+/// carrying the digest a review records (obligations.md 3).
+// frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+pub fn waiver_candidates(analysis: &Analysis, universes: &[Universe]) -> Vec<AckCandidate> {
+    reviewed_waivers(analysis, universes)
+        .into_iter()
+        .map(|(w, digest)| AckCandidate {
+            id: ObligationId::new(ObligationKind::Waiver, w.glob.clone()),
+            subject: Subject::Waiver {
+                code: w.code.clone(),
+                alt: w.for_alt.as_ref().and_then(|a| {
+                    a.short()
+                        .split_once('=')
+                        .map(|(slot, alternate)| AltBinding {
+                            slot: slot.to_owned(),
+                            alternate: alternate.to_owned(),
+                        })
+                }),
+                digest,
+            },
+        })
+        .collect()
+}
+
+/// The unreviewed or changed `waiver` obligations (obligations.md 2.3): `waiver:GLOB` is open
+/// until acked, and stale when the combined closure digest of its targets differs from the lock
+/// record. A waiver with no matching target or an unchanged review is not listed.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+pub fn waiver_states(
+    analysis: &Analysis,
+    universes: &[Universe],
+    lock: &Lock,
+) -> Vec<(ObligationId, ObligationState)> {
+    let mut out = Vec::new();
+    for (w, current) in reviewed_waivers(analysis, universes) {
         let alt = w.for_alt.as_ref().map(|a| a.short());
         let recorded = lock.records().find_map(|r| match r {
             Record::Waiver(l)
@@ -767,6 +804,48 @@ mod tests {
         assert!(
             rows.iter()
                 .any(|r| r["id"] == "waiver:acme.axle::Axle.bore" && r["state"] == "open"),
+            "{v}"
+        );
+    }
+
+    // frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::waiver_candidates
+    #[test]
+    fn ack_reviews_a_waiver_and_it_leaves_the_obligation_list() {
+        let src = format!("{AXLE}waive C001 on acme.axle::Axle.bore {{ because \"x\" }}\n");
+        let dir = Dir::with_src(&src);
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            toml.replace(
+                "check:acme.axle::**\"",
+                "check:acme.axle::**\", \"waiver:acme.axle::**\"",
+            ),
+        )
+        .unwrap();
+        run(
+            ack::run_ack,
+            &dir,
+            &[
+                "waiver:acme.axle::Axle.bore",
+                "--role",
+                "review",
+                "--as",
+                "ana@x",
+            ],
+        );
+        let lock = std::fs::read_to_string(dir.0.join("cadetta.lock")).unwrap();
+        assert!(
+            lock.contains("waiver C001 acme.axle::Axle.bore digest="),
+            "{lock}"
+        );
+        let v = run(obligations::run_obligations, &dir, &[]);
+        assert!(
+            !v["obligations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["id"] == "waiver:acme.axle::Axle.bore"),
             "{v}"
         );
     }
