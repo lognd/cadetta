@@ -2,7 +2,8 @@
 id = "01M4ZDQBBD1AW0RA4JW5SFKGWW"
 title = "cadetta sync: SessionBackend exposes a Document so live pushes restore on R004"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
