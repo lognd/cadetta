@@ -2,7 +2,8 @@
 id = "01M4XE4D2QZNBRFAGP9JGA9NDJ"
 title = "Python test suite hangs past 100s in test_project_ops.py (suspect real-CLI test e.g. test_update_real_cli_runs)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
