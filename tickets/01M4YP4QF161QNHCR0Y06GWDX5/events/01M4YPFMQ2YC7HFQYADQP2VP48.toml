@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-15T02:32:56Z"
+digest = "e659c4783ccf016c0a0690f0c36c99b1d0352964e9881d94ea0bc444eadc9954"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID db13966a-185d-4372-be93-6757f9019af6 with nextest profile: default
+    Starting 1 test across 57 binaries (1326 tests skipped)
+        PASS [   0.039s] cadetta::ir_lint_rules clearance_outside_its_required_range_fires_f004
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.041s] 1 test run: 1 passed, 1326 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "clearance_outside_its_required_range_fires_f004"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "c9470af87732144c318a7aa31f16731ab0b08df05bdd89dc8327a3524e07a712"
+at = "2026-10-15T02:32:56Z"
+actor = "lognd"
+rev = 1
