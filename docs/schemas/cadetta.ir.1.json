@@ -902,10 +902,15 @@
         },
         {
           "additionalProperties": false,
-          "description": "Flip about an axis.",
+          "description": "Flip about an axis (x or y only, ir.md 3).",
           "properties": {
             "flip": {
-              "$ref": "#/$defs/Axis"
+              "description": "A flip axis.",
+              "enum": [
+                "x",
+                "y"
+              ],
+              "type": "string"
             }
           },
           "required": [

@@ -358,7 +358,11 @@ fn defs() -> Map<String, J> {
                     )],
                     &[],
                 ),
-                obj("Flip about an axis.", &[("flip", r("Axis"))], &[]),
+                obj(
+                    "Flip about an axis (x or y only, ir.md 3).",
+                    &[("flip", en("A flip axis.", &["x", "y"]))],
+                    &[],
+                ),
             ],
         }),
     ));
@@ -1107,6 +1111,15 @@ mod tests {
             schema_json(),
             "docs/schemas/cadetta.ir.1.json is stale; replace it with schema_json()"
         );
+    }
+
+    // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit
+    #[test]
+    fn flip_op_schema_rejects_z_accepts_x_and_y() {
+        for (axis, ok) in [("x", true), ("y", true), ("z", false)] {
+            let op = serde_json::json!({ "flip": axis });
+            assert_eq!(validate(Some("Op"), &op).is_empty(), ok, "flip {axis}");
+        }
     }
 
     // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit
