@@ -2,12 +2,13 @@
 id = "01M4Z3FGMA3F7F97RS43JYCXK0"
 title = "language: i001/i002/i003 fixtures use cite without accessed (S008); update cites and drop i001-missing-member, i001-optional-member, i001-wrong-kind gaps"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-15T06:24:18Z"
+updated = "2026-10-15T06:27:21Z"
 scope = ["tests/conformance/language/i00*", "tests/conformance/known-gaps.toml"]
 +++
 

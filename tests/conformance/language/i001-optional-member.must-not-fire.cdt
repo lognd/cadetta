@@ -1,4 +1,8 @@
-cite src: web { url = "https://x.example/a.pdf" }
+cite src: web {
+  title = "Source page"
+  url = "https://x.example/a.pdf"
+  accessed = "2026-10-13"
+}
 pub interface Caster {
   diameter: Length
   unit_cost?: Money

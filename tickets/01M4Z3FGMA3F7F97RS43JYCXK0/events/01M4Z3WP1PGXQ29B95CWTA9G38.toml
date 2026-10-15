@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-15T06:27:15Z"
+digest = "61240ee6ea8887871fbbf2c0a82a602c2231463e2d5bd3268278d1ce07ce8eaa"
+provider = "file"
+ref = "tests/conformance/language/i001-missing-member.must-fire.cdt"
+size = 216
+status = "measured"
+at = "2026-10-15T06:27:15Z"
+actor = "lognd"
+rev = 1

@@ -18,21 +18,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/i001-missing-member"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/i001-optional-member"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
-fixture = "language/i001-wrong-kind"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "language/i002-alternate-not-viable"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
