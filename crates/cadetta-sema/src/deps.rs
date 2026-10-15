@@ -1208,4 +1208,35 @@ mod tests {
         assert!(build("m = j.major").contains(&"E016"));
         assert!(!build("m = j.minor").contains(&"E016"));
     }
+
+    // frob:ticket 01M4YRTE99BY9YGQ7E19NFT8AX
+    // frob:tests priv_member_expression_path_across_packages_is_e016
+    #[test]
+    fn priv_member_expression_path_across_packages_is_e016() {
+        let lib = file(
+            "pub model W { priv bore = 5\n  hub = 2\n}\npub model R { part w: W\n}\n",
+        );
+        let build = |body: &str| {
+            let user = file(&format!("use lib::R\nuse lib::W\nmodel U {{\n  {body}\n}}\n"));
+            let pkgs = vec![
+                PackageSrc {
+                    name: "lib".to_owned(),
+                    deps: Vec::new(),
+                    modules: vec![ModuleSrc { path: Vec::new(), file: &lib, enums: &[] }],
+                },
+                PackageSrc {
+                    name: "app".to_owned(),
+                    deps: vec!["lib".to_owned()],
+                    modules: vec![ModuleSrc { path: Vec::new(), file: &user, enums: &[] }],
+                },
+            ];
+            let (resolver, _) = Resolver::new(pkgs.clone());
+            let renames = Renames::collect(&resolver, &pkgs);
+            let g = DepGraph::build(&resolver, &renames, &pkgs);
+            codes(&g)
+        };
+        assert!(build("m = W.bore").contains(&"E016"));
+        assert!(build("m = R.w.bore").contains(&"E016"));
+        assert!(!build("m = W.hub").contains(&"E016"));
+    }
 }
