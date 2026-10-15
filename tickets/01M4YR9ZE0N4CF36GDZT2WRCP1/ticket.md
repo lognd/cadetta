@@ -6,7 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-15T03:04:48Z"
+updated = "2026-10-15T03:32:02Z"
+scope = ["crates/cadetta-cli/tests/conformance/exec.rs", "tests/conformance/known-gaps.toml", "tests/conformance/quantities/*", "changelog.d/01M4YR9ZE0N4CF36GDZT2WRCP1.*"]
+
+[[acceptance]]
+text = "The five quantities fixtures (c002-inexact-boundary, exact-zero-normalised, trig-exact-atan2, trig-exact-sin, trig-exact-tan) pass the conformance corpus with no known-gaps entries"
+bound = false
 +++
 
 Found while working ~X1PF271. quantities/{c002-inexact-boundary,exact-zero-normalised,trig-exact-atan2,trig-exact-sin,trig-exact-tan} must-not-fire: missing Q006 (info).
