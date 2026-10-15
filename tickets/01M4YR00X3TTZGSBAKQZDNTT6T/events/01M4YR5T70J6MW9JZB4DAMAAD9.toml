@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T03:02:30Z"
+digest = "ed40976183b03306086c2d9bf15aa11cad5e48866a8e6368c511901baf310e3c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3caa6989-c077-459b-affa-f231180dcf8f with nextest profile: default
+    Starting 1 test across 61 binaries (1363 tests skipped)
+        PASS [   0.137s] cadetta::privacy e017_private_type_in_public_signature
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.139s] 1 test run: 1 passed, 1363 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e017_private_type_in_public"
+size = 550
+status = "measured"
+test_count = 1
+tests_digest = "276aa2aca5e206f644348efb8319b745a02b43c497c0c768bb508c7883240dbf"
+at = "2026-10-15T03:02:30Z"
+actor = "lognd"
+rev = 1

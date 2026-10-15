@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:01:57Z"
+updated = "2026-10-15T03:02:30Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/**", "crates/cadetta-cli/tests/privacy.rs", "changelog.d/01M4YR00X3TTZGSBAKQZDNTT6T.*"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "E017 fires for a private type in a public signature (language/e017-private-in-public)"
-bound = false
+bound = true
 +++
 
 Split from ~8WN9V3R. VisibilityChecker (crates/cadetta-sema/src/visibility.rs) exists but is not called from pipeline.rs. Directory fixtures tests/conformance/language/e016-private-item and e017-private-in-public disagree with the binary; remove their known-gaps.toml entries when fixed (also add tests/conformance/** to scope).
