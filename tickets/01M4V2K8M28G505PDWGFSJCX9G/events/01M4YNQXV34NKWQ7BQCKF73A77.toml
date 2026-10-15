@@ -1,0 +1,38 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:19:58Z"
+digest = "3fcf2a82cfa12ebe7379d7bd1301790357b23306bc5cc2534c08e536a12b0a08"
+exit_code = 0
+inline = '''
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d461c105-fd17-4bcd-97f4-4947bad0b6c8 with nextest profile: default
+    Starting 1 test across 56 binaries (1300 tests skipped)
+        PASS [   0.817s] cadetta::c004_e010 e010_honours_role_attribute_for_mmc_and_lmc
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.820s] 1 test run: 1 passed, 1300 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e010_honours_role_attribute"
+size = 924
+status = "measured"
+test_count = 1
+tests_digest = "d09fe3566350059571cc39f3a647b591cb1fe93e7843d7218fd595cd7e59745f"
+at = "2026-10-15T02:19:58Z"
+actor = "lognd"
+rev = 1
