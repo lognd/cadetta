@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T04:21:22Z"
+updated = "2026-10-15T04:24:27Z"
 scope = ["tests/conformance/stdlib/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "g005-float-unlocated remains gapped under ~HWJP0GQ (needs placement-edge float, out of scope here)"
-bound = false
+bound = true
 +++
 
 Fixtures failing against the binary, gapped in known-gaps.toml: check-aligned check-aligned-nut-floating check-depth-ok-drill check-depth-ok-vendor check-grip-positive check-not-bottomed e006-count-with-pattern e006-joint-per-pattern e006-vendor-needs-depth g004-joint-pattern-count g005-float-unlocated vendor-tap-members-absent. Found while working ~GDYVJ8R.

@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T04:24:27Z"
+digest = "f39d4c4b3e2918fd2c95fbfae131dedf3c4d6ec31ea2c5d6b74d120ce53bb3c6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID aaa0e904-2f4e-4cd7-b033-20898a246877 with nextest profile: default
+    Starting 1 test across 67 binaries (1417 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance_stdlib stdlib_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_stdlib stdlib_fixtures_match_the_spec
+        PASS [ 175.733s] cadetta::conformance_stdlib stdlib_fixtures_match_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 175.736s] 1 test run: 1 passed (1 slow), 1417 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "stdlib_fixtures_match_the_spec"
+size = 731
+status = "measured"
+test_count = 1
+tests_digest = "94e9ef4a8f59177679093db25f6ff5607c5fc754d51ec2bd12db851da971b727"
+at = "2026-10-15T04:24:27Z"
+actor = "lognd"
+rev = 1
