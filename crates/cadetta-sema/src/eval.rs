@@ -1683,6 +1683,7 @@ mod tests {
 
     pub(super) fn run(f: &File) -> Evaluation {
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -2216,6 +2217,7 @@ mod tests {
              let d = insert_hole.drawn\n  let m = insert_hole\n  let bad = m.drawn\n}\n",
         );
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {

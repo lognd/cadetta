@@ -794,7 +794,7 @@ fn wire_transform(v: &Json) -> Option<Vec<Vec<IrValue>>> {
 }
 
 /// The observed `frames[]` and `instances[]` of an adapter's `read`; malformed items are skipped.
-fn observed_geometry(observed: &Json) -> (Vec<ObservedFrame>, Vec<ObservedInstance>) {
+pub(crate) fn observed_geometry(observed: &Json) -> (Vec<ObservedFrame>, Vec<ObservedInstance>) {
     let projects: Vec<&Json> = match observed {
         Json::Array(a) => a.iter().collect(),
         v => vec![v],
