@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A bound Text parameter that the run must emit raises R014 (error, exit 1, file withheld), for global and dimension locators", "A Text parameter filtered out by adapter paths or unbound is not emitted and not an error"]
+moved = []
+at = "2026-10-15T03:40:03Z"
+actor = "lognd"
+rev = 1
