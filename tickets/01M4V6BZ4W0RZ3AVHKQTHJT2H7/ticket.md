@@ -2,11 +2,12 @@
 id = "01M4V6BZ4W0RZ3AVHKQTHJT2H7"
 title = "module tree: E015 reported as E001, N001 false positive on nested modules"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:53:35Z"
-updated = "2026-10-15T03:09:31Z"
+updated = "2026-10-15T03:10:01Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/src/rules/n.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/module_tree.rs", "tests/conformance/known-gaps.toml", "changelog.d/01M4V6BZ4W0RZ3AVHKQTHJT2H7.fixed.md"]
 
 [[acceptance]]
