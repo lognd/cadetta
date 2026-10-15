@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:35:37Z"
+digest = "5706464898d0738795646250fee0564f5a764d0ab7c8def671280339b1c5ee8c"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 54.64s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a3445cb8-9e72-4e23-9ef3-613b66124e37 with nextest profile: default
+    Starting 1 test across 57 binaries (1331 tests skipped)
+        PASS [   0.030s] cadetta-sema kindcheck::tests::temperature_variable_multiply_is_q002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.055s] 1 test run: 1 passed, 1331 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "temperature_variable_multiply_is_q002"
+size = 745
+status = "measured"
+test_count = 1
+tests_digest = "04792f958c126be0fe80914bc00c215092b3a25deaf1794e44d19214c6d49e9f"
+at = "2026-10-15T02:35:37Z"
+actor = "lognd"
+rev = 1
