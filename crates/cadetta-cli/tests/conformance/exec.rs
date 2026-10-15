@@ -4,7 +4,8 @@
 use std::fs;
 use std::path::Path;
 
-use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options, PushItem, ReadBack};
+use cadetta_adapter::atomic::Document;
+use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options};
 use cadetta_units::{Magnitude, Rational, UnitTable};
 use serde_json::{Value, json};
 
@@ -325,13 +326,7 @@ fn init(job: &Job) -> Result<Facts, String> {
 struct NoBackend;
 
 impl Backend for NoBackend {
-    fn push(
-        &mut self,
-        _adapter: &str,
-        _file: &str,
-        _items: &[PushItem],
-        _regen: bool,
-    ) -> Vec<ReadBack> {
+    fn document<'a>(&'a mut self, _adapter: &str, _file: &str) -> Box<dyn Document + 'a> {
         unreachable!("classify fixtures run as a dry run")
     }
 }
