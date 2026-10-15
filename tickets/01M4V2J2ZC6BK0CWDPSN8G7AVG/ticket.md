@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:02Z"
-updated = "2026-10-15T04:19:19Z"
+updated = "2026-10-15T04:21:22Z"
 scope = ["tests/conformance/stdlib/**"]
 
 [[acceptance]]
 text = "The 11 ScrewJoint fixtures (check-*, e006-*, g004-joint-pattern-count, vendor-tap-members-absent) pass against the binary and are not gapped"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "g005-float-unlocated remains gapped under ~HWJP0GQ (needs placement-edge float, out of scope here)"
