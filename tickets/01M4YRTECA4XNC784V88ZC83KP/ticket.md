@@ -4,9 +4,10 @@ title = "check: resolve git dependencies (currently skipped with a warning)"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T03:13:47Z"
-updated = "2026-10-15T03:13:47Z"
+updated = "2026-10-15T19:07:55Z"
 scope = ["crates/cadetta-cli/**"]
 
 [[acceptance]]
