@@ -12,10 +12,10 @@
     "output": {
       "build/params.csv": {
         "contains": [
-          "1/4in emit=mmc @\"\"ASTM B209\"\"\""
+          "1/4in emit=mid @\"\"ASTM B209\"\"\""
         ],
         "excludes": [
-          "emit=mmc 1/4in",
+          "emit=mid 1/4in",
           "@\"\"ASTM B209\"\" emit=",
           "; "
         ]

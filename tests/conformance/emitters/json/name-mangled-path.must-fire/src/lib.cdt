@@ -2,5 +2,5 @@ model Axle {
   end_diameter = 12mm
 }
 model Rover {
-  axle: [Axle; 2]
+  part axle[2]: Axle
 }
