@@ -2,7 +2,8 @@
 id = "01M4YEA3SADYRF5MJ4AG2DFAFQ"
 title = "U002 and I004 facts: resolution-based use, members, parameterized and is_root"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
