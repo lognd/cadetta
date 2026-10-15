@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a clean or failing project, when check --format json runs, then the output validates against docs/schemas/check.json and each diagnostic against diag.json"]
+moved = []
+at = "2026-10-15T01:45:05Z"
+actor = "lognd"
+rev = 1
