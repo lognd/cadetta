@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:10:03Z"
+digest = "2a379feb9481be0378738fc294668b0b9d4b29e50d58a9fe44acab1043467c21"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.88s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ec5fbde7-a3aa-48e2-b556-e160a5f3bdc7 with nextest profile: default
+    Starting 1 test across 66 binaries (1411 tests skipped)
+        PASS [   0.006s] cadetta-sema deps::tests::priv_member_expression_path_across_packages_is_e016
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.053s] 1 test run: 1 passed, 1411 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "priv_member_expression_path_across_packages_is_e016"
+size = 700
+status = "measured"
+test_count = 1
+tests_digest = "cd094d3d00236f1faf5f9b4b46f9ac6d86c5c84da6585efb652205415438033e"
+at = "2026-10-15T04:10:03Z"
+actor = "lognd"
+rev = 1
