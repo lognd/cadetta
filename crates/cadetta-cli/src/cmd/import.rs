@@ -13,6 +13,7 @@ use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_adapter::bindings::BindingSet;
+use cadetta_adapter::import::accept::plan as accept_plan;
 use cadetta_adapter::import::naming::component_file;
 use cadetta_adapter::import::propose::{
     Item, PROPOSAL_DIR, PROPOSAL_TOML, Proposal, Status, propose, render_model, write_proposal,
@@ -725,23 +726,6 @@ fn rel(root: &FsPath, p: &FsPath) -> String {
         .into_owned()
 }
 
-fn quote(s: &str) -> String {
-    toml::Value::String(s.to_owned()).to_string()
-}
-
-fn binding_table(canonical: &str, item: &Item) -> String {
-    let mut loc = format!(
-        "{{ locator = {}, kind = {}, mode = \"value\"",
-        quote(&item.locator),
-        quote(&item.kind)
-    );
-    if let Some(unit) = &item.unit {
-        loc.push_str(&format!(", native_unit = {}", quote(unit)));
-    }
-    loc.push_str(" }");
-    format!("[{}]\nlocators = [ {loc} ]\n", quote(canonical))
-}
-
 /// Find the package whose `build/import/proposal.toml` exists.
 fn proposal_package<'a>(project: &'a Project, scope: &[usize]) -> Option<&'a PackageDir> {
     scope
@@ -787,21 +771,10 @@ fn accept(project: &Project, scope: &[usize], parsed: &ImportArgs) -> Result<Imp
         mode: "accept".to_owned(),
         ..ImportReport::default()
     };
-    let mut appended = String::new();
-    let mut by_file: BTreeMap<&str, Vec<&Item>> = BTreeMap::new();
-    for item in proposal.items.iter().filter(|i| i.status != Status::Skip) {
-        let canonical = format!("{pkg_name}::{}.{}", item.component, item.path);
-        if bound_paths.contains(&canonical) || bound_locators.contains(&item.locator) {
-            report.unchanged.push(canonical);
-            continue;
-        }
-        appended.push_str(&binding_table(&canonical, item));
-        appended.push('\n');
-        bound_paths.insert(canonical.clone());
-        bound_locators.insert(item.locator.clone());
-        by_file.entry(item.file.as_str()).or_default().push(item);
-        report.items.push(canonical);
-    }
+    let planned = accept_plan(&proposal, &pkg_name, &mut bound_paths, &mut bound_locators);
+    let appended = planned.appended;
+    report.unchanged.extend(planned.unchanged);
+    report.items.extend(planned.added);
     if !appended.is_empty() {
         if let Some(parent) = bindings_file.parent() {
             std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
