@@ -1,0 +1,12 @@
+kind = "create"
+title = "conformance emitters/sw-equations/naming-component-field fails: fixture uses dotted part path and out-of-range instance"
+type = "bug"
+category = "todo"
+priority = "high"
+points = 1
+scope = ["crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/emitters/sw-equations/naming-component-field.*/**", "tests/conformance/known-gaps.toml"]
+acceptance = ['sw-equations/naming-component-field emits "D1@Bore@Wheel.SLDPRT" = 10mm in both halves and adapters/star-mangle-drops-segment still passes']
+body = "Not a regression from naming_path: the gap entry was dropped by ~9WDH9XE but the fixture never passed. It binds Rover.wheel[2] (dot form, not the canonical Rover/wheel[2]) on part wheel[2], whose instances are 0..1."
+at = "2026-10-15T08:33:35Z"
+actor = "lognd"
+rev = 1
