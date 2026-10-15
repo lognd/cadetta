@@ -78,12 +78,12 @@ fn is_generator_member(name: &str) -> bool {
         .any(|g| name.starts_with(g))
 }
 
-/// Parse a source-form word: `datum`, `derived-coordinate`, `<owner>.<member>`, `place.<axis>`,
+/// Parse a source-form word: `datum`, `frame` (the native coordinate system a datum binds to), `derived-coordinate`, `<owner>.<member>`, `place.<axis>`,
 /// `placement`, `plain placement`, `flip`, `rotate <n>deg`, `for-placement over pattern`.
 pub fn parse_source_form(word: &str) -> Result<SourceForm, UnknownForm> {
     let word = word.trim();
     let form = match word {
-        "datum" => SourceForm::Datum,
+        "datum" | "frame" => SourceForm::Datum,
         "derived-coordinate" => SourceForm::DerivedCoordinate,
         "placement" => SourceForm::Placement,
         "plain placement" => SourceForm::PlainPlacement,
@@ -219,6 +219,13 @@ mod tests {
         let ninety = plan("rotate 90deg", false);
         assert_eq!((ninety.binds_to, ninety.push_writes), (None, false));
         assert!(!plan("placement", false).push_writes);
+    }
+
+    // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::parse_source_form kind=unit
+    #[test]
+    fn frame_form_plans_as_a_datum_frame() {
+        assert_eq!(parse_source_form("frame"), Ok(SourceForm::Datum));
+        assert_eq!(plan("frame", false), plan("datum", false));
     }
 
     // frob:tests crates/cadetta-adapter/src/geometry_plan.rs::plan_source_form kind=unit
