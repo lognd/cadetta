@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-15T21:59:26Z"
-scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml"]
+updated = "2026-10-15T22:23:15Z"
+scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs"]
 +++
 
 Split from ~B645GTM. Fixtures solvers/s003-stale-{dep,inputs,script,still-evaluates}, trust-solver-own-check, unsolved-output-no-result still fail with S006 landed: S003 messages lack the changed name (analysis/material_db.csv, inputs, script); s003-stale-still-evaluates does not observe stale_output; C001 (trust-solver-own-check) and C002 (unsolved-output-no-result) are not produced. Make them pass and remove their known-gaps entries.
