@@ -4,9 +4,10 @@ title = "Derive fits whose operands are component args or parameterized instance
 type = "task"
 category = "todo"
 priority = "low"
+points = 3
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:06:07Z"
+updated = "2026-10-15T18:59:27Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/instances.rs"]
 
 [[acceptance]]
