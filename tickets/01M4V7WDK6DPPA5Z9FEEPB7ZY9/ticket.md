@@ -11,7 +11,7 @@ scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
 text = "assume-unit wins over the locator native_unit, then the adapter native unit, when reading a unitless value"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Whole-number values render without a fraction in json and csv"

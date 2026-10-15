@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:12:12Z"
+digest = "fedab331d85def8caa5154efa432034ab08033727efcc8b760e67e8090f52eeb"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.26s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d6f39b8c-0583-4425-8d99-0684d13f74fb with nextest profile: default
+    Starting 1 test across 66 binaries (1413 tests skipped)
+        PASS [   0.006s] cadetta-adapter read_units::tests::assume_unit_wins_over_native_unit
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.052s] 1 test run: 1 passed, 1413 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "assume_unit_wins_over_native_unit"
+size = 897
+status = "measured"
+test_count = 1
+tests_digest = "7a01ecf9dc6d3a253dab648c29b95c2e7d3a83891e4775384ad9c5b861c3991d"
+at = "2026-10-15T04:12:12Z"
+actor = "lognd"
+rev = 1
