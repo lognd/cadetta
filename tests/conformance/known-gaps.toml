@@ -28,11 +28,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "obligations/s003-solver-stale"
-ticket = "~JET4TC0"
-reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
-
-[[gap]]
 fixture = "stdlib/m003-hole-fit-side"
 ticket = "~3YZ3NSG"
 reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
@@ -44,52 +39,47 @@ reason = "S001 reports per member, fixture expects the component path"
 
 [[gap]]
 fixture = "solvers/s003-stale-dep"
-ticket = "~JET4TC0"
-reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
-
-[[gap]]
-fixture = "solvers/s003-stale-either-role"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s003-stale-inputs"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s003-stale-script"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s003-stale-still-evaluates"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s006-primary-missing-is-not-s006"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s006-unchanged-variant-reads-primary"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/s006-unsolved-variant"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/trust-solver-own-check"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
 fixture = "solvers/unsolved-output-no-result"
-ticket = "~JET4TC0"
+ticket = "~B645GTM"
 reason = "solver member outputs do not resolve in check, so S003/S006/C001/C002 are not produced"
 
 [[gap]]
