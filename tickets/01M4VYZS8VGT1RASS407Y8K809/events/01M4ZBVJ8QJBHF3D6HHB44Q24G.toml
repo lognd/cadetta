@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Datums of a parameterized instance are evaluated per instance (given argument and default) and lower as datum Members of the instantiating component", "Placements inside a parameterized assembly instance are evaluated per instance and lower as place Members"]
+moved = []
+at = "2026-10-15T08:46:27Z"
+actor = "lognd"
+rev = 1
