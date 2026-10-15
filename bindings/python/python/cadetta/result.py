@@ -1,4 +1,4 @@
-"""Result contract: findings are Ok; only I/O, config or usage is Err (bindings.md 3)."""
+"""Result contract: findings are Ok; only I/O, config or usage is Err (bindings 3)."""
 
 # frob:ticket 01M4SWP8D2254TD7A8558R6ZY3
 
