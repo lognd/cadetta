@@ -331,10 +331,16 @@ not dead code, even when private and unnamed.
 
 Engine entry points (0.1.0): `cadetta check` runs I001 (`check_members`,
 interfaces lowered from the AST with `extends` flattened; bounds are not
-yet lowered), I004 (`check_roots`) and U002 (`u002::check`). U002 decides
-"used" lexically: an item is used when its identifier is mentioned more
-than once across the package's modules (its own declaration counts
-once). `require` protection is wired by collecting the path of every
+yet lowered), I004 and U002, both from `lint_facts::item_facts`. U002
+decides "used" by name resolution, not lexically: an item is used when a
+path or reference in some component, fn, interface, table, process,
+solver, fit, check or require resolves to it, so a local or parameter
+that shadows an item's name is not a use and a self-reference is not a
+use. Private `priv` param and let members of a component get their own
+U002 rows (`pkg::mod::Comp.member`); part and datum members are not yet
+covered. I004 treats a model or assembly as parameterized when a param
+has no default and is not optional, and as a root when no other
+component instantiates it through a part. `require` protection is wired by collecting the path of every
 obligation check into the suppression table, and `#[allow(CODE, reason)]`
 member attributes are collected from the IR into `allows`; those on `check`
 and `require` statements, which the IR does not keep, are read from the AST
