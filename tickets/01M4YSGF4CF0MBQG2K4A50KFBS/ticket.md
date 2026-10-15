@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T10:57:58Z"
-scope = ["crates/cadetta-sema/**", "docs/spec/language.md"]
+updated = "2026-10-15T10:57:59Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml"]
 +++
 
 found while working ~6K58FR1. Fixtures stdlib/commercial-misspelling-not-a-member (expects EVAL; gets E002 on max(self, lead_time)) and stdlib/screw-price-not-in-iso4762 (expects EVAL; gets unknown function sum). rollup.rs has roll_up with unit tests only; func.rs has no sum and no (self, member) form.
