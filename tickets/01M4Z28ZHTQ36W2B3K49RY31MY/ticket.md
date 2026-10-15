@@ -9,7 +9,7 @@ reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
 updated = "2026-10-15T06:15:38Z"
 idempotency_key = "split-0N41BNX-u002"
-scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs"]
+scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/lint_facts.rs", "tests/conformance/**"]
 
 [[acceptance]]
 text = "The three u002 fixtures pass conformance without known-gaps entries"
