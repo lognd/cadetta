@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T12:43:04Z"
-updated = "2026-10-15T13:44:38Z"
+updated = "2026-10-15T16:07:52Z"
 idempotency_key = "g005-halfturn-fixture"
 scope = ["tests/conformance/geometry/g005-float-half-turn.*"]
 
