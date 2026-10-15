@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "A call to an unknown equation function reads as an unparsed raw line"
-bound = false
+bound = true
 +++
 
 split from ~0MC1ZA9: adapters/read-driven-dimension-inexact (library has no driven-dimension concept), adapters/read-never-raises-q001 (dimension-mismatch inexactness kg vs mm), adapters/read-unparsable-expression-inexact (equations parser accepts SWFN(1) as a call). Remove each known-gaps.toml entry when done.
