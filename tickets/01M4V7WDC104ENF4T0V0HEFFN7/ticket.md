@@ -6,8 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-13T18:20:03Z"
-scope = ["crates/cadetta-adapter/**"]
+updated = "2026-10-15T04:07:47Z"
+scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/emitters/sw-equations/**", "tests/conformance/known-gaps.toml", "changelog.d/**"]
+
+[[acceptance]]
+text = "The created global takes the ref-mode dimension locator native_unit, else the adapter native unit"
+bound = false
 +++
 
 found while working ~WD0CWPQ. See adapters.md 3 and sw-equations.md 1.
