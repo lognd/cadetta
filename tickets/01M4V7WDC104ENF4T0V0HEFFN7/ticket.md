@@ -2,11 +2,12 @@
 id = "01M4V7WDC104ENF4T0V0HEFFN7"
 title = "sw-equations emit: created global unit from locator native_unit else adapter default"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-15T04:08:23Z"
+updated = "2026-10-15T04:08:59Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "tests/conformance/emitters/sw-equations/**", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
