@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:22:44Z"
+digest = "1d46cba6da3f33abf09b25315c293e70db2ac04801e385f178eea39f33859d76"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ae32bdfa-8306-457d-828c-30bf1c694959 with nextest profile: default
+    Starting 1 test across 56 binaries (1308 tests skipped)
+        PASS [   0.124s] cadetta::quantity_pi_inexact deg_plus_rad_is_inexact_not_eval
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.126s] 1 test run: 1 passed, 1308 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "deg_plus_rad"
+size = 557
+status = "measured"
+test_count = 1
+tests_digest = "a66718a73535ef1e9e2f2c93ed22935f447b0e88bbd5351a2b8db8c5f30211c7"
+at = "2026-10-15T02:22:44Z"
+actor = "lognd"
+rev = 1

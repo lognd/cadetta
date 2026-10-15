@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-15T02:22:27Z"
+updated = "2026-10-15T02:22:44Z"
 idempotency_key = "Z48-angle"
 labels = ["creates:changelog.d/01M4V1HE7FVQECRVX6S7K6PYDX.fixed.md"]
 scope = ["crates/cadetta-sema/**", "crates/cadetta-units/src/inexact.rs", "crates/cadetta-cli/tests/quantity_pi_inexact.rs", "docs/spec/quantities.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HE7FVQECRVX6S7K6PYDX.fixed.md"]
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "1deg + 1rad is an inexact value (Q006), not an EVAL error; exact-zero-normalised sums stay clean"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Q008 fires for rpm*length compared to a speed and not for the per-rev form"
