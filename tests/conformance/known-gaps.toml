@@ -1499,53 +1499,33 @@ reason = "binding import entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/contract-q004-not-representable"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "adapters/contract-structured-failures"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "emitters/csv/value-q004-beyond-precision"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "emitters/json/value-q004-beyond-precision"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "emitters/sw-equations/value-q004-beyond-precision"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
-
-[[gap]]
-fixture = "quantities/exact-zero-normalised"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "quantities/q004"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
-
-[[gap]]
-fixture = "quantities/trig-exact-atan2"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
-
-[[gap]]
-fixture = "quantities/trig-exact-sin"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
-
-[[gap]]
-fixture = "quantities/trig-exact-tan"
-ticket = "~MHTX343"
-reason = "Q004/Q006 diagnostics not raised"
+ticket = "~H29EAMF"
+reason = "Q004 diagnostic not raised"
 
 [[gap]]
 fixture = "solvers/deps-missing-file-fails"

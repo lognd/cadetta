@@ -24,7 +24,7 @@ use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableM
 use cadetta_lint::rules::{c, d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
-use cadetta_sema::eval::Evaluator;
+use cadetta_sema::eval::{Evaluator, Selection};
 use cadetta_sema::fitderive;
 use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
@@ -722,17 +722,67 @@ fn table_cells(
     out
 }
 
+/// What variant evaluation needs: the resolver, units and sources, plus a per-swap cache.
+struct VariantEnv<'a, 'p> {
+    resolver: &'a Resolver<'p>,
+    units: &'a UnitTable,
+    sources: &'a [PackageSrc<'a>],
+    cache: std::cell::RefCell<BTreeMap<String, bool>>,
+}
+
+impl<'a, 'p> VariantEnv<'a, 'p> {
+    /// Builds the environment with an empty cache.
+    fn new(resolver: &'a Resolver<'p>, units: &'a UnitTable, sources: &'a [PackageSrc<'a>]) -> Self {
+        Self { resolver, units, sources, cache: std::cell::RefCell::new(BTreeMap::new()) }
+    }
+
+    /// True when no check or require violates with `alt` swapped into `owner`'s `slot`.
+    fn alternate_holds(
+        &self,
+        owner: &CanonPath,
+        slot: &str,
+        package: &str,
+        module: &[String],
+        alt: &cadetta_syntax::ast::Ctor,
+    ) -> bool {
+        let Some((alt_path, _)) = self.resolver.ctor_component(package, module, alt) else {
+            tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
+            return true;
+        };
+        let selection = Selection { owner: owner.clone(), slot: slot.to_owned(), alt: alt_path };
+        let key = selection.key();
+        if let Some(held) = self.cache.borrow().get(&key) {
+            return *held;
+        }
+        let evaluator =
+            Evaluator::new(self.resolver, self.units, self.sources).with_selection(selection);
+        let evaluation = evaluator.evaluate();
+        let violated: Vec<String> = evaluation
+            .checks
+            .iter()
+            .filter(|r| r.verdict == Verdict::Violates)
+            .map(|r| r.path.to_string())
+            .collect();
+        let held = violated.is_empty();
+        tracing::info!(variant = %key, viable = held, ?violated, "pipeline: alternate viability evaluated");
+        self.cache.borrow_mut().insert(key, held);
+        held
+    }
+}
+
 /// L001/L002: lifecycle facts for the primary of every part slot in scope.
 ///
 /// An alternate counts as viable when it names a known `ots` component that is not itself
-/// end-of-life; `check` does not evaluate variants, so interface-bound failures under the
-/// alternate (I002/I003) are not folded in (lints.md L).
-// frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
+/// end-of-life and the design evaluated under that alternate's slot swap violates no check or
+/// require (language.md 3.2); undecided results keep it viable. Variants are evaluated only for
+/// primaries whose lifecycle can raise a fact, and once per distinct swap.
+// frob:ticket 01M4YMYMD920CQR97CW6QJCHN0
 fn lifecycle_findings(
     parsed: &[ParsedPackage],
     scope: &BTreeSet<String>,
     as_of: &str,
     index: &SourceIndex,
+    env: &VariantEnv<'_, '_>,
 ) -> Vec<LifecycleFinding> {
     use cadetta_variants::lifecycle as vl;
     let Some(as_of) = vl::LifecycleDate::parse(as_of) else {
@@ -775,6 +825,9 @@ fn lifecycle_findings(
                     let Some((_, lc)) = lookup(&p.name, primary) else {
                         continue;
                     };
+                    // Only a non-active primary can raise L001/L002; skip the swaps otherwise.
+                    let needs_variants = lc.as_ref().is_some_and(|l| l.status != vl::Status::Active);
+                    let owner = CanonPath::item(&p.name, &m.path, &c.name.name);
                     let alternates: Vec<vl::Alternate> = part
                         .alts
                         .iter()
@@ -786,8 +839,11 @@ fn lifecycle_findings(
                                 .map_or_else(String::new, |s| s.name.clone());
                             let found = lookup(&p.name, a);
                             let lifecycle = found.and_then(|(_, l)| l.clone());
-                            let viable = found.is_some()
+                            let mut viable = found.is_some()
                                 && !lifecycle.as_ref().is_some_and(|l| l.status.is_end_of_life());
+                            if viable && needs_variants {
+                                viable = env.alternate_holds(&owner, &part.name.name, &p.name, &m.path, a);
+                            }
                             vl::Alternate { name, lifecycle, viable }
                         })
                         .collect();

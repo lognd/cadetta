@@ -343,10 +343,12 @@ citation, when it names a `cite` path) with every key and cell of the
 tables carrying the same citation path; it fires only when a table holds
 values of the literal's dimension and none equals it. L001/L002 read the
 `lifecycle` attribute of the primary of each part slot. `--as-of` (else
-`[package] as_of`, else today) is the date for L001. Approximation: an
+`[package] as_of`, else today) is the date for L001. An
 alternate is viable when it names a known `ots` component that is not
-itself end-of-life; variants are not evaluated by `check`, so I002/I003
-failures under an alternate do not count against viability. E-family
+itself end-of-life and the design evaluated with that alternate swapped
+into its slot violates no check or require (language.md 3.2); undecided
+results keep it viable. Swaps are evaluated only for non-`active` primaries.
+E-family
 resolution errors keep their current fixed-error text and are not re-lifted
 through `lift_resolution`.
 

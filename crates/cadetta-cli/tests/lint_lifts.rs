@@ -186,3 +186,20 @@ fn l002_reports_a_not_recommended_primary() {
     let a = run("l002", &rover("#[lifecycle(nrnd, \"2026-09\")]"));
     assert!(has(&a, "L002"), "{:?}", codes(&a));
 }
+
+/// An eol `Old` primary whose `Big` alternate is wider than the assembly's check allows.
+fn swap_rover(alt: &str) -> String {
+    format!(
+        "{CASTER}#[lifecycle(eol, \"2026-09\")]\npub ots Old: Caster @src {{\n  diameter = 5in\n  load_rating = 500N\n}}\npub ots Big: Caster @src {{\n  diameter = 8in\n  load_rating = 500N\n}}\npub assembly Rover {{\n  part wheel: Caster = Old alt [{alt}]\n  check fits: wheel.diameter <= 6in\n}}\n"
+    )
+}
+
+// frob:ticket 01M4YMYMD920CQR97CW6QJCHN0
+// frob:tests crates/cadetta-cli/src/pipeline.rs::lifecycle_findings kind=integration
+#[test]
+fn l001_variant_evaluation_rejects_an_alternate_that_violates_a_check() {
+    let bad = run("l001varbad", &swap_rover("Big"));
+    assert!(has(&bad, "L001"), "violating alternate is not viable: {:?}", codes(&bad));
+    let good = run("l001vargood", &swap_rover("Good"));
+    assert!(!has(&good, "L001"), "{:?}", codes(&good));
+}
