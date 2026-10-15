@@ -2,7 +2,8 @@
 id = "01M4Y2Z99SXRHPTNQS11392B89"
 title = "Emit lint G008 from the placement float"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
