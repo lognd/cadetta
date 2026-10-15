@@ -15,11 +15,12 @@ use cadetta_adapter::builtin::sw_equations::{
     ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
 };
 use cadetta_adapter::geometry_bind::{datum_entries, verify_geometry};
-use cadetta_adapter::policy::resolve_point;
+use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_tolerance};
+use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, Feature, PushMode, PushStatus, ReadParams, ReadSource,
-    RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, Feature, ObservedTolerance, PushMode,
+    PushStatus, ReadParams, ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -28,7 +29,7 @@ use cadetta_adapter::sync::{
 };
 use cadetta_ir::model::{
     Exact, LocatorKind, LocatorMode, Nominal, ObservedFrame, ObservedInstance, Project as Ir, Sign,
-    Value as IrValue,
+    TolerancePolicy, Value as IrValue,
 };
 use cadetta_obligations::lock::{Hex, Lock as FileLock, Record, SyncedFile, SyncedValue};
 use cadetta_units::dimension::Dim;
@@ -38,8 +39,8 @@ use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
-    emit_package_texts, kind_of, load_bindings, locators_for, native_unit, negate_text, package_ir,
-    text_params_of, written_for,
+    designed, emit_package_texts, kind_of, load_bindings, locators_for, native_unit, negate_text,
+    package_ir, text_params_of, to_ratio, written_for,
 };
 use crate::cmd::import::program;
 use crate::config::{Adapter, SaveMode};
@@ -206,11 +207,8 @@ struct Ctx<'a> {
     texts: TextParams,
 }
 
-/// Normalize `text` to `{number}{unit}`; `default_unit` fills a missing unit.
-///
-/// Text that does not start with a number is trimmed and kept as is.
-pub(crate) fn normalize(text: &str, default_unit: &str) -> String {
-    let t = text.trim();
+/// Split `text` into its leading number and the rest; `None` when it does not start with one.
+fn split_number(t: &str) -> Option<(&str, &str)> {
     let b = t.as_bytes();
     let mut i = 0;
     if i < b.len() && (b[i] == b'-' || b[i] == b'+') {
@@ -221,7 +219,7 @@ pub(crate) fn normalize(text: &str, default_unit: &str) -> String {
         i += 1;
     }
     if i == digits_from {
-        return t.to_owned();
+        return None;
     }
     if i < b.len() && (b[i] == b'e' || b[i] == b'E') {
         let mut j = i + 1;
@@ -236,16 +234,133 @@ pub(crate) fn normalize(text: &str, default_unit: &str) -> String {
             i = j;
         }
     }
-    let mut num = t[..i].trim_start_matches('+').to_owned();
+    Some((&t[..i], &t[i..]))
+}
+
+/// Normalize `text` to `{number}{unit}`; `default_unit` fills a missing unit.
+///
+/// Text that does not start with a number is trimmed and kept as is.
+pub(crate) fn normalize(text: &str, default_unit: &str) -> String {
+    let t = text.trim();
+    let Some((number, rest)) = split_number(t) else {
+        return t.to_owned();
+    };
+    let mut num = number.trim_start_matches('+').to_owned();
     if num.contains('.') && !num.contains(['e', 'E']) {
         num = num.trim_end_matches('0').trim_end_matches('.').to_owned();
     }
     if num == "-0" || num.is_empty() {
         num = "0".to_owned();
     }
-    let unit = t[i..].trim();
+    let unit = rest.trim();
     let unit = if unit.is_empty() { default_unit } else { unit };
     format!("{num}{unit}")
+}
+
+// frob:ticket 01M4XDM9WRFB7RFEF2X6RBPR2Y
+/// Convert a normalized `{number}{unit}` to the `native` unit exactly; `None` keeps the text.
+///
+/// Only linear units of one dimension convert; a result that is not a decimal within `precision`
+/// places (or involves pi) is left in its own unit so the textual comparison still reports it.
+fn convert_unit(table: &UnitTable, text: &str, native: &str, precision: u32) -> Option<String> {
+    let (num, unit) = split_number(text)?;
+    if native.is_empty() || unit.is_empty() || unit == native {
+        return None;
+    }
+    let affine = |u: &str| table.lookup(u).is_some_and(|d| d.affine);
+    let (from, to) = (table.parse(unit).ok()?, table.parse(native).ok()?);
+    if from.dim != to.dim || affine(unit) || affine(native) {
+        return None;
+    }
+    let x = Magnitude::new(Rational::parse_decimal(num).ok()?, 0);
+    let scaled = x.mul(&from.factor).div(&to.factor).ok()?;
+    if scaled.pi_exp() != 0 {
+        return None;
+    }
+    let dec = to_decimal(to_ratio(&scaled).ok()?, precision).ok()?;
+    tracing::debug!(
+        from = unit,
+        to = native,
+        text,
+        "sync: converted observed unit"
+    );
+    Some(normalize(&format!("{dec}{native}"), native))
+}
+
+// frob:ticket 01M4XDM9WRFB7RFEF2X6RBPR2Y
+/// [`normalize`] `text`, then convert it to `native` when it carries another unit of the same dimension.
+pub(crate) fn normalize_in(table: &UnitTable, text: &str, native: &str, precision: u32) -> String {
+    let n = normalize(text, native);
+    convert_unit(table, &n, native, precision).unwrap_or(n)
+}
+
+// frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+/// `tol` with every literal normalized into the `native` unit (a fit class is kept as is).
+fn normalize_tolerance(
+    table: &UnitTable,
+    tol: &DimTolerance,
+    native: &str,
+    precision: u32,
+) -> DimTolerance {
+    let n = |s: &str| normalize_in(table, s, native, precision);
+    match tol {
+        DimTolerance::Symmetric { t } => DimTolerance::Symmetric { t: n(t) },
+        DimTolerance::Bilateral { upper, lower } => DimTolerance::Bilateral {
+            upper: n(upper),
+            lower: n(lower),
+        },
+        DimTolerance::Limits { min, max } => DimTolerance::Limits {
+            min: n(min),
+            max: n(max),
+        },
+        DimTolerance::Fit { class } => DimTolerance::Fit {
+            class: class.clone(),
+        },
+    }
+}
+
+// frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+/// The designed tolerance of `value` as native-unit literals: its shape, `.min` and `.max`.
+///
+/// The IR keeps no fit class or interval spelling, so a one-sided or asymmetric spread is
+/// `Bilateral` and an equal spread `Symmetric`; an untoleranced value is `DesignForm::None`.
+fn design_tolerance(
+    table: &UnitTable,
+    value: &IrValue,
+    unit: &str,
+    precision: u32,
+) -> Result<DesignTolerance, String> {
+    let factor = table
+        .parse(unit)
+        .map_err(|e| format!("unit `{unit}`: {e}"))?
+        .factor;
+    let lit = |r| {
+        to_decimal(r, precision)
+            .map(|d| format!("{d}{unit}"))
+            .map_err(|e| e.to_string())
+    };
+    let abs = designed(value, &factor)?;
+    let form = if value.tol.is_none() {
+        DesignForm::None
+    } else {
+        let zero = Rational::new(0, 1).map_err(|e| e.to_string())?;
+        let mut spread = value.clone();
+        spread.nominal = Nominal::Exact(Exact(Magnitude::new(zero, 0)));
+        let d = designed(&spread, &factor)?;
+        let (hi, lo) = (lit(d.max)?, lit(d.min)?);
+        if d.max == d.min {
+            DesignForm::None
+        } else if hi == negate_text(&lo) {
+            DesignForm::Symmetric(hi)
+        } else {
+            DesignForm::Bilateral(hi, lo)
+        }
+    };
+    Ok(DesignTolerance {
+        form,
+        min: lit(abs.min)?,
+        max: lit(abs.max)?,
+    })
 }
 
 /// Flatten an adapter's `observed` JSON into `(file, native name, authored, expr)` rows.
@@ -337,6 +452,8 @@ fn diag_parts(v: &Json) -> (String, String) {
 struct SessionBackend<R: BufRead, W: Write> {
     session: DriveSession<R, W>,
     default_unit: UnitMap,
+    /// The adapter's decimal places, for converting read-back units.
+    precision: u32,
     regen: Vec<RegenRecord>,
     diags: Vec<SyncDiag>,
     failure: Option<String>,
@@ -385,7 +502,7 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
                 locator: i.locator.clone(),
                 mode: PushMode::Value,
                 ref_to: None,
-                tolerance: None,
+                tolerance: i.tolerance.clone(),
             })
             .collect();
         let result = match self.session.push(file, params) {
@@ -422,13 +539,15 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
                 status: "skipped".to_owned(),
             });
         }
-        let rows = match self.session.read() {
-            Ok(r) => observe(&r.observed),
+        let (rows, read_tols) = match self.session.read() {
+            Ok(r) => (observe(&r.observed), r.tolerances),
             Err(e) => {
                 self.fail(&e);
                 return Vec::new();
             }
         };
+        let table = UnitTable::builtin();
+        let precision = self.precision;
         let unit_for = |locator: &str| {
             self.default_unit
                 .get(&(adapter.to_owned(), locator.to_owned()))
@@ -443,13 +562,27 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
                     .then(|| {
                         rows.iter()
                             .find(|o| o.file == file && o.native == s.locator)
-                            .map(|o| normalize(&o.text, &unit_for(&s.locator)))
+                            .map(|o| {
+                                normalize_in(&table, &o.text, &unit_for(&s.locator), precision)
+                            })
+                    })
+                    .flatten();
+                let tolerance = (s.status == PushStatus::Pushed)
+                    .then(|| {
+                        read_tols
+                            .iter()
+                            .find(|t| t.locator == s.locator)
+                            .and_then(|t| t.tolerance.as_ref())
+                            .or(s.tolerance.as_ref())
+                            .map(|t| {
+                                normalize_tolerance(&table, t, &unit_for(&s.locator), precision)
+                            })
                     })
                     .flatten();
                 ReadBack {
                     locator: s.locator.clone(),
                     value,
-                    tolerance: None,
+                    tolerance,
                 }
             })
             .collect()
@@ -489,6 +622,7 @@ fn build_entries(
     let table = UnitTable::builtin();
     let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
     let cfg_point = config_point(pkg.config.emit.point);
+    let has_tolerances = read.features.contains(&Feature::Tolerances);
     let mut entries = Vec::new();
     let mut units = BTreeMap::new();
     let mut clean = true;
@@ -523,6 +657,34 @@ fn build_entries(
             } else {
                 written
             };
+            let mut ours_tol = None;
+            let mut theirs_tol = None;
+            let drives = has_tolerances
+                && kind == ValueKind::Quantity
+                && loc.kind == LocatorKind::Dimension
+                && loc.tolerance.unwrap_or(adapter.tolerances) == TolerancePolicy::Drive;
+            if drives {
+                let plan = TolerancePlan {
+                    adapter_default: adapter.tolerances,
+                    has_feature: true,
+                    nominal_emit: point == EmitPoint::Nominal,
+                    tool_has_fit: false,
+                };
+                match design_tolerance(&table, value, &unit, precision) {
+                    Ok(design) => ours_tol = plan_tolerance(loc, &plan, &design),
+                    Err(message) => {
+                        clean = false;
+                        ctx.report.diag("Q004", format!("{canonical}: {message}"));
+                        continue;
+                    }
+                }
+                theirs_tol = read
+                    .tolerances
+                    .iter()
+                    .find(|t| t.locator == loc.locator)
+                    .and_then(|t| t.tolerance.as_ref())
+                    .map(|t| normalize_tolerance(&table, t, &unit, precision));
+            }
             let default_unit = if kind == ValueKind::Quantity {
                 unit
             } else {
@@ -565,10 +727,10 @@ fn build_entries(
                 locator: loc.locator.clone(),
                 base,
                 ours: normalize(&written, &default_unit),
-                theirs: normalize(&found.text, &default_unit),
+                theirs: normalize_in(&table, &found.text, &default_unit, precision),
                 replaces: found.expr.clone(),
-                ours_tol: None,
-                theirs_tol: None,
+                ours_tol,
+                theirs_tol,
             });
         }
     }
@@ -590,6 +752,8 @@ struct Geometry<'a> {
     observed: &'a Json,
     /// The features the adapter announced at initialize.
     features: &'a [Feature],
+    /// The dimension tolerances the adapter read (only `tolerances` adapters report any).
+    tolerances: &'a [ObservedTolerance],
 }
 
 /// One IR `Value` from a wire entry: a `{nominal}` Value, a bare `Exact`/`Inexact`, or a number.
@@ -871,6 +1035,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     let geometry = Geometry {
         observed: &read.observed,
         features: &client.info().features,
+        tolerances: &read.tolerances,
     };
     let Some((entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx) else {
         let _ = client.shutdown();
@@ -940,6 +1105,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     let mut backend = SessionBackend {
         session,
         default_unit: units,
+        precision: adapter.precision.map_or(DEFAULT_PRECISION, u32::from),
         regen: Vec::new(),
         diags: Vec::new(),
         failure: None,
@@ -1144,6 +1310,7 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
     let geometry = Geometry {
         observed: &read.observed,
         features: &client.info().features,
+        tolerances: &read.tolerances,
     };
     let run_scope = RunScope::new(&[] as &[String], &[] as &[String]).map_err(|e| e.to_string())?;
     let args = SyncArgs::default();
@@ -1340,15 +1507,19 @@ mod tests {
     const PATH: &str = "acme.plate::CoverPlate.thickness";
 
     fn project(extra: &str) -> Dir {
+        project_with(extra, SOURCE, BINDINGS)
+    }
+
+    fn project_with(extra: &str, source: &str, bindings: &str) -> Dir {
         let dir = Dir::new();
         let toml = format!(
             "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"sw-equations\"\nid = \"equations\"\n{extra}"
         );
         std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
         std::fs::create_dir_all(dir.0.join("src")).unwrap();
-        std::fs::write(dir.0.join("src/lib.cdt"), SOURCE).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), source).unwrap();
         std::fs::create_dir_all(dir.0.join("bindings")).unwrap();
-        std::fs::write(dir.0.join("bindings/equations.toml"), BINDINGS).unwrap();
+        std::fs::write(dir.0.join("bindings/equations.toml"), bindings).unwrap();
         dir
     }
 
@@ -1414,6 +1585,17 @@ mod tests {
         results: &[Json],
     ) -> (SyncReport, Vec<String>, FileLock) {
         let dir = project("files = [\"part.FCStd\"]\n");
+        let (report, out, lock) = drive_in(&dir, args, base, results);
+        (report, methods(&out), lock)
+    }
+
+    /// [`drive`] over `dir`; returns the report, the raw requests sent, and the lock.
+    fn drive_in(
+        dir: &Dir,
+        args: &[&str],
+        base: Option<&str>,
+        results: &[Json],
+    ) -> (SyncReport, Vec<u8>, FileLock) {
         let args = parse_args(&args.iter().map(|a| (*a).to_owned()).collect::<Vec<_>>()).unwrap();
         let (proj, scope) = Project::open(Some(&dir.0), None).unwrap();
         let analysis = analyze(&proj, &scope);
@@ -1441,7 +1623,7 @@ mod tests {
             texts: TextParams::new(),
         };
         drive_adapter(client, pkg, &pkg.config.adapters[0], &ir, &mut ctx).unwrap();
-        (report, methods(&out), lock)
+        (report, out, lock)
     }
 
     fn full_run(readback: &str) -> Vec<Json> {
@@ -1467,6 +1649,31 @@ mod tests {
         assert_eq!(normalize("+2", ""), "2");
         assert_eq!(normalize("1e3mm", "mm"), "1e3mm");
         assert_eq!(normalize(" \"a\" ", "mm"), "\"a\"");
+    }
+
+    // frob:ticket 01M4XDM9WRFB7RFEF2X6RBPR2Y
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::normalize_in
+    #[test]
+    fn normalize_in_converts_same_dimension_units_exactly() {
+        let t = UnitTable::builtin();
+        assert_eq!(normalize_in(&t, "0.5in", "mm", 6), "12.7mm");
+        assert_eq!(normalize_in(&t, "12.7 mm", "mm", 6), "12.7mm");
+        assert_eq!(normalize_in(&t, "1cm", "mm", 6), "10mm");
+        assert_eq!(normalize_in(&t, "2", "mm", 6), "2mm");
+        assert_eq!(normalize_in(&t, "25.4mm", "in", 6), "1in");
+    }
+
+    // frob:ticket 01M4XDM9WRFB7RFEF2X6RBPR2Y
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::normalize_in
+    #[test]
+    fn normalize_in_keeps_text_it_cannot_convert_exactly() {
+        let t = UnitTable::builtin();
+        // Different dimension, unknown unit, non-terminating decimal and pi all stay textual.
+        assert_eq!(normalize_in(&t, "5kg", "mm", 6), "5kg");
+        assert_eq!(normalize_in(&t, "5furlong", "mm", 6), "5furlong");
+        assert_eq!(normalize_in(&t, "1mm", "in", 6), "1mm");
+        assert_eq!(normalize_in(&t, "90deg", "rad", 6), "90deg");
+        assert_eq!(normalize_in(&t, "\"a\"", "mm", 6), "\"a\"");
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/sync.rs::parse_args
@@ -1595,6 +1802,138 @@ mod tests {
         let (report, _, _) = drive(&[], Some("4mm"), &[init(), observed("5mm"), Json::Null]);
         assert!(report.failed(), "{report:?}");
         assert!(report.diagnostics.iter().any(|d| d.code == "R001"));
+    }
+
+    const TOL_SOURCE: &str = "model CoverPlate {\n  thickness: Length = 6mm [+-0.1mm]\n}\n";
+    const TOL_BINDINGS: &str = "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"Plate_Thk\", kind = \"dimension\", mode = \"value\", native_unit = \"mm\" } ]\n";
+
+    fn tol_init(features: &[&str]) -> Json {
+        let mut v = init();
+        v["features"] = json!(features);
+        v
+    }
+
+    fn observed_tol(text: &str, t: Option<&str>) -> Json {
+        let mut v = observed(text);
+        if let Some(t) = t {
+            v["tolerances"] = json!([{"locator": "Plate_Thk",
+                "tolerance": {"form": "symmetric", "t": t}}]);
+        }
+        v
+    }
+
+    // frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::build_entries
+    #[test]
+    fn tolerance_edited_in_cad_is_r001() {
+        let dir = project_with("files = [\"part.FCStd\"]\n", TOL_SOURCE, TOL_BINDINGS);
+        let results = [
+            tol_init(&["tolerances"]),
+            observed_tol("6mm", Some("0.3mm")),
+            Json::Null,
+        ];
+        let (report, _, _) = drive_in(&dir, &[], Some("6mm +-0.1mm"), &results);
+        assert!(report.failed(), "{report:?}");
+        assert!(
+            report.diagnostics.iter().any(|d| d.code == "R001"),
+            "{report:?}"
+        );
+    }
+
+    // frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::build_entries
+    #[test]
+    fn matching_tolerance_is_not_drift_and_unit_is_converted() {
+        let dir = project_with("files = [\"part.FCStd\"]\n", TOL_SOURCE, TOL_BINDINGS);
+        // 0.0039370078740157in is not exact, so use a tolerance that converts exactly.
+        let results = [
+            tol_init(&["tolerances"]),
+            observed_tol("6mm", Some("0.1mm")),
+            Json::Null,
+        ];
+        let (report, _, _) = drive_in(&dir, &[], Some("6mm +-0.1mm"), &results);
+        assert!(!report.failed(), "{report:?}");
+        assert_eq!(report.records[0].verb, "skip");
+    }
+
+    // frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::build_entries
+    #[test]
+    fn design_tolerance_is_pushed_with_the_value() {
+        let dir = project_with("files = [\"part.FCStd\"]\n", TOL_SOURCE, TOL_BINDINGS);
+        let results = [
+            tol_init(&["tolerances"]),
+            observed_tol("5mm", Some("0.1mm")),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            pushed("5mm", "6mm"),
+            json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
+            observed_tol("6mm", Some("0.1mm")),
+            json!({"files": [{"path": "part.FCStd", "digest": "blake3:0a"}], "diagnostics": []}),
+            Json::Null,
+            Json::Null,
+        ];
+        let (report, out, _) = drive_in(&dir, &[], Some("5mm +-0.1mm"), &results);
+        assert!(!report.failed(), "{report:?}");
+        let text = String::from_utf8(out).unwrap();
+        let push: Json = text
+            .lines()
+            .map(|l| serde_json::from_str::<Json>(l).unwrap())
+            .find(|r| r["method"] == "push")
+            .expect("a push request");
+        assert_eq!(
+            push["params"]["params"][0]["tolerance"],
+            json!({"form": "symmetric", "t": "0.1mm"}),
+            "{push}"
+        );
+    }
+
+    // frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::design_tolerance
+    #[test]
+    fn asymmetric_design_tolerance_is_pushed_bilateral() {
+        let src = "model CoverPlate {\n  thickness: Length = 6mm [+0 -0.2mm]\n}\n";
+        let dir = project_with("files = [\"part.FCStd\"]\n", src, TOL_BINDINGS);
+        let results = [
+            tol_init(&["tolerances"]),
+            observed_tol("6mm", None),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            pushed("6mm", "6mm"),
+            json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
+            observed_tol("6mm", None),
+            json!({"files": [{"path": "part.FCStd", "digest": "blake3:0a"}], "diagnostics": []}),
+            Json::Null,
+            Json::Null,
+        ];
+        let (_, out, _) = drive_in(&dir, &[], None, &results);
+        let text = String::from_utf8(out).unwrap();
+        let push = text
+            .lines()
+            .map(|l| serde_json::from_str::<Json>(l).unwrap())
+            .find(|r| r["method"] == "push")
+            .expect("a push request");
+        assert_eq!(
+            push["params"]["params"][0]["tolerance"],
+            json!({"form": "bilateral", "upper": "0mm", "lower": "-0.2mm"}),
+            "{push}"
+        );
+    }
+
+    // frob:ticket 01M4XDM9ST75VR0KRM3TDVNMAR
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::build_entries
+    #[test]
+    fn tolerances_are_ignored_without_the_feature() {
+        let dir = project_with("files = [\"part.FCStd\"]\n", TOL_SOURCE, TOL_BINDINGS);
+        let results = [
+            tol_init(&[]),
+            observed_tol("6mm", Some("0.3mm")),
+            Json::Null,
+        ];
+        let (report, _, _) = drive_in(&dir, &[], Some("6mm"), &results);
+        assert!(!report.failed(), "{report:?}");
+        assert!(
+            report.diagnostics.iter().all(|d| d.code != "R001"),
+            "{report:?}"
+        );
     }
 
     // criterion 2: an adapter without drive gets emit plus manual instructions.
@@ -1793,6 +2132,7 @@ mod tests {
         let read = Geometry {
             observed: &observed,
             features,
+            tolerances: &[],
         };
         let entries = geometry_pass(&adapter, &ir, &bindings, &[], &read, &mut ctx);
         (

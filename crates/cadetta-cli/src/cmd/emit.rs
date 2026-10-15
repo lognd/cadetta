@@ -10,11 +10,13 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_adapter::bindings::{BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all};
-use cadetta_adapter::builtin::{csv, json};
+use cadetta_adapter::bindings::{
+    BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
+};
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
+use cadetta_adapter::builtin::{csv, json};
 use cadetta_adapter::policy::{
     Designed, EmitPoint as PolicyPoint, EmitRequest, Ratio, Role, build_request, resolve_point,
     to_decimal,
@@ -129,7 +131,7 @@ pub(crate) fn diag(code: &str, message: impl Into<String>, path: Option<&Path>) 
 }
 
 /// Convert an SI magnitude to a ratio of `factor` units; `Err` when pi remains or it overflows.
-fn to_native(mag: &Magnitude, factor: &Magnitude) -> Result<Magnitude, String> {
+pub(crate) fn to_native(mag: &Magnitude, factor: &Magnitude) -> Result<Magnitude, String> {
     let m = mag.div(factor).map_err(|e| e.to_string())?;
     if m.pi_exp() != 0 {
         return Err("the value is not a rational multiple of the native unit".to_owned());
@@ -137,7 +139,7 @@ fn to_native(mag: &Magnitude, factor: &Magnitude) -> Result<Magnitude, String> {
     Ok(m)
 }
 
-fn to_ratio(m: &Magnitude) -> Result<Ratio, String> {
+pub(crate) fn to_ratio(m: &Magnitude) -> Result<Ratio, String> {
     let num: i128 = m
         .rational()
         .numer()
@@ -154,7 +156,7 @@ fn to_ratio(m: &Magnitude) -> Result<Ratio, String> {
 }
 
 /// The designed nominal and limits of `value` in the unit whose SI factor is `factor`.
-fn designed(value: &Value, factor: &Magnitude) -> Result<Designed, String> {
+pub(crate) fn designed(value: &Value, factor: &Magnitude) -> Result<Designed, String> {
     let Nominal::Exact(nominal) = &value.nominal else {
         return Err("the value is inexact (Q006) and cannot be emitted exactly".to_owned());
     };
@@ -512,8 +514,8 @@ fn build_value_rows(job: &Job<'_>) -> Built {
                 (Some(value), _) => {
                     let kind = kind_of(value);
                     let unit = native_unit(job.adapter, loc);
-                    let numeric = request_for(&table, value, member, &unit, kind, point)
-                        .and_then(|req| {
+                    let numeric =
+                        request_for(&table, value, member, &unit, kind, point).and_then(|req| {
                             to_decimal(req.value, precision)
                                 .map(|decimal| (decimal, req.unit))
                                 .map_err(|e| ("Q004", e.to_string()))
@@ -1216,7 +1218,11 @@ mod tests {
             "[package]\nname = \"acme.other\"\nversion = \"1.0.0\"\n",
         )
         .unwrap();
-        std::fs::write(dir.0.join("dep0/src/lib.cdt"), "pub model Thing {\n  size = 3mm\n}\n").unwrap();
+        std::fs::write(
+            dir.0.join("dep0/src/lib.cdt"),
+            "pub model Thing {\n  size = 3mm\n}\n",
+        )
+        .unwrap();
         let (code, out, e) = run(&dir, &["sw-equations"]);
         assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
         let text = std::fs::read_to_string(dir.0.join("build/eq.txt")).unwrap();
@@ -1436,7 +1442,8 @@ mod tests {
         dir
     }
 
-    const VALUE_SOURCE: &str = "model P {\n  thk: Length = 1/4in @\"ASTM B209\"\n  w: Length = 10mm\n  n: Count = 6\n}\n";
+    const VALUE_SOURCE: &str =
+        "model P {\n  thk: Length = 1/4in @\"ASTM B209\"\n  w: Length = 10mm\n  n: Count = 6\n}\n";
     const VALUE_BINDINGS: &str = "[\"acme.plate::P.thk\"]\nlocators = [ { locator = \"Thk\", kind = \"global\", native_unit = \"mm\" } ]\n\n[\"acme.plate::P.w\"]\nlocators = [ { locator = \"W\", kind = \"global\", native_unit = \"mm\" } ]\n\n[\"acme.plate::P.n\"]\nlocators = [ { locator = \"N\", kind = \"global\" } ]\n";
 
     // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
@@ -1450,9 +1457,15 @@ mod tests {
         assert!(text.contains("\"schema\": \"cadetta.params/1\""), "{text}");
         assert!(text.contains("\"adapter\": \"json 0.1.0\""), "{text}");
         assert!(text.contains("\"value\": \"6.35\""), "{text}");
-        assert!(text.contains("\"note\": \"1/4in @\\\"ASTM B209\\\"\""), "{text}");
+        assert!(
+            text.contains("\"note\": \"1/4in @\\\"ASTM B209\\\"\""),
+            "{text}"
+        );
         assert!(text.contains("\"name\": \"N\""), "{text}");
-        assert!(!text.contains("\"note\": \"10mm\""), "equal literal has no note: {text}");
+        assert!(
+            !text.contains("\"note\": \"10mm\""),
+            "equal literal has no note: {text}"
+        );
         assert!(out.contains("build/json.json"), "{out}");
     }
 
@@ -1464,7 +1477,11 @@ mod tests {
         let (code, out, e) = run(&dir, &[]);
         assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
         let text = std::fs::read_to_string(dir.0.join("build/csv.csv")).unwrap();
-        assert!(text.contains("\nThk,6.35,mm,1/4in @\"\"ASTM B209\"\"\n") || text.contains("\"1/4in @\"\"ASTM B209\"\"\""), "{text}");
+        assert!(
+            text.contains("\nThk,6.35,mm,1/4in @\"\"ASTM B209\"\"\n")
+                || text.contains("\"1/4in @\"\"ASTM B209\"\"\""),
+            "{text}"
+        );
         assert!(text.contains("\nW,10,mm,\n"), "{text}");
         assert!(text.contains("\nN,6,,\n"), "{text}");
     }
@@ -1515,7 +1532,11 @@ mod tests {
         let edited = first.replace("blake3:", "blake3:0");
         std::fs::write(&path, &edited).unwrap();
         assert_eq!(run(&dir, &[]).0, EXIT_OK);
-        assert_eq!(std::fs::read_to_string(&path).unwrap(), edited, "header-only change rewrote");
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            edited,
+            "header-only change rewrote"
+        );
     }
 
     // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK

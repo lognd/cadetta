@@ -434,6 +434,19 @@ tolerances` (`"drive"`). It has effect only in adapters whose
   like an edited value.
 - A position zone (geometry.md 3.1) is not a dimension tolerance and is
   never written.
+- `cadetta sync` drives this: for a `value`-mode quantity `dimension`
+  locator under `drive`, the design tolerance is pushed with the value
+  and the tolerance `read` reports (in `tolerances`) is the CAD side of
+  the three-way compare. The design IR keeps no fit class or interval
+  spelling, so `sync` writes `[+-t]` as symmetric and any other spread
+  as bilateral deviations (never limits or a class). A tolerance read
+  back that differs from the one pushed fails the read-back compare.
+- Before comparing, `sync` converts an observed value or tolerance in
+  another unit of the same dimension to the locator's native unit when
+  the conversion is exact (`0.5in` equals `12.7mm`); anything else
+  (other dimension, affine unit, pi, non-terminating) is compared as
+  text.
+- `sync` does not yet drive `ref`-mode locators; they are skipped.
 
 ## 3a. What every emitter spec states
 
