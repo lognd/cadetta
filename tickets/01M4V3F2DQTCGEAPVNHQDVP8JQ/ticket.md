@@ -2,11 +2,12 @@
 id = "01M4V3F2DQTCGEAPVNHQDVP8JQ"
 title = "solve accepts missing and wrong-kind solver outputs"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:02:51Z"
-updated = "2026-10-15T02:28:25Z"
+updated = "2026-10-15T02:29:05Z"
 scope = ["crates/cadetta-cli/src/**", "tests/conformance/known-gaps.toml", "docs/**", "changelog.d/**", "crates/cadetta-cli/**"]
 
 [[acceptance]]
