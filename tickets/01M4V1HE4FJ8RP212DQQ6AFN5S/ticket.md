@@ -2,11 +2,12 @@
 id = "01M4V1HE4FJ8RP212DQQ6AFN5S"
 title = "Quantities: package kinds (kind Stress = Pressure) are not distinct, no Q003"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-15T02:15:39Z"
+updated = "2026-10-15T02:16:31Z"
 idempotency_key = "Z48-pkgkind"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/quantity_diag_once.rs", "tests/conformance/**", "docs/spec/quantities.md", "changelog.d/**"]
 
