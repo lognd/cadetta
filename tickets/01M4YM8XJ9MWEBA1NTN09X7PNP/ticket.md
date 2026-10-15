@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T01:54:19Z"
-updated = "2026-10-15T09:38:11Z"
-scope = ["crates/cadetta-cli/src/**,crates/cadetta-lint/src/**", "docs/spec/lints.md", "changelog.d/01M4YM8XJ9MWEBA1NTN09X7PNP.*"]
+updated = "2026-10-15T09:38:12Z"
+scope = ["crates/cadetta-cli/src/**,crates/cadetta-lint/src/**", "docs/spec/lints.md", "changelog.d/01M4YM8XJ9MWEBA1NTN09X7PNP.*", "creates:x"]
 +++
 
 Cut from ~203JFR7: waiver globs are not carried over renames, and no IR entity carries eol so check_w005 receives no eol dates.
