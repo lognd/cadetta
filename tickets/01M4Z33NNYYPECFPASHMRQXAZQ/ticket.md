@@ -2,12 +2,12 @@
 id = "01M4Z33NNYYPECFPASHMRQXAZQ"
 title = "sema: .drawn readable in checks (process-drawn-value)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-15T06:13:36Z"
+updated = "2026-10-15T06:25:13Z"
 idempotency_key = "a0fq-drawn"
 scope = ["crates/cadetta-sema/**"]
 
