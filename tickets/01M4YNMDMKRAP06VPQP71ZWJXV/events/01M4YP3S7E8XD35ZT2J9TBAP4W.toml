@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:26:16Z"
+digest = "95b193b019f66d342ac3fe0e834c65b44bdc2ef10c60b90ad659e7edb97e2ba5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.99s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 81af0daa-e7b0-402f-b8ae-cd7b6ecfb102 with nextest profile: default
+    Starting 1 test across 57 binaries (1315 tests skipped)
+        PASS [   0.054s] cadetta::ir_lint_rules clean_document_is_quiet_after_full_decode
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.056s] 1 test run: 1 passed, 1315 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "clean_document_is_quiet_after_full_decode"
+size = 615
+status = "measured"
+test_count = 1
+tests_digest = "9a602282a384d697c74db5bc87d947b1a7d4f2d3b3b4d3830eb0fd2a4128ea92"
+at = "2026-10-15T02:26:16Z"
+actor = "lognd"
+rev = 1
