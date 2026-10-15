@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T00:10:07Z"
-updated = "2026-10-15T10:06:30Z"
-scope = ["crates/cadetta-cli/src/lint_facts.rs"]
+updated = "2026-10-15T10:11:12Z"
+scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/src/pipeline.rs"]
 
 [[links]]
 kind = "blocked-by"
