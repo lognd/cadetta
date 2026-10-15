@@ -2,11 +2,12 @@
 id = "01M4V1HDRM35VQ2ZE35FP8V54M"
 title = "Quantities: cbrt unknown function (EVAL)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:00:32Z"
+updated = "2026-10-15T02:00:47Z"
 idempotency_key = "Z48-cbrt"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDRM35VQ2ZE35FP8V54M.*"]
 
