@@ -6,8 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:40Z"
-updated = "2026-10-13T16:47:40Z"
+updated = "2026-10-15T02:14:23Z"
 scope = ["crates/cadetta-lint/**"]
+
+[[acceptance]]
+text = "lints/q003-named-kind-package fires exactly one Q003 and its must-not-fire variant is quiet"
+bound = false
 +++
 
 Fixture lints/q003-named-kind-package: kind Stress = Pressure assigned to Pressure must raise Q003 (lints.md 3). found while working ~T71T26K

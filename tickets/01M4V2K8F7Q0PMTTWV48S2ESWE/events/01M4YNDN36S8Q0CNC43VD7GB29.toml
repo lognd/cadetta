@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["lints/q003-named-kind-package fires exactly one Q003 and its must-not-fire variant is quiet"]
+moved = []
+at = "2026-10-15T02:14:23Z"
+actor = "lognd"
+rev = 1
