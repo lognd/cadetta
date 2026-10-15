@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["floor of a pi-carrying value is inexact with a Q006 root; a pi-free ratio floors clean", "1deg + 1rad is an inexact value (Q006), not an EVAL error; exact-zero-normalised sums stay clean", "Q008 fires for rpm*length compared to a speed and not for the per-rev form"]
+moved = []
+at = "2026-10-15T02:21:41Z"
+actor = "lognd"
+rev = 1
