@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:06:12Z"
+digest = "8ee85570bd4fceb9ad131f351d8eaab75221dd734799961b03a534720eed2e77"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 766f0395-0666-4fde-a4e8-42f087f0aa44 with nextest profile: default
+    Starting 1 test across 52 binaries (1276 tests skipped)
+        PASS [   0.161s] cadetta::lint_lifts f001_and_f002_fire_for_a_bad_class_and_an_out_of_range_size
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.163s] 1 test run: 1 passed, 1276 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "f001_and_f002_fire"
+size = 575
+status = "measured"
+test_count = 1
+tests_digest = "348d4c0b1b89fc26a80a82b21ec2cb8307a67c14ad993cdae1f4375266724195"
+at = "2026-10-15T02:06:12Z"
+actor = "lognd"
+rev = 1
