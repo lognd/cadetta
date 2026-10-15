@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
 text = "Re-expression of an indexed part instance (leg[1].top in origin) evaluates at that instance placement"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A member read through an indexed part slot (rail[0].length) resolves to the part type member"
