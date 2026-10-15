@@ -1,0 +1,13 @@
+kind = "create"
+title = "Q002 affine multiply: also reject Temperature values held in variables/params"
+type = "task"
+category = "todo"
+priority = "low"
+points = 3
+idempotency_key = "q002-affine-vars"
+scope = ["crates/cadetta-sema/src/kindcheck.rs"]
+acceptance = ["Temperature held in a variable multiplied by a number reports Q002; fixtures q002-affine-multiply and q003-temperature-delta pass"]
+body = "~0YYT3TP rejects multiply/divide only on direct degC/degF literals; a Temperature held in a variable or parameter passes. Needs affine tracking on values/kinds. Also replay fixtures q002-affine-multiply and q003-temperature-delta (not run by the implementer)."
+at = "2026-10-15T02:08:46Z"
+actor = "lognd"
+rev = 1
