@@ -1,0 +1,10 @@
+kind = "create"
+title = "Lower ScrewJoint floats for joints inside sub-assembly components"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/boltfloat.rs"]
+body = "found while working ~4XTSTXR: bolt_floats only walks the top-level assembly; joints in sub-assembly components add no float."
+at = "2026-10-15T09:53:58Z"
+actor = "lognd"
+rev = 1
