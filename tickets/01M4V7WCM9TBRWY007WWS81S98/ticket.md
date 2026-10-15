@@ -2,11 +2,12 @@
 id = "01M4V7WCM9TBRWY007WWS81S98"
 title = "json/csv emit: R015 error for dimension/property/frame locator or mode=ref"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:02Z"
-updated = "2026-10-15T03:42:51Z"
+updated = "2026-10-15T03:43:04Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "changelog.d/**", "tests/conformance/known-gaps.toml", "docs/**"]
 
 [[acceptance]]
