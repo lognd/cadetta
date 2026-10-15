@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "Claude"
 created = "2026-10-14T11:50:39Z"
-updated = "2026-10-15T08:50:13Z"
+updated = "2026-10-15T08:50:33Z"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/tests/conformance/**", "tests/conformance/README.md"]
 
 [[acceptance]]
