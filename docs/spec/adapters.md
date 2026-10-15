@@ -526,7 +526,9 @@ only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
 unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
 `push` answers with a summary instead of a status per locator. The precision in force is
-`[[adapter]] precision` when set, else the one `initialize` reported. Built-in adapters
+`[[adapter]] precision` when set, else the one `initialize` reported (`cadetta sync` applies
+this through `Client::effective_precision`; views that never spawn an adapter, such as
+`names` and the no-spawn emitted-values view, use the emitter default). Built-in adapters
 (`csv`, `json`, `sw-equations`) declare `emit` and `read`; a `drive` request to one is a
 configuration error (exit 2). Adapters are located by `command` in
 `cadetta.toml`; there is no PATH search (a bare name such as `sh` names a file in the
