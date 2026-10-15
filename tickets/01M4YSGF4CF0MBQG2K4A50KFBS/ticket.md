@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/k
 
 [[acceptance]]
 text = "sum/max/min(self, m) and the ? forms evaluate over every part instance, counting arrays"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "a roll-up over a misspelled member, a missing argument, no contributing part or mixed dimensions is EVAL, not E002"
