@@ -7,6 +7,9 @@ use std::path::PathBuf;
 use cadetta::pipeline::{Analysis, analyze};
 use cadetta::project::Project;
 
+/// Marks the child process that runs the real assertions with CADETTA_STD removed.
+const CHILD_MARKER: &str = "CADETTA_EMBEDDED_STD_CHILD";
+
 /// Writes a one-package project with `src` as `src/lib.cdt` and analyzes it.
 fn analyze_src(tag: &str, src: &str) -> Analysis {
     let dir: PathBuf =
@@ -36,9 +39,25 @@ fn errors(a: &Analysis) -> Vec<String> {
 // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze kind=integration
 #[test]
 fn std_import_resolves_from_the_embedded_copy() {
+    // Re-run this test in a child with CADETTA_STD removed, so an exported variable cannot mask
+    // the embedded copy (the workspace forbids unsafe, so the parent cannot clear its own env).
+    if std::env::var_os(CHILD_MARKER).is_none() {
+        let status = std::process::Command::new(std::env::current_exe().expect("test exe"))
+            .args([
+                "--exact",
+                "std_import_resolves_from_the_embedded_copy",
+                "--test-threads=1",
+            ])
+            .env_remove("CADETTA_STD")
+            .env(CHILD_MARKER, "1")
+            .status()
+            .expect("spawn child");
+        assert!(status.success(), "child run without CADETTA_STD failed");
+        return;
+    }
     assert!(
         std::env::var_os("CADETTA_STD").is_none(),
-        "test needs CADETTA_STD unset"
+        "child must run with CADETTA_STD unset"
     );
     let good = analyze_src(
         "good",
