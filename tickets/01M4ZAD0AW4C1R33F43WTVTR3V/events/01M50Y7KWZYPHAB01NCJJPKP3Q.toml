@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A counted part of a parameterized callee lowers one instance per index with per-instance values"]
+moved = []
+at = "2026-10-15T23:26:51Z"
+actor = "lognd"
+rev = 1
