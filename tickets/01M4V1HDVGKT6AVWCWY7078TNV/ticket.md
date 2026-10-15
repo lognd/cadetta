@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:12:18Z"
+updated = "2026-10-15T02:12:19Z"
 idempotency_key = "Z48-iso286"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDVGKT6AVWCWY7078TNV.added.md"]
 
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = ".mmc/.lmc use the role (#[role], class letter, inherited); E010 without one"
-bound = false
+bound = true
 +++
 
 found while working ~Z48GXKX. quantities.md 5.1, 5.2, 5.6. Fixtures f002, e010, e010-lmc, acc-mmc-hole-shaft: 'a = 20mm H7' gives EVAL; #[role(hole)] yields no role.
