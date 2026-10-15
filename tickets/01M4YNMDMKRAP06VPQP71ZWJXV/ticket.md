@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:18:04Z"
-updated = "2026-10-15T02:26:29Z"
+updated = "2026-10-15T02:26:45Z"
 labels = ["creates:crates/cadetta-ir/src/decode.rs", "creates:crates/cadetta-cli/tests/ir_lint_rules.rs", "creates:changelog.d/01M4YNMDMKRAP06VPQP71ZWJXV.added.md"]
 scope = ["crates/cadetta-ir/src/lib.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/config-cli.md", "crates/cadetta-ir/src/decode.rs", "crates/cadetta-cli/tests/ir_lint_rules.rs", "changelog.d/01M4YNMDMKRAP06VPQP71ZWJXV.added.md"]
 
