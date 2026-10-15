@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T16:49:53Z"
+digest = "c641f338339ef04a0332a02c674d47d12389efdd8b1eae1a55a220040abc3613"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 32s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 66d345b7-acb4-4c3a-941e-52bcf5b41bc8 with nextest profile: default
+    Starting 1 test across 42 binaries (507 tests skipped)
+        PASS [   0.193s] cadetta cmd::names::tests::adapter_without_read_capability_keeps_unknown
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.194s] 1 test run: 1 passed, 507 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta adapter_without_read_capability_keeps_unknown"
+size = 621
+status = "measured"
+test_count = 1
+tests_digest = "efbb198c8ce035205f907b22f67a8304311631da192c2a7f7b99844012fc7436"
+at = "2026-10-15T16:49:53Z"
+actor = "lognd"
+rev = 1

@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T22:34:35Z"
-updated = "2026-10-15T16:08:39Z"
+updated = "2026-10-15T16:49:53Z"
 scope = ["crates/cadetta-cli/src/cmd/names.rs"]
 
 [[acceptance]]
 text = "Given an adapter that can read, when cadetta names runs, then paths with no locator are unbound and native-link discoveries show implicit link, frame or reference; an adapter that cannot read keeps unknown (config-cli.md 3)"
-bound = false
+bound = true
 +++
 
 found while working ~4T5YM3Y: names never launches CAD, so every path without a locator reports unknown and discovery-based implicit states are unreachable.
