@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T12:28:08Z"
+updated = "2026-10-15T12:28:11Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
 text = "A check comparing enum variants (e.g. a Materials table cell == TapClass::Hard) decides == and != instead of EVAL"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Ordering enum variants is an EVAL error"
