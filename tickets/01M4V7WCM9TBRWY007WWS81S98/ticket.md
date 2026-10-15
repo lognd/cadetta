@@ -6,8 +6,16 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:02Z"
-updated = "2026-10-13T18:20:02Z"
-scope = ["crates/cadetta-adapter/**"]
+updated = "2026-10-15T03:42:49Z"
+scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "changelog.d/**", "tests/conformance/known-gaps.toml", "docs/**"]
+
+[[acceptance]]
+text = "Given a dimension, property or frame locator, or a mode=ref binding, bound to a path the json or csv adapter must emit, when emit runs, then it is the error R015 naming the path, the file is withheld and exit is 1"
+bound = false
+
+[[acceptance]]
+text = "Given such a locator that is filtered out or unbound, when emit runs, then R015 is not raised"
+bound = false
 +++
 
 found while working ~EWSF8YR. Implement R015 per json.md 3 and csv.md.
