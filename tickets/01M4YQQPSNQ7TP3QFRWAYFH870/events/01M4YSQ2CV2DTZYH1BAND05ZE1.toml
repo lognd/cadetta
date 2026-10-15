@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:28:49Z"
+digest = "6973f216ef8f4a2416ca56137ad322384052cfa9fdc2e7e731334344c637fb2b"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.45s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 516146f3-0966-4f2c-8b20-3aaf024daf28 with nextest profile: default
+    Starting 2 tests across 63 binaries (1384 tests skipped)
+        PASS [   0.158s] cadetta cmd::sync::tests::invalid_bindings_exit_two_naming_the_file
+        PASS [   0.167s] cadetta cmd::names::tests::invalid_bindings_exit_two_naming_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.170s] 2 tests run: 2 passed, 1384 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "invalid_bindings_exit_two_naming_the_file"
+size = 840
+status = "measured"
+test_count = 2
+tests_digest = "772ded307a9c22bbf13da3618edfb3c827313e811db8b71917d6ba92d3d0fdeb"
+at = "2026-10-15T03:28:49Z"
+actor = "lognd"
+rev = 1
