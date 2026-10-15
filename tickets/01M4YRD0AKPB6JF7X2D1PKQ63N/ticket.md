@@ -2,7 +2,8 @@
 id = "01M4YRD0AKPB6JF7X2D1PKQ63N"
 title = "Conformance: implement the compare executor (digest rules, schema classify)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
