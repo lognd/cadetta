@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::Path;
 
-use cadetta_sema::eval::{Evaluator, Quant};
+use cadetta_sema::eval::{Evaluator, Quant, Selection};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::resolve::{CanonPath, Ctx, MemberSeg, ModuleSrc, PackageSrc, Resolver};
 use cadetta_solve::decl::{SolverDecl, lower_solver};
@@ -402,6 +402,9 @@ pub fn solve_project(
         configs: &configs,
         project,
         args,
+        resolver: &resolver,
+        units: &table,
+        sources: &sources,
     };
     let mut failed = false;
     let mut usage = false;
@@ -468,6 +471,34 @@ pub fn solve_project(
     }
 }
 
+/// Evaluate every `in` binding of `t` with `evaluator`; the error is a (code, message) pair.
+fn eval_inputs(
+    t: &Target<'_>,
+    evaluator: &mut Evaluator<'_, '_>,
+    table: &UnitTable,
+) -> Result<BTreeMap<String, InputValue>, (String, String)> {
+    let mut inputs = BTreeMap::new();
+    for member in &t.ast.members {
+        let SolverMemberKind::In(binds) = &member.kind else {
+            continue;
+        };
+        for Bind { name, value, .. } in binds {
+            match evaluator.eval_input(t.ctx.clone(), value) {
+                Ok(q) => {
+                    inputs.insert(name.name.clone(), input_value(table, &q));
+                }
+                Err(d) => {
+                    return Err((
+                        d.code.to_owned(),
+                        format!("input `{}`: {}", name.name, d.message),
+                    ));
+                }
+            }
+        }
+    }
+    Ok(inputs)
+}
+
 enum Outcome {
     Ok,
     Failed { code: String, message: String },
@@ -507,27 +538,10 @@ fn solve_one(
             return Outcome::Failed { code, message };
         }
     };
-    let mut inputs = BTreeMap::new();
-    for member in &t.ast.members {
-        let SolverMemberKind::In(binds) = &member.kind else {
-            continue;
-        };
-        for Bind { name, value, .. } in binds {
-            match evaluator.eval_input(t.ctx.clone(), value) {
-                Ok(q) => {
-                    inputs.insert(name.name.clone(), input_value(table, &q));
-                }
-                Err(d) => {
-                    return fail(
-                        err,
-                        &t.path,
-                        d.code,
-                        &format!("input `{}`: {}", name.name, d.message),
-                    );
-                }
-            }
-        }
-    }
+    let inputs = match eval_inputs(t, evaluator, table) {
+        Ok(inputs) => inputs,
+        Err((code, message)) => return fail(err, &t.path, &code, &message),
+    };
     let request = Request::new(t.path.clone(), inputs);
     let script = t.package_dir.join(&decl.script);
     let results_path = out_path(&script);
@@ -612,16 +626,69 @@ struct RunEnv<'a> {
     configs: &'a BTreeMap<String, SolverConfig>,
     project: &'a Project,
     args: &'a SolveArgs,
+    resolver: &'a Resolver<'a>,
+    units: &'a UnitTable,
+    sources: &'a [PackageSrc<'a>],
 }
 
-/// The requests of each approved alternate whose solver inputs differ from the primary's.
+/// Every approved alternate of every part slot in the project, as a slot selection.
+// frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+fn selections(run: &RunEnv<'_>) -> Vec<Selection> {
+    let mut found = Vec::new();
+    for pkg in run.sources {
+        for module in &pkg.modules {
+            for item in module.file.items() {
+                let ItemKind::Component(c) = &item.kind else {
+                    continue;
+                };
+                let owner = CanonPath::item(&pkg.name, &module.path, &c.name.name);
+                for member in &c.members {
+                    let MemberKind::Part(part) = &member.kind else {
+                        continue;
+                    };
+                    for ctor in &part.alts {
+                        match run.resolver.ctor_component(&pkg.name, &module.path, ctor) {
+                            Some((alt, _)) => found.push(Selection {
+                                owner: owner.clone(),
+                                slot: part.name.name.clone(),
+                                alt,
+                            }),
+                            None => tracing::warn!(
+                                slot = %part.name.name, owner = %owner,
+                                "solve: alternate does not resolve to a component"
+                            ),
+                        }
+                    }
+                }
+            }
+        }
+    }
+    found
+}
+
+/// The requests of each approved alternate, evaluated under that alternate's slot selection.
 ///
-/// The language evaluator does not yet re-evaluate `in` expressions under a
-/// slot selection (ticket filed), so no variant inputs are produced here;
-/// the planner, runner and store below are exercised through it unchanged.
-fn variant_requests(t: &Target<'_>) -> Vec<VariantRequest> {
-    tracing::info!(solver = %t.path, "solve: variant inputs need selection-aware evaluation");
-    Vec::new()
+/// An alternate whose inputs fail to evaluate is not viable for this solver and is skipped;
+/// those whose inputs equal the primary's are dropped later by the planner.
+// frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+fn variant_requests(t: &Target<'_>, run: &RunEnv<'_>) -> Vec<VariantRequest> {
+    let mut requests = Vec::new();
+    for sel in selections(run) {
+        let mut evaluator =
+            Evaluator::new(run.resolver, run.units, run.sources).with_selection(sel.clone());
+        match eval_inputs(t, &mut evaluator, run.units) {
+            Ok(inputs) => requests.push(VariantRequest {
+                variant: sel.key(),
+                request: Request::new(t.path.clone(), inputs),
+            }),
+            Err((code, message)) => {
+                tracing::warn!(solver = %t.path, variant = %sel.key(), %code, %message,
+                    "solve: variant inputs do not evaluate, skipping");
+            }
+        }
+    }
+    tracing::info!(solver = %t.path, variants = requests.len(), "solve: variant inputs evaluated");
+    requests
 }
 
 /// Run and store one result per distinct changed input digest (solvers.md 4.1).
@@ -642,7 +709,7 @@ fn solve_variants(
         Ok(f) => f,
         Err(e) => return fail(err, &t.path, "S005", &e.to_string()),
     };
-    let jobs = variants::plan(&file, &t.path, digests, &variant_requests(t));
+    let jobs = variants::plan(&file, &t.path, digests, &variant_requests(t, run));
     let mut outcome = Outcome::Ok;
     for job in &jobs {
         match transport::run_solver(
@@ -738,6 +805,45 @@ mod tests {
         std::fs::write(dir.join("src/lib.cdt"), src.replace("2kg", "3kg")).unwrap();
         assert_eq!(solve(&dir).0, EXIT_OK);
         assert_eq!(runs(&marker), 2);
+    }
+
+    // frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::variant_requests
+    #[test]
+    fn variants_flag_solves_each_changed_alternate_once() {
+        let (dir, marker) = fixture("variants", "2kg");
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            "interface Motor { mass: Mass }\n\
+             model MotorA { mass = 2kg }\n\
+             model MotorB { mass = 5kg }\n\
+             model MotorC { mass = 2kg }\n\
+             model Box {\n  part motor: Motor = MotorA alt [MotorB, MotorC]\n  \
+             solver size {\n    script \"size.sh\"\n    in m = motor.mass\n    out w: Length\n  }\n}\n",
+        )
+        .unwrap();
+        let globals = Globals {
+            format: crate::Format::Text,
+            cwd: Some(dir.clone()),
+            config: None,
+        };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = run_solve(&["--variants".to_owned()], &globals, &mut out, &mut err);
+        let text = String::from_utf8(err).unwrap() + &String::from_utf8(out).unwrap();
+        assert_eq!(code, EXIT_OK, "{text}");
+        // The primary and MotorB (5kg) run; MotorC (2kg) equals the primary's inputs.
+        assert_eq!(runs(&marker), 2, "{text}");
+        let stored = ResultFile::load(&dir.join("size.out.json")).unwrap();
+        let keys: Vec<_> = stored.results.iter().map(|r| r.variant.clone()).collect();
+        assert_eq!(keys.len(), 2, "{keys:?}");
+        let alt = stored.results.iter().find(|r| r.variant.is_some()).unwrap();
+        assert!(
+            alt.variant
+                .as_deref()
+                .unwrap()
+                .ends_with("Box/motor=acme.t::MotorB")
+        );
+        assert_eq!(alt.inputs["m"].lit, "5kg");
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::run_solve

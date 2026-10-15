@@ -18,7 +18,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    Arg, Block, Component, Expr, ExprKind, File, FnDecl, Ident, Interface, InterfaceMemberKind,
+    Arg, Block, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface, InterfaceMemberKind,
     Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind, Use, UseKind, UsePath,
     UseRoot, UseTree, UseTreeKind, Vis,
 };
@@ -538,6 +538,16 @@ impl<'a> Resolver<'a> {
         }
     }
 
+    /// Whether any module declares a `kind` named `name` (user kinds are not indexed items).
+    // frob:ticket 01M4V1HDNKJ9095119JPVAKYG1
+    pub fn declares_kind(&self, name: &str) -> bool {
+        self.pkgs.values().flat_map(|p| p.modules.values()).any(|m| {
+            m.file
+                .items()
+                .any(|i| matches!(&i.kind, ItemKind::Kind(k) if k.name.name == name))
+        })
+    }
+
     /// The component declared at `id`.
     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
     pub fn component(&self, id: &CanonPath) -> Option<&'a Component> {
@@ -583,17 +593,28 @@ impl<'a> Resolver<'a> {
             return Some(found);
         }
         let primary = part.primary.as_ref()?;
+        let found = self.ctor_component(package, module, primary)?;
+        trace!(slot = %part.name.name, primary = %found.0, "interface slot resolved to its primary");
+        Some(found)
+    }
+
+    /// The component a constructor (`MotorA`, `MotorA(x = 1)`) names, resolved from `module`.
+    // frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+    pub fn ctor_component(
+        &self,
+        package: &str,
+        module: &[String],
+        ctor: &Ctor,
+    ) -> Option<(CanonPath, &'a Component)> {
         let scope = Ctx {
             package: package.to_owned(),
             module: module.to_vec(),
             component: None,
             locals: Vec::new(),
         };
-        let Ok(Resolved::Item { path, .. }) = self.resolve_path(&scope, &primary.path, None)
-        else {
+        let Ok(Resolved::Item { path, .. }) = self.resolve_path(&scope, &ctor.path, None) else {
             return None;
         };
-        trace!(slot = %part.name.name, primary = %path, "interface slot resolved to its primary");
         Some((path.clone(), self.component(&path)?))
     }
 

@@ -44,6 +44,7 @@ use super::{
     strip,
 };
 use crate::deps::Severity;
+use crate::eval::Selection;
 use crate::parts;
 use crate::resolve::{CanonPath, Ctx, MemberSeg, ModuleKey, Resolver};
 
@@ -195,8 +196,11 @@ fn nominal_form(q: &Quant) -> Affine {
 }
 
 /// Steps from component `cur` into the type of its part slot `name`; also whether it is counted.
+/// Under a `selection` of this very slot the alternate stands in for the primary.
+// frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
 fn step_part(
     resolver: &Resolver<'_>,
+    selection: Option<&Selection>,
     cur: &CanonPath,
     name: &str,
 ) -> Result<(CanonPath, bool), String> {
@@ -204,6 +208,10 @@ fn step_part(
         .component(cur)
         .ok_or_else(|| format!("no component `{}`", cur.item))?;
     let part = find_part(comp, name).ok_or_else(|| format!("`{name}` is not a part"))?;
+    if let Some(sel) = selection.filter(|s| s.owner == *cur && s.slot == name) {
+        trace!(slot = name, alt = %sel.alt, "slot read follows the selected alternate");
+        return Ok((sel.alt.clone(), part.count.is_some()));
+    }
     let (next, _) = resolver
         .slot_component(&cur.package, &cur.modules, part)
         .ok_or_else(|| format!("the type of part `{name}` is unknown"))?;
@@ -215,7 +223,7 @@ fn step_part(
 pub fn definition_path(resolver: &Resolver<'_>, path: &CanonPath) -> Option<CanonPath> {
     let mut cur = path.item_only();
     for seg in &path.parts {
-        cur = step_part(resolver, &cur, &seg.name).ok()?.0;
+        cur = step_part(resolver, None, &cur, &seg.name).ok()?.0;
     }
     cur.members = path.members.clone();
     Some(cur)
@@ -234,7 +242,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let mut cur = path.item_only();
         for seg in &path.parts {
             let (next, counted) =
-                step_part(self.resolver, &cur, &seg.name).map_err(|m| diag("EVAL", span, m))?;
+                step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name).map_err(|m| diag("EVAL", span, m))?;
             if counted {
                 return Err(diag(
                     "EVAL",

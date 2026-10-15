@@ -423,6 +423,26 @@ impl Scope {
     }
 }
 
+/// One slot swap: `alt` replaces the primary of `owner`'s part slot `slot` in every instance
+/// (language.md 3.2).
+// frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Selection {
+    /// The component that declares the slot.
+    pub owner: CanonPath,
+    /// The slot name.
+    pub slot: String,
+    /// The alternate component standing in for the slot's primary.
+    pub alt: CanonPath,
+}
+
+impl Selection {
+    /// The full-form variant key `PKG::Owner/slot=PKG::Alt` (ir.md 3).
+    pub fn key(&self) -> String {
+        format!("{}/{}={}", self.owner, self.slot, self.alt)
+    }
+}
+
 /// Evaluates the parameters and `let`s of a project, on demand and memoised.
 pub struct Evaluator<'r, 'p> {
     resolver: &'r Resolver<'p>,
@@ -435,6 +455,8 @@ pub struct Evaluator<'r, 'p> {
     /// Part nodes of the current component whose placement raised G004 (not expanded).
     g004_nodes: BTreeSet<String>,
     done: BTreeMap<CanonPath, Option<Evaluated>>,
+    /// The slot swap reads through part slots follow; `None` selects every primary.
+    selection: Option<Selection>,
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
     diagnostics: Vec<EvalDiagnostic>,
@@ -506,6 +528,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             part_counts: BTreeMap::new(),
             g004_nodes: BTreeSet::new(),
             done: BTreeMap::new(),
+            selection: None,
             in_progress: BTreeSet::new(),
             next_var: 0,
             diagnostics,
@@ -517,6 +540,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             cur_inst: None,
             absent: BTreeSet::new(),
         }
+    }
+
+    /// This evaluator under `selection`: reads through the swapped slot reach the alternate.
+    // frob:ticket 01M4TRMJMNWCMHCE2H3BJF002X
+    #[must_use]
+    pub fn with_selection(mut self, selection: Selection) -> Self {
+        debug!(variant = %selection.key(), "evaluator: slot selection set");
+        self.selection = Some(selection);
+        self
     }
 
     /// Evaluates one free-standing expression (a solver `in` value) in `ctx`.

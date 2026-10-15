@@ -175,6 +175,14 @@ from the primary: checks and requires reading them are `undecided`
 under that variant, with S006 (`solver-unsolved-variant`), and
 `impact --swap` says which solve to run.
 
+To find the changed inputs, `solve --variants` re-evaluates the solver's `in`
+expressions once per approved alternate of every part slot in the project,
+with that alternate standing in for the slot's primary wherever an `in`
+expression reads through the slot (`wheel.load_rating`); every other slot
+stays on its primary. The variant key is the full form `SLOT=ALT`
+(`acme.rover::Rover/wheel=acme.rover::Colson2Series`). An alternate whose
+inputs fail to evaluate is skipped with a logged warning, not an error.
+
 `solve --variants` plans one run per distinct input digest that differs
 from the primary's and lacks a fresh result. Variants whose changed inputs
 are equal share one run and each gets its own entry keyed (solver,
