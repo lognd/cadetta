@@ -497,7 +497,8 @@ The caller lowers the `onto` points into the frame of the placement
 datum and supplies the source variables. G005 is emitted by sema when
 an undecided check comparison reads a form that depends on a joint's
 float source variables (so `locating = true` or a looser check keeps it
-quiet). G008 (`float::unconstrained_rotation`) is not emitted yet.
+quiet). G008 (`float::unconstrained_rotation`) is emitted by sema once per
+non-locating joint when a check re-expresses through the floated edge.
 
 ## 8. Conformance decisions
 

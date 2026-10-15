@@ -200,3 +200,50 @@ fn g005_stays_quiet_when_locating_or_looser() {
         ev.diagnostics
     );
 }
+
+/// A box whose joint has a one-point pattern, so it cannot fix rotation.
+const ONE_POINT: &str = "model Lid1 {
+  holes: [Point2 on origin; 1] = rect_pattern(1, 1, 30mm, 0mm)
+  datum edge = origin.offset(x = 50mm)
+}
+model Base1 {
+  datum top = origin.offset(z = 10mm)
+  tapped: [Point2 on origin; 1] = rect_pattern(1, 1, 30mm, 0mm)
+  datum edge = origin.offset(x = 50mm)
+}
+assembly Box1 {
+  part lid: Lid1
+  part base: Base1
+  place base.origin at origin
+  place lid.origin at base.top
+  JOINT
+  check flush: (lid.edge in origin).x - (base.edge in origin).x <= 0.1mm \"flush\"
+}
+";
+
+// frob:tests crates/cadetta-sema/src/geom.rs::report_unconstrained_rotation kind=unit
+#[test]
+fn g008_fires_once_for_a_one_point_non_locating_joint() {
+    let joint = "part j: ScrewJoint(at = lid.holes, onto = base.tapped)";
+    let ev = run(&ONE_POINT.replace("JOINT", joint));
+    let n = ev.diagnostics.iter().filter(|d| d.code == "G008").count();
+    assert_eq!(n, 1, "{:?}", ev.diagnostics);
+    let loc = "part j: ScrewJoint(at = lid.holes, onto = base.tapped, locating = true)";
+    let ev = run(&ONE_POINT.replace("JOINT", loc));
+    assert!(
+        ev.diagnostics.iter().all(|d| d.code != "G008"),
+        "{:?}",
+        ev.diagnostics
+    );
+}
+
+// frob:tests crates/cadetta-sema/src/geom.rs::report_unconstrained_rotation kind=unit
+#[test]
+fn g008_stays_quiet_for_a_two_point_joint() {
+    let ev = run(&boxed(true, J, FLUSH));
+    assert!(
+        ev.diagnostics.iter().all(|d| d.code != "G008"),
+        "{:?}",
+        ev.diagnostics
+    );
+}

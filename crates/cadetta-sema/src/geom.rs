@@ -26,7 +26,7 @@ use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
-use cadetta_geometry::float::FloatMode;
+use cadetta_geometry::float::{EdgeFloat, FloatMode, unconstrained_rotation};
 use cadetta_geometry::instances::{
     Operand, check_elementwise, check_unplaced, expand_instances, operands,
 };
@@ -1078,7 +1078,36 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         {
             self.float_reads += 1;
         }
+        self.report_unconstrained_rotation(&a.floats, span);
         tables(&asm, mode)
+    }
+
+    /// Emits G008 once per non-locating joint whose float leaves rotation unconstrained.
+    // frob:ticket 01M4Y2Z99SXRHPTNQS11392B89
+    fn report_unconstrained_rotation(&mut self, floats: &[EdgeFloat], span: Span) {
+        for j in floats
+            .iter()
+            .flat_map(|e| &e.joints)
+            .filter(|j| !j.locating)
+        {
+            if !matches!(unconstrained_rotation(j), Ok(true))
+                || !self.g008_seen.insert(j.path.clone())
+            {
+                continue;
+            }
+            warn!(joint = %j.path, "geometry: G008 rotation about the screw is unconstrained");
+            self.diagnostics.push(EvalDiagnostic {
+                module: None,
+                code: "G008",
+                severity: Severity::Warning,
+                message: format!(
+                    "G008: joint `{}` leaves the part free to turn about the screw; add a second \
+                     point, or locate the part with a dowel or fit",
+                    j.path
+                ),
+                span,
+            });
+        }
     }
 
     /// `p in D` (geometry.md 3): re-expresses a point, or an array of points, in datum `D`.
