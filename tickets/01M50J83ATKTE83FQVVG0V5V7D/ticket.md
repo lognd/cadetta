@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T19:57:24Z"
-updated = "2026-10-15T21:55:41Z"
+updated = "2026-10-15T21:55:51Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "A unit of another dimension than the locator's native unit reads inexact, never Q001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A call to an unknown equation function reads as an unparsed raw line"
