@@ -2,11 +2,12 @@
 id = "01M4YG7D22XEEK9M3X678B88BT"
 title = "conformance_corpus_matches_the_spec hangs: a corpus adapter command receives the initialize JSON as its shell command"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-15T00:43:35Z"
-updated = "2026-10-15T02:31:47Z"
+updated = "2026-10-15T02:38:54Z"
 scope = ["crates/cadetta-cli/tests/conformance.rs", "crates/cadetta-cli/src/cmd/check_drift.rs", "crates/cadetta-adapter/src/rpc/client.rs", "crates/cadetta-cli/src/cmd/import.rs", "docs/spec/adapters.md", "changelog.d/01M4YG7D22XEEK9M3X678B88BT.fixed.md"]
 
 [[acceptance]]
