@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "Remaining lint rule families lack engine entry points"
+new = "Wire I001, I004, U002, require and allow into cadetta check"
+at = "2026-10-15T00:10:00Z"
+actor = "lognd"
+rev = 1

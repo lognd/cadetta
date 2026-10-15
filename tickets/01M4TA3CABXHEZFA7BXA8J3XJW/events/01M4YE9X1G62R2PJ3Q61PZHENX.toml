@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["I001 fires through check when an implementer lacks an interface member", "I001 is quiet when the implementer has every member", "I004 fires through check for a public parameterized root", "U002 fires through check for an unused private item and not a used one", "An #[allow] attribute suppresses its diagnostic through the engine", "require paths are collected so requires are never suppressed"]
+moved = []
+at = "2026-10-15T00:10:00Z"
+actor = "lognd"
+rev = 1
