@@ -2,7 +2,7 @@
 id = "01M4Y53MB9VXXCQB6FHQ06ZV6Q"
 title = "Load upstream locks of git dependencies in cadetta obligations"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
