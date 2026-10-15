@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:34:44Z"
-updated = "2026-10-15T06:03:07Z"
+updated = "2026-10-15T06:05:34Z"
 idempotency_key = "datum-unknown-placed-e002"
 scope = ["crates/**"]
 
