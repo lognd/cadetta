@@ -2,12 +2,12 @@
 id = "01M4V5XAW55E04T7EVWDX2KSSF"
 title = "Spec: bindings.md leaves Python parse-failure and float-operand error types unspecified"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-13T17:45:36Z"
-updated = "2026-10-15T06:09:04Z"
+updated = "2026-10-15T06:09:17Z"
 scope = ["docs/spec/bindings.md"]
 +++
 
