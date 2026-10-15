@@ -1,4 +1,4 @@
-["acme.demo::Rover.wheel[2].hub_bore"]
+["acme.demo::Rover/wheel[2].hub_bore"]
 locators = [
   { locator = "D1@Bore@Wheel.SLDPRT", kind = "dimension", mode = "value", native_unit = "mm", component = "wheel<2>" },
 ]
