@@ -2,7 +2,8 @@
 id = "01M4ZS69MFPJDPD7782XAY9ZBA"
 title = "Wire initialize precision into CLI call sites via Client::effective_precision"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
