@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:02Z"
-updated = "2026-10-15T03:42:49Z"
+updated = "2026-10-15T03:42:51Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "changelog.d/**", "tests/conformance/known-gaps.toml", "docs/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "Given such a locator that is filtered out or unbound, when emit runs, then R015 is not raised"
-bound = false
+bound = true
 +++
 
 found while working ~EWSF8YR. Implement R015 per json.md 3 and csv.md.

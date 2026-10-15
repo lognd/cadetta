@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T03:42:51Z"
+digest = "106b7ffcb9aaa91dd9b4d9c6856a2c7098599999c91b893a408809adf7a25606"
+exit_code = 0
+inline = '''
+warning: function `emit_package` is never used
+   --> crates/cadetta-cli/src/cmd/emit.rs:816:15
+    |
+816 | pub(crate) fn emit_package(
+    |               ^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `cadetta` (lib) generated 1 warning
+warning: `cadetta` (lib test) generated 1 warning (1 duplicate)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8343ef4c-bac3-4fe8-8d28-9d685e60137c with nextest profile: default
+    Starting 1 test across 66 binaries (1397 tests skipped)
+        PASS [   0.929s] cadetta::r015_locator_unsupported filtered_or_unbound_locator_is_not_r015
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.931s] 1 test run: 1 passed, 1397 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "filtered_or_unbound_locator_is_not_r015"
+size = 929
+status = "measured"
+test_count = 1
+tests_digest = "bc8d765c9e2aa3db4b7caf7275d9d5d09762eaa41c1082b48d13651d36f34caf"
+at = "2026-10-15T03:42:51Z"
+actor = "lognd"
+rev = 1
