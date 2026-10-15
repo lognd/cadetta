@@ -2,7 +2,8 @@
 id = "01M4Y77294QQTRF5TA9H360TSR"
 title = "Pipeline evaluates each part slot's approved alternates and fills Member.variants / Verdicts.per_alternate"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
