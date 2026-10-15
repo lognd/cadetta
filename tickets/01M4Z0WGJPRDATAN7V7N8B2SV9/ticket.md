@@ -2,7 +2,8 @@
 id = "01M4Z0WGJPRDATAN7V7N8B2SV9"
 title = "geometry: unknown datum of a placed part must report E002, not EVAL"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
