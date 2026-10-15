@@ -437,6 +437,12 @@ hand-written graph: the IR is the input, so no source can be written that
 lowers to a cycle. Rules that need bindings, observed IR or the lock (R and
 O families) are not run by `lint FILE`.
 
+Implemented today: `ir-validate` checks the JSON Schema plus the ir.md 6
+invariants that read only the document (sorting, path and variant-key
+forms, bound shapes, exactness, observed-flavour shape, provenance, tol
+terms); `lint FILE` runs D003. The value-reading IR-only rules (D001, D002,
+F004, M, N, Q006, S) need a full IR decoder and are not yet run.
+
 ### 3.8 `lsp`
 
 `cadetta lsp` is a Language Server Protocol 3.17 server on stdin and

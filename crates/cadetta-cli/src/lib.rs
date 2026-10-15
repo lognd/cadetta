@@ -183,6 +183,10 @@ enum Command {
     /// `compare IFACE`.
     Compare(Vec<String>),
     Ir(Vec<String>),
+    /// `ir-validate FILE`.
+    IrValidate(Vec<String>),
+    /// `lint FILE [--format json]`.
+    LintIr(Vec<String>),
     Explain(Vec<String>),
     Units(Vec<String>),
     Update(Vec<String>),
@@ -218,6 +222,8 @@ fn parse(args: &[String]) -> Command {
         Some("impact") => Command::Impact(args[1..].to_vec()),
         Some("compare") => Command::Compare(args[1..].to_vec()),
         Some("ir") => Command::Ir(args[1..].to_vec()),
+        Some("ir-validate") => Command::IrValidate(args[1..].to_vec()),
+        Some("lint") => Command::LintIr(args[1..].to_vec()),
         Some("explain") => Command::Explain(args[1..].to_vec()),
         Some("units") => Command::Units(args[1..].to_vec()),
         Some("update") => Command::Update(args[1..].to_vec()),
@@ -276,6 +282,8 @@ pub fn run_with_env(
         Command::Impact(rest) => cmd::run_impact(&rest, &globals, out, err),
         Command::Compare(rest) => cmd::run_compare(&rest, &globals, out, err),
         Command::Ir(rest) => cmd::run_ir(&rest, &globals, out, err),
+        Command::IrValidate(rest) => cmd::run_ir_validate(&rest, &globals, out, err),
+        Command::LintIr(rest) => cmd::run_lint_ir(&rest, &globals, out, err),
         Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
         Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
         Command::Update(rest) => cmd::run_update(&rest, &globals, out, err),

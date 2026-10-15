@@ -93,9 +93,9 @@ ureq = { version = "3", default-features = false, features = ["rustls"] }
 lsp-server = "0.7"
 lsp-types = "0.95"
 crossbeam-channel = "0.5.17"
+jsonschema = { version = "0.58", default-features = false }
 
 [dev-dependencies]
-jsonschema = { version = "0.58", default-features = false }
 regex = "1"
 
 [lints]
