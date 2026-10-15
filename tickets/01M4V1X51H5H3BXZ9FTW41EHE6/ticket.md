@@ -7,7 +7,7 @@ priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:35:36Z"
 updated = "2026-10-15T02:49:08Z"
-scope = ["crates/cadetta-cli/**"]
+scope = ["crates/cadetta-cli/**", "tests/conformance/**", "changelog.d/**"]
 
 [[acceptance]]
 text = "check reports R008 info (exit 0) when an external adapter command is missing"
