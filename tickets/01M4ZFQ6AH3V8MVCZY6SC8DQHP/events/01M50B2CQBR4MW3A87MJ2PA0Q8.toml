@@ -1,0 +1,38 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T17:49:23Z"
+digest = "0086ab3ea345e1c36822ba6c9542de51cb85454b82bbb56804248f2f8b1e4c78"
+exit_code = 0
+inline = '''
+   Compiling serde_json v1.0.154
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling schemars v1.2.3
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 32s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b01a6220-a886-4ee9-ac2e-2350b9834259 with nextest profile: default
+    Starting 2 tests across 5 binaries (237 tests skipped)
+        PASS [   0.010s] cadetta-sema::bolt_float subassembly_locating_joint_keeps_the_inner_child_fixed
+        PASS [   0.011s] cadetta-sema::bolt_float subassembly_joint_frees_the_inner_child
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 2 tests run: 2 passed, 237 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema subassembly_"
+size = 1493
+status = "measured"
+test_count = 2
+tests_digest = "6136da909d20f088be8a3d460dde5efffdaa74899b2177b55bec556470126b81"
+at = "2026-10-15T17:49:23Z"
+actor = "lognd"
+rev = 1
