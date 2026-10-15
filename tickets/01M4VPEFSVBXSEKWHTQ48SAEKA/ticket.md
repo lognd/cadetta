@@ -2,7 +2,8 @@
 id = "01M4VPEFSVBXSEKWHTQ48SAEKA"
 title = "names reads CAD so unbound and implicit link/frame/reference states are reachable"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
