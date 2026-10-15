@@ -2,11 +2,12 @@
 id = "01M4V7WDZT11T3QC6FAGAACNA8"
 title = "csv emit: note parts single-space separated, emit=POINT token"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-15T04:10:09Z"
+updated = "2026-10-15T04:11:04Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "changelog.d/**"]
 
 [[acceptance]]
