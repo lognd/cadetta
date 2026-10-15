@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:45:37Z"
+digest = "7670b8bdc066ca384572740864f8065f53c91c3d788ac268ff9d95ad2e4d33eb"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8df22b3a-1a65-4baf-a927-0c95021ea587 with nextest profile: default
+    Starting 1 test across 49 binaries (1243 tests skipped)
+        PASS [   0.008s] cadetta cmd::solve::tests::enums_are_not_double_indexed_by_the_resolver
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 1243 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "enums_are_not_double_indexed_by_the_resolver"
+size = 900
+status = "measured"
+test_count = 1
+tests_digest = "3e38ea2bd8f960036b75524e81e158ebead5c3d33cf8cf15913b6748c6e574ae"
+at = "2026-10-15T01:45:37Z"
+actor = "lognd"
+rev = 1

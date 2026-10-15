@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/src/cmd/solve.rs"]
 
 [[acceptance]]
 text = "cadetta solve passes no enum declarations to the resolver, so a module with an enum yields no duplicate E003"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. causes duplicate E003.
