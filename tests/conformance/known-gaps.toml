@@ -928,11 +928,6 @@ ticket = "~0MC1ZA9"
 reason = "R007 has no producer in the library"
 
 [[gap]]
-fixture = "adapters/native-link-dimension-link"
-ticket = "~GYSN0Y3"
-reason = "discover() warns R002 for a bare reference to a name that is not a bound global; the must-not-fire case expects silence"
-
-[[gap]]
 fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
 ticket = "~0MC1ZA9"
 reason = "the equations reader parses IIF(...) as a call, so it never yields an unparsed raw line"
