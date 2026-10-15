@@ -234,6 +234,8 @@ impl Walker<'_, '_> {
                 _ => None,
             });
             let Some(slot) = slot else { return };
+            trace!(owner = %cur, part = %seg.name, "lint_facts: part referenced");
+            self.refs.members.insert((cur.clone(), seg.name.clone()));
             let Some((next, _)) = self
                 .resolver
                 .slot_component(&cur.package, &cur.modules, slot)
@@ -251,8 +253,31 @@ impl Walker<'_, '_> {
 
     /// Resolve a source path and record it.
     fn path(&mut self, p: &ast::Path) {
-        let r = self.resolver.resolve_path(&self.ctx, p, None).ok();
-        self.record(r);
+        match self.resolver.resolve_path(&self.ctx, p, None) {
+            Ok(r) => self.record(Some(r)),
+            Err(_) => self.own_datum(p),
+        }
+    }
+
+    /// Record a read of the walked component's own datum, which sema does not resolve by bare name.
+    // frob:ticket 01M4ZKRTB105N3QFA1RQ8C7WFF
+    fn own_datum(&mut self, p: &ast::Path) {
+        let (Some(first), Some(cname)) = (p.segments.first(), &self.ctx.component) else {
+            return;
+        };
+        if self.ctx.locals.contains(&first.name) {
+            return;
+        }
+        let cid = CanonPath::item(&self.ctx.package, &self.ctx.module, cname);
+        let is_datum = self.resolver.component(&cid).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, MemberKind::Datum(d) if d.name.name == first.name))
+        });
+        if is_datum {
+            trace!(owner = %cid, datum = %first.name, "lint_facts: datum referenced");
+            self.refs.members.insert((cid, first.name.clone()));
+        }
     }
 
     /// Record the component a `part` or constructor instantiates.
@@ -604,8 +629,8 @@ fn collect_refs(package: &str, modules: &[ModuleView<'_>], resolver: &Resolver<'
 /// U002 and I004 fact rows for the items and `priv` members of the checked package `package`.
 ///
 /// `used` comes from name resolution (`collect_refs`), so a local or parameter that merely
-/// shadows an item's name is not a use. `priv` parameter and `let` members of a component
-/// get `Member` rows. A component is `parameterized` when a model or assembly has a
+/// shadows an item's name is not a use. `priv` parameter, `let`, `part` and `datum` members of a
+/// component get `Member` rows. A component is `parameterized` when a model or assembly has a
 /// parameter with no default, and a `is_root` when no other component's `part` instantiates
 /// it. `instances` counts `part`s of the IR that instantiate a component.
 // frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
@@ -668,6 +693,8 @@ pub fn item_facts(
                 let member = match &mem.kind {
                     MemberKind::Param(p) => &p.name.name,
                     MemberKind::Let(l) => &l.name.name,
+                    MemberKind::Part(pt) => &pt.name.name,
+                    MemberKind::Datum(d) => &d.name.name,
                     _ => continue,
                 };
                 let used = refs.members.contains(&(canon.clone(), member.clone()));

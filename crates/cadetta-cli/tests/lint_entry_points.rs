@@ -111,6 +111,30 @@ fn u002_reports_an_unused_private_member_and_not_a_read_one() {
     assert!(!has(&a, "U002", "M.used"), "{:?}", codes(&a));
 }
 
+// frob:ticket 01M4ZKRTB105N3QFA1RQ8C7WFF
+// frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
+#[test]
+fn u002_reports_an_unused_private_part_and_not_a_read_one() {
+    let a = analyze_src(
+        "u002-part",
+        "model Leaf {\n  w = 1mm\n}\n\npub model M {\n  priv part spare: Leaf\n  priv part used: Leaf\n  a = used.w\n}\n",
+    );
+    assert!(has(&a, "U002", "M.spare"), "{:?}", codes(&a));
+    assert!(!has(&a, "U002", "M.used"), "{:?}", codes(&a));
+}
+
+// frob:ticket 01M4ZKRTB105N3QFA1RQ8C7WFF
+// frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
+#[test]
+fn u002_reports_an_unused_private_datum_and_not_a_read_one() {
+    let a = analyze_src(
+        "u002-datum",
+        "pub model M {\n  priv datum spare = origin.offset(x = 1mm)\n  priv datum used = origin.offset(x = 2mm)\n  datum far = used.offset(x = 1mm)\n}\n",
+    );
+    assert!(has(&a, "U002", "M.spare"), "{:?}", codes(&a));
+    assert!(!has(&a, "U002", "M.used"), "{:?}", codes(&a));
+}
+
 // frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
 // frob:tests crates/cadetta-cli/src/lint_facts.rs::item_facts kind=unit
 #[test]

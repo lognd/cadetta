@@ -336,9 +336,9 @@ decides "used" by name resolution, not lexically: an item is used when a
 path or reference in some component, fn, interface, table, process,
 solver, fit, check or require resolves to it, so a local or parameter
 that shadows an item's name is not a use and a self-reference is not a
-use. Private `priv` param and let members of a component get their own
-U002 rows (`pkg::mod::Comp.member`); part and datum members are not yet
-covered. I004 treats a model or assembly as parameterized when a param
+use. Private `priv` param, let, part and datum members of a component get
+their own U002 rows (`pkg::mod::Comp.member`); a part is used when any
+path crosses it and a datum when any path reads it. I004 treats a model or assembly as parameterized when a param
 has no default and is not optional, and as a root when no other
 component instantiates it through a part. `require` protection is wired by collecting the path of every
 obligation check into the suppression table, and `#[allow(CODE, reason)]`
