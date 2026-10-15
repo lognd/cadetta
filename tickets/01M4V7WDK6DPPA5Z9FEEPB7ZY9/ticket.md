@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-15T04:12:12Z"
+updated = "2026-10-15T04:12:46Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "Whole-number values render without a fraction in json and csv"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "An open sync obligation (O004) is reported for a json/csv binding without drive"
