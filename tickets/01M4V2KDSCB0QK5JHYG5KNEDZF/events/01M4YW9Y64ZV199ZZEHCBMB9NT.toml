@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Probed 2026-10-15: D001 info below min digits, C004 and the geometry pass (G002-G007 via cadetta-sema geom) already work; regression tests added in crates/cadetta-cli/tests/lint_gaps_d001_d002.rs. D002 works for fit clearance accessors. Remaining: D002 for fit hole/shaft accessors and M003 for fit sides, both blocked on ~3YZ3NSG (ir::Fit hole/shaft are synthetic <fit>.hole/.shaft paths, no real member). Left open on that."
+at = "2026-10-15T04:14:41Z"
+actor = "lognd"
+rev = 1
