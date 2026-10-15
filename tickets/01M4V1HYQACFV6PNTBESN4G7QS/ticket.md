@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T02:51:40Z"
+updated = "2026-10-15T02:51:47Z"
 scope = ["crates/cadetta-cli/src/**", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HYQACFV6PNTBESN4G7QS.fixed.md"]
 
 [[acceptance]]
 text = "allow on a require raises W003 and C001 stays an error; allow on a check suppresses it"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "waive naming a require diagnostic raises W003 and does not suppress it"
