@@ -2,12 +2,13 @@
 id = "01M4W47VTBXFMC70Q2R137W4EE"
 title = "Part slot canonical path uses '.' instead of '/' (Rover.wheel vs Rover/wheel)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-14T02:35:38Z"
-updated = "2026-10-14T02:35:38Z"
-scope = ["crates/cadetta-sema/src/lower.rs"]
+updated = "2026-10-15T07:13:26Z"
+scope = ["crates/cadetta-sema/src/lower.rs", "crates/cadetta-cli/src/cmd/impact_swap.rs", "crates/cadetta-ir/src/path.rs"]
 
 [[acceptance]]
 text = "a part slot lowers to pkg::Assembly/part and impact --swap accepts that form"

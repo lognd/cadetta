@@ -928,11 +928,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 trace!(%key, "evaluator: drawn rule failed, reported by Processes::apply");
                 Err(Fail::Silent)
             }
-            None => Err(diag(
-                "EVAL",
-                span,
-                "`.drawn` is not readable on this value",
-            )),
+            None => Err(diag("EVAL", span, "`.drawn` is not readable on this value")),
         }
     }
 

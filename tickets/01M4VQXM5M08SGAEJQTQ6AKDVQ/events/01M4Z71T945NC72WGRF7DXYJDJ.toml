@@ -1,0 +1,179 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T07:17:18Z"
+digest = "2f2d2ea72f7d6adfaee5e14cb28a316a8ea6a3f5f91c1a9f7158b52e5c25f36b"
+exit_code = 0
+inline = '''
+   Compiling proc-macro2 v1.0.107
+   Compiling tracing-core v0.1.36
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.154
+   Compiling shlex v2.0.1
+   Compiling thiserror v2.0.21
+   Compiling find-msvc-tools v0.1.14
+   Compiling constant_time_eq v0.4.2
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling arrayvec v0.7.8
+   Compiling cpufeatures v0.3.1
+   Compiling ref-cast v1.0.27
+   Compiling cc v1.8.0
+   Compiling winnow v1.0.4
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling libc v0.2.190
+   Compiling dyn-clone v1.0.20
+   Compiling smallvec v1.16.3
+   Compiling stable_deref_trait v1.2.1
+   Compiling quote v1.0.47
+   Compiling regex-syntax v0.8.11
+   Compiling aho-corasick v1.1.5
+   Compiling log v0.4.34
+   Compiling getrandom v0.3.4
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling blake3 v1.8.7
+   Compiling version_check v0.9.5
+   Compiling zerocopy v0.8.59
+   Compiling writeable v0.6.4
+   Compiling num-integer v0.1.47
+   Compiling litemap v0.8.3
+   Compiling percent-encoding v2.3.2
+   Compiling ahash v0.8.12
+   Compiling utf8_iter v1.0.4
+   Compiling num-bigint v0.5.1
+   Compiling num-bigint v0.4.8
+   Compiling regex-automata v0.4.18
+   Compiling parking_lot_core v0.9.12
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling num-iter v0.1.46
+   Compiling synstructure v0.14.0
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.21
+   Compiling ref-cast-impl v1.0.27
+   Compiling serde_derive_internals v0.30.0
+   Compiling zerovec-derive v0.11.6
+   Compiling tracing-attributes v0.1.31
+   Compiling zerofrom-derive v0.1.8
+   Compiling schemars_derive v1.2.3
+   Compiling yoke-derive v0.8.4
+   Compiling displaydoc v0.2.7
+   Compiling zerofrom v0.1.8
+   Compiling regex v1.13.1
+   Compiling num-rational v0.4.2
+   Compiling num-complex v0.4.6
+   Compiling ring v0.17.14
+   Compiling tracing v0.1.44
+   Compiling scopeguard v1.2.0
+   Compiling num v0.4.3
+   Compiling lock_api v0.4.14
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling yoke v0.8.3
+   Compiling allocator-api2 v0.2.21
+   Compiling jsonschema-value v0.58.5
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling zeroize v1.9.1
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling unicode-general-category v1.1.0
+   Compiling borrow-or-share v0.2.4
+   Compiling bit-vec v0.8.0
+   Compiling heck v0.5.0
+   Compiling foldhash v0.2.0
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling lazy_static v1.5.1
+   Compiling equivalent v1.0.2
+   Compiling icu_locale_core v2.3.0
+   Compiling icu_collections v2.3.0
+   Compiling sharded-slab v0.1.7
+   Compiling hashbrown v0.17.1
+   Compiling bit-set v0.8.0
+   Compiling strum_macros v0.28.0
+   Compiling rustls-pki-types v1.15.1
+   Compiling parking_lot v0.12.5
+   Compiling fraction v0.17.0
+   Compiling matchers v0.2.0
+   Compiling icu_provider v2.3.1
+   Compiling getrandom v0.2.17
+   Compiling tracing-log v0.2.0
+   Compiling thread_local v1.1.10
+   Compiling outref v0.5.2
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling bytecount v0.6.9
+   Compiling httparse v1.10.1
+   Compiling untrusted v0.9.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling crossbeam-utils v0.8.23
+   Compiling num-cmp v0.1.0
+   Compiling micromap v0.3.0
+   Compiling vsimd v0.8.0
+   Compiling fancy-regex v0.19.2
+   Compiling idna_adapter v1.2.2
+   Compiling jsonschema-regex v0.58.5
+   Compiling data-encoding v2.11.1
+   Compiling uuid-simd v0.8.0
+   Compiling bytes v1.12.1
+   Compiling rustls v0.23.45
+   Compiling idna v1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling subtle v2.6.1
+   Compiling base64 v0.23.1
+   Compiling http v1.5.0
+   Compiling webpki-roots v1.0.9
+   Compiling crossbeam-channel v0.5.17
+   Compiling serde_repr v0.1.21
+   Compiling serde_spanned v1.1.2
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling serde v1.0.229
+   Compiling rustls-webpki v0.103.15
+   Compiling ureq-proto v0.6.4
+   Compiling utf8-zero v0.8.1
+   Compiling bitflags v1.3.2
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling strum v0.28.0
+   Compiling ureq v3.4.2
+   Compiling tracing-serde v0.2.0
+   Compiling fluent-uri v0.4.1
+   Compiling email_address v0.2.9
+   Compiling url v2.5.8
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling tracing-subscriber v0.3.23
+   Compiling referencing v0.58.5
+   Compiling lsp-types v0.95.1
+   Compiling lsp-server v0.7.9
+   Compiling jsonschema v0.58.5
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 88ea462f-e5bd-4f0c-96b3-0d9f18e8e831 with nextest profile: default
+    Starting 1 test across 68 binaries (1437 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>180.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        PASS [ 184.350s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 184.380s] 1 test run: 1 passed (1 slow), 1437 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "conformance_corpus_matches_the_spec"
+size = 6136
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-15T07:17:18Z"
+actor = "lognd"
+rev = 1
