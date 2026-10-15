@@ -2,12 +2,12 @@
 id = "01M4Z96RJ4B6W5M23XKGYSN0Y3"
 title = "cadetta adapter: discover() warns R002 for a dimension whose bare reference names a global that is not a bound native global"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T08:00:08Z"
-updated = "2026-10-15T08:00:08Z"
+updated = "2026-10-15T19:38:05Z"
 scope = ["crates/cadetta-adapter/src/bindings.rs"]
 
 [[acceptance]]
