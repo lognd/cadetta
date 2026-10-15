@@ -2,11 +2,12 @@
 id = "01M4YNMDQSSNMTEJETYVXDCETM"
 title = "Fix conformance/ir fixtures: placements use 'on' not at/path; observed must-not-fire fixtures lack bindings"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:18:04Z"
-updated = "2026-10-15T02:21:05Z"
+updated = "2026-10-15T02:21:47Z"
 scope = ["tests/conformance/ir/**", "crates/cadetta-cli/tests/ir_entries.rs", "changelog.d/*"]
 
 [[acceptance]]
