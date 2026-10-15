@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T12:06:04Z"
-updated = "2026-10-15T13:04:01Z"
-scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs"]
+updated = "2026-10-15T13:06:28Z"
+scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs", "docs/spec/config-cli.md"]
 
 [[acceptance]]
 text = "cadetta emit spawns external adapters and sends emit, reporting their files"
