@@ -1,0 +1,13 @@
+kind = "create"
+title = "conformance: spurious S008 warning on sourced-component fixtures (stdlib i001/q003)"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+idempotency_key = "gap-s008-noise"
+scope = ["crates/cadetta-cli/src/**", "crates/cadetta-core/**"]
+acceptance = ["the three stdlib fixtures pass and their gap entries are removed"]
+body = "Found while cleaning known-gaps (~YE4KW2A): extra S008 warning at acme.demo::src in stdlib/i001-sourced-optional-members, i001-sourced-wrong-kind, q003-sourced-named-kind."
+at = "2026-10-15T03:43:26Z"
+actor = "lognd"
+rev = 1
