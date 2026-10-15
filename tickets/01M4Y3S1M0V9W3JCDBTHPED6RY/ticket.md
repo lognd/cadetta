@@ -2,13 +2,13 @@
 id = "01M4Y3S1M0V9W3JCDBTHPED6RY"
 title = "Route sync execute through push_atomic and matched_locators"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-14T21:06:01Z"
-updated = "2026-10-14T21:06:01Z"
+updated = "2026-10-15T09:14:19Z"
 idempotency_key = "cadetta:sync-wire-atomic"
 scope = ["crates/cadetta-adapter/src/sync.rs"]
 

@@ -64,6 +64,9 @@ pub struct PackageSrc<'a> {
     pub deps: Vec<String>,
     /// Its modules.
     pub modules: Vec<ModuleSrc<'a>>,
+    /// The package's `[defaults]` table: interface name to the qualified implementation path.
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    pub defaults: std::collections::BTreeMap<String, String>,
 }
 
 /// The module a diagnostic's span lies in: its package and module path.
@@ -1592,6 +1595,7 @@ mod tests {
         enums: &'a [EnumDecl],
     ) -> PackageSrc<'a> {
         PackageSrc {
+            defaults: Default::default(),
             name: name.to_owned(),
             deps: deps.iter().map(|s| (*s).to_owned()).collect(),
             modules: mods

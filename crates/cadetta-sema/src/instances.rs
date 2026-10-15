@@ -158,6 +158,7 @@ pub(super) fn materialise<'p>(
                     let site = Site {
                         resolver,
                         packages,
+                        project_defaults: &pkg.defaults,
                         parent: c,
                         parent_ctx: &parent_ctx,
                         parent_file: module.file,
@@ -180,6 +181,8 @@ pub(super) fn materialise<'p>(
 struct Site<'a, 'p> {
     resolver: &'a Resolver<'p>,
     packages: &'a [PackageSrc<'p>],
+    /// The parent package's `[defaults]` table.
+    project_defaults: &'a BTreeMap<String, String>,
     parent: &'p Component,
     parent_ctx: &'a Ctx,
     parent_file: &'p ast::File,
@@ -234,14 +237,15 @@ impl<'p> Site<'_, 'p> {
         let layers = Layers {
             component: Some(&component.names),
             file: Some(&file.names),
-            project: None,
+            project: Some(self.project_defaults),
             std: std_impl.as_ref().map(|_| STD_DEFAULT),
         };
         let resolution = resolve_default(name, &layers)?;
         let value = match resolution.source {
             Source::Component => component.exprs.get(name),
             Source::File => file.exprs.get(name),
-            Source::Project | Source::Std => None,
+            Source::Project => return self.project_default(name),
+            Source::Std => None,
         };
         let Some(value) = value else {
             debug!(iface = name, source = ?resolution.source, "instances: default from non-scope layer");
@@ -260,6 +264,29 @@ impl<'p> Site<'_, 'p> {
                 None
             }
         }
+    }
+
+    /// The component the project `[defaults]` entry for `iface` names, from its qualified path.
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    fn project_default(&self, iface: &str) -> Option<CanonPath> {
+        let written = self.project_defaults.get(iface)?;
+        let mut segs: Vec<&str> = written.split("::").collect();
+        let item = segs.pop().filter(|i| !i.is_empty());
+        let package = (!segs.is_empty()).then(|| segs.remove(0));
+        let found = item.zip(package).and_then(|(item, package)| {
+            self.packages
+                .iter()
+                .filter(|p| p.name == package)
+                .flat_map(|p| p.modules.iter().map(move |m| (p, m)))
+                .filter(|(_, m)| m.path.iter().map(String::as_str).eq(segs.iter().copied()))
+                .find(|(_, m)| m.file.components().any(|c| c.name.name == item))
+                .map(|(p, m)| CanonPath::item(&p.name, &m.path, item))
+        });
+        match &found {
+            Some(path) => debug!(iface, %written, ?path, "instances: project default resolved"),
+            None => warn!(iface, %written, "instances: project default does not name a component"),
+        }
+        found
     }
 
     /// The `std` default component implementing the interface named `name`, if any.
@@ -661,6 +688,70 @@ mod tests {
             "{:?}",
             ev.diagnostics
         );
+    }
+
+    /// Evaluate `top` (package `p`) with `defaults` as its `[defaults]`, beside dependency `q` holding `dep`.
+    fn run_with_defaults(top: &str, dep: &str, defaults: &[(&str, &str)]) -> Evaluation {
+        use super::super::Evaluator;
+        use crate::resolve::{ModuleSrc, PackageSrc, Resolver};
+        use cadetta_units::UnitTable;
+        let (top, dep) = (file(top), file(dep));
+        let module = |f| {
+            vec![ModuleSrc {
+                path: Vec::new(),
+                file: f,
+                enums: &[],
+            }]
+        };
+        let pkgs = vec![
+            PackageSrc {
+                name: "p".to_owned(),
+                deps: vec!["q".to_owned()],
+                modules: module(&top),
+                defaults: defaults
+                    .iter()
+                    .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                    .collect(),
+            },
+            PackageSrc {
+                name: "q".to_owned(),
+                deps: Vec::new(),
+                modules: module(&dep),
+                defaults: Default::default(),
+            },
+        ];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty(), "{errs:?}");
+        let units = UnitTable::builtin();
+        Evaluator::new(&resolver, &units, &pkgs).evaluate()
+    }
+
+    const DEP: &str = "pub interface Pol { gap: Length }\n\
+        pub ots Std: Pol { gap = 2mm }\n\
+        pub ots Loose: Pol { gap = 5mm }\n";
+
+    const TOP: &str = "use q::{Pol, Std, Loose}\n\
+        assembly Joint(a: Length, pol: Pol) { gapped = pol.gap + a }\n";
+
+    // frob:tests project_defaults_name_a_dependency_implementation
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    #[test]
+    fn project_defaults_name_a_dependency_implementation() {
+        let top = format!("{TOP}assembly Top {{ part j: Joint(a = 4mm) }}\n");
+        let ev = run_with_defaults(&top, DEP, &[("Pol", "q::Loose")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(mm(&ev, "gapped"), m(9, 1000));
+    }
+
+    // frob:tests file_default_beats_project_default
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    #[test]
+    fn file_default_beats_project_default() {
+        let top =
+            format!("{TOP}#![default(Pol = Std)]\nassembly Top {{ part j: Joint(a = 4mm) }}\n");
+        let ev = run_with_defaults(&top, DEP, &[("Pol", "q::Loose")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(mm(&ev, "gapped"), m(3, 500));
     }
 
     // frob:tests assembly_default_beats_file_default

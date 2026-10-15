@@ -265,6 +265,7 @@ mod tests {
     fn duplicate_component_in_a_module_is_e003_with_both_spans() {
         let parsed = parse("model A { x = 1 }\nmodel A { y = 1 }\n");
         let (_r, errs) = Resolver::new(vec![PackageSrc {
+            defaults: Default::default(),
             name: "acme.rover".into(),
             deps: vec![],
             modules: vec![ModuleSrc {

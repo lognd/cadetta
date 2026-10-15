@@ -218,7 +218,14 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 - Beyond `diagnostics`, `exit` and `values`, the runner observes `output`
   and `outputs` (`contains`/`excludes` per file), `writes`,
   `file_written`, `order`, `stdout_contains`, `stderr_contains`,
-  `message_contains`, `message_excludes` and `config_error` (exit 2).
+  `message_contains`, `message_excludes`, `config_error` (exit 2),
+  `json_diag_schema` (every report record carries the schema tag),
+  `results_order` (solver ids appear in this order in the written files),
+  `runs` (lines in the `marker` file each solver script appends to),
+  `unbound_params_not_written` (no written file names a member that no
+  `bindings/*.toml` binds) and, for `classify`, `r001_suppressed_by_force`
+  (`force_design` overrode an R001 that would have refused; the override
+  note is then not counted as a diagnostic).
   `note`, `why` and `args` are descriptive and ignored. Any other key is
   a failure ("this entry does not observe K") so an expectation is never
   dropped silently.

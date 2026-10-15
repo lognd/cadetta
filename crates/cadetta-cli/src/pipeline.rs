@@ -320,6 +320,8 @@ struct RawPackage {
     name: String,
     version: String,
     deps: Vec<String>,
+    /// The package's `[defaults]` table (empty for `std`).
+    defaults: BTreeMap<String, String>,
     dir: PathBuf,
     modules: Vec<Module>,
 }
@@ -335,6 +337,7 @@ impl RawPackage {
                 .and_then(|p| p.version.clone())
                 .unwrap_or_else(|| "0.0.0".to_owned()),
             deps: pkg.config.dependencies.keys().cloned().collect(),
+            defaults: pkg.config.defaults.clone(),
             dir: pkg.dir.clone(),
             modules: pkg.modules.clone(),
         }
@@ -375,6 +378,7 @@ fn load_std(dir: &Path) -> std::io::Result<RawPackage> {
         name: "std".to_owned(),
         version: "0.1.0".to_owned(),
         deps: Vec::new(),
+        defaults: BTreeMap::new(),
         dir: dir.to_owned(),
         modules,
     })
@@ -384,6 +388,7 @@ struct ParsedPackage {
     name: String,
     version: String,
     deps: Vec<String>,
+    defaults: BTreeMap<String, String>,
     dir: PathBuf,
     is_std: bool,
     modules: Vec<Parsed>,
@@ -425,6 +430,7 @@ fn embedded_std() -> RawPackage {
         name: "std".to_owned(),
         version: "0.1.0".to_owned(),
         deps: Vec::new(),
+        defaults: BTreeMap::new(),
         dir,
         modules,
     }
@@ -606,6 +612,7 @@ fn parse_package(
         name,
         version,
         deps: pkg.deps.clone(),
+        defaults: pkg.defaults.clone(),
         dir: pkg.dir.clone(),
         is_std,
         modules,
@@ -1121,6 +1128,7 @@ fn evaluate_stages(
         .map(|p| PackageSrc {
             name: p.name.clone(),
             deps: p.deps.clone(),
+            defaults: p.defaults.clone(),
             modules: p
                 .modules
                 .iter()

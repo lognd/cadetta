@@ -2,12 +2,13 @@
 id = "01M4YEA3QBT5257Z8BAN7NH9KY"
 title = "Lower interface bounds into lint_facts::interfaces"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T00:10:06Z"
-updated = "2026-10-15T00:10:06Z"
-scope = ["crates/cadetta-cli/src/lint_facts.rs"]
+updated = "2026-10-15T09:15:02Z"
+scope = ["crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/interface_bounds_check.rs"]
 
 [[links]]
 kind = "blocked-by"
