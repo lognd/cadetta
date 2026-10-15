@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/src/**", "changelog.d/01M4V1HYN215BC5W2R6Y0NVZAF.*"
 
 [[acceptance]]
 text = "A fit appears in cadetta obligations, can be signed off with ack, and goes stale when it changes"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "ots and citation components appear as obligations (already shipped; covered by existing universe tests)"
