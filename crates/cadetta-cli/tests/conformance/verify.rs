@@ -7,7 +7,7 @@
 
 use serde_json::Value;
 
-use crate::compare::compare;
+use crate::compare::{Produced, compare};
 use crate::exec::expected_members;
 use crate::expect::Block;
 use crate::run::{Facts, parse_json};
@@ -32,6 +32,7 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "stderr_contains" => check_contains(want, &facts.stderr, "stderr"),
             "message_contains" => check_contains(want, &facts.messages.join("\n"), "messages"),
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
+            "diagnostics_exclude" => check_diagnostics_exclude(want, &facts.produced),
             "results_order" => check_results_order(want, facts),
             "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
@@ -111,6 +112,21 @@ fn check_excludes(want: &Value, haystack: &str, what: &str) -> Result<(), String
         Ok(())
     } else {
         Err(format!("{what} contain {present:?}"))
+    }
+}
+
+/// `diagnostics_exclude`: none of the listed codes may appear among the produced diagnostics.
+// frob:ticket 01M50VAJJFQ8W7QWGFZEGCSBD5
+fn check_diagnostics_exclude(want: &Value, produced: &[Produced]) -> Result<(), String> {
+    let present: Vec<String> = strings(want)
+        .into_iter()
+        .filter(|c| produced.iter().any(|p| &p.code == c))
+        .collect();
+    tracing::debug!(?present, "diagnostics_exclude");
+    if present.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("diagnostics_exclude: produced {present:?}"))
     }
 }
 
