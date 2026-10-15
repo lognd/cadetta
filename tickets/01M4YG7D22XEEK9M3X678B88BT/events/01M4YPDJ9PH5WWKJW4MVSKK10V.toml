@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:31:47Z"
+digest = "9a44b2f19dddc10129f899ad38813320c4d15b8d1065cb5fd8fb63bd9aff11a2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a2f1755a-9a80-43f2-93b1-a3f61e31fc80 with nextest profile: default
+    Starting 1 test across 57 binaries (1320 tests skipped)
+        LEAK [   0.509s] cadetta-adapter rpc::client::tests::silent_process_times_out_even_when_a_grandchild_holds_the_pipe
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.511s] 1 test run: 1 passed (1 leaky), 1320 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "silent_process_times_out_even_when_a_grandchild_holds_the_pipe"
+size = 604
+status = "measured"
+test_count = 1
+tests_digest = "d1b9a06c16071a33a05d2fdbf085792d200cf1599809c40644523991d0580ddf"
+at = "2026-10-15T02:31:47Z"
+actor = "lognd"
+rev = 1
