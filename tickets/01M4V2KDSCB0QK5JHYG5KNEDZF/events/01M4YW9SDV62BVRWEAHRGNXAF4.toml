@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["D001 is info below d001_min_digits", "D002 fires for fit clearance accessors", "Geometry G002-G007 reach check"]
+new = ["D001 is info below d001_min_digits", "D002 fires for fit clearance accessors", "Geometry G002-G007 reach check", "D002 sees fit hole/shaft accessors and M003 fires for path/path fit sides (blocked on ~3YZ3NSG IR decision)"]
+moved = [1, 2, 3]
+at = "2026-10-15T04:14:36Z"
+actor = "lognd"
+rev = 1
