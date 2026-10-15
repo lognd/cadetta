@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T11:57:42Z"
+digest = "41402dc9f4f77d53b723de21039e2ff51aae55e70da1f8e87a161161d2dcf437"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 61bffceb-7258-4405-9585-db819da2ae12 with nextest profile: default
+    Starting 1 test across 1 binary (160 tests skipped)
+        PASS [   0.006s] cadetta-adapter rpc::client::tests::configured_precision_overrides_initialize
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 160 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter configured_precision_overrides"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "f5f3d0aa3b461f94a68074488b73f7e8842c856ac26870f0c4eed00ba05bce2e"
+at = "2026-10-15T11:57:42Z"
+actor = "lognd"
+rev = 1

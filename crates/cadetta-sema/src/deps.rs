@@ -34,12 +34,6 @@ use crate::resolve::{
 };
 use crate::visibility::VisibilityChecker;
 
-/// Members every part contributes to a `name(self)` roll-up (language.md 3.5).
-const ROLLUP_NAMES: &[&str] = &["unit_cost", "lead_time", "moq", "supplier", "mass"];
-
-/// Roll-up functions that take `(self, member)`.
-const ROLLUP_FNS: &[&str] = &["sum", "max", "min"];
-
 /// How serious a dependency diagnostic is.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Severity {
@@ -949,19 +943,7 @@ impl DepGraph {
 
 /// The member a call rolls up over parts: `sum(self, m)` or `m(self)`.
 fn rollup_member(callee: &Expr, args: &[Arg]) -> Option<String> {
-    let ExprKind::Path(cp) = &callee.kind else {
-        return None;
-    };
-    let name = cp.segments.last()?.name.as_str();
-    let is_self = |a: &Arg| matches!(&a.value.kind, ExprKind::Path(p) if p.text() == "self");
-    match args {
-        [a] if ROLLUP_NAMES.contains(&name) && is_self(a) => Some(name.to_owned()),
-        [a, b] if ROLLUP_FNS.contains(&name) && is_self(a) => match &b.value.kind {
-            ExprKind::Path(p) if p.segments.len() == 1 => Some(p.text()),
-            _ => None,
-        },
-        _ => None,
-    }
+    crate::rollup::shape(callee, args).map(|(_, member)| member)
 }
 
 #[cfg(test)]

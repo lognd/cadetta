@@ -2,13 +2,14 @@
 id = "01M4YSGF4CF0MBQG2K4A50KFBS"
 title = "roll-up evaluation sum/max/min(self, member) not wired into the evaluator (commercial-misspelling, screw-price)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T10:58:05Z"
-scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml"]
+updated = "2026-10-15T11:59:34Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/commercial-misspelling-not-a-member.must-fire.cdt", "tests/conformance/stdlib/commercial-misspelling-not-a-member.must-not-fire.cdt", "tests/conformance/stdlib/screw-price-not-in-iso4762.must-not-fire.cdt"]
 
 [[acceptance]]
 text = "sum/max/min(self, m) and the ? forms evaluate over every part instance, counting arrays"

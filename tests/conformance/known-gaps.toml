@@ -33,21 +33,6 @@ ticket = "~JET4TC0"
 reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
 
 [[gap]]
-fixture = "stdlib/commercial-misspelling-not-a-member"
-ticket = "~A50KFBS"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/materials-tap-class"
-ticket = "~34KDRPA"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
-fixture = "stdlib/screw-price-not-in-iso4762"
-ticket = "~A50KFBS"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
 fixture = "stdlib/m003-hole-fit-side"
 ticket = "~3YZ3NSG"
 reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
@@ -1306,16 +1291,6 @@ reason = "binding-kind run does not observe names_path_or_key"
 fixture = "adapters/bind-invalid-sign-not-on-property"
 ticket = "~CE627BF"
 reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "solvers/result-file-committed-fresh-not-run"
-ticket = "~BV5FGCF"
-reason = "freshness stdout / S005 not produced"
-
-[[gap]]
-fixture = "solvers/solve-stale-result-runs"
-ticket = "~BV5FGCF"
-reason = "freshness stdout / S005 not produced"
 
 [[gap]]
 fixture = "geometry/pattern-count-structural"

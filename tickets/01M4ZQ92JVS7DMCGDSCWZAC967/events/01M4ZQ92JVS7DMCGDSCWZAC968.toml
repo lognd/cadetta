@@ -1,0 +1,10 @@
+kind = "create"
+title = "emit: run external adapters in cadetta emit"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/emit.rs"]
+body = "Found while working ~5HP91AE: emit.rs (~line 1077) still skips external adapters; sync now runs them via emit_external."
+at = "2026-10-15T12:06:04Z"
+actor = "lognd"
+rev = 1
