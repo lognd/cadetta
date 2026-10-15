@@ -4,9 +4,10 @@ title = "Spec: bindings.md leaves Python parse-failure and float-operand error t
 type = "task"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-13T17:45:36Z"
-updated = "2026-10-13T17:45:36Z"
+updated = "2026-10-15T06:09:04Z"
 scope = ["docs/spec/bindings.md"]
 +++
 
