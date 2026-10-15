@@ -2,7 +2,8 @@
 id = "01M4Z3FGQHHAPQ3N8VCDEY1G2X"
 title = "language: wire I002/I003 and part alt slots into check (E002 on slot members, per-alternate viability)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
