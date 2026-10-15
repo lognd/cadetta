@@ -2,7 +2,8 @@
 id = "01M4ZJAYVZYZTP7ASF0NJ1S30Q"
 title = "Ack for waiver: and sync: obligations"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
