@@ -2,7 +2,8 @@
 id = "01M4Z96RJ4B6W5M23XKGYSN0Y3"
 title = "cadetta adapter: discover() warns R002 for a dimension whose bare reference names a global that is not a bound native global"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
