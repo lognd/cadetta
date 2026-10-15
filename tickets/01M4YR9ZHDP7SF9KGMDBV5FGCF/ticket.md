@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-15T12:37:40Z"
+updated = "2026-10-15T12:37:51Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**", "tests/conformance/known-gaps.toml", "tests/conformance/solvers/result-file-committed-fresh-not-run.expect.json", "tests/conformance/solvers/solve-stale-result-runs.expect.json"]
 
 [[acceptance]]
