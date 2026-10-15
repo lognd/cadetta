@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T10:50:21Z"
+digest = "6a465a37889c25c0beacd251103ce46f496372c622782b5b77d4a6d99a5147f7"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6cfe7728-6949-401a-82fd-7d4d62aae3eb with nextest profile: default
+    Starting 1 test across 42 binaries (498 tests skipped)
+        PASS [   0.262s] cadetta cmd::obligations::tests::dependency_own_ack_digest_matches_the_dependent_closure_digest
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.264s] 1 test run: 1 passed, 498 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta dependency_own_ack_digest"
+size = 650
+status = "measured"
+test_count = 1
+tests_digest = "da4d4d20e413842f07d07ccfe8a87773997e7b168c4ab15154811d452d658e19"
+at = "2026-10-15T10:50:21Z"
+actor = "lognd"
+rev = 1

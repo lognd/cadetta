@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/universe.rs", "crates/cadetta-cli/src/cmd/oblig
 
 [[acceptance]]
 text = "A dependency check's own-lock digest equals the dependent's closure digest"
-bound = false
+bound = true
 +++
 
 found while working ~Q06ZV6Q: a dependency's own-lock digest for check:acme.axle::Axle.bore_ok (ack inside the dependency) differs from the closure digest the dependent computes for the same node, so trusted upstream roles cannot discharge in practice. Make the digest context independent.
