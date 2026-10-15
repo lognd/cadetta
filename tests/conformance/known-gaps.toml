@@ -183,11 +183,6 @@ ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
 
 [[gap]]
-fixture = "emitters/sw-equations/comment-nothing-else"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
 fixture = "emitters/sw-equations/comment-trailing-authored-literal"
 ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
@@ -1043,11 +1038,6 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "stdlib/iso4762-any-length"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
 fixture = "stdlib/table-iso4032"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
@@ -1407,7 +1397,6 @@ fixture = "adapters/geom-placement-verify-only"
 ticket = "~BC7S5KT"
 reason = "binding push-plan entries have no executor yet"
 
-
 [[gap]]
 fixture = "geometry/g005-check-looser-than-float"
 ticket = "~HWJP0GQ"
@@ -1477,7 +1466,6 @@ reason = "extra E002 / expected nonzero exit"
 fixture = "lints/w005-waiver-expiring"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
-
 
 [[gap]]
 fixture = "adapters/protocol-open-dirty-r009"
