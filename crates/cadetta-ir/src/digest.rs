@@ -366,6 +366,38 @@ pub fn fit_digest(f: &Fit) -> Digest {
     e.finish()
 }
 
+/// Own digest of a lookup table: its path, columns, rows and citation reference.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+pub fn table_digest(t: &crate::entities::Table) -> Digest {
+    use crate::entities::Cell;
+    let cell = |e: &mut Enc, c: &Cell| match c {
+        Cell::Value(v) => {
+            e.str("value");
+            value(e, v);
+        }
+        Cell::Variant(s) => {
+            e.str("variant").str(s);
+        }
+    };
+    let mut e = Enc::new("table");
+    e.str(&t.path.to_string());
+    e.str(&t.key.name).str(&t.key.type_name);
+    e.num(t.cols.len() as u64);
+    for c in &t.cols {
+        e.str(&c.name).str(&c.type_name);
+    }
+    e.num(t.rows.len() as u64);
+    for r in &t.rows {
+        cell(&mut e, &r.key);
+        e.num(r.cells.len() as u64);
+        for c in &r.cells {
+            cell(&mut e, c);
+        }
+    }
+    e.opt(&t.citation, cite_ref);
+    e.finish()
+}
+
 /// Own digest of a solver, including its recorded result digest (ir.md 4).
 pub fn solver_digest(s: &Solver) -> Digest {
     let mut e = Enc::new("solver");

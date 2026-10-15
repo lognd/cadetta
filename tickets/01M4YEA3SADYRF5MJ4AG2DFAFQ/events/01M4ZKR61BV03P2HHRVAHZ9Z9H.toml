@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T11:03:29Z"
+digest = "48fada551a39c53497e8a1f238534d0d2025ec9da528c3f48b5faaaae4c751fe"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 53.43s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6389736f-030f-4ecf-9843-ca5a3cb8f922 with nextest profile: default
+    Starting 1 test across 42 binaries (494 tests skipped)
+        PASS [   0.110s] cadetta::lint_entry_points u002_use_is_by_resolution_so_a_shadowing_name_is_not_a_use
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.115s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta u002_use_is_by_resolution"
+size = 640
+status = "measured"
+test_count = 1
+tests_digest = "dd9b8503a76f255328ef0515e3cda749e5a257b0066f26d4d0906051c3fd7e31"
+at = "2026-10-15T11:03:29Z"
+actor = "lognd"
+rev = 1

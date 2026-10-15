@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A dependency check's own-lock digest equals the dependent's closure digest"]
+moved = []
+at = "2026-10-15T10:50:21Z"
+actor = "lognd"
+rev = 1
