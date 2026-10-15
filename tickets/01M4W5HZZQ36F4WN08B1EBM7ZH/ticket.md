@@ -7,8 +7,8 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-14T02:58:39Z"
-updated = "2026-10-15T12:50:33Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
+updated = "2026-10-15T13:32:31Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given host = <part> and at = Pattern2, when cadetta check runs, then joint-host-default-into, joint-count-*, joint-screw-cost evaluate"
