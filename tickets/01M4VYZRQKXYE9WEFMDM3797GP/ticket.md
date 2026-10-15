@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T01:03:50Z"
-updated = "2026-10-15T04:37:34Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-15T04:37:47Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/geometry.md"]
 
 [[acceptance]]
 text = "Re-expression of an indexed part instance (leg[1].top in origin) evaluates at that instance placement"
