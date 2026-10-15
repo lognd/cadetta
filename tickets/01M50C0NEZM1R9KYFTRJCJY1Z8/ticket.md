@@ -7,9 +7,13 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-15T18:08:29Z"
+updated = "2026-10-15T18:09:51Z"
 idempotency_key = "v2k95h5-slice-frontend"
 scope = ["crates/cadetta-syntax/src/**"]
+
+[[links]]
+kind = "blocked-by"
+target = "01M50C0NA43G0H8N5YSRDMWEB8"
 
 [[acceptance]]
 text = "A Point2 with [position d] lowers to paired .u/.v terms and the E006 cases fire."
