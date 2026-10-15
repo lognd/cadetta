@@ -2,11 +2,12 @@
 id = "01M4VYZRQKXYE9WEFMDM3797GP"
 title = "Evaluate indexed part-instance reads and re-expression (leg[1].top in origin)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T01:03:50Z"
-updated = "2026-10-15T04:37:47Z"
+updated = "2026-10-15T04:37:50Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/geometry.md", "changelog.d/**"]
 
 [[acceptance]]
