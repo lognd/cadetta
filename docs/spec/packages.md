@@ -119,7 +119,9 @@ The module tree is the file tree under `src`:
 - An item may only be used where it is visible (E016). The check runs on
   every `use` target and on every expression path written out with `::`
   (`package::a::Thing.size`, `super::Thing.size`); a bare imported name
-  is judged once, at its `use`. A `pub` item
+  is judged once, at its `use`, except that a `priv` member read through
+  an instance of an imported component (`j.major` on a `part j: Joint`
+  from another package) is also E016 at the read. A `pub` item
   whose signature names a private item is E017. This covers an
   interface member's type, a component parameter's type, and a
   function's argument and result types.

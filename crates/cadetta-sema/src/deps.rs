@@ -847,9 +847,13 @@ impl<'a> Builder<'_, 'a> {
         };
         // frob:ticket 01M4YRPNTCYCGNZ5VP5PDPCRB2
         // E016 on a fully qualified expression path, `package::` / `super::` included.
-        let denied = is_qualified(e)
-            .then(|| self.vis.check_use(&ctx, &resolved, e.span).err())
-            .flatten();
+        // A bare name's item is judged at its `use`, but a `priv` member read through an
+        // instance (`j.major`) is only visible here.
+        let denied = if is_qualified(e) {
+            self.vis.check_use(&ctx, &resolved, e.span).err()
+        } else {
+            self.vis.check_member_use(&ctx, &resolved, e.span).err()
+        };
         if let Some(denied) = denied {
             debug!(code = denied.code, span = ?e.span, "E016: reference to an invisible item");
             self.graph.diagnostics.push(DepDiagnostic {
@@ -1176,5 +1180,32 @@ mod tests {
         let deps = g.deps_of(&c).cloned().collect::<Vec<_>>();
         assert_eq!(deps, vec![node_key(&m, &[], "a"), node_key(&m, &[], "b")]);
         assert!(codes(&g).is_empty());
+    }
+
+    // frob:tests priv_member_read_through_instance_is_e016
+    #[test]
+    fn priv_member_read_through_instance_is_e016() {
+        let lib = file("pub model J { priv major = 3\n  minor = 2\n}\n");
+        let build = |body: &str| {
+            let user = file(&format!("use lib::J\nmodel U {{\n  part j: J\n  {body}\n}}\n"));
+            let pkgs = vec![
+                PackageSrc {
+                    name: "lib".to_owned(),
+                    deps: Vec::new(),
+                    modules: vec![ModuleSrc { path: Vec::new(), file: &lib, enums: &[] }],
+                },
+                PackageSrc {
+                    name: "app".to_owned(),
+                    deps: vec!["lib".to_owned()],
+                    modules: vec![ModuleSrc { path: Vec::new(), file: &user, enums: &[] }],
+                },
+            ];
+            let (resolver, _) = Resolver::new(pkgs.clone());
+            let renames = Renames::collect(&resolver, &pkgs);
+            let g = DepGraph::build(&resolver, &renames, &pkgs);
+            codes(&g)
+        };
+        assert!(build("m = j.major").contains(&"E016"));
+        assert!(!build("m = j.minor").contains(&"E016"));
     }
 }

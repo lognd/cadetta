@@ -130,6 +130,24 @@ impl<'a> VisibilityChecker<'a> {
         Ok(())
     }
 
+    /// Checks only the `priv` members a resolved member or part read passes through (E016).
+    ///
+    /// The item itself is judged at its `use`; this is the use-site half for a bare imported name.
+    // frob:ticket 01M4V2J3BCSB3MFKDRSPGR0M75
+    pub fn check_member_use(
+        &self,
+        from: &Ctx,
+        resolved: &Resolved,
+        span: Span,
+    ) -> Result<(), ResolveError> {
+        match resolved {
+            Resolved::Member { path, .. } | Resolved::Part { path } => {
+                self.check_members(from, path, span)
+            }
+            _ => Ok(()),
+        }
+    }
+
     /// E016 over every `use` of the project whose target item is not visible to the importing module.
     // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
     pub fn check_uses(&self) -> Vec<ResolveError> {

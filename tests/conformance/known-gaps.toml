@@ -318,11 +318,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "emitters/sw-equations/global-created-unit-from-locator"
-ticket = "~0HEFFN7"
-reason = "created global unit from locator native_unit not implemented"
-
-[[gap]]
 fixture = "adapters/adapter-id-keys-bindings"
 ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
