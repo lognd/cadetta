@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:00:27Z"
+digest = "3f74260406c58bf0b82294b0104d0707c2948d5d49987e4af1cdef1a94067473"
+provider = "file"
+ref = "docs/spec/lints.md"
+size = 34514
+status = "measured"
+at = "2026-10-15T03:00:27Z"
+actor = "lognd"
+rev = 1
