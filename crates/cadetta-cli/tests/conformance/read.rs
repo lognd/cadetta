@@ -12,7 +12,7 @@ use cadetta_adapter::bindings::{ForwardTable, NameSource, Placement, discover, r
 use cadetta_adapter::builtin::{csv, json, sw_equations};
 use cadetta_adapter::locator::check_native_collisions;
 use cadetta_adapter::read_facts;
-use cadetta_adapter::read_units::{NativeValue, ObservedValue, UnitPolicy};
+use cadetta_adapter::read_units::{NativeValue, ObservedValue, ReadContext, UnitPolicy};
 use cadetta_adapter::sync::{self, Lock};
 use cadetta_adapter::testing::{Observed, ReadAdapter, check_round_trip};
 use cadetta_adapter::{
@@ -408,10 +408,16 @@ fn unit_read(spec: &Value) -> Result<Facts, String> {
     let units = policy_of(spec["adapter"]["native_unit"].as_str(), assume);
     let native = &spec["native"];
     let number = native["number"].to_string();
-    let mut o = units.read(&NativeValue {
-        literal: number,
-        unit: native["unit"].as_str().map(str::to_owned),
-    });
+    let mut o = units.read_in(
+        &NativeValue {
+            literal: number,
+            unit: native["unit"].as_str().map(str::to_owned),
+        },
+        &ReadContext {
+            expected_unit: spec["adapter"]["native_unit"].as_str(),
+            driven: native["driven"].as_bool().unwrap_or(false),
+        },
+    );
     let mut out = Map::new();
     if let Some(expr) = native["expression"].as_str() {
         let line = format!(

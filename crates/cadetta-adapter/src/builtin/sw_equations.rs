@@ -247,6 +247,12 @@ pub fn emit(header: &Header, blocks: &[PathBlock]) -> String {
     s
 }
 
+/// Functions SOLIDWORKS equations define; any other call is not parseable (kept raw).
+const KNOWN_FUNCS: &[&str] = &[
+    "sin", "cos", "tan", "sec", "cosec", "cotan", "arcsin", "arccos", "atn", "arcsec", "arccosec",
+    "arccotan", "abs", "exp", "log", "sqr", "int", "sgn", "iif",
+];
+
 /// A parsed equation expression (observed IR).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Expr {
@@ -456,6 +462,10 @@ impl Parser<'_> {
                 Some(e)
             }
             Tok::Ident(func) => {
+                if !KNOWN_FUNCS.contains(&func.to_ascii_lowercase().as_str()) {
+                    tracing::warn!(func = func.as_str(), "unknown equation function");
+                    return None;
+                }
                 matches!(self.toks.get(self.pos), Some(Tok::LParen)).then(|| self.pos += 1)?;
                 let mut args = Vec::new();
                 if matches!(self.peek(), Some(Tok::RParen)) {
@@ -777,6 +787,16 @@ mod tests {
             panic!("call")
         };
         assert_eq!((func.as_str(), args.len()), ("IIF", 3));
+    }
+
+    // frob:ticket 01M50J83ATKTE83FQVVG0V5V7D
+    // frob:tests crates/cadetta-adapter/src/builtin/sw_equations.rs::read kind=unit
+    #[test]
+    fn read_keeps_unknown_function_call_raw() {
+        let got = read("\"A\" = SWFN(1)\n", &UnitPolicy::default());
+        assert!(matches!(&got[0].rhs, ReadRhs::Unparsed(o) if !o.exact));
+        let ok = read("\"A\" = sqr(4)\n", &UnitPolicy::default());
+        assert!(matches!(&ok[0].rhs, ReadRhs::Expr(Expr::Call { .. })));
     }
 
     // frob:tests crates/cadetta-adapter/src/builtin/sw_equations.rs::read kind=unit

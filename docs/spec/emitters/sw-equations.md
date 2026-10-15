@@ -72,7 +72,9 @@ it.
 ## 3. Read
 
 `read` parses the same grammar plus anything SOLIDWORKS itself writes
-(expressions such as `"A" = "B" * 2`, functions, `IIF`). Expressions
+(expressions such as `"A" = "B" * 2`, the equation functions `sin`, `cos`,
+`tan`, `sqr`, `abs`, `iif` and the rest of SOLIDWORKS' list). A call to any
+other function name is not parseable. Expressions
 become observed-IR expressions; values without units take the document
 unit given by `--assume-unit` or `[[adapter]] native_unit`
 (adapters.md 3). Lines it cannot parse are kept with `exact: false` and
