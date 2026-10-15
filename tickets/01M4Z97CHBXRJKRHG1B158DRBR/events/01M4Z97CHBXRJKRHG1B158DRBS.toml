@@ -1,0 +1,10 @@
+kind = "create"
+title = "cadetta ir: derive fits with component-argument operands per instance (Parent/part prefix)"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/fitderive.rs"]
+body = "follow-up of ~TC5DJ1M: lowering now drops deps on underived fits; per-instance fit nodes still absent"
+at = "2026-10-15T08:00:29Z"
+actor = "lognd"
+rev = 1
