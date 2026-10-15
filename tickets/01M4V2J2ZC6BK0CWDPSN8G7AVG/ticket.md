@@ -12,6 +12,10 @@ scope = ["tests/conformance/stdlib/**"]
 [[acceptance]]
 text = "The 11 ScrewJoint fixtures (check-*, e006-*, g004-joint-pattern-count, vendor-tap-members-absent) pass against the binary and are not gapped"
 bound = false
+
+[[acceptance]]
+text = "g005-float-unlocated remains gapped under ~HWJP0GQ (needs placement-edge float, out of scope here)"
+bound = false
 +++
 
 Fixtures failing against the binary, gapped in known-gaps.toml: check-aligned check-aligned-nut-floating check-depth-ok-drill check-depth-ok-vendor check-grip-positive check-not-bottomed e006-count-with-pattern e006-joint-per-pattern e006-vendor-needs-depth g004-joint-pattern-count g005-float-unlocated vendor-tap-members-absent. Found while working ~GDYVJ8R.

@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["The 11 ScrewJoint fixtures (check-*, e006-*, g004-joint-pattern-count, vendor-tap-members-absent) pass against the binary and are not gapped"]
+new = ["The 11 ScrewJoint fixtures (check-*, e006-*, g004-joint-pattern-count, vendor-tap-members-absent) pass against the binary and are not gapped", "g005-float-unlocated remains gapped under ~HWJP0GQ (needs placement-edge float, out of scope here)"]
+moved = [1]
+at = "2026-10-15T04:19:19Z"
+actor = "lognd"
+rev = 1
