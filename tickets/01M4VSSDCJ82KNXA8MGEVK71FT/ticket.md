@@ -2,11 +2,12 @@
 id = "01M4VSSDCJ82KNXA8MGEVK71FT"
 title = "Evaluate #![requires(arg, when = cond)] as E006 missing argument"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:29:13Z"
+updated = "2026-10-15T04:29:27Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
