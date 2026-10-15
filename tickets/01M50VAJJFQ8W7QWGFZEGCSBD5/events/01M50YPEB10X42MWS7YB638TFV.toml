@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T23:34:56Z"
+digest = "eb40a0b1c6fbc4c0f9851c96255364959625b0c14b1062f081edad74a48a2b4c"
+provider = "file"
+ref = "tests/conformance/adapters/read-never-raises-q001.expect.json"
+size = 470
+status = "measured"
+at = "2026-10-15T23:34:56Z"
+actor = "lognd"
+rev = 1
