@@ -20,7 +20,7 @@ use cadetta_adapter::policy::{
     to_decimal,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
-use cadetta_ir::digest::digest_project;
+use cadetta_ir::digest::{digest_project, project_digest};
 use cadetta_ir::model::{
     Flavour, Locator, LocatorKind, LocatorMode, Member, Nominal, Project as Ir, Sign, Value,
 };
@@ -874,7 +874,22 @@ pub(crate) fn package_ir(
         .iter()
         .find(|p| p.name == id.name)
         .map_or_else(|| Ir::new(Flavour::Design, id.clone()), |p| p.ir.clone());
+    // Cross-package reads digest against the other packages' components, which are then dropped.
+    let own = ir.components.len();
+    for other in analysis
+        .packages
+        .iter()
+        .chain(&analysis.dependencies)
+        .filter(|p| p.name != id.name)
+    {
+        ir.components.extend(other.ir.components.iter().cloned());
+    }
     digest_project(&mut ir).map_err(|e| format!("could not digest the IR: {e}"))?;
+    if ir.components.len() > own {
+        tracing::debug!(package = %id.name, dropped = ir.components.len() - own, "emit: dropping dependency components after digest");
+        ir.components.truncate(own);
+        ir.digest = Some(project_digest(&ir));
+    }
     Ok(ir)
 }
 
@@ -1182,6 +1197,33 @@ mod tests {
         assert!(out.contains("build/solidworks/equations.txt"), "{out}");
     }
 
+    // frob:ticket 01M4YTGQ9BHMKS38GTGX2PFH03
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::package_ir
+    #[test]
+    fn reads_across_a_dependency_digest_and_emit_only_own_members() {
+        let dir = Dir::new();
+        let toml = "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n[dependencies]\n\"acme.other\" = { path = \"dep0\", version = \"1\" }\n[[adapter]]\nname = \"sw-equations\"\nout = \"build/eq.txt\"\nbind = \"scope\"\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        std::fs::create_dir_all(dir.0.join("src")).unwrap();
+        std::fs::write(
+            dir.0.join("src/lib.cdt"),
+            "use acme.other::Thing\nmodel Plate {\n  thickness = 10mm\n}\nmodel Probe {\n  let other_0 = Thing.size\n}\n",
+        )
+        .unwrap();
+        std::fs::create_dir_all(dir.0.join("dep0/src")).unwrap();
+        std::fs::write(
+            dir.0.join("dep0/cadetta.toml"),
+            "[package]\nname = \"acme.other\"\nversion = \"1.0.0\"\n",
+        )
+        .unwrap();
+        std::fs::write(dir.0.join("dep0/src/lib.cdt"), "pub model Thing {\n  size = 3mm\n}\n").unwrap();
+        let (code, out, e) = run(&dir, &["sw-equations"]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/eq.txt")).unwrap();
+        assert!(text.contains("\"Plate__thickness\" = 10mm"), "{text}");
+        assert!(!text.contains("Thing") && !text.contains("3mm"), "{text}");
+    }
+
     // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit
     #[test]
     fn honours_out_and_adapter_selection() {
@@ -1425,6 +1467,24 @@ mod tests {
         assert!(text.contains("\nThk,6.35,mm,1/4in @\"\"ASTM B209\"\"\n") || text.contains("\"1/4in @\"\"ASTM B209\"\"\""), "{text}");
         assert!(text.contains("\nW,10,mm,\n"), "{text}");
         assert!(text.contains("\nN,6,,\n"), "{text}");
+    }
+
+    // frob:ticket 01M4V7WDZT11T3QC6FAGAACNA8
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::build_value_rows
+    #[test]
+    fn csv_note_joins_literal_emit_point_and_citation_with_single_spaces() {
+        let dir = value_project(
+            "csv",
+            "model P {\n  bore: Length = 12mm [+0.029mm +0.011mm]  @\"ASTM B209\" #[emit(mid)]\n}\n",
+            "[\"acme.plate::P.bore\"]\nlocators = [ { locator = \"Bore\", kind = \"global\", native_unit = \"mm\" } ]\n",
+        );
+        let (code, out, e) = run(&dir, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        let text = std::fs::read_to_string(dir.0.join("build/csv.csv")).unwrap();
+        assert!(
+            text.contains("\"12mm [+0.029mm +0.011mm] emit=mid @\"\"ASTM B209\"\"\""),
+            "{text}"
+        );
     }
 
     // frob:ticket 01M4VQXN3J51T9B0C08TQMFETK
