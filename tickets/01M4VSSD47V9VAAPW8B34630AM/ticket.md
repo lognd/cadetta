@@ -2,11 +2,12 @@
 id = "01M4VSSD47V9VAAPW8B34630AM"
 title = "Evaluate optional params: given(x), absent members, E002 on absent reads"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:29:12Z"
+updated = "2026-10-15T04:29:27Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
