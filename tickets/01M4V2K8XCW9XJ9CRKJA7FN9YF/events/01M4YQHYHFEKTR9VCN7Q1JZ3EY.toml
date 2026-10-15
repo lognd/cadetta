@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["W003 fires for allow of a fixed code and waive of a require; W004 for an unused allow; W005 for an expiring waiver"]
+moved = []
+at = "2026-10-15T02:51:40Z"
+actor = "lognd"
+rev = 1
