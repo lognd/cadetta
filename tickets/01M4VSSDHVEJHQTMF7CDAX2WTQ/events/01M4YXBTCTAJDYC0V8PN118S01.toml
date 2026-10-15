@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "done"
+reason = "already shipped and fragmented under 01M4SWP814HCC088QRKJ7QGBNV (1fa956e9); this ticket only binds evidence"
+at = "2026-10-15T04:33:11Z"
+actor = "lognd"
+rev = 1
