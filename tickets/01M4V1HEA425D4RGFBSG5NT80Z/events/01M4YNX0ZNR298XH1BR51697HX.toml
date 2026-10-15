@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:22:46Z"
+digest = "b6bb41132cf438717fa24977183d987fb144d2e9691d1495861d313dfafbf9ee"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 80580df3-d007-4dd0-8202-c97f69e72fa0 with nextest profile: default
+    Starting 1 test across 56 binaries (1308 tests skipped)
+        PASS [   0.122s] cadetta::quantity_pi_inexact inexact_check_operand_on_boundary_is_c002
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.124s] 1 test run: 1 passed, 1308 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "on_boundary_is_c002"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "baa572ed0d36976d3b8222649fc8a17cb6189599d1c2ed6b87e8cb246268e9ce"
+at = "2026-10-15T02:22:46Z"
+actor = "lognd"
+rev = 1
