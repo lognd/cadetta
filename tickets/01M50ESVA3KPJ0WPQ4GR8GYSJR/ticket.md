@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T18:57:11Z"
-updated = "2026-10-15T19:06:03Z"
+updated = "2026-10-15T19:06:09Z"
 scope = ["tests/conformance/solvers/**", "tests/conformance/known-gaps.toml", "docs/spec/solvers.md"]
 
 [[acceptance]]
