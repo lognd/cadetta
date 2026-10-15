@@ -143,6 +143,8 @@ Waiver     { code, glob, because, expires?, for_alt?: "<slot>=<alternate>",
              targets_closure }
 Process    { path, params[], rules: [ { role, expr } ] }
 Part       { path, type, count?, primary, alternates[], args }
+             // slot Part.path is "PKG::Type/part" (the `/part` step, no
+             // ".member"), per cadetta-sema lower.rs (~137W4EE)
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
 Op         = offset{x,y,z: member ref} | rotate{axis, angle: member ref}
              | flip{axis}                                // shared by Datum and Placement
