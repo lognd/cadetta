@@ -11,7 +11,7 @@ scope = ["docs/spec/**"]
 
 [[acceptance]]
 text = "config-cli.md 3.9 specifies ir-validate FILE (exit 0 valid, 2 invalid) and lint FILE on IR JSON (D003 reachable)"
-bound = false
+bound = true
 +++
 
 found while working ~99NMCBG: ir.md 6 introduces ir-validate FILE (exit 0 valid, 2 invalid); lint on an IR JSON file for D003 has no CLI form. Add both to config-cli.md or the runner contract.
