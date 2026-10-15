@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A user-declared kind is registered so assigning a differently-kinded value reports Q003", "The kind-row-length-from-cbrt known gap is removed"]
+moved = []
+at = "2026-10-15T02:02:33Z"
+actor = "lognd"
+rev = 1
