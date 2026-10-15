@@ -2,7 +2,8 @@
 id = "01M4XDMA1D78TRJB1CB5HP91AE"
 title = "sync: run external non-drive adapter emit"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
