@@ -17,7 +17,7 @@ bound = false
 
 [[acceptance]]
 text = "solve --format json reports a diagnostics list for failed solvers (S005, Q001)"
-bound = false
+bound = true
 +++
 
 found while working ~6BCVN48: solvers/s005-*, q001-output-*, transport-*, result-file-beside-script, variants-* fixtures (27) fail; see also ~QDVP8JQ.

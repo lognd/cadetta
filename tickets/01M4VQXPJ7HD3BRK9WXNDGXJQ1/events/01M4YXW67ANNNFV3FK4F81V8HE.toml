@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T04:41:29Z"
+digest = "de0fbf59446b666e695715e7c58142eb9e7e1b75ef056925d203b94d436b6aee"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID dbffe73a-230f-45aa-9ccd-fddf83bd691e with nextest profile: default
+    Starting 1 test across 67 binaries (1425 tests skipped)
+        PASS [   0.037s] cadetta cmd::solve::tests::json_report_records_failures_with_code
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.040s] 1 test run: 1 passed, 1425 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "json_report_records_failures_with_code"
+size = 676
+status = "measured"
+test_count = 1
+tests_digest = "89173e1c870696deaf830211469ad970f48f25230358c8e7047c73dc9c45ff13"
+at = "2026-10-15T04:41:29Z"
+actor = "lognd"
+rev = 1
