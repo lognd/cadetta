@@ -8,7 +8,7 @@ points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T09:03:17Z"
+updated = "2026-10-15T09:09:12Z"
 scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "json_diag_schema stays observed and compared"
-bound = false
+bound = true
 +++
 
 found while working ~6BCVN48: these expect.json keys are not observed by verify.rs, so the entry fails 'does not observe'.
