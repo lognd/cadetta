@@ -2,7 +2,8 @@
 id = "01M4XDMA5YXDDQDXEDB6S1V8Y7"
 title = "sync: feed verify_geometry/datum_entries to geometry_bind"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "medium"
 points = 2
 reporter = "lognd"
