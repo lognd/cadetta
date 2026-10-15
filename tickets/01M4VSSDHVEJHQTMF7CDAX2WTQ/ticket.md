@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:33:04Z"
+updated = "2026-10-15T04:33:11Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
