@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["The decoder reads dependencies, checks, bindings, interfaces, tables, waivers and component datums, points and placements and round-trips them", "lint FILE reports D002 for a literal equal to a table cell and stays quiet otherwise", "lint FILE fires F004 and N001 on decoded fits and member names", "lint FILE reports real line and column from the source file beside the IR document"]
+moved = []
+at = "2026-10-15T02:32:26Z"
+actor = "lognd"
+rev = 1
