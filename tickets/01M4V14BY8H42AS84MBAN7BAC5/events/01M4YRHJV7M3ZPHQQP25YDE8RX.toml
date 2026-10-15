@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:07:58Z"
+digest = "f9717e6ca23e11ffc759436f61625132c236147bfa328d179ffca18689da0bf3"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 57.53s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bf96db53-6b54-41e8-87cf-b686f16db521 with nextest profile: default
+    Starting 1 test across 61 binaries (1362 tests skipped)
+        PASS [   0.164s] cadetta cmd::check::tests::e005_missing_src_is_a_diagnostic_with_exit_1
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.179s] 1 test run: 1 passed, 1362 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "e005_missing_src_is_a_diagnostic_with_exit_1"
+size = 882
+status = "measured"
+test_count = 1
+tests_digest = "e41c0e5a0b8ac2ced4c6b66c691f1df33184c6825ab145073d2b218feedfa7ee"
+at = "2026-10-15T03:07:58Z"
+actor = "lognd"
+rev = 1
