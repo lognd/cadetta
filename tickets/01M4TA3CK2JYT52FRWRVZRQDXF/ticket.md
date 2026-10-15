@@ -2,11 +2,12 @@
 id = "01M4TA3CK2JYT52FRWRVZRQDXF"
 title = "cmd/solve.rs passes enums the resolver already indexes"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-15T01:45:37Z"
+updated = "2026-10-15T01:45:57Z"
 scope = ["crates/cadetta-cli/src/cmd/solve.rs"]
 
 [[acceptance]]
