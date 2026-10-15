@@ -318,10 +318,21 @@ def _compare(
 
 
 @pytest.fixture(scope="module")
-def replays(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Case], Replay]:
-    """Replay every case once, in parallel, and look results up by case."""
+def replays(
+    tmp_path_factory: pytest.TempPathFactory, request: pytest.FixtureRequest
+) -> Callable[[Case], Replay]:
+    """Replay only the cases selected this session, once, in parallel.
+
+    Replaying the whole corpus eagerly made a single `-k` selection cost minutes.
+    """
     scratch = tmp_path_factory.mktemp("conformance")
-    _log.info("replaying %d corpus cases", len(CASES))
+    selected = {
+        item.callspec.params["case"].id
+        for item in request.session.items
+        if hasattr(item, "callspec") and "case" in item.callspec.params
+    }
+    todo = [c for c in CASES if c.id in selected]
+    _log.info("replaying %d of %d corpus cases", len(todo), len(CASES))
 
     def one(case: Case) -> Replay | BaseException:
         try:
@@ -331,7 +342,7 @@ def replays(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Case], Replay
             return exc
 
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:
-        done = dict(zip((c.id for c in CASES), pool.map(one, CASES), strict=True))
+        done = dict(zip((c.id for c in todo), pool.map(one, todo), strict=True))
 
     def lookup(case: Case) -> Replay:
         got = done[case.id]
