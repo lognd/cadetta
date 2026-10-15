@@ -1833,8 +1833,3 @@ fixture = "lints/w005-waiver-expiring"
 ticket = "~32TR561"
 reason = "extra E002 / expected nonzero exit"
 
-
-[[gap]]
-fixture = "geometry/datum-unknown-of-placed-part"
-ticket = "~N8B2SV9"
-reason = "unknown datum of a placed part yields EVAL, expected E002"

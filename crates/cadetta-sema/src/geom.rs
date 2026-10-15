@@ -984,6 +984,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     ),
                 ));
             }
+            // frob:ticket 01M4Z0WGJPRDATAN7V7N8B2SV9
+            if let Some(chain) = steps(r) {
+                let name = chain.last().map(|(n, _)| n.clone()).unwrap_or_default();
+                warn!(datum = %name, "geometry: `in` names an unknown datum");
+                return Err(diag(
+                    "E002",
+                    r.span,
+                    format!(
+                        "E002: `{name}` is not a datum of the part it is read from (geometry.md 3)"
+                    ),
+                ));
+            }
             return Err(diag("EVAL", r.span, "the right side of `in` names a datum"));
         };
         let Ref::Datum {
