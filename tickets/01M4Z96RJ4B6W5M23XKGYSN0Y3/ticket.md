@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T08:00:08Z"
-updated = "2026-10-15T19:38:05Z"
-scope = ["crates/cadetta-adapter/src/bindings.rs"]
+updated = "2026-10-15T19:40:13Z"
+scope = ["crates/cadetta-adapter/src/bindings.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "native-link-dimension-link passes with no known-gaps entry."
