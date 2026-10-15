@@ -13,7 +13,7 @@ scope = ["crates/cadetta-units/**", "crates/cadetta-sema/**", "crates/cadetta-em
 
 [[acceptance]]
 text = "sw-equations Q004 beyond-precision fixtures fire (error, path, exit 1, file withheld) and pass when representable"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "emit JSON diagnostics are cadetta.diag/1 records with severity"

@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:54:22Z"
+digest = "7836b0f8be8d0d92ef924dfd83fc0f2974610771a24df21af8b8611935785954"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0c0b0c6e-a282-4ffd-ba13-30cef3d3afee with nextest profile: default
+    Starting 1 test across 60 binaries (1352 tests skipped)
+        PASS [   0.430s] cadetta::q004_beyond_precision q004_beyond_precision_fires_and_withholds_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.434s] 1 test run: 1 passed, 1352 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "q004_beyond_precision_fires_and_withholds_the_file"
+size = 704
+status = "measured"
+test_count = 1
+tests_digest = "5e5e485faad43fdbea29fdb51e6d48c0bf21a8460829387ac8709dd97e8f694f"
+at = "2026-10-15T02:54:22Z"
+actor = "lognd"
+rev = 1
