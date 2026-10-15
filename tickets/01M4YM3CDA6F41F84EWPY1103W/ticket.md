@@ -7,9 +7,9 @@ priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T01:51:17Z"
-updated = "2026-10-15T01:51:17Z"
+updated = "2026-10-15T02:07:55Z"
 idempotency_key = "followup-xn48psv-engine-severity"
-scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/cmd/check.rs"]
+scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/cmd/check.rs", "changelog.d"]
 
 [[acceptance]]
 text = "Engine preserves a rule-set severity; check.rs workaround removed; a test in cadetta-lint proves a downgraded D001 stays info"
