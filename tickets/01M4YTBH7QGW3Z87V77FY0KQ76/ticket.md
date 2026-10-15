@@ -7,7 +7,7 @@ priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:40:36Z"
 updated = "2026-10-15T03:41:55Z"
-scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/r014_sync_manual_adapter.rs", "changelog.d/01M4YTBH7QGW3Z87V77FY0KQ76.fixed.md"]
 
 [[acceptance]]
 text = "sync manual-adapter fallback raises R014 for a bound Text param and withholds the file"
