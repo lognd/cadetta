@@ -2,7 +2,8 @@
 id = "01M4Y772AZC00VRGAKXK8V6DSY"
 title = "Derive fits whose operands are component args or parameterized instances (Resolved::Arg), e.g. H7 on bearing.outer_diameter"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 3
 reporter = "lognd"
