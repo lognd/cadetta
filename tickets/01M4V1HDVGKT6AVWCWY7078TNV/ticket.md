@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:11:43Z"
+updated = "2026-10-15T02:12:17Z"
 idempotency_key = "Z48-iso286"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDVGKT6AVWCWY7078TNV.added.md"]
 
