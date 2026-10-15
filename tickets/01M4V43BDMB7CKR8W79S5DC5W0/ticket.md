@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-15T03:19:21Z"
+updated = "2026-10-15T03:19:54Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/src/rules/interface.rs", "crates/cadetta-geometry/src/datum.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/cmd/check.rs", "tests/conformance/known-gaps.toml", "changelog.d/01M4V43BDMB7CKR8W79S5DC5W0.fixed.md", "Cargo.lock"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "E006 fires for flip(z)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "I001 fires only when an implementer omits a declared interface datum"
