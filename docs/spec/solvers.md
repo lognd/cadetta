@@ -213,8 +213,10 @@ with the solver outputs recorded for its inputs (the primary's when the inputs
 are unchanged, its own entry otherwise), and a changed-input variant with no
 entry raises S006 at the solver, carrying the variant as `alt`.
 
-S003 names what changed (`inputs`, `script` or a dep path) in notes and
-carries the variant as `alt`. S005 is raised for a failed run whose code is S005
+S003 names what changed (`inputs`, `script` or a dep path) in its message and
+notes and carries the variant as `alt`. A check declared inside a solver reads
+the solver's recorded outputs bare and yields C001 when it fails; a check that
+reads an output with no recorded value is undecided (C002), never S003. S005 is raised for a failed run whose code is S005
 (a protocol failure with another code, such as Q001, keeps that code) and says
 whether a previous result stays in use. S006 fires only for a variant whose own
 result is missing; a missing primary result is an unsolved output, not S006.

@@ -72,6 +72,9 @@ struct CheckDef<'p> {
     inst: Option<Rc<InstInfo>>,
     /// The `#[when(cond)]` gate: the check exists only while it holds.
     when: Option<&'p Expr>,
+    /// For a check declared inside a `solver`: the solver's path and its `out` names, which the
+    /// condition reads bare (solvers.md 5).
+    solver: Option<(CanonPath, Vec<String>)>,
 }
 
 /// A bound member, indexed by its component and name.
@@ -121,6 +124,7 @@ impl<'p> CheckIndex<'p> {
                     span: m.span,
                     inst: None,
                     when: None,
+                    solver: None,
                 }),
                 MemberKind::Require(r) => self.checks.push(CheckDef {
                     path: at(&r.name.name),
@@ -133,7 +137,10 @@ impl<'p> CheckIndex<'p> {
                     span: m.span,
                     inst: None,
                     when: None,
+                    solver: None,
                 }),
+                MemberKind::Solver(_) if parameterized => {}
+                MemberKind::Solver(sv) => self.add_solver_checks(&ctx, &at(&sv.name.name), sv),
                 MemberKind::Bound(b) => {
                     let name = match &b.kind {
                         BoundKind::Le { name, .. }
@@ -151,6 +158,45 @@ impl<'p> CheckIndex<'p> {
                 }
                 _ => {}
             }
+        }
+    }
+}
+
+impl<'p> CheckIndex<'p> {
+    /// Indexes the checks a solver declares on its own outputs (solvers.md 5).
+    ///
+    /// Each is a plain check at `Comp.solver.name` whose condition reads the solver's `out`
+    /// names bare.
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    fn add_solver_checks(&mut self, ctx: &Ctx, solver: &CanonPath, sv: &'p ast::Solver) {
+        let outs: Vec<String> = sv
+            .members
+            .iter()
+            .filter_map(|m| match &m.kind {
+                ast::SolverMemberKind::Out { name, .. } => Some(name.name.clone()),
+                _ => None,
+            })
+            .collect();
+        for m in &sv.members {
+            let ast::SolverMemberKind::Check(k) = &m.kind else {
+                continue;
+            };
+            let mut path = solver.clone();
+            path.members.push(MemberSeg::Name(k.name.name.clone()));
+            trace!(check = %path, "checks: solver output check indexed");
+            self.checks.push(CheckDef {
+                path,
+                each: k.each.as_ref(),
+                cond: &k.cond,
+                message: k.message.clone(),
+                citation: None,
+                obligation: false,
+                ctx: ctx.clone(),
+                span: m.span,
+                inst: None,
+                when: None,
+                solver: Some((solver.clone(), outs.clone())),
+            });
         }
     }
 }
@@ -296,6 +342,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         span: m.span,
                         inst: Some(info.clone()),
                         when,
+                        solver: None,
                     },
                     MemberKind::Require(r) => CheckDef {
                         path: at(&r.name.name),
@@ -308,6 +355,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         span: m.span,
                         inst: Some(info.clone()),
                         when,
+                        solver: None,
                     },
                     _ => continue,
                 };
@@ -330,8 +378,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             };
             let start = self.diagnostics.len();
             let saved = std::mem::replace(&mut self.cur_inst, def.inst.clone());
+            let unsolved_before = self.unsolved_reads;
             let outcome = match self.gate(&mut sc, def) {
-                Ok(true) => self.run_check(&mut sc, def),
+                Ok(true) => match self.bind_solver_outputs(&mut sc, def) {
+                    Ok(true) => self.run_check(&mut sc, def),
+                    Ok(false) => {
+                        debug!(check = %def.path, "checks: solver output unrecorded, check undecided");
+                        Ok(vec![self.record(
+                            def,
+                            None,
+                            Outcome::of(Verdict::Undecided),
+                        )])
+                    }
+                    Err(f) => Err(f),
+                },
                 Ok(false) => {
                     debug!(check = %def.path, "checks: `when` is false, check absent");
                     Ok(Vec::new())
@@ -343,6 +403,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             self.stamp_since(start, &ModuleKey::of_ctx(&def.ctx));
             match outcome {
                 Ok(rs) => out.extend(rs),
+                Err(Fail::Silent) if self.unsolved_reads > unsolved_before => {
+                    // The condition read an output no result records: undecided, not absent.
+                    debug!(check = %def.path, "checks: reads an unsolved solver output, undecided");
+                    let r = self.record(def, None, Outcome::of(Verdict::Undecided));
+                    out.push(r);
+                }
                 Err(Fail::Silent) => {}
                 Err(Fail::Diag(mut d)) => {
                     if let Some(i) = &def.inst {
@@ -358,6 +424,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         debug!(checks = out.len(), "checks: evaluation finished");
         out
+    }
+
+    /// Binds a solver check's `out` names as locals; false when any has no recorded value.
+    fn bind_solver_outputs(&mut self, sc: &mut Scope, def: &CheckDef<'p>) -> R<bool> {
+        let Some((solver, outs)) = &def.solver else {
+            return Ok(true);
+        };
+        for name in outs {
+            let mut key = solver.clone();
+            key.members.push(MemberSeg::Name(name.clone()));
+            match self.done.get(&key) {
+                Some(Some(ev)) => sc.push(name, ev.value.clone()),
+                _ => {
+                    trace!(%key, "checks: solver output has no recorded value");
+                    return Ok(false);
+                }
+            }
+        }
+        Ok(true)
     }
 
     /// True when the check's `#[when]` gate (if any) holds.

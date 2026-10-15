@@ -125,6 +125,13 @@ fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(),
         tracing::debug!(runs, "observed solver runs");
         facts.observed.insert("runs".into(), json!(runs));
     }
+    if wants("stale_output") {
+        let out = stale_output(facts);
+        tracing::debug!(?out, "observed stale output");
+        facts
+            .observed
+            .insert("stale_output".into(), out.map_or(Value::Null, Value::from));
+    }
     if wants("unbound_params_not_written") {
         let clean = unbound_params_not_written(scratch, facts)?;
         tracing::debug!(clean, "observed unbound params not written");
@@ -133,6 +140,34 @@ fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(),
             .insert("unbound_params_not_written".into(), json!(clean));
     }
     Ok(())
+}
+
+/// The recorded output of a stale (S003) solver that checks still evaluated.
+///
+/// Evidence of "still evaluated": a check verdict (C001/C002) was produced besides the S003.
+// frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+fn stale_output(facts: &Facts) -> Option<String> {
+    let evaluated = facts
+        .produced
+        .iter()
+        .any(|d| d.code == "C001" || d.code == "C002");
+    let stale: Vec<&str> = facts
+        .produced
+        .iter()
+        .filter(|d| d.code == "S003")
+        .filter_map(|d| d.path.as_deref())
+        .collect();
+    if !evaluated || stale.is_empty() {
+        return None;
+    }
+    facts
+        .after
+        .iter()
+        .filter(|(p, _)| p.ends_with(".out.json"))
+        .filter_map(|(_, text)| serde_json::from_str::<Value>(text).ok())
+        .flat_map(|doc| doc["results"].as_array().cloned().unwrap_or_default())
+        .filter(|r| r["solver"].as_str().is_some_and(|s| stale.contains(&s)))
+        .find_map(|r| r["outputs"].as_object()?.keys().next().cloned())
 }
 
 /// Solver script runs: the lines of the `marker` file each script invocation appends to.
@@ -422,5 +457,43 @@ fn action_label(verb: sync::Verb) -> &'static str {
         Verb::Skip | Verb::Drift => "none",
         Verb::Converged => "record only",
         Verb::Fail => "push failed",
+    }
+}
+
+#[cfg(test)]
+mod stale_output_tests {
+    use super::*;
+
+    fn facts(codes: &[&str], result: &str) -> Facts {
+        let mut f = Facts::default();
+        for c in codes {
+            f.produced.push(Produced {
+                code: (*c).to_owned(),
+                severity: "warning".into(),
+                path: Some("p::M.s".into()),
+            });
+        }
+        f.after.insert("a/s.out.json".into(), result.to_owned());
+        f
+    }
+
+    const RESULT: &str = r#"{"results":[{"solver":"p::M.s","outputs":{"w":"1m"}}]}"#;
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::stale_output
+    #[test]
+    fn stale_solver_with_an_evaluated_check_observes_its_output() {
+        assert_eq!(
+            stale_output(&facts(&["S003", "C001"], RESULT)).as_deref(),
+            Some("w")
+        );
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::stale_output
+    #[test]
+    fn no_s003_or_no_check_verdict_observes_nothing() {
+        assert_eq!(stale_output(&facts(&["C001"], RESULT)), None);
+        assert_eq!(stale_output(&facts(&["S003"], RESULT)), None);
     }
 }

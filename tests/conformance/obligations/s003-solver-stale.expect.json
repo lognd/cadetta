@@ -15,6 +15,11 @@
     "exit": 0
   },
   "must_not_fire": {
-    "diagnostics": []
+    "diagnostics": [
+      {
+        "code": "S003",
+        "severity": "warning"
+      }
+    ]
   }
 }

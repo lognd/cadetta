@@ -1630,7 +1630,17 @@ fn evaluate_stages(
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
     for s in stale {
         let StaleSolver { key, span, diag } = s;
-        if let Some(mut d) = located("S003", Severity::Warning, diag.message, span, Some(&key)) {
+        // The message itself names what changed (solvers.md 4), not only the notes.
+        let message = match diag
+            .notes
+            .iter()
+            .map(|n| n.message.as_str())
+            .collect::<Vec<_>>()
+        {
+            n if n.is_empty() => diag.message,
+            n => format!("{} ({})", diag.message, n.join("; ")),
+        };
+        if let Some(mut d) = located("S003", Severity::Warning, message, span, Some(&key)) {
             d.notes = diag.notes;
             d.path = diag.path.or(d.path);
             out.push(d);
@@ -1926,6 +1936,16 @@ mod tests {
 
     /// A one-package project whose solver has a recorded result with the given digest.
     fn solver_project(tag: &str, with_result: bool) -> Project {
+        solver_project_with(tag, with_result, "", "")
+    }
+
+    /// `solver_project` with extra lines inside the solver block and inside the model.
+    fn solver_project_with(
+        tag: &str,
+        with_result: bool,
+        in_solver: &str,
+        in_model: &str,
+    ) -> Project {
         let dir = std::env::temp_dir().join(format!("cadetta-stale-{}-{tag}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(dir.join("src")).unwrap();
@@ -1936,7 +1956,7 @@ mod tests {
         .unwrap();
         std::fs::write(
             dir.join("src/lib.cdt"),
-            "model Box {\n  m: Mass = 2kg\n  solver size {\n    script \"size.sh\"\n    in m = m\n    out w: Length\n  }\n}\n",
+            format!("model Box {{\n  m: Mass = 2kg\n  solver size {{\n    script \"size.sh\"\n    in m = m\n    out w: Length\n{in_solver}  }}\n{in_model}}}\n"),
         )
         .unwrap();
         std::fs::write(dir.join("size.sh"), "true\n").unwrap();
@@ -1967,6 +1987,42 @@ mod tests {
         assert!(d.location.is_some());
         assert!(d.notes.iter().any(|n| n.message == "changed: inputs"));
         assert!(d.notes.iter().any(|n| n.message == "changed: script"));
+        // The message itself names what changed, not only the notes.
+        assert!(d.message.contains("changed: inputs"), "{}", d.message);
+        assert!(d.message.contains("changed: script"), "{}", d.message);
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-sema/src/checks.rs::add_solver_checks
+    #[test]
+    fn solver_own_check_on_a_recorded_output_is_evaluated() {
+        // Recorded `w` is 2m, so `w < 1m` fails: C001 from the solver's own check.
+        let project = solver_project_with("own", true, "    check small: w < 1m\n", "");
+        let analysis = analyze(&project, &[0]);
+        assert!(
+            analysis.diagnostics.iter().any(|d| d.code == "C001"),
+            "{:?}",
+            analysis
+                .diagnostics
+                .iter()
+                .map(|d| &d.code)
+                .collect::<Vec<_>>()
+        );
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-sema/src/checks.rs::run_checks
+    #[test]
+    fn check_reading_an_unsolved_output_is_c002_not_s003() {
+        let project = solver_project_with("unsolved", false, "", "  check ok: size.w < 1m\n");
+        let analysis = analyze(&project, &[0]);
+        let codes: Vec<&str> = analysis
+            .diagnostics
+            .iter()
+            .map(|d| d.code.as_str())
+            .collect();
+        assert!(codes.contains(&"C002"), "{codes:?}");
+        assert!(!codes.contains(&"S003"), "{codes:?}");
     }
 
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0

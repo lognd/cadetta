@@ -499,6 +499,8 @@ pub struct Evaluator<'r, 'p> {
     float_vars: BTreeMap<CanonPath, [VarId; 3]>,
     /// Count of datum re-expressions that read through a floated placement edge (G005).
     float_reads: u32,
+    /// Count of reads of a solver output no result records (makes a check undecided, not absent).
+    unsolved_reads: u32,
     /// Joints already reported G008, so each warns once.
     g008_seen: BTreeSet<String>,
     diagnostics: Vec<EvalDiagnostic>,
@@ -602,6 +604,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             next_var: 0,
             float_vars: BTreeMap::new(),
             float_reads: 0,
+            unsolved_reads: 0,
             g008_seen: BTreeSet::new(),
             diagnostics,
             index,
@@ -1030,6 +1033,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Some(Some(ev)) => Ok(ev.value.clone()),
             _ => {
                 trace!(%out, "evaluator: solver output has no recorded value");
+                self.unsolved_reads += 1;
                 Err(Fail::Silent)
             }
         }
