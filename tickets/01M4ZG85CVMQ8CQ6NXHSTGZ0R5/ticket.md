@@ -2,7 +2,8 @@
 id = "01M4ZG85CVMQ8CQ6NXHSTGZ0R5"
 title = "Dependency check digest differs between its own universe and the dependent's"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
