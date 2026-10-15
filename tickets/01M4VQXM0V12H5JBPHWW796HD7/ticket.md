@@ -8,8 +8,8 @@ points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:20Z"
-updated = "2026-10-15T07:46:07Z"
-scope = ["crates/cadetta-cli/tests/**"]
+updated = "2026-10-15T08:02:56Z"
+scope = ["crates/cadetta-cli/tests/**", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "Every kind=binding entry=read and emit-read fixture executes against the adapter host and its expect.json is compared; their known-gaps.toml entries are removed."
