@@ -2,11 +2,12 @@
 id = "01M4V2K8RG8K1P774YVYBFVYDC"
 title = "S007 not raised for untyped solver out port"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:40Z"
-updated = "2026-10-15T02:28:08Z"
+updated = "2026-10-15T02:29:04Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-syntax/**", "crates/cadetta-solve/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/**", "tests/conformance/lints/**", "tests/conformance/known-gaps.toml", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
