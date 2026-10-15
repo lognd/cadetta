@@ -4,9 +4,10 @@ title = "Materials index and enum compare in a check not evaluated (materials-ta
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T03:25:49Z"
+updated = "2026-10-15T12:01:15Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
