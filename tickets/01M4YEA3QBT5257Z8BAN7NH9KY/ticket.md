@@ -2,7 +2,8 @@
 id = "01M4YEA3QBT5257Z8BAN7NH9KY"
 title = "Lower interface bounds into lint_facts::interfaces"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
