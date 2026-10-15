@@ -2,11 +2,12 @@
 id = "01M4V1HDYKBWX1HP3ZVPDC7173"
 title = "Quantities: C004 derived-feature-in-check never fires"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-15T02:19:57Z"
+updated = "2026-10-15T02:20:16Z"
 idempotency_key = "Z48-c004"
 scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/c004_e010.rs", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDYKBWX1HP3ZVPDC7173.fixed.md"]
 
