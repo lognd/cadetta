@@ -1,0 +1,11 @@
+kind = "create"
+title = "S006 emission and recorded variant outputs in check and evaluators"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+scope = ["crates/cadetta-cli/src/**", "docs/spec/solvers.md", "tests/conformance/known-gaps.toml"]
+body = "Split from ~JET4TC0 (S003 landed). Remaining: S006 emission, variant evaluator in pipeline.rs and evaluators in cmd/solve.rs get recorded variant outputs; fixtures still in known-gaps.toml."
+at = "2026-10-15T20:31:19Z"
+actor = "lognd"
+rev = 1

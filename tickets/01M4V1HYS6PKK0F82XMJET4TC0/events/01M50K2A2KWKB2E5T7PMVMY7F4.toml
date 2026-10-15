@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["check reports S003 naming what changed for a solver whose recorded primary result digests differ, outputs still evaluating; a solver with no result is not S003"]
+new = ["check reports S003 naming what changed for a solver whose recorded primary result digests differ, outputs still evaluating; a solver with no result is not S003", "O004 sync obligations are produced by check from the lock (already landed with ~TND4WKS)"]
+moved = [1]
+at = "2026-10-15T20:11:43Z"
+actor = "lognd"
+rev = 1
