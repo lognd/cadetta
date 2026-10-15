@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:08:21Z"
+digest = "8aa69b73bc557c9f889a79425e03d590e6b3d3e7292e9295d43ec71b4a490870"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 438994e2-4d01-4e3d-88ad-e277d51fd8c7 with nextest profile: default
+    Starting 1 test across 52 binaries (1279 tests skipped)
+        PASS [   0.013s] cadetta-sema kindcheck::tests::temperature_difference_is_a_delta
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.015s] 1 test run: 1 passed, 1279 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "temperature_difference_is_a_delta"
+size = 560
+status = "measured"
+test_count = 1
+tests_digest = "519d0962d470d650fd4b22896bf5255db64b02c175e25e5e9935a29b3610fc8c"
+at = "2026-10-15T02:08:21Z"
+actor = "lognd"
+rev = 1
