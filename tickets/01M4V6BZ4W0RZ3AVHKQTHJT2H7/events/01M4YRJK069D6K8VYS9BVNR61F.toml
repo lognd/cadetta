@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A bad module file or directory name is reported as code E015, not E001", "Valid snake_case nested modules do not raise N001"]
+moved = []
+at = "2026-10-15T03:09:30Z"
+actor = "lognd"
+rev = 1
