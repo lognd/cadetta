@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["conformance_corpus_matches_the_spec passes", "conformance_adapters, conformance_quantities, conformance_stdlib pass"]
+new = ["conformance_corpus_matches_the_spec passes"]
+moved = [1, 0]
+at = "2026-10-15T03:20:55Z"
+actor = "lognd"
+rev = 1
