@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-14T01:03:51Z"
 updated = "2026-10-15T08:46:42Z"
-scope = ["crates/cadetta-sema/**", "docs/spec/ir.md"]
+scope = ["crates/cadetta-sema/**", "docs/spec/ir.md", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Datums of a parameterized instance are evaluated per instance (given argument and default) and lower as datum Members of the instantiating component"
