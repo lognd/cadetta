@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Criterion 2 named conformance targets that do not exist separately; the single conformance_corpus_matches_the_spec test (criterion 1) covers them. Removed as redundant."
+at = "2026-10-15T03:20:56Z"
+actor = "lognd"
+rev = 1
