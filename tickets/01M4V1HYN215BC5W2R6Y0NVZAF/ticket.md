@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:29Z"
-updated = "2026-10-15T03:03:46Z"
-scope = ["crates/cadetta-cli/src/**"]
+updated = "2026-10-15T03:03:54Z"
+scope = ["crates/cadetta-cli/src/**", "changelog.d/01M4V1HYN215BC5W2R6Y0NVZAF.*"]
 
 [[acceptance]]
 text = "A fit appears in cadetta obligations, can be signed off with ack, and goes stale when it changes"
