@@ -2,11 +2,12 @@
 id = "01M4V3F2A8PNNRXND41CXE9G4M"
 title = "S007 and Q001 not raised for solver in-expression forms"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:02:51Z"
-updated = "2026-10-15T02:28:25Z"
+updated = "2026-10-15T02:29:04Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-syntax/**", "crates/cadetta-solve/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/**", "tests/conformance/lints/**", "tests/conformance/known-gaps.toml", "docs/**", "changelog.d/**"]
 
 [[acceptance]]
