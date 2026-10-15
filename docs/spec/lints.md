@@ -382,7 +382,8 @@ warns when only an alternate fails. C003 inspects the operands of each
 of the check's component other than through `.nominal`. C004 fires per
 derived parameter (a `param` with an expression and dependencies, no
 tolerance of its own) that the check reads while one of its dependencies
-is toleranced.
+is toleranced. The diagnostic sits on the derived parameter (the member to
+turn into a `let`), once per parameter however many checks read it.
 
 ### O: obligations
 

@@ -5,10 +5,12 @@
 
 // frob:ticket 01M4SPWR7SG2GDJ254566CDH0B
 
-use cadetta_ir::model::{Check, Component, Member, MemberKind, Project, VerdictState};
+use cadetta_ir::model::{
+    Check, Component, Member, MemberKind, Project, SpanRef, VerdictState,
+};
 use tracing::{debug, trace};
 
-use crate::diag::{Diagnostic, Severity};
+use crate::diag::{Diagnostic, Location, Severity};
 
 /// Rule code: a check is false for every value in tolerance (error).
 pub const C001: &str = "C001";
@@ -247,8 +249,11 @@ fn accessor(operand: &str) -> String {
 }
 
 /// Run C004: a check reads a derived parameter, with no tolerance of its own, over toleranced inputs.
-pub fn check_derived(project: &Project) -> Vec<Diagnostic> {
-    let mut out = Vec::new();
+///
+/// The finding sits on the derived parameter (the member to turn into a `let`), once per
+/// parameter however many checks read it; `locate` turns the member span into a location.
+pub fn check_derived(project: &Project, locate: impl Fn(&SpanRef) -> Location) -> Vec<Diagnostic> {
+    let mut out: Vec<Diagnostic> = Vec::new();
     for k in &project.checks {
         let members = siblings(project, k);
         let toks = tokens(&k.expr);
@@ -268,18 +273,20 @@ pub fn check_derived(project: &Project) -> Vec<Diagnostic> {
                     .flat_map(|c| c.members.iter())
                     .any(|o| o.path == *d && toleranced(o))
             });
-            if tol_input {
+            let path = m.path.to_string();
+            if tol_input && !out.iter().any(|d| d.path.as_deref() == Some(path.as_str())) {
                 debug!(check = %k.path, param = %m.path, "C004: derived parameter in check");
-                out.push(on_check(
+                let mut d = Diagnostic::new(
                     C004,
                     Severity::Info,
-                    k,
-                    None,
                     format!(
                         "check `{}` reads `{}`, computed from toleranced inputs but exact itself; did you mean `let`?",
                         k.path, m.path
                     ),
-                ));
+                );
+                d.path = Some(path);
+                d.location = m.span.as_ref().map(&locate);
+                out.push(d);
             }
         }
     }
@@ -287,10 +294,10 @@ pub fn check_derived(project: &Project) -> Vec<Diagnostic> {
 }
 
 /// Run C001-C004 over `project`.
-pub fn check(project: &Project) -> Vec<Diagnostic> {
+pub fn check(project: &Project, locate: impl Fn(&SpanRef) -> Location) -> Vec<Diagnostic> {
     let mut out = check_verdicts(project);
     out.extend(check_equality(project));
-    out.extend(check_derived(project));
+    out.extend(check_derived(project, locate));
     out
 }
 
@@ -425,16 +432,18 @@ mod tests {
     // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived
     #[test]
     fn c004_fires_on_derived_parameter() {
-        let d = check_derived(&project("d > 1mm", VerdictState::Pass));
+        let d = check_derived(&project("d > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 });
         assert_eq!(codes(&d), vec!["C004"]);
         assert_eq!(d[0].severity, Severity::Info);
         assert!(d[0].message.contains("let"));
+        // The finding names the derived parameter, not the check.
+        assert_eq!(d[0].path.as_deref(), Some("demo::Plate.d"));
     }
 
     // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived
     #[test]
     fn c004_quiet_when_not_read_or_not_derived() {
-        assert!(check_derived(&project("a > 1mm", VerdictState::Pass)).is_empty());
-        assert!(check_derived(&project("w > 1mm", VerdictState::Pass)).is_empty());
+        assert!(check_derived(&project("a > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
+        assert!(check_derived(&project("w > 1mm", VerdictState::Pass), |_| Location::Lock { line: 0 }).is_empty());
     }
 }

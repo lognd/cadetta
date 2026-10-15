@@ -233,11 +233,6 @@ ticket = "~JET4TC0"
 reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
 
 [[gap]]
-fixture = "quantities/c004"
-ticket = "~PDC7173"
-reason = "C004 not emitted"
-
-[[gap]]
 fixture = "quantities/q006-count-pi"
 ticket = "~7K6PYDX"
 reason = "angle/count pi handling differs from spec"
@@ -326,11 +321,6 @@ reason = "unused allow is not reported"
 fixture = "lints/w005-waiver-expiring"
 ticket = "~A7FN9YF"
 reason = "expiring waiver is not reported"
-
-[[gap]]
-fixture = "lints/e010-mmc-without-role"
-ticket = "~FSJCX9G"
-reason = "#[role(hole)] not honoured"
 
 [[gap]]
 fixture = "solvers/q001-in-bare-factor-legal"

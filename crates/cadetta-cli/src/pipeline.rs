@@ -21,7 +21,7 @@ use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::d::{Key, NamedValue};
 use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableMiss};
-use cadetta_lint::rules::{d, f, interface, m, n, q, u002, unused};
+use cadetta_lint::rules::{c, d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
@@ -1247,6 +1247,8 @@ fn evaluate_stages(
             )
             .expect("[lint] settings were validated at load");
         let mcfg = lint.m_config().expect("[lint] settings were validated at load");
+        // C001-C003 come from the structured check results; C004 reads the lowered IR.
+        out.extend(c::check_derived(&ir, locate));
         out.extend(d::check_d001(&ir, &lcfg, &dcfg, locate));
         out.extend(d::check_d002(&ir, &lcfg, &dcfg, locate));
         out.extend(f::check_f004(&ir, &lcfg, locate));
