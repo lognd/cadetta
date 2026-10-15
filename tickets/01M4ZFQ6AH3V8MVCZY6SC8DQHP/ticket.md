@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T09:53:58Z"
-updated = "2026-10-15T17:40:37Z"
-scope = ["crates/cadetta-sema/src/boltfloat.rs"]
+updated = "2026-10-15T17:40:41Z"
+scope = ["crates/cadetta-sema/src/boltfloat.rs", "crates/cadetta-sema/src/geom.rs"]
 
 [[acceptance]]
 text = "A joint inside a sub-assembly component floats the sub-assembly's placement edge"
