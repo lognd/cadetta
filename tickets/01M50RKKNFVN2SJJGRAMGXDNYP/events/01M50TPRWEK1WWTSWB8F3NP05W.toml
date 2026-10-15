@@ -1,0 +1,38 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T22:24:49Z"
+digest = "a2d93aa21d1a6f9b1267dba731130d298f3e3699e11ee5a7aee17af0c6eb6f7b"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 20.04s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a4adb97d-6de9-468b-9e9b-1bb0c89c16ac with nextest profile: default
+    Starting 14 tests across 42 binaries (577 tests skipped)
+        PASS [   0.015s] cadetta::conformance_config_cli exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.015s] cadetta::conformance exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.027s] cadetta::conformance_geometry exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.028s] cadetta::conformance_language exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.029s] cadetta::conformance_obligations exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.032s] cadetta::conformance_solvers exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.065s] cadetta::conformance_packages exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_emitters_csv exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_adapters exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_quantities exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_ir exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_emitters_json exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.068s] cadetta::conformance_lints exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.051s] cadetta::conformance_stdlib exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.070s] 14 tests run: 14 passed, 577 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta stale_solver_with_an_evaluated_check"
+size = 2455
+status = "measured"
+test_count = 1
+tests_digest = "250dfbeee886ae576a5c3ad4b49f3ceea20149f6ed757f9a7c17ebde08f65573"
+at = "2026-10-15T22:24:49Z"
+actor = "lognd"
+rev = 1
