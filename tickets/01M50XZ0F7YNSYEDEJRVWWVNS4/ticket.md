@@ -4,9 +4,10 @@ title = "Evaluate .hole/.shaft/.clearance for fits in parameterized instances; f
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T23:22:09Z"
-updated = "2026-10-15T23:22:09Z"
+updated = "2026-10-15T23:43:09Z"
 idempotency_key = "leftovers-k8v6dsy-fit-instances"
 scope = ["crates/cadetta-sema/src/**"]
 +++
