@@ -9,7 +9,7 @@ reporter = "lognd"
 created = "2026-10-15T06:13:35Z"
 updated = "2026-10-15T06:22:03Z"
 idempotency_key = "a0fq-fitmember"
-scope = ["crates/cadetta-sema/**", "docs/spec/language.md"]
+scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "The fit-clearance-member fixture passes and its known-gaps entry is removed"
