@@ -7,7 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T03:55:26Z"
-updated = "2026-10-15T07:24:57Z"
+updated = "2026-10-15T07:36:53Z"
+scope = ["crates/cadetta-lint/src/rules/n.rs"]
 
 [[acceptance]]
 text = "N003 does not fire on a dimensionless member whose name ends in a unit-like word (tap_lead_in = 3)"
