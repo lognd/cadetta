@@ -2,7 +2,8 @@
 id = "01M4VQXNVZGJSVAPXKH6ES67RW"
 title = "Fixtures use invalid part-array syntax (r012, star-binding, name-mangled-path, naming-component-field)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
