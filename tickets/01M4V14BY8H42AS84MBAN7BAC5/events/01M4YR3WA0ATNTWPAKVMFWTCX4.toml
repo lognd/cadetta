@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta check reports E005 (missing src, member or path dependency without cadetta.toml) as a fixed-error diagnostic with exit 1 and a report, not an exit-2 load error"]
+moved = []
+at = "2026-10-15T03:01:28Z"
+actor = "lognd"
+rev = 1
