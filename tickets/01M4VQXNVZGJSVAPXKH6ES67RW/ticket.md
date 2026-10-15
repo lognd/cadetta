@@ -2,13 +2,13 @@
 id = "01M4VQXNVZGJSVAPXKH6ES67RW"
 title = "Fixtures use invalid part-array syntax (r012, star-binding, name-mangled-path, naming-component-field)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-13T23:00:21Z"
+updated = "2026-10-15T07:39:09Z"
 scope = ["tests/conformance/**"]
 
 [[acceptance]]
