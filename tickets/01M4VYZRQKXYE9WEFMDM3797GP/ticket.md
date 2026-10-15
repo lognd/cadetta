@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T01:03:50Z"
-updated = "2026-10-15T04:37:33Z"
+updated = "2026-10-15T04:37:34Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -19,7 +19,7 @@ bound = true
 
 [[acceptance]]
 text = "An out-of-range index or two instances of one slot in one in-expression is a diagnosed error"
-bound = false
+bound = true
 +++
 
 found while working ~NYB5TXC: indexed part instance re-expression errors 'not evaluated yet'; blocks golden 06 array placement values.
