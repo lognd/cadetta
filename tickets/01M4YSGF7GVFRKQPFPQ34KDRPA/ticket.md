@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T12:30:55Z"
+updated = "2026-10-15T12:31:11Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
