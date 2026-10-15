@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A design tolerance is pushed with the value (symmetric or bilateral)", "A tolerance edited in CAD is reported as R001", "Tolerances are ignored without the tolerances feature"]
+moved = []
+at = "2026-10-15T05:06:00Z"
+actor = "lognd"
+rev = 1
