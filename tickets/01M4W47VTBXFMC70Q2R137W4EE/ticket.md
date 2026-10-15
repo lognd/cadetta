@@ -2,7 +2,8 @@
 id = "01M4W47VTBXFMC70Q2R137W4EE"
 title = "Part slot canonical path uses '.' instead of '/' (Rover.wheel vs Rover/wheel)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
