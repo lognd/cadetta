@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T14:47:45Z"
-updated = "2026-10-15T09:28:30Z"
+updated = "2026-10-15T09:28:46Z"
 scope = ["bindings/python/tests/test_conformance.py"]
 
 [[acceptance]]
