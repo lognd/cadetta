@@ -36,7 +36,7 @@ struct Owner<'p> {
 /// What a roll-up found at one part slot.
 enum Found {
     /// The member's value.
-    Value(Quant),
+    Value(Box<Quant>),
     /// The part does not have the member.
     Lacks,
 }
@@ -208,7 +208,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match found {
             Found::Value(q) => out.push(Contribution {
                 path: label,
-                value: Some(q),
+                value: Some(*q),
             }),
             Found::Lacks => match child {
                 Some(c)
@@ -234,7 +234,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             return Ok(Found::Lacks);
         }
         match self.value_of(key).map(|e| e.value) {
-            Some(Val::Quantity(q)) => Ok(Found::Value(q)),
+            Some(Val::Quantity(q)) => Ok(Found::Value(Box::new(q))),
             Some(_) => Err(diag(
                 "EVAL",
                 span,
@@ -272,7 +272,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let r = self.quant(&mut sc, expr);
         self.cur_inst = saved;
         match r {
-            Ok(q) => Found::Value(q),
+            Ok(q) => Found::Value(Box::new(q)),
             Err(_) => {
                 debug!(param, slot = %part.name.name, "roll-up: argument not available");
                 Found::Lacks
