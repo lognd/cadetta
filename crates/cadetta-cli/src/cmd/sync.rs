@@ -21,8 +21,8 @@ use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedTolerance,
-    PushMode, PushStatus, ReadParams, ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, EmitParams, Feature, LocatorStatus,
+    ObservedTolerance, PushMode, PushStatus, ReadParams, ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -1258,8 +1258,14 @@ fn instructions(adapter: &Adapter, emitted: Option<&str>) -> String {
 }
 
 /// Fall back to emit plus manual instructions (no classification, nothing pushed).
-fn manual_adapter(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_>) {
-    let mut emitted = None;
+fn manual_adapter(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    ctx: &mut Ctx<'_>,
+    external: Option<String>,
+) {
+    let mut emitted = external;
     if !ctx.args.dry_run && adapter.command.is_none() {
         let mut report = EmitReport::default();
         let parsed = EmitArgs {
@@ -1286,6 +1292,67 @@ fn manual_adapter(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_
     });
 }
 
+/// Run the `emit` of an external adapter that cannot be driven, then shut it down.
+///
+/// Returns the first file written, for the manual instructions; `Err` is an adapter failure
+/// (exit 2). An adapter without `emit`, or a dry run, emits nothing (adapters.md 2.1, 5).
+// frob:ticket 01M4XDMA1D78TRJB1CB5HP91AE
+fn emit_external(
+    mut client: ProcessClient,
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    ctx: &mut Ctx<'_>,
+) -> Result<Option<String>, String> {
+    let mut first = None;
+    let mut failure = None;
+    if !ctx.args.dry_run && client.info().capabilities.contains(&CapabilityName::Emit) {
+        match emit_params(pkg, adapter, ir) {
+            Err(message) => failure = Some(message),
+            Ok(params) => match client.emit(&params) {
+                Ok(result) => {
+                    for f in result.files {
+                        tracing::info!(adapter = %adapter.id(), file = %f.path, "sync: external emit wrote");
+                        first.get_or_insert_with(|| f.path.clone());
+                        ctx.report.emitted.push(f.path);
+                    }
+                    for d in &result.diagnostics {
+                        let (code, message) = diag_parts(&d.0);
+                        ctx.report.diag(&code, message);
+                    }
+                }
+                Err(e) => {
+                    failure = Some(format!("R008: adapter `{}` emit failed: {e}", adapter.id()));
+                }
+            },
+        }
+    }
+    if let Err(e) = client.shutdown() {
+        tracing::warn!(error = %e, "sync: adapter shutdown failed");
+    }
+    failure.map_or(Ok(first), Err)
+}
+
+/// The `emit` params for an adapter: design IR, its bindings file text, and the emit policy.
+fn emit_params(pkg: &PackageDir, adapter: &Adapter, ir: &Ir) -> Result<EmitParams, String> {
+    let (set, _) = load_bindings(pkg, adapter, ir).map_err(|e| match e {
+        LoadError::Config(message) => message,
+        LoadError::Diag(d) => format!("{}: {}", d.code, d.message),
+    })?;
+    let design = serde_json::to_value(ir).map_err(|e| format!("cannot encode the IR: {e}"))?;
+    let point = match config_point(pkg.config.emit.point) {
+        EmitPoint::Nominal => "nominal",
+        EmitPoint::Mid => "mid",
+        EmitPoint::Mmc => "mmc",
+        EmitPoint::Lmc => "lmc",
+    };
+    Ok(EmitParams {
+        design,
+        bindings: json!({"adapter": adapter.id(), "toml": set.to_toml()}),
+        policy: json!({"point": point}),
+    })
+}
+
 /// Run one adapter of a package; `Err` is a usage/IO/adapter failure (exit 2).
 fn sync_adapter(
     pkg: &PackageDir,
@@ -1294,7 +1361,7 @@ fn sync_adapter(
     ctx: &mut Ctx<'_>,
 ) -> Result<(), String> {
     let Some(command) = &adapter.command else {
-        manual_adapter(pkg, adapter, ir, ctx);
+        manual_adapter(pkg, adapter, ir, ctx, None);
         return Ok(());
     };
     let (path, argv) = program(pkg, command)
@@ -1313,10 +1380,8 @@ fn sync_adapter(
     if client.info().capabilities.contains(&CapabilityName::Drive) {
         drive_adapter(client, pkg, adapter, ir, ctx)
     } else {
-        if let Err(e) = client.shutdown() {
-            tracing::warn!(error = %e, "sync: adapter shutdown failed");
-        }
-        manual_adapter(pkg, adapter, ir, ctx);
+        let external = emit_external(client, pkg, adapter, ir, ctx)?;
+        manual_adapter(pkg, adapter, ir, ctx, external);
         Ok(())
     }
 }
@@ -1539,6 +1604,9 @@ pub fn run_sync(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Serializes writing and spawning of script adapters (ETXTBSY on a still-open writer).
+    static SPAWN_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
     use std::io::Cursor;
 
     /// A self-removing scratch directory.
@@ -2263,6 +2331,50 @@ mod tests {
         assert_eq!(entries[0].file, "rail.FCStd");
         assert!(pass(None, create, &[]).1.is_empty());
         assert!(pass(None, "", &[Feature::CreateFrames]).1.is_empty());
+    }
+
+    // frob:ticket 01M4XDMA1D78TRJB1CB5HP91AE
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::emit_external
+    #[cfg(unix)]
+    #[test]
+    fn external_adapter_without_drive_runs_emit_and_reports_files() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = project("");
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"ext\"\ncommand = [\"./ext.sh\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        let body = r#"#!/bin/sh
+read -r _init
+echo '{"jsonrpc":"2.0","id":1,"result":{"name":"ext","version":"1.0.0","capabilities":["emit"],"native_units":"mm","precision":6,"platforms":["linux"]}}'
+while read -r req; do
+  case "$req" in
+    *'"method":"emit"'*)
+      printf '%s' "$req" > "$(dirname "$0")/emit-request.json"
+      echo '{"jsonrpc":"2.0","id":2,"result":{"files":[{"path":"build/ext/out.txt","digest":"blake3:00"}],"diagnostics":[]}}' ;;
+    *'"method":"shutdown"'*)
+      echo '{"jsonrpc":"2.0","id":3,"result":null}'
+      exit 0 ;;
+  esac
+done
+"#;
+        let script = dir.0.join("ext.sh");
+        let _guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        std::fs::write(&script, body).unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let (code, out, err) = run(&dir, Format::Text, &[]);
+        drop(_guard);
+        assert_eq!((code, err.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(out.contains("build/ext/out.txt"), "{out}");
+        let req: Json = serde_json::from_str(
+            &std::fs::read_to_string(dir.0.join("emit-request.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(req["method"], "emit");
+        assert_eq!(req["params"]["policy"]["point"], "nominal");
+        assert!(req["params"]["design"].is_object(), "{req}");
+        std::fs::remove_file(dir.0.join("emit-request.json")).unwrap();
+        let (code, _, _) = run(&dir, Format::Text, &["--dry-run"]);
+        assert_eq!(code, EXIT_OK);
+        assert!(!dir.0.join("emit-request.json").exists(), "dry run emitted");
     }
 
     // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
