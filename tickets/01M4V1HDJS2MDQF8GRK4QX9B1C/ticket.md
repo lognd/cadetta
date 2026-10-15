@@ -6,13 +6,13 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:15:38Z"
+updated = "2026-10-15T02:16:38Z"
 idempotency_key = "Z48-cascade"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-syntax/src/parser.rs", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/tests/quantity_diag_once.rs", "tests/conformance/**", "docs/spec/quantities.md", "changelog.d/**"]
 
 [[acceptance]]
 text = "Each E001 lexical error, Q001/Q002/Q008 and E002 quantity fault is reported exactly once (conformance quantities e001-*, e002-unit, q001-*, q002-*, q008-* pass)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "check and require conditions are kind-checked and carry a member path (q001-compare, q008-compare)"

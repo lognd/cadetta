@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:16:38Z"
+digest = "317abdc97c82be53b51d87eaa42527a61fb567b92390ad669a734fc6328c60a4"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.93s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b3087b0a-1029-4f7a-8ec1-edda51522562 with nextest profile: default
+    Starting 1 test across 54 binaries (1291 tests skipped)
+        PASS [   0.086s] cadetta::quantity_diag_once lexical_error_reports_one_e001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.089s] 1 test run: 1 passed, 1291 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "lexical_error_reports_one_e001"
+size = 615
+status = "measured"
+test_count = 1
+tests_digest = "d9fdc99b9a67a657b1a624f4b46560af07d300f020f5be077de8bfae260197e1"
+at = "2026-10-15T02:16:38Z"
+actor = "lognd"
+rev = 1
