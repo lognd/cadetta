@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:54:49Z"
+digest = "0458465c847f4adde49dd2b84517c703b91de1da2164bd8d6e0b5ba895055900"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.74s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 64703b05-87da-438f-ad27-3b3facfc724e with nextest profile: default
+    Starting 1 test across 60 binaries (1355 tests skipped)
+        PASS [   0.341s] cadetta::q004_beyond_precision representable_value_is_written_at_the_declared_precision
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.366s] 1 test run: 1 passed, 1355 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "representable_value_is_written_at_the_declared_precision"
+size = 802
+status = "measured"
+test_count = 1
+tests_digest = "62759b244548f51f87578c0ebf612f2b1b02bd6b3f6dbc84390a9df03d2cb37c"
+at = "2026-10-15T02:54:49Z"
+actor = "lognd"
+rev = 1
