@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T09:53:58Z"
-updated = "2026-10-15T17:52:03Z"
+updated = "2026-10-15T17:52:09Z"
 scope = ["crates/cadetta-sema/src/boltfloat.rs", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md"]
 
 [[acceptance]]
