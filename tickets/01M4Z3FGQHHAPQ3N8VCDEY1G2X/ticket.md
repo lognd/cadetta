@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-15T06:40:38Z"
-scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**"]
+updated = "2026-10-15T06:40:41Z"
+scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "tests/conformance/known-gaps.toml", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "An interface bound (load_rating >= 400N) is a readable member of the interface, so no E002"
