@@ -2,11 +2,12 @@
 id = "01M4YRPNTCYCGNZ5VP5PDPCRB2"
 title = "sema: package:: expression paths do not raise E016 / N004 (was-path)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T03:11:44Z"
-updated = "2026-10-15T03:37:30Z"
+updated = "2026-10-15T03:37:46Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/packages.md", "changelog.d/01M4YRPNTCYCGNZ5VP5PDPCRB2.fixed.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
