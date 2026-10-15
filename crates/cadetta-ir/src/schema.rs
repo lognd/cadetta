@@ -692,6 +692,9 @@ pub fn schema_value() -> J {
         &[
             ("frames", arr(r("ObservedFrame"))),
             ("instances", arr(r("ObservedInstance"))),
+            ("interfaces", arr(r("Interface"))),
+            ("tables", arr(r("Table"))),
+            ("waivers", arr(r("Waiver"))),
             ("digest", r("Digest")),
         ],
     );
@@ -1121,6 +1124,24 @@ mod tests {
         ))
         .unwrap();
         assert!(validate(None, &bare).is_empty());
+    }
+
+    // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit
+    #[test]
+    fn project_accepts_interfaces_tables_and_waivers() {
+        let mut j = serde_json::to_value(full_project()).unwrap();
+        j["interfaces"] = json!([{"path": "a.b::I", "members": [], "bounds": [], "datums": []}]);
+        j["waivers"] =
+            json!([{"code": "R001", "glob": "a::*", "because": "x", "targets_closure": {}}]);
+        j["tables"] = json!([{"bogus": 1}]);
+        let errs = validate(None, &j);
+        assert!(
+            errs.iter().all(|e| e.contains("tables")),
+            "interfaces and waivers must validate: {errs:#?}"
+        );
+        assert!(!errs.is_empty(), "a malformed table must be rejected");
+        j["tables"] = json!([]);
+        assert_eq!(validate(None, &j), Vec::<String>::new());
     }
 
     // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit

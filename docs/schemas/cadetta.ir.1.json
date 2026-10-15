@@ -1442,6 +1442,12 @@
       },
       "type": "array"
     },
+    "interfaces": {
+      "items": {
+        "$ref": "#/$defs/Interface"
+      },
+      "type": "array"
+    },
     "modules": {
       "items": {
         "type": "string"
@@ -1458,6 +1464,18 @@
     "solvers": {
       "items": {
         "$ref": "#/$defs/Solver"
+      },
+      "type": "array"
+    },
+    "tables": {
+      "items": {
+        "$ref": "#/$defs/Table"
+      },
+      "type": "array"
+    },
+    "waivers": {
+      "items": {
+        "$ref": "#/$defs/Waiver"
       },
       "type": "array"
     }
