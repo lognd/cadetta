@@ -7,8 +7,20 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T19:57:24Z"
-updated = "2026-10-15T21:40:56Z"
+updated = "2026-10-15T21:55:40Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
+
+[[acceptance]]
+text = "A driven dimension reads exact:false with a reason"
+bound = false
+
+[[acceptance]]
+text = "A unit of another dimension than the locator's native unit reads inexact, never Q001"
+bound = false
+
+[[acceptance]]
+text = "A call to an unknown equation function reads as an unparsed raw line"
+bound = false
 +++
 
 split from ~0MC1ZA9: adapters/read-driven-dimension-inexact (library has no driven-dimension concept), adapters/read-never-raises-q001 (dimension-mismatch inexactness kg vs mm), adapters/read-unparsable-expression-inexact (equations parser accepts SWFN(1) as a call). Remove each known-gaps.toml entry when done.
