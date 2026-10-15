@@ -2,7 +2,8 @@
 id = "01M4YRH3G6F8EGQ5X5CK4JKH27"
 title = "Sema: resolve solver member outputs (solver.out) so check evaluates them; S003/S006 staleness needs it"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
