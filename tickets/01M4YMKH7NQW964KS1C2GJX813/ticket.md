@@ -2,11 +2,12 @@
 id = "01M4YMKH7NQW964KS1C2GJX813"
 title = "Quantities: user-declared kinds are not registered in the KindTable (kind-row-length-from-cbrt Q003)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:00:07Z"
-updated = "2026-10-15T02:02:55Z"
+updated = "2026-10-15T02:03:14Z"
 labels = ["creates:crates/cadetta-cli/tests/user_kinds.rs"]
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/quantities.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4YMKH7NQW964KS1C2GJX813.fixed.md", "crates/cadetta-cli/tests/user_kinds.rs"]
 

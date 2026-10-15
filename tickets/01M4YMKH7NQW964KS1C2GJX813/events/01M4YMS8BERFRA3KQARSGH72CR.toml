@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "done"
+reason = "Done: changed kindcheck::register_user_kinds + pipeline registration; evidence user_kinds tests + kindcheck unit tests; filed none; check clean except others' SCOPE001"
+at = "2026-10-15T02:03:14Z"
+actor = "lognd"
+rev = 1
