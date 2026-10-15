@@ -443,6 +443,14 @@ impl Affine {
         Ok(outward(lo.sqrt(), hi.sqrt()))
     }
 
+    /// Cube root over the interval (monotone, defined for negatives); inexact and conservative.
+    // frob:ticket 01M4YMKHAW1T9QY9FWJNQ0HFFK
+    pub fn cbrt(&self) -> Result<InexactInterval, ToleranceError> {
+        let (lo, hi) = self.f64_bounds()?;
+        debug!("tolerance: cbrt is inexact and conservative");
+        Ok(outward(lo.cbrt(), hi.cbrt()))
+    }
+
     /// Sine over the interval (radians); inexact and conservative.
     pub fn sin(&self) -> Result<InexactInterval, ToleranceError> {
         self.periodic(0.0)
@@ -613,6 +621,18 @@ mod tests {
         assert_eq!(s.coefficient(VarId(0)), Some(&mm(2, 1)));
         let q = a.div(&var(1, 100)).unwrap();
         assert!(q.is_conservative());
+    }
+
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.cbrt kind=unit
+    #[test]
+    fn cbrt_interval_is_conservative_and_handles_negatives() {
+        let a = Toleranced::symmetric(Dim::default(), m(-1, 1), (Dim::default(), m(7, 1)))
+            .unwrap()
+            .to_affine(VarId(0))
+            .unwrap();
+        let r = a.cbrt().unwrap();
+        assert!(r.conservative);
+        assert!(r.lo <= (-8f64).cbrt() && r.hi >= 6f64.cbrt());
     }
 
     // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.sqrt kind=unit

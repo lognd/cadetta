@@ -27,6 +27,8 @@ pub const AMBIGUITY_REL_TOL: f64 = 1e-9;
 pub enum RootOp {
     /// A root with a non-rational result.
     Sqrt,
+    /// A cube root with a non-rational result.
+    Cbrt,
     /// Sine at an angle that is not an exact special case.
     Sin,
     /// Cosine at an angle that is not an exact special case.
@@ -44,6 +46,7 @@ impl RootOp {
     pub fn name(self) -> &'static str {
         match self {
             Self::Sqrt => "sqrt",
+            Self::Cbrt => "cbrt",
             Self::Sin => "sin",
             Self::Cos => "cos",
             Self::Tan => "tan",
@@ -241,6 +244,28 @@ impl Value {
                     root: i.root,
                 }))
             }
+        }
+    }
+
+    /// Cube root: exact only for a perfect-cube rational with `pi` exponent divisible by 3.
+    // frob:ticket 01M4YMKHAW1T9QY9FWJNQ0HFFK
+    pub fn cbrt(&self) -> Value {
+        match self {
+            Self::Exact(m) => {
+                let (n, d) = (m.rational().numer(), m.rational().denom());
+                let (rn, rd) = (n.cbrt(), d.cbrt());
+                if m.pi_exp() % 3 == 0 && &rn.pow(3) == n && &rd.pow(3) == d {
+                    if let Ok(r) = Rational::new(rn, rd) {
+                        trace!("inexact: cbrt is exact");
+                        return Self::Exact(Magnitude::new(r, m.pi_exp() / 3));
+                    }
+                }
+                inexact(m.to_f64().cbrt(), RootOp::Cbrt)
+            }
+            Self::Inexact(i) => Self::Inexact(InexactValue {
+                value: i.value.cbrt(),
+                root: i.root,
+            }),
         }
     }
 
@@ -537,6 +562,17 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-units/src/inexact.rs::Value.sqrt kind=unit
+    // frob:tests crates/cadetta-units/src/inexact.rs::Value.cbrt kind=unit
+    #[test]
+    fn cbrt_is_exact_for_cubes_and_marked_inexact_otherwise() {
+        let c = Value::Exact(Magnitude::new(Rational::new(-8, 27).unwrap(), 0)).cbrt();
+        assert_eq!(c, Value::Exact(Magnitude::new(Rational::new(-2, 3).unwrap(), 0)));
+        let two = Value::Exact(Magnitude::new(Rational::new(2, 1).unwrap(), 0)).cbrt();
+        assert_eq!(two.root(), Some(RootOp::Cbrt));
+        assert!((two.to_f64() - 2f64.cbrt()).abs() < 1e-15);
+        assert_eq!(two.cbrt().root(), Some(RootOp::Cbrt));
+    }
+
     #[test]
     fn sqrt_of_two_square_mm_is_marked_inexact_with_root() {
         let two_mm2 = ex(2, 1_000_000);

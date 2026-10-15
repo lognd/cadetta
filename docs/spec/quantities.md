@@ -141,6 +141,8 @@ divided (Q002, decided in the conformance fixtures); subtracting two Temperature
    and angle. A Count is assignable to a Ratio (never the reverse: that
    needs `floor`, `ceil` or `round`). Named kinds never convert implicitly: Q003. Explicit
    conversion: `x as Energy`.
+   A package `kind Name = Expr` declaration registers `Name` as a named kind of that
+   dimension, so it follows this rule like a built-in kind.
 5. Assignment and `as` give the value the target kind's canonical angle
    exponent (4.3), after any Q008 the assignment raises. `as` may change the angle exponent but never the
    dimension: `travel as Length` turns `lead * 1rev`-style values into a
@@ -320,7 +322,7 @@ a construct evaluated by a later stage) carry the internal code `EVAL`.
 Parameterized components are evaluated only as instances.
 
 Standard functions (language.md 3.8) follow these rules. An inexact value
-(`sqrt` of a non-square, `sin`, `cos`, `tan`, `atan2` off the special
+(`sqrt` of a non-square, `cbrt` of a non-cube, `sin`, `cos`, `tan`, `atan2` off the special
 angles) is carried as an `f64` nominal with an outward-widened
 conservative interval and its root operation (Q006). It supports
 `+ - * /`, negation, `min`, `max`, `abs` and `round_to`, `ceil_to`,
@@ -401,7 +403,9 @@ integer multiple of step for `ceil_to` and `floor_to`; "within 1e-9
 max(|boundary|, 1)`. A quotient `x / step` with differing `pi`
 exponents is irrational, so it is treated as inexact for this check.
 `sqrt` is exact for a perfect-square rational with an even `pi`
-exponent (`sqrt(4mm^2)` is exactly `2mm`) and inexact otherwise; an
+exponent (`sqrt(4mm^2)` is exactly `2mm`) and inexact otherwise; `cbrt`
+likewise for a perfect cube with a `pi` exponent divisible by 3 (negative
+values allowed), and a toleranced operand gets an interval cube root; an
 inexact operand keeps its own root operation, so Q006 names the first
 one. `tan` at an odd multiple of 90deg and `atan2(0, 0)` are domain
 errors.

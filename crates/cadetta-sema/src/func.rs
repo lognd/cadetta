@@ -953,30 +953,37 @@ pub(super) fn sqrt(v: &Val, span: Span) -> R<Val> {
     }
 }
 
-/// `cbrt(x)`: the exact cube root of an exact perfect-cube quantity (quantities.md 4.1);
-/// a non-cube or toleranced value has no exact root and is an `EVAL` error.
-// frob:ticket 01M4V1HDRM35VQ2ZE35FP8V54M
+/// `cbrt(x)`: exact for an exact perfect-cube quantity (quantities.md 4.1), else an
+/// inexact value (interval cube root when toleranced) rooted at `cbrt`.
+// frob:ticket 01M4YMKHAW1T9QY9FWJNQ0HFFK
 pub(super) fn cbrt(v: &Val, span: Span) -> R<Val> {
-    let Val::Quantity(q) = v else {
-        return Err(diag("EVAL", span, "`cbrt` takes an exact number"));
-    };
-    let dim = root_dim("cbrt", 3, q.dim(), span)?;
-    let m = &q.nominal;
-    let (num, den) = (m.rational().numer().cbrt(), m.rational().denom().cbrt());
-    let exact = q.form.is_exact()
-        && m.pi_exp() % 3 == 0
-        && num.pow(3) == *m.rational().numer()
-        && den.pow(3) == *m.rational().denom();
-    match Rational::new(num, den) {
-        Ok(r) if exact => Ok(Val::Quantity(Quant::constant(
-            dim,
-            Magnitude::new(r, m.pi_exp() / 3),
-        ))),
-        _ => Err(diag(
-            "EVAL",
-            span,
-            "`cbrt` is exact only for a perfect cube without tolerance",
-        )),
+    match v {
+        Val::Quantity(q) => {
+            let dim = root_dim("cbrt", 3, q.dim(), span)?;
+            let nv = Value::Exact(q.nominal.clone()).cbrt();
+            if q.form.is_exact()
+                && let Value::Exact(m) = &nv
+            {
+                return Ok(Val::Quantity(Quant::constant(dim, m.clone())));
+            }
+            let iv = q.form.cbrt().map_err(|e| tol_diag(&e, span))?;
+            let root = nv.root().unwrap_or(RootOp::Cbrt);
+            let out = inex(dim, nv.to_f64(), iv.lo, iv.hi, root, span)?;
+            // A root of an exact nominal keeps that exact nominal: only the interval is inexact.
+            Ok(match (out, nv) {
+                (Val::Inexact(mut i), Value::Exact(m)) => {
+                    i.exact_nominal = Some(m);
+                    Val::Inexact(i)
+                }
+                (other, _) => other,
+            })
+        }
+        Val::Inexact(i) => {
+            let dim = root_dim("cbrt", 3, &i.dim, span)?;
+            let (lo, hi) = widen(i.lo.cbrt(), i.hi.cbrt());
+            inex(dim, i.nominal.cbrt(), lo, hi, i.root, span)
+        }
+        _ => Err(diag("EVAL", span, "`cbrt` takes a number")),
     }
 }
 
@@ -1173,8 +1180,26 @@ mod tests {
         };
         assert_eq!(*q.nominal.rational(), Rational::new(2, 3).unwrap());
         assert_eq!(*q.dim(), Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0));
-        // Not a perfect cube: no exact root.
-        assert!(cbrt(&cube(2, 1), sp).is_err());
+        // Not a perfect cube: an inexact value rooted at cbrt, never an error.
+        let Ok(Val::Inexact(i)) = cbrt(&cube(2, 1), sp) else {
+            panic!("cbrt of a non-cube is inexact");
+        };
+        assert_eq!(i.root, RootOp::Cbrt);
+        assert!((i.nominal - 2f64.cbrt()).abs() < 1e-12 && i.lo <= i.nominal && i.nominal <= i.hi);
+        // Inexact input stays inexact and keeps its root.
+        let wide = Val::Inexact(Inex {
+            dim: cube_dim(),
+            nominal: 8.0,
+            lo: 7.0,
+            hi: 9.0,
+            root: RootOp::Sin,
+            exact_nominal: None,
+        });
+        let Ok(Val::Inexact(j)) = cbrt(&wide, sp) else {
+            panic!("cbrt of an inexact is inexact");
+        };
+        assert_eq!(j.root, RootOp::Sin);
+        assert!(j.lo <= 7f64.cbrt() && j.hi >= 9f64.cbrt());
         // Dimension L^2 is not a cube: Q011.
         let sq = Val::Quantity(Quant::constant(
             Dim::new(Dimension::from_si([2, 0, 0, 0, 0, 0, 0]), 0),
