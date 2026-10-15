@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T13:34:33Z"
+digest = "aebd1c195818b3dd5acb7c5cf5ee2b88f5119a64ff9561426eff6f89d73d6ec0"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 42bbdd9f-d47d-42d1-b726-3465ae75e87a with nextest profile: default
+    Starting 1 test across 5 binaries (236 tests skipped)
+        PASS [   0.006s] cadetta-sema eval::rolleval::tests::part_argument_reads_the_hosts_members
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 236 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema part_argument_reads"
+size = 1183
+status = "measured"
+test_count = 1
+tests_digest = "1d57eeda84991b5e50aa850fe120e8b67485da34f4bae890afa59b13cb10a1fd"
+at = "2026-10-15T13:34:33Z"
+actor = "lognd"
+rev = 1

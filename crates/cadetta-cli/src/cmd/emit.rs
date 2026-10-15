@@ -3,13 +3,14 @@
 //! and write their outputs (config-cli.md 3, adapters.md 3, emitters/sw-equations.md).
 //!
 //! The `sw-equations`, `json` and `csv` built-ins are implemented here; external adapters
-//! (those with a `command`) are skipped with a logged notice. Q004 (a value not representable
+//! (those with a `command`) are spawned and sent `emit`, as `sync` does. Q004 (a value not representable
 //! at the declared precision) and R013 (two paths creating one native name) give exit 1.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
+use cadetta_adapter::availability::{Verb as AvailVerb, unavailable};
 use cadetta_adapter::bindings::{
     BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
 };
@@ -21,6 +22,8 @@ use cadetta_adapter::policy::{
     Designed, EmitPoint as PolicyPoint, EmitRequest, Ratio, Role, build_request, resolve_point,
     to_decimal,
 };
+use cadetta_adapter::rpc::client::ProcessClient;
+use cadetta_adapter::rpc::{CapabilityName, EmitParams};
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_ir::digest::{digest_project, project_digest};
 use cadetta_ir::model::{
@@ -30,6 +33,7 @@ use cadetta_ir::path::Path;
 use cadetta_units::{Magnitude, UnitTable};
 use serde::Serialize;
 
+use crate::cmd::import::program;
 use crate::cmd::ir::package_id;
 use crate::config::{Adapter, BindMode, EmitPoint as ConfigPoint};
 use crate::output::Format;
@@ -1055,6 +1059,85 @@ pub(crate) fn load_bindings(
     Ok((set, bindings_text))
 }
 
+/// The `emit` params for an adapter: design IR, its bindings file text, and the emit policy.
+// frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+pub(crate) fn emit_params(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+) -> Result<EmitParams, String> {
+    let (set, _) = load_bindings(pkg, adapter, ir).map_err(|e| match e {
+        LoadError::Config(message) => message,
+        LoadError::Diag(d) => format!("{}: {}", d.code, d.message),
+    })?;
+    let design = serde_json::to_value(ir).map_err(|e| format!("cannot encode the IR: {e}"))?;
+    let point = match config_point(pkg.config.emit.point) {
+        PolicyPoint::Nominal => "nominal",
+        PolicyPoint::Mid => "mid",
+        PolicyPoint::Mmc => "mmc",
+        PolicyPoint::Lmc => "lmc",
+    };
+    Ok(EmitParams {
+        design,
+        bindings: serde_json::json!({"adapter": adapter.id(), "toml": set.to_toml()}),
+        policy: serde_json::json!({"point": point}),
+    })
+}
+
+/// Run the `emit` of an external adapter and add its files and diagnostics to `report`.
+///
+/// `Err` is an adapter failure (exit 2). An adapter without the `emit` capability emits nothing.
+// frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+fn emit_external(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    report: &mut EmitReport,
+) -> Result<(), String> {
+    let command = adapter.command.as_deref().unwrap_or_default();
+    let (path, argv) = program(pkg, command)
+        .ok_or_else(|| format!("adapter `{}` has an empty command", adapter.id()))?;
+    tracing::info!(adapter = %adapter.id(), "emit: starting external adapter");
+    let mut client = ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(adapter.timeout()),
+    )
+    .map_err(|e| match unavailable(adapter.id(), &e, AvailVerb::Sync) {
+        Some(u) => format!("{}: {}", u.diagnostic.code, u.diagnostic.message),
+        None => format!("R008: could not start adapter `{}`: {e}", adapter.id()),
+    })?;
+    let mut outcome = Ok(());
+    if client.info().capabilities.contains(&CapabilityName::Emit) {
+        outcome = emit_params(pkg, adapter, ir).and_then(|params| {
+            client
+                .emit(&params)
+                .map_err(|e| format!("R008: adapter `{}` emit failed: {e}", adapter.id()))
+        })
+        .map(|result| {
+            for f in result.files {
+                tracing::info!(adapter = %adapter.id(), file = %f.path, "emit: external adapter wrote");
+                report.files.push(EmitFile {
+                    adapter: adapter.id().to_owned(),
+                    path: f.path,
+                    digest: f.digest,
+                });
+            }
+            for d in &result.diagnostics {
+                let text = |k: &str| d.0.get(k).and_then(|v| v.as_str()).unwrap_or_default();
+                report.diagnostics.push(diag(text("code"), text("message"), None));
+            }
+        });
+    } else {
+        tracing::info!(adapter = %adapter.id(), "emit: external adapter has no emit capability");
+    }
+    if let Err(e) = client.shutdown() {
+        tracing::warn!(error = %e, "emit: adapter shutdown failed");
+    }
+    outcome
+}
+
 /// Run emit for every selected adapter of one package, appending to `report`.
 ///
 /// `texts` are the package's `Text` parameters, so R014 can fire and `json`/`csv` can write them.
@@ -1074,7 +1157,10 @@ pub(crate) fn emit_package_texts(
             continue;
         }
         if adapter.command.is_some() {
-            tracing::info!(adapter = %adapter.id(), "emit: external adapters are not run by the CLI yet");
+            if let Err(message) = emit_external(pkg, adapter, ir, report) {
+                report.config_error = Some(message);
+                return;
+            }
             continue;
         }
         let value_row = adapter.name == json::ADAPTER || adapter.name == csv::ADAPTER;
@@ -1582,5 +1668,47 @@ mod tests {
         assert_eq!(code, EXIT_FAIL, "{out}");
         assert!(out.contains("Q004"), "{out}");
         assert!(!dir.0.join("build/json.json").exists());
+    }
+
+    // frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_external
+    #[cfg(unix)]
+    #[test]
+    fn external_adapter_is_run_and_its_files_reported() {
+        use std::os::unix::fs::PermissionsExt;
+        static SPAWN_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+        let dir = Dir::new();
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"ext\"\ncommand = [\"./ext.sh\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        std::fs::create_dir_all(dir.0.join("src")).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), SOURCE).unwrap();
+        let body = r#"#!/bin/sh
+read -r _init
+echo '{"jsonrpc":"2.0","id":1,"result":{"name":"ext","version":"1.0.0","capabilities":["emit"],"native_units":"mm","precision":6,"platforms":["linux"]}}'
+while read -r req; do
+  case "$req" in
+    *'"method":"emit"'*)
+      printf '%s' "$req" > "$(dirname "$0")/emit-request.json"
+      echo '{"jsonrpc":"2.0","id":2,"result":{"files":[{"path":"build/ext/out.txt","digest":"blake3:00"}],"diagnostics":[]}}' ;;
+    *'"method":"shutdown"'*)
+      echo '{"jsonrpc":"2.0","id":3,"result":null}'
+      exit 0 ;;
+  esac
+done
+"#;
+        let script = dir.0.join("ext.sh");
+        let guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        std::fs::write(&script, body).unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let (code, out, e) = run(&dir, &[]);
+        drop(guard);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(out.contains("build/ext/out.txt"), "{out}");
+        let req: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(dir.0.join("emit-request.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(req["method"], "emit");
+        assert_eq!(req["params"]["policy"]["point"], "nominal");
     }
 }
