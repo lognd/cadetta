@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "BLOCKER: sema has no notion of solver members (resolve.rs/eval.rs ignore MemberKind::Solver), so wall_sizing.out is E002 and no S003 can be attached to an evaluated output; fix is outside this ticket's cli scope. SUGGESTION: do ~K4JKH27 first (resolver + evaluator + use_output), then cli emits S003/S006 and O004 (sync obligations also need universe candidates from synced lock records). No code changed."
+at = "2026-10-15T03:08:58Z"
+actor = "lognd"
+rev = 1
