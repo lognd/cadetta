@@ -4,9 +4,10 @@ title = "emit: run external adapters in cadetta emit"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T12:06:04Z"
-updated = "2026-10-15T12:06:04Z"
+updated = "2026-10-15T12:50:06Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs"]
 +++
 
