@@ -2,12 +2,12 @@
 id = "01M4Z28ZHTQ36W2B3K49RY31MY"
 title = "language: U002 unused-private-item fixtures (u002-*)"
 type = "task"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-15T06:08:33Z"
+updated = "2026-10-15T06:14:54Z"
 idempotency_key = "split-0N41BNX-u002"
 scope = ["crates/cadetta-lint/**"]
 
