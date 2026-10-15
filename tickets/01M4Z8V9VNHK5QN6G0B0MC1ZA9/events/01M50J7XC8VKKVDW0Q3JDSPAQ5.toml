@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "cadetta conformance: library behaviour for the remaining binding read fixtures (R002 unbound, R003 read-bound, R007, R011, Q001 kg-vs-mm, driven dimensions, lock digest, slots)"
+new = "cadetta conformance: library behaviour for binding read fixtures (R002/R003 reconcile, R007, R011, lock digest, slots)"
+at = "2026-10-15T19:57:17Z"
+actor = "lognd"
+rev = 1
