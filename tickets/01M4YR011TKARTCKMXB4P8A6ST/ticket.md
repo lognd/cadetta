@@ -2,11 +2,12 @@
 id = "01M4YR011TKARTCKMXB4P8A6ST"
 title = "parser: one bad waive date token emits two E001 (cascade)"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:21:37Z"
+updated = "2026-10-15T03:22:16Z"
 scope = ["crates/cadetta-syntax/**", "crates/cadetta-syntax/**"]
 
 [[acceptance]]
