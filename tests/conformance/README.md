@@ -58,7 +58,7 @@ tests/conformance/<doc>/
 | `doc` | string | Spec document stem; equals the directory name. |
 | `section` | string | Normative section the rule comes from. |
 | `rule` | string | Rule or diagnostic code the pair tests. |
-| `kind` | `"source"`, `"ir"`, `"binding"` | Fixture form: `.cdt`, IR JSON, or binding-call JSON. |
+| `kind` | `"source"`, `"ir"`, `"binding"`, `"compare"` | Fixture form: `.cdt`, IR JSON, binding-call JSON, or an input pair (see "Two-input comparisons"). |
 | `entry` | string, optional | Command to run: `check` (default), `eval`, `lint`, `emit <target>`. |
 | `must_fire` | object | Expectations for the must-fire fixture. |
 | `must_not_fire` | object | Expectations for the must-not-fire fixture. |
@@ -87,6 +87,71 @@ Matching rules:
 ## Runner contract
 
 The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
+## Two-input comparisons (`kind: "compare"`)
+
+The digest rules (ir.md 4: formatting never changes a digest, semantic
+versus presentational attributes, closure Merkle, swap staleness) and
+schema `classify(old, new)` (ir.md 5) relate two inputs, which the
+single-fixture contract above cannot express. A `compare` fixture is a
+pair of inputs per side; the verdict is a relation between them.
+
+```
+tests/conformance/ir/
+  NAME.expect.json
+  NAME.must-fire.a.cdt         input A of the must-fire side
+  NAME.must-fire.b.cdt         input B (the edited one)
+  NAME.must-not-fire.a.cdt
+  NAME.must-not-fire.b.cdt
+```
+
+`a` and `b` use the extension of the input form: `.cdt` (or a
+`NAME.must-fire.a/` package directory) for digest rules, `.json` for
+`classify`, where `a` is the old and `b` the new schema document.
+
+```json
+{
+  "spec": "1.4",
+  "doc": "ir",
+  "section": "ir.md 4",
+  "rule": "digest-presentational-attrs",
+  "kind": "compare",
+  "entry": "digest",
+  "must_fire": {
+    "digests": [
+      { "path": "acme.demo::Part.width", "field": "closure", "relation": "differs" }
+    ]
+  },
+  "must_not_fire": {
+    "digests": [
+      { "path": "acme.demo::Part.width", "field": "closure", "relation": "same" }
+    ]
+  }
+}
+```
+
+- `entry` is `digest` (compile A and B, compare node digests) or
+  `classify` (compare two IR JSON Schemas).
+- `digests` lists `{ "path", "field", "relation" }`: `field` is `own` or
+  `closure` (ir.md 4), `path` is a canonical node or instance path
+  present in both inputs, and `relation` is `same` or `differs`. Paths
+  not listed are not compared.
+- For `classify`, a block holds `"classify": "minor"`, `"major"` or
+  `"none"`, the result of `classify(a, b)` by the ir.md 5 rule (a new
+  optional property or definition is `minor`; a removed or retyped
+  property, a new required property, a changed enum or a removed
+  definition is `major`; identical documents are `none`).
+- "Fires" means the rule's observable effect: a digest that must change
+  (`differs`) belongs in `must_fire`, one that must stay put (`same`) in
+  `must_not_fire`; a swap-staleness pair therefore lists the swapped
+  slot's instance paths as `differs` in `must_fire` and an unrelated
+  check as `same` in `must_not_fire`. The two sides use the same `a`
+  and differ only in `b`, by the smallest edit that flips the rule.
+- `diagnostics` is not used by `compare`; an input that fails to compile
+  is a failure of the fixture, reported as such.
+- Until the executor for `(compare, digest)` and `(compare, classify)`
+  exists in `exec.rs`, such fixtures are failures ("no executor") and
+  must be listed in `known-gaps.toml` against the ticket adding it.
+
 `cargo test -p cadetta --test conformance`). It takes each
 `NAME.expect.json`, runs the `entry` command on each fixture through the
 `cadetta` library, and compares the result with the matching block.
