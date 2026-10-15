@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T12:48:24Z"
+digest = "d4fd398b16c16eaf5dad8a7a3fbcb72ce22271584130e86a3ed2379d33e9cfe6"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 68ce2b97-dc56-42ed-9b43-c0337fbcbe66 with nextest profile: default
+    Starting 1 test across 5 binaries (232 tests skipped)
+        PASS [   0.006s] cadetta-sema eval::rolleval::tests::nested_callee_default_parameter_is_read
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 232 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema nested_callee_default"
+size = 568
+status = "measured"
+test_count = 1
+tests_digest = "dd4f6825c7220d64d7bdca6f96c8b3a319f5eb7b64cf848ccd17c05641d56088"
+at = "2026-10-15T12:48:24Z"
+actor = "lognd"
+rev = 1
