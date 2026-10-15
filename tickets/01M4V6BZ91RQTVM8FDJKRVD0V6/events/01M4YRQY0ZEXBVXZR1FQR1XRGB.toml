@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:11:56Z"
+digest = "b50cdd08e3387f94666486566154e88934227d6c2a16a24d5376c2704bb3f742"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0cb726cf-0b11-4857-a92c-bc6443a833fb with nextest profile: default
+    Starting 1 test across 62 binaries (1368 tests skipped)
+        PASS [   0.012s] cadetta-syntax parser::tests::package_and_super_paths_parse_in_expressions
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 1368 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "package_and_super_paths_parse"
+size = 631
+status = "measured"
+test_count = 1
+tests_digest = "bcd3604682dd91fbe937a5d0de31f2d079343f6925966ed0c94d427801715b91"
+at = "2026-10-15T03:11:56Z"
+actor = "lognd"
+rev = 1
