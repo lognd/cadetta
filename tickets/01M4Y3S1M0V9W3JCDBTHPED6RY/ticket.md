@@ -10,7 +10,7 @@ reporter = "lognd"
 created = "2026-10-14T21:06:01Z"
 updated = "2026-10-15T09:15:45Z"
 idempotency_key = "cadetta:sync-wire-atomic"
-scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/geometry_bind.rs"]
+scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/geometry_bind.rs", "crates/cadetta-cli/tests/conformance/sync.rs"]
 
 [[links]]
 kind = "blocked-by"
