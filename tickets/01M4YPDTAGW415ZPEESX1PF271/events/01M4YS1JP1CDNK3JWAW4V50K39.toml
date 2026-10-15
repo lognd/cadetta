@@ -1,0 +1,70 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T03:15:10Z"
+digest = "bbe69d72ba4d30acc1b6ba75bbb8ebd9b2e4e9ec9a3abdb4525ef2940a8e0b7c"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.91s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e917a6eb-928d-4375-878b-cafc45b04a83 with nextest profile: default
+    Starting 1 test across 62 binaries (1373 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        FAIL [ 122.753s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    test conformance_corpus_matches_the_spec has been running for over 60 seconds
+
+    thread 'conformance_corpus_matches_the_spec' (623945) panicked at crates/cadetta-cli/tests/conformance.rs:44:5:
+    20 conformance failure(s):
+    adapters/bind-scope-every-in-scope-path [adapters]: must-not-fire: exit status 2, expected 0
+    geometry/datum-built-from-earlier [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/datum-flip-z [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/i001-interface-datum-omitted [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    packages/e012-bare-version-is-caret [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-comparator-list [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-exact [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-first-requirement-fails [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-prerelease-never-matches [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-tilde [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-unversioned-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-version-unsatisfied [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-wildcard [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e013-single-version-per-project [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e013-version-conflict [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e014-dependency-changed [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e016-private-from-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e016-pub-package-from-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/pub-use-reexports [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    stdlib/policy-default-component-over-file [stdlib]: stale known-gaps entry (ticket ~TGY21E7); the fixture passes, remove the entry
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 122.74s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 122.763s] 1 test run: 0 passed, 1 failed, 1373 skipped
+        FAIL [ 122.753s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "conformance_corpus_matches_the_spec"
+size = 4121
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-15T03:15:10Z"
+actor = "lognd"
+rev = 1
