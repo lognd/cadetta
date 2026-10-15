@@ -2,12 +2,13 @@
 id = "01M4YM3CDA6F41F84EWPY1103W"
 title = "Lint engine resets diagnostic severity, undoing D001 downgrade"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T01:51:17Z"
-updated = "2026-10-15T02:07:55Z"
+updated = "2026-10-15T12:38:53Z"
 idempotency_key = "followup-xn48psv-engine-severity"
 scope = ["crates/cadetta-lint", "crates/cadetta-cli/src/cmd/check.rs", "changelog.d"]
 
