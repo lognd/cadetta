@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "push-plan tolerance subset landed; sync and geometry remainder split to ~CDJGJMG and ~Y25XAXV"
+at = "2026-10-15T08:12:43Z"
+actor = "lognd"
+rev = 1
