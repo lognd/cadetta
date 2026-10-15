@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:02:54Z"
+digest = "5d574a77b3ea15e54fcabef013fc529c2581b5942ecdbc1fa438cca9b8ebd225"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 04f38ae1-ec97-4909-9565-4ab7df4a229c with nextest profile: default
+    Starting 1 test across 52 binaries (1276 tests skipped)
+        PASS [   0.010s] cadetta-sema kindcheck::tests::user_kind_is_distinct_target_q003
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.012s] 1 test run: 1 passed, 1276 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "user_kind_is_distinct_target_q003"
+size = 612
+status = "measured"
+test_count = 1
+tests_digest = "d0d4fae2fae477b3d21eb6565f8ef6294aff57bfd637b3977c3ca0ebca2911d7"
+at = "2026-10-15T02:02:54Z"
+actor = "lognd"
+rev = 1
