@@ -7,12 +7,12 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
-updated = "2026-10-15T21:21:03Z"
+updated = "2026-10-15T21:21:04Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "docs/spec/adapters.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Every geom-* push-plan fixture executes and is compared; their known-gaps.toml entries are removed."
-bound = false
+bound = true
 +++
 
 found while working ~BC7S5KT: geom-* push-plan fixtures (binds_to, push_writes, read_reports, native_written/read_back_as) have no library decision function; negate_text is pub(crate) in cadetta-cli emit.rs.
