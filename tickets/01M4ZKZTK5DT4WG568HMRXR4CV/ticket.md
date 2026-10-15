@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T11:08:35Z"
-updated = "2026-10-15T12:48:25Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-15T12:48:34Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "A roll-up reads non-argument members and defaulted parameters of parts nested in a parameterized callee, at any nesting depth"
