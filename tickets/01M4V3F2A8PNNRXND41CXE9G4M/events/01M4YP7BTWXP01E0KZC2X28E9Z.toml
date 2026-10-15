@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:28:25Z"
+digest = "dd272f1ee8533ce081f23adacfe65a4757316433f61d2954f5e02f480ebc2214"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2726fda7-fb14-43f0-82e5-caec946c43ed with nextest profile: default
+    Starting 1 test across 57 binaries (1316 tests skipped)
+        PASS [   0.006s] cadetta-sema solverdecl::tests::bad_in_forms_and_legal_forms
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1316 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "bad_in_forms_and_legal_forms"
+size = 556
+status = "measured"
+test_count = 1
+tests_digest = "fef0877b6bcf3e8ae18bc4e484425064d3fc64c055ed98850af9e86f0c3b85c6"
+at = "2026-10-15T02:28:25Z"
+actor = "lognd"
+rev = 1
