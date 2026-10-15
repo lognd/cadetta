@@ -2,7 +2,8 @@
 id = "01M4V5XAYHZH7RXHYYHN1HPCE5"
 title = "Conformance README: define kind=binding entry=python fixture form"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
