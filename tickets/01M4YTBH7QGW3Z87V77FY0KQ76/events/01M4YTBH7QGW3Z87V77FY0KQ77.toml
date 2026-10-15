@@ -1,0 +1,10 @@
+kind = "create"
+title = "sync: manual-adapter emit fallback does not raise R014 for bound Text params"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+body = "found while working ~T8PTE0A; sync.rs manual_adapter calls emit_package (empty Text set); should use emit_package_texts with LoweredPackage.text_params."
+at = "2026-10-15T03:40:36Z"
+actor = "lognd"
+rev = 1
