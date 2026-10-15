@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T03:55:26Z"
-updated = "2026-10-15T07:37:24Z"
+updated = "2026-10-15T07:37:53Z"
 scope = ["crates/cadetta-lint/src/rules/n.rs", "docs/spec/lints.md", "tests/conformance/stdlib/check-not-bottomed.expect.json", "changelog.d/01M4W8SYZPJX8JTSGH1MFXESB3.fixed.md"]
 
 [[acceptance]]
