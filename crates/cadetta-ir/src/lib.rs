@@ -4,6 +4,7 @@
 
 pub mod canon;
 pub mod digest;
+pub mod decode;
 pub mod dim;
 pub mod entities;
 pub mod geometry;

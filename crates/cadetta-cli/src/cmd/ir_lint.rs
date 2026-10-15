@@ -3,22 +3,25 @@
 //! with catalog severities and no project context (config-cli.md 3.9).
 //!
 //! A document `ir-validate` rejects exits 2 before any rule runs. Today the rules that read only
-//! the member dependency graph run (D003); the value-reading rules need a full IR decoder, which
-//! is tracked separately.
+//! the decoded model run: D001, D002, D003, F004, M001-M003, N, Q006 and S001/S002/S008. Tables,
+//! checks and bindings are not decoded, so D002 sees no table cells; locations are line 1.
 
 use std::io::Write;
 use std::path::Path;
 
-use cadetta_ir::model::{Component, ComponentClass, Flavour, Member, MemberKind, PackageId};
-use cadetta_ir::model::Project as Ir;
-use cadetta_ir::path::Path as IrPath;
-use cadetta_lint::diag::{self, Diagnostic};
-use cadetta_lint::rules::d;
+use cadetta_ir::decode::decode_project;
+use cadetta_ir::model::SpanRef;
+use cadetta_lint::diag::{self, Diagnostic, Location, Position};
+use cadetta_lint::engine::LintConfig;
+use cadetta_lint::rules::d::{self, DConfig};
+use cadetta_lint::rules::m::MConfig;
+use cadetta_lint::rules::{f, m, n, q, s};
 use serde_json::Value;
 
 use crate::cmd::ir_validate::{load_json, violations};
 use crate::config::FailOn;
 use crate::output::{self, Format};
+use crate::pipeline::s_facts;
 use crate::{EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta lint FILE [--format json]";
@@ -55,70 +58,36 @@ pub fn parse_args(args: &[String]) -> Result<LintArgs, String> {
     })
 }
 
-fn class_of(name: &str) -> ComponentClass {
-    match name {
-        "ots" => ComponentClass::Ots,
-        "assembly" => ComponentClass::Assembly,
-        "process" => ComponentClass::Process,
-        _ => ComponentClass::Model,
-    }
-}
-
-/// The lint-relevant skeleton of a schema-valid document: components with their members' paths
-/// and `deps`. A path the IR path grammar rejects is an error message.
-pub fn skeleton(doc: &Value) -> Result<Ir, String> {
-    let parse = |v: &Value| -> Result<IrPath, String> {
-        let text = v.as_str().unwrap_or_default();
-        text.parse::<IrPath>().map_err(|e| format!("path `{text}`: {e}"))
-    };
-    let package = PackageId {
-        name: doc["package"]["name"].as_str().unwrap_or_default().to_owned(),
-        version: doc["package"]["version"].as_str().unwrap_or_default().to_owned(),
-    };
-    let flavour = if doc["flavour"] == "observed" { Flavour::Observed } else { Flavour::Design };
-    let mut project = Ir::new(flavour, package);
-    for c in doc["components"].as_array().into_iter().flatten() {
-        let mut members = Vec::new();
-        for m in c["members"].as_array().into_iter().flatten() {
-            let mut member = Member::new(parse(&m["path"])?, MemberKind::Param);
-            for dep in m["deps"].as_array().into_iter().flatten() {
-                member.deps.push(parse(dep)?);
-            }
-            members.push(member);
-        }
-        project.components.push(Component {
-            // a component path has no member tail; the IR path type requires one, and D003
-            // never reads the component path, so a placeholder tail satisfies the grammar
-            path: parse(&Value::String(format!("{}.component", c["path"].as_str().unwrap_or_default())))?,
-            class: class_of(c["class"].as_str().unwrap_or_default()),
-            params_sig: None,
-            implements: Vec::new(),
-            citation: None,
-            attrs: Default::default(),
-            members,
-            parts: Vec::new(),
-            fits: Vec::new(),
-            datums: Vec::new(),
-            points: Vec::new(),
-            placements: Vec::new(),
-            span: None,
-            digest: None,
-        });
-    }
-    Ok(project)
-}
-
-/// The IR-only findings of a schema-valid document, sorted.
+/// The IR-only findings of a schema-valid document, sorted. `dir` is `None`: no package
+/// directory exists, so S002 treats every cited file as present.
 pub fn lint_document(doc: &Value) -> Result<Vec<Diagnostic>, String> {
-    let project = skeleton(doc)?;
-    let mut found = d::check_d003(&project, |span| {
-        tracing::debug!(file = %span.file, "IR members carry no spans");
-        diag::Location::Source {
+    let ir = decode_project(doc)?;
+    let locate = |span: &SpanRef| {
+        tracing::debug!(file = %span.file, "IR spans are byte offsets; reporting line 1");
+        Location::Source {
             file: span.file.clone(),
-            start: diag::Position { line: 1, col: 1 },
-            end: diag::Position { line: 1, col: 1 },
+            start: Position { line: 1, col: 1 },
+            end: Position { line: 1, col: 1 },
         }
-    });
+    };
+    // Catalog severities and default rule settings: `lint FILE` has no `[lint]` table.
+    let lcfg = LintConfig::new();
+    let dcfg = DConfig::default();
+    let mcfg = MConfig::default();
+    let mut found = Vec::new();
+    found.extend(d::check_d001(&ir, &lcfg, &dcfg, locate));
+    found.extend(d::check_d002(&ir, &lcfg, &dcfg, locate));
+    found.extend(d::check_d003(&ir, locate));
+    found.extend(f::check_f004(&ir, &lcfg, locate));
+    found.extend(m::check_m001(&ir, &lcfg, &mcfg, locate));
+    found.extend(m::check_m002(&ir, &lcfg, locate));
+    found.extend(m::check_m003(&ir, &lcfg, locate));
+    found.extend(n::check(&ir, &lcfg, locate));
+    found.extend(q::check_inexact(&ir, &lcfg, locate));
+    let (ots_values, cites, own_cites) = s_facts(&ir, &ir.package.name, None);
+    found.extend(s::check_s001(&ots_values, locate));
+    found.extend(s::check_s002(&cites, locate));
+    found.extend(s::check_s008(&own_cites, &ots_values, locate));
     diag::sort(&mut found);
     tracing::info!(count = found.len(), "IR lint finished");
     Ok(found)

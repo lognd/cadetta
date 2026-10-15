@@ -20,3 +20,10 @@ bound = true
 +++
 
 lint FILE (T 5ZFM9K6) only runs D003 via a skeleton decode; the value-reading rules need a full cadetta.ir/1 JSON decoder into cadetta_ir::model.
+
+## Done report
+
+Changed: crates/cadetta-ir/src/decode.rs::decode_project; crates/cadetta-cli/src/cmd/ir_lint.rs::lint_document; crates/cadetta-cli/src/pipeline.rs::s_facts (pub(crate))
+Evidence: decode_roundtrips_a_serialized_project, decode_reports_a_json_pointer, clean_document_is_quiet_after_full_decode, inexact_nominal_fires_q006, uncited_ots_value_fires_s001, equal_literals_fire_d001, long_literal_fires_m001
+Filed: ~06GWDX5 (undecoded entities, line/col)
+Gates: frob check --ticket clean for owned files; remaining findings are other tickets' files

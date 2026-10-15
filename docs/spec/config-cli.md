@@ -440,8 +440,13 @@ O families) are not run by `lint FILE`.
 Implemented today: `ir-validate` checks the JSON Schema plus the ir.md 6
 invariants that read only the document (sorting, path and variant-key
 forms, bound shapes, exactness, observed-flavour shape, provenance, tol
-terms); `lint FILE` runs D003. The value-reading IR-only rules (D001, D002,
-F004, M, N, Q006, S) need a full IR decoder and are not yet run.
+terms); `lint FILE` decodes the document (`cadetta_ir::decode`) and runs
+D001-D003, F004, M001-M003, N, Q006 and S001/S002/S008. The decoder carries
+components (members, parts, fits), solvers and citations; tables, checks,
+bindings, interfaces, waivers and a component's datums, points and placements
+are not decoded, so D002 sees no table cells and S002 (no package directory)
+treats every cited file as present. Locations are `1:1` of the span's file:
+IR spans are byte offsets with no line index.
 
 ### 3.8 `lsp`
 

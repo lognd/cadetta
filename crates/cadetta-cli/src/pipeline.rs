@@ -249,7 +249,7 @@ fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
 /// S001/S002/S008 inputs of one lowered package: `ots` values, and the package's own `cite`
 /// items with the filesystem answer taken against the package directory.
 // frob:ticket 01M4VB63M63PQVRKN0HDXQP567
-fn s_facts(
+pub(crate) fn s_facts(
     ir: &IrProject,
     package: &str,
     dir: Option<&Path>,
