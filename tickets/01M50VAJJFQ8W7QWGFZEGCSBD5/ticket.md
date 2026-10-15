@@ -7,12 +7,12 @@ priority = "high"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T22:36:02Z"
-updated = "2026-10-15T23:25:50Z"
+updated = "2026-10-15T23:34:56Z"
 scope = ["crates/cadetta-cli/tests/conformance/verify.rs"]
 
 [[acceptance]]
 text = "the conformance verifier observes diagnostics_exclude: none of the listed codes may be produced"
-bound = false
+bound = true
 +++
 
 Split from ~QQJNWHY; blocked on the MGXDNYP lease over crates/cadetta-cli/tests/**.
