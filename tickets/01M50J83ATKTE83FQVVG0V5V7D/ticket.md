@@ -4,9 +4,10 @@ title = "cadetta conformance: library behaviour for driven dimensions, Q001 kg-v
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T19:57:24Z"
-updated = "2026-10-15T19:57:24Z"
+updated = "2026-10-15T21:40:55Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
 +++
 
