@@ -313,7 +313,9 @@ info even though the engine otherwise resets severities, unless `[lint] severity
 | P001 | missing-process-role | warning | | Under a process, a feature-like parameter has no rule role. |
 
 I rule implementation notes (0.1.0): I001 checks every non-optional
-interface member and every interface datum by member-root name. I002
+interface member and every interface datum by member-root name; a
+member present under a different kind (a datum where a value is
+required, or the reverse) is also I001. I002
 and I003 read the per-alternate check verdicts only (fits, bounds and
 requires reach them through checks); I002 is raised per check and
 alternate, located at the alternate's variant key

@@ -61,38 +61,51 @@ pub fn check_members(
                 trace!(implements = %r, "I001: interface not in scope of this check");
                 continue;
             };
-            let has = |name: &str, kind: Option<MemberKind>| {
+            // A value member (`name: Type`) is satisfied by any non-datum member of that root.
+            let has_value = |name: &str| {
                 c.members
                     .iter()
-                    .any(|m| m.path.member_root() == Some(name) && kind.is_none_or(|k| m.kind == k))
+                    .any(|m| m.path.member_root() == Some(name) && m.kind != MemberKind::Datum)
             };
             // Datums live in `Component.datums`; a bare `datum d = origin` has no members.
             let has_datum = |name: &str| {
                 c.datums.iter().any(|d| d.path.member_root() == Some(name))
-                    || has(name, Some(MemberKind::Datum))
+                    || c.members
+                        .iter()
+                        .any(|m| m.path.member_root() == Some(name) && m.kind == MemberKind::Datum)
             };
-            let missing = iface
+            let present = |name: &str| {
+                c.members.iter().any(|m| m.path.member_root() == Some(name))
+                    || c.datums.iter().any(|d| d.path.member_root() == Some(name))
+            };
+            // (name, why): absent, or present under a different kind (language.md 3.2).
+            let problems = iface
                 .members
                 .iter()
-                .filter(|m| !m.optional && !has(&m.name, None))
-                .map(|m| m.name.as_str())
+                .filter(|m| !m.optional && !has_value(&m.name))
+                .map(|m| (m.name.as_str(), "value", "a datum"))
                 .chain(
                     iface
                         .datums
                         .iter()
                         .filter(|d| !has_datum(d))
-                        .map(String::as_str),
+                        .map(|d| (d.as_str(), "datum", "a value member")),
                 );
-            for name in missing {
-                debug!(component = %component_text(c), interface = %r, member = name, "I001: missing member");
-                let mut d = Diagnostic::new(
-                    I001,
-                    Severity::Error,
+            for (name, want, other) in problems {
+                let msg = if present(name) {
+                    debug!(component = %component_text(c), interface = %r, member = name, "I001: member has a different kind");
+                    format!(
+                        "`{}` implements `{r}` but member `{name}` is {other}, not a {want}",
+                        component_text(c)
+                    )
+                } else {
+                    debug!(component = %component_text(c), interface = %r, member = name, "I001: missing member");
                     format!(
                         "`{}` implements `{r}` but lacks member `{name}`",
                         component_text(c)
-                    ),
-                );
+                    )
+                };
+                let mut d = Diagnostic::new(I001, Severity::Error, msg);
                 d.path = Some(format!("{}.{name}", component_text(c)));
                 d.location = c.span.as_ref().map(&locate);
                 out.push(d);
@@ -319,6 +332,28 @@ mod tests {
             vec![],
         ));
         assert!(check_members(&[c], &[i], |_| unreachable!()).is_empty());
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/interface.rs::check_members
+    #[test]
+    fn i001_fires_when_member_present_under_a_different_kind() {
+        let mut i = iface();
+        i.datums.push("mount".into());
+        let mut c = comp("demo::Wheel.x");
+        c.implements.push("Caster".into());
+        // `bore` (a value) is given as a datum; `mount` (a datum) is given as a param.
+        c.members
+            .push(Member::new(p("demo::Wheel.bore"), MemberKind::Datum));
+        c.members
+            .push(Member::new(p("demo::Wheel.mount"), MemberKind::Param));
+        let d = check_members(&[c], &[i], |_| unreachable!());
+        assert_eq!(d.len(), 2, "{d:?}");
+        assert!(d.iter().all(|x| x.code == "I001"));
+        assert!(d.iter().any(|x| x.message.contains("`bore` is a datum")));
+        assert!(
+            d.iter()
+                .any(|x| x.message.contains("`mount` is a value member"))
+        );
     }
 
     // frob:tests crates/cadetta-lint/src/rules/interface.rs::check_members
