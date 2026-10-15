@@ -35,6 +35,12 @@ class Obligation(BaseModel):
     age_days: int | None
     nearest_changed: str | None
     note: str | None
+    upstream: Annotated[
+        list[str],
+        Field(
+            description="Attestations of this node carried by a dependency lock (attested upstream)."
+        ),
+    ]
 
 
 class ObligationsOutput(BaseModel):

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from enum import StrEnum
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -23,12 +24,25 @@ class File(BaseModel):
     ]
 
 
+class Severity(StrEnum):
+    error = "error"
+    warning = "warning"
+    info = "info"
+
+
 class Diagnostic(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     code: Annotated[str, Field(description="Rule code, e.g. Q004 or R013.")]
     message: str
+    schema_: Annotated[
+        str | None,
+        Field(alias="schema", description="Diagnostic schema id, cadetta.diag/1."),
+    ] = None
+    severity: Annotated[Severity | None, Field(description="Diagnostic severity.")] = (
+        None
+    )
     path: Annotated[
         str | None, Field(description="Canonical path concerned, when there is one.")
     ] = None

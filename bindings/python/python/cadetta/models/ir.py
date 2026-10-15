@@ -156,11 +156,16 @@ class MemberKind(StrEnum):
     place = "place"
 
 
+class Flip(StrEnum):
+    x = "x"
+    y = "y"
+
+
 class Op3(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    flip: Axis
+    flip: Annotated[Flip, Field(description="A flip axis.")]
 
 
 class PackageId(BaseModel):
@@ -610,6 +615,7 @@ class Project(BaseModel):
     flavour: Flavour
     frames: list[ObservedFrame] | None = None
     instances: list[ObservedInstance] | None = None
+    interfaces: list[Interface] | None = None
     modules: list[str]
     package: PackageId
     schema_: Annotated[
@@ -617,3 +623,5 @@ class Project(BaseModel):
         Field(alias="schema", description="Always `cadetta.ir/1`."),
     ]
     solvers: list[Solver]
+    tables: list[Table] | None = None
+    waivers: list[Waiver] | None = None

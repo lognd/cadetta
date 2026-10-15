@@ -257,11 +257,13 @@ impl Value {
             Self::Exact(m) => {
                 let (n, d) = (m.rational().numer(), m.rational().denom());
                 let (rn, rd) = (n.cbrt(), d.cbrt());
-                if m.pi_exp() % 3 == 0 && &rn.pow(3) == n && &rd.pow(3) == d {
-                    if let Ok(r) = Rational::new(rn, rd) {
-                        trace!("inexact: cbrt is exact");
-                        return Self::Exact(Magnitude::new(r, m.pi_exp() / 3));
-                    }
+                if m.pi_exp() % 3 == 0
+                    && &rn.pow(3) == n
+                    && &rd.pow(3) == d
+                    && let Ok(r) = Rational::new(rn, rd)
+                {
+                    trace!("inexact: cbrt is exact");
+                    return Self::Exact(Magnitude::new(r, m.pi_exp() / 3));
                 }
                 inexact(m.to_f64().cbrt(), RootOp::Cbrt)
             }
