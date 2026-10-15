@@ -1,0 +1,33 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:32:30Z"
+digest = "2c3d7bb5f974e5b59046a4329002945154991d42fe84c974ffc2f8f6be016d9d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.63s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a27df615-c16c-4639-ae30-b8af8568b7b9 with nextest profile: default
+    Starting 1 test across 57 binaries (1326 tests skipped)
+        PASS [   0.007s] cadetta-ir decode::tests::decode_roundtrips_every_top_level_entity
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 1326 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "decode_roundtrips_every_top_level_entity"
+size = 1185
+status = "measured"
+test_count = 1
+tests_digest = "2fccd4613589cd2d3bfab8d7cead6aa59a8f5d5c3f478e9d283e40574ec837f7"
+at = "2026-10-15T02:32:30Z"
+actor = "lognd"
+rev = 1
