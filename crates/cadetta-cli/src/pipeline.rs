@@ -1307,6 +1307,10 @@ fn evaluate_stages(
             .suppressions
             .allows
             .extend(lint_facts::allows(&ir));
+        analysis
+            .suppressions
+            .allows
+            .extend(lint_facts::statement_allows(&p.name, &own_views));
         // IR-only rule families run with the catalog severities; `check` applies `[lint]`
         // overrides afterwards through the engine.
         let lcfg = LintConfig::new();

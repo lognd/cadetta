@@ -322,7 +322,10 @@ yet lowered), I004 (`check_roots`) and U002 (`u002::check`). U002 decides
 than once across the package's modules (its own declaration counts
 once). `require` protection is wired by collecting the path of every
 obligation check into the suppression table, and `#[allow(CODE, reason)]`
-member attributes are collected from the IR into `allows`.
+member attributes are collected from the IR into `allows`; those on `check`
+and `require` statements, which the IR does not keep, are read from the AST
+(`lint_facts::statement_allows`), so an `allow` on a `check` suppresses and
+one on a `require` is W003.
 
 L, T and P rule implementation notes (0.1.0): the facts are decided
 upstream (lifecycle analysis in cadetta-variants, the table evaluator and

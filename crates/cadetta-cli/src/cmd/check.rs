@@ -697,6 +697,34 @@ waive C001 on acme.axle::Axle.wide { because \"x\" expires 2026-10-20 }\n";
         assert!(c.contains(&"W005".to_owned()), "{json}");
     }
 
+    // frob:ticket 01M4V1HYQACFV6PNTBESN4G7QS
+    // frob:tests crates/cadetta-cli/src/lint_facts.rs::statement_allows
+    #[test]
+    fn allow_on_a_require_is_w003_and_never_suppresses_but_allow_on_a_check_does() {
+        let src = "model Axle {\n  od: Length = 20mm\n  \
+#[allow(C001, \"accepted\")]\n  require wide: od < 1mm\n}\n";
+        let (_, json, _) = run(&project(src, ""), &[]);
+        let c = diag_for(&json, "C001").expect("C001 on the require");
+        assert!(!c["waived"].is_object(), "{json}");
+        assert!(codes(&json).contains(&"W003".to_owned()), "{json}");
+
+        let src = "model Axle {\n  od: Length = 20mm\n  \
+#[allow(C001, \"accepted\")]\n  check narrow: od < 1mm\n}\n";
+        let (_, json, _) = run(&project(src, ""), &[]);
+        let c = diag_for(&json, "C001").expect("C001 on the check");
+        assert!(c["waived"].is_object(), "{json}");
+        assert!(!codes(&json).contains(&"W003".to_owned()), "{json}");
+        assert!(!codes(&json).contains(&"W004".to_owned()), "{json}");
+    }
+
+    /// The first diagnostic of `code` in a `check --format json` report.
+    fn diag_for<'a>(json: &'a serde_json::Value, code: &str) -> Option<&'a serde_json::Value> {
+        json["diagnostics"]
+            .as_array()?
+            .iter()
+            .find(|d| d["code"] == code)
+    }
+
     fn attest(dir: &Dir, digest: &str) {
         let mut lock = Lock::new();
         lock.insert(Record::Attest(Attest {

@@ -183,16 +183,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "obligations/w003-waive-require"
-ticket = "~SN4G7QS"
-reason = "waive naming a require diagnostic suppresses it instead of raising W003"
-
-[[gap]]
-fixture = "obligations/w003-allow-require"
-ticket = "~SN4G7QS"
-reason = "allow on a require raises no W003, and allow does not suppress C001 on a check either"
-
-[[gap]]
 fixture = "obligations/s003-solver-stale"
 ticket = "~JET4TC0"
 reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
@@ -251,26 +241,6 @@ reason = "joint-level lint not raised"
 fixture = "stdlib/policy-iso-default-silent"
 ticket = "~PGR0M75"
 reason = "joint-level lint not raised"
-
-[[gap]]
-fixture = "lints/w003-allow-fixed-code"
-ticket = "~A7FN9YF"
-reason = "allow of a fixed code is not rejected"
-
-[[gap]]
-fixture = "lints/w003-waive-require"
-ticket = "~A7FN9YF"
-reason = "waiver of a require's C001 is not rejected"
-
-[[gap]]
-fixture = "lints/w004-unused-allow"
-ticket = "~A7FN9YF"
-reason = "unused allow is not reported"
-
-[[gap]]
-fixture = "lints/w005-waiver-expiring"
-ticket = "~A7FN9YF"
-reason = "expiring waiver is not reported"
 
 [[gap]]
 fixture = "solvers/s003-stale-dep"

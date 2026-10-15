@@ -15,7 +15,8 @@ use cadetta_ir::variant_name::ComponentPath;
 use cadetta_lint::engine::Allow;
 use cadetta_lint::rules::u002::{ItemFacts, ItemKind as FactKind, Visibility};
 use cadetta_syntax::ast::{
-    BoundKind, Expr, ExprKind, File, InterfaceMemberKind, Item, ItemKind, UnOp, Vis,
+    Attr, AttrArg, BoundKind, Expr, ExprKind, File, InterfaceMemberKind, Item, ItemKind,
+    MemberKind, UnOp, Vis,
 };
 use cadetta_units::{Magnitude, Rational, UnitTable};
 
@@ -262,6 +263,68 @@ pub fn allows(ir: &Project) -> Vec<Allow> {
         }
     }
     out
+}
+
+/// `#[allow(CODE, "because")]` on `check` and `require` members, read from the AST.
+///
+/// The lowered IR keeps no attributes for these statements, so `allows` cannot see them. A
+/// `require` allow is collected too: the engine never suppresses it and W003 names it
+/// (obligations.md 4; ~SN4G7QS).
+// frob:ticket 01M4V1HYQACFV6PNTBESN4G7QS
+pub fn statement_allows(package: &str, modules: &[ModuleView<'_>]) -> Vec<Allow> {
+    let mut out = Vec::new();
+    for m in modules {
+        for item in m.file.items() {
+            let ItemKind::Component(c) = &item.kind else {
+                continue;
+            };
+            for member in &c.members {
+                let name = match &member.kind {
+                    MemberKind::Check(k) => &k.name.name,
+                    MemberKind::Require(r) => &r.name.name,
+                    _ => continue,
+                };
+                let mut path = package.to_owned();
+                for seg in m.path {
+                    path.push_str("::");
+                    path.push_str(seg);
+                }
+                path.push_str(&format!("::{}.{name}", c.name.name));
+                for a in member.attrs.iter().chain(&member.trailing) {
+                    match statement_allow(m.text, a, &path) {
+                        Some(Ok(allow)) => out.push(allow),
+                        Some(Err(error)) => {
+                            tracing::warn!(%path, %error, "lint_facts: statement allow skipped");
+                        }
+                        None => {}
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
+/// One `allow(CODE, "because")` attribute on the statement at `path`; `None` for other attributes.
+fn statement_allow(
+    text: &str,
+    a: &Attr,
+    path: &str,
+) -> Option<Result<Allow, cadetta_lint::engine::EngineError>> {
+    if a.name.name != "allow" {
+        return None;
+    }
+    let arg_text = |g: &AttrArg| match g {
+        AttrArg::Expr(e) => match &e.kind {
+            ExprKind::Str(s) => s.clone(),
+            _ => text.get(e.span.start..e.span.end).unwrap_or("").to_owned(),
+        },
+        AttrArg::Named { .. } => String::new(),
+    };
+    let code = a.args.first().map(arg_text)?;
+    let because = a.args.get(1).map(arg_text).unwrap_or_default();
+    tracing::trace!(%code, %path, "lint_facts: statement allow");
+    Some(Allow::new(&code, path, &because))
 }
 
 #[cfg(test)]
