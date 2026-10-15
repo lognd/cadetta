@@ -51,3 +51,12 @@ Without `--fake`, the Com build connects through `SwConnection<T>`
 (`Core/Session`): it attaches to a running SOLIDWORKS if there is one,
 otherwise starts one hidden through `SwComHost`. On exit it quits the
 instance only if it started it (adapters.md 2.2).
+
+## Busy detection (R009)
+
+Before any push, `BusyGuard.Check` (`Core/Busy`) asks an `IBusyProbe`
+whether a modal dialog is open or a command is active; either refuses
+the push with R009 and nothing is written (adapters.md 2.3). The Com
+build's `SwComBusyProbe` uses `CommandInProgress` and a disabled main
+window. The guard is not yet wired into a `push` method (it does not
+exist yet).
