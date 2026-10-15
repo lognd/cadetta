@@ -6,8 +6,7 @@ category = "todo"
 priority = "high"
 reporter = "lognd"
 created = "2026-10-15T02:31:57Z"
-updated = "2026-10-15T02:31:57Z"
-scope = ["crates/cadetta-cli/tests/conformance.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/src/ir_lint.rs"]
+updated = "2026-10-15T03:05:36Z"
 
 [[acceptance]]
 text = "conformance_corpus_matches_the_spec passes"

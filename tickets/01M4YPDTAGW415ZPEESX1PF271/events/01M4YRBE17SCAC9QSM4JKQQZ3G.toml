@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/tests/conformance.rs", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/src/ir_lint.rs"]
+new = ["crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/conformance/**", "crates/cadetta-cli/tests/conformance.rs", "tests/conformance/README.md", "tests/conformance/known-gaps.toml", "tests/conformance/quantities/eval-mixed-pi.*", "changelog.d/01M4YPDTAGW415ZPEESX1PF271.fixed.md"]
+at = "2026-10-15T03:05:36Z"
+actor = "lognd"
+rev = 1
