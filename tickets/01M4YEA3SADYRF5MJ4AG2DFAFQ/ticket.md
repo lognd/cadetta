@@ -21,6 +21,10 @@ bound = false
 [[acceptance]]
 text = "U002 reports an unused private param/let member of a component"
 bound = false
+
+[[acceptance]]
+text = "I004 fires only for a model/assembly with a param lacking a default that no part instantiates"
+bound = false
 +++
 
 Follow-up of ~A8J3XJW. U002 'used' is a lexical identifier count; priv Member rows are not produced; ItemFacts.parameterized/is_root are unset so I004 uses check_roots only. Drive these from sema name resolution.
