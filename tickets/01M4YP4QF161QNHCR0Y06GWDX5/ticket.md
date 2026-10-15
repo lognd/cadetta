@@ -2,11 +2,12 @@
 id = "01M4YP4QF161QNHCR0Y06GWDX5"
 title = "IR decoder: tables, checks, bindings, interfaces, waivers, datums/points/placements; real line/col for lint FILE"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:26:59Z"
-updated = "2026-10-15T02:32:57Z"
+updated = "2026-10-15T02:33:11Z"
 scope = ["crates/cadetta-ir/src/decode.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs", "crates/cadetta-cli/tests/ir_lint_rules.rs", "docs/spec/config-cli.md", "changelog.d/01M4YP4QF161QNHCR0Y06GWDX5.added.md"]
 
 [[acceptance]]
