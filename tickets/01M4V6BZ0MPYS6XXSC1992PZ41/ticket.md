@@ -2,11 +2,12 @@
 id = "01M4V6BZ0MPYS6XXSC1992PZ41"
 title = "check does not load dependencies: E012, E013, E014 and cross-package use unimplemented"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:53:35Z"
-updated = "2026-10-15T03:20:16Z"
+updated = "2026-10-15T03:22:09Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/known-gaps.toml", "docs/spec/packages.md", "changelog.d/01M4V6BZ0MPYS6XXSC1992PZ41.fixed.md"]
 
 [[acceptance]]
