@@ -7,12 +7,12 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
-updated = "2026-10-15T08:26:02Z"
+updated = "2026-10-15T08:30:11Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "Binding sync fixtures decided by the in-process sync loop execute and are compared; their known-gaps.toml entries are removed (the rest moved to ~PHMB7P7J)."
-bound = false
+bound = true
 +++
 
 found while working ~BC7S5KT: sync fixtures (adapters/ and emitters/*) still lack an executor; build on sync::run plus protocol.rs scripted adapters.
