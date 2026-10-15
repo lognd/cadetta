@@ -1,0 +1,10 @@
+kind = "create"
+title = "Carry waiver globs across renames and report eol W005"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/**,crates/cadetta-lint/src/**"]
+body = "Cut from ~203JFR7: waiver globs are not carried over renames, and no IR entity carries eol so check_w005 receives no eol dates."
+at = "2026-10-15T01:54:19Z"
+actor = "lognd"
+rev = 1
