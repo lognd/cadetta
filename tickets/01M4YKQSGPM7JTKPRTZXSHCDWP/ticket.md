@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T01:44:58Z"
-updated = "2026-10-15T01:46:40Z"
+updated = "2026-10-15T01:47:31Z"
 scope = ["crates/cadetta-ir/**", "docs/spec/ir.md", "changelog.d/01M4YKQSGPM7JTKPRTZXSHCDWP.*"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "Project with those collections validates against the IR JSON Schema"
-bound = false
+bound = true
 +++
 
 found while working ~RC9QR10: schema now allows optional Project interfaces/tables/waivers but the Project struct does not carry or serialize them, and no Require entity shape exists in ir.md 3.

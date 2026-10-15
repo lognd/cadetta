@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T01:47:31Z"
+digest = "7133679217d0e6556701187e876da22439b3b777c5920c8513e9614d5e405642"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.57s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 86137623-9820-4568-9a32-75c3fdbaf2e5 with nextest profile: default
+    Starting 1 test across 49 binaries (1247 tests skipped)
+        PASS [   0.023s] cadetta-ir schema::tests::project_accepts_interfaces_tables_and_waivers
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.047s] 1 test run: 1 passed, 1247 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "project_accepts_interfaces_tables_and_waivers"
+size = 882
+status = "measured"
+test_count = 1
+tests_digest = "36631d923f84825fb11c55e50df8e47e3d56f9aa9584321311695164e022a73f"
+at = "2026-10-15T01:47:31Z"
+actor = "lognd"
+rev = 1
