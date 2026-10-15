@@ -12,6 +12,7 @@ use std::io::{BufRead, Write};
 use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_adapter::atomic::{AtomicOutcome, Document};
+use cadetta_adapter::availability::{Verb as AvailVerb, rejections, unavailable};
 use cadetta_adapter::builtin::sw_equations::{
     ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
 };
@@ -458,6 +459,8 @@ struct SessionBackend<R: BufRead, W: Write> {
     regen: Vec<RegenRecord>,
     diags: Vec<SyncDiag>,
     failure: Option<String>,
+    /// Per-file push statuses, for the R010 summary (adapters.md 2.3).
+    pushed: Vec<(String, Vec<LocatorStatus>)>,
 }
 
 impl<R: BufRead, W: Write> SessionBackend<R, W> {
@@ -559,6 +562,9 @@ impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
         match self.backend.session.push(&self.file, params) {
             Ok(r) => {
                 self.backend.adapter_diags(&r.diagnostics);
+                self.backend
+                    .pushed
+                    .push((self.file.clone(), r.statuses.clone()));
                 self.statuses = r.statuses;
                 Ok(())
             }
@@ -1069,7 +1075,8 @@ fn drive_adapter<R: BufRead, W: Write>(
         features: &client.info().features,
         tolerances: &read.tolerances,
     };
-    let Some((entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx) else {
+    let Some((mut entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx)
+    else {
         let _ = client.shutdown();
         return Ok(());
     };
@@ -1124,7 +1131,7 @@ fn drive_adapter<R: BufRead, W: Write>(
         }
         return Ok(());
     }
-    let mut session = match DriveSession::open(client, &pushed_files) {
+    let session = match DriveSession::open(client, &pushed_files) {
         Ok(s) => s,
         Err(e) => {
             let code = e.code().unwrap_or("R009");
@@ -1133,7 +1140,13 @@ fn drive_adapter<R: BufRead, W: Write>(
             return Ok(());
         }
     };
-    let _ = &mut session;
+    // R009 is per file: a refused file is never handed to the engine, the rest proceed.
+    for busy in session.busy() {
+        ctx.report
+            .diag(&busy.diagnostic.code, busy.diagnostic.message.clone());
+    }
+    let refused: BTreeSet<String> = session.busy().iter().map(|b| b.file.clone()).collect();
+    entries.retain(|e| !refused.contains(&e.file));
     let mut backend = SessionBackend {
         session,
         default_unit: units,
@@ -1141,6 +1154,7 @@ fn drive_adapter<R: BufRead, W: Write>(
         regen: Vec::new(),
         diags: Vec::new(),
         failure: None,
+        pushed: Vec::new(),
     };
     let real = run(
         &entries,
@@ -1154,6 +1168,13 @@ fn drive_adapter<R: BufRead, W: Write>(
     apply_lock(ctx, &before, &engine_lock);
     to_records(&real, ctx.report);
     ctx.report.regen.append(&mut backend.regen);
+    // R010: one diagnostic per file naming the locators the adapter rejected.
+    for r in rejections(&backend.pushed) {
+        backend.diags.push(SyncDiag {
+            code: r.diagnostic.code,
+            message: r.diagnostic.message,
+        });
+    }
     let blocked = backend.failure.is_some()
         || real.records.iter().any(|r| r.verb == Verb::Fail)
         || backend
@@ -1285,7 +1306,10 @@ fn sync_adapter(
         adapter.version.as_deref(),
         Some(adapter.timeout()),
     )
-    .map_err(|e| format!("R008: could not start adapter `{}`: {e}", adapter.id()))?;
+    .map_err(|e| match unavailable(adapter.id(), &e, AvailVerb::Sync) {
+        Some(u) => format!("{}: {}", u.diagnostic.code, u.diagnostic.message),
+        None => format!("R008: could not start adapter `{}`: {e}", adapter.id()),
+    })?;
     if client.info().capabilities.contains(&CapabilityName::Drive) {
         drive_adapter(client, pkg, adapter, ir, ctx)
     } else {
@@ -2258,6 +2282,54 @@ mod tests {
         assert_eq!(code, EXIT_USAGE, "{err}");
         assert!(err.contains("R008"), "{err}");
         assert!(start.elapsed() < std::time::Duration::from_secs(30));
+    }
+
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::sync_adapter
+    #[test]
+    fn unavailable_adapter_exits_two_with_r008() {
+        let dir = project("");
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"gone\"\ncommand = [\"./does-not-exist\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        let (code, _, err) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_USAGE, "{err}");
+        assert!(err.contains("R008"), "{err}");
+    }
+
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn rejected_locator_is_reported_as_r010_per_file() {
+        let mut results = full_run("6mm");
+        results[4] = json!({"statuses": [{"locator": "Plate_Thk", "status": "rejected"}],
+                            "diagnostics": []});
+        let (report, _, _) = drive(&[], Some("5mm"), &results);
+        let r010: Vec<_> = report
+            .diagnostics
+            .iter()
+            .filter(|d| d.code == "R010")
+            .collect();
+        assert_eq!(r010.len(), 1, "{report:?}");
+        assert!(r010[0].message.contains("part.FCStd") && r010[0].message.contains("Plate_Thk"));
+    }
+
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn dirty_file_is_refused_r009_and_nothing_is_pushed() {
+        let results = vec![
+            init(),
+            observed("5mm"),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": true, "readonly": false}]}, "diagnostics": []}),
+            observed("5mm"),
+            Json::Null,
+        ];
+        let (report, calls, _) = drive(&[], Some("5mm"), &results);
+        assert!(
+            report.diagnostics.iter().any(|d| d.code == "R009"),
+            "{report:?}"
+        );
+        assert!(!calls.contains(&"push".to_owned()), "{calls:?}");
     }
 
     // frob:ticket 01M4YQQPSNQ7TP3QFRWAYFH870

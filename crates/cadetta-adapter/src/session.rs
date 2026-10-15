@@ -5,6 +5,7 @@
 use std::fmt;
 use std::io::{BufRead, Write};
 
+use crate::availability::{Busy, partition_busy};
 use crate::rpc::{
     ChangedParam, Client, LocatorStatus, OpenParams, PushParams, PushResult, PushStatus,
     ReadParams, ReadResult, ReadSource, RegenParams, RegenResult, RpcError, SaveResult,
@@ -87,33 +88,45 @@ pub struct SyncReport {
 pub struct DriveSession<R: BufRead, W: Write> {
     client: Client<R, W>,
     handle: String,
+    busy: Vec<Busy>,
 }
 
 impl<R: BufRead, W: Write> DriveSession<R, W> {
-    /// Opens `files`; any dirty or read-only file is refused (R009) and the session closed.
+    /// Opens `files`; dirty or read-only files are refused per file (R009) and the rest proceed.
+    ///
+    /// The session is closed and `Refused` returned only when every file is refused.
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
     pub fn open(mut client: Client<R, W>, files: &[String]) -> Result<Self, SessionError> {
         let res = client.open(&OpenParams {
             files: files.to_vec(),
         })?;
         let session = res.session;
         let handle = session.handle.clone();
-        let refused = session.files.iter().find_map(|f| {
-            if f.dirty {
-                Some((f.path.clone(), "dirty"))
-            } else if f.readonly {
-                Some((f.path.clone(), "read-only"))
-            } else {
-                None
-            }
-        });
-        let mut this = Self { client, handle };
-        if let Some((file, reason)) = refused {
-            tracing::warn!(%file, reason, "document refused before push (R009)");
+        let (ready, busy) = partition_busy(&session.files);
+        let mut this = Self {
+            client,
+            handle,
+            busy,
+        };
+        if ready.is_empty()
+            && let Some(first) = this.busy.first()
+        {
+            let refused = SessionError::Refused {
+                file: first.file.clone(),
+                reason: first.reason,
+            };
+            tracing::warn!(refused = this.busy.len(), "every document refused (R009)");
             this.close_quietly();
-            return Err(SessionError::Refused { file, reason });
+            return Err(refused);
         }
-        tracing::info!(handle = %this.handle, files = files.len(), "session opened");
+        tracing::info!(handle = %this.handle, files = files.len(), busy = this.busy.len(), "session opened");
         Ok(this)
+    }
+
+    /// The files refused at open (R009); the host must not push to, save or close them itself.
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
+    pub fn busy(&self) -> &[Busy] {
+        &self.busy
     }
 
     /// The session handle the adapter issued.
@@ -200,7 +213,8 @@ pub fn sync<R: BufRead, W: Write>(
     let mut session = DriveSession::open(client, &files)?;
     let mut statuses = Vec::new();
     let mut failure = None;
-    for p in pushes {
+    let refused: Vec<String> = session.busy().iter().map(|b| b.file.clone()).collect();
+    for p in pushes.into_iter().filter(|p| !refused.contains(&p.file)) {
         match session.push(&p.file, p.params) {
             Ok(r) => statuses.push((p.file, r.statuses)),
             Err(e) => {
@@ -375,5 +389,38 @@ mod tests {
             .and_then(|e| e.code());
         assert_eq!(code, Some("R009"));
         assert_eq!(methods(&out), ["initialize", "open", "close"]);
+    }
+
+    // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
+    // frob:tests crates/cadetta-adapter/src/session.rs::DriveSession kind=unit
+    #[test]
+    fn dirty_file_among_several_is_refused_and_the_rest_are_pushed() {
+        let two = json!({"session": {"handle": "s1", "files": [
+            {"path": "a.FCStd", "dirty": true, "readonly": false},
+            {"path": "b.FCStd", "dirty": false, "readonly": false}]},
+            "diagnostics": []});
+        let push = json!({"statuses": [], "diagnostics": []});
+        let results = [init(), two, push, Value::Null, Value::Null];
+        let mut out = Vec::new();
+        let c = Client::connect(script(&results), &mut out, None).unwrap();
+        let report = sync(
+            c,
+            vec![
+                FilePush {
+                    file: "a.FCStd".into(),
+                    params: vec![change()],
+                },
+                FilePush {
+                    file: "b.FCStd".into(),
+                    params: vec![change()],
+                },
+            ],
+            SaveMode::Never,
+        )
+        .unwrap();
+        assert_eq!(report.statuses.len(), 1);
+        assert_eq!(report.statuses[0].0, "b.FCStd");
+        let m = methods(&out);
+        assert_eq!(m.iter().filter(|x| *x == "push").count(), 1);
     }
 }
