@@ -200,6 +200,8 @@ pub struct Analysis {
     pub diagnostics: Vec<Diagnostic>,
     /// The in-scope packages lowered to IR; empty when parsing failed.
     pub packages: Vec<LoweredPackage>,
+    /// The loaded dependency packages outside the scope, lowered but not linted.
+    pub dependencies: Vec<LoweredPackage>,
     /// Source files, for rendering excerpts.
     pub sources: SourceIndex,
     /// True when a syntax error stopped the pipeline before evaluation.
@@ -1314,8 +1316,7 @@ fn evaluate_stages(
     }
 
     // Lower each in-scope package and run the IR lints over it.
-    let mut lowered = Vec::new();
-    for p in &in_scope {
+    let lower_one = |p: &ParsedPackage| {
         let texts: BTreeMap<Vec<String>, SourceText> = p
             .modules
             .iter()
@@ -1329,7 +1330,7 @@ fn evaluate_stages(
                 )
             })
             .collect();
-        let input = LowerInput {
+        lower(&LowerInput {
             name: &p.name,
             version: &p.version,
             packages: &sources,
@@ -1340,8 +1341,22 @@ fn evaluate_stages(
             deps: &graph,
             variants: BTreeMap::new(),
             fits: &derived_fits,
-        };
-        let ir = lower(&input);
+        })
+    };
+    // frob:ticket 01M4YTGQ9BHMKS38GTGX2PFH03
+    // Out-of-scope packages are lowered unlinted so an in-scope IR can digest its cross-package reads.
+    analysis.dependencies = parsed
+        .iter()
+        .filter(|p| !p.is_std && !scope.contains(&p.name))
+        .map(|p| LoweredPackage {
+            name: p.name.clone(),
+            ir: lower_one(p),
+            text_params: Default::default(),
+        })
+        .collect();
+    let mut lowered = Vec::new();
+    for p in &in_scope {
+        let ir = lower_one(p);
         let locate = |s: &cadetta_ir::model::SpanRef| index.locate_ref(&s.file, s.start, s.end);
         out.extend(unused::check(&ir, locate));
         out.extend(interface::check_alternates(&ir));
