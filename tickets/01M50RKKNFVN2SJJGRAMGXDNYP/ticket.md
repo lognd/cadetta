@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-15T22:24:49Z"
+updated = "2026-10-15T22:25:13Z"
 scope = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "A check inside a solver on its own recorded output yields C001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A check reading an unsolved output yields C002 and not S003"
