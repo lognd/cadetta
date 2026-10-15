@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:11Z"
-updated = "2026-10-15T02:12:17Z"
+updated = "2026-10-15T02:12:18Z"
 idempotency_key = "Z48-iso286"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HDVGKT6AVWCWY7078TNV.added.md"]
 
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Class letter case gives hole/shaft role"
-bound = false
+bound = true
 
 [[acceptance]]
 text = ".mmc/.lmc use the role (#[role], class letter, inherited); E010 without one"
