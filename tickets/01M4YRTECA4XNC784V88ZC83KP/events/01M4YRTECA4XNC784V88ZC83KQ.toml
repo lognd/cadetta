@@ -1,0 +1,11 @@
+kind = "create"
+title = "check: resolve git dependencies (currently skipped with a warning)"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/**"]
+acceptance = ["cadetta check loads git dependencies from the lock-pinned checkout"]
+body = "found while working ~992PZ41: Project::load only loads path dependencies; git sources need an injected fetch (see cmd/update.rs git_checkout); use of a git dependency stays E002 in check."
+at = "2026-10-15T03:13:47Z"
+actor = "lognd"
+rev = 1
