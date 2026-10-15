@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T03:26:41Z"
+digest = "08b8e6b9de3be002502dffe32b7379656517c61006289bfbc531b86cea58ba91"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.23s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8619e53e-1aac-4314-9c44-a996f1a53539 with nextest profile: default
+    Starting 1 test across 63 binaries (1382 tests skipped)
+        PASS [   0.434s] cadetta::stdlib_interface_kinds named_kind_mismatch_on_sourced_member_is_q003
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.436s] 1 test run: 1 passed, 1382 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "named_kind_mismatch_on_sourced_member_is_q003"
+size = 754
+status = "measured"
+test_count = 1
+tests_digest = "9b207348b3e171a1e941e8564e571ffc1b9ababbc58f7fc27b6d56902ebf4dfb"
+at = "2026-10-15T03:26:41Z"
+actor = "lognd"
+rev = 1
