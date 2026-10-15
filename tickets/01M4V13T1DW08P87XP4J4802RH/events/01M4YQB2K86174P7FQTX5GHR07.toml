@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-15T02:47:55Z"
+digest = "a1830d973eb84b777b8ad6b82b551cd141c10cb7c23c8eb991d35995073afc83"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b806bcab-86f2-47e8-8870-77bad91e99b5 with nextest profile: default
+    Starting 1 test across 58 binaries (1342 tests skipped)
+        PASS [   0.012s] cadetta lint_facts::tests::interface_bounds_lower_to_si_and_inherit
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 1342 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "interface_bounds_lower_to_si_and_inherit"
+size = 563
+status = "measured"
+test_count = 1
+tests_digest = "35d206832e9066e5fc0cbaa18be8510aadbbeb2cf0082775ddd804225f86af47"
+at = "2026-10-15T02:47:55Z"
+actor = "lognd"
+rev = 1
