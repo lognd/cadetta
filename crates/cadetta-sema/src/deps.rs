@@ -44,11 +44,11 @@ const ROLLUP_FNS: &[&str] = &["sum", "max", "min"];
 pub enum Severity {
     /// A fixed-severity error (D003).
     Error,
-    /// A warning (N004).
+    /// A warning (N004, N006).
     Warning,
 }
 
-/// A D003 or N004 finding.
+/// A D003, N004 or N006 finding.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DepDiagnostic {
     /// The lint code.
@@ -297,6 +297,14 @@ fn path_to_canon(resolver: &Resolver<'_>, ctx: &Ctx, path: &Path) -> Option<Cano
             Some(base)
         }
         Ok(_) => None,
+        Err(_) if starts_upper(&path.segments[0].name) => {
+            // A stale type name (`Old.thk`): read as an item of this module, like the `was`.
+            // frob:ticket 01M4YR00ZFABJQWKQJ3F3JFVY4
+            debug!(path = %path.text(), "stale item name read textually");
+            let mut base = CanonPath::item(&ctx.package, &ctx.module, &path.segments[0].name);
+            base.members = names(1);
+            Some(base)
+        }
         Err(_) => {
             let c = ctx.component.as_deref()?;
             let mut base = CanonPath::item(&ctx.package, &ctx.module, c);
@@ -304,6 +312,11 @@ fn path_to_canon(resolver: &Resolver<'_>, ctx: &Ctx, path: &Path) -> Option<Cano
             Some(base)
         }
     }
+}
+
+/// True when `name` starts with an uppercase letter (an item name).
+fn starts_upper(name: &str) -> bool {
+    name.chars().next().is_some_and(char::is_uppercase)
 }
 
 /// An item path read from text alone (its module or item has since moved).
@@ -336,10 +349,27 @@ impl DepGraph {
     /// Builds the graph of every component in `packages` without evaluating anything.
     pub fn build(resolver: &Resolver<'_>, renames: &Renames, packages: &[PackageSrc<'_>]) -> Self {
         let mut comps = BTreeMap::new();
+        let mut case_diags = Vec::new();
         for p in packages {
             for m in &p.modules {
                 for c in m.file.components() {
                     comps.insert(CanonPath::item(&p.name, &m.path, &c.name.name), c);
+                    if !starts_upper(&c.name.name) {
+                        // frob:ticket 01M4YR00ZFABJQWKQJ3F3JFVY4
+                        // Lowering drops such a component, so the IR lint never sees the name.
+                        debug!(name = %c.name.name, "N001: component name is not an item name");
+                        case_diags.push(DepDiagnostic {
+                            module: Some(ModuleKey::new(&p.name, &m.path)),
+                            code: "N001",
+                            severity: Severity::Warning,
+                            message: format!(
+                                "component name `{}` breaks the case canon",
+                                c.name.name
+                            ),
+                            span: c.name.span,
+                            related: Vec::new(),
+                        });
+                    }
                 }
             }
         }
@@ -358,6 +388,7 @@ impl DepGraph {
             b.add_instance(id, &inst, None, &mut Vec::new());
         }
         let mut graph = b.graph;
+        graph.diagnostics.extend(case_diags);
         graph.diagnostics.extend(graph.find_cycles());
         graph.diagnostics.sort_by_key(|d| (d.span, d.code));
         graph.diagnostics.dedup();
@@ -803,6 +834,27 @@ impl<'a> Builder<'_, 'a> {
                 return;
             }
         };
+        if let Resolved::Member {
+            path,
+            beside_instance: Some(part),
+            ..
+        } = &resolved
+        {
+            // frob:ticket 01M4YR00ZFABJQWKQJ3F3JFVY4
+            let shown = path.to_string();
+            let tail = shown.split_once('.').map_or("", |x| x.1);
+            debug!(%path, %part, "N006: type read beside an instance");
+            self.graph.diagnostics.push(DepDiagnostic {
+                module: Some(ModuleKey::of_ctx(&ctx)),
+                code: "N006",
+                severity: Severity::Warning,
+                message: format!(
+                    "`{path}` reads the type, but this assembly has an instance; read `{part}.{tail}`"
+                ),
+                span: e.span,
+                related: Vec::new(),
+            });
+        }
         let inst = &site.inst;
         let first = |p: &CanonPath| match p.members.first() {
             Some(MemberSeg::Name(n)) => Some(n.clone()),
@@ -965,6 +1017,43 @@ mod tests {
             "model Bolt { mass = 4g }\n\
              model Top {\n  part bolts[2]: Bolt\n  mass = sum(self, mass)\n}\n",
         );
+        assert!(codes(&analyse(&[(&[], &f)])).is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn stale_item_name_in_was_is_n004() {
+        let f = file(
+            "model Part {\n  thickness = 3mm  was Old.thk\n}\nmodel Other {\n  t = Old.thk\n}\n",
+        );
+        assert_eq!(codes(&analyse(&[(&[], &f)])), vec!["N004"]);
+        let f = file("model Part {\n  thickness = 3mm\n}\nmodel Other {\n  t = Part.thickness\n}\n");
+        assert!(codes(&analyse(&[(&[], &f)])).is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn type_read_beside_instance_is_n006() {
+        let f = file(
+            "model Plate {\n  thickness = 4mm\n}\n\
+             assembly Rig {\n  part plate: Plate\n  total = Plate.thickness\n}\n",
+        );
+        let g = analyse(&[(&[], &f)]);
+        assert_eq!(codes(&g), vec!["N006"]);
+        assert!(g.diagnostics()[0].message.contains("`plate.thickness`"));
+        let f = file(
+            "model Plate {\n  thickness = 4mm\n}\n\
+             assembly Rig {\n  part plate: Plate\n  total = plate.thickness\n}\n",
+        );
+        assert!(codes(&analyse(&[(&[], &f)])).is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn lowercase_component_name_is_n001() {
+        let f = file("model part_thing {\n  width = 3mm\n}\n");
+        assert_eq!(codes(&analyse(&[(&[], &f)])), vec!["N001"]);
+        let f = file("model PartThing {\n  width = 3mm\n}\n");
         assert!(codes(&analyse(&[(&[], &f)])).is_empty());
     }
 

@@ -1,8 +1,9 @@
 //! Lints N001-N006: the naming family.
 //!
 //! N001 (case canon), N002 (redundant prefix), N003 (unit in name), N005
-//! (reserved separator) and N006 (type read beside an instance) are derived from
-//! the IR. N004 (renamed reference) is known to the resolver, which reads `was`
+//! (reserved separator) are derived from
+//! the IR. N006 (type read beside an instance) is decided by the resolver and
+//! reported with the dependency diagnostics (`cadetta-sema` `deps.rs`). N004 (renamed reference) is known to the resolver, which reads `was`
 //! paths from text (language.md 4); it hands findings over and [`lift_renamed`]
 //! turns them into catalog diagnostics. N005 is a fixed error and cannot be waived.
 //!
@@ -12,7 +13,7 @@
 
 use std::collections::BTreeSet;
 
-use cadetta_ir::model::{Component, ComponentClass, Member, MemberKind, Project, SpanRef};
+use cadetta_ir::model::{Component, Member, MemberKind, Project, SpanRef};
 use cadetta_ir::path::Path;
 use tracing::{debug, trace};
 
@@ -120,6 +121,14 @@ fn unit_suffix(name: &str) -> Option<&str> {
     (!stem.is_empty() && UNIT_SUFFIXES.contains(&last)).then_some(last)
 }
 
+/// The slot name of a part path: the last instance step, else the member root (`Rig.plate`).
+fn part_name(path: &Path) -> Option<&str> {
+    path.steps
+        .last()
+        .map(|s| s.name.as_str())
+        .or_else(|| path.member_root())
+}
+
 /// Collects diagnostics for one run.
 struct Run<'a, F: Fn(&SpanRef) -> Location> {
     cfg: &'a LintConfig,
@@ -189,46 +198,9 @@ impl<F: Fn(&SpanRef) -> Location> Run<'_, F> {
             );
         }
     }
-
-    /// N006 for reads in assembly `c` of `Type.member` where a `part` of `Type` exists.
-    fn type_reads(&mut self, c: &Component) {
-        let mut seen = BTreeSet::new();
-        for m in &c.members {
-            for d in &m.deps {
-                if !d.steps.is_empty() || d.item == c.path.item {
-                    continue;
-                }
-                let parts: Vec<&str> = c
-                    .parts
-                    .iter()
-                    .filter(|p| p.type_name.rsplit("::").next() == Some(d.item.as_str()))
-                    .filter_map(|p| p.path.steps.last().map(|s| s.name.as_str()))
-                    .collect();
-                if parts.is_empty() || !seen.insert((m.path.to_string(), d.to_string())) {
-                    continue;
-                }
-                let tail = d.to_string();
-                let tail = tail.split_once('.').map(|x| x.1).unwrap_or_default();
-                let hint = parts
-                    .iter()
-                    .map(|p| format!("`{p}.{tail}`"))
-                    .collect::<Vec<_>>()
-                    .join(" or ");
-                self.emit(
-                    N006,
-                    format!(
-                        "`{}` reads the type, but this assembly has an instance; read {hint}",
-                        d
-                    ),
-                    Some(m.path.to_string()),
-                    m.span.as_ref(),
-                );
-            }
-        }
-    }
 }
 
-/// Run N001, N002, N003, N005 and N006 over `project`; `locate` maps a span to a location.
+/// Run N001, N002, N003 and N005 over `project`; `locate` maps a span to a location.
 pub fn check(
     project: &Project,
     cfg: &LintConfig,
@@ -252,8 +224,8 @@ pub fn check(
         let item = c.path.item.clone();
         r.name(Canon::Pascal, "component", &item, &cpath, c.span.as_ref());
         for part in &c.parts {
-            if let Some(s) = part.path.steps.last() {
-                let name = s.name.clone();
+            if let Some(name) = part_name(&part.path) {
+                let name = name.to_owned();
                 r.name(
                     Canon::Snake,
                     "part",
@@ -281,9 +253,6 @@ pub fn check(
             if !name.contains("__") {
                 r.member_name(c, m, name);
             }
-        }
-        if c.class == ComponentClass::Assembly {
-            r.type_reads(c);
         }
     }
     r.out
@@ -327,7 +296,7 @@ pub fn lift_renamed(refs: &[RenamedRef], cfg: &LintConfig) -> Vec<Diagnostic> {
 mod tests {
     use super::*;
     use crate::diag::Severity;
-    use cadetta_ir::model::{Flavour, PackageId, Part};
+    use cadetta_ir::model::{ComponentClass, Flavour, PackageId, Part};
     use cadetta_ir::path::PathContext;
 
     fn p(s: &str) -> Path {
@@ -465,34 +434,17 @@ mod tests {
 
     // frob:tests crates/cadetta-lint/src/rules/n.rs::check
     #[test]
-    fn n006_type_read_beside_instance() {
-        let mut asm = comp(
-            "demo::Rover",
-            ComponentClass::Assembly,
-            &["demo::Rover.span"],
-        );
-        asm.members[0].deps.push(p("demo::Axle.length"));
+    fn n001_checks_part_slot_named_in_members() {
+        let mut asm = comp("demo::Rig", ComponentClass::Assembly, &["demo::Rig.total"]);
         asm.parts.push(Part {
-            path: p("demo::Rover/rear.x"),
-            type_name: "Axle".into(),
+            path: p("demo::Rig.BadSlot"),
+            type_name: "Plate".into(),
             count: None,
-            primary: "Axle".into(),
+            primary: "Plate".into(),
             alternates: vec![],
             args: Default::default(),
         });
-        let pr = proj(vec![asm]);
-        let d = check(&pr, &LintConfig::new(), |_| unreachable!());
-        assert_eq!(d.len(), 1);
-        assert_eq!(d[0].code, "N006");
-        assert!(d[0].message.contains("`rear.length`"));
-        // no part of that type: quiet
-        let mut lone = comp(
-            "demo::Rover",
-            ComponentClass::Assembly,
-            &["demo::Rover.span"],
-        );
-        lone.members[0].deps.push(p("demo::Axle.length"));
-        assert!(codes(&proj(vec![lone])).is_empty());
+        assert_eq!(codes(&proj(vec![asm])), vec!["N001"]);
     }
 
     // frob:tests crates/cadetta-lint/src/rules/n.rs::lift_renamed

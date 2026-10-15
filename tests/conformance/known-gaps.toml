@@ -93,21 +93,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/n001-case"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
-fixture = "language/n004-was"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
-fixture = "language/n006-type-read-beside-instance"
-ticket = "~8WN9V3R"
-reason = "sema does not emit the spec diagnostic yet"
-
-[[gap]]
 fixture = "language/p001-missing-role"
 ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"

@@ -457,6 +457,8 @@ impl Selection {
 /// Evaluates the parameters and `let`s of a project, on demand and memoised.
 pub struct Evaluator<'r, 'p> {
     resolver: &'r Resolver<'p>,
+    /// Every `was` of the project, so a stale reference reads the current member (N004 is the graph's).
+    renames: crate::deps::Renames,
     units: &'r UnitTable,
     defs: BTreeMap<CanonPath, Def<'p>>,
     /// Components whose datums and placements are evaluated (those without parameters).
@@ -535,6 +537,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         Self {
             resolver,
+            renames: crate::deps::Renames::collect(resolver, packages),
             units,
             defs,
             geom_components,
@@ -789,7 +792,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     }
 
     fn classify(&self, sc: &Scope, e: &Expr) -> R<RefKind> {
-        let resolved = self.resolver.resolve_ref(&sc.ctx, e, None).map_err(|re| {
+        // frob:ticket 01M4YR00ZFABJQWKQJ3F3JFVY4
+        let resolved = self.renames.resolve_ref(self.resolver, &sc.ctx, e, None).map(|(r, _)| r).map_err(|re| {
             Fail::Diag(EvalDiagnostic {
                 code: re.code,
                 severity: Severity::Error,

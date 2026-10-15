@@ -241,8 +241,13 @@ when the last `_` token of a member name is a unit symbol (`mm`, `in`,
 `kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
 N005 only, never also N001. N004 findings come from the resolver, since
 only it sees the `was` text; the lint turns them into diagnostics.
-N006 carries its suggestion in the message (`rear.length`); no edit is
-attached because the read has no single source range in the IR.
+A stale uppercase item name in a `was` path or a read (`Old.thk`) is
+N004 too, since it normalizes to the same canonical path. N006 is decided
+by the resolver (a type member read where the assembly has an instance)
+and reported with the dependency diagnostics; its suggestion is in the
+message (`rear.length`) and no edit is attached. A component whose name
+does not start uppercase is dropped by lowering, so its N001 also comes
+from the dependency graph.
 
 ### D: duplication and single source of truth
 
