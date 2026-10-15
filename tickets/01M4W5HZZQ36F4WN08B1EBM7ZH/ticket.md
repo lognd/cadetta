@@ -2,12 +2,12 @@
 id = "01M4W5HZZQ36F4WN08B1EBM7ZH"
 title = "Host Part argument and part arrays/count(at) for ScrewJoint"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-14T02:58:39Z"
-updated = "2026-10-14T02:58:39Z"
+updated = "2026-10-15T12:50:33Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
 
 [[acceptance]]
