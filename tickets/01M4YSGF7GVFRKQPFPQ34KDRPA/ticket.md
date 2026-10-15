@@ -13,6 +13,10 @@ scope = ["crates/cadetta-sema/**"]
 [[acceptance]]
 text = "A check comparing enum variants (e.g. a Materials table cell == TapClass::Hard) decides == and != instead of EVAL"
 bound = false
+
+[[acceptance]]
+text = "Ordering enum variants is an EVAL error"
+bound = false
 +++
 
 found while working ~6K58FR1. Fixture stdlib/materials-tap-class expects C001 at acme.demo::P.steel_hard; both sides give EVAL a quantity is required here for Materials[Material::X].tap_class == TapClass::Hard.
