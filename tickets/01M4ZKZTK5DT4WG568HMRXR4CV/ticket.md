@@ -2,7 +2,8 @@
 id = "01M4ZKZTK5DT4WG568HMRXR4CV"
 title = "roll-ups do not read non-argument members of parts nested in a parameterized callee (screw mass inside ScrewJoint)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
