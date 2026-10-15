@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "changel
 
 [[acceptance]]
 text = "ISO 286 class literal (20mm H7) evaluates to its table tolerance; out-of-range is F002"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Class letter case gives hole/shaft role"

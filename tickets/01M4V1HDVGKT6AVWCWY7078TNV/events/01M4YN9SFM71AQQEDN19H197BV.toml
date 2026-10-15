@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:11:43Z"
+digest = "122cf3ffb9eaf69532a358f5046a59bc8abd9cfab6f4588c3fed4496ac3b705e"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 32.41s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5aac4fe3-510e-4573-a60f-5fbeb6604e79 with nextest profile: default
+    Starting 1 test across 52 binaries (1284 tests skipped)
+        PASS [   0.012s] cadetta-sema eval::tests::iso_class_applies_table_deviations_and_hole_role
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.016s] 1 test run: 1 passed, 1284 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "iso_class_applies_table_deviations_and_hole_role"
+size = 903
+status = "measured"
+test_count = 1
+tests_digest = "56cca58b22a2e00be1e35153ef6fa3da2a8f6b72e0933b9b8b928b79adcff347"
+at = "2026-10-15T02:11:43Z"
+actor = "lognd"
+rev = 1
