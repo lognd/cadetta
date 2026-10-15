@@ -4,7 +4,12 @@ title = "N003 fires on std interface member tap_lead_in (found while working ~3G
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-14T03:55:26Z"
-updated = "2026-10-14T03:55:26Z"
+updated = "2026-10-15T07:24:56Z"
+
+[[acceptance]]
+text = "N003 does not fire on a dimensionless member whose name ends in a unit-like word (tap_lead_in = 3)"
+bound = false
 +++
