@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T08:00:29Z"
-updated = "2026-10-15T08:00:29Z"
+updated = "2026-10-15T23:20:55Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs"]
 +++
 
