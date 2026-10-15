@@ -1,0 +1,35 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:21:05Z"
+digest = "1baf038590a9d79def367ea5fe1207067deaef049be3e09cef32124a0b185a71"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.89s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6c0c9591-b4fe-4aaa-90c8-e7470e53db0e with nextest profile: default
+    Starting 1 test across 56 binaries (1306 tests skipped)
+        PASS [   1.438s] cadetta::ir_entries ir_validate_corpus_matches_expected_exit_codes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.440s] 1 test run: 1 passed, 1306 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "ir_validate_corpus_matches_expected_exit_codes"
+size = 1307
+status = "measured"
+test_count = 1
+tests_digest = "5cde562d1409a6329900e94c16cf9cb77b8fa45a965463aa2c57c201c6bf6ca5"
+at = "2026-10-15T02:21:05Z"
+actor = "lognd"
+rev = 1
