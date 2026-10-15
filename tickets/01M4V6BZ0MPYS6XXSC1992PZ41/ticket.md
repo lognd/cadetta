@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "check reports E014 when a dependency's content differs from its lock digest"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "dependency packages are loaded so cross-package use resolves and E016 applies across packages"
