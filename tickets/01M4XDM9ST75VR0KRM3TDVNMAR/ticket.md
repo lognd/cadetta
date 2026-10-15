@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T14:38:57Z"
-updated = "2026-10-15T05:06:49Z"
+updated = "2026-10-15T05:06:50Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/cmd/emit.rs", "docs/spec/adapters.md", "changelog.d/*"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "A tolerance edited in CAD is reported as R001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Tolerances are ignored without the tolerances feature"

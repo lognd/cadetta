@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T05:06:50Z"
+digest = "1ead261da07e1189e33e6bfd1635998a89f433b7ff410947e58b41c4dd08d5fc"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 536b9c6f-c14c-4e2c-9306-7d3fc0154480 with nextest profile: default
+    Starting 1 test across 67 binaries (1432 tests skipped)
+        PASS [   0.129s] cadetta cmd::sync::tests::tolerance_edited_in_cad_is_r001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.131s] 1 test run: 1 passed, 1432 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "tolerance_edited_in_cad_is_r001"
+size = 553
+status = "measured"
+test_count = 1
+tests_digest = "c7fb7349c5a68ad724a0a43363a5fc67e3e88b29f60ab6b2397d8c592030178b"
+at = "2026-10-15T05:06:50Z"
+actor = "lognd"
+rev = 1
