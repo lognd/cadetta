@@ -7,7 +7,7 @@ priority = "high"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T22:35:38Z"
-updated = "2026-10-15T22:36:09Z"
+updated = "2026-10-15T23:17:09Z"
 scope = ["crates/cadetta-adapter/src/geometry_plan.rs"]
 
 [[acceptance]]
