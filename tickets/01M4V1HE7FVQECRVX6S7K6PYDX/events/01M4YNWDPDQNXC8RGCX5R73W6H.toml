@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:21:42Z"
+digest = "a040bc0cfa079bc92a020dbcf1e88faff189cf3359120a344fe2fbe3002578d7"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 43.86s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a96fc5f2-ae7d-43ed-97c3-cf1aa259d768 with nextest profile: default
+    Starting 2 tests across 56 binaries (1307 tests skipped)
+        PASS [   0.168s] cadetta::quantity_pi_inexact floor_of_pi_carrying_value_raises_q006
+        PASS [   0.172s] cadetta::quantity_pi_inexact floor_of_pi_free_ratio_is_clean
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.175s] 2 tests run: 2 passed, 1307 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "floor_of_pi"
+size = 1064
+status = "measured"
+test_count = 2
+tests_digest = "8ce5ff501393ad78455fb19600a0589b21f9ffd8e4bf648f092024eb6a7429e7"
+at = "2026-10-15T02:21:42Z"
+actor = "lognd"
+rev = 1
