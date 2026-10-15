@@ -2,7 +2,8 @@
 id = "01M4VQXM5M08SGAEJQTQ6AKDVQ"
 title = "Conformance runner: executor for binding protocol entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
