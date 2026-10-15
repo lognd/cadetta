@@ -75,6 +75,8 @@ pub struct ItemFacts {
     /// True when something in the declaring package names or uses the item,
     /// including an instantiation, an `implements` or a read.
     pub used: bool,
+    /// True for an assembly: an entry point, never dead even when nothing names it.
+    pub entry_point: bool,
     /// True for a component with at least one parameter lacking a default.
     pub parameterized: bool,
     /// True when no `part` of another component instantiates the component.
@@ -87,7 +89,11 @@ pub struct ItemFacts {
 
 /// Whether U002 fires for `i`: private, in the checked package, used nowhere.
 fn is_dead_private(i: &ItemFacts) -> bool {
-    i.in_checked_package && i.visibility == Visibility::Private && !i.used && i.instances == 0
+    i.in_checked_package
+        && i.visibility == Visibility::Private
+        && !i.used
+        && !i.entry_point
+        && i.instances == 0
 }
 
 /// Run U002 over `items`; `locate` turns a span into a diagnostic location.
@@ -161,6 +167,7 @@ mod tests {
             visibility: vis,
             in_checked_package: true,
             used: false,
+            entry_point: false,
             parameterized: false,
             is_root: true,
             instances: 0,
@@ -192,6 +199,14 @@ mod tests {
         dep.in_checked_package = false;
         let items = [item(Visibility::Pub), item(Visibility::PubPackage), dep];
         assert!(check(&items, |_| unreachable!()).is_empty());
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/u002.rs::check
+    #[test]
+    fn u002_quiet_for_private_entry_point_assembly() {
+        let mut i = item(Visibility::Private);
+        i.entry_point = true;
+        assert!(check(&[i], |_| unreachable!()).is_empty());
     }
 
     // frob:tests crates/cadetta-lint/src/rules/u002.rs::check_i004

@@ -1,3 +1,6 @@
 model Part {
   w = 1mm
 }
+model Helper(span: Length) {
+  length = span
+}
