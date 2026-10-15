@@ -1,0 +1,10 @@
+kind = "create"
+title = "cadetta import: decode frames and instances from adapter observed JSON"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/import.rs"]
+body = "found while working ~MNV70G6: decode_observed does not push frames/instances into ObservedBuilder, so end-to-end import never proposes them"
+at = "2026-10-15T08:58:36Z"
+actor = "lognd"
+rev = 1
