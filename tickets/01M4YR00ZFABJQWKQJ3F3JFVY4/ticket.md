@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:30:21Z"
+updated = "2026-10-15T03:30:46Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "N004: a stale item name in a was path or read is reported"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "N006: a type member read beside an instance is reported"
