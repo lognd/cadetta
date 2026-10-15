@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T14:38:57Z"
-updated = "2026-10-15T05:06:00Z"
+updated = "2026-10-15T05:06:01Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/cmd/emit.rs", "docs/spec/adapters.md", "changelog.d/*"]
 
 [[acceptance]]
 text = "A design tolerance is pushed with the value (symmetric or bilateral)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A tolerance edited in CAD is reported as R001"
