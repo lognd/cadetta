@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A check comparing enum variants (e.g. a Materials table cell == TapClass::Hard) decides == and != instead of EVAL"]
+moved = []
+at = "2026-10-15T12:28:08Z"
+actor = "lognd"
+rev = 1
