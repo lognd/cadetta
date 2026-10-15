@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**", "docs/spec/geometry.md"]
+new = ["crates/cadetta-sema/**", "docs/spec/geometry.md", "changelog.d/**"]
+at = "2026-10-15T04:37:47Z"
+actor = "lognd"
+rev = 1

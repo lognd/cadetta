@@ -7,7 +7,7 @@ priority = "medium"
 reporter = "lognd"
 created = "2026-10-14T01:03:50Z"
 updated = "2026-10-15T04:37:47Z"
-scope = ["crates/cadetta-sema/**", "docs/spec/geometry.md"]
+scope = ["crates/cadetta-sema/**", "docs/spec/geometry.md", "changelog.d/**"]
 
 [[acceptance]]
 text = "Re-expression of an indexed part instance (leg[1].top in origin) evaluates at that instance placement"
