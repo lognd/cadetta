@@ -71,6 +71,11 @@ solver and output name. A stale result (section 4) still evaluates in
 either role, carrying the S003 fact that names what changed (`inputs`,
 `script`, or a dep path). An output with no recorded value is unsolved.
 
+Solver outputs are evaluated from the recorded `.out.json` result file:
+`check` and the IR read each output's recorded value (parsed as an exact
+quantity) rather than re-running the script. S003/S006 staleness reporting
+over those results is tracked separately (~JET4TC0).
+
 ## 3. Protocol
 
 No library is needed in any language: inputs and outputs are JSON, and

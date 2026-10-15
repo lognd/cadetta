@@ -803,16 +803,6 @@ ticket = "~KKVE13B"
 reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
-fixture = "solvers/output-decimal-exact"
-ticket = "~R8GYSJR"
-reason = "the must-not-fire value expectation repeats the must-fire nominal, contradicting the fixture's own recorded output"
-
-[[gap]]
-fixture = "solvers/role-output-value-is-recorded"
-ticket = "~R8GYSJR"
-reason = "the must-not-fire value expectation repeats the must-fire nominal, contradicting the fixture's own recorded output"
-
-[[gap]]
 fixture = "solvers/variants-flag-solves-alternates"
 ticket = "~0N5FY1T"
 reason = "unindexed read of a counted part array in an in-expression is an EVAL error"

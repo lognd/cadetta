@@ -19,7 +19,7 @@
     "values": [
       {
         "path": "acme.demo::Frame.wall_sizing.min_wall",
-        "nominal": "3.3mm"
+        "nominal": "2mm"
       }
     ],
     "note": "not-fire: recorded 2mm differs"
