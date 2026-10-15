@@ -11,6 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::io::{BufRead, Write};
 use std::path::{Path as FsPath, PathBuf};
 
+use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::builtin::sw_equations::{
     ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, ValueKind,
 };
@@ -19,8 +20,8 @@ use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, DimTolerance, Feature, ObservedTolerance, PushMode,
-    PushStatus, ReadParams, ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedTolerance,
+    PushMode, PushStatus, ReadParams, ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -486,14 +487,64 @@ impl<R: BufRead, W: Write> SessionBackend<R, W> {
     }
 }
 
-impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
-    fn push(
-        &mut self,
-        adapter: &str,
-        file: &str,
-        items: &[PushItem],
-        regen: bool,
-    ) -> Vec<ReadBack> {
+/// One file of a live session as an atomic-push [`Document`]: write is `push`, rebuild is `regen`.
+struct SessionDoc<'a, R: BufRead, W: Write> {
+    backend: &'a mut SessionBackend<R, W>,
+    adapter: String,
+    file: String,
+    /// Statuses of the last write; a locator not `Pushed` reads back as failed.
+    statuses: Vec<LocatorStatus>,
+}
+
+impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
+    fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
+        let (rows, read_tols) = match self.backend.session.read() {
+            Ok(r) => (observe(&r.observed), r.tolerances),
+            Err(e) => {
+                self.backend.fail(&e);
+                return Vec::new();
+            }
+        };
+        let table = UnitTable::builtin();
+        let precision = self.backend.precision;
+        items
+            .iter()
+            .map(|it| {
+                let locator = &it.locator;
+                let status = self.statuses.iter().find(|s| &s.locator == locator);
+                if status.is_some_and(|s| s.status != PushStatus::Pushed) {
+                    return ReadBack {
+                        locator: locator.clone(),
+                        value: None,
+                        tolerance: None,
+                    };
+                }
+                let unit = self
+                    .backend
+                    .default_unit
+                    .get(&(self.adapter.clone(), locator.clone()))
+                    .cloned()
+                    .unwrap_or_default();
+                let value = rows
+                    .iter()
+                    .find(|o| o.file == self.file && &o.native == locator)
+                    .map(|o| normalize_in(&table, &o.text, &unit, precision));
+                let tolerance = read_tols
+                    .iter()
+                    .find(|t| &t.locator == locator)
+                    .and_then(|t| t.tolerance.as_ref())
+                    .or(status.and_then(|s| s.tolerance.as_ref()))
+                    .map(|t| normalize_tolerance(&table, t, &unit, precision));
+                ReadBack {
+                    locator: locator.clone(),
+                    value,
+                    tolerance,
+                }
+            })
+            .collect()
+    }
+
+    fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
         let params = items
             .iter()
             .map(|i| ChangedParam {
@@ -505,87 +556,68 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
                 tolerance: i.tolerance.clone(),
             })
             .collect();
-        let result = match self.session.push(file, params) {
-            Ok(r) => r,
-            Err(e) => {
-                self.fail(&e);
-                return Vec::new();
+        match self.backend.session.push(&self.file, params) {
+            Ok(r) => {
+                self.backend.adapter_diags(&r.diagnostics);
+                self.statuses = r.statuses;
+                Ok(())
             }
-        };
-        self.adapter_diags(&result.diagnostics);
-        if regen {
-            let status = match self.session.regen(&[file.to_owned()]) {
-                Ok(r) => {
-                    self.adapter_diags(&r.diagnostics);
-                    if r.targets.iter().any(|t| t.status == RegenState::Failed) {
-                        self.note("R004", format!("rebuild of `{file}` failed"));
-                        "failed"
-                    } else {
-                        "ok"
-                    }
-                }
-                Err(e) => {
-                    self.fail(&e);
-                    "failed"
-                }
-            };
-            self.regen.push(RegenRecord {
-                file: file.to_owned(),
-                status: status.to_owned(),
-            });
-        } else {
-            self.regen.push(RegenRecord {
-                file: file.to_owned(),
-                status: "skipped".to_owned(),
-            });
+            Err(e) => {
+                self.backend.fail(&e);
+                Err(e.to_string())
+            }
         }
-        let (rows, read_tols) = match self.session.read() {
-            Ok(r) => (observe(&r.observed), r.tolerances),
-            Err(e) => {
-                self.fail(&e);
-                return Vec::new();
-            }
-        };
-        let table = UnitTable::builtin();
-        let precision = self.precision;
-        let unit_for = |locator: &str| {
-            self.default_unit
-                .get(&(adapter.to_owned(), locator.to_owned()))
-                .cloned()
-                .unwrap_or_default()
-        };
-        result
-            .statuses
-            .iter()
-            .map(|s| {
-                let value = (s.status == PushStatus::Pushed)
-                    .then(|| {
-                        rows.iter()
-                            .find(|o| o.file == file && o.native == s.locator)
-                            .map(|o| {
-                                normalize_in(&table, &o.text, &unit_for(&s.locator), precision)
-                            })
-                    })
-                    .flatten();
-                let tolerance = (s.status == PushStatus::Pushed)
-                    .then(|| {
-                        read_tols
-                            .iter()
-                            .find(|t| t.locator == s.locator)
-                            .and_then(|t| t.tolerance.as_ref())
-                            .or(s.tolerance.as_ref())
-                            .map(|t| {
-                                normalize_tolerance(&table, t, &unit_for(&s.locator), precision)
-                            })
-                    })
-                    .flatten();
-                ReadBack {
-                    locator: s.locator.clone(),
-                    value,
-                    tolerance,
+    }
+
+    fn rebuild(&mut self) -> Result<(), String> {
+        match self.backend.session.regen(std::slice::from_ref(&self.file)) {
+            Ok(r) => {
+                self.backend.adapter_diags(&r.diagnostics);
+                if r.targets.iter().any(|t| t.status == RegenState::Failed) {
+                    Err(format!("rebuild of `{}` failed", self.file))
+                } else {
+                    Ok(())
                 }
-            })
-            .collect()
+            }
+            Err(e) => {
+                tracing::error!(error = %e, "sync: regen failed");
+                Err(e.to_string())
+            }
+        }
+    }
+}
+
+impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
+    fn document<'a>(&'a mut self, adapter: &str, file: &str) -> Box<dyn Document + 'a> {
+        Box::new(SessionDoc {
+            backend: self,
+            adapter: adapter.to_owned(),
+            file: file.to_owned(),
+            statuses: Vec::new(),
+        })
+    }
+
+    fn pushed(&mut self, file: &str, regen: bool, outcome: &AtomicOutcome) {
+        for d in &outcome.diagnostics {
+            self.note(&d.code, d.message.clone());
+        }
+        let status = if !regen {
+            "skipped"
+        } else if outcome.diagnostics.is_empty() {
+            "ok"
+        } else {
+            "failed"
+        };
+        tracing::info!(
+            file,
+            status,
+            restored = outcome.restored,
+            "sync: file pushed"
+        );
+        self.regen.push(RegenRecord {
+            file: file.to_owned(),
+            status: status.to_owned(),
+        });
     }
 }
 
@@ -593,7 +625,7 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
 struct NoBackend;
 
 impl Backend for NoBackend {
-    fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> {
+    fn document<'a>(&'a mut self, _: &str, _: &str) -> Box<dyn Document + 'a> {
         unreachable!("no push was planned")
     }
 }
@@ -1631,6 +1663,7 @@ mod tests {
             init(),
             observed("5mm"),
             json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            observed("5mm"),
             pushed("5mm", "6mm"),
             json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
             observed(readback),
@@ -1722,6 +1755,7 @@ mod tests {
                 "initialize",
                 "read",
                 "open",
+                "read",
                 "push",
                 "regen",
                 "read",
@@ -1759,6 +1793,7 @@ mod tests {
             init(),
             observed("5mm"),
             json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            observed("5mm"),
             pushed("5mm", "6mm"),
             observed("6mm"),
             Json::Null,
@@ -1771,6 +1806,7 @@ mod tests {
                 "initialize",
                 "read",
                 "open",
+                "read",
                 "push",
                 "read",
                 "close",
@@ -1785,11 +1821,48 @@ mod tests {
     fn read_back_mismatch_fails_and_skips_save() {
         let (report, calls, _) = drive(&[], Some("5mm"), &{
             let mut r = full_run("7mm");
-            r.remove(6);
+            r.remove(7);
             r
         });
         assert_eq!(report.records[0].verb, "fail");
         assert!(report.failed());
+        assert!(!calls.contains(&"save".to_owned()), "{calls:?}");
+    }
+
+    // frob:ticket 01M4ZDQBBD1AW0RA4JW5SFKGWW
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::SessionBackend
+    #[test]
+    fn failed_regen_restores_the_snapshot_and_reports_r004() {
+        let results = vec![
+            init(),
+            observed("5mm"),
+            json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            observed("5mm"),
+            pushed("5mm", "6mm"),
+            json!({"targets": [{"target": "part.FCStd", "status": "failed"}], "diagnostics": []}),
+            pushed("6mm", "5mm"),
+            json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
+            Json::Null,
+            Json::Null,
+        ];
+        let (report, calls, _) = drive(&[], Some("5mm"), &results);
+        assert_eq!(
+            calls,
+            [
+                "initialize",
+                "read",
+                "open",
+                "read",
+                "push",
+                "regen",
+                "push",
+                "regen",
+                "close",
+                "shutdown"
+            ]
+        );
+        assert_eq!(report.regen[0].status, "failed");
+        assert!(report.failed(), "{report:?}");
         assert!(!calls.contains(&"save".to_owned()), "{calls:?}");
     }
 
@@ -1865,6 +1938,7 @@ mod tests {
             tol_init(&["tolerances"]),
             observed_tol("5mm", Some("0.1mm")),
             json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            observed("5mm"),
             pushed("5mm", "6mm"),
             json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
             observed_tol("6mm", Some("0.1mm")),
@@ -1897,6 +1971,7 @@ mod tests {
             tol_init(&["tolerances"]),
             observed_tol("6mm", None),
             json!({"session": {"handle": "s1", "files": [{"path": "part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []}),
+            observed("6mm"),
             pushed("6mm", "6mm"),
             json!({"targets": [{"target": "part.FCStd", "status": "ok"}], "diagnostics": []}),
             observed_tol("6mm", None),

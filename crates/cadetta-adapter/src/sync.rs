@@ -207,21 +207,15 @@ pub struct ReadBack {
     pub tolerance: Option<DimTolerance>,
 }
 
-/// The adapter side of a push: write, optionally rebuild, and read back.
+/// The adapter side of a push: the native [`Document`] of each file.
 ///
-/// A backend that exposes its native [`Document`] through [`Backend::document`] is pushed
-/// atomically (snapshot, rebuild, restore on R004). One that does not still answers
-/// [`Backend::push`], which has no snapshot to restore.
+/// Every push is atomic: the host snapshots the document, writes, optionally rebuilds, and
+/// restores the snapshot on R004 (adapters.md 2.3).
 // frob:ticket 01M4Y3S1M0V9W3JCDBTHPED6RY
+// frob:ticket 01M4ZDQBBD1AW0RA4JW5SFKGWW
 pub trait Backend {
-    /// Pushes `items` into `file`; returns the read-back per locator.
-    fn push(&mut self, adapter: &str, file: &str, items: &[PushItem], regen: bool)
-    -> Vec<ReadBack>;
-
-    /// The native document of `file` under `adapter`, when the backend can be driven atomically.
-    fn document<'a>(&'a mut self, _adapter: &str, _file: &str) -> Option<Box<dyn Document + 'a>> {
-        None
-    }
+    /// The native document of `file` under `adapter`.
+    fn document<'a>(&'a mut self, adapter: &str, file: &str) -> Box<dyn Document + 'a>;
 
     /// Called once per pushed file with what the push did (R004, restore, read-back).
     fn pushed(&mut self, _file: &str, _regen: bool, _outcome: &AtomicOutcome) {}
@@ -344,16 +338,10 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
             })
             .collect();
         let regen = !opts.no_regen;
-        let atomic = backend
-            .document(&adapter, &file)
-            .map(|mut doc| push_atomic(doc.as_mut(), &file, &items, regen));
-        let outcome = atomic.unwrap_or_else(|| {
-            tracing::debug!(%file, "backend has no document; pushing without a snapshot");
-            AtomicOutcome {
-                read_back: backend.push(&adapter, &file, &items, regen),
-                ..AtomicOutcome::default()
-            }
-        });
+        let outcome = {
+            let mut doc = backend.document(&adapter, &file);
+            push_atomic(doc.as_mut(), &file, &items, regen)
+        };
         backend.pushed(&file, regen, &outcome);
         tracing::info!(
             %file,
@@ -448,12 +436,9 @@ mod tests {
     }
 
     impl Backend for Mock {
-        fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> {
-            unreachable!("the mock is driven through its document")
-        }
-        fn document<'a>(&'a mut self, _a: &str, _f: &str) -> Option<Box<dyn Document + 'a>> {
+        fn document<'a>(&'a mut self, _a: &str, _f: &str) -> Box<dyn Document + 'a> {
             self.calls += 1;
-            Some(Box::new(MockDoc(self)))
+            Box::new(MockDoc(self))
         }
         fn pushed(&mut self, _f: &str, regen: bool, outcome: &AtomicOutcome) {
             self.regen.push(regen);
@@ -638,10 +623,7 @@ mod tests {
         // the CAD rounds p.y on write, so its read-back differs from the push
         struct Rounding(Mock);
         impl Backend for Rounding {
-            fn push(&mut self, _: &str, _: &str, _: &[PushItem], _: bool) -> Vec<ReadBack> {
-                unreachable!("driven through the document")
-            }
-            fn document<'a>(&'a mut self, a: &str, f: &str) -> Option<Box<dyn Document + 'a>> {
+            fn document<'a>(&'a mut self, a: &str, f: &str) -> Box<dyn Document + 'a> {
                 struct D<'a>(Box<dyn Document + 'a>);
                 impl Document for D<'_> {
                     fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
@@ -660,9 +642,7 @@ mod tests {
                         self.0.rebuild()
                     }
                 }
-                self.0
-                    .document(a, f)
-                    .map(|d| Box::new(D(d)) as Box<dyn Document + 'a>)
+                Box::new(D(self.0.document(a, f)))
             }
         }
         let mut rounding = Rounding(mock);

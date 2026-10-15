@@ -656,6 +656,7 @@ pub fn datum_entries(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::atomic::Document;
     use crate::classify::Class;
     use crate::sync::{Backend, Lock, Options, PushItem, ReadBack, Verb, run};
 
@@ -739,17 +740,37 @@ mod tests {
         pushed: Vec<PushItem>,
     }
 
-    impl Backend for Fake {
-        fn push(&mut self, _: &str, _: &str, items: &[PushItem], _: bool) -> Vec<ReadBack> {
-            self.pushed.extend_from_slice(items);
+    struct FakeDoc<'a>(&'a mut Fake);
+
+    impl Document for FakeDoc<'_> {
+        fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
             items
                 .iter()
                 .map(|i| ReadBack {
                     locator: i.locator.clone(),
-                    value: Some(i.value.clone()),
+                    value: self
+                        .0
+                        .pushed
+                        .iter()
+                        .rev()
+                        .find(|p| p.locator == i.locator)
+                        .map(|p| p.value.clone()),
                     tolerance: None,
                 })
                 .collect()
+        }
+        fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
+            self.0.pushed.extend_from_slice(items);
+            Ok(())
+        }
+        fn rebuild(&mut self) -> Result<(), String> {
+            Ok(())
+        }
+    }
+
+    impl Backend for Fake {
+        fn document<'a>(&'a mut self, _: &str, _: &str) -> Box<dyn Document + 'a> {
+            Box::new(FakeDoc(self))
         }
     }
 
