@@ -6,8 +6,9 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:30:47Z"
-scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**"]
+updated = "2026-10-15T03:31:10Z"
+labels = ["creates:changelog.d/01M4YR00ZFABJQWKQJ3F3JFVY4.fixed.md"]
+scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**", "docs/spec/lints.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4YR00ZFABJQWKQJ3F3JFVY4.fixed.md"]
 
 [[acceptance]]
 text = "N001: a lowercase component name is reported"
