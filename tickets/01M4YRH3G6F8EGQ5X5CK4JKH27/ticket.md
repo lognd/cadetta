@@ -7,12 +7,12 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T03:08:41Z"
-updated = "2026-10-15T18:42:36Z"
+updated = "2026-10-15T18:42:37Z"
 scope = ["crates/cadetta-sema/src/**", "crates/cadetta-cli/src/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Sema resolves solver member outputs (solver.out) so check and ir evaluate them without E002"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A recorded solver output literal is evaluated exactly and appears in the IR as an analysis member"
