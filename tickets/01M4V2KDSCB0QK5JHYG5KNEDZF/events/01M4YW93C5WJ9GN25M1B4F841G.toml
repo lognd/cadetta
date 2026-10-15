@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:14:11Z"
+digest = "502a901a849d642cf71c68ae275fa3a1019190ea584b2bb0fd729c9f5abcefbc"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 986e10a3-3037-451b-9aec-47acd74b3675 with nextest profile: default
+    Starting 1 test across 67 binaries (1416 tests skipped)
+        PASS [   0.237s] cadetta::lint_gaps_d001_d002 d001_is_info_below_min_digits_and_warning_at_or_above
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.242s] 1 test run: 1 passed, 1416 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "d001_is_info_below_min_digits"
+size = 638
+status = "measured"
+test_count = 1
+tests_digest = "c998ac7e1f69449f60f4d0634dafeb2e414ef04c25d04ff5f7b7cc5090e27748"
+at = "2026-10-15T04:14:11Z"
+actor = "lognd"
+rev = 1

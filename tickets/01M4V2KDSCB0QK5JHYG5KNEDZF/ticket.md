@@ -11,7 +11,7 @@ scope = ["crates/cadetta-lint/**"]
 
 [[acceptance]]
 text = "D001 is info below d001_min_digits"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "D002 fires for fit clearance accessors"
