@@ -152,7 +152,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `init [--adapter solidworks\|freecad\|sw-equations] [--bare]` | Write `cadetta.toml` with `[package]`, `src/lib.cdt` and the adapter block. | writes missing files only | never | - |
 | `fmt [--check]` | Canonical formatting (language.md 7). | `src` files | `--check` finds a diff | - |
 | `check [--release] [--as-of DATE] [--watch] [--module PATH] [GLOB...]` | Compile, evaluate, lint, obligations; with `read` adapters, drift lints. | reads all | diagnostics >= `fail_on` | `check.json` |
-| `solve [GLOB...] [--module PATH] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<stem>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` |
+| `solve [GLOB...] [--module PATH] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<stem>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` (`cadetta.solve-report/1`: per-solver solved, fresh or failed) |
 | `update [NAME]` | Re-resolve dependencies (all, or NAME) and write the `package` records of the lock (packages.md 1). | writes `cadetta.lock` | E012, E013 | `update.json` |
 | `lock verify [--format json]` | Check the lock is well formed, sorted, unique and policy-conformant; list merge-invalidated attestations (obligations.md 3). Text prints `cadetta.lock: clean` or one line per finding; JSON is `cadetta.lock/1`. A missing lock is clean; an unparsable lock exits `2`. | reads, lock | any finding (exit `1`) | `lock.json` |
 | `why PATH` | Upstream derivation. | reads | never | `why.json` |

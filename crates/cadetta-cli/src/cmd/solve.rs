@@ -8,9 +8,7 @@ use std::path::Path;
 
 use cadetta_sema::eval::{Evaluator, Quant};
 use cadetta_sema::modules::module_path_of;
-use cadetta_sema::resolve::{
-    CanonPath, Ctx, MemberSeg, ModuleSrc, PackageSrc, Resolver,
-};
+use cadetta_sema::resolve::{CanonPath, Ctx, MemberSeg, ModuleSrc, PackageSrc, Resolver};
 use cadetta_solve::decl::{SolverDecl, lower_solver};
 use cadetta_solve::protocol::{InputValue, Request};
 use cadetta_solve::results::{
@@ -25,10 +23,13 @@ use cadetta_units::display::{DisplaySpec, format_value};
 
 use crate::config::Transport as CfgTransport;
 use crate::project::{Module, PackageDir, Project};
-use crate::{EXIT_OK, EXIT_USAGE, Globals};
+use crate::{EXIT_OK, EXIT_USAGE, Format, Globals};
 
 /// Exit code when a solver run or declaration fails (config-cli.md 3).
 pub const EXIT_FAILED: u8 = 1;
+
+/// Schema tag of the JSON report; the schema is `docs/schemas/solve-report.json`.
+pub const REPORT_SCHEMA: &str = "cadetta.solve-report/1";
 
 const USAGE: &str = "usage: cadetta solve [PATH-GLOB...] [--module PATH] [--variants]";
 
@@ -82,6 +83,56 @@ pub fn glob_match(pattern: &str, text: &str) -> bool {
         }
     }
     p[pi..].iter().all(|&c| c == '*')
+}
+
+/// What happened to one solver in a `solve` run.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Status {
+    /// The solver ran and its result was stored.
+    Solved,
+    /// The stored result was current, so nothing ran.
+    Fresh,
+    /// The declaration, inputs or run failed.
+    Failed,
+}
+
+/// One row of the JSON report.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
+pub struct Entry {
+    /// Canonical solver path.
+    pub solver: String,
+    /// Outcome for this solver.
+    pub status: Status,
+    /// Approved alternates (variants) solved alongside; empty for the primary row.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub variants: Vec<String>,
+    /// Diagnostic code when `status` is `failed`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub code: Option<String>,
+    /// Failure message when `status` is `failed`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
+}
+
+impl Entry {
+    fn new(solver: &str, status: Status) -> Self {
+        Entry {
+            solver: solver.to_owned(),
+            status,
+            variants: Vec::new(),
+            code: None,
+            message: None,
+        }
+    }
+}
+
+/// The JSON report of a whole run.
+#[derive(Debug, serde::Serialize)]
+struct Report<'a> {
+    schema: &'static str,
+    ok: bool,
+    solvers: &'a [Entry],
 }
 
 /// One module parsed and ready to resolve.
@@ -317,14 +368,17 @@ pub fn run_solve(
             return EXIT_USAGE;
         }
     };
-    solve_project(&project, &scope, &args, out, err)
+    solve_project(&project, &scope, &args, globals.format, out, err)
 }
 
 /// Solve the selected packages of `project`; skips fresh results.
+///
+/// With `Format::Json` the per-solver lines are replaced by one report on `out`.
 pub fn solve_project(
     project: &Project,
     scope: &[usize],
     args: &SolveArgs,
+    format: Format,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> u8 {
@@ -351,20 +405,59 @@ pub fn solve_project(
     };
     let mut failed = false;
     let mut usage = false;
-    let mut selected = 0usize;
+    let mut entries: Vec<Entry> = Vec::new();
+    let mut sink = Vec::new();
+    let json = format == Format::Json;
     for &i in scope {
         for target in targets(&project.packages[i], &names[i], &all[i], args) {
-            selected += 1;
-            match solve_one(&target, &mut evaluator, &table, &run, out, err) {
-                Outcome::Ok => {}
-                Outcome::Failed => failed = true,
-                Outcome::Usage => usage = true,
+            let lines: &mut dyn Write = if json { &mut sink } else { &mut *out };
+            let outcome = solve_one(
+                &target,
+                &mut evaluator,
+                &table,
+                &run,
+                &mut entries,
+                lines,
+                err,
+            );
+            let (is_usage, code, message) = match outcome {
+                Outcome::Ok => continue,
+                Outcome::Failed { code, message } => (false, code, message),
+                Outcome::Usage { code, message } => (true, code, message),
+            };
+            if is_usage {
+                usage = true;
+            } else {
+                failed = true;
             }
+            let mut entry = Entry::new(&target.path, Status::Failed);
+            entry.code = Some(code);
+            entry.message = Some(message);
+            entries.push(entry);
         }
     }
-    if selected == 0 {
+    if entries.is_empty() {
         tracing::info!("solve: no solvers selected");
-        let _ = writeln!(out, "no solvers to run");
+        if !json {
+            let _ = writeln!(out, "no solvers to run");
+        }
+    }
+    if json {
+        let report = Report {
+            schema: REPORT_SCHEMA,
+            ok: !(usage || failed),
+            solvers: &entries,
+        };
+        match serde_json::to_string_pretty(&report) {
+            Ok(text) => {
+                let _ = writeln!(out, "{text}");
+            }
+            Err(error) => {
+                tracing::error!(%error, "solve: could not render the report");
+                let _ = writeln!(err, "error: could not render the report: {error}");
+                return EXIT_FAILED;
+            }
+        }
     }
     if usage {
         EXIT_USAGE
@@ -377,14 +470,17 @@ pub fn solve_project(
 
 enum Outcome {
     Ok,
-    Failed,
-    Usage,
+    Failed { code: String, message: String },
+    Usage { code: String, message: String },
 }
 
 fn fail(err: &mut dyn Write, solver: &str, code: &str, message: &str) -> Outcome {
     tracing::error!(solver, code, %message, "solve: failed");
     let _ = writeln!(err, "error[{code}]: {solver}: {message}");
-    Outcome::Failed
+    Outcome::Failed {
+        code: code.to_owned(),
+        message: message.to_owned(),
+    }
 }
 
 fn solve_one(
@@ -392,6 +488,7 @@ fn solve_one(
     evaluator: &mut Evaluator<'_, '_>,
     table: &UnitTable,
     run: &RunEnv<'_>,
+    entries: &mut Vec<Entry>,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Outcome {
@@ -399,11 +496,15 @@ fn solve_one(
     let decl: SolverDecl = match lower_solver(t.ast, &t.path) {
         Ok(d) => d,
         Err(errors) => {
+            let first = errors
+                .first()
+                .map(|e| (e.code.to_string(), e.message.to_string()));
             for e in &errors {
                 let _ = writeln!(err, "error[{}]: {}: {}", e.code, t.path, e.message);
                 tracing::error!(solver = %t.path, code = e.code, "solve: bad declaration");
             }
-            return Outcome::Failed;
+            let (code, message) = first.unwrap_or_default();
+            return Outcome::Failed { code, message };
         }
     };
     let mut inputs = BTreeMap::new();
@@ -462,7 +563,8 @@ fn solve_one(
         Lookup::Fresh(_) => {
             tracing::info!(solver = %t.path, "solve: result is fresh, not running");
             let _ = writeln!(out, "fresh {}", t.path);
-            return solve_variants(t, &script, &digests, run, out, err);
+            entries.push(Entry::new(&t.path, Status::Fresh));
+            return solve_variants(t, &script, &digests, run, entries, out, err);
         }
         Lookup::Stale(_) => tracing::info!(solver = %t.path, "solve: result is stale, running"),
         Lookup::Missing => tracing::info!(solver = %t.path, "solve: no result, running"),
@@ -471,13 +573,16 @@ fn solve_one(
         Ok(r) => r,
         Err(e) => {
             let outcome = fail(err, &t.path, e.code(), &e.to_string());
-            return if matches!(
-                e,
-                TransportError::UnknownSolver { .. } | TransportError::BadTemplate { .. }
-            ) {
-                Outcome::Usage
-            } else {
-                outcome
+            return match outcome {
+                Outcome::Failed { code, message }
+                    if matches!(
+                        e,
+                        TransportError::UnknownSolver { .. } | TransportError::BadTemplate { .. }
+                    ) =>
+                {
+                    Outcome::Usage { code, message }
+                }
+                other => other,
             };
         }
     };
@@ -498,7 +603,8 @@ fn solve_one(
     }
     tracing::info!(solver = %t.path, path = %results_path.display(), "solve: result stored");
     let _ = writeln!(out, "solved {}", t.path);
-    solve_variants(t, &script, &digests_for_variants, run, out, err)
+    entries.push(Entry::new(&t.path, Status::Solved));
+    solve_variants(t, &script, &digests_for_variants, run, entries, out, err)
 }
 
 /// The shared, read-only context of one `solve` run.
@@ -524,6 +630,7 @@ fn solve_variants(
     script: &Path,
     digests: &CurrentDigests,
     run: &RunEnv<'_>,
+    entries: &mut Vec<Entry>,
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> Outcome {
@@ -548,6 +655,9 @@ fn solve_variants(
             Ok(response) => {
                 variants::store(&mut file, &t.path, digests, job, &response);
                 let _ = writeln!(out, "solved {} [{}]", t.path, job.variants.join(", "));
+                let mut entry = Entry::new(&t.path, Status::Solved);
+                entry.variants = job.variants.clone();
+                entries.push(entry);
             }
             Err(e) => {
                 outcome = fail(err, &t.path, e.code(), &e.to_string());
@@ -639,6 +749,57 @@ mod tests {
         assert_eq!(code, EXIT_OK, "{text}");
         assert_eq!(runs(&marker), 1);
         assert!(text.contains("fresh acme.t::Box.size"));
+    }
+
+    fn solve_json(dir: &Path) -> (u8, serde_json::Value, String) {
+        let globals = Globals {
+            format: Format::Json,
+            cwd: Some(dir.to_owned()),
+            config: None,
+        };
+        let (mut out, mut err) = (Vec::new(), Vec::new());
+        let code = run_solve(&[], &globals, &mut out, &mut err);
+        let v = serde_json::from_slice(&out).unwrap_or_else(|e| panic!("{e}: {out:?}"));
+        (code, v, String::from_utf8(err).unwrap())
+    }
+
+    fn validate(v: &serde_json::Value) {
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../../docs/schemas/solve-report.json"))
+                .unwrap();
+        let validator = jsonschema::validator_for(&schema).unwrap();
+        assert!(validator.is_valid(v), "{v}");
+    }
+
+    // frob:ticket 01M4TZKF0EKQ5E4N9KTNGEACDP
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_project
+    #[test]
+    fn json_report_lists_solved_then_fresh_and_validates() {
+        let (dir, _marker) = fixture("json", "2kg");
+        let (code, v, _) = solve_json(&dir);
+        assert_eq!(code, EXIT_OK);
+        validate(&v);
+        assert_eq!(v["ok"], true);
+        assert_eq!(v["solvers"][0]["solver"], "acme.t::Box.size");
+        assert_eq!(v["solvers"][0]["status"], "solved");
+        let (_, v, _) = solve_json(&dir);
+        validate(&v);
+        assert_eq!(v["solvers"][0]["status"], "fresh");
+    }
+
+    // frob:ticket 01M4TZKF0EKQ5E4N9KTNGEACDP
+    // frob:tests crates/cadetta-cli/src/cmd/solve.rs::solve_project
+    #[test]
+    fn json_report_records_failures_with_code() {
+        let (dir, _marker) = fixture("jsonfail", "2kg");
+        std::fs::remove_file(dir.join("size.sh")).unwrap();
+        let (code, v, err) = solve_json(&dir);
+        assert_eq!(code, EXIT_FAILED);
+        validate(&v);
+        assert_eq!(v["ok"], false);
+        assert_eq!(v["solvers"][0]["status"], "failed");
+        assert_eq!(v["solvers"][0]["code"], "S005");
+        assert!(err.contains("S005"));
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/solve.rs::glob_match

@@ -1,0 +1,32 @@
+{
+  "$id": "cadetta.solve-report/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta solve --format json`: what happened to each selected solver.",
+  "properties": {
+    "schema": { "const": "cadetta.solve-report/1" },
+    "ok": { "description": "True when no solver failed.", "type": "boolean" },
+    "solvers": {
+      "type": "array",
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "solver": { "description": "Canonical solver path.", "type": "string" },
+          "status": { "enum": ["solved", "fresh", "failed"] },
+          "variants": {
+            "description": "Approved alternates solved in this row; absent for the primary result.",
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "code": { "description": "Diagnostic code; present when status is failed.", "type": "string" },
+          "message": { "description": "Failure message; present when status is failed.", "type": "string" }
+        },
+        "required": ["solver", "status"],
+        "type": "object"
+      }
+    }
+  },
+  "required": ["schema", "ok", "solvers"],
+  "title": "SolveReport",
+  "type": "object"
+}
