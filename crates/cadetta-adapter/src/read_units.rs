@@ -1,8 +1,8 @@
 //! Unit assumption when reading native values (adapters.md 3).
 //!
-//! A native value without a unit takes the adapter's declared native unit and
-//! is recorded as `unit_assumed`. With no unit information at all and no
-//! `--assume-unit`, the value is read inexact with a reason. Read never raises
+//! A native value without a unit takes `--assume-unit` when the run gives one, else the
+//! locator's or adapter's native unit, and is recorded as `unit_assumed`. With no unit
+//! information at all the value is read inexact with a reason. Read never raises
 //! Q001: that code is a source error, not a read diagnostic.
 
 /// The unit a read value ended up with, and how it was chosen.
@@ -53,12 +53,13 @@ pub struct UnitPolicy {
 }
 
 impl UnitPolicy {
-    /// Resolves a unit for a value: own unit, then adapter native, then `--assume-unit`.
+    /// Resolves a unit for a value: own unit, then `--assume-unit`, then the native unit.
+    // frob:ticket 01M4V7WDK6DPPA5Z9FEEPB7ZY9
     pub fn resolve(&self, unit: Option<&str>) -> UnitResolution {
         if let Some(u) = unit {
             return UnitResolution::Explicit(u.to_string());
         }
-        if let Some(u) = self.native_unit.as_ref().or(self.assume_unit.as_ref()) {
+        if let Some(u) = self.assume_unit.as_ref().or(self.native_unit.as_ref()) {
             tracing::debug!(unit = u.as_str(), "assuming unit at read");
             return UnitResolution::Assumed(u.clone());
         }
@@ -134,6 +135,17 @@ mod tests {
         let v = p.read(&bare());
         assert_eq!(v.unit.as_deref(), Some("in"));
         assert!(v.unit_assumed);
+    }
+
+    // frob:ticket 01M4V7WDK6DPPA5Z9FEEPB7ZY9
+    // frob:tests crates/cadetta-adapter/src/read_units.rs::UnitPolicy.resolve
+    #[test]
+    fn assume_unit_wins_over_native_unit() {
+        let p = UnitPolicy {
+            native_unit: Some("mm".into()),
+            assume_unit: Some("in".into()),
+        };
+        assert_eq!(p.read(&bare()).unit.as_deref(), Some("in"));
     }
 
     #[test]

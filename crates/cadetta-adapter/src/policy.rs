@@ -271,6 +271,16 @@ mod tests {
         assert_eq!(to_decimal(r(6, 1), 6).unwrap(), "6");
     }
 
+    // frob:ticket 01M4V7WDK6DPPA5Z9FEEPB7ZY9
+    // frob:tests crates/cadetta-adapter/src/policy.rs::to_decimal
+    #[test]
+    fn whole_numbers_render_without_a_fraction() {
+        assert_eq!(to_decimal(r(10, 1), 6).unwrap(), "10");
+        assert_eq!(to_decimal(r(-3, 1), 6).unwrap(), "-3");
+        assert_eq!(to_decimal(r(0, 1), 6).unwrap(), "0");
+        assert_eq!(to_decimal(r(127, 20), 6).unwrap(), "6.35");
+    }
+
     #[test]
     fn mmc_lmc_without_role_is_e010() {
         for p in [EmitPoint::Mmc, EmitPoint::Lmc] {
