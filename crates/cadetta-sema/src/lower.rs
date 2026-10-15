@@ -252,15 +252,70 @@ struct Cx<'a> {
 
 impl Cx<'_> {
     /// A dependency path with part-slot instances mapped to the part type's own member.
+    // frob:ticket 01M4Z7SF16P01AQQ1XXE2NDJ5J
     fn dep_node(&self, p: CanonPath) -> Option<CanonPath> {
         if p.parts.is_empty() {
-            return Some(p);
+            if self.is_underived_fit(&p) {
+                debug!(path = %p, "lower: dependency on a fit with component-argument operands dropped");
+                return None;
+            }
+            return Some(self.slot_node(p));
         }
         let d = crate::eval::geom::definition_path(&self.resolver, &p);
-        if d.is_none() {
-            debug!(path = %p, "lower: dependency through an unresolved part slot dropped");
+        match d {
+            None => {
+                debug!(path = %p, "lower: dependency through an unresolved part slot dropped");
+                None
+            }
+            // A dependency package's component is not lowered, so its member is no node:
+            // the read depends on the slot (and so on the arguments) that instantiates it.
+            Some(d) if d.package != self.input.name => {
+                let mut slot = p.item_only();
+                slot.parts.push(PartSeg {
+                    name: p.parts[0].name.clone(),
+                    index: None,
+                });
+                debug!(path = %p, slot = %slot, "lower: dependency on a foreign part member is the slot");
+                Some(slot)
+            }
+            d => d,
         }
-        d
+    }
+
+    /// True when `p` names a `fit` member that was not derived (its operands read component arguments).
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    fn is_underived_fit(&self, p: &CanonPath) -> bool {
+        let [MemberSeg::Name(name)] = p.members.as_slice() else {
+            return false;
+        };
+        let is_fit = self.resolver.component(&p.item_only()).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, ast::MemberKind::Fit(f) if f.name.name == *name))
+        });
+        is_fit && !self.input.fits.iter().any(|f| f.path == *p)
+    }
+
+    /// A read of a bare part slot (`Unit.bearing`) is the slot's own `Unit/bearing` node.
+    fn slot_node(&self, p: CanonPath) -> CanonPath {
+        let [MemberSeg::Name(name)] = p.members.as_slice() else {
+            return p;
+        };
+        let is_slot = self.resolver.component(&p.item_only()).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, ast::MemberKind::Part(x) if x.name.name == *name))
+        });
+        if !is_slot {
+            return p;
+        }
+        let mut slot = p.item_only();
+        slot.parts.push(PartSeg {
+            name: name.clone(),
+            index: None,
+        });
+        trace!(slot = %slot, "lower: dependency on a part slot");
+        slot
     }
 
     fn lower_member(
@@ -812,6 +867,44 @@ mod tests {
             .expect("Rover");
         let paths: Vec<String> = rover.parts.iter().map(|p| p.path.to_string()).collect();
         assert_eq!(paths, ["p::Rover/wheel"]);
+    }
+
+    // frob:ticket 01M4Z7SF16P01AQQ1XXE2NDJ5J
+    // frob:tests crates/cadetta-sema/src/lower.rs::slot_node kind=unit
+    #[test]
+    fn a_read_of_a_part_slot_depends_on_the_slot_node() {
+        let src = "pub interface Caster {\n  diameter: Length\n}\n\
+            pub ots Good: Caster {\n  diameter = 5in\n}\n\
+            pub assembly Rover {\n  part wheel: Caster = Good\n  \
+            reach = wheel.diameter\n}\n";
+        let b = build(src, &[], &[]);
+        let reach = member(&b, "Rover", "reach");
+        let deps: Vec<String> = reach.deps.iter().map(|d| d.to_string()).collect();
+        assert!(deps.iter().all(|d| !d.ends_with(".wheel")), "{deps:?}");
+    }
+
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    // frob:tests crates/cadetta-sema/src/lower.rs::is_underived_fit kind=unit
+    #[test]
+    fn fit_on_component_argument_operand_is_not_a_dependency() {
+        let src = "pub interface Motor {\n  pilot_dia: Length\n}\n\
+            pub ots M1: Motor {\n  pilot_dia = 12mm [-0.006mm -0.017mm]\n}\n\
+            pub model Plate(motor: Motor) {\n  fit pilot = H7 on motor.pilot_dia\n  \
+            pilot_bore = pilot.hole\n}\n";
+        let b = build(src, &[], &[]);
+        let plate = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Plate")
+            .expect("Plate");
+        for m in &plate.members {
+            assert!(
+                m.deps.iter().all(|d| !d.to_string().ends_with(".pilot")),
+                "{:?}",
+                m.deps
+            );
+        }
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit

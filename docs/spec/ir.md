@@ -327,7 +327,11 @@ nodes keyed `<component>.<param>` so a member reading one resolves; each
 fit contributes a fit node plus its `hole` and `shaft` nodes. A commercial
 roll-up (`deps.rs`) depends only on parts whose component declares the
 rolled member; an optional member such as `unit_cost` is skipped on a part
-lacking it instead of becoming a dangling dependency.
+lacking it instead of becoming a dangling dependency. A read of a bare part
+slot depends on the slot's `Type/slot` node; a read of a member of a
+dependency-package part depends on that slot too (the foreign component is
+not lowered). A dependency on a `fit` whose operands read component arguments
+is dropped, since that fit is not derived at the generic level.
 
 ## 5. Stability
 
