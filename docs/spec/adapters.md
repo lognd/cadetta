@@ -125,10 +125,9 @@ read-back matched, so a partial sync reconverges on the next run.
 The host implements this in `cadetta_adapter::atomic`: `push_atomic`
 snapshots, writes, rebuilds and restores on R004 over a `Document`, and
 `matched_locators` selects the locators eligible for a `synced` record.
-`sync` pushes every file through `push_atomic` when its backend exposes the
-file as a `Document` (`Backend::document`) and records a `synced` entry only
-for the locators `matched_locators` returns; a backend without a `Document`
-still answers `Backend::push`, which has no snapshot to restore.
+`sync` pushes every file through `push_atomic`, since every backend exposes
+the file as a `Document` (`Backend::document`), and records a `synced` entry
+only for the locators `matched_locators` returns.
 
 ### 2.4 Resolving drift
 
