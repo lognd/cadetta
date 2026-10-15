@@ -2,7 +2,8 @@
 id = "01M4Z9WQS0B2QY3G3TZY25XAXV"
 title = "Conformance: geometry push-plan fixtures need a source_form to binding-target planner"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
