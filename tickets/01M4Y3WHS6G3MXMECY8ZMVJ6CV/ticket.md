@@ -2,7 +2,8 @@
 id = "01M4Y3WHS6G3MXMECY8ZMVJ6CV"
 title = "Wire availability (R008-R010) into the sync and check commands"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
