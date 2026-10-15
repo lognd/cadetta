@@ -128,26 +128,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "config-cli/e003"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-no-cdt"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-member"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "config-cli/e005-path-dep"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
@@ -308,39 +288,14 @@ ticket = "~6K58FR1"
 reason = "use std:: imports do not resolve yet"
 
 [[gap]]
-fixture = "packages/e005-dependency-without-manifest"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-empty-src"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-missing-src"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
 fixture = "packages/e005-registry-dependency-rejected"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+ticket = "~ZRN2H8S"
+reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
 
 [[gap]]
 fixture = "packages/e005-std-name-reserved"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-workspace-member-is-workspace"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
-
-[[gap]]
-fixture = "packages/e005-workspace-member-without-manifest"
-ticket = "~AN7BAC5"
-reason = "E003/E005 abort check with exit 2 and no JSON report instead of a diagnostic"
+ticket = "~ZRN2H8S"
+reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
 
 [[gap]]
 fixture = "packages/e012-bare-version-is-caret"

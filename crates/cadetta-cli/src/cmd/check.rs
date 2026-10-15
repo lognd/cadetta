@@ -22,7 +22,7 @@ use super::check_drift::process_drift;
 use super::obligations::{Candidate, ObligationsArgs, list};
 use crate::config::{Adapter, Config};
 use crate::pipeline::{Analysis, analyze_at};
-use crate::project::{PackageDir, Project};
+use crate::project::{PackageDir, Project, ProjectDiag, ProjectError};
 use crate::scope::Scope;
 use crate::universe::{self, universes};
 use crate::{EXIT_USAGE, Globals, output};
@@ -87,6 +87,30 @@ pub type DriftHook<'a> = dyn Fn(&DriftSite<'_>, &IrProject) -> Vec<Diagnostic> +
 pub(crate) fn no_drift(site: &DriftSite<'_>, _ir: &IrProject) -> Vec<Diagnostic> {
     tracing::info!(adapter = %site.adapter.name, "check: drift lints skipped by this hook");
     Vec::new()
+}
+
+/// Report a project-load diagnostic (E005) as an ordinary fixed-error diagnostic: rendered in
+/// the chosen format, exit 1 at the default `fail_on` (config-cli.md 1 (3), lints.md E005).
+// frob:ticket 01M4V14BY8H42AS84MBAN7BAC5
+fn report_load_diagnostic(
+    globals: &Globals,
+    d: &ProjectDiag,
+    out: &mut dyn Write,
+    err: &mut dyn Write,
+) -> u8 {
+    tracing::warn!(code = d.code, path = %d.path.display(), "check: project load diagnostic");
+    let diagnostics = vec![Diagnostic::new(
+        d.code,
+        Severity::Error,
+        format!("{} ({})", d.message, d.path.display()),
+    )];
+    let text = output::render(globals.format, &diagnostics, &|_, _| None);
+    if let Err(e) = out.write_all(text.as_bytes()) {
+        tracing::error!(error = %e, "check failed writing output");
+        let _ = writeln!(err, "error: could not write output: {e}");
+        return EXIT_USAGE;
+    }
+    output::exit_code(&diagnostics, crate::config::FailOn::default())
 }
 
 /// The lint configuration from `[lint]`; the error is a config message.
@@ -232,6 +256,7 @@ pub fn run_check_with(
     let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
     {
         Ok(o) => o,
+        Err(ProjectError::Diag(d)) => return report_load_diagnostic(globals, &d, out, err),
         Err(e) => return fail(err, &e.to_string()),
     };
     if parsed.watch {
@@ -444,6 +469,41 @@ mod tests {
                     .collect()
             })
             .unwrap_or_default()
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn e005_missing_src_is_a_diagnostic_with_exit_1() {
+        let dir = project(AXLE_OK, "");
+        std::fs::remove_dir_all(dir.0.join("src")).unwrap();
+        let (code, json, err) = run(&dir, &[]);
+        assert_eq!(code, 1, "{err}");
+        assert_eq!(codes(&json), ["E005"]);
+        assert_eq!(json["diagnostics"][0]["severity"], "error");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn e005_workspace_member_without_manifest_is_a_diagnostic() {
+        let dir = Dir::new();
+        std::fs::write(dir.0.join("cadetta.toml"), "[workspace]\nmembers = [\"rover\"]\n").unwrap();
+        std::fs::create_dir_all(dir.0.join("rover/src")).unwrap();
+        let (code, json, err) = run(&dir, &[]);
+        assert_eq!(code, 1, "{err}");
+        assert_eq!(codes(&json), ["E005"]);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
+    #[test]
+    fn e005_path_dependency_without_manifest_is_a_diagnostic() {
+        let dir = project(
+            AXLE_OK,
+            "\n[dependencies]\n\"acme.shop\" = { path = \"shop\", version = \"1\" }\n",
+        );
+        std::fs::create_dir_all(dir.0.join("shop/src")).unwrap();
+        let (code, json, err) = run(&dir, &[]);
+        assert_eq!(code, 1, "{err}");
+        assert_eq!(codes(&json), ["E005"]);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
