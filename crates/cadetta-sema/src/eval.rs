@@ -56,7 +56,8 @@ pub mod func;
 #[path = "geom.rs"]
 pub mod geom;
 #[path = "instances.rs"]
-mod instances;
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+pub(crate) mod instances;
 #[path = "point.rs"]
 pub mod point;
 #[path = "posshape.rs"]

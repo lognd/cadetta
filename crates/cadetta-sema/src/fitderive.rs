@@ -4,7 +4,9 @@
 //! `fits::analyze` is pure; this module finds every `fit` member of every component, reads the
 //! evaluated tolerance of the path(s) it names, runs `analyze` and packages the result with
 //! the required range as an IR [`Bound`]. A fit whose operands are not evaluated values (a
-//! component argument, an unevaluated member) is skipped with a log line.
+//! component argument of the definition, an unevaluated member) is skipped with a log line; a
+//! fit of a parameterized component is derived again per instance (`Parent/part.fit`), reading
+//! its argument operands from the instance's evaluated members.
 
 use std::collections::BTreeMap;
 
@@ -14,6 +16,7 @@ use cadetta_syntax::span::Span;
 use cadetta_units::{Magnitude, Role, ToleranceError, Toleranced};
 use tracing::{debug, trace, warn};
 
+use crate::eval::instances::{InstanceSite, instance_sites};
 use crate::eval::{Evaluation, Evaluator, Quant, Val};
 use crate::fits::{FitFailure, analyze};
 use crate::lower::FitInput;
@@ -146,22 +149,64 @@ pub(crate) fn toleranced(q: &Quant) -> Result<Toleranced, ToleranceError> {
     )
 }
 
-/// The evaluated tolerance at `path` as read from component `c`'s scope.
+/// Reads an argument operand (`bearing.outer_dia`, or a bare quantity argument) of instance `inst`.
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+fn instance_arg(evaluation: &Evaluation, inst: &InstanceSite, path: &CanonPath) -> Option<Quant> {
+    let (MemberSeg::Name(_), rest) = path.members.split_first()? else {
+        return None;
+    };
+    let mut key = inst.prefix.clone();
+    key.members = vec![path.members[0].clone()];
+    let value = &evaluation.values.get(&key)?.value;
+    let value = match (value, rest) {
+        (v, []) => v.clone(),
+        (Val::Component(target), [MemberSeg::Name(n)]) => {
+            let mut p = target.clone();
+            p.members = vec![MemberSeg::Name(n.clone())];
+            evaluation.values.get(&p)?.value.clone()
+        }
+        _ => return None,
+    };
+    match value {
+        Val::Quantity(q) => Some(q),
+        _ => None,
+    }
+}
+
+/// The evaluated tolerance at `path` as read from component `c`'s scope (or from instance `inst`).
 fn operand(
     resolver: &Resolver,
     evaluation: &Evaluation,
     ctx: &Ctx,
     path: &ast::Path,
-) -> Option<(CanonPath, Toleranced)> {
-    let Ok(Resolved::Member { path: p, .. }) = resolver.resolve_path(ctx, path, None) else {
-        debug!("fits: operand is not a member; fit skipped");
-        return None;
+    inst: Option<&InstanceSite>,
+) -> Option<Toleranced> {
+    let q = match (resolver.resolve_path(ctx, path, None), inst) {
+        (Ok(Resolved::Arg { path: p, name }), Some(inst)) => {
+            let q = instance_arg(evaluation, inst, &p);
+            trace!(instance = %inst.prefix, arg = %name, found = q.is_some(), "fits: argument operand read");
+            q?
+        }
+        (Ok(Resolved::Member { path: mut p, .. }), inst) => {
+            if let Some(inst) = inst.filter(|i| p.parts.is_empty() && p.item_only() == i.callee) {
+                let members = std::mem::take(&mut p.members);
+                p = inst.prefix.clone();
+                p.members = members;
+            }
+            match evaluation.values.get(&p).map(|e| &e.value) {
+                Some(Val::Quantity(q)) => q.clone(),
+                _ => {
+                    debug!(operand = %p, "fits: operand has no evaluated quantity; fit skipped");
+                    return None;
+                }
+            }
+        }
+        _ => {
+            debug!("fits: operand is not a member; fit skipped");
+            return None;
+        }
     };
-    let Some(Val::Quantity(q)) = evaluation.values.get(&p).map(|e| &e.value) else {
-        debug!(operand = %p, "fits: operand has no evaluated quantity; fit skipped");
-        return None;
-    };
-    toleranced(q).ok().map(|t| (p, t))
+    toleranced(&q).ok()
 }
 
 fn bound_of(lo: &Quant, hi: &Quant) -> Bound {
@@ -177,19 +222,29 @@ fn derive_one(
     evaluation: &Evaluation,
     ranges: &FitRanges,
     (pkg, module, c, f, span): FitSite,
+    inst: Option<&InstanceSite>,
     findings: &mut Vec<FitFinding>,
 ) -> Option<FitInput> {
     let ctx = ctx_of(pkg, module, c);
-    let path = fit_path(pkg, module, c, f);
+    let def_path = fit_path(pkg, module, c, f);
+    // A per-instance fit lives under the instance prefix; ranges and findings stay on the definition.
+    let path = match inst {
+        Some(i) => {
+            let mut p = i.prefix.clone();
+            p.members.push(MemberSeg::Name(f.name.name.clone()));
+            p
+        }
+        None => def_path.clone(),
+    };
     let (first, second) = match &f.spec {
         FitSpec::Paths(a, b) => {
-            let (_, ta) = operand(resolver, evaluation, &ctx, a)?;
-            let (_, tb) = operand(resolver, evaluation, &ctx, b)?;
+            let ta = operand(resolver, evaluation, &ctx, a, inst)?;
+            let tb = operand(resolver, evaluation, &ctx, b, inst)?;
             (ta, Some(tb))
         }
-        _ => (operand(resolver, evaluation, &ctx, &f.on)?.1, None),
+        _ => (operand(resolver, evaluation, &ctx, &f.on, inst)?, None),
     };
-    let required = ranges.0.get(&path);
+    let required = ranges.0.get(&def_path);
     let range = required.map(|(l, h)| Ok::<_, ToleranceError>((toleranced(l)?, toleranced(h)?)));
     let range = match range.transpose() {
         Ok(r) => r,
@@ -215,7 +270,7 @@ fn derive_one(
                         f.name.name,
                         failure_reason(&e)
                     ),
-                    path,
+                    path: def_path,
                     span,
                 });
             }
@@ -230,7 +285,7 @@ fn derive_one(
         findings.push(FitFinding {
             code: crate::fits::F003,
             message: d.message.clone(),
-            path: path.clone(),
+            path: def_path.clone(),
             span,
         });
     }
@@ -282,9 +337,106 @@ pub fn derive_fits_with_findings(
     ranges: &FitRanges,
     packages: &[PackageSrc],
 ) -> (Vec<FitInput>, Vec<FitFinding>) {
+    let sites = instance_sites(resolver, packages);
     let mut findings = Vec::new();
-    let fits = each_fit(packages)
-        .filter_map(|x| derive_one(resolver, evaluation, ranges, x, &mut findings))
-        .collect();
+    let mut fits = Vec::new();
+    for site in each_fit(packages) {
+        let callee = CanonPath::item(site.0, site.1, &site.2.name.name);
+        let own = derive_one(resolver, evaluation, ranges, site, None, &mut findings);
+        let per_instance = sites
+            .iter()
+            .filter(|i| i.callee == callee)
+            .filter_map(|i| derive_one(resolver, evaluation, ranges, site, Some(i), &mut findings));
+        fits.extend(own.into_iter().chain(per_instance));
+    }
+    // One finding per fit definition, however many instances raised it.
+    let mut seen: Vec<(&str, CanonPath, String)> = Vec::new();
+    findings.retain(|f| {
+        let key = (f.code, f.path.clone(), f.message.clone());
+        let fresh = !seen.contains(&key);
+        if fresh {
+            seen.push(key);
+        }
+        fresh
+    });
+    debug!(
+        fits = fits.len(),
+        findings = findings.len(),
+        "fits: derived"
+    );
     (fits, findings)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::resolve::{ModuleSrc, PackageSrc};
+    use cadetta_syntax::parser::parse;
+    use cadetta_units::UnitTable;
+
+    /// Derives the fits of one-package source `src`.
+    fn derive(src: &str) -> Vec<FitInput> {
+        let parsed = parse(src);
+        assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
+        let pkgs = vec![PackageSrc {
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &parsed.file,
+                enums: &[],
+            }],
+            defaults: Default::default(),
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty(), "{errs:?}");
+        let units = UnitTable::builtin();
+        let mut evaluator = Evaluator::new(&resolver, &units, &pkgs);
+        let ranges = eval_ranges(&mut evaluator, &pkgs);
+        let evaluation = evaluator.evaluate();
+        derive_fits(&resolver, &evaluation, &ranges, &pkgs)
+    }
+
+    // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits kind=unit
+    // frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+    #[test]
+    fn fit_on_a_component_argument_member_is_derived_per_instance() {
+        let fits = derive(
+            "model Bearing { outer_dia = 22mm [+0mm -0.009mm] }\n\
+             model Housing(bearing: Bearing) { fit seat = H7 on bearing.outer_dia }\n\
+             assembly Top {\n  part b: Bearing\n  part h: Housing(bearing = b)\n}\n",
+        );
+        assert_eq!(fits.len(), 1, "{fits:?}");
+        assert_eq!(fits[0].path.to_string(), "p::Top/h.seat");
+        assert_eq!(fits[0].hole.to_string(), "p::Top/h.seat.hole");
+        assert_eq!(fits[0].result.fit_type.name(), "clearance");
+    }
+
+    // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits kind=unit
+    // frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+    #[test]
+    fn fit_on_a_quantity_argument_is_derived_for_each_instance() {
+        let fits = derive(
+            "model Plate(d: Length) { fit seat = H7 on d }\n\
+             assembly Top {\n  part a: Plate(d = 20mm)\n  part b: Plate(d = 30mm)\n}\n",
+        );
+        let mut paths: Vec<String> = fits.iter().map(|f| f.path.to_string()).collect();
+        paths.sort();
+        assert_eq!(paths, ["p::Top/a.seat", "p::Top/b.seat"]);
+        assert_ne!(
+            fits[0].result.hole.value, fits[1].result.hole.value,
+            "each instance reads its own diameter"
+        );
+    }
+
+    // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits kind=unit
+    // frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+    #[test]
+    fn unevaluated_argument_operand_derives_no_fit() {
+        let fits = derive(
+            "model Plate(d: Length) { fit seat = H7 on d }\n\
+             assembly Top { part a: Plate }\n",
+        );
+        assert!(fits.is_empty(), "{fits:?}");
+    }
 }

@@ -82,6 +82,34 @@ impl<'p> Instances<'p> {
     }
 }
 
+/// The key prefix of one parameterized instance and the component it instantiates.
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+#[derive(Clone, Debug)]
+pub(crate) struct InstanceSite {
+    /// `Parent/part`, the key prefix of every member of the instance.
+    pub prefix: CanonPath,
+    /// The instantiated (parameterized) component.
+    pub callee: CanonPath,
+}
+
+/// Every parameterized instance of the project, for passes that derive per-instance facts.
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+pub(crate) fn instance_sites<'p>(
+    resolver: &Resolver<'p>,
+    packages: &[PackageSrc<'p>],
+) -> Vec<InstanceSite> {
+    let mut scratch = BTreeMap::new();
+    let sites: Vec<InstanceSite> = materialise(resolver, packages, &mut scratch)
+        .members()
+        .map(|(info, ..)| InstanceSite {
+            prefix: info.prefix.clone(),
+            callee: info.callee.clone(),
+        })
+        .collect();
+    debug!(sites = sites.len(), "instances: sites listed");
+    sites
+}
+
 /// A placeholder expression for definitions whose value is fixed.
 fn placeholder() -> &'static Expr {
     static P: OnceLock<Expr> = OnceLock::new();

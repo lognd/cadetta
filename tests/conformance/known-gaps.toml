@@ -798,11 +798,6 @@ ticket = "~B08JM3F"
 reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
 
 [[gap]]
-fixture = "emitters/sw-equations/read-unparsed-line-kept-raw"
-ticket = "~14758F0"
-reason = "the equations reader parses IIF(...) as a call, so it never yields an unparsed raw line"
-
-[[gap]]
 fixture = "ir/affine-term-ordered"
 ticket = "~ZM6GZJ0"
 reason = "ir-validate entry has no CLI form or executor yet"

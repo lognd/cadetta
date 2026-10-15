@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at b12b940d8539 (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38818391896/job/116709978713): fix-forward for red conformance; user authorized"
+at = "2026-10-15T23:17:09Z"
+actor = "lognd"
+rev = 1
