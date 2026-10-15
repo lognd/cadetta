@@ -1,0 +1,10 @@
+kind = "create"
+title = "Evaluate variants for L001 alternate viability in check"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/pipeline.rs"]
+body = "found while working ~4H7PTZX: L001/L002 approximate alternate viability as resolves-and-not-end-of-life; real viability needs variant evaluation."
+at = "2026-10-15T02:06:10Z"
+actor = "lognd"
+rev = 1
