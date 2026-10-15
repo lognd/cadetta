@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["config-cli.md 3.9 specifies ir-validate FILE (exit 0 valid, 2 invalid) and lint FILE on IR JSON (D003 reachable)"]
+moved = []
+at = "2026-10-15T01:58:25Z"
+actor = "lognd"
+rev = 1
