@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-15T06:31:41Z"
+updated = "2026-10-15T06:31:44Z"
 idempotency_key = "a0fq-drawn"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/known-gaps.toml", "changelog.d/01M4Z33NNYYPECFPASHMRQXAZQ.fixed.md", "docs/spec/language.md"]
 
