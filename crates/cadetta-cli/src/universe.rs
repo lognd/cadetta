@@ -81,7 +81,7 @@ pub struct Universe {
     graph: DigestGraph,
     /// Direct dependencies of every graph key (for the `why --stale` walk).
     edges: std::collections::BTreeMap<String, Vec<String>>,
-    /// One entry per IR check, in IR order.
+    /// One entry per IR check (`check` or `require`) in IR order, then one per fit.
     pub checks: Vec<CheckEntry>,
     /// One entry per `ots` component (ack only).
     pub ots: Vec<OtsEntry>,
@@ -96,8 +96,16 @@ fn verdict_of(c: &Check) -> Verdict {
 }
 
 impl Universe {
-    /// Build the graph and the check obligations of `ir`; errors on a dependency cycle.
+    /// Build the graph and the check obligations of `ir` with no `require` known; errors on a
+    /// dependency cycle.
     pub fn of(ir: &IrProject) -> Result<Self, DigestError> {
+        Self::of_with(ir, &BTreeSet::new())
+    }
+
+    /// Build the graph and the check, fit and `require` obligations of `ir`; `requires` holds
+    /// the canonical paths of the IR checks that are `require`s (the IR does not mark them).
+    // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
+    pub fn of_with(ir: &IrProject, requires: &BTreeSet<String>) -> Result<Self, DigestError> {
         let mut nodes: Vec<(String, Digest, Vec<String>)> = Vec::new();
         let members: Vec<_> = ir.components.iter().flat_map(|c| &c.members).collect();
         for m in &members {
@@ -128,6 +136,15 @@ impl Universe {
             nodes.push((
                 s.path.to_string(),
                 cadetta_ir::digest::solver_digest(s),
+                deps,
+            ));
+        }
+        // A fit is a node over its hole and shaft members (obligations.md 1, `evaluates`).
+        for f in ir.components.iter().flat_map(|c| &c.fits) {
+            let deps = vec![f.hole.to_string(), f.shaft.to_string()];
+            nodes.push((
+                f.path.to_string(),
+                cadetta_ir::digest::fit_digest(f),
                 deps,
             ));
         }
@@ -165,13 +182,31 @@ impl Universe {
             let key = c.path.to_string();
             let covered = g.closure(&key)?;
             let deps = g.dep_owns(&key)?;
-            tracing::debug!(%key, deps = deps.len(), "universe: check obligation");
+            let kind = if requires.contains(&key) {
+                ObligationKind::Require
+            } else {
+                ObligationKind::Check
+            };
+            tracing::debug!(%key, ?kind, deps = deps.len(), "universe: check obligation");
             checks.push(CheckEntry {
-                id: ObligationId::new(ObligationKind::Check, key.clone()),
+                id: ObligationId::new(kind, key.clone()),
                 key,
                 covered,
                 deps,
                 verdict: verdict_of(c),
+            });
+        }
+        // A fit's result is signed off like a check; F004 and C002 report a bad clearance on
+        // their own, so the sign-off judges the fit as evaluated (obligations.md 2.3).
+        for f in ir.components.iter().flat_map(|c| &c.fits) {
+            let key = f.path.to_string();
+            tracing::debug!(%key, "universe: fit obligation");
+            checks.push(CheckEntry {
+                id: ObligationId::new(ObligationKind::Fit, key.clone()),
+                covered: g.closure(&key)?,
+                deps: g.dep_owns(&key)?,
+                key,
+                verdict: Verdict::Holds,
             });
         }
         let mut ots = Vec::new();
@@ -262,7 +297,7 @@ pub fn universes(analysis: &Analysis) -> Vec<Universe> {
     analysis
         .packages
         .iter()
-        .filter_map(|p| match Universe::of(&p.ir) {
+        .filter_map(|p| match Universe::of_with(&p.ir, &analysis.suppressions.require_paths) {
             Ok(u) => Some(u),
             Err(error) => {
                 tracing::warn!(package = %p.name, %error, "universe: digest graph unavailable");
@@ -272,11 +307,21 @@ pub fn universes(analysis: &Analysis) -> Vec<Universe> {
         .collect()
 }
 
-/// The `obligations` candidates: every IR check, every `ots` component and every cite item an
+/// Whether `e` is offered for sign-off: a `require` only when it holds (obligations.md 4, the
+/// `require` rule: sign-off never changes a violated or undecided verdict).
+fn signable(e: &&CheckEntry) -> bool {
+    e.id.kind() != ObligationKind::Require || e.verdict == Verdict::Holds
+}
+
+/// The `obligations` candidates: every IR check, fit, passing require, every `ots` component and every cite item an
 /// `ots` reaches, judged against closure digests (obligations.md 2.2).
 // frob:ticket 01M4TA3C5QWZ2NH70V6QN4PR7X
 pub fn candidates(universes: &[Universe]) -> Vec<Candidate> {
-    let checks = universes.iter().flat_map(|u| &u.checks).map(|e| Candidate {
+    let checks = universes
+        .iter()
+        .flat_map(|u| &u.checks)
+        .filter(signable)
+        .map(|e| Candidate {
         id: e.id.clone(),
         current: e.covered.clone(),
         deps: e.deps.clone(),
@@ -322,6 +367,7 @@ pub fn ack_candidates(universes: &[Universe]) -> Vec<AckCandidate> {
     universes
         .iter()
         .flat_map(|u| &u.checks)
+        .filter(signable)
         .map(|e| AckCandidate {
             id: e.id.clone(),
             subject: Subject::Attest {
@@ -352,7 +398,9 @@ mod tests {
     use crate::cmd::{ack, impact, ir, obligations, why};
     use crate::output::Format;
     use crate::{EXIT_OK, Globals};
+    use cadetta_ir::model::{Check, Project as IrProject, VerdictState};
     use serde_json::Value;
+    use std::collections::BTreeSet;
 
     const AXLE: &str = "model Axle {\n  od: Length = 20mm\n  let bore: Length = 8mm\n  check bore_ok: bore < od \"bore fits\"\n}\n";
     const ROLES: &str = "[obligations.roles.review]\ncovers = [\"check:acme.axle::**\"]\n";
@@ -570,5 +618,66 @@ mod tests {
         let v = run(crate::cmd::check::run_check, &dir, &[]).to_string();
         assert!(v.contains("S004"), "{v}");
         assert!(!v.contains("O001"), "{v}");
+    }
+
+    const FIT_SRC: &str = "model Axle {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n}\n";
+
+    // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
+    // frob:tests crates/cadetta-cli/src/universe.rs::candidates
+    // frob:tests crates/cadetta-cli/src/universe.rs::ack_candidates
+    #[test]
+    fn fit_obligation_is_listed_signed_off_and_stales_on_edit() {
+        let dir = Dir::new();
+        std::fs::write(dir.0.join("src/lib.cdt"), FIT_SRC).unwrap();
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        let roles = "[obligations.roles.signoff]\ncovers = [\"fit:acme.axle::**\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{roles}")).unwrap();
+        let fit = "fit:acme.axle::Axle.seat";
+        let v = run(obligations::run_obligations, &dir, &[]);
+        let row = &v["obligations"][0];
+        assert_eq!((&row["id"], &row["state"]), (&Value::from(fit), &Value::from("open")), "{v}");
+        let text = run(crate::cmd::check::run_check, &dir, &[]).to_string();
+        assert!(text.contains("O002") && text.contains(fit), "{text}");
+        let sign = &[fit, "--role", "signoff", "--reason", "ok", "--as", "ana@x"];
+        run(ack::run_ack, &dir, sign);
+        let v = run(obligations::run_obligations, &dir, &[]);
+        assert!(v["obligations"].as_array().unwrap().is_empty(), "{v}");
+        std::fs::write(dir.0.join("src/lib.cdt"), FIT_SRC.replace("H7/p6", "H7/g6"))
+            .unwrap();
+        let v = run(obligations::run_obligations, &dir, &[]);
+        assert_eq!(v["obligations"][0]["state"], "stale", "{v}");
+    }
+
+    fn ir_with_requires() -> IrProject {
+        use cadetta_ir::model::{Flavour, PackageId, Verdicts};
+        use cadetta_ir::path::{Path, PathContext};
+        let mut ir = IrProject::new(
+            Flavour::Design,
+            PackageId { name: "a".into(), version: "0.1.0".into() },
+        );
+        for (name, state) in [("ok", VerdictState::Pass), ("bad", VerdictState::Fail)] {
+            ir.checks.push(Check {
+                path: Path::parse(&format!("a::M.{name}"), PathContext::General).unwrap(),
+                expr: "x".into(),
+                verdicts: Verdicts { primary: Some(state), ..Verdicts::default() },
+                conservative: false,
+                waived_for: Vec::new(),
+            });
+        }
+        ir
+    }
+
+    // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    // frob:tests crates/cadetta-cli/src/universe.rs::candidates
+    #[test]
+    fn require_paths_make_require_obligations_and_only_a_holding_one_is_signable() {
+        let ir = ir_with_requires();
+        let reqs: BTreeSet<String> = ["a::M.ok", "a::M.bad"].map(String::from).into();
+        let u = super::Universe::of_with(&ir, &reqs).unwrap();
+        let ids: Vec<String> = super::candidates(&[u]).iter().map(|c| c.id.to_string()).collect();
+        assert_eq!(ids, vec!["require:a::M.ok"]);
+        let plain = super::Universe::of(&ir).unwrap();
+        assert_eq!(plain.checks[0].id.to_string(), "check:a::M.ok");
     }
 }
