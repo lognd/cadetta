@@ -23,7 +23,7 @@ bound = true
 
 [[acceptance]]
 text = "C001/C002 fire for reversed or undecided datum-bound rotations"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "S001 fires for uncited ots datum offsets"
