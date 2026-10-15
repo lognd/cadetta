@@ -2,7 +2,8 @@
 id = "01M4ZFX46E8NWCBFMS9D90C71F"
 title = "docs: adapters.md 2.3 still says Backend::push exists; sync is Document-only"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
