@@ -4,9 +4,10 @@ title = "Sema: resolve solver member outputs (solver.out) so check evaluates the
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-15T03:08:41Z"
-updated = "2026-10-15T03:08:41Z"
+updated = "2026-10-15T18:10:48Z"
 scope = ["crates/cadetta-sema/src/**", "crates/cadetta-cli/src/**"]
 +++
 
