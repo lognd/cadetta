@@ -1486,8 +1486,3 @@ reason = "built-in adapters declare no capability set the host can check"
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "part-array instance members now lower (~9WDH9XE), but the must-fire half (differing instance values) is unreachable from source until ~V9JHZEN"
-
-[[gap]]
-fixture = "adapters/star-mangle-drops-segment"
-ticket = "01M4ZACVTPPWND6W694CNW9MJ0"
-reason = "emit names a [*]-bound member's own global from instance 0 (Rover__axle_0__x) instead of dropping the star segment (adapters.md 3.1)"

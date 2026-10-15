@@ -265,6 +265,18 @@ pub(crate) fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [
         .map(|b| b.locators.as_slice())
 }
 
+/// The path an own global is named from: the matched `[*]` binding path, else the member path.
+// frob:ticket 01M4ZACVTPPWND6W694CNW9MJ0
+fn naming_path(set: &BindingSet, path: &Path) -> Path {
+    if set.get(path).is_some() {
+        return path.clone();
+    }
+    let (wild, _) = wildcard(&path.to_string());
+    let named = set.entries().iter().find(|b| b.path.to_string() == wild);
+    tracing::debug!(path = %path, star = named.is_some(), "emit: own-global naming path");
+    named.map_or_else(|| path.clone(), |b| b.path.clone())
+}
+
 pub(crate) fn kind_of(value: &Value) -> ValueKind {
     if !value.dim.dimension.is_dimensionless() || value.angle != 0 || value.dim.angle != 0 {
         return ValueKind::Quantity;
@@ -659,7 +671,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                 .get(&m.path)
                 .is_none_or(|b| !b.locators.iter().any(|l| l.kind == LocatorKind::Global))
         })
-        .map(|m| m.path.clone())
+        .map(|m| naming_path(job.set, &m.path))
         .collect();
     let mangled: HashMap<Path, String> = match mangle_all(&paths, &job.adapter.prefix) {
         Ok(pairs) => pairs.into_iter().collect(),
@@ -727,7 +739,10 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                     comment,
                 }),
                 (_, LocatorMode::Ref) => {
-                    let own = mangled.get(&member.path).cloned().unwrap_or_default();
+                    let own = mangled
+                        .get(&naming_path(job.set, &member.path))
+                        .cloned()
+                        .unwrap_or_default();
                     let target = job.set.resolve_ref(&member.path, loc, &alias_of, &own);
                     let name = match target {
                         RefTarget::Global(g) | RefTarget::AliasOf(g) => g,
