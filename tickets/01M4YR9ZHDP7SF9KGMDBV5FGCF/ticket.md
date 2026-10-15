@@ -4,6 +4,7 @@ title = "solvers: freshness stdout and S005 fixtures fail (4 fixtures)"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
 updated = "2026-10-15T11:13:37Z"
