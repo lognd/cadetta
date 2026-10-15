@@ -2,12 +2,12 @@
 id = "01M4Z92C5D3GN1R52D5JSTNC17"
 title = 'sw-equations trailing comment drops @"..." quoting of the citation'
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T07:57:44Z"
-updated = "2026-10-15T08:02:31Z"
+updated = "2026-10-15T08:02:35Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "docs/spec/emitters/sw-equations.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
