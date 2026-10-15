@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md", "tests/conformance/known-gaps.toml"]
+new = ["crates/cadetta-lint/src/engine.rs", "crates/cadetta-lint/src/rules/g008.rs", "tests/conformance/lints/G008/**", "crates/cadetta-sema/src/geom.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/tests/bolt_float.rs", "docs/spec/geometry.md", "tests/conformance/known-gaps.toml", "tests/conformance/geometry/g008-*"]
+at = "2026-10-15T10:15:42Z"
+actor = "lognd"
+rev = 1

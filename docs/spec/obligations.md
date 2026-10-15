@@ -96,7 +96,8 @@ errors (exit 2).
 | solver result is current | `cadetta solve` | input, script or dep digest changed | S003 |
 | CAD file reflects design | `cadetta sync` | a bound param's emitted value changed | O004 |
 | value matches its citation | `cadetta ack ots:PATH --role source` | the citation's digest changed: a field (a new `rev`, `date` or `url`) or its `file`'s content | S004 |
-| review / sign-off | `cadetta ack SELECTOR --role NAME` | any node in the attested set changed digest | O001 (stale), O002 (open) |
+| review / sign-off | (`cadetta obligations` ids) | Besides `check:`, `fit:`, `require:`, `ots:` and `cite:`, the list carries `solver:PATH` (judged against the solver's closure), `sync:FILE` (stale when a bound input changed) and `waiver:GLOB` (open until reviewed, stale when the covered closure digest changed). Check closures include the tables and part arguments a check reads, so editing them stales the attestation. |
+| `cadetta ack SELECTOR --role NAME` | any node in the attested set changed digest | O001 (stale), O002 (open) |
 
 Diagnostic rules:
 

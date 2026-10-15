@@ -550,6 +550,13 @@ pub const CATALOG: &[CodeInfo] = &[
         meaning: "A placed array leaves an instance without a placement",
     },
     CodeInfo {
+        code: "G008",
+        name: "rotation-unconstrained",
+        default: Severity::Warning,
+        fixed: false,
+        meaning: "A non-locating joint with a one-point pattern (or float >= spread) leaves the part free to turn about the screw (geometry.md 5.2)",
+    },
+    CodeInfo {
         code: "R001",
         name: "drift",
         default: Severity::Error,

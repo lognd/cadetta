@@ -495,6 +495,10 @@ pub struct Evaluator<'r, 'p> {
     next_var: u32,
     /// The x, y and rotation source variables of each bolt-float joint (geometry.md 5.2).
     float_vars: BTreeMap<CanonPath, [VarId; 3]>,
+    /// Count of datum re-expressions that read through a floated placement edge (G005).
+    float_reads: u32,
+    /// Joints already reported G008, so each warns once.
+    g008_seen: BTreeSet<String>,
     diagnostics: Vec<EvalDiagnostic>,
     index: checks::CheckIndex<'p>,
     /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
@@ -590,6 +594,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             in_progress: BTreeSet::new(),
             next_var: 0,
             float_vars: BTreeMap::new(),
+            float_reads: 0,
+            g008_seen: BTreeSet::new(),
             diagnostics,
             index,
             recursive,

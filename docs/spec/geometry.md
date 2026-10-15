@@ -494,9 +494,11 @@ the edge takes the whole bound of the selected joint (translation,
 `theta`, centroid together; `theta` rounded up to `1e-9 pi`), and a
 joint's own `aligned` check places the tree with `FloatMode::Without`.
 The caller lowers the `onto` points into the frame of the placement
-datum and supplies the source variables. G005 and G008 are not emitted
-yet: G008 is `float::unconstrained_rotation`, and the lint rules and
-the sema lowering of `EdgeFloat` follow.
+datum and supplies the source variables. G005 is emitted by sema when
+an undecided check comparison reads a form that depends on a joint's
+float source variables (so `locating = true` or a looser check keeps it
+quiet). G008 (`float::unconstrained_rotation`) is emitted by sema once per
+non-locating joint when a check re-expresses through the floated edge.
 
 ## 8. Conformance decisions
 

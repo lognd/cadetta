@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["U002 uses name resolution, so a shadowing mention does not count as use"]
+new = ["U002 uses name resolution, so a shadowing mention does not count as use", "U002 reports an unused private param/let member of a component"]
+moved = [1]
+at = "2026-10-15T10:37:58Z"
+actor = "lognd"
+rev = 1
