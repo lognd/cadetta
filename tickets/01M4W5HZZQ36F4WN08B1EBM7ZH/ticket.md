@@ -2,7 +2,8 @@
 id = "01M4W5HZZQ36F4WN08B1EBM7ZH"
 title = "Host Part argument and part arrays/count(at) for ScrewJoint"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
