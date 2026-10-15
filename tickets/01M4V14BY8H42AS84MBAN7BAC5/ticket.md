@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:22:03Z"
-updated = "2026-10-15T03:09:02Z"
+updated = "2026-10-15T03:09:03Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/known-gaps.toml", "changelog.d/**", "docs/**"]
 
 [[acceptance]]

@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:09:03Z"
+digest = "7552fd63df9c32f62c3582411990378acc656e2542bcfab4bb827fe323d25237"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.17s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0cfb424e-7cf0-4ce9-8b02-1d6a0f7f2395 with nextest profile: default
+    Starting 4 tests across 61 binaries (1359 tests skipped)
+        PASS [   0.015s] cadetta cmd::check::tests::e005_workspace_member_without_manifest_is_a_diagnostic
+        PASS [   0.015s] cadetta cmd::check::tests::e005_missing_src_is_a_diagnostic_with_exit_1
+        PASS [   0.019s] cadetta cmd::check::tests::e005_path_dependency_without_manifest_is_a_diagnostic
+        PASS [   0.338s] cadetta::sema_gaps e003_duplicate_type_is_a_diagnostic
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.341s] 4 tests run: 4 passed, 1359 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "_is_a_diagnostic"
+size = 862
+status = "measured"
+test_count = 4
+tests_digest = "d0c3133b3433a12f83dfd400e626dbb50982d10274997a268bd7156e93e52224"
+at = "2026-10-15T03:09:03Z"
+actor = "lognd"
+rev = 1
