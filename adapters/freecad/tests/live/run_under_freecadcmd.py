@@ -25,6 +25,9 @@ def main() -> int:
     extra = os.environ.get("CADETTA_SITE")
     if extra:
         _log.info("adding %s to sys.path", extra)
+        # Front of the path: the system typing_extensions is too old for
+        # pydantic_core and would otherwise shadow the venv's copy.
+        sys.path.insert(0, extra)
         site.addsitedir(extra)
     import pytest
 
