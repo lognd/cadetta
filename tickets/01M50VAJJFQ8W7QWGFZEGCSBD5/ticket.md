@@ -2,7 +2,8 @@
 id = "01M50VAJJFQ8W7QWGFZEGCSBD5"
 title = "Fix red conformance: read-never-raises-q001 diagnostics_exclude unobserved"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 1
 reporter = "lognd"
