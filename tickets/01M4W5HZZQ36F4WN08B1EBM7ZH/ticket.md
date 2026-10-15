@@ -7,12 +7,12 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-14T02:58:39Z"
-updated = "2026-10-15T13:32:31Z"
+updated = "2026-10-15T13:34:33Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Given host = <part> and at = Pattern2, when cadetta check runs, then joint-host-default-into, joint-count-*, joint-screw-cost evaluate"
-bound = false
+bound = true
 +++
 
 found while working ~646D1T7: Part-typed instance args (nodef today), part screw[n] inside instances, count(j.screw), sum, count(at) with Pattern2.
