@@ -885,7 +885,7 @@ fn lifecycle_findings(
                                 .last()
                                 .map_or_else(String::new, |s| s.name.clone());
                             let found = lookup(&p.name, a);
-                            let lifecycle = found.and_then(|(_, l)| l.clone());
+                            let lifecycle = found.and_then(|(_, l)| *l);
                             let mut viable = found.is_some()
                                 && !lifecycle
                                     .as_ref()

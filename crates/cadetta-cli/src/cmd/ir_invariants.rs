@@ -231,10 +231,12 @@ fn tol(t: &Value, at: &str, out: &mut Vec<String>) {
     for (i, term) in terms.iter().enumerate() {
         let at = format!("{at}/terms/{i}");
         path_at(&term["var"], &format!("{at}/var"), out);
-        if let (Some((ln, ld)), Some((hn, hd))) = (rat(&term["lo"]), rat(&term["hi"])) {
-            if ld > 0 && hd > 0 && ln * hd > hn * ld {
-                out.push(format!("{at}: lo must not exceed hi"));
-            }
+        if let (Some((ln, ld)), Some((hn, hd))) = (rat(&term["lo"]), rat(&term["hi"]))
+            && ld > 0
+            && hd > 0
+            && ln * hd > hn * ld
+        {
+            out.push(format!("{at}: lo must not exceed hi"));
         }
     }
     for (i, term) in terms.iter().enumerate() {

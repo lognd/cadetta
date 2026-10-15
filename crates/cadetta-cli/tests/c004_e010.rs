@@ -58,7 +58,7 @@ fn c004_quiet_for_let_and_unread_derived() {
 // frob:tests crates/cadetta-lint/src/rules/c.rs::check_derived kind=integration
 #[test]
 fn c004_fires_once_per_parameter_across_checks() {
-    let two = format!("{}", DERIVED.replace("}\n", "  check d: cb <= 10mm\n}\n"));
+    let two = DERIVED.replace("}\n", "  check d: cb <= 10mm\n}\n");
     assert_eq!(hits("twice", &two, "C004").len(), 1);
 }
 
