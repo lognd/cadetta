@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:39:22Z"
+digest = "549e3e555a719c9bfa6424927a3d17fe9c6b295a5bf3ef339ff0fa5a4eca53d9"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.93s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f00b7c06-b200-464c-b922-1b0d48096c7d with nextest profile: default
+    Starting 1 test across 63 binaries (1391 tests skipped)
+        PASS [   2.034s] cadetta::conformance eval_entry_reports_q006_info_for_exact_trig_fixtures
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   2.037s] 1 test run: 1 passed, 1391 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "eval_entry_reports_q006"
+size = 902
+status = "measured"
+test_count = 1
+tests_digest = "ddc80d09fa8f5993a2313a950dc58e817019322a818dc37a091b362f57d1de5b"
+at = "2026-10-15T03:39:22Z"
+actor = "lognd"
+rev = 1

@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/tests/conformance/exec.rs", "tests/conformance/know
 
 [[acceptance]]
 text = "The five quantities fixtures (c002-inexact-boundary, exact-zero-normalised, trig-exact-atan2, trig-exact-sin, trig-exact-tan) pass the conformance corpus with no known-gaps entries"
-bound = false
+bound = true
 +++
 
 Found while working ~X1PF271. quantities/{c002-inexact-boundary,exact-zero-normalised,trig-exact-atan2,trig-exact-sin,trig-exact-tan} must-not-fire: missing Q006 (info).
