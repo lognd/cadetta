@@ -11,7 +11,7 @@ scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
 text = "given(x) is true only when the optional argument was supplied"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "#[when(cond)] members are absent while cond is false"
