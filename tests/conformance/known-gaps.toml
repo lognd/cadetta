@@ -33,11 +33,6 @@ ticket = "~JET4TC0"
 reason = "solver member declarations are unresolved (E002) in check, so S003 never fires"
 
 [[gap]]
-fixture = "stdlib/materials-tap-class"
-ticket = "~34KDRPA"
-reason = "std commercial/fits/materials diagnostic not raised"
-
-[[gap]]
 fixture = "stdlib/m003-hole-fit-side"
 ticket = "~3YZ3NSG"
 reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
