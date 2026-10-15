@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:29:12Z"
+updated = "2026-10-15T04:29:13Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "requires is silent when arg is given"
-bound = false
+bound = true
 +++
 
 found while working ~XCK8EGP: tap = Vendor without depth_available must be E006; attribute is parsed only.
