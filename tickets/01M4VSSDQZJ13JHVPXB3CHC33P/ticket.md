@@ -2,11 +2,12 @@
 id = "01M4VSSDQZJ13JHVPXB3CHC33P"
 title = "Counterbore data for ButtonHead and FlatHead (ISO 7380, ISO 10642)"
 type = "story"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:31:24Z"
+updated = "2026-10-15T04:31:36Z"
 scope = ["std/src/fasteners/**"]
 
 [[acceptance]]
