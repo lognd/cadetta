@@ -2,7 +2,8 @@
 id = "01M4ZSTX34B5RTHS2Y5TND4WKS"
 title = "O004 open sync obligation for a json/csv/sw-equations binding without drive"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
