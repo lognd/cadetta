@@ -1071,8 +1071,13 @@ fn sync_adapter(
     let (path, argv) = program(pkg, command)
         .ok_or_else(|| format!("adapter `{}` has an empty command", adapter.id()))?;
     tracing::info!(adapter = %adapter.id(), "sync: starting adapter");
-    let client = ProcessClient::spawn(&path, &argv, adapter.version.as_deref())
-        .map_err(|e| format!("R008: could not start adapter `{}`: {e}", adapter.id()))?;
+    let client = ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(adapter.timeout()),
+    )
+    .map_err(|e| format!("R008: could not start adapter `{}`: {e}", adapter.id()))?;
     if client.info().capabilities.contains(&CapabilityName::Drive) {
         drive_adapter(client, pkg, adapter, ir, ctx)
     } else {
@@ -1081,6 +1086,25 @@ fn sync_adapter(
         }
         manual_adapter(pkg, adapter, ir, ctx);
         Ok(())
+    }
+
+    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::sync_adapter
+    #[cfg(unix)]
+    #[test]
+    fn a_silent_adapter_fails_sync_within_the_configured_timeout() {
+        use std::os::unix::fs::PermissionsExt;
+        let dir = project("");
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"silent\"\ncommand = [\"./silent.sh\"]\ntimeout = 1\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        let script = dir.0.join("silent.sh");
+        std::fs::write(&script, "#!/bin/sh\nsleep 300\n").unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let start = std::time::Instant::now();
+        let (code, _, err) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_USAGE, "{err}");
+        assert!(err.contains("R008"), "{err}");
+        assert!(start.elapsed() < std::time::Duration::from_secs(30));
     }
 }
 

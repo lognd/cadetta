@@ -22,15 +22,12 @@ use super::sync::{Probe, probe_adapter};
 /// Codes `build_entries` reports that are R lints in their own right (R003 is structured).
 const FORWARDED_ERRORS: [&str; 3] = ["R001", "R005", "R013"];
 
-/// How long one adapter call may stay unanswered before `check` kills it (R008).
-const ADAPTER_TIMEOUT: Duration = Duration::from_secs(60);
-
 /// The default drift hook: spawn the adapter named by `command` and lint what it reads.
 ///
-/// A spawn, version or timeout failure is R008, which `check` downgrades to info (adapters.md 7).
+/// The adapter's `timeout` (default 60s) bounds each call. A spawn, version or timeout failure is R008, which `check` downgrades to info (adapters.md 7).
 // frob:ticket 01M4TA3C87N60Y711163RK3GPH
 pub(crate) fn process_drift(site: &DriftSite<'_>, ir: &IrProject) -> Vec<Diagnostic> {
-    process_drift_within(site, ir, ADAPTER_TIMEOUT)
+    process_drift_within(site, ir, site.adapter.timeout())
 }
 
 /// [`process_drift`] with an explicit per-call `timeout`; a silent adapter is killed and is R008.

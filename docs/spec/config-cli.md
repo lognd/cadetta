@@ -104,6 +104,7 @@ precision = 6                    # decimals; default from the emitter spec (adap
 name = "solidworks"              # external, Windows only
 command = ["cadetta-solidworks"]
 version = "0.1"
+timeout = 60                     # seconds one call may stay unanswered before the adapter is killed; default 60 (adapters.md 5)
 files = ["**/*.SLDPRT", "**/*.SLDASM"]
 save = "after-sync"              # after-sync | never (adapters.md 2.2)
 datums = "verify"                # verify | create: create and drive datum coordinate systems (adapters.md 3.4)

@@ -424,7 +424,14 @@ pub struct Adapter {
     // frob:ticket 01M4SWMCYW919R5JKSV2T1ZYBN
     #[serde(default)]
     pub datums: cadetta_adapter::geometry_bind::DatumPolicy,
+    /// Seconds one adapter call may stay unanswered before the adapter is killed (adapters.md 5).
+    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
+    #[serde(default)]
+    pub timeout: Option<u64>,
 }
+
+/// Seconds an external adapter call may stay unanswered when `[[adapter]] timeout` is unset.
+pub const DEFAULT_ADAPTER_TIMEOUT_SECS: u64 = 60;
 
 /// The `[[adapter]] tolerances` default, `drive` (adapters.md 3.6).
 fn default_tolerances() -> TolerancePolicy {
@@ -435,6 +442,12 @@ impl Adapter {
     /// The instance id: `id`, else `name`.
     pub fn id(&self) -> &str {
         self.id.as_deref().unwrap_or(&self.name)
+    }
+
+    /// The per-call adapter timeout: `timeout` seconds, else [`DEFAULT_ADAPTER_TIMEOUT_SECS`].
+    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
+    pub fn timeout(&self) -> std::time::Duration {
+        std::time::Duration::from_secs(self.timeout.unwrap_or(DEFAULT_ADAPTER_TIMEOUT_SECS))
     }
 
     /// The bindings file: `bindings`, else `bindings/<id>.toml`.

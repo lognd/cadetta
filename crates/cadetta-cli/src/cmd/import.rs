@@ -409,8 +409,13 @@ fn read_adapter<'a>(
         })
         .collect();
     tracing::info!(adapter = %id, files = files.len(), "import: reading");
-    let mut client = ProcessClient::spawn(&path, &argv, adapter.version.as_deref())
-        .map_err(|e| format!("could not start adapter `{id}`: {e:?}"))?;
+    let mut client = ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(adapter.timeout()),
+    )
+    .map_err(|e| format!("R008: could not start adapter `{id}`: {e:?}"))?;
     let read = client
         .read(&ReadParams {
             source: ReadSource::Files(files),
@@ -1118,5 +1123,25 @@ for line in sys.stdin:
             let v: serde_json::Value = serde_json::from_slice(&out).unwrap();
             assert!(validator.is_valid(&v), "{v}");
         }
+    }
+
+    // frob:ticket 01M4YPDTD1977TMY4M2PPPNSDD
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::read_adapter
+    #[test]
+    fn a_silent_adapter_fails_import_within_the_configured_timeout() {
+        let dir = project();
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}timeout = 1\n")).unwrap();
+        {
+            let _guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+            let script = dir.0.join("adapter.py");
+            std::fs::write(&script, "#!/bin/sh\nsleep 300\n").unwrap();
+            std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        }
+        let start = std::time::Instant::now();
+        let (code, _, e) = run(&dir, &["fake", "cover_plate.FCStd"]);
+        assert_eq!(code, EXIT_USAGE, "{e}");
+        assert!(e.contains("R008"), "{e}");
+        assert!(start.elapsed() < std::time::Duration::from_secs(30));
     }
 }
