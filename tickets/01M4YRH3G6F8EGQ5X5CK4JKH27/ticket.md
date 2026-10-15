@@ -2,12 +2,12 @@
 id = "01M4YRH3G6F8EGQ5X5CK4JKH27"
 title = "Sema: resolve solver member outputs (solver.out) so check evaluates them; S003/S006 staleness needs it"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T03:08:41Z"
-updated = "2026-10-15T18:10:48Z"
+updated = "2026-10-15T18:10:51Z"
 scope = ["crates/cadetta-sema/src/**", "crates/cadetta-cli/src/**"]
 +++
 
