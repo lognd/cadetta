@@ -2,12 +2,12 @@
 id = "01M4ZSCT4KRVAHVKQE36A9J2KR"
 title = "Fix g005-float-half-turn must_not_fire listing G008"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T12:43:04Z"
-updated = "2026-10-15T12:43:04Z"
+updated = "2026-10-15T13:44:22Z"
 idempotency_key = "g005-halfturn-fixture"
 scope = ["tests/conformance/geometry/g005-float-half-turn.*"]
 
