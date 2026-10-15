@@ -1,0 +1,13 @@
+kind = "create"
+title = "geometry: unknown datum of a placed part must report E002, not EVAL"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 3
+idempotency_key = "datum-unknown-placed-e002"
+scope = ["crates/**"]
+acceptance = ["Fixture geometry/datum-unknown-of-placed-part passes with E002 and no EVAL"]
+body = "Fixture geometry/datum-unknown-of-placed-part: 'a.pt in a.nothing' in an assembly check yields EVAL at acme.demo::A.c instead of E002."
+at = "2026-10-15T05:34:44Z"
+actor = "lognd"
+rev = 1
