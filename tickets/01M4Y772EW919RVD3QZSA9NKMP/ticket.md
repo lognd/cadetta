@@ -2,7 +2,8 @@
 id = "01M4Y772EW919RVD3QZSA9NKMP"
 title = "Surface fits::analyze failures (F001/F002/F003/C002) as user diagnostics from the pipeline"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
