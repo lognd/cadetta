@@ -7,7 +7,7 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T02:08:46Z"
-updated = "2026-10-15T02:35:37Z"
+updated = "2026-10-15T02:36:34Z"
 idempotency_key = "q002-affine-vars"
 scope = ["crates/cadetta-sema/src/kindcheck.rs", "docs/spec/quantities.md", "changelog.d/01M4YN3CPR91NB4SD63RQ4WTFB.fixed.md", "tests/conformance/quantities/q00*"]
 
