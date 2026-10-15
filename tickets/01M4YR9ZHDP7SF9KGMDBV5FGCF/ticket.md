@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
 updated = "2026-10-15T12:37:39Z"
-scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**", "tests/conformance/known-gaps.toml", "tests/conformance/solvers/result-file-committed-fresh-not-run.expect.json"]
+scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**", "tests/conformance/known-gaps.toml", "tests/conformance/solvers/result-file-committed-fresh-not-run.expect.json", "tests/conformance/solvers/solve-stale-result-runs.expect.json"]
 
 [[acceptance]]
 text = "solvers freshness and stale-run fixtures pass under the conformance runner"
