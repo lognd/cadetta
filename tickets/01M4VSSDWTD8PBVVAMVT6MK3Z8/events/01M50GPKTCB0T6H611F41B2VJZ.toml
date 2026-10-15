@@ -1,0 +1,8 @@
+kind = "transition"
+from = "todo"
+to = "done"
+outcome = "duplicate"
+reason = "ScrewJoint already declares locating (e54432a7); Insert.length is a golden-local ots part in 03, not a ScrewJoint argument"
+at = "2026-10-15T19:30:22Z"
+actor = "lognd"
+rev = 1
