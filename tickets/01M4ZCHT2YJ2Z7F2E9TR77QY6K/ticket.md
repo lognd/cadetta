@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T08:58:36Z"
-updated = "2026-10-15T09:07:37Z"
-scope = ["crates/cadetta-cli/src/cmd/import.rs"]
+updated = "2026-10-15T09:07:56Z"
+scope = ["crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/src/cmd/sync.rs"]
 
 [[acceptance]]
 text = "decode_observed pushes adapter-observed frames and instances into ObservedBuilder; unit test decodes JSON with frames+instances"
