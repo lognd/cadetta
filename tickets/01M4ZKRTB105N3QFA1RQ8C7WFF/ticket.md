@@ -2,7 +2,8 @@
 id = "01M4ZKRTB105N3QFA1RQ8C7WFF"
 title = "U002 rows for unused private part and datum members"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
