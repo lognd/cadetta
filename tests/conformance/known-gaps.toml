@@ -423,51 +423,6 @@ ticket = "~A9M9EPG"
 reason = "R013/N005 mangling collision checks not implemented"
 
 [[gap]]
-fixture = "adapters/geom-derived-coordinates-analysis-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-flip-verified-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-for-placement-pattern"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-frame"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-pattern-generator"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-place-offset"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-rotate-90-verified-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-rotate-not-90"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
-fixture = "adapters/geom-sign-write-and-read"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
-
-[[gap]]
 fixture = "adapters/adopted-cleared-by-first-sync"
 ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
@@ -1166,11 +1121,6 @@ reason = "ir-validate entry has no CLI form or executor yet"
 fixture = "ir/d003-ir"
 ticket = "~ZM6GZJ0"
 reason = "lint on IR JSON has no CLI form or executor yet"
-
-[[gap]]
-fixture = "adapters/geom-placement-verify-only"
-ticket = "~Y25XAXV"
-reason = "binding push-plan entries have no executor yet"
 
 [[gap]]
 fixture = "adapters/bind-invalid-component-form"
