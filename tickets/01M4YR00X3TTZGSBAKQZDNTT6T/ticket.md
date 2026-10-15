@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:01:53Z"
+updated = "2026-10-15T03:01:57Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/**", "crates/cadetta-cli/tests/privacy.rs", "changelog.d/01M4YR00X3TTZGSBAKQZDNTT6T.*"]
 
 [[acceptance]]
 text = "E016 fires for a use of a private item from a non-descendant module (language/e016-private-item)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "E017 fires for a private type in a public signature (language/e017-private-in-public)"
