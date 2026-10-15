@@ -2,10 +2,9 @@
 
 # frob:ticket 01M4SWP8D2254TD7A8558R6ZY3
 
+from cadetta.result import report_from_exit
 from pydantic import BaseModel
 from typani import Err, Ok
-
-from cadetta.result import report_from_exit
 
 
 class _Report(BaseModel):
@@ -17,9 +16,7 @@ class _Report(BaseModel):
 def test_error_diagnostics_are_ok_report() -> None:
     """Given error diagnostics (exit 1), when check runs, then Ok(report)."""
     # frob:tests bindings/python/python/cadetta/result.py::report_from_exit kind=unit
-    out = report_from_exit(
-        _Report, "check", 1, '{"diagnostics": ["E0001"]}', "", str
-    )
+    out = report_from_exit(_Report, "check", 1, '{"diagnostics": ["E0001"]}', "", str)
     assert isinstance(out, Ok)
     assert out.danger_ok.diagnostics == ["E0001"]
 

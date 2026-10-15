@@ -538,7 +538,11 @@ mod tests {
     #[test]
     fn e005_workspace_member_without_manifest_is_a_diagnostic() {
         let dir = Dir::new();
-        std::fs::write(dir.0.join("cadetta.toml"), "[workspace]\nmembers = [\"rover\"]\n").unwrap();
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            "[workspace]\nmembers = [\"rover\"]\n",
+        )
+        .unwrap();
         std::fs::create_dir_all(dir.0.join("rover/src")).unwrap();
         let (code, json, err) = run(&dir, &[]);
         assert_eq!(code, 1, "{err}");
@@ -604,6 +608,31 @@ mod tests {
         assert!(bad.is_empty(), "{bad:?}");
     }
 
+    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::s_facts
+    #[test]
+    fn ots_datum_offset_without_citation_is_s001() {
+        let dir = project("ots Plate {\n  datum top = origin.offset(z = 5mm)\n}\n", "");
+        let (_, json, _) = run(&dir, &[]);
+        let s = diag_for(&json, "S001").expect("S001 on the uncited ots datum offset");
+        assert_eq!(s["path"], "acme.axle::Plate.top.offset.z");
+    }
+
+    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
+    // frob:tests crates/cadetta-sema/src/geom.rs::check_datum_bounds
+    #[test]
+    fn reversed_datum_normal_against_interface_is_c001() {
+        let src = std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../tests/conformance/geometry/datum-bound-reversed-normal.must-fire.cdt"
+        ))
+        .unwrap();
+        let dir = project(&src, "");
+        let (code, json, _) = run(&dir, &[]);
+        assert_eq!(code, 1, "{json}");
+        assert!(codes(&json).contains(&"C001".to_owned()), "{json}");
+    }
+
     // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
     #[test]
     fn violated_check_is_c001_with_path() {
@@ -632,31 +661,6 @@ mod tests {
     // frob:tests crates/cadetta-cli/src/cmd/check.rs::run_check_with
     #[test]
     fn drift_lints_run_for_adapters_that_can_read() {
-    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
-    // frob:tests crates/cadetta-cli/src/pipeline.rs::s_facts
-    #[test]
-    fn ots_datum_offset_without_citation_is_s001() {
-        let dir = project("ots Plate {\n  datum top = origin.offset(z = 5mm)\n}\n", "");
-        let (_, json, _) = run(&dir, &[]);
-        let s = diag_for(&json, "S001").expect("S001 on the uncited ots datum offset");
-        assert_eq!(s["path"], "acme.axle::Plate.top.offset.z");
-    }
-
-    // frob:ticket 01M4V43BDMB7CKR8W79S5DC5W0
-    // frob:tests crates/cadetta-sema/src/geom.rs::check_datum_bounds
-    #[test]
-    fn reversed_datum_normal_against_interface_is_c001() {
-        let src = std::fs::read_to_string(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/../../tests/conformance/geometry/datum-bound-reversed-normal.must-fire.cdt"
-        ))
-        .unwrap();
-        let dir = project(&src, "");
-        let (code, json, _) = run(&dir, &[]);
-        assert_eq!(code, 1, "{json}");
-        assert!(codes(&json).contains(&"C001".to_owned()), "{json}");
-    }
-
         let dir = project(
             AXLE_OK,
             "[[adapter]]\nname = \"ext\"\ncommand = [\"ext-adapter\"]\n[[adapter]]\nname = \"sw-equations\"\n",

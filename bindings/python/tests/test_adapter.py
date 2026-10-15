@@ -8,8 +8,6 @@ import logging
 import sys
 
 import pytest
-from pydantic import ValidationError
-
 from cadetta.adapter import (
     Adapter,
     Capability,
@@ -23,6 +21,7 @@ from cadetta.adapter import (
     Session,
 )
 from cadetta.models import ir
+from pydantic import ValidationError
 from typani import Err, Ok
 
 OBSERVED = {

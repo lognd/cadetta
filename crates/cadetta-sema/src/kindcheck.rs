@@ -19,9 +19,8 @@
 use std::collections::BTreeMap;
 
 use cadetta_syntax::ast::{
-    BinOp, Block, Component, Expr, ExprKind, File, Ident, ItemKind, KindDecl, KindExpr, KindOp, Let,
-    MemberKind, Path, PathSep, Type, TypeKind,
-    UnOp,
+    BinOp, Block, Component, Expr, ExprKind, File, Ident, ItemKind, KindDecl, KindExpr, KindOp,
+    Let, MemberKind, Path, PathSep, Type, TypeKind, UnOp,
 };
 use cadetta_syntax::span::Span;
 use cadetta_units::{
@@ -240,7 +239,9 @@ pub fn register_user_kinds<'f>(table: &mut KindTable, files: impl IntoIterator<I
     let mut pending: Vec<(&KindDecl, String)> = Vec::new();
     for file in files {
         for item in file.items() {
-            let ItemKind::Kind(k) = &item.kind else { continue };
+            let ItemKind::Kind(k) = &item.kind else {
+                continue;
+            };
             let text = match &k.def.kind {
                 TypeKind::Path(p) => p.segments.last().map(|s| s.name.clone()),
                 TypeKind::KindExpr(ke) => kind_expr_text(ke),
@@ -1082,7 +1083,10 @@ mod tests {
     // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker
     #[test]
     fn q002_q003_fixtures_replay() {
-        let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/conformance/quantities/");
+        let dir = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../tests/conformance/quantities/"
+        );
         let run = |name: &str| {
             let src = std::fs::read_to_string(format!("{dir}{name}.cdt")).expect("fixture");
             codes_with_decls(&src)
@@ -1207,7 +1211,11 @@ mod tests {
             c.check_component(comp);
         }
         let got: Vec<_> = c.into_diagnostics().iter().map(|d| d.code).collect();
-        assert_eq!(got, ["E002"], "only `Foo` is unresolved, `Length` is a kind");
+        assert_eq!(
+            got,
+            ["E002"],
+            "only `Foo` is unresolved, `Length` is a kind"
+        );
         // An environment that cannot tell never reports it.
         assert!(codes("a: Foo = 5mm").is_empty());
     }

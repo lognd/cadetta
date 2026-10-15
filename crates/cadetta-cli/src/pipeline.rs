@@ -18,9 +18,9 @@ use cadetta_ir::model::{
 use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
-use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::d::{Key, NamedValue};
 use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableMiss};
+use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::{c, d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
@@ -30,10 +30,10 @@ use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
-use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_sema::resolve::{
     CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
 };
+use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
 use cadetta_syntax::parser::parse;
@@ -475,9 +475,9 @@ fn shadowed_by_kind_diag(
     if !matches!(d.code, "EVAL" | "Q001" | "Q002" | "Q003") {
         return false;
     }
-    kind_spans.iter().any(|(k, s, e)| {
-        d.module.as_ref() == Some(k) && d.span.start < *e && *s < d.span.end
-    })
+    kind_spans
+        .iter()
+        .any(|(k, s, e)| d.module.as_ref() == Some(k) && d.span.start < *e && *s < d.span.end)
 }
 
 /// The member of a component whose name-to-value region covers `span`, as a canonical path.
@@ -695,7 +695,13 @@ pub fn analyze_at(project: &Project, scope: &[usize], as_of: &str) -> Analysis {
         .iter()
         .map(|&i| package_name(&project.packages[i]))
         .collect();
-    evaluate_stages(&parsed, &scope_names, &project.config.lint, as_of, &mut analysis);
+    evaluate_stages(
+        &parsed,
+        &scope_names,
+        &project.config.lint,
+        as_of,
+        &mut analysis,
+    );
     analysis
 }
 
@@ -719,7 +725,10 @@ fn table_cells(
                     continue;
                 };
                 for row in &t.rows {
-                    let key_text = m.text.get(row.key.span.start..row.key.span.end).unwrap_or("?");
+                    let key_text = m
+                        .text
+                        .get(row.key.span.start..row.key.span.end)
+                        .unwrap_or("?");
                     for (col, expr) in t.cols.iter().zip(row.values.iter().flatten()) {
                         let Ok(q) = evaluator.eval_input(ctx.clone(), expr) else {
                             tracing::trace!(table = %t.name.name, "pipeline: table cell is not a quantity");
@@ -751,8 +760,17 @@ struct VariantEnv<'a, 'p> {
 
 impl<'a, 'p> VariantEnv<'a, 'p> {
     /// Builds the environment with an empty cache.
-    fn new(resolver: &'a Resolver<'p>, units: &'a UnitTable, sources: &'a [PackageSrc<'a>]) -> Self {
-        Self { resolver, units, sources, cache: std::cell::RefCell::new(BTreeMap::new()) }
+    fn new(
+        resolver: &'a Resolver<'p>,
+        units: &'a UnitTable,
+        sources: &'a [PackageSrc<'a>],
+    ) -> Self {
+        Self {
+            resolver,
+            units,
+            sources,
+            cache: std::cell::RefCell::new(BTreeMap::new()),
+        }
     }
 
     /// True when no check or require violates with `alt` swapped into `owner`'s `slot`.
@@ -768,7 +786,11 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
             tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
             return true;
         };
-        let selection = Selection { owner: owner.clone(), slot: slot.to_owned(), alt: alt_path };
+        let selection = Selection {
+            owner: owner.clone(),
+            slot: slot.to_owned(),
+            alt: alt_path,
+        };
         let key = selection.key();
         if let Some(held) = self.cache.borrow().get(&key) {
             return *held;
@@ -817,7 +839,9 @@ fn lifecycle_findings(
                     && c.class == cadetta_syntax::ast::ComponentClass::Ots
                 {
                     let lc = vl::find(&item.attrs).and_then(Result::ok);
-                    ots.entry(c.name.name.as_str()).or_default().push((p.name.as_str(), lc));
+                    ots.entry(c.name.name.as_str())
+                        .or_default()
+                        .push((p.name.as_str(), lc));
                 }
             }
         }
@@ -828,7 +852,10 @@ fn lifecycle_findings(
         all.iter().find(|(p, _)| *p == pkg).or_else(|| all.first())
     };
     let mut out = Vec::new();
-    for p in parsed.iter().filter(|p| !p.is_std && scope.contains(&p.name)) {
+    for p in parsed
+        .iter()
+        .filter(|p| !p.is_std && scope.contains(&p.name))
+    {
         for m in &p.modules {
             for item in m.file.items() {
                 let ItemKind::Component(c) = &item.kind else {
@@ -845,7 +872,8 @@ fn lifecycle_findings(
                         continue;
                     };
                     // Only a non-active primary can raise L001/L002; skip the swaps otherwise.
-                    let needs_variants = lc.as_ref().is_some_and(|l| l.status != vl::Status::Active);
+                    let needs_variants =
+                        lc.as_ref().is_some_and(|l| l.status != vl::Status::Active);
                     let owner = CanonPath::item(&p.name, &m.path, &c.name.name);
                     let alternates: Vec<vl::Alternate> = part
                         .alts
@@ -859,11 +887,23 @@ fn lifecycle_findings(
                             let found = lookup(&p.name, a);
                             let lifecycle = found.and_then(|(_, l)| l.clone());
                             let mut viable = found.is_some()
-                                && !lifecycle.as_ref().is_some_and(|l| l.status.is_end_of_life());
+                                && !lifecycle
+                                    .as_ref()
+                                    .is_some_and(|l| l.status.is_end_of_life());
                             if viable && needs_variants {
-                                viable = env.alternate_holds(&owner, &part.name.name, &p.name, &m.path, a);
+                                viable = env.alternate_holds(
+                                    &owner,
+                                    &part.name.name,
+                                    &p.name,
+                                    &m.path,
+                                    a,
+                                );
                             }
-                            vl::Alternate { name, lifecycle, viable }
+                            vl::Alternate {
+                                name,
+                                lifecycle,
+                                viable,
+                            }
                         })
                         .collect();
                     let pname = primary
@@ -940,12 +980,18 @@ fn table_misses(
                         }
                     }
                 }
-                tables.entry(cite).or_default().push((t.name.name.clone(), keys));
+                tables
+                    .entry(cite)
+                    .or_default()
+                    .push((t.name.name.clone(), keys));
             }
         }
     }
     let mut out = Vec::new();
-    for p in parsed.iter().filter(|p| !p.is_std && scope.contains(&p.name)) {
+    for p in parsed
+        .iter()
+        .filter(|p| !p.is_std && scope.contains(&p.name))
+    {
         for m in &p.modules {
             let ctx = Ctx {
                 package: p.name.clone(),
@@ -1032,7 +1078,9 @@ fn evaluate_stages(
     let mut kinds = KindTable::builtin();
     kindcheck::register_user_kinds(
         &mut kinds,
-        parsed.iter().flat_map(|p| p.modules.iter().map(|m| &m.file)),
+        parsed
+            .iter()
+            .flat_map(|p| p.modules.iter().map(|m| &m.file)),
     );
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
     let mut evaluator = Evaluator::new(&resolver, &units, &sources);
@@ -1153,7 +1201,11 @@ fn evaluate_stages(
                     .iter()
                     .filter_map(|r| r.segments.last())
                     .flat_map(|last| iface_kinds.iter().filter(move |i| i.path.item == last.name))
-                    .flat_map(|i| i.members.iter().map(|f| (f.name.clone(), f.type_name.clone())))
+                    .flat_map(|i| {
+                        i.members
+                            .iter()
+                            .map(|f| (f.name.clone(), f.type_name.clone()))
+                    })
                     .collect();
                 checker.check_interface_members(c, &required);
                 found.extend(checker.into_diagnostics());
@@ -1201,9 +1253,22 @@ fn evaluate_stages(
     // Privacy: E016 on `use` targets and E017 on public signatures (packages.md 3).
     {
         let checker = VisibilityChecker::new(&resolver, &sources);
-        for e in checker.check_uses().iter().chain(checker.check_signatures().iter()) {
-            if e.module.as_ref().is_some_and(|k| scope.contains(&k.package)) {
-                out.extend(located(e.code, Severity::Error, e.message.clone(), e.span, e.module.as_deref()));
+        for e in checker
+            .check_uses()
+            .iter()
+            .chain(checker.check_signatures().iter())
+        {
+            if e.module
+                .as_ref()
+                .is_some_and(|k| scope.contains(&k.package))
+            {
+                out.extend(located(
+                    e.code,
+                    Severity::Error,
+                    e.message.clone(),
+                    e.span,
+                    e.module.as_deref(),
+                ));
             }
         }
     }
@@ -1262,7 +1327,10 @@ fn evaluate_stages(
             continue;
         }
         if shadowed_by_kind_diag(d, &kind_spans) {
-            tracing::debug!(code = d.code, "dropping evaluator report shadowed by a kind diagnostic");
+            tracing::debug!(
+                code = d.code,
+                "dropping evaluator report shadowed by a kind diagnostic"
+            );
             continue;
         }
         out.extend(located(
@@ -1367,8 +1435,16 @@ fn evaluate_stages(
             .iter()
             .flat_map(|q| lint_facts::interfaces(&q.name, &module_views(q)))
             .collect();
-        out.extend(interface::check_members(&ir.components, &all_interfaces, locate));
-        out.extend(c::check_interface_bounds(&ir.components, &all_interfaces, locate));
+        out.extend(interface::check_members(
+            &ir.components,
+            &all_interfaces,
+            locate,
+        ));
+        out.extend(c::check_interface_bounds(
+            &ir.components,
+            &all_interfaces,
+            locate,
+        ));
         out.extend(interface::check_roots(
             &ir,
             |c| lint_facts::is_private(c, &own_views),
@@ -1378,10 +1454,7 @@ fn evaluate_stages(
             &lint_facts::item_facts(&p.name, &own_views, &ir),
             locate,
         ));
-        analysis
-            .suppressions
-            .allows
-            .extend(lint_facts::allows(&ir));
+        analysis.suppressions.allows.extend(lint_facts::allows(&ir));
         analysis
             .suppressions
             .allows
@@ -1398,7 +1471,9 @@ fn evaluate_stages(
                     .collect(),
             )
             .expect("[lint] settings were validated at load");
-        let mcfg = lint.m_config().expect("[lint] settings were validated at load");
+        let mcfg = lint
+            .m_config()
+            .expect("[lint] settings were validated at load");
         // C001-C003 come from the structured check results; C004 reads the lowered IR.
         out.extend(c::check_derived(&ir, locate));
         out.extend(c::check_fit_ranges(&ir, locate));
@@ -1440,7 +1515,10 @@ fn evaluate_stages(
     // The eager pass repeats what a use site already reported: one fault, one diagnostic.
     for d in eager_diags {
         let twin = |o: &Diagnostic| {
-            o.code == d.code && o.message == d.message && o.path == d.path && o.location == d.location
+            o.code == d.code
+                && o.message == d.message
+                && o.path == d.path
+                && o.location == d.location
         };
         if !out.iter().any(twin) {
             out.push(d);
