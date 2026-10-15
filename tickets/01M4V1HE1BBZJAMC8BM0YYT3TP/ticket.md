@@ -8,7 +8,7 @@ reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
 updated = "2026-10-15T02:07:41Z"
 idempotency_key = "Z48-affine"
-scope = ["crates/cadetta-sema/**"]
+scope = ["crates/cadetta-sema/**", "changelog.d/01M4V1HE1BBZJAMC8BM0YYT3TP.fixed.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Affine unit multiply or divide (20degC * 2) is Q002"
