@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:32:28Z"
+updated = "2026-10-15T04:33:04Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "a part array of a component taking a Pattern argument is E006 (one joint per pattern)"
-bound = false
+bound = true
 +++
 
 found while working ~XCK8EGP: stdlib.md 3 rules e006-count-with-pattern and e006-joint-per-pattern.
