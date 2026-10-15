@@ -1,0 +1,33 @@
+{
+  "spec": "1.4",
+  "doc": "geometry",
+  "section": "geometry.md 5.2",
+  "rule": "G005",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "G005",
+        "severity": "warning"
+      },
+      {
+        "code": "C002",
+        "severity": "warning"
+      },
+      {
+        "code": "G008",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "G008",
+        "severity": "warning"
+      }
+    ]
+  },
+  "note": "float 0.25mm >= s 0.1mm so theta is 180deg and the edge may flip (the pattern is also G008, as float::unconstrained_rotation reports float >= s); a 2mm check on a datum 50mm out is undecided, the 150mm twin holds"
+}

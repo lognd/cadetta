@@ -12,6 +12,14 @@ expect.json format are in `../README.md`.
   not execute them yet; that gap is ticket ~6BCVN48.
 - `r007-not-from-origin` is a copy of
   `../adapters/geom-r007-not-from-origin.*` (binding entry).
+- The bolt-float placement of geometry.md 5.2 is covered by
+  `g005-*` and `g008-*`: x translation (`g005-check-looser-than-float`),
+  y translation (`g005-float-on-y`), theta (`g005-float-theta-far-datum`),
+  `theta = 180deg` when `float >= s` (`g005-float-half-turn`), selection
+  among joints (`g005-float-selects-smallest-theta`), locating removal
+  (`g005-locating-joint-no-float`), either parent/child order
+  (`g005-float-base-is-child`) and the own check reading the nominal
+  edge (`g005-own-check-reads-nominal`).
 - Covered elsewhere and not duplicated: the CAD binding rules of
   geometry.md 6 in `../adapters/geom-*`, datum variants in
   `../ir/datum-variants-chain`, the floating-nut allowance in
