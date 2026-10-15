@@ -234,7 +234,10 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   dependent's matching obligations on the dependency's nodes. Without
   `trust`, they are information only.
 - Implementation: `cadetta obligations` reads the `cadetta.lock` of each
-  path dependency (git dependencies are not read yet). A row carries
+  dependency: a path dependency in place, a git dependency from its
+  `build/deps` checkout (materialised on demand through the resolver and
+  reused as-is; `cadetta update` refreshes it). The dependency's nodes join
+  the analysis universe, so upstream matching is by obligation id. A row carries
   `[attested upstream: PACKAGE ROLE by WHO on DATE]` (JSON `upstream`).
   A trusted role discharges the dependent's obligation, which is then not
   listed, only when that role also covers the obligation in the

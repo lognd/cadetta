@@ -3,6 +3,7 @@
 //! to-do list of open and stale obligations (obligations.md 5, config-cli.md 3).
 
 use std::io::Write;
+use std::path::Path;
 
 use cadetta_ir::model::Digest;
 use cadetta_obligations::as_of::{AsOf, Date as Today};
@@ -14,9 +15,12 @@ use cadetta_obligations::trust::{Trust, Upstream};
 use cadetta_obligations::why_stale::WhyStale;
 
 use super::ack::policy_of;
+use super::update::{checkout_dir, git_checkout, roots_of};
 use crate::output::Format;
 use crate::pipeline::{Analysis, analyze};
-use crate::project::Project;
+use crate::pkg::manifest::GitRef;
+use crate::pkg::resolve;
+use crate::project::{Dependency, PackageDir, Project};
 use crate::universe::{candidates, universes};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
@@ -330,23 +334,83 @@ fn project_candidates(
     out
 }
 
-/// Read the lock of every path dependency and the roles each is trusted for (packages.md 6).
+/// Read the lock of every dependency and the roles each is trusted for (packages.md 6).
 ///
-/// Git dependencies are not materialised here, so they contribute nothing.
+/// A path dependency is read in place; a git dependency is read from the checkout that
+/// [`attach_git_dependencies`] materialised into `project.dependencies`.
 fn upstream_of(project: &Project) -> Result<(Upstream, Trust), String> {
     let mut upstream = Upstream::new();
     let mut trust = Trust::new();
     for (name, dep) in &project.config.dependencies {
         trust.set(name, &dep.trust);
-        let Some(path) = &dep.path else {
-            tracing::debug!(dependency = %name, "no path: upstream lock not read");
-            continue;
+        let dir = match &dep.path {
+            Some(path) => project.root.join(path),
+            None => match project
+                .dependencies
+                .iter()
+                .find(|d| &d.resolved.name == name)
+            {
+                Some(d) => d.resolved.dir.clone(),
+                None => {
+                    tracing::debug!(dependency = %name, "git dependency not materialised: upstream lock not read");
+                    continue;
+                }
+            },
         };
-        let lock = Lock::load(&project.root.join(path).join("cadetta.lock"))
+        let lock = Lock::load(&dir.join("cadetta.lock"))
             .map_err(|e| format!("dependency `{name}`: {e}"))?;
+        tracing::debug!(dependency = %name, dir = %dir.display(), "upstream lock read");
         upstream.add_package(name, &lock);
     }
     Ok((upstream, trust))
+}
+
+/// Materialise git dependencies (and their closure) into `project.dependencies`.
+///
+/// `check` never touches the network, so git packages are absent from the project; here an
+/// existing checkout under `build/deps` is reused as-is (refresh it with `cadetta update`)
+/// and a missing one is cloned. The new packages join the analysis universe so upstream
+/// matching by obligation id sees their nodes.
+// frob:ticket 01M4Y53MB9VXXCQB6FHQ06ZV6Q
+fn attach_git_dependencies(project: &mut Project) -> Result<(), String> {
+    if !project
+        .config
+        .dependencies
+        .values()
+        .any(|d| d.git.is_some())
+    {
+        return Ok(());
+    }
+    let roots = roots_of(project)?;
+    let cache = project.root.join("build").join("deps");
+    let read = |p: &Path| std::fs::read_to_string(p).ok();
+    let fetch = |url: &str, r: &GitRef| {
+        let dir = checkout_dir(&cache, url, r);
+        if dir.join(".git").is_dir() {
+            tracing::info!(%url, dir = %dir.display(), "reusing cached git dependency");
+            Ok(dir)
+        } else {
+            git_checkout(&cache, url, r)
+        }
+    };
+    let io = resolve::Io {
+        read: &read,
+        fetch: &fetch,
+    };
+    let resolution = resolve::resolve(&roots, &io).map_err(|e| e.to_string())?;
+    for resolved in resolution.packages {
+        if project
+            .dependencies
+            .iter()
+            .any(|d| d.resolved.name == resolved.name)
+        {
+            continue;
+        }
+        let package = PackageDir::load(&resolved.dir).map_err(|e| e.to_string())?;
+        tracing::info!(name = %resolved.name, "git dependency joins the analysis");
+        project.dependencies.push(Dependency { resolved, package });
+    }
+    Ok(())
 }
 
 /// Run `cadetta obligations`; `args` are the words after the verb. Returns the exit code.
@@ -365,11 +429,11 @@ pub fn run_obligations(
         Ok(p) => p,
         Err(message) => return fail(err, &format!("{message}; {USAGE}")),
     };
-    let (project, members) = match Project::open(globals.cwd.as_deref(), globals.config.as_deref())
-    {
-        Ok(o) => o,
-        Err(e) => return fail(err, &e.to_string()),
-    };
+    let (mut project, members) =
+        match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
+            Ok(o) => o,
+            Err(e) => return fail(err, &e.to_string()),
+        };
     let policy = match policy_of(&project.config) {
         Ok(p) => p,
         Err(message) => return fail(err, &message),
@@ -392,6 +456,9 @@ pub fn run_obligations(
         Ok(a) => a,
         Err(e) => return fail(err, &e.to_string()),
     };
+    if let Err(message) = attach_git_dependencies(&mut project) {
+        return fail(err, &message);
+    }
     let analysis = analyze(&project, &members);
     if analysis.halted {
         return fail(err, "a syntax error stopped analysis; run `cadetta check`");
@@ -686,6 +753,166 @@ mod tests {
         assert_eq!(upstream.for_id(&id("a::X.cur")).count(), 1);
         assert!(trust.trusts("acme.shop", "review"));
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    const AXLE: &str = "model Axle {\n  od: Length = 20mm\n  let bore: Length = 8mm\n  check bore_ok: bore < od \"bore fits\"\n}\n";
+    const CHECK: &str = "check:acme.axle::Axle.bore_ok";
+    const ROLES: &str = "[obligations.roles.review]\ncovers = [\"check:acme.axle::**\"]\n";
+
+    /// A scratch tree holding a git dependency repo `dep` (attested) and a dependent `app`.
+    struct GitWorld(std::path::PathBuf);
+
+    impl GitWorld {
+        fn new(trust: &str) -> Self {
+            static N: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+            let n = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let root =
+                std::env::temp_dir().join(format!("cadetta-gitdep-{}-{n}", std::process::id()));
+            let (dep, app) = (root.join("dep"), root.join("app"));
+            for d in [&dep, &app] {
+                std::fs::create_dir_all(d.join("src")).unwrap();
+            }
+            std::fs::write(
+                dep.join("cadetta.toml"),
+                format!("[package]\nname = \"acme.axle\"\nversion = \"0.1.0\"\n{ROLES}"),
+            )
+            .unwrap();
+            std::fs::write(dep.join("src/lib.cdt"), AXLE).unwrap();
+            let globals = |cwd: &Path| Globals {
+                format: Format::Json,
+                cwd: Some(cwd.to_owned()),
+                config: None,
+            };
+            let ack = ["--role", "review", "--reason", "ok", "--as", "ana@x"];
+            let mut args = vec![CHECK.to_owned()];
+            args.extend(ack.iter().map(|a| (*a).to_owned()));
+            let code =
+                crate::cmd::ack::run_ack(&args, &globals(&dep), &mut Vec::new(), &mut Vec::new());
+            assert_eq!(code, EXIT_OK);
+            let world = Self(root.clone());
+            world.git(&["init", "--quiet"]);
+            world.git(&["add", "."]);
+            world.git(&["commit", "--quiet", "-m", "dep"]);
+            std::fs::write(
+                app.join("cadetta.toml"),
+                format!(
+                    "[package]\nname = \"acme.app\"\n{ROLES}[dependencies.\"acme.axle\"]\ngit = \"{}\"\n{trust}",
+                    dep.display()
+                ),
+            )
+            .unwrap();
+            std::fs::write(app.join("src/lib.cdt"), "").unwrap();
+            world
+        }
+
+        /// Run `git` in the dependency repo, failing the test on a non-zero exit.
+        fn git(&self, args: &[&str]) {
+            let st = std::process::Command::new("git")
+                .arg("-C")
+                .arg(self.0.join("dep"))
+                .args([
+                    "-c",
+                    "user.name=t",
+                    "-c",
+                    "user.email=t@x",
+                    "-c",
+                    "commit.gpgsign=false",
+                ])
+                .args(args)
+                .output()
+                .unwrap();
+            assert!(
+                st.status.success(),
+                "{}",
+                String::from_utf8_lossy(&st.stderr)
+            );
+        }
+
+        /// The closure digest of the dependency's check as the dependent's analysis sees it.
+        fn dependent_digest(&self) -> String {
+            let (mut project, members) = Project::open(Some(&self.0.join("app")), None).unwrap();
+            attach_git_dependencies(&mut project).unwrap();
+            let analysis = analyze(&project, &members);
+            let policy = policy_of(&project.config).unwrap();
+            project_candidates(
+                &analysis,
+                &Lock::new(),
+                &policy,
+                &ObligationsArgs::default(),
+            )
+            .into_iter()
+            .find(|c| c.id.to_string() == CHECK)
+            .unwrap()
+            .current
+            .0
+        }
+
+        fn run(&self) -> serde_json::Value {
+            let globals = Globals {
+                format: Format::Json,
+                cwd: Some(self.0.join("app")),
+                config: None,
+            };
+            let (mut out, mut err) = (Vec::new(), Vec::new());
+            run_obligations(&[], &globals, &mut out, &mut err);
+            serde_json::from_slice(&out)
+                .unwrap_or_else(|_| panic!("{}", String::from_utf8_lossy(&err)))
+        }
+    }
+
+    impl Drop for GitWorld {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_dir_all(&self.0);
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::run_obligations
+    #[test]
+    fn git_dependency_lock_shows_attested_upstream() {
+        let w = GitWorld::new("");
+        let v = w.run();
+        let row = v["obligations"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|r| r["id"] == CHECK)
+            .unwrap_or_else(|| panic!("{v}"));
+        let up = row["upstream"][0].as_str().unwrap_or_else(|| panic!("{v}"));
+        assert!(up.starts_with("acme.axle review by ana@x"), "{up}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::run_obligations
+    #[test]
+    fn git_dependency_trusted_role_discharges_dependent_obligation() {
+        let w = GitWorld::new("trust = [\"review\"]\n");
+        // The dependency attests the digest its check has in the dependent's universe.
+        let digest = w.dependent_digest();
+        let mut lock = Lock::new();
+        attested(&mut lock, "acme.axle::Axle.bore_ok", &digest);
+        lock.save(&w.0.join("dep/cadetta.lock")).unwrap();
+        w.git(&["commit", "--quiet", "-am", "reattest"]);
+        let _ = std::fs::remove_dir_all(w.0.join("app/build"));
+        let v = w.run();
+        let rows = v["obligations"].as_array().unwrap();
+        assert!(rows.iter().all(|r| r["id"] != CHECK), "{v}");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::attach_git_dependencies
+    #[test]
+    fn git_dependency_nodes_join_the_candidate_universe() {
+        let w = GitWorld::new("");
+        let before = w.0.join("app/build/deps");
+        assert!(!before.exists());
+        let v = w.run();
+        assert!(before.is_dir(), "checkout is cached for reuse");
+        assert!(
+            v["obligations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["id"] == CHECK),
+            "{v}"
+        );
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/obligations.rs::parse_args

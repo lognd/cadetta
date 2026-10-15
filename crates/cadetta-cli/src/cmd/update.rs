@@ -276,6 +276,13 @@ pub fn read_package_files(dir: &Path) -> Result<Vec<(String, Vec<u8>)>, String> 
     Ok(out)
 }
 
+/// The directory under `cache` where `url` at `reference` is (or will be) checked out.
+// frob:ticket 01M4Y53MB9VXXCQB6FHQ06ZV6Q
+pub fn checkout_dir(cache: &Path, url: &str, reference: &GitRef) -> PathBuf {
+    let key = blake3::hash(format!("{url}\n{reference:?}").as_bytes()).to_hex();
+    cache.join(&key.as_str()[..16])
+}
+
 /// Check out `url` at `reference` under `cache` with the `git` binary; returns the checkout.
 pub fn git_checkout(cache: &Path, url: &str, reference: &GitRef) -> Result<PathBuf, String> {
     let git = |dir: Option<&Path>, args: &[&str]| -> Result<(), String> {
@@ -290,8 +297,7 @@ pub fn git_checkout(cache: &Path, url: &str, reference: &GitRef) -> Result<PathB
             Err(String::from_utf8_lossy(&output.stderr).trim().to_owned())
         }
     };
-    let key = blake3::hash(format!("{url}\n{reference:?}").as_bytes()).to_hex();
-    let dir = cache.join(&key.as_str()[..16]);
+    let dir = checkout_dir(cache, url, reference);
     std::fs::create_dir_all(cache).map_err(|e| e.to_string())?;
     if dir.join(".git").is_dir() {
         tracing::info!(%url, dir = %dir.display(), "fetching dependency");
@@ -310,7 +316,7 @@ pub fn git_checkout(cache: &Path, url: &str, reference: &GitRef) -> Result<PathB
 }
 
 /// Load the package manifests of the project's packages as resolution roots.
-fn roots_of(project: &Project) -> Result<Vec<(PathBuf, PackageManifest)>, String> {
+pub(crate) fn roots_of(project: &Project) -> Result<Vec<(PathBuf, PackageManifest)>, String> {
     project
         .packages
         .iter()
