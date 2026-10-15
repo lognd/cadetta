@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:10:09Z"
+digest = "7affb7d381d4467fbc6e13c440889581c1a8332ad0d13873bda4a0c27dd6bd3a"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 36.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9cd50e43-928b-4a19-ae57-f48cb3e9b8a0 with nextest profile: default
+    Starting 1 test across 66 binaries (1411 tests skipped)
+        PASS [   0.669s] cadetta cmd::emit::tests::csv_note_joins_literal_emit_point_and_citation_with_single_spaces
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.673s] 1 test run: 1 passed, 1411 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "csv_note_joins_literal"
+size = 642
+status = "measured"
+test_count = 1
+tests_digest = "be17d74eff9c925b1923b0e8d5c6c2bc9321c858f966c253bd19561b6a100871"
+at = "2026-10-15T04:10:09Z"
+actor = "lognd"
+rev = 1
