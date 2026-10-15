@@ -1,0 +1,38 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:19:44Z"
+digest = "a13b30bef9400e61bb3dbf096f01151656d35cf0d6f56a0920c80a5c4317dbfc"
+exit_code = 0
+inline = '''
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c998c48d-aed7-4c02-abf6-707adb6c81a3 with nextest profile: default
+    Starting 1 test across 56 binaries (1300 tests skipped)
+        PASS [   0.006s] cadetta::ir_entries ir_entries_reject_missing_unreadable_and_non_json_input_with_exit_2
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1300 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "ir_entries_reject"
+size = 949
+status = "measured"
+test_count = 1
+tests_digest = "df8f739199333dc6d7313173e42e2c1a36008d78b2412883cea252cbe6e6cdc5"
+at = "2026-10-15T02:19:44Z"
+actor = "lognd"
+rev = 1
