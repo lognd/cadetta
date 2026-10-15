@@ -2,7 +2,8 @@
 id = "01M4ZSCT4KRVAHVKQE36A9J2KR"
 title = "Fix g005-float-half-turn must_not_fire listing G008"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
