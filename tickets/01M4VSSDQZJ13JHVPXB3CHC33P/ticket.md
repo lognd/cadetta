@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T23:32:59Z"
-updated = "2026-10-15T04:31:22Z"
+updated = "2026-10-15T04:31:24Z"
 scope = ["std/src/fasteners/**"]
 
 [[acceptance]]

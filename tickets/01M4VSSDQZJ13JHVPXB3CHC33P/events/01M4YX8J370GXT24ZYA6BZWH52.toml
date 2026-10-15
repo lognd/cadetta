@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T04:31:24Z"
+digest = "da6e46d67fc3477137387fdf7cbeeb47cc23d0f6f2632ec0969fb22a428ea8e0"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 74834233-db85-464f-9014-1293a64ed3b8 with nextest profile: default
+    Starting 1 test across 67 binaries (1421 tests skipped)
+        PASS [   0.009s] cadetta-syntax::std_fasteners_tables eight_tables_parse_cited_with_spec_columns
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 1421 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "eight_tables_parse"
+size = 575
+status = "measured"
+test_count = 1
+tests_digest = "44c1fc6cb7dde0171259668bd5ea74ad6000de78f1512d49bbdd9f2b3185119e"
+at = "2026-10-15T04:31:24Z"
+actor = "lognd"
+rev = 1
