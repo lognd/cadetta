@@ -7,6 +7,8 @@ use std::path::{Path, PathBuf};
 use cadetta_syntax::lexer::Span;
 
 use crate::config::{Config, ConfigError};
+use crate::pkg::manifest::{self, Manifest, PackageManifest, Source};
+use crate::pkg::resolve::{self, ResolveError, ResolvedPackage};
 
 /// The configuration file name.
 pub const CONFIG_FILE: &str = "cadetta.toml";
@@ -112,6 +114,17 @@ pub struct Project {
     pub config: Config,
     /// Loaded packages: the package itself, or each workspace member in order.
     pub packages: Vec<PackageDir>,
+    /// The resolved dependency closure (path sources), one entry per package name.
+    pub dependencies: Vec<Dependency>,
+}
+
+/// One resolved dependency: how it was resolved and its loaded files.
+#[derive(Debug, Clone)]
+pub struct Dependency {
+    /// The resolution record (name, version, source, directory).
+    pub resolved: ResolvedPackage,
+    /// The loaded package.
+    pub package: PackageDir,
 }
 
 /// Walk up from `start` to the nearest `cadetta.toml` with a `[package]`
@@ -202,10 +215,12 @@ impl Project {
                 }
             }
         }
+        let dependencies = load_dependencies(&packages)?;
         Ok(Self {
             root,
             config,
             packages,
+            dependencies,
         })
     }
 
@@ -222,6 +237,73 @@ impl Project {
             .position(|p| cwd.starts_with(&p.dir))
             .map_or(all, |i| vec![i])
     }
+}
+
+/// Build a project diagnostic (E012, E013) for a resolution failure.
+fn dep_diag(code: &'static str, path: &Path, message: String) -> ProjectError {
+    tracing::warn!(code, path = %path.display(), %message, "project diagnostic");
+    ProjectError::Diag(ProjectDiag {
+        code,
+        message,
+        path: path.to_owned(),
+        spans: Vec::new(),
+    })
+}
+
+/// Resolve and load the dependency closure of `packages` (packages.md 1).
+///
+/// Only path sources are resolved here: `check` does no network or git access, so a git
+/// dependency is skipped with a warning and stays unresolved. E012 and E013 are returned as
+/// project diagnostics; a dependency that cannot be found is E005.
+fn load_dependencies(packages: &[PackageDir]) -> Result<Vec<Dependency>, ProjectError> {
+    let mut roots: Vec<(PathBuf, PackageManifest)> = Vec::with_capacity(packages.len());
+    for pkg in packages {
+        match manifest::load(&pkg.dir) {
+            Ok(Manifest::Package(mut m)) => {
+                m.dependencies.retain(|d| {
+                    let local = matches!(d.source, Source::Path(_));
+                    if !local {
+                        tracing::warn!(name = %d.name, "git dependency is not resolved by check; run `cadetta update`");
+                    }
+                    local
+                });
+                roots.push((pkg.dir.clone(), m));
+            }
+            Ok(Manifest::Workspace(_)) => {
+                return Err(e005(&pkg.dir, "not a package: found a workspace"));
+            }
+            Err(e) => return Err(e005(&pkg.dir, e.to_string())),
+        }
+    }
+    if roots.iter().all(|(_, m)| m.dependencies.is_empty()) {
+        return Ok(Vec::new());
+    }
+    let read = |p: &Path| std::fs::read_to_string(p).ok();
+    let fetch = |_: &str, _: &manifest::GitRef| -> Result<PathBuf, String> {
+        Err("git dependencies are not fetched by check".to_owned())
+    };
+    let io = resolve::Io {
+        read: &read,
+        fetch: &fetch,
+    };
+    let resolution = match resolve::resolve(&roots, &io) {
+        Ok(r) => r,
+        Err(e) => {
+            let dir = &packages[0].dir;
+            return Err(match &e {
+                ResolveError::VersionUnsatisfied { .. } => dep_diag("E012", dir, e.to_string()),
+                ResolveError::VersionConflict { .. } => dep_diag("E013", dir, e.to_string()),
+                _ => e005(dir, e.to_string()),
+            });
+        }
+    };
+    let mut out = Vec::with_capacity(resolution.packages.len());
+    for resolved in resolution.packages {
+        let package = PackageDir::load(&resolved.dir)?;
+        tracing::debug!(name = %resolved.name, version = %resolved.version, "dependency loaded");
+        out.push(Dependency { resolved, package });
+    }
+    Ok(out)
 }
 
 /// Load a `cadetta.toml`, mapping the error with its path.
@@ -432,5 +514,79 @@ mod tests {
             find_config(&empty),
             Err(ProjectError::NotFound { .. })
         ));
+    }
+
+    /// A root package depending on `acme.shop` (version `shop_version`) with requirement `req`.
+    fn with_shop(shop_version: &str, req: &str) -> PathBuf {
+        let root = scratch();
+        put(
+            &root,
+            "cadetta.toml",
+            &format!(
+                "[package]\nname = \"acme.a\"\n[dependencies]\n\"acme.shop\" = {{ path = \"shop\", version = \"{req}\" }}\n"
+            ),
+        );
+        put(&root, "src/lib.cdt", "");
+        put(
+            &root,
+            "shop/cadetta.toml",
+            &format!("[package]\nname = \"acme.shop\"\nversion = \"{shop_version}\"\n"),
+        );
+        put(&root, "shop/src/lib.cdt", "pub model Thing { }\n");
+        root
+    }
+
+    // frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn path_dependency_is_resolved_and_loaded() {
+        let root = with_shop("1.0.0", "1");
+        let project = Project::load(&root.join("cadetta.toml")).unwrap();
+        assert_eq!(project.dependencies.len(), 1);
+        assert_eq!(project.dependencies[0].resolved.name, "acme.shop");
+        assert_eq!(project.dependencies[0].package.modules.len(), 1);
+    }
+
+    // frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn unsatisfied_version_requirement_is_e012() {
+        let root = with_shop("1.3.0", "1.2.*");
+        assert_eq!(
+            code(Project::load(&root.join("cadetta.toml")).unwrap_err()),
+            "E012"
+        );
+    }
+
+    // frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn conflicting_requirements_on_one_package_are_e013() {
+        let root = scratch();
+        put(
+            &root,
+            "cadetta.toml",
+            "[workspace]\nmembers = [\"a\", \"b\"]\n",
+        );
+        for (m, req) in [("a", "1"), ("b", "2")] {
+            put(
+                &root,
+                &format!("{m}/cadetta.toml"),
+                &format!(
+                    "[package]\nname = \"acme.{m}\"\n[dependencies]\n\"acme.shop\" = {{ path = \"../shop\", version = \"{req}\" }}\n"
+                ),
+            );
+            put(&root, &format!("{m}/src/lib.cdt"), "");
+        }
+        put(
+            &root,
+            "shop/cadetta.toml",
+            "[package]\nname = \"acme.shop\"\nversion = \"1.0.0\"\n",
+        );
+        put(&root, "shop/src/lib.cdt", "pub model Thing { }\n");
+        assert_eq!(
+            code(Project::load(&root.join("cadetta.toml")).unwrap_err()),
+            "E013"
+        );
     }
 }

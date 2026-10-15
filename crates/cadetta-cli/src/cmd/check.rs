@@ -15,11 +15,15 @@ use cadetta_obligations::as_of::{AsOf, Date as Today};
 use cadetta_obligations::citation::{SOURCE_ROLE, check_citation, citation_id};
 use cadetta_obligations::graph::{ObligationKind, ObligationState};
 use cadetta_obligations::lock::{Lock, Record};
+use cadetta_obligations::lock_package::{
+    DependencyChanged, ResolvedPackage as Pin, check_pinned, content_digest,
+};
 use cadetta_obligations::roles::Policy;
 
 use super::ack::policy_of;
 use super::check_drift::process_drift;
 use super::obligations::{Candidate, ObligationsArgs, list};
+use super::update::{read_package_files, source_text};
 use crate::config::{Adapter, Config};
 use crate::pipeline::{Analysis, analyze_at};
 use crate::project::{PackageDir, Project, ProjectDiag, ProjectError};
@@ -286,6 +290,7 @@ pub fn run_check_with(
 
     let analysis = analyze_at(&project, &members, &as_of.date.to_string());
     let mut raw = analysis.diagnostics.clone();
+    raw.extend(dependency_diagnostics(&project, &lock));
     if !analysis.halted {
         for package in &analysis.packages {
             let Some(pkg) = project.packages.iter().find(|p| {
@@ -391,6 +396,35 @@ fn bind_waiver_digests(sup: &mut Suppressions, universes: &[universe::Universe],
             tracing::warn!(%error, glob = %w.glob, "check: waiver not bound");
         }
     }
+}
+
+/// E014 diagnostics for resolved dependencies whose content differs from their lock pin.
+// frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41
+pub fn dependency_diagnostics(project: &Project, lock: &Lock) -> Vec<Diagnostic> {
+    let mut pins = Vec::new();
+    for dep in &project.dependencies {
+        let files = match read_package_files(&dep.resolved.dir) {
+            Ok(f) => f,
+            Err(reason) => {
+                tracing::warn!(
+                    name = %dep.resolved.name,
+                    %reason,
+                    "check: cannot read dependency files"
+                );
+                continue;
+            }
+        };
+        pins.push(Pin {
+            name: dep.resolved.name.clone(),
+            version: dep.resolved.version.clone(),
+            source: source_text(&project.root, &dep.resolved.source),
+            digest: content_digest(&files),
+        });
+    }
+    check_pinned(lock, &pins)
+        .into_iter()
+        .map(|c| Diagnostic::new(DependencyChanged::CODE, Severity::Error, c.to_string()))
+        .collect()
 }
 
 #[cfg(test)]
@@ -915,5 +949,43 @@ waive C001 on acme.axle::Axle.wide { because \"x\" expires 2026-10-20 }\n";
         for d in diags {
             assert!(diag_validator.is_valid(d), "{d}");
         }
+    }
+
+    // frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41
+    // frob:tests crates/cadetta-cli/src/cmd/check.rs::dependency_diagnostics
+    #[test]
+    fn changed_dependency_content_is_e014() {
+        let dir = project(
+            AXLE_OK,
+            "[dependencies]\n\"acme.shop\" = { path = \"shop\", version = \"1\" }\n",
+        );
+        std::fs::create_dir_all(dir.0.join("shop/src")).unwrap();
+        std::fs::write(
+            dir.0.join("shop/cadetta.toml"),
+            "[package]\nname = \"acme.shop\"\nversion = \"1.0.0\"\n",
+        )
+        .unwrap();
+        std::fs::write(dir.0.join("shop/src/lib.cdt"), "pub model Thing { }\n").unwrap();
+        let load = || Project::load(&dir.0.join("cadetta.toml")).unwrap();
+        // Unpinned: nothing to compare against.
+        assert!(dependency_diagnostics(&load(), &Lock::default()).is_empty());
+        // Pin the current content, then change it.
+        let project_now = load();
+        let files = read_package_files(&project_now.dependencies[0].resolved.dir).unwrap();
+        let mut lock = Lock::default();
+        cadetta_obligations::lock_package::pin_package(
+            &mut lock,
+            &Pin {
+                name: "acme.shop".into(),
+                version: "1.0.0".into(),
+                source: "path:shop".into(),
+                digest: content_digest(&files),
+            },
+        );
+        assert!(dependency_diagnostics(&project_now, &lock).is_empty());
+        std::fs::write(dir.0.join("shop/src/lib.cdt"), "pub model Other { }\n").unwrap();
+        let diags = dependency_diagnostics(&load(), &lock);
+        assert_eq!(diags.len(), 1);
+        assert_eq!(diags[0].code, "E014");
     }
 }

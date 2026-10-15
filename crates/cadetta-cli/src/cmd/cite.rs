@@ -832,6 +832,7 @@ mod tests {
                     source: source.to_owned(),
                 }],
             }],
+            dependencies: vec![],
         }
     }
 

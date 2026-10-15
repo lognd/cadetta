@@ -651,6 +651,17 @@ pub fn analyze_at(project: &Project, scope: &[usize], as_of: &str) -> Analysis {
             &mut analysis.sources,
         ));
     }
+    for dep in &project.dependencies {
+        tracing::debug!(name = %dep.resolved.name, "pipeline: parsing dependency package");
+        parsed.push(parse_package(
+            &RawPackage::of(&dep.package),
+            &project.root,
+            false,
+            &mut analysis.diagnostics,
+            &mut halted,
+            &mut analysis.sources,
+        ));
+    }
     if let Some(std_pkg) = &loaded_std {
         let std_root = std_pkg.dir.parent().unwrap_or(&std_pkg.dir).to_owned();
         let mut scratch = Vec::new();

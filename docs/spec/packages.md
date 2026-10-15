@@ -74,6 +74,11 @@ src = "src"                  # module root (default "src")
   `version` accepts comma-joined `^`, `~`, `=`, `<`, `<=`, `>`, `>=`
   and wildcard comparators; a bare version is caret; pre-releases never
   match. Git and file access are injected, never made by the resolver.
+- `cadetta check` resolves path dependencies before analysis, so E012
+  and E013 surface as diagnostics, each dependency's items are in scope
+  for `use`, and E014 is reported when a dependency's content differs
+  from its pinned lock digest (an unpinned dependency is not checked).
+  Git dependencies are not fetched by `check`.
 
 ## 2. Modules
 

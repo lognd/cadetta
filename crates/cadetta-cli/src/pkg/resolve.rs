@@ -240,6 +240,15 @@ impl VersionReq {
                 .iter()
                 .find_map(|op| raw.strip_prefix(op).map(|r| (*op, r.trim())))
                 .unwrap_or(("^", raw));
+            // A bare wildcard (`1.2.*`) pins the numbers before it, like `=`.
+            let op = if op == "^"
+                && raw == rest
+                && rest.split('.').any(|c| matches!(c, "*" | "x" | "X"))
+            {
+                "="
+            } else {
+                op
+            };
             let rest = rest.split(['-', '+']).next().unwrap_or("");
             let p = partial(rest)?;
             let range = match op {
@@ -651,6 +660,7 @@ mod tests {
         assert!(ok(">1", "2.0.0") && !ok(">1", "1.5.0"));
         assert!(ok("<=1.2", "1.2.9") && !ok("<=1.2", "1.3.0"));
         assert!(ok("*", "9.9.9") && ok("1.*", "1.4.0"));
+        assert!(ok("1.2.*", "1.2.5") && !ok("1.2.*", "1.3.0"));
         assert!(!ok("1", "1.2.0-rc1"));
         assert!(VersionReq::parse("").is_err() && Version::parse("1.0").is_err());
     }

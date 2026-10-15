@@ -680,6 +680,7 @@ mod tests {
             root: root.clone(),
             config,
             packages: vec![],
+            dependencies: vec![],
         };
         let (upstream, trust) = upstream_of(&project).unwrap();
         assert_eq!(upstream.for_id(&id("a::X.cur")).count(), 1);
