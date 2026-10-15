@@ -7,7 +7,7 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T07:53:53Z"
-updated = "2026-10-15T19:57:27Z"
+updated = "2026-10-15T19:57:42Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml", "docs/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "R007 fires for a dimension not measured from the sketch origin and R011 for an instance file that is not the slot file; a slots read records instance files."
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A read whose on-disk digest equals the lock digest reuses the lock values without opening the tool."
