@@ -2,11 +2,12 @@
 id = "01M4TA3CGRPW987SHWQ4E2F944"
 title = "Add check.json output schema"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T09:39:34Z"
-updated = "2026-10-15T01:45:05Z"
+updated = "2026-10-15T01:45:06Z"
 scope = ["docs/schemas"]
 
 [[acceptance]]
