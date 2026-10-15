@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T07:38:07Z"
-updated = "2026-10-15T07:46:09Z"
+updated = "2026-10-15T07:46:27Z"
 scope = ["docs/spec/ir.md"]
 +++
 
