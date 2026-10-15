@@ -4,9 +4,10 @@ title = "Surface fits::analyze failures (F001/F002/F003/C002) as user diagnostic
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-14T22:14:02Z"
+updated = "2026-10-15T09:43:06Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
