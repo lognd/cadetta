@@ -58,6 +58,8 @@ pub struct Ty {
     pub bare: bool,
     /// The exact value of a bare number when it is known from literals alone.
     pub value: Option<Rational>,
+    /// True for a quantity written in an affine unit (`degC`, `degF`; quantities.md 3).
+    pub affine: bool,
 }
 
 impl Ty {
@@ -66,6 +68,7 @@ impl Ty {
             kd,
             bare: false,
             value: None,
+            affine: false,
         }
     }
 
@@ -74,6 +77,7 @@ impl Ty {
             kd: KindedDim::anonymous(Dim::default()),
             bare: true,
             value,
+            affine: false,
         }
     }
 
@@ -507,7 +511,11 @@ impl<'a> KindChecker<'a> {
             ExprKind::Quantity(segs) => {
                 let unit = &segs.first()?.unit;
                 match self.units.parse(unit) {
-                    Ok(r) => Some(Ty::quantity(self.kinds.from_unit(&r))),
+                    Ok(r) => {
+                        let mut t = Ty::quantity(self.kinds.from_unit(&r));
+                        t.affine = self.units.lookup(unit).is_some_and(|d| d.affine);
+                        Some(t)
+                    }
                     Err(err) => {
                         self.report(
                             "E002",
@@ -674,10 +682,28 @@ impl<'a> KindChecker<'a> {
                     };
                     return Some(Ty::bare(value));
                 }
-                self.operands(&a, &b, l.span, r.span, span)
+                let out = self.operands(&a, &b, l.span, r.span, span)?;
+                // quantities.md 3: the difference of two Temperatures is a TemperatureDelta.
+                let temp = |t: &Ty| !t.bare && t.kd.name() == Some("Temperature");
+                if op == BinOp::Sub && temp(&a) && temp(&b) {
+                    return self.kinds.named("TemperatureDelta").ok().map(Ty::quantity);
+                }
+                Some(out)
             }
             BinOp::Mul | BinOp::Div => {
                 let (a, b) = (a?, b?);
+                if a.affine || b.affine {
+                    // quantities.md 3: affine units cannot be multiplied or divided.
+                    self.report(
+                        "Q002",
+                        Severity::Error,
+                        "Q002 dimension-mismatch: an affine temperature unit (degC, degF) \
+                         cannot be multiplied or divided; use a TemperatureDelta unit"
+                            .to_string(),
+                        span,
+                    );
+                    return None;
+                }
                 if a.bare && b.bare {
                     let value = match (&a.value, &b.value) {
                         (Some(x), Some(y)) if op == BinOp::Mul => Some(x.mul(y)),
@@ -985,6 +1011,22 @@ mod tests {
     fn user_kinds_register_in_any_order() {
         let src = "kind B = A\nkind A = Length\nmodel M {\n s: B = len\n}\n";
         assert_eq!(codes_with_decls(src), ["Q003"]);
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker
+    #[test]
+    fn affine_multiply_is_q002_but_delta_unit_is_fine() {
+        assert_eq!(codes("a = 20degC * 2"), ["Q002"]);
+        assert_eq!(codes("a = 20degF / 2"), ["Q002"]);
+        assert!(codes("a = 20dK * 2").is_empty());
+        assert!(codes("a = 20K * 2").is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker
+    #[test]
+    fn temperature_difference_is_a_delta() {
+        assert!(codes("d: TemperatureDelta = 20degC - 5degC").is_empty());
+        assert_eq!(codes("d: Temperature = 20degC - 5degC"), ["Q003"]);
     }
 
     // frob:tests crates/cadetta-sema/src/kindcheck.rs::KindChecker

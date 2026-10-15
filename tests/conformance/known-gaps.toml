@@ -333,16 +333,6 @@ ticket = "~PDC7173"
 reason = "C004 not emitted"
 
 [[gap]]
-fixture = "quantities/q002-affine-multiply"
-ticket = "~0YYT3TP"
-reason = "affine unit handling differs from spec"
-
-[[gap]]
-fixture = "quantities/q003-temperature-delta"
-ticket = "~0YYT3TP"
-reason = "affine unit handling differs from spec"
-
-[[gap]]
 fixture = "quantities/q003-package-kind"
 ticket = "~Q6AFN5S"
 reason = "package kind rows not checked (Q003)"
