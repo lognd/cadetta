@@ -204,7 +204,11 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   (`sync.rs`: the adapter host's sync loop against a simulated native
   document, observing `class`, `writes`, `regen`, `lock_updated`,
   `lock_synced_updated`, `push_status` and the next run's class; fixtures
-  needing a tool session are gaps). A pair with no executor is a
+  needing a tool session are gaps) and `import` (`import.rs`: propose mode
+  only; observed items are decoded as the CLI does and run through
+  `propose`, observing `members`, `components`, `flagged`, `item_order`,
+  `status` and `reason_present`; accept, update and richer item features
+  are gaps and fail loudly). A pair with no executor is a
   failure ("no executor for kind K entry V"), never a silent skip; the
   fixture must then be listed in `known-gaps.toml` against the ticket that
   adds the executor.
