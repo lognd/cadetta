@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "U002 fires through check for an unused private item and not a used one"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "An #[allow] attribute suppresses its diagnostic through the engine"
