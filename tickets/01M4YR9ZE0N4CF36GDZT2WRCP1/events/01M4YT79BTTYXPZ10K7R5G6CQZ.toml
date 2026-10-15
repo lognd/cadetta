@@ -1,0 +1,82 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:35:09Z"
+digest = "f2697cf31837a9529452773454b6907dfa0bfb617a5c0141d5ac38470b400578"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.12s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9fd5f5ae-d726-45ad-97fb-aaa2d36a0f66 with nextest profile: default
+    Starting 1 test across 63 binaries (1385 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        FAIL [ 163.545s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    test conformance_corpus_matches_the_spec has been running for over 60 seconds
+
+    thread 'conformance_corpus_matches_the_spec' (714772) panicked at crates/cadetta-cli/tests/conformance.rs:44:5:
+    32 conformance failure(s):
+    adapters/bind-scope-every-in-scope-path [adapters]: must-not-fire: exit status 2, expected 0
+    geometry/datum-bound-inexact-rotation-undecided [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/datum-bound-reversed-normal [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/datum-bound-toleranced-angle-undecided [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/datum-built-from-earlier [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/datum-flip-z [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    geometry/i001-interface-datum-omitted [geometry]: stale known-gaps entry (ticket ~S5DC5W0); the fixture passes, remove the entry
+    packages/e012-bare-version-is-caret [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-comparator-list [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-exact [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-first-requirement-fails [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-prerelease-never-matches [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-tilde [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-unversioned-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-version-unsatisfied [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e012-wildcard [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e013-single-version-per-project [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e013-version-conflict [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e014-dependency-changed [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e016-fully-qualified-path-checks-visibility [packages]: stale known-gaps entry (ticket ~KRVD0V6); the fixture passes, remove the entry
+    packages/e016-private-from-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/e016-pub-package-from-dependency [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/n004-reference-to-was-path [packages]: stale known-gaps entry (ticket ~KRVD0V6); the fixture passes, remove the entry
+    packages/pub-use-reexports [packages]: stale known-gaps entry (ticket ~992PZ41); the fixture passes, remove the entry
+    packages/use-brace-tree [packages]: stale known-gaps entry (ticket ~8WN9V3R); the fixture passes, remove the entry
+    stdlib/i001-sourced-optional-members [stdlib]: must-fire: extra S008 (warning) at acme.demo::src
+    stdlib/i001-sourced-optional-members [stdlib]: must-not-fire: extra S008 (warning) at acme.demo::src
+    stdlib/i001-sourced-wrong-kind [stdlib]: must-fire: extra S008 (warning) at acme.demo::src
+    stdlib/i001-sourced-wrong-kind [stdlib]: must-not-fire: extra S008 (warning) at acme.demo::src
+    stdlib/policy-default-component-over-file [stdlib]: stale known-gaps entry (ticket ~TGY21E7); the fixture passes, remove the entry
+    stdlib/q003-sourced-named-kind [stdlib]: must-fire: extra S008 (warning) at acme.demo::src
+    stdlib/q003-sourced-named-kind [stdlib]: must-not-fire: extra S008 (warning) at acme.demo::src
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 7 filtered out; finished in 163.53s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 163.553s] 1 test run: 0 passed, 1 failed, 1385 skipped
+        FAIL [ 163.545s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "conformance_corpus_matches_the_spec"
+size = 5531
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-15T03:35:09Z"
+actor = "lognd"
+rev = 1
