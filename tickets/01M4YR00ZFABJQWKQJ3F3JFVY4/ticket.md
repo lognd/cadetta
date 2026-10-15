@@ -6,12 +6,12 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:59:22Z"
-updated = "2026-10-15T03:30:18Z"
+updated = "2026-10-15T03:30:21Z"
 scope = ["crates/cadetta-sema/**", "crates/cadetta-lint/**"]
 
 [[acceptance]]
 text = "N001: a lowercase component name is reported"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "N004: a stale item name in a was path or read is reported"
