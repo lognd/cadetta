@@ -374,8 +374,9 @@ fn launch(spec: &Value) -> Result<Facts, String> {
             }),
         );
         let script = format!(
-            "#!/bin/sh\nread line\nprintf '%s\\n' '{init}'\nread line\nprintf '%s\\n' '{}'\n",
-            rpc(2, &Value::Null)
+            "#!/bin/sh\nread line\nprintf '%s\\n' '{init}'\nread line\nprintf '%s\\n' '{}'\nread line\nprintf '%s\\n' '{}'\n",
+            rpc(2, &json!({"files": [], "diagnostics": []})),
+            rpc(3, &Value::Null)
         );
         put_exec(root, command, &script)?;
     }
