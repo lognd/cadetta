@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-15T01:50:24Z"
+digest = "12e9466d7701b0a8dbd2f8d376ed87170d10494970d2d8cf87055405909874eb"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.98s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 33739693-cc1c-4010-9335-803128f96a36 with nextest profile: default
+    Starting 4 tests across 49 binaries (1250 tests skipped)
+        PASS [   0.007s] cadetta cmd::lock::tests::json_report_carries_schema_and_exit_code
+        PASS [   0.034s] cadetta cmd::solve::tests::json_report_records_failures_with_code
+        PASS [   0.048s] cadetta-obligations lock_verify::tests::json_report_validates_against_lock_schema
+        PASS [   0.053s] cadetta cmd::solve::tests::json_report_lists_solved_then_fresh_and_validates
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.055s] 4 tests run: 4 passed, 1250 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "json_report"
+size = 919
+status = "measured"
+test_count = 4
+tests_digest = "18fecbb33e44a179b2f5c90eacbd6b00d126e72ea19fb7cad086a688d307b5e9"
+at = "2026-10-15T01:50:24Z"
+actor = "lognd"
+rev = 1

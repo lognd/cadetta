@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T15:55:21Z"
-updated = "2026-10-13T15:55:21Z"
+updated = "2026-10-15T01:50:24Z"
 scope = ["crates/cadetta-cli/src/cmd/solve.rs", "docs/schemas/*.json"]
 +++
 
