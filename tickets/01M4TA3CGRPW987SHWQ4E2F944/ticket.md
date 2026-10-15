@@ -11,7 +11,7 @@ scope = ["docs/schemas"]
 
 [[acceptance]]
 text = "Given a clean or failing project, when check --format json runs, then the output validates against docs/schemas/check.json and each diagnostic against diag.json"
-bound = false
+bound = true
 +++
 
 found while working ~E631Y52. absent.
