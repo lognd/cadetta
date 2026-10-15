@@ -2,7 +2,8 @@
 id = "01M4Y2Z9CK91EG2KZN8516EW7Q"
 title = "Conformance fixtures for ScrewJoint placement float"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SWEQMQ8DQMN8B8GWVR4GDH"
