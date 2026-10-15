@@ -4,9 +4,10 @@ title = "language: table lookup, fit and variant pipeline unimplemented (E007 E0
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-13T16:21:45Z"
+updated = "2026-10-15T05:58:38Z"
 scope = ["crates/**"]
 +++
 
