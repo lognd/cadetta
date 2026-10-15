@@ -197,7 +197,10 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   (`read.rs`: the adapter host's read side in process, namely native-link
   discovery, R003, name qualification, unit resolution, the csv, json and
   sw-equations readers and the round-trip contract; the `observed` block is
-  subset-compared and `excludes` lists tokens that must be absent). A pair with no executor is a
+  subset-compared and `excludes` lists tokens that must be absent) and
+  `push-plan` (`push_plan.rs`: the tolerance planner, one printed line per
+  written tolerance, checked by a flat `output` `contains`/`excludes` against
+  that plan text; geometry push-plan fixtures remain gaps). A pair with no executor is a
   failure ("no executor for kind K entry V"), never a silent skip; the
   fixture must then be listed in `known-gaps.toml` against the ticket that
   adds the executor.

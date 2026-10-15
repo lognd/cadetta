@@ -166,6 +166,22 @@ fn check_output(want: &Value, facts: &Facts) -> Result<(), String> {
         return Err("output: expectation is not an object".into());
     };
     let mut problems = Vec::new();
+    // A flat `contains`/`excludes` checks the entry's printed plan (`stdout`), not a file.
+    if want.get("contains").is_some_and(Value::is_array)
+        || want.get("excludes").is_some_and(Value::is_array)
+    {
+        if let Err(m) = check_contains(&want["contains"], &facts.stdout, "stdout") {
+            problems.push(m);
+        }
+        if let Err(m) = check_excludes(&want["excludes"], &facts.stdout, "stdout") {
+            problems.push(m);
+        }
+        return if problems.is_empty() {
+            Ok(())
+        } else {
+            Err(format!("output: {}", problems.join("; ")))
+        };
+    }
     for (path, spec) in files {
         let text = facts.after.get(path);
         let wants_exists = spec["exists"].as_bool();
