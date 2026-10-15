@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T02:26:28Z"
+digest = "03b2296d6c32e9550c3ad56cb41567b4cf99d5ce3bc0c6f5f3881b351732f9aa"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID a62fa38d-80a0-44d6-80fa-429efb195279 with nextest profile: default
+    Starting 1 test across 57 binaries (1315 tests skipped)
+        PASS [   0.041s] cadetta::ir_lint_rules inexact_nominal_fires_q006
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.043s] 1 test run: 1 passed, 1315 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "inexact_nominal_fires_q006"
+size = 545
+status = "measured"
+test_count = 1
+tests_digest = "a6e14f13c87bf3dd9b0d76224665fd9d59d401d6e7c76eccb143d8e0aaa45502"
+at = "2026-10-15T02:26:28Z"
+actor = "lognd"
+rev = 1
