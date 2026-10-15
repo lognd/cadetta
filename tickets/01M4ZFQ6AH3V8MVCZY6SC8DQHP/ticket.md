@@ -2,7 +2,8 @@
 id = "01M4ZFQ6AH3V8MVCZY6SC8DQHP"
 title = "Lower ScrewJoint floats for joints inside sub-assembly components"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
