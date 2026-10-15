@@ -2,7 +2,8 @@
 id = "01M4Y9Z3KDPFRNGQR1KTNGHA7Q"
 title = "Enumerate fit, require, sync, solver and waiver obligations; read-member deps for check closures"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
