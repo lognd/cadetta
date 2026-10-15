@@ -8,7 +8,7 @@ points = 5
 reporter = "lognd"
 created = "2026-10-15T08:12:08Z"
 updated = "2026-10-15T21:21:03Z"
-scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "docs/spec/adapters.md"]
+scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/tests/**", "docs/spec/adapters.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Every geom-* push-plan fixture executes and is compared; their known-gaps.toml entries are removed."
