@@ -2,11 +2,12 @@
 id = "01M4TZY6AT7ZPFVRT8N50N0ZB6"
 title = "Remove dead check_r004/check_r006 engine functions (superseded by check_drift and sync)"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:01:13Z"
-updated = "2026-10-15T03:07:48Z"
+updated = "2026-10-15T03:09:03Z"
 scope = ["crates/cadetta-lint/src/**", "crates/cadetta-lint/src/rules/r.rs", "crates/cadetta-cli/src/cmd/sync.rs", "changelog.d/**", "docs/**"]
 
 [[acceptance]]
