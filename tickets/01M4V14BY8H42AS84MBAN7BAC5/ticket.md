@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:22:03Z"
-updated = "2026-10-15T03:07:58Z"
-scope = ["crates/cadetta-cli/**"]
+updated = "2026-10-15T03:09:02Z"
+scope = ["crates/cadetta-cli/**", "tests/conformance/known-gaps.toml", "changelog.d/**", "docs/**"]
 
 [[acceptance]]
 text = "cadetta check reports E005 (missing src, member or path dependency without cadetta.toml) as a fixed-error diagnostic with exit 1 and a report, not an exit-2 load error"
