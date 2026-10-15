@@ -14,11 +14,6 @@
     ]
   },
   "must_not_fire": {
-    "diagnostics": [
-      {
-        "code": "Q006",
-        "severity": "info"
-      }
-    ]
+    "diagnostics": []
   }
 }

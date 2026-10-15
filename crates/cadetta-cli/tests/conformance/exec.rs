@@ -171,10 +171,15 @@ pub fn expected_members(block: &Block) -> Result<Vec<(String, String)>, String> 
         .collect()
 }
 
-/// `eval`: run `cadetta ir` and collect each member's exact nominal.
+/// `eval`: run `cadetta ir` and collect each member's exact nominal, plus the
+/// info diagnostics (such as Q006) that `cadetta check` reports for the same package.
 fn eval(job: &Job) -> Result<Facts, String> {
     let scratch = stage(job.fixture)?;
     let mut facts = run_cli(&scratch.0, &["ir".to_owned()])?;
+    let checked = run_cli(&scratch.0, &["check".to_owned()])?;
+    facts
+        .produced
+        .extend(checked.produced.into_iter().filter(|p| p.severity == "info"));
     let Some(ir) = parse_json(&facts.stdout) else {
         return Ok(facts);
     };
