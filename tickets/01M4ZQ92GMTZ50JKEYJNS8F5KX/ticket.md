@@ -2,7 +2,8 @@
 id = "01M4ZQ92GMTZ50JKEYJNS8F5KX"
 title = "docs: document emit for external non-drive adapters in adapters.md"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
