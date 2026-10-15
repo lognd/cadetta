@@ -1,6 +1,6 @@
 +++
 id = "01M4VQXP1KGYPH7KRKBSK1B9S3"
-title = "Conformance runner observes active_alternate, json_diag_schema, results_order, r001_suppressed_by_force, unbound_params_not_written"
+title = "Conformance runner observes json_diag_schema, results_order, r001_suppressed_by_force, unbound_params_not_written, runs"
 type = "task"
 category = "in-progress"
 priority = "medium"
@@ -8,11 +8,15 @@ points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
 reporter = "lognd"
 created = "2026-10-13T23:00:22Z"
-updated = "2026-10-15T08:52:15Z"
+updated = "2026-10-15T09:03:17Z"
 scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
-text = "Each key is observed and compared; the gap entries are removed."
+text = "results_order, r001_suppressed_by_force, unbound_params_not_written and runs are observed and compared; their gap entries are removed"
+bound = false
+
+[[acceptance]]
+text = "json_diag_schema stays observed and compared"
 bound = false
 +++
 
