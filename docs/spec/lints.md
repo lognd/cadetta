@@ -305,6 +305,15 @@ alternate, and only when the primary does not itself fail that check
 skips private components (U002) and components some part names as its
 type, primary or alternate.
 
+Engine entry points (0.1.0): `cadetta check` runs I001 (`check_members`,
+interfaces lowered from the AST with `extends` flattened; bounds are not
+yet lowered), I004 (`check_roots`) and U002 (`u002::check`). U002 decides
+"used" lexically: an item is used when its identifier is mentioned more
+than once across the package's modules (its own declaration counts
+once). `require` protection is wired by collecting the path of every
+obligation check into the suppression table, and `#[allow(CODE, reason)]`
+member attributes are collected from the IR into `allows`.
+
 L, T and P rule implementation notes (0.1.0): the facts are decided
 upstream (lifecycle analysis in cadetta-variants, the table evaluator and
 the process pass in cadetta-sema) and handed to `cadetta-lint`

@@ -19,7 +19,7 @@ use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
-use cadetta_lint::rules::{d, f, interface, m, n, q, unused};
+use cadetta_lint::rules::{d, f, interface, m, n, q, u002, unused};
 use cadetta_sema::cite::CiteIndex;
 use cadetta_sema::deps::{DepGraph, Renames, Severity as SemaSeverity};
 use cadetta_sema::eval::Evaluator;
@@ -37,6 +37,7 @@ use cadetta_syntax::parser::parse;
 use cadetta_syntax::span::SourceFile;
 use cadetta_units::{KindTable, UnitTable, Verdict};
 
+use crate::lint_facts::{self, ModuleView};
 use crate::project::{Module, PackageDir, Project};
 
 /// Environment variable naming a directory that holds the `std` package.
@@ -199,6 +200,19 @@ pub struct Analysis {
     pub halted: bool,
     /// The `waive` declarations of the in-scope packages, for the lint engine.
     pub suppressions: Suppressions,
+}
+
+/// The lint-facing view of every module of `p`.
+fn module_views(p: &ParsedPackage) -> Vec<ModuleView<'_>> {
+    p.modules
+        .iter()
+        .map(|m| ModuleView {
+            path: &m.path,
+            file: &m.file,
+            text: &m.text,
+            display: &m.display,
+        })
+        .collect()
 }
 
 /// Lower the `waive` items of one parsed module to engine waivers (lints.md 2.1).
@@ -735,6 +749,12 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         ));
     }
     for r in &evaluation.checks {
+        if r.obligation && scope.contains(&r.path.package) {
+            analysis
+                .suppressions
+                .require_paths
+                .insert(r.path.to_string());
+        }
         let (code, sev) = match r.verdict {
             Verdict::Holds => continue,
             Verdict::Violates => ("C001", Severity::Error),
@@ -794,6 +814,26 @@ fn evaluate_stages(parsed: &[ParsedPackage], scope: &BTreeSet<String>, analysis:
         let locate = |s: &cadetta_ir::model::SpanRef| index.locate_ref(&s.file, s.start, s.end);
         out.extend(unused::check(&ir, locate));
         out.extend(interface::check_alternates(&ir));
+        // ~A8J3XJW: I001, I004 and U002 read facts the IR lacks (interfaces, visibility, use).
+        let own_views = module_views(p);
+        let all_interfaces: Vec<_> = parsed
+            .iter()
+            .flat_map(|q| lint_facts::interfaces(&q.name, &module_views(q)))
+            .collect();
+        out.extend(interface::check_members(&ir.components, &all_interfaces, locate));
+        out.extend(interface::check_roots(
+            &ir,
+            |c| lint_facts::is_private(c, &own_views),
+            locate,
+        ));
+        out.extend(u002::check(
+            &lint_facts::item_facts(&p.name, &own_views, &ir),
+            locate,
+        ));
+        analysis
+            .suppressions
+            .allows
+            .extend(lint_facts::allows(&ir));
         // IR-only rule families run with the catalog severities; `check` applies `[lint]`
         // overrides afterwards through the engine.
         let lcfg = LintConfig::new();

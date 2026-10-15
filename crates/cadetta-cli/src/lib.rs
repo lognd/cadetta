@@ -8,6 +8,7 @@
 pub mod cmd;
 pub mod config;
 mod env;
+pub mod lint_facts;
 pub mod output;
 pub mod pipeline;
 pub mod pkg;
