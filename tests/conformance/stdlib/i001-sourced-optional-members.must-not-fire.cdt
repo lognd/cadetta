@@ -1,5 +1,9 @@
 use std::commercial::Sourced
-cite src: web { url = "https://x.example/a.pdf" }
+cite src: web {
+  title = "Supplier sheet"
+  url = "https://x.example/a.pdf"
+  accessed = "2026-10-13"
+}
 pub ots A: Sourced @src {
   supplier = "acme"
 }

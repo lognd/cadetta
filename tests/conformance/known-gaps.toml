@@ -1978,17 +1978,3 @@ fixture = "stdlib/g005-float-unlocated"
 ticket = "~HWJP0GQ"
 reason = "G005/G008 need the ScrewJoint float on the placement edge (geometry.md 5.2), not built yet"
 
-[[gap]]
-fixture = "stdlib/i001-sourced-optional-members"
-ticket = "~ZHXK8Z8"
-reason = "extra S008 warning at acme.demo::src"
-
-[[gap]]
-fixture = "stdlib/i001-sourced-wrong-kind"
-ticket = "~ZHXK8Z8"
-reason = "extra S008 warning at acme.demo::src"
-
-[[gap]]
-fixture = "stdlib/q003-sourced-named-kind"
-ticket = "~ZHXK8Z8"
-reason = "extra S008 warning at acme.demo::src"
