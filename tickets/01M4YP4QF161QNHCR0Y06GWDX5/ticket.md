@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T02:26:59Z"
-updated = "2026-10-15T02:32:56Z"
+updated = "2026-10-15T02:32:57Z"
 scope = ["crates/cadetta-ir/src/decode.rs", "crates/cadetta-cli/src/cmd/ir_lint.rs", "crates/cadetta-cli/tests/ir_lint_rules.rs", "docs/spec/config-cli.md", "changelog.d/01M4YP4QF161QNHCR0Y06GWDX5.added.md"]
 
 [[acceptance]]
@@ -23,7 +23,7 @@ bound = true
 
 [[acceptance]]
 text = "lint FILE reports real line and column from the source file beside the IR document"
-bound = false
+bound = true
 +++
 
 found while working ~71ZWJXV: decoder skips these entities, so D002 sees no table cells and lint FILE reports line 1.

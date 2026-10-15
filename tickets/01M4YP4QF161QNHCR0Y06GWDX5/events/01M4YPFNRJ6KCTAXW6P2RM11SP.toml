@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-15T02:32:57Z"
+digest = "991993adfda2cb8fba04730783a1c2fef0279ab2afd02292782bc06e596f6c8a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fc22597c-e171-453a-9e26-85b2855a5cbc with nextest profile: default
+    Starting 1 test across 57 binaries (1326 tests skipped)
+        PASS [   0.041s] cadetta::ir_lint_rules span_offsets_become_line_and_column_of_the_source_beside_the_document
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.043s] 1 test run: 1 passed, 1326 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "span_offsets_become_line_and_column"
+size = 588
+status = "measured"
+test_count = 1
+tests_digest = "fb356ac96b75f326722a7b324f3feaa36daf3eac653a8934b4a716164170e594"
+at = "2026-10-15T02:32:57Z"
+actor = "lognd"
+rev = 1
