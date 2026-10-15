@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T02:19:57Z"
+digest = "4b0f4afcf79222c6aae1fc30545bab3097899401f9ef28a9af592f8a0fcdc147"
+exit_code = 0
+inline = '''
+warning: missing documentation for the crate
+  --> crates/cadetta-cli/tests/probe_tmp.rs:1:1
+   |
+ 1 | / use std::fs;
+ 2 | | use cadetta::pipeline::analyze_at;
+ 3 | | use cadetta::project::Project;
+ 4 | | #[test]
+...  |
+17 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+warning: `cadetta` (test "probe_tmp") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.69s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 80c3c64d-30f4-40b0-99f2-893be1dca7bf with nextest profile: default
+    Starting 1 test across 56 binaries (1300 tests skipped)
+        PASS [   0.107s] cadetta::c004_e010 c004_fires_on_derived_parameter_read_by_a_check
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.109s] 1 test run: 1 passed, 1300 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "c004_fires_on_derived_parameter_read_by_a_check"
+size = 988
+status = "measured"
+test_count = 1
+tests_digest = "99812be0b91dd6c8ab1852a86b18a4ceacad972264147de2c91544a967faa3d8"
+at = "2026-10-15T02:19:57Z"
+actor = "lognd"
+rev = 1

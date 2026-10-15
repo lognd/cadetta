@@ -12,7 +12,7 @@ scope = ["crates/cadetta-lint/**", "crates/cadetta-cli/src/pipeline.rs", "crates
 
 [[acceptance]]
 text = "C004 fires on the derived parameter read by a check, once per parameter, and not for let"
-bound = false
+bound = true
 +++
 
 found while working ~Z48GXKX. quantities.md 5.3. Fixture c004.
