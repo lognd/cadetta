@@ -11,8 +11,13 @@
 //! the three source variables of a joint (x, y, rotation) are allocated on first use and kept,
 //! so every frame table of one evaluation reads the same variables; a joint whose operands do
 //! not evaluate adds no float here (its own `aligned` check reports the failure).
+//!
+//! A joint inside a sub-assembly component floats the placement edge of that sub-assembly's own
+//! [`Assembly`]: the sub-assembly is lowered with the same root frame table, its datum ids
+//! prefixed by the path of the node that holds it.
 
 // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+// frob:ticket 01M4ZFQ6AH3V8MVCZY6SC8DQHP
 use std::rc::Rc;
 
 use cadetta_geometry::float::{EdgeFloat, JointFloat};
@@ -20,7 +25,7 @@ use cadetta_geometry::placement::{Anchor, Assembly};
 use cadetta_geometry::point::DatumId;
 use cadetta_geometry::reexpress::{FrameTable, Reexpressed};
 use cadetta_geometry::transform::Coord;
-use cadetta_syntax::ast::Component;
+use cadetta_syntax::ast::{Component, MemberKind};
 use cadetta_units::Affine;
 use tracing::{debug, trace};
 
@@ -59,18 +64,67 @@ fn flatten(r: &Reexpressed, out: &mut Vec<[Affine; 2]>) -> Option<()> {
     }
 }
 
+/// Every float of `a` and of its sub-assemblies.
+pub(super) fn all_floats(a: &Assembly) -> Vec<EdgeFloat> {
+    let mut out = a.floats.clone();
+    for sub in a.nodes.iter().filter_map(|n| n.sub.as_deref()) {
+        out.extend(all_floats(sub));
+    }
+    out
+}
+
 impl<'r, 'p> Evaluator<'r, 'p> {
     /// The float of every placement edge of `a` that a `ScrewJoint` of `comp` lies across.
     ///
     /// `nominal` is the frame table of `a` read without floats; joints on one edge are all kept,
-    /// for `float::select` to choose between.
+    /// for `float::select` to choose between. The floats of sub-assemblies are installed in
+    /// place (`a.floats` itself is left to the caller).
     pub(super) fn bolt_floats(
         &mut self,
         here: &CanonPath,
         comp: &'p Component,
-        a: &Assembly,
+        a: &mut Assembly,
         nominal: &FrameTable,
     ) -> Vec<EdgeFloat> {
+        self.lower_floats(here, comp, a, nominal, &[])
+    }
+
+    /// [`Self::bolt_floats`] for the assembly `a` of `comp` at node path `at` below the root.
+    fn lower_floats(
+        &mut self,
+        here: &CanonPath,
+        comp: &'p Component,
+        a: &mut Assembly,
+        nominal: &FrameTable,
+        at: &[String],
+    ) -> Vec<EdgeFloat> {
+        for i in 0..a.nodes.len() {
+            let name = a.nodes[i].name.clone();
+            if a.nodes[i].sub.is_none() {
+                continue;
+            }
+            let Some(part) = comp.members.iter().find_map(|m| match &m.kind {
+                MemberKind::Part(p) if p.name.name == name => Some(p),
+                _ => None,
+            }) else {
+                continue;
+            };
+            let Some((callee, sub_comp)) =
+                self.resolver
+                    .part_type(&here.package, &here.modules, &part.ty)
+            else {
+                continue;
+            };
+            let mut path = at.to_vec();
+            path.push(name);
+            let mut sub = a.nodes[i].sub.take();
+            if let Some(s) = sub.as_deref_mut() {
+                let floats = self.lower_floats(&callee, sub_comp, s, nominal, &path);
+                debug!(sub = %path.join("/"), edges = floats.len(), "bolt float: sub-assembly lowered");
+                s.floats = floats;
+            }
+            a.nodes[i].sub = sub;
+        }
         let joints: Vec<Rc<InstInfo>> = self
             .instances
             .members()
@@ -85,7 +139,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .collect();
         let mut edges: Vec<EdgeFloat> = Vec::new();
         for info in joints {
-            let found = match self.joint_float(comp, a, nominal, &info) {
+            let found = match self.joint_float(comp, a, nominal, at, &info) {
                 Ok(f) => f,
                 Err(Fail::Silent) | Err(Fail::Diag(_)) => {
                     debug!(joint = %info.prefix, "bolt float: operands do not evaluate; no float");
@@ -111,6 +165,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         comp: &'p Component,
         a: &Assembly,
         nominal: &FrameTable,
+        at: &[String],
         info: &Rc<InstInfo>,
     ) -> R<Option<(String, JointFloat)>> {
         let (Some((ea, ctx)), Some((eb, _))) = (
@@ -147,8 +202,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let saved = self.cur_inst.take();
         let onto = self.eval(&mut caller, eb);
         self.cur_inst = saved;
-        let pos = to_pos(&onto?, &DatumId::new(datum_id(&bp, &tag)), true, eb.span)?;
-        let target = DatumId::new(datum_id(std::slice::from_ref(&p.node), &p.datum));
+        let rooted = |parts: &[String]| [at, parts].concat();
+        let pos = to_pos(
+            &onto?,
+            &DatumId::new(datum_id(&rooted(&bp), &tag)),
+            true,
+            eb.span,
+        )?;
+        let target = DatumId::new(datum_id(&rooted(std::slice::from_ref(&p.node)), &p.datum));
         let moved = nominal
             .reexpress(&pos, &target)
             .map_err(|e| diag("EVAL", eb.span, e.to_string()))?;

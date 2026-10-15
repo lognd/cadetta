@@ -247,3 +247,30 @@ fn g008_stays_quiet_for_a_two_point_joint() {
         ev.diagnostics
     );
 }
+
+/// A top assembly that places the joint-bearing `Box` as a sub-assembly.
+fn nested(joints: &str) -> String {
+    format!(
+        "{}assembly Outer {{\n  part inner: Box\n  place inner.origin at origin\n  \
+         check flush: (inner.lid.edge in origin).x - (inner.base.edge in origin).x <= 0.1mm \
+         \"flush\"\n}}\n",
+        boxed(true, joints, "")
+    )
+}
+
+// frob:ticket 01M4ZFQ6AH3V8MVCZY6SC8DQHP
+// frob:tests crates/cadetta-sema/tests/bolt_float.rs::subassembly_joint_frees_the_inner_child kind=unit
+#[test]
+fn subassembly_joint_frees_the_inner_child() {
+    let ev = run(&nested(J));
+    assert_eq!(verdict(&ev, "flush"), Verdict::Undecided);
+}
+
+// frob:ticket 01M4ZFQ6AH3V8MVCZY6SC8DQHP
+// frob:tests crates/cadetta-sema/tests/bolt_float.rs::subassembly_locating_joint_keeps_the_inner_child_fixed kind=unit
+#[test]
+fn subassembly_locating_joint_keeps_the_inner_child_fixed() {
+    let loc = "part j: ScrewJoint(at = lid.holes, onto = base.tapped, locating = true)";
+    let ev = run(&nested(loc));
+    assert_eq!(verdict(&ev, "flush"), Verdict::Holds);
+}
