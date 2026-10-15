@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T07:57:44Z"
-updated = "2026-10-15T08:03:41Z"
+updated = "2026-10-15T08:20:47Z"
 labels = ["creates:crates/cadetta-sema/src/lower_array.rs"]
-scope = ["crates/cadetta-sema/src/**", "docs/spec/ir.md", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/lower_array.rs"]
+scope = ["crates/cadetta-sema/src/**", "docs/spec/ir.md", "tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/lower_array.rs", "tests/conformance/emitters/json/name-mangled-path.expect.json"]
 
 [[acceptance]]
 text = "Part-array instance members lower to Parent/part[i].member IR members"
