@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["An unused private part member yields a U002 Member row and a used one does not", "An unused private datum member yields a U002 Member row and a read one does not"]
+moved = []
+at = "2026-10-15T17:40:13Z"
+actor = "lognd"
+rev = 1
