@@ -7,7 +7,7 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-15T09:57:00Z"
+updated = "2026-10-15T10:01:13Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/eval.rs", "docs/spec/**", "crates/cadetta-cli/tests/alternate_verdicts.rs"]
 
 [[links]]
@@ -16,7 +16,7 @@ target = "01M4Y77276XRHD2NDXHJMCB8NQ"
 
 [[acceptance]]
 text = "pipeline analyze evaluates every part slot alternate (key <slot>=<alt>) and passes LowerInput.variants so Member.variants and Verdicts.per_alternate are populated for checks that differ from the primary"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "cadetta check reports I002/I003 style diagnostics per non-viable alternate through the pipeline"
