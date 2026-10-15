@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "O004 half done in aad16d16: universe::sync_states plus check_o004 wired into cmd/check.rs, with tests and spec note. Solver S003/S006 half remains, blocked by ~K4JKH27; ticket stays open for it."
+at = "2026-10-15T04:04:04Z"
+actor = "lognd"
+rev = 1
