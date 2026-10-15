@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = 'Impl landed in commit dc69c5d5 whose message ("wire adapter drift lints into check") is wrong: a stray shell from ~3RK3GPH committed this work. Pushed, not amended.'
+at = "2026-10-15T01:03:46Z"
+actor = "lognd"
+rev = 1
