@@ -102,8 +102,11 @@ pub struct AdapterNames {
 pub struct NamesReport {
     /// One entry per selected adapter.
     pub adapters: Vec<AdapterNames>,
-    /// Diagnostics (R005 bad bindings file, R013 name collision, Q004 unwritable value).
+    /// Diagnostics (R013 name collision, Q004 unwritable value).
     pub diagnostics: Vec<EmitDiag>,
+    /// An invalid bindings file: stops the run with exit 2 (adapters.md 3); not reported.
+    #[serde(skip)]
+    pub config_error: Option<String>,
 }
 
 /// State of a path from its locators; `can_read` says whether an adapter could read CAD.
@@ -199,11 +202,13 @@ fn adapter_names(
     report: &mut NamesReport,
 ) {
     let bindings = adapter.bindings_path();
-    let mut set = match std::fs::read_to_string(pkg.dir.join(&bindings)) {
+    let bindings_file = pkg.dir.join(&bindings);
+    let mut set = match std::fs::read_to_string(&bindings_file) {
         Ok(text) => match BindingSet::load_str(adapter.id(), &text) {
             Ok(set) => set,
             Err(e) => {
-                report.diagnostics.push(diag("R005", e.to_string(), None));
+                tracing::error!(file = %bindings_file.display(), error = %e, "names: invalid bindings");
+                report.config_error = Some(format!("{}: {e}", bindings_file.display()));
                 return;
             }
         },
@@ -370,12 +375,15 @@ pub fn run_names(
                 continue;
             }
             adapter_names(pkg, &ir, adapter, &run_scope, &mut report);
+            if let Some(message) = report.config_error.take() {
+                return fail(err, &message);
+            }
         }
     }
     let failed = report
         .diagnostics
         .iter()
-        .any(|d| d.code == "Q004" || d.code == R013 || d.code == "R005");
+        .any(|d| d.code == "Q004" || d.code == R013);
     let rendered = match globals.format {
         Format::Json => serde_json::to_string_pretty(&report).map_err(|e| e.to_string()),
         _ => Ok(render_text(&report)),
@@ -535,5 +543,17 @@ mod tests {
             let v = json(&dir, &[]);
             assert!(validator.is_valid(&v), "{v}");
         }
+    }
+
+    // frob:ticket 01M4YQQPSNQ7TP3QFRWAYFH870
+    // frob:tests crates/cadetta-cli/src/cmd/names.rs::run_names
+    #[test]
+    fn invalid_bindings_exit_two_naming_the_file() {
+        let bad = "[\"acme.plate::CoverPlate.thickness\"]\nlocators = [ { locator = \"\", kind = \"global\" } ]\n";
+        let dir = project(SOURCE, bad, "");
+        let (code, out, e) = run(&dir, Format::Json, &[]);
+        assert_eq!(code, EXIT_USAGE, "{out} {e}");
+        assert!(e.contains("equations.toml"), "{e}");
+        assert!(!out.contains("R005"), "{out}");
     }
 }
