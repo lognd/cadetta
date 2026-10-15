@@ -2,11 +2,12 @@
 id = "01M4Z6SFCH83BW0D8GPR501QAM"
 title = "Conformance executor impact_swap passes dotted slot Rover.wheel; must be Rover/wheel once ~137W4EE lands"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-15T07:17:56Z"
-updated = "2026-10-15T07:45:27Z"
+updated = "2026-10-15T07:45:46Z"
 
 [[acceptance]]
 text = "Given the conformance executor, when impact --swap runs, then binding.rs passes {package}::Rover/wheel (verified: conformance 9/9 on goway)"
