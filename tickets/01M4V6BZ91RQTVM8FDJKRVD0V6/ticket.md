@@ -6,8 +6,8 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T17:53:36Z"
-updated = "2026-10-15T03:11:56Z"
-scope = ["crates/cadetta-syntax/**"]
+updated = "2026-10-15T03:12:27Z"
+scope = ["crates/cadetta-syntax/**", "tests/conformance/known-gaps.toml", "changelog.d/**"]
 
 [[acceptance]]
 text = "package:: and super:: paths parse in expressions"
