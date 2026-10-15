@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:54:19Z"
+digest = "c929d2deaba7444d7545d0a56bb3f4acbe67c278d256b7fc56f3e2b731083ef6"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.86s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7b86b0ff-bdd3-4a3f-8a76-e9a8e782fee8 with nextest profile: default
+    Starting 1 test across 50 binaries (1255 tests skipped)
+        PASS [   0.070s] cadetta::lint_entry_points allow_attribute_suppresses_through_the_engine
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.073s] 1 test run: 1 passed, 1255 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "allow_attribute_suppresses_through_the_engine"
+size = 819
+status = "measured"
+test_count = 1
+tests_digest = "ce638a187ad75a3c77667dada59ecee74259879c7aa061190d681f91489ef1dd"
+at = "2026-10-15T01:54:19Z"
+actor = "lognd"
+rev = 1

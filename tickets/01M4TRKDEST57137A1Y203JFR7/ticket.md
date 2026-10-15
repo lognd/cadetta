@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/pipeline.rs,crates/cadetta-cli/src/cmd/check.rs
 
 [[acceptance]]
 text = "#[allow] is parsed and applied; W002 fires on a changed closure; W003 fires for requires; W005 reported"
-bound = false
+bound = true
 +++
 
 Follow-up of ~MC5WD33: check applies waive declarations only. #[allow] attributes are not parsed into Allow, Suppressions.closures and targets_closure are empty (W002 cannot fire), require_paths is empty (W003 for requires), W005 is not wired, waiver globs are not carried over renames.
