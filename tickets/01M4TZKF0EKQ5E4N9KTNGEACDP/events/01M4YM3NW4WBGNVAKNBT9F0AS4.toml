@@ -1,0 +1,32 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T01:51:04Z"
+digest = "88085691db32c6562159071f708817628a7685cd05c8ff52970eb5e471bdaaa4"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.75s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ad9c0523-7e17-40e5-a7b1-1d7ec9043f0c with nextest profile: default
+    Starting 4 tests across 49 binaries (1250 tests skipped)
+        PASS [   0.006s] cadetta cmd::lock::tests::json_report_carries_schema_and_exit_code
+        PASS [   0.022s] cadetta-obligations lock_verify::tests::json_report_validates_against_lock_schema
+        PASS [   0.035s] cadetta cmd::solve::tests::json_report_records_failures_with_code
+        PASS [   0.048s] cadetta cmd::solve::tests::json_report_lists_solved_then_fresh_and_validates
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.050s] 4 tests run: 4 passed, 1250 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "json_report"
+size = 1197
+status = "measured"
+test_count = 4
+tests_digest = "18fecbb33e44a179b2f5c90eacbd6b00d126e72ea19fb7cad086a688d307b5e9"
+at = "2026-10-15T01:51:04Z"
+actor = "lognd"
+rev = 1

@@ -11,7 +11,7 @@ scope = ["crates/cadetta-cli/src/cmd/solve.rs", "docs/schemas/*.json"]
 
 [[acceptance]]
 text = "Given solvers, when solve --format json runs, then a report validating against solve-report.json lists each solver as solved, fresh or failed with its code"
-bound = false
+bound = true
 +++
 
 found while working ~VN1YQYC: solve prints text only; lock and sync commands do not exist yet, so lock.json and sync.json belong to those command tickets.
