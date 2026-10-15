@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T03:07:48Z"
+digest = "a22bb29274fc4dc04a7b0d17e974590eaba7b50e0ab4754707c50b3ae81b90fb"
+exit_code = 0
+inline = '''
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 39.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 804cc1a0-77ab-4a0c-962e-4bed8fc98a86 with nextest profile: default
+    Starting 1 test across 61 binaries (1361 tests skipped)
+        PASS [   0.005s] cadetta-lint rules::r::tests::r005_orphan_binding_and_was_and_wildcard
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1361 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "r005_orphan_binding"
+size = 827
+status = "measured"
+test_count = 1
+tests_digest = "5112e4f230a403ad35c1191a7ba9c3f2164387fd3d330f84f27f355c3341baf7"
+at = "2026-10-15T03:07:48Z"
+actor = "lognd"
+rev = 1
