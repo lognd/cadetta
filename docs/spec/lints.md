@@ -354,7 +354,8 @@ Q007 comes from the lexer: it is lifted as a fixable error carrying the join
 fix, while E001 stays a halting syntax error. P001 comes from the process
 pass (one fact per feature-like parameter with no role). F001/F002 (fit
 class or size out of the ISO 286 tables) and F003 (side tolerance disagrees
-with the class) come from fit derivation. T001 compares each literal of a
+with the class) come from fit derivation and reach `cadetta check` as the catalog
+diagnostics; a sub-nanometre nominal is F002 (`20000001nm` is whole, `20.0000000005mm` is not). T001 compares each literal of a
 non-parameterized `ots` component (the member citation, else the component
 citation, when it names a `cite` path) with every key and cell of the
 tables carrying the same citation path; it fires only when a table holds
