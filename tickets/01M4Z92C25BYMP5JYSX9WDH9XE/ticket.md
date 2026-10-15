@@ -2,7 +2,8 @@
 id = "01M4Z92C25BYMP5JYSX9WDH9XE"
 title = "Part-array instance members are not lowered to IR paths, so emitters and bindings see none"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
