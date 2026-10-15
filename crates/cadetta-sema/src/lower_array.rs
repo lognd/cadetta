@@ -5,7 +5,8 @@
 //! every instance shares the callee's arguments, so each instance member `Rover/axle[i].len`
 //! carries the value of the definition `Axle.len`. They lower as members of the parent so the
 //! emitters, bindings and `[*]` selectors see one path per instance (adapters.md 3). A
-//! parameterized callee is not handled here.
+//! parameterized callee has per-instance definitions instead (`instances.rs::expand_arrays`);
+//! `lower_instance_members` lowers those.
 
 use cadetta_ir::model::{Member, MemberKind, Provenance};
 use cadetta_syntax::ast;

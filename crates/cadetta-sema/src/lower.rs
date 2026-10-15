@@ -449,16 +449,15 @@ impl Cx<'_> {
         Some(out)
     }
 
-    /// The numeric members of the parameterized instances declared in `comp` (`Box/j.depth`).
+    /// The numeric members of the parameterized instances declared in `comp` (`Box/j.depth`,
+    /// `Box/arm[1].depth` for one element of a part array).
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     fn lower_instance_members(&self, comp: &CanonPath) -> Vec<Member> {
         let ev = self.input.evaluation;
         let mut out = Vec::new();
         for (k, e) in &ev.values {
-            let is_instance_member = k.item_only() == *comp
-                && k.parts.len() == 1
-                && k.parts[0].index.is_none()
-                && k.members.len() == 1;
+            let is_instance_member =
+                k.item_only() == *comp && k.parts.len() == 1 && k.members.len() == 1;
             if !is_instance_member {
                 continue;
             }
@@ -1333,6 +1332,33 @@ mod tests {
         paths.sort();
         assert_eq!(paths, ["p::Rover/axle[0].len", "p::Rover/axle[1].len"]);
         assert!(rover.members.iter().all(|m| m.value.is_some()));
+    }
+
+    // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V
+    // frob:tests crates/cadetta-sema/src/instances.rs::expand_arrays kind=unit
+    #[test]
+    fn parameterized_part_array_lowers_per_instance_values() {
+        let src = "model Arm(len: Length, gap: Length = 1mm) {\n  reach = len + gap\n}\n\
+            model Rover {\n  part arm[2]: Arm(len = 10mm)\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let reach: Vec<_> = rover
+            .members
+            .iter()
+            .filter(|m| m.path.to_string().ends_with(".reach"))
+            .collect();
+        let mut paths: Vec<String> = reach.iter().map(|m| m.path.to_string()).collect();
+        paths.sort();
+        assert_eq!(paths, ["p::Rover/arm[0].reach", "p::Rover/arm[1].reach"]);
+        for m in reach {
+            let v = m.value.as_ref().expect("a value");
+            assert!(format!("{v:?}").contains("Rational(11/1000)"), "{v:?}");
+        }
     }
 
     const INST_GEOM_SRC: &str = "model Leg {\n  len = 10mm\n}\n\

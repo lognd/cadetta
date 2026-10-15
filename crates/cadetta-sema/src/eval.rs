@@ -590,7 +590,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             });
             recursive.insert(path);
         }
-        Self {
+        let mut ev = Self {
             resolver,
             renames: crate::deps::Renames::collect(resolver, packages),
             units,
@@ -620,7 +620,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             fit_done: BTreeMap::new(),
             processes: None,
             solver_keys,
-        }
+        };
+        ev.expand_arrays(packages);
+        ev
     }
 
     /// Gives the solver members their recorded output literals (solvers.md 3), keyed by solver path.

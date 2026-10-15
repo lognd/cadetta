@@ -117,8 +117,10 @@ reordering; they change only by rename or move, which `was` records.
   parameter or `let` of the callee (`Rover/axle[0].len`,
   `Rover/axle[1].len`; indexes are 0-based). Each carries the callee
   definition's value and depends on the definition member
-  (`Axle.len`), with derived provenance. Arrays of parameterized
-  callees are not yet lowered.
+  (`Axle.len`), with derived provenance. An array of a parameterized
+  callee (`part arm[2]: Arm(len = 10mm)`) expands to one instance per
+  index, each with its own arguments: its members lower as
+  `Rover/arm[0].reach`, `Rover/arm[1].reach` with the instance's value.
 - Instance vs definition level: an obligation targets a definition path
   when its closure reads no component parameter or interface-typed slot,
   and an instance path otherwise; instances with identical argument

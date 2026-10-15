@@ -21,7 +21,7 @@ use crate::defaults::{Layers, Source, resolve_default};
 use crate::deps::Severity;
 use crate::parts::{ArgSource, bind_args_injecting};
 use crate::resolve::{
-    CanonPath, Ctx, ItemClass, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
+    CanonPath, Ctx, Index, ItemClass, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
 };
 
 /// The package whose components supply the default policies (stdlib.md 4).
@@ -57,6 +57,19 @@ pub(super) struct Instances<'p> {
     pub diagnostics: Vec<EvalDiagnostic>,
     /// Instance members declared `priv`.
     pub private: BTreeSet<CanonPath>,
+    /// Counted parts of parameterized callees, expanded once their counts evaluate.
+    arrays: Vec<ArrayPart<'p>>,
+}
+
+/// A counted `part` of a parameterized callee awaiting its evaluated count.
+struct ArrayPart<'p> {
+    package: usize,
+    module: usize,
+    parent: &'p Component,
+    part: &'p ast::Part,
+    callee_path: CanonPath,
+    callee: &'p Component,
+    span: Span,
 }
 
 impl<'p> Instances<'p> {
@@ -138,8 +151,8 @@ pub(super) fn materialise<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
 ) -> Instances<'p> {
     let mut out = Instances::default();
-    for pkg in packages {
-        for module in &pkg.modules {
+    for (pi, pkg) in packages.iter().enumerate() {
+        for (mi, module) in pkg.modules.iter().enumerate() {
             for c in module.file.components() {
                 if !c.params.is_empty() {
                     continue;
@@ -171,6 +184,16 @@ pub(super) fn materialise<'p>(
                                     callee.name.name, part.name.name
                                 ),
                             ));
+                        } else {
+                            out.arrays.push(ArrayPart {
+                                package: pi,
+                                module: mi,
+                                parent: c,
+                                part,
+                                callee_path,
+                                callee,
+                                span: m.span,
+                            });
                         }
                         continue;
                     }
@@ -517,6 +540,59 @@ fn pattern_arg(callee: &Component, args: &[ast::Arg]) -> Option<String> {
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// Indexes one instance per element of every counted part of a parameterized callee.
+    ///
+    /// `part axle[N]: Axle(len = 3mm)` becomes `Parent/axle[0]` .. `Parent/axle[N-1]`, each with
+    /// its own arguments and members; a count that does not evaluate leaves the array unexpanded.
+    // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V
+    pub(super) fn expand_arrays(&mut self, packages: &[PackageSrc<'p>]) {
+        let arrays = std::mem::take(&mut self.instances.arrays);
+        let before = self.instances.diagnostics.len();
+        for a in arrays {
+            let pkg = &packages[a.package];
+            let module = &pkg.modules[a.module];
+            let id = super::geom::component_id(&CanonPath::item(
+                &pkg.name,
+                &module.path,
+                &a.parent.name.name,
+            ));
+            let Some(count) = self.part_count(&id, a.part) else {
+                debug!(part = %a.part.name.name, "instances: array count does not evaluate");
+                continue;
+            };
+            let parent_ctx = Ctx {
+                package: pkg.name.clone(),
+                module: module.path.clone(),
+                component: Some(a.parent.name.name.clone()),
+                locals: Vec::new(),
+            };
+            for i in 0..count {
+                let mut prefix = CanonPath::item(&pkg.name, &module.path, &a.parent.name.name);
+                prefix.parts.push(PartSeg {
+                    name: a.part.name.name.clone(),
+                    index: Some(Index::At(i)),
+                });
+                let site = Site {
+                    resolver: self.resolver,
+                    packages,
+                    project_defaults: &pkg.defaults,
+                    parent: a.parent,
+                    parent_ctx: &parent_ctx,
+                    parent_file: module.file,
+                    callee_path: &a.callee_path,
+                    callee: a.callee,
+                    prefix: &prefix,
+                    args: a.part.args.as_deref().unwrap_or(&[]),
+                    span: a.span,
+                };
+                site.index(&mut self.defs, &mut self.instances);
+            }
+            debug!(part = %a.part.name.name, count, "instances: array expanded");
+        }
+        let fresh = self.instances.diagnostics[before..].to_vec();
+        self.diagnostics.extend(fresh);
+    }
+
     /// The instance of a parameterized `part` nested in instance `owner`, indexed on first use.
     ///
     /// Arguments the nested site gives are evaluated in the owner's callee scope; defaults and
