@@ -427,7 +427,7 @@ Defined with their semantics in geometry.md 7.
 R rules run on observed IR after `read` or `sync`; R004 and R008-R010
 come from the adapter's responses and are passed through unchanged
 (adapters.md). The implementation is `crates/cadetta-lint/src/rules/r_adapter.rs`:
-R007, R011, R012 and R013 are pure functions over binding facts, and
+R007, R011, R012 (reserved) and R013 are pure functions over binding facts, and
 `pass_through` forwards the adapter codes unchanged.
 
 `cadetta check` runs the family for every `[[adapter]]` with a `command`
@@ -451,7 +451,7 @@ need observed facts (sketch planes, assembly slots, instance values) that
 | R009 | file-busy | error | | Document dirty, locked or read-only; refused before any push. |
 | R010 | push-rejected | error | | Push to a driven or suppressed dimension, an equation conflict or a unit conflict. |
 | R011 | component-mismatch | warning | | The file instantiated in an assembly is not the file bound to the slot's primary (for example after a manual swap). |
-| R012 | binding-divergent | error | | A `[*]` binding over instances whose emitted values differ. |
+| R012 | binding-divergent | error | | Reserved; unreachable from source today. A `[*]` binding over instances whose emitted values differ; instances of a part array share arguments (language.md 3.5), so none differ until the language gives instances differing arguments or index-dependent members. |
 | R013 | name-collision | error | yes | Two in-scope paths would create the same native name, bind one explicitly (adapters.md 3.1); or two component instances name the same part in their reference property (adapters.md 3.5). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
 | R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |

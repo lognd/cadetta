@@ -193,9 +193,13 @@ variable `"Axle_end_diameter"` or to the dimension
 - Parameterized components exist only as instances. A binding may name
   one instance (`Rover/axle[1].end_diameter`) or all of them
   (`Rover/axle[*].end_diameter`). A `[*]` binding is emitted once, at
-  instance 0. If any instance's emitted value differs from instance 0
-  the binding is R012 (error); the user then binds the instances
-  separately.
+  instance 0. Every instance of a part array has the same arguments
+  (language.md 3.5) and tolerance variables share the nominal, so
+  today all instances emit the same value and `[*]` cannot diverge.
+  R012 (error) is reserved for a future language feature that gives
+  instances differing arguments or index-dependent members: if any
+  instance's emitted value then differed from instance 0, the user
+  would bind the instances separately. No source reaches R012 now.
 - Only bound paths are emitted, explicitly or through a native link or
   `bind = "scope"` (3.5); an unbound parameter is not written. An
   adapter that cannot read discovers no links, so it emits explicit

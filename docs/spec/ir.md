@@ -109,8 +109,9 @@ reordering; they change only by rename or move, which `was` records.
   may name one instance or all of them with
   `Rover/axle[*].end_diameter`; the instances share arguments, so the
   value is the same up to independent tolerance variables. A `[*]`
-  binding emits once, at the emit point of instance 0; if another
-  instance's emitted value differs, that is R012.
+  binding emits once, at the emit point of instance 0. Because the
+  instances share arguments, no source makes another instance's
+  emitted value differ; R012 is reserved for that case (adapters.md 3).
 - Instance vs definition level: an obligation targets a definition path
   when its closure reads no component parameter or interface-typed slot,
   and an instance path otherwise; instances with identical argument
