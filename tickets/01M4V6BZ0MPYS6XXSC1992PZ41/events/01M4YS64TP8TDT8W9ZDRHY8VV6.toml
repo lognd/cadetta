@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["check reports E012 and E013 for unmet or conflicting dependency version requirements", "check reports E014 when a dependency's content differs from its lock digest", "dependency packages are loaded so cross-package use resolves and E016 applies across packages"]
+moved = []
+at = "2026-10-15T03:20:11Z"
+actor = "lognd"
+rev = 1
