@@ -1204,6 +1204,33 @@ mod tests {
         assert!(out.contains("Q004"), "{out}");
     }
 
+    // frob:ticket 01M4V7WDC104ENF4T0V0HEFFN7
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::native_unit
+    #[test]
+    fn created_global_takes_locator_native_unit_else_adapter_default() {
+        let src = "model Gasket {\n  width = 25.4mm\n}\n";
+        let loc = |unit: &str| {
+            format!(
+                "[\"acme.plate::Gasket.width\"]\nlocators = [ {{ locator = \"D1@Sk@Plate.SLDPRT\", kind = \"dimension\", mode = \"ref\"{unit} }} ]\n"
+            )
+        };
+        let text_of = |bindings: String| {
+            let dir = project(src, &bindings, "");
+            let (code, out, e) = run(&dir, &[]);
+            assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+            std::fs::read_to_string(dir.0.join("build/solidworks/equations.txt")).unwrap()
+        };
+        let inch = text_of(loc(", native_unit = \"in\""));
+        assert!(inch.contains("\"Gasket__width\" = 1in"), "{inch}");
+        assert!(!inch.contains("= 25.4mm"), "{inch}");
+        assert!(
+            inch.contains("\"D1@Sk@Plate.SLDPRT\" = \"Gasket__width\""),
+            "{inch}"
+        );
+        let default = text_of(loc(""));
+        assert!(default.contains("\"Gasket__width\" = 25.4mm"), "{default}");
+    }
+
     // frob:tests crates/cadetta-cli/src/cmd/emit.rs::run_emit
     #[test]
     fn native_name_collision_exits_one() {

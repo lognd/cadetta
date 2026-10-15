@@ -16,7 +16,7 @@
           "\"D1@Sk@Plate.SLDPRT\" = \"Gasket__width\""
         ],
         "excludes": [
-          "25.4mm"
+          "= 25.4mm"
         ]
       }
     }
