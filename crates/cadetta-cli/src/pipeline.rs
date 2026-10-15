@@ -378,16 +378,45 @@ struct ParsedPackage {
     modules: Vec<Parsed>,
 }
 
-/// The directory holding the `std` package: `$CADETTA_STD`, else the repository copy.
-pub fn std_dir() -> Option<PathBuf> {
-    let from_env = std::env::var_os(STD_ENV).map(PathBuf::from);
-    let built_in = Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../std")).to_path_buf();
-    let found = from_env
-        .into_iter()
-        .chain(std::iter::once(built_in))
-        .find(|d| d.join("cadetta.toml").is_file());
-    tracing::debug!(dir = ?found, "pipeline: std package location");
-    found
+/// The `std` package: `$CADETTA_STD` when it names a std directory, else the copy
+/// embedded in the binary.
+fn load_std_package() -> Option<RawPackage> {
+    let from_env = std::env::var_os(STD_ENV)
+        .map(PathBuf::from)
+        .filter(|d| d.join("cadetta.toml").is_file());
+    if let Some(dir) = from_env {
+        tracing::debug!(dir = %dir.display(), "pipeline: std from CADETTA_STD");
+        return match load_std(&dir) {
+            Ok(p) => Some(p),
+            Err(error) => {
+                tracing::warn!(%error, "pipeline: std package could not be loaded");
+                None
+            }
+        };
+    }
+    tracing::debug!("pipeline: std from the embedded copy");
+    Some(embedded_std())
+}
+
+/// The `std` package built from the sources compiled into the binary.
+fn embedded_std() -> RawPackage {
+    let dir = PathBuf::from("<embedded>/std");
+    let mut modules: Vec<Module> = crate::std_embed::STD_FILES
+        .iter()
+        .map(|(rel, text)| Module {
+            rel_path: (*rel).to_owned(),
+            file: dir.join("src").join(rel),
+            source: (*text).to_owned(),
+        })
+        .collect();
+    modules.sort_by(|a, b| a.rel_path.cmp(&b.rel_path));
+    RawPackage {
+        name: "std".to_owned(),
+        version: "0.1.0".to_owned(),
+        deps: Vec::new(),
+        dir,
+        modules,
+    }
 }
 
 fn package_name(pkg: &PackageDir) -> String {
@@ -537,13 +566,8 @@ pub fn analyze(project: &Project, scope: &[usize]) -> Analysis {
     let mut parsed: Vec<ParsedPackage> = Vec::new();
     let mut loaded_std: Option<RawPackage> = None;
     let has_std_member = project.packages.iter().any(|p| package_name(p) == "std");
-    if !has_std_member && let Some(dir) = std_dir() {
-        match load_std(&dir) {
-            Ok(p) => loaded_std = Some(p),
-            Err(error) => {
-                tracing::warn!(%error, "pipeline: std package could not be loaded");
-            }
-        }
+    if !has_std_member {
+        loaded_std = load_std_package();
     }
     for pkg in &project.packages {
         parsed.push(parse_package(

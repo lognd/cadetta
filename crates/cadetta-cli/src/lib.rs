@@ -14,6 +14,7 @@ pub mod pipeline;
 pub mod pkg;
 pub mod project;
 pub mod scope;
+pub mod std_embed;
 pub mod universe;
 
 use std::path::PathBuf;

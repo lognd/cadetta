@@ -199,8 +199,8 @@ uses this same form. Globs use the obligations.md 2.2 grammar.
 module (a lexical error E001 stops the run before evaluation, so later
 stages never see a broken tree), resolves, evaluates, kind-checks,
 lowers each in-scope package to IR and lints the IR; the `std` package
-is loaded from `$CADETTA_STD` or the repository `std/` directory and
-its own findings are not reported. A diagnostic's `path` is the
+is embedded in the binary (a `$CADETTA_STD` directory holding a std
+package overrides the embedded copy) and its own findings are not reported. A diagnostic's `path` is the
 canonical path of the member it concerns (for a check verdict, the
 check's path) and its `location` the project-relative file with 1-based
 line and column. The file is the one of the module the finding was
