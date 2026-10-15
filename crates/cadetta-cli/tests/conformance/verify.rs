@@ -34,6 +34,8 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
             "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
+            "observed" => check_observed_subset(want, facts),
+            "excludes" => check_observed_excludes(want, facts),
             _ => check_observed(key, want, facts),
         };
         if let Err(m) = result {
@@ -210,6 +212,64 @@ fn check_observed(key: &str, want: &Value, facts: &Facts) -> Result<(), String> 
         Some(got) if got == want => Ok(()),
         Some(got) => Err(format!("{key}: observed {got}, expected {want}")),
         None => Err(format!("this entry does not observe `{key}`")),
+    }
+}
+
+/// `observed`: the expectation is a partial object; every wanted key must match recursively
+/// and a wanted `{}` needs an empty actual object (reads, `binding` entry).
+// frob:ticket 01M4VQXM0V12H5JBPHWW796HD7
+fn check_observed_subset(want: &Value, facts: &Facts) -> Result<(), String> {
+    let Some(got) = facts.observed.get("observed") else {
+        return Err("this entry does not observe `observed`".into());
+    };
+    if subset(want, got) {
+        Ok(())
+    } else {
+        Err(format!("observed: got {got}, expected (subset) {want}"))
+    }
+}
+
+/// True when `want` is contained in `got`: objects by key, scalars and arrays by equality.
+fn subset(want: &Value, got: &Value) -> bool {
+    match (want, got) {
+        (Value::Object(w), Value::Object(g)) => {
+            (!w.is_empty() || g.is_empty())
+                && w.iter()
+                    .all(|(k, v)| g.get(k).is_some_and(|x| subset(v, x)))
+        }
+        _ => want == got,
+    }
+}
+
+/// `excludes`: none of the strings may be a key or a string value anywhere in `observed`.
+// frob:ticket 01M4VQXM0V12H5JBPHWW796HD7
+fn check_observed_excludes(want: &Value, facts: &Facts) -> Result<(), String> {
+    let got = facts.observed.get("observed").unwrap_or(&Value::Null);
+    let mut tokens = Vec::new();
+    collect_tokens(got, &mut tokens);
+    let present: Vec<String> = strings(want)
+        .into_iter()
+        .filter(|s| tokens.contains(s))
+        .collect();
+    if present.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("observed contains excluded {present:?}"))
+    }
+}
+
+/// Every key and string leaf of `v`.
+fn collect_tokens(v: &Value, out: &mut Vec<String>) {
+    match v {
+        Value::Object(m) => {
+            for (k, x) in m {
+                out.push(k.clone());
+                collect_tokens(x, out);
+            }
+        }
+        Value::Array(a) => a.iter().for_each(|x| collect_tokens(x, out)),
+        Value::String(s) => out.push(s.clone()),
+        _ => {}
     }
 }
 
