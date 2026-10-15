@@ -2,11 +2,12 @@
 id = "01M4V1HEA425D4RGFBSG5NT80Z"
 title = "Quantities: inexact operand in check gives EVAL, spec 5.8 wants undecided/holds with 1e-9 widening"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-15T02:22:46Z"
+updated = "2026-10-15T02:23:07Z"
 idempotency_key = "Z48-inexactcheck"
 labels = ["creates:changelog.d/01M4V1HEA425D4RGFBSG5NT80Z.fixed.md"]
 scope = ["crates/cadetta-lint/**", "crates/cadetta-units/src/inexact.rs", "crates/cadetta-sema/**", "crates/cadetta-cli/tests/quantity_pi_inexact.rs", "docs/spec/quantities.md", "tests/conformance/known-gaps.toml", "changelog.d/01M4V1HEA425D4RGFBSG5NT80Z.fixed.md"]
