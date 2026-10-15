@@ -2,7 +2,8 @@
 id = "01M4Z33NKSMBJSGKAMVDGYN4CP"
 title = "sema: evaluate a fit's .clearance as a member readable by checks"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
