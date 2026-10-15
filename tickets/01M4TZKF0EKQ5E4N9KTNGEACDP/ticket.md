@@ -2,11 +2,12 @@
 id = "01M4TZKF0EKQ5E4N9KTNGEACDP"
 title = "solve --format json report and solve-report.json schema"
 type = "bug"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T15:55:21Z"
-updated = "2026-10-15T01:51:04Z"
+updated = "2026-10-15T01:51:27Z"
 scope = ["crates/cadetta-cli/src/cmd/solve.rs", "docs/schemas/*.json"]
 
 [[acceptance]]
