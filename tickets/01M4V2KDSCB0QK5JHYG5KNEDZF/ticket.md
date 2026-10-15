@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T16:47:45Z"
-updated = "2026-10-15T04:14:11Z"
+updated = "2026-10-15T04:14:13Z"
 scope = ["crates/cadetta-lint/**"]
 
 [[acceptance]]
@@ -15,7 +15,7 @@ bound = true
 
 [[acceptance]]
 text = "D002 fires for fit clearance accessors"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Geometry G002-G007 reach check"
