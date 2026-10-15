@@ -4,9 +4,10 @@ title = "Wire initialize precision into CLI call sites via Client::effective_pre
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T12:39:30Z"
-updated = "2026-10-15T12:39:30Z"
+updated = "2026-10-15T12:50:06Z"
 scope = ["crates/cadetta-cli/**"]
 +++
 
