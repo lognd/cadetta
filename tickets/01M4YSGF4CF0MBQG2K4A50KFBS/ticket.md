@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "a roll-up over a misspelled member, a missing argument, no contributing part or mixed dimensions is EVAL, not E002"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "a parameterized part contributes the argument its part site passes (ScrewJoint screw_cost)"
