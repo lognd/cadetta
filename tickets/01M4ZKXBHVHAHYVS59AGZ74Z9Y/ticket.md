@@ -2,7 +2,8 @@
 id = "01M4ZKXBHVHAHYVS59AGZ74Z9Y"
 title = "Reconcile G008 half-turn (float >= spread) between geometry.md 5.2 and code"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
