@@ -12,7 +12,7 @@ scope = ["tests/conformance/solvers/**", "tests/conformance/known-gaps.toml", "d
 
 [[acceptance]]
 text = "must_not_fire value rows match the recorded outputs and the two known-gaps entries are removed (conformance passes on goway)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "docs/spec/solvers.md notes outputs are evaluated from the recorded .out.json"
