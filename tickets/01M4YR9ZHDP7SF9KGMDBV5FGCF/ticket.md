@@ -2,12 +2,12 @@
 id = "01M4YR9ZHDP7SF9KGMDBV5FGCF"
 title = "solvers: freshness stdout and S005 fixtures fail (4 fixtures)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-15T11:13:37Z"
+updated = "2026-10-15T11:14:30Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/lint_facts.rs", "crates/cadetta-cli/tests/lint_entry_points.rs", "changelog.d/**"]
 +++
 
