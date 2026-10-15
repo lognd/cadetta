@@ -2,11 +2,12 @@
 id = "01M4V7WDK6DPPA5Z9FEEPB7ZY9"
 title = "json/csv: --assume-unit precedence, whole-number rendering, O004 open obligation without drive"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "done"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-13T18:20:03Z"
-updated = "2026-10-15T12:50:47Z"
+updated = "2026-10-15T12:50:50Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
