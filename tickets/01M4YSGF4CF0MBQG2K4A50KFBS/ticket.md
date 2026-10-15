@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:25:49Z"
-updated = "2026-10-15T11:59:11Z"
+updated = "2026-10-15T11:59:34Z"
 scope = ["crates/cadetta-sema/**", "docs/spec/language.md", "tests/conformance/known-gaps.toml", "tests/conformance/stdlib/commercial-misspelling-not-a-member.must-fire.cdt", "tests/conformance/stdlib/commercial-misspelling-not-a-member.must-not-fire.cdt", "tests/conformance/stdlib/screw-price-not-in-iso4762.must-not-fire.cdt"]
 
 [[acceptance]]
