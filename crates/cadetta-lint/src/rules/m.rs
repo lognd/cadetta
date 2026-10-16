@@ -288,6 +288,7 @@ mod tests {
             variants: None,
             digest: None,
             closure: None,
+            text: None,
         }
     }
 
