@@ -2,7 +2,8 @@
 id = "01M4Z2YACNJ4C44YEK6QQY7ZED"
 title = "bindings.md: member.variant has no concrete alternate-part example"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
