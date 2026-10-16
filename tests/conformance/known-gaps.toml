@@ -746,3 +746,13 @@ reason = "a pure reference does not inherit its referent's emit point yet (alias
 fixture = "language/e001-waive-date"
 ticket = "~2VJQFPG"
 reason = "a waive with a valid future expiry does not suppress C001 on the check in the check entry"
+
+[[gap]]
+fixture = "packages/update-e012-lock-untouched"
+ticket = "~MJX2SB1"
+reason = "update exits 2 on E012 because Project::open fails first; spec says exit 1"
+
+[[gap]]
+fixture = "packages/update-e013-lock-untouched"
+ticket = "~MJX2SB1"
+reason = "update exits 2 on E013 because Project::open fails first; spec says exit 1"

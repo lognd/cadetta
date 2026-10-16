@@ -1,0 +1,11 @@
+[package]
+name = "acme.shop"
+version = "1.2.3"
+as_of = "2026-10-13"
+
+[obligations.roles.review]
+covers = ["check:acme.shop::**"]
+required_for = "check"
+
+[lint]
+fail_on = "error"
