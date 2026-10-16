@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision (delegated): new top-level verb 'cadetta display VALUE SPEC' (not 'units display', not project-bound). Rationale: units lists tables keyed by KIND; display is a pure value+spec computation needing no project; args map 1:1 onto the fixture call {call,value,spec} and a future cadetta.display(value, spec) binding. JSON output cadetta.display/1 {schema,value,spec,text}; errors exit 2. Runner: ('binding','check') executor in tests/conformance/binding.rs observes 'result'. Fixtures stay gapped until ~HX96KHW (known-gaps.toml is leased elsewhere)."
+at = "2026-10-16T03:37:31Z"
+actor = "lognd"
+rev = 1
