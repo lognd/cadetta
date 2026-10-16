@@ -7,7 +7,7 @@ priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T21:59:15Z"
-updated = "2026-10-16T00:48:01Z"
+updated = "2026-10-16T00:48:02Z"
 idempotency_key = "kindcheck-untyped-local-shadow"
 scope = ["crates/cadetta-sema", "docs/spec/quantities.md", "changelog.d", "crates/cadetta-cli/tests", "crates/cadetta-cli/tests/**", "crates/cadetta-sema/**"]
 
