@@ -4,9 +4,10 @@ title = "solve --variants fixtures fail with EVAL at Rover.sizing; runner observ
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-15T08:57:02Z"
+updated = "2026-10-16T15:08:06Z"
 scope = ["crates/**"]
 +++
 
