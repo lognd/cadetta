@@ -2,7 +2,8 @@
 id = "01M52TH35NQBTKBHMBH6WF08GT"
 title = "ack: accept sync:FILE as an attestable obligation"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
