@@ -2,7 +2,8 @@
 id = "01M4ZBN0XKQRTXW7AY1KKVE13B"
 title = "Conformance import executor: accept/update modes and richer item features"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
