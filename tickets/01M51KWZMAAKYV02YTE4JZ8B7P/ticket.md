@@ -7,7 +7,7 @@ priority = "high"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T05:45:31Z"
-updated = "2026-10-16T06:07:31Z"
+updated = "2026-10-16T06:09:17Z"
 scope = ["crates/cadetta-cli/src/cmd/check.rs"]
 
 [[acceptance]]
