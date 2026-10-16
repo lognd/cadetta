@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:03:50Z"
-updated = "2026-10-16T08:40:40Z"
+updated = "2026-10-16T08:40:41Z"
 scope = ["crates/cadetta-sema/src/lower.rs", "crates/cadetta-ir/src/**", "docs/spec/ir.md", "crates/cadetta-cli/src/universe.rs", "changelog.d/**"]
 
 [[acceptance]]
 text = "A require lowers to requires[] with message, citation and verdicts, not into checks[]"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "The CLI universe lists IR requires as require obligations"
