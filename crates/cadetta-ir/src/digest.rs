@@ -584,15 +584,18 @@ impl DigestGraph {
         }
     }
 
-    /// Add a fit keyed by its path plus its `hole` and `shaft` read nodes, which derive from it.
+    /// Add a fit keyed by its path plus its `<fit>.hole` and `<fit>.shaft` accessor nodes, which
+    /// derive from it. The accessors are keyed under the fit, never under the operand members
+    /// (`Fit.hole`/`Fit.shaft`), which are real members with their own nodes.
     pub fn add_fit(&mut self, f: &Fit) {
         let own = fit_digest(f);
         let key = f.path.to_string();
         self.add_node(key.clone(), own.clone(), Vec::new());
-        for side in [&f.hole, &f.shaft] {
+        for side in ["hole", "shaft"] {
+            let node = format!("{key}.{side}");
             let mut e = Enc::new("fit-side");
-            e.str(&side.to_string()).digest(&own);
-            self.add_node(side.to_string(), e.finish(), vec![key.clone()]);
+            e.str(&node).digest(&own);
+            self.add_node(node, e.finish(), vec![key.clone()]);
         }
     }
 

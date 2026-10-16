@@ -28,11 +28,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "stdlib/m003-hole-fit-side"
-ticket = "~3YZ3NSG"
-reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
-
-[[gap]]
 fixture = "stdlib/policy-iso-default-silent"
 ticket = "~Z0MJNAM5"
 reason = "S001 reports per member, fixture expects the component path"

@@ -219,12 +219,14 @@ fn operand(
     ctx: &Ctx,
     path: &ast::Path,
     inst: Option<&InstanceSite>,
-) -> Option<Toleranced> {
-    let q = match (resolver.resolve_path(ctx, path, None), inst) {
+) -> Option<(Toleranced, CanonPath)> {
+    let (q, at) = match (resolver.resolve_path(ctx, path, None), inst) {
         (Ok(Resolved::Arg { path: p, name }), Some(inst)) => {
             let q = instance_arg(evaluation, inst, &p);
             trace!(instance = %inst.prefix, arg = %name, found = q.is_some(), "fits: argument operand read");
-            q?
+            let mut at = inst.prefix.clone();
+            at.members = p.members.clone();
+            (q?, at)
         }
         (Ok(Resolved::Member { path: mut p, .. }), inst) => {
             if let Some(inst) = inst.filter(|i| p.parts.is_empty() && p.item_only() == i.callee) {
@@ -233,7 +235,7 @@ fn operand(
                 p.members = members;
             }
             match evaluation.values.get(&p).map(|e| &e.value) {
-                Some(Val::Quantity(q)) => q.clone(),
+                Some(Val::Quantity(q)) => (q.clone(), p),
                 _ => {
                     debug!(operand = %p, "fits: operand has no evaluated quantity; fit skipped");
                     return None;
@@ -245,7 +247,7 @@ fn operand(
             return None;
         }
     };
-    toleranced(&q).ok()
+    toleranced(&q).ok().map(|t| (t, at))
 }
 
 fn bound_of(lo: &Quant, hi: &Quant) -> Bound {
@@ -276,13 +278,35 @@ fn derive_one(
         }
         None => def_path.clone(),
     };
-    let (first, second) = match &f.spec {
+    let synthetic = |n: &str| {
+        let mut m = path.clone();
+        m.members.push(MemberSeg::Name(n.to_owned()));
+        m
+    };
+    // The hole and shaft are the real operand members; a side no member names (the class of a
+    // class fit, both sides of a class pair) keeps the synthetic `<fit>.hole`/`.shaft` path.
+    let (first, second, hole, shaft) = match &f.spec {
         FitSpec::Paths(a, b) => {
-            let ta = operand(resolver, evaluation, &ctx, a, inst)?;
-            let tb = operand(resolver, evaluation, &ctx, b, inst)?;
-            (ta, Some(tb))
+            let (ta, pa) = operand(resolver, evaluation, &ctx, a, inst)?;
+            let (tb, pb) = operand(resolver, evaluation, &ctx, b, inst)?;
+            (ta, Some(tb), pa, pb)
         }
-        _ => (operand(resolver, evaluation, &ctx, &f.on, inst)?, None),
+        spec => {
+            let (t, on) = operand(resolver, evaluation, &ctx, &f.on, inst)?;
+            // `on` carries the mate of a class's side (quantities.md 5.6); a class pair names none.
+            let mate = match spec {
+                FitSpec::Class(class) => cadetta_fits::parse_class(&class.name)
+                    .ok()
+                    .map(|c| crate::fits::role_of(c.side).mate()),
+                _ => None,
+            };
+            let (hole, shaft) = match mate {
+                Some(Role::Hole) => (on, synthetic("shaft")),
+                Some(_) => (synthetic("hole"), on),
+                None => (synthetic("hole"), synthetic("shaft")),
+            };
+            (t, None, hole, shaft)
+        }
     };
     let required = ranges.0.get(&fit_path(pkg, module, c, f));
     let range = required.map(|(l, h)| Ok::<_, ToleranceError>((toleranced(l)?, toleranced(h)?)));
@@ -329,15 +353,10 @@ fn derive_one(
             span,
         });
     }
-    let member = |n: &str| {
-        let mut m = path.clone();
-        m.members.push(MemberSeg::Name(n.to_owned()));
-        m
-    };
     debug!(fit = %path, fit_type = result.fit_type.name(), "fits: fit derived");
     Some(FitInput {
-        hole: member("hole"),
-        shaft: member("shaft"),
+        hole,
+        shaft,
         path,
         result,
         required: required.map(|(l, h)| bound_of(l, h)),
@@ -451,7 +470,9 @@ mod tests {
         );
         assert_eq!(fits.len(), 1, "{fits:?}");
         assert_eq!(fits[0].path.to_string(), "p::Top/h.seat");
+        // H7 is a hole class: the operand is the shaft, the hole side has no member.
         assert_eq!(fits[0].hole.to_string(), "p::Top/h.seat.hole");
+        assert_eq!(fits[0].shaft.to_string(), "p::Top/h.bearing.outer_dia");
         assert_eq!(fits[0].result.fit_type.name(), "clearance");
     }
 
@@ -494,7 +515,9 @@ mod tests {
         );
         assert_eq!(fits.len(), 1, "{fits:?}");
         assert_eq!(fits[0].path.to_string(), "p::Bore.press");
-        assert_eq!(fits[0].hole.to_string(), "p::Bore.press.hole");
+        // The operands are the real members, so M003 can match them (~3YZ3NSG).
+        assert_eq!(fits[0].hole.to_string(), "p::Bore.d");
+        assert_eq!(fits[0].shaft.to_string(), "p::Pin.d");
         assert!(fits[0].required.is_some(), "range is carried");
     }
 
@@ -505,6 +528,8 @@ mod tests {
         let fits = derive("model Shaft { d = 20mm [+0mm -0.013mm] }\nfit seat = H7 on Shaft.d\n");
         assert_eq!(fits.len(), 1, "{fits:?}");
         assert_eq!(fits[0].path.to_string(), "p::Shaft.seat");
+        assert_eq!(fits[0].shaft.to_string(), "p::Shaft.d");
+        assert_eq!(fits[0].hole.to_string(), "p::Shaft.seat.hole");
         let none = derive("model Plate(d: Length) { }\nfit seat = H7 on d\n");
         assert!(none.is_empty(), "{none:?}");
     }
