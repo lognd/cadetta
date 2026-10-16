@@ -8,7 +8,7 @@ points = 2
 reporter = "lognd"
 created = "2026-10-16T09:59:32Z"
 updated = "2026-10-16T13:06:10Z"
-scope = ["crates/cadetta-sema/src/geom.rs", "tests/conformance/geometry/coaxial-parameterized-model.*", "docs/spec/geometry.md"]
+scope = ["crates/cadetta-sema/src/geom.rs", "tests/conformance/geometry/coaxial-parameterized-model.*", "docs/spec/geometry.md", "changelog.d/01M522E34AS5NZTG9PFFCZKA30.*.md"]
 
 [[acceptance]]
 text = 'A check on datums (coaxial, aligned) inside a parameterized model evaluates in its instance, with no EVAL "failed to evaluate" on the model-level members'
