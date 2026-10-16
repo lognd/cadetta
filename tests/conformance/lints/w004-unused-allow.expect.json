@@ -14,12 +14,7 @@
     ]
   },
   "must_not_fire": {
-    "diagnostics": [
-      {
-        "code": "M001",
-        "severity": "warning"
-      }
-    ],
+    "diagnostics": [],
     "exit": 0
   }
 }

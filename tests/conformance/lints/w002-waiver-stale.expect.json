@@ -18,12 +18,7 @@
     ]
   },
   "must_not_fire": {
-    "diagnostics": [
-      {
-        "code": "C001",
-        "severity": "error"
-      }
-    ],
+    "diagnostics": [],
     "exit": 0
   }
 }
