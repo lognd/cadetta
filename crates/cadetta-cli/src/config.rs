@@ -276,12 +276,17 @@ fn money_dims() -> Vec<Dim> {
 }
 
 impl Lint {
-    /// The M001 settings: `precision` by kind name; empty keeps the documented defaults.
-    pub fn m_config(&self) -> Result<MConfig, ConfigError> {
+    /// The M001 settings: `precision` by kind name, resolved against `kinds` (built-ins plus
+    /// the package's own `kind` declarations); empty keeps the documented defaults.
+    pub fn m_config(&self, kinds: &KindTable) -> Result<MConfig, ConfigError> {
+        self.resolve_precision(kinds, true)
+    }
+
+    /// Resolve `precision`; an unknown kind is an error when `strict`, else logged and skipped.
+    fn resolve_precision(&self, kinds: &KindTable, strict: bool) -> Result<MConfig, ConfigError> {
         if self.precision.is_empty() {
             return Ok(MConfig::default());
         }
-        let kinds = KindTable::builtin();
         let mut precision = Vec::with_capacity(self.precision.len());
         for (kind, decimals) in &self.precision {
             if kind == "Money" {
@@ -292,12 +297,23 @@ impl Lint {
                 continue;
             }
             let Some(dim) = kinds.dim_of(kind) else {
-                return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
+                if strict {
+                    return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
+                }
+                tracing::warn!(kind = %kind, "lint: precision names an unknown quantity kind; ignored");
+                continue;
             };
             precision.push((dim.clone(), u32::from(*decimals)));
         }
         tracing::debug!(kinds = precision.len(), "lint: M001 precision from config");
         Ok(MConfig { precision })
+    }
+
+    /// The M001 settings for analysis: like `m_config` but an unknown kind is skipped, since the
+    /// configuration loads before the package's kinds are known.
+    pub fn m_config_lenient(&self, kinds: &KindTable) -> MConfig {
+        self.resolve_precision(kinds, false)
+            .unwrap_or_else(|_| MConfig::default())
     }
 
     /// The D001/D002 settings: `d001_min_digits`, parsed `common_values` and the caller's
@@ -579,7 +595,7 @@ impl Config {
         if self.lint.d001_min_digits == 0 {
             return invalid("lint.d001_min_digits", "must be at least 1");
         }
-        self.lint.m_config()?;
+        // Package-declared kinds are unknown at load; `pipeline` resolves `precision` later.
         self.lint.d_config(Vec::new())?;
         for (name, role) in &self.obligations.roles {
             if role.covers.is_empty() {
@@ -849,22 +865,36 @@ native_unit = "mm"
     // frob:tests crates/cadetta-cli/src/config.rs::Lint
     #[test]
     fn lint_precision_kinds_and_common_values_are_checked() {
-        assert!(err_text(&pkg("[lint]\nprecision = { Lenth = 2 }\n")).contains("Lenth"));
+        let typo = Config::parse(&pkg("[lint]\nprecision = { Lenth = 2 }\n")).unwrap();
+        let err = typo.lint.m_config(&KindTable::builtin()).unwrap_err();
+        assert!(err.to_string().contains("Lenth"));
         assert!(err_text(&pkg("[lint]\ncommon_values = [\"fast\"]\n")).contains("fast"));
         let c = Config::parse(&pkg(
             "[lint]\nprecision = { Length = 4 }\ncommon_values = [\"0.5in\"]\n",
         ))
         .unwrap();
-        assert_eq!(c.lint.m_config().unwrap().precision.len(), 1);
+        assert_eq!(c.lint.m_config(&KindTable::builtin()).unwrap().precision.len(), 1);
         assert_eq!(c.lint.d_config(Vec::new()).unwrap().common_values.len(), 1);
     }
 
     // frob:ticket 01M4Z7SF3KHPF3NA2YB3P4PXDX
+    // frob:ticket 01M4YM3CKT4FBV4VXJD76GMV4N
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_accepts_custom_kinds_from_table() {
+        let c = Config::parse(&pkg("[lint]\nprecision = { Widget = 3 }\n")).unwrap();
+        assert!(c.lint.m_config(&KindTable::builtin()).is_err());
+        let mut kinds = KindTable::builtin();
+        kinds.register("Widget", "Length").unwrap();
+        let m = c.lint.m_config(&kinds).unwrap();
+        assert_eq!(m.precision, vec![(kinds.dim_of("Length").unwrap().clone(), 3)]);
+    }
+
     // frob:tests crates/cadetta-cli/src/config.rs::Lint
     #[test]
     fn lint_precision_accepts_money_for_every_currency() {
         let c = Config::parse(&pkg("[lint]\nprecision = { Money = 2 }\n")).unwrap();
-        let m = c.lint.m_config().unwrap();
+        let m = c.lint.m_config(&KindTable::builtin()).unwrap();
         assert_eq!(m.precision.len(), 5);
         assert!(m.precision.iter().all(|(_, n)| *n == 2));
     }

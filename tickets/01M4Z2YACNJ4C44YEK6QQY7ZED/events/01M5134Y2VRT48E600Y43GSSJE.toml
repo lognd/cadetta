@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/QQY7ZED; scope: docs/spec/bindings.md; ttl 7200s"
+at = "2026-10-16T00:52:44Z"
+actor = "lognd"
+rev = 1
