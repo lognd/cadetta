@@ -13,7 +13,7 @@ scope = ["crates/cadetta-cli/src/**", "crates/cadetta-adapter/src/builtin/csv.rs
 
 [[acceptance]]
 text = "The CLI csv read path calls read_bound and an unbound-name row exits with R016."
-bound = false
+bound = true
 +++
 
 read_bound in builtin/csv.rs (from ~BB49Z35) has no caller; the CLI csv read path must use it so unbound rows raise R016.
