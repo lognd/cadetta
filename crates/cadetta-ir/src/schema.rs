@@ -474,7 +474,7 @@ fn defs() -> Map<String, J> {
                 ("deps", arr(r("Path"))),
                 ("stale", b()),
             ],
-            &[("result_digest", r("Digest"))],
+            &[("result_digest", r("Digest")), ("citation", r("CiteRef"))],
         ),
     ));
     d.push((
@@ -980,6 +980,7 @@ mod tests {
         pr.solvers.push(Solver {
             path: p("a.b::C.sol"),
             script: "s.py".into(),
+            citation: Some(CiteRef::item("a.b::method", Some("p.3".into()))),
             inputs: BTreeMap::from([("i".to_owned(), "a.b::C.d".to_owned())]),
             outputs: BTreeMap::from([("o".to_owned(), "a.b::C.e".to_owned())]),
             deps: vec![p("a.b::C.d")],

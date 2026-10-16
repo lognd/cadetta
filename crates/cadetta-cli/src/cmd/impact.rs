@@ -303,6 +303,7 @@ mod tests {
         ir.solvers.push(Solver {
             path: p("pkg::X.fea"),
             script: "fea.py".into(),
+            citation: None,
             inputs: BTreeMap::from([("w".into(), "pkg::X.b".into())]),
             outputs: BTreeMap::new(),
             deps: vec![],

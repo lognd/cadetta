@@ -656,6 +656,7 @@ mod tests {
         with_solver.solvers.push(Solver {
             path: p("demo::S.run"),
             script: "s.py".into(),
+            citation: None,
             inputs: Default::default(),
             outputs: [("out".to_owned(), "demo::P.out".to_owned())].into(),
             deps: vec![],

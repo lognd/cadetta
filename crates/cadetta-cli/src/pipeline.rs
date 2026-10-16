@@ -16,7 +16,6 @@ use cadetta_ir::entities::Waiver;
 use cadetta_ir::model::{
     Citation, CiteBuiltin, ComponentClass, MemberKind as IrMemberKind, Project as IrProject,
 };
-use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::d::{Key, NamedValue};
@@ -39,7 +38,7 @@ use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_solve::decl::lower_solver;
 use cadetta_solve::lints as solver_lints;
 use cadetta_solve::protocol::Request;
-use cadetta_solve::results::{CurrentDigests, ResultFile, input_digest, out_path};
+use cadetta_solve::results::{CurrentDigests, Lookup, ResultFile, input_digest, out_path};
 use cadetta_solve::variants::{VariantReading, read_variant};
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
@@ -228,26 +227,53 @@ fn module_waivers(file: &File, moves: &Moves, out: &mut Vec<Waiver>) {
         let ItemKind::Waive(w) = &item.kind else {
             continue;
         };
-        let for_alt = match &w.for_alt {
-            None => None,
-            Some(a) => match VariantName::parse(&format!("{}={}", a.slot.text, a.alt.text)) {
-                Ok(v) => Some(v),
-                Err(error) => {
-                    tracing::warn!(code = %w.code.name, %error, "pipeline: waiver with a bad `for alt`; skipped");
-                    continue;
-                }
-            },
-        };
-        tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
-        out.push(Waiver {
-            code: w.code.name.clone(),
-            glob: moves.carry_glob(&w.glob.text),
-            because: w.because.clone(),
-            expires: w.expires.as_ref().map(|e| e.text.clone()),
-            for_alt,
-            targets_closure: BTreeMap::new(),
-        });
+        // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+        match cadetta_sema::lower::lower_waiver(w) {
+            Ok(mut waiver) => {
+                tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
+                waiver.glob = moves.carry_glob(&w.glob.text);
+                out.push(waiver);
+            }
+            Err(error) => {
+                tracing::warn!(code = %w.code.name, %error, "pipeline: waiver with a bad `for alt`; skipped");
+            }
+        }
     }
+}
+
+/// Recorded primary-result state of every solver site, for `ir.solvers` (solvers.md 4).
+///
+/// A fresh or stale result carries a digest of its recorded outputs; a missing one carries none.
+// frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+fn solver_states(
+    sites: &[SolverSite<'_>],
+) -> BTreeMap<CanonPath, cadetta_sema::lower::SolverState> {
+    sites
+        .iter()
+        .map(|s| {
+            let (result, stale) = match s.results.lookup(&s.key, None, &s.current) {
+                Lookup::Fresh(r) => (Some(r), false),
+                Lookup::Stale(r) => (Some(r), true),
+                Lookup::Missing => (None, false),
+            };
+            let result_digest = result.map(|r| {
+                let text: String = r
+                    .outputs
+                    .iter()
+                    .map(|(k, v)| format!("{k}={v}\n"))
+                    .collect();
+                cadetta_ir::digest::digest_bytes(text.as_bytes())
+            });
+            tracing::debug!(solver = %s.path, stale, recorded = result_digest.is_some(), "pipeline: solver state");
+            (
+                s.path.clone(),
+                cadetta_sema::lower::SolverState {
+                    result_digest,
+                    stale,
+                },
+            )
+        })
+        .collect()
 }
 
 /// S001/S002/S008 inputs of one lowered package: `ots` values, and the package's own `cite`
@@ -1739,6 +1765,7 @@ fn evaluate_stages(
             deps: &graph,
             variants: variant_refs.clone(),
             fits: &derived_fits,
+            solver_states: solver_states(&sites),
         })
     };
     // frob:ticket 01M4YTGQ9BHMKS38GTGX2PFH03

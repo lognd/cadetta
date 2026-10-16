@@ -938,6 +938,7 @@ mod tests {
         let mut s = Solver {
             path: p("a.b::X.sol"),
             script: "s.py".into(),
+            citation: None,
             inputs: BTreeMap::new(),
             outputs: BTreeMap::new(),
             deps: vec![],
@@ -954,6 +955,12 @@ mod tests {
         let c = close(&s);
         s.result_digest = Some(Digest("22".into()));
         assert_ne!(c, close(&s));
+        // the method citation is documentation, never an input to the solver closure (solvers.md 1)
+        s.citation = Some(CiteRef::item("a.b::refs::method", None));
+        let c2 = close(&s);
+        s.citation = None;
+        s.result_digest = Some(Digest("22".into()));
+        assert_eq!(c2, close(&s));
     }
 
     // frob:tests digest_graph_errors

@@ -1,0 +1,11 @@
+kind = "create"
+title = "Lower tables into the IR in cadetta-sema"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+acceptance = ["Tables declared in a package lower into ir.tables with their cell values"]
+body = "found while working ~R0ANADA: ir.tables is empty; the evaluator keeps table cell values private (table_vals), so lowering needs them exposed from Evaluation."
+at = "2026-10-16T02:21:43Z"
+actor = "lognd"
+rev = 1

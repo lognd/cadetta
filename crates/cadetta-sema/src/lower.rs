@@ -15,8 +15,9 @@
 //! - A member is `Derived` when its definition reads other members, else `Authored`.
 //! - Variant evaluations are supplied by the caller keyed `"<slot>=<alternate>"`; a member
 //!   stores only the values that differ from the primary.
-//! - Not lowered (the IR `Project` has no field for them yet): waivers, interfaces, tables,
-//!   `require` obligations, solvers and bindings; parameterized components lower with
+//! - Solvers and waivers lower in `lower_solver.rs`; the recorded-result state of a solver comes
+//!   from the caller (`LowerInput::solver_states`).
+//! - Not lowered yet: interfaces, tables, `require` obligations and bindings; parameterized components lower with
 //!   valueless members. Datums, points and placements lower in `lower_geom.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -86,6 +87,9 @@ pub struct LowerInput<'a> {
     pub variants: BTreeMap<String, &'a Evaluation>,
     /// Analysed fits.
     pub fits: &'a [FitInput],
+    /// Recorded primary result state per solver (`PKG::Comp.solver`); absent means unsolved.
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    pub solver_states: BTreeMap<CanonPath, SolverState>,
 }
 
 /// Converts a canonical path to an IR path; `None` (logged) when it is not well formed.
@@ -243,6 +247,9 @@ fn evaluated_value(
 mod lower_array;
 #[path = "lower_geom.rs"]
 mod lower_geom;
+#[path = "lower_solver.rs"]
+mod lower_solver;
+pub use lower_solver::{SolverState, lower_waiver};
 
 /// Per-lowering shared state.
 struct Cx<'a> {
@@ -743,6 +750,14 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
                 comp.members.extend(cx.lower_solver_outputs(&canon, c));
                 cx.lower_geometry(&canon, src, c, &mut comp);
+                // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+                let solvers = cx.lower_solvers(&canon, src, &idx, (&pkg.name, &module.path), c);
+                cited.extend(
+                    solvers
+                        .iter()
+                        .filter_map(|s| s.citation.as_ref()?.cite.clone()),
+                );
+                project.solvers.extend(solvers);
                 comp.fits = input
                     .fits
                     .iter()
@@ -752,6 +767,15 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
+            }
+            // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+            for item in module.file.items() {
+                if let ast::ItemKind::Waive(w) = &item.kind {
+                    match lower_waiver(w) {
+                        Ok(w) => project.waivers.push(w),
+                        Err(e) => lower_solver::skip_waiver(w, &e),
+                    }
+                }
             }
         }
     }
@@ -829,6 +853,7 @@ mod tests {
     use crate::process::Processes;
     use crate::resolve::{ModuleSrc, Resolver};
     use cadetta_ir::geometry::Op;
+    use cadetta_ir::model::Digest;
     use cadetta_syntax::ast::{FitSpec, Ident};
     use cadetta_syntax::parser::parse;
     use cadetta_units::{Rational, UnitTable};
@@ -874,6 +899,15 @@ mod tests {
     }
 
     fn build(src: &str, variants: &[(&str, &str)], fits: &[FitInput]) -> Built {
+        build_with(src, variants, fits, BTreeMap::new())
+    }
+
+    fn build_with(
+        src: &str,
+        variants: &[(&str, &str)],
+        fits: &[FitInput],
+        solver_states: BTreeMap<CanonPath, SolverState>,
+    ) -> Built {
         let (evaluation, outcome, graph) = evaluate(src);
         let vevals: Vec<(String, Evaluation)> = variants
             .iter()
@@ -909,6 +943,7 @@ mod tests {
             deps: &graph,
             variants: vevals.iter().map(|(k, e)| (k.clone(), e)).collect(),
             fits,
+            solver_states,
         };
         let project = lower(&input);
         Built {
@@ -928,6 +963,87 @@ mod tests {
             .iter()
             .find(|m| m.path.members == vec![Seg::Name(name.to_owned())])
             .expect("member")
+    }
+
+    const SOLVER_SRC: &str = "model Frame { span = 2m\n  \
+        solver beam {\n    script \"beam.sh\"\n    in len = span\n    out defl: Length\n  }\n}\n\
+        waive W001 on Frame.* { because \"known\" expires 2030-01-01 }\n\
+        waive W002 on Frame.span for alt p::Frame/s=p::Alt { because \"alt\" }\n\
+        waive W003 on Frame.span for alt a=b { because \"bad alt\" }\n";
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_lowers_with_script_inputs_outputs_and_deps() {
+        let b = build(SOLVER_SRC, &[], &[]);
+        assert_eq!(b.project.solvers.len(), 1);
+        let s = &b.project.solvers[0];
+        assert_eq!(s.path.to_string(), "p::Frame.beam");
+        assert_eq!(s.script, "beam.sh");
+        assert_eq!(s.inputs.get("len").map(String::as_str), Some("span"));
+        assert_eq!(
+            s.outputs.get("defl").map(String::as_str),
+            Some("p::Frame.beam.defl")
+        );
+        assert_eq!(
+            s.deps.iter().map(|d| d.to_string()).collect::<Vec<_>>(),
+            ["p::Frame.span"]
+        );
+        assert!(s.result_digest.is_none() && !s.stale);
+    }
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_takes_its_recorded_result_state_from_the_caller() {
+        let key = member_path(&CanonPath::item("p", &[], "Frame"), "beam");
+        let state = SolverState {
+            result_digest: Some(Digest("ab".to_owned())),
+            stale: true,
+        };
+        let b = build_with(SOLVER_SRC, &[], &[], BTreeMap::from([(key, state)]));
+        let s = &b.project.solvers[0];
+        assert_eq!(s.result_digest, Some(Digest("ab".to_owned())));
+        assert!(s.stale);
+    }
+
+    // frob:ticket 01M4VNC6QGY8T20VW77QCK9BKX
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_citation_lowers_to_a_cite_ref_and_is_not_an_input() {
+        let src = "cite fea: web { title = \"FEA\" }\n\
+            model Frame { span = 2m\n  \
+            solver beam @fea:\"p.4\" {\n    script \"beam.sh\"\n    in len = span\n    out defl: Length\n  }\n}\n";
+        let b = build(src, &[], &[]);
+        let s = &b.project.solvers[0];
+        let c = s.citation.as_ref().expect("solver citation");
+        assert_eq!(c.cite.as_deref(), Some("p::fea"));
+        assert_eq!(c.locator.as_deref(), Some("p.4"));
+        assert_eq!(s.inputs.len(), 1, "the citation is not an input");
+        assert!(s.deps.iter().all(|d| d.to_string() != "p::fea"));
+        assert!(b.project.citations.iter().any(|c| c.path == "p::fea"));
+        let plain = build(SOLVER_SRC, &[], &[]);
+        assert!(plain.project.solvers[0].citation.is_none());
+    }
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_waiver kind=unit
+    #[test]
+    fn waivers_lower_with_expiry_and_alternate() {
+        let b = build(SOLVER_SRC, &[], &[]);
+        let w = &b.project.waivers;
+        assert_eq!(w.len(), 2, "the waiver with a bad `for alt` is skipped");
+        assert_eq!(
+            (w[0].code.as_str(), w[0].glob.as_str()),
+            ("W001", "Frame.*")
+        );
+        assert_eq!(w[0].because, "known");
+        assert_eq!(w[0].expires.as_deref(), Some("2030-01-01"));
+        assert!(w[0].for_alt.is_none());
+        assert_eq!(
+            w[1].for_alt.as_ref().map(|v| v.to_string()),
+            Some("p::Frame/s=p::Alt".to_owned())
+        );
     }
 
     // frob:ticket 01M4W47VTBXFMC70Q2R137W4EE

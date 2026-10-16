@@ -417,6 +417,7 @@ impl Serialize for Solver {
         let mut m = s.serialize_map(None)?;
         m.serialize_entry("path", &self.path)?;
         m.serialize_entry("script", &self.script)?;
+        opt(&mut m, "citation", &self.citation)?;
         m.serialize_entry("inputs", &self.inputs)?;
         m.serialize_entry("outputs", &self.outputs)?;
         m.serialize_entry("deps", &self.deps)?;

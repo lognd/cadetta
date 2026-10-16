@@ -1141,6 +1141,9 @@
       "additionalProperties": false,
       "description": "A solver script with its declared inputs and outputs.",
       "properties": {
+        "citation": {
+          "$ref": "#/$defs/CiteRef"
+        },
         "deps": {
           "items": {
             "$ref": "#/$defs/Path"
