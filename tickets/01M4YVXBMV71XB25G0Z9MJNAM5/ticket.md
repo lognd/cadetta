@@ -2,12 +2,12 @@
 id = "01M4YVXBMV71XB25G0Z9MJNAM5"
 title = "S001 for an uncited user ots policy should report at component path"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T04:07:49Z"
-updated = "2026-10-16T03:32:53Z"
+updated = "2026-10-16T03:32:54Z"
 scope = ["crates/cadetta-lint/src/rules/s.rs", "tests/conformance/stdlib/**"]
 +++
 
