@@ -612,8 +612,12 @@ mod tests {
     // frob:tests crates/cadetta-cli/src/pipeline.rs::s_facts
     #[test]
     fn ots_datum_offset_without_citation_is_s001() {
-        let dir = project("ots Plate {\n  datum top = origin.offset(z = 5mm)\n}\n", "");
+        let dir = project(
+            "ots Plate {\n  thick = 3mm @\"catalog\"\n  datum top = origin.offset(z = 5mm)\n}\n",
+            "",
+        );
         let (_, json, _) = run(&dir, &[]);
+        // A partly cited component reports per uncited value, not once at the component.
         let s = diag_for(&json, "S001").expect("S001 on the uncited ots datum offset");
         assert_eq!(s["path"], "acme.axle::Plate.top.offset.z");
     }

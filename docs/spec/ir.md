@@ -178,6 +178,12 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
 - A disc source variable (geometry.md 3.1, quantities.md 5.4) appears
   as two `Affine` terms whose `var` paths share a stem and end in `.u`
   and `.v`; the pair ranges over the disc `u^2 + v^2 <= 1`, not the box.
+  A `[position d]` point lowers one such pair, stem `<point>.position`
+  (`Type.holes[i].position.u`), on both its x and y coordinate values.
+  Both terms carry the symmetric bounds `+-(|a| + |b|)` of the disc
+  coefficients `a`, `b` (for position, `d/2`), a sound outer bound of
+  the true radius; each coordinate lists the full pair, so a single
+  coordinate's range is looser than its true `[-d/2, d/2]`.
 - Observed flavour only: `Project.frames[]` holds `{ name, document,
   transform }` and `Project.instances[]` holds `{ component, document,
   reference?, transform }` (section 1); a transform is a 3x4 array of
@@ -285,8 +291,9 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     per instance (`Asm/node[i]`, integer indexes) and skipped, with a
     warning, when its count is unknown. A Point is `Type.p` or
     `Type.holes[i]`; its coordinates are Members `...x|y|z` (kind `let`,
-    analysis form, derived from the declaring member) and `position` stays
-    absent.
+    analysis form, derived from the declaring member) and `position` is the
+    zone diameter (`Exact`) when the point is `[position d]`-toleranced,
+    otherwise absent.
   - Solvers and waivers lower into `solvers` and `waivers`: a solver keeps
     its script, one input per `in` binding (the expression text), one output
     per `out` (the path of the recorded output member) and the members its

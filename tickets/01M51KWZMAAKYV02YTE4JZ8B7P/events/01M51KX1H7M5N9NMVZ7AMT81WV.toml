@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given an ots with one cited param and an uncited datum offset, when check runs, then S001 is reported at the datum offset path"]
+moved = []
+at = "2026-10-16T05:45:33Z"
+actor = "lognd"
+rev = 1

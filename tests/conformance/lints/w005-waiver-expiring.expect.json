@@ -15,7 +15,8 @@
         "code": "C001",
         "severity": "error"
       }
-    ]
+    ],
+    "exit": 0
   },
   "must_not_fire": {
     "diagnostics": [
@@ -25,5 +26,6 @@
       }
     ],
     "exit": 0
-  }
+  },
+  "note": "an expiring waiver still suppresses C001 (lints.md 2.1; the waived diagnostic stays in the run), so W005 fires and the run exits 0; contrast w001"
 }

@@ -1123,7 +1123,7 @@ pub(crate) mod tests {
                     _ => None,
                 }
             }
-            ExprKind::Paren(i) | ExprKind::Tolerance(i, _) => num(i),
+            ExprKind::Paren(i) | ExprKind::Tolerance(i, _) | ExprKind::Position(i, _) => num(i),
             ExprKind::Unary(_, i) => num(i).map(|a| a.neg()),
             _ => None,
         }

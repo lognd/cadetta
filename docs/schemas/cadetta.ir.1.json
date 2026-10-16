@@ -1041,6 +1041,9 @@
         },
         "path": {
           "$ref": "#/$defs/Path"
+        },
+        "position": {
+          "$ref": "#/$defs/Exact"
         }
       },
       "required": [

@@ -785,6 +785,10 @@ impl<'a> Builder<'_, 'a> {
                 go!(x);
                 terms.iter().for_each(|t| go!(&t.value));
             }
+            ExprKind::Position(x, d) => {
+                go!(x);
+                go!(d);
+            }
             ExprKind::If {
                 cond,
                 then,
