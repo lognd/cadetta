@@ -24,7 +24,13 @@ fn rows<'a>(name: &str) -> Vec<&'a str> {
 fn inch_module_parses_and_tables_are_cited() {
     let parsed = parse(SRC);
     assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
-    for t in ["InchThreadData", "InchTapDrill", "InchClearance", "InchSocketHead", "InchLen"] {
+    for t in [
+        "InchThreadData",
+        "InchTapDrill",
+        "InchClearance",
+        "InchSocketHead",
+        "InchLen",
+    ] {
         let line = SRC
             .lines()
             .find(|l| l.starts_with(&format!("pub table {t} ")))
@@ -36,7 +42,12 @@ fn inch_module_parses_and_tables_are_cited() {
 // frob:tests crates/cadetta-syntax/tests/std_fasteners_inch.rs::every_thread_has_a_row_in_each_table kind=unit
 #[test]
 fn every_thread_has_a_row_in_each_table() {
-    for t in ["InchThreadData", "InchTapDrill", "InchClearance", "InchSocketHead"] {
+    for t in [
+        "InchThreadData",
+        "InchTapDrill",
+        "InchClearance",
+        "InchSocketHead",
+    ] {
         assert_eq!(rows(t).len(), 16, "{t}");
     }
 }
