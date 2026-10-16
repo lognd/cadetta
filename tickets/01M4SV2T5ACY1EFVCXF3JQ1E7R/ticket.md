@@ -13,7 +13,7 @@ persona = "C or MATLAB user"
 capability = "call cadetta through a stable C ABI"
 outcome_text = "non-Python languages get in-process interop"
 labels = ["later", "creates:bindings/c/**"]
-scope = ["bindings/c/**", ".github/workflows/ci.yml", "Cargo.toml", "docs/spec/bindings.md"]
+scope = ["bindings/c/**", ".github/workflows/ci.yml", "Cargo.toml", "docs/spec/bindings.md", "bindings/README.md"]
 
 [[links]]
 kind = "blocked-by"
