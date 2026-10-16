@@ -4,9 +4,10 @@ title = "geometry/pattern-count-structural extra E002; lints/w005-waiver-expirin
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-16T04:31:23Z"
+updated = "2026-10-16T04:31:25Z"
 scope = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*"]
 +++
 
