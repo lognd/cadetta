@@ -1,0 +1,7 @@
+kind = "field"
+field = "body"
+old = "found while working ~ZV526KN. Fixtures quantities/emit-point-lmc-hole, emit-point-lmc-shaft: '12mm [+0.029mm +0.011mm] #[role(hole), emit(lmc)]' still fails emit with E010 (member.role is not set from the role attribute when emit reads it, crates/cadetta-cli/src/cmd/emit.rs role_of). quantities/emit-point-inherited: 'b = a' where a is #[emit(mid)] emits b at nominal 12, spec quantities.md 5.6 says a pure reference inherits the referent's emit point. Likely sema lowering (lower.rs role_from_attrs / reference provenance); related ~B08JM3F (class-letter role). Un-gap the three fixtures when fixed."
+new = "found while working ~ZV526KN. Fixture quantities/emit-point-inherited: 'a = 12mm H7 #[emit(mid)]; b = a' emits b at nominal 12; quantities.md 5.6 says a pure reference inherits its referent's emit point (12.009). Likely sema lowering / emit point resolution (crates/cadetta-cli/src/cmd/emit.rs resolve_point input, lower.rs). Un-gap quantities/emit-point-inherited when fixed."
+at = "2026-10-16T06:23:39Z"
+actor = "lognd"
+rev = 1
