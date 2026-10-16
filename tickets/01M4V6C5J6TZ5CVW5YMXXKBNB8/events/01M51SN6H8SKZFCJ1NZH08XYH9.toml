@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decided: two new source-fixture entries, update (lock/exit/digest_changed observations) and obligations (rows with listed and upstream); path sources only. Executors and fixtures filed as follow-up."
+at = "2026-10-16T07:26:07Z"
+actor = "lognd"
+rev = 1
