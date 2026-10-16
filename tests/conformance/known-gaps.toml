@@ -816,3 +816,8 @@ reason = "language.md 3.8 says a process rule must keep the argument kind; sema 
 fixture = "quantities/emit-point-inherited"
 ticket = "~AQ8KSJA"
 reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"
+
+[[gap]]
+fixture = "language/e001-waive-date"
+ticket = "~2VJQFPG"
+reason = "a waive with a valid future expiry does not suppress C001 on the check in the check entry"
