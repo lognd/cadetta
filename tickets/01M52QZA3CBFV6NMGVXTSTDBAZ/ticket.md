@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:15:56Z"
-updated = "2026-10-16T17:05:29Z"
+updated = "2026-10-16T17:10:18Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**", "docs/spec/adapters.md"]
 
 [[acceptance]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "the csv, json and sw-equations sync-header-excluded-from-noop fixtures pass: a header-only difference writes nothing"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "session attach and close-only-opened fixtures stay gapped with a filed follow-up (~6NNC66V); R001 under --force-design decided and documented"
