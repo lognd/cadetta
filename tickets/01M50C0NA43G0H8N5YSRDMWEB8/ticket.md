@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:28Z"
-updated = "2026-10-16T04:04:48Z"
+updated = "2026-10-16T04:06:13Z"
 idempotency_key = "v2k95h5-slice-units"
-scope = ["crates/cadetta-units/src/**"]
+scope = ["crates/cadetta-units/src/**", "docs/spec/quantities.md"]
 
 [[acceptance]]
 text = "Affine carries paired u/v disc terms with exact bounds, and existing L1-box callers are unchanged."
