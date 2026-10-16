@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A fit .hole/.shaft/.clearance read inside a parameterized instance (and via the instance, e.g. housing.bore_fit.hole) evaluates to a quantity"]
+moved = []
+at = "2026-10-16T00:05:31Z"
+actor = "lognd"
+rev = 1
