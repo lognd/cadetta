@@ -1,0 +1,4 @@
+model Part {
+  a = 12mm H7 #[emit(mid)]
+  b = a
+}
