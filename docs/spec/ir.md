@@ -377,14 +377,6 @@ sides of a class pair) has no operand and keeps the synthetic
 `<fit>.hole`/`<fit>.shaft` path. The schema is unchanged (same fields, same
 types), only their content.
 
-Fit accessor members (~93GZBM2): the three accessor reads of every fit are
-also emitted as ordinary derived `Let` members of the owning component,
-`<fit>.hole`, `<fit>.shaft` and `<fit>.clearance` (provenance `derived`,
-`analysis`, deps `[<fit path>]`, value from the fit's resolved limits), so
-a consumer reads them by path like any other member. No schema change. The
-digest keys `.clearance` on its member node; `.hole`/`.shaft` keep the
-fit-side accessor nodes described above.
-
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
