@@ -282,8 +282,10 @@ fn diagnostics(expected: &Expected, actual: &Actual, suspect: Suspect, out: &mut
     };
     let mut used = vec![false; diags.len()];
     for want in &expected.diagnostics {
-        let hit = diags.iter().enumerate().find(|(_, d)| {
-            !d.waived
+        let hit = diags.iter().enumerate().find(|(i, d)| {
+            // each actual diagnostic satisfies at most one expectation, so repeats need repeated entries
+            !used[*i]
+                && !d.waived
                 && d.code == want.code
                 && want
                     .path

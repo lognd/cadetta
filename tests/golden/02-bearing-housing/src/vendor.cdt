@@ -10,6 +10,8 @@ cite skf: catalog {
   organization = "SKF"
   title = "608-2RS1 deep groove ball bearing"
   url = "https://www.skf.com/catalogue/608-2RS1"
+  edition = "2024"
+  accessed = "2026-10-13"
 }
 use std::din472
 

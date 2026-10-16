@@ -2,7 +2,8 @@
 id = "01M522E34AS5NZTG9PFFCZKA30"
 title = "Shaft.seat_a.offset.z fails to evaluate in golden 02-bearing-housing (EVAL)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"

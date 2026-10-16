@@ -39,6 +39,9 @@ const MODELLED: &[&str] = &[
     "lock_base",
     "source",
     "then_sync",
+    "native_unit_in_proposal",
+    "assembly",
+    "components",
 ];
 
 /// Package name of the scratch package the CLI runs against.
@@ -54,6 +57,7 @@ const MODELLED_ITEM: &[&str] = &[
     "driven",
     "expression",
     "tolerance",
+    "equation_linked",
 ];
 
 /// The `[[item]]` keys adapters.md 7.1 documents; `item_keys` reports the proposal's keys among them.
@@ -85,15 +89,27 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     else {
         return Err("item lacks file, locator or kind".into());
     };
-    let number = item["number"]
-        .as_i64()
-        .ok_or("import executor models integer `number` only")?;
-    let unit = text("unit").ok_or("import executor models items with a `unit` only")?;
-    let metres = match unit.as_str() {
-        "mm" => format!("{number}/1000"),
-        "m" => format!("{number}/1"),
-        other => return Err(format!("import executor does not model unit `{other}`")),
+    // A string `number` is a text property; an integer is a magnitude in `unit` (none: unitless).
+    let (nominal, dim, authored) = match (&item["number"], text("unit")) {
+        (Value::String(t), None) => ("0/1".to_owned(), json!({}), t.clone()),
+        (Value::String(_), Some(_)) => return Err("a text `number` takes no `unit`".into()),
+        (n, unit) => {
+            let number = n
+                .as_i64()
+                .ok_or("import executor models integer or text `number` only")?;
+            let (si, dim) = match unit.as_deref() {
+                None => (format!("{number}/1"), json!({})),
+                Some("mm") => (format!("{number}/1000"), json!({"m": 1})),
+                Some("m") => (format!("{number}/1"), json!({"m": 1})),
+                Some("kg") => (format!("{number}/1"), json!({"kg": 1})),
+                Some(other) => {
+                    return Err(format!("import executor does not model unit `{other}`"));
+                }
+            };
+            (si, dim, number.to_string())
+        }
     };
+    let unit = text("unit").unwrap_or_default();
     let path = format!("fixture.pkg::Observed.{n}");
     // A native tolerance is not recovered (7.2): the adapter reports it, import drops it.
     if let Some(tol) = item["tolerance"].as_str() {
@@ -105,12 +121,15 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     }
     let mut member = json!({
         "path": path,
-        "value": {"nominal": {"r": metres, "pi": 0}, "dim": {"m": 1},
-                   "authored": number.to_string(), "exact": true},
+        "value": {"nominal": {"r": nominal, "pi": 0}, "dim": dim,
+                   "authored": authored, "exact": true},
         "provenance": {"imported": {"adapter": "fixture", "file": file, "native_name": locator}},
     });
     if let Some(expr) = text("expression") {
         member["expr"] = json!(expr);
+    }
+    if item["equation_linked"].as_bool() == Some(true) {
+        member["equation_linked"] = json!(true);
     }
     let mode = if item["driven"].as_bool() == Some(true) {
         "ref"
@@ -120,6 +139,39 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     let binding = json!({"path": path, "adapter": "fixture", "locators": [
         {"locator": locator, "kind": kind, "mode": mode, "native_unit": unit}]});
     Ok((member, binding))
+}
+
+/// The fixture's `components` map as observed assembly instances, in the order the fixture
+/// lists them (the parsed map is sorted, so the order is recovered from the source text).
+fn observed_instances(spec: &Value, text: &str) -> Result<Vec<Value>, String> {
+    let Some(map) = spec["components"].as_object() else {
+        return Ok(Vec::new());
+    };
+    let document = spec["assembly"]
+        .as_str()
+        .ok_or("fixture `components` needs an `assembly` file")?;
+    let row = |n: i64| {
+        let cell = |v: i64| json!({"nominal": {"r": format!("{v}/1"), "pi": 0}});
+        (0..4).map(|c| cell(i64::from(c == n))).collect::<Vec<_>>()
+    };
+    let mut names: Vec<&String> = map.keys().collect();
+    names.sort_by_key(|k| text.find(&format!("\"{k}\"")));
+    names
+        .into_iter()
+        .map(|name| {
+            let file = map[name]
+                .as_str()
+                .ok_or_else(|| format!("component `{name}` must name a file"))?;
+            let stem = std::path::Path::new(file)
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or(file);
+            Ok(
+                json!({"component": name, "document": document, "reference": stem,
+                      "transform": [row(0), row(1), row(2)]}),
+            )
+        })
+        .collect()
 }
 
 /// Run the fixture's `import`: propose-shaped facts in process, file-level facts through the CLI.
@@ -159,7 +211,8 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         components.push(json!({"members": [member]}));
         bindings.push(binding);
     }
-    let observed = json!({"components": components, "bindings": bindings});
+    let instances = observed_instances(&spec, &text)?;
+    let observed = json!({"components": components, "bindings": bindings, "instances": instances});
     let update = flag("--update");
     let mut observations = BTreeMap::new();
     if !update {
@@ -677,17 +730,77 @@ fn proposal_facts(
         .items
         .iter()
         .map(|i| {
-            let s = if i.status == Status::Skip {
-                "skip"
-            } else {
-                "accept"
+            let s = match i.status {
+                Status::Skip => "skip",
+                Status::Rename => "rename",
+                Status::Accept => "accept",
             };
             (i.locator.clone(), json!(s))
         })
         .collect();
     put("status", Value::Object(status));
     put("source", json!(render_cdt(&proposal)));
+    let properties: Vec<&_> = proposal
+        .items
+        .iter()
+        .filter(|i| i.property_type.is_some())
+        .collect();
+    put(
+        "types",
+        json!(
+            properties
+                .iter()
+                .filter_map(|i| i
+                    .property_type
+                    .as_ref()
+                    .map(|t| (i.locator.clone(), t.clone())))
+                .collect::<BTreeMap<_, _>>()
+        ),
+    );
+    put(
+        "needs_edit",
+        json!(proposal.items.iter().any(|i| i.status == Status::Rename)),
+    );
+    put(
+        "needs_explicit_native_unit",
+        json!(
+            properties
+                .iter()
+                .any(|i| i.property_type.as_deref() == Some("Quantity"))
+        ),
+    );
+    if let Some(want) = spec["native_unit_in_proposal"].as_str()
+        && let Some(bad) = properties.iter().find(|i| i.unit.as_deref() != Some(want))
+    {
+        return Err(format!(
+            "proposal item `{}` has unit {:?}, fixture says {want:?}",
+            bad.locator, bad.unit
+        ));
+    }
     put("item_keys", json!(item_keys(&proposal)));
+    let mut instances: Vec<&_> = proposal
+        .items
+        .iter()
+        .filter(|i| i.kind == "instance")
+        .collect();
+    let seen: Vec<&str> = observed["instances"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|i| i["component"].as_str())
+        .collect();
+    instances.sort_by_key(|i| seen.iter().position(|c| *c == i.locator));
+    let mut parts: Vec<&str> = Vec::new();
+    for part in instances.iter().filter_map(|i| i.part.as_deref()) {
+        if !parts.contains(&part) {
+            parts.push(part);
+        }
+    }
+    put("parts", json!(parts));
+    put(
+        "instance_components",
+        json!(instances.iter().map(|i| &i.locator).collect::<Vec<_>>()),
+    );
     put(
         "reason_present",
         json!(

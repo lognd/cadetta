@@ -943,6 +943,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(ev)
             }
             _ => match self.eval(sc, e)? {
+                // A pure member, fit-side or table-cell read keeps its tolerance (quantities.md 5.6, stdlib.md 2).
+                Val::Quantity(q) if is_member_read(e) => {
+                    trace!("evaluator: parameter keeps the fit side tolerance");
+                    Ok(owned(Val::Quantity(q), None, span))
+                }
                 Val::Quantity(q) => {
                     trace!("evaluator: parameter stores the nominal only");
                     let c = Quant::constant(q.dim().clone(), q.nominal);
@@ -1786,6 +1791,21 @@ fn round_diag(e: &InexactError, span: Span) -> Fail {
     diag(e.code().unwrap_or("EVAL"), span, e.to_string())
 }
 
+/// True when `e` is a pure read of a member, fit side or table cell (`a.b`, `FIT.hole`, `T[k].col`), not an accessor.
+// frob:ticket 01M52D19FF0HZRMFWH8GZSVB0J
+fn is_member_read(e: &Expr) -> bool {
+    match &e.kind {
+        ExprKind::Path(p) => {
+            p.segments.len() >= 2
+                && p.segments
+                    .last()
+                    .is_some_and(|l| !ACCESSORS.contains(&l.name.as_str()))
+        }
+        ExprKind::Field(_, name) => !ACCESSORS.contains(&name.name.as_str()),
+        _ => false,
+    }
+}
+
 fn owned(value: Val, var: Option<VarId>, span: Span) -> Evaluated {
     Evaluated {
         value,
@@ -2490,6 +2510,28 @@ mod tests {
         assert_eq!(quant(&ev, "P", "pl").nominal, m(99, 10_000));
         // `p6 on lone` makes `lone` the hole (the mate of the shaft class).
         assert_eq!(quant(&ev, "P", "lm").nominal, m(99, 10_000));
+    }
+
+    // frob:tests fit_side_and_table_cell_parameters_keep_tolerance
+    // frob:ticket 01M52D19FF0HZRMFWH8GZSVB0J
+    #[test]
+    fn fit_side_and_table_cell_parameters_keep_tolerance() {
+        let ev = run(&file(
+            "table W { key d: Length\n cols w: Length\n 22mm => 1.1mm H13 }\n\
+             model P {\n  bore = 22mm H7\n  pin = 22mm g6\n  fit seat = bore / pin\n  \
+             hole = seat.hole\n  shaft = seat.shaft\n  cell = W[22mm].w\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let hi = |n: &str| {
+            quant(&ev, "P", n)
+                .accessor("max", None, Span::new(0, 0))
+                .ok()
+                .expect("max reads")
+        };
+        assert_eq!(hi("hole").nominal, m(22_021, 1_000_000));
+        assert_eq!(hi("shaft").nominal, m(21_993, 1_000_000));
+        // H13 on 1.1mm is +0.14mm: the table cell keeps its tolerance class.
+        assert_eq!(hi("cell").nominal, m(1_240, 1_000_000));
     }
 
     // frob:tests fit_side_role_yields_to_explicit_role

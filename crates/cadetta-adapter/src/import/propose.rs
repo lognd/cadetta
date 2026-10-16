@@ -11,7 +11,7 @@ use std::fmt;
 use std::fs;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_ir::model::{LocatorKind, LocatorMode, Project, Provenance, Value};
+use cadetta_ir::model::{Locator, LocatorKind, LocatorMode, Project, Provenance, Value};
 use serde::{Deserialize, Serialize};
 
 use super::geometry::{unit_scale, write_transform};
@@ -67,6 +67,9 @@ pub struct Item {
     /// The part type of an `instance` item (the component the instance places).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub part: Option<String>,
+    /// The type of a `property` item: `Text`, `Count` or `Quantity` (7.3).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub property_type: Option<String>,
     /// Review status.
     pub status: Status,
     /// Why the item is skipped.
@@ -164,7 +167,12 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                     tracing::warn!(native = %native_name, name = %allocated.name, "import: member name collided; suffixed");
                 }
                 for loc in &binding.locators {
-                    let (status, reason) = if loc.mode == LocatorMode::Ref {
+                    let property_type = (loc.kind == LocatorKind::Property).then(|| {
+                        classify_property(native_name, &value.authored, unit_of(value, loc))
+                    });
+                    let (status, reason) = if let Some(kind) = m.attrs.get("linked") {
+                        (Status::Skip, Some(linked_reason(kind)))
+                    } else if loc.mode == LocatorMode::Ref {
                         (
                             Status::Skip,
                             Some("driven (reference) dimension".to_string()),
@@ -174,16 +182,17 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                             Status::Accept,
                             Some("name collided with an earlier member; suffixed".to_string()),
                         )
+                    } else if property_type == Some(PropertyType::Quantity)
+                        && unit_of(value, loc).is_none()
+                    {
+                        (Status::Rename, Some(NEEDS_UNIT_REASON.to_string()))
                     } else if m.expr.is_some() {
                         (Status::Accept, Some(EXPRESSION_REASON.to_string()))
                     } else {
                         (Status::Accept, None)
                     };
                     let unit_assumed = value.unit_assumed.is_some();
-                    let unit = value
-                        .unit_assumed
-                        .clone()
-                        .or_else(|| Some(loc.native_unit.clone()).filter(|u| !u.is_empty()));
+                    let unit = unit_of(value, loc);
                     items.push(Item {
                         file: file.clone(),
                         locator: loc.locator.clone(),
@@ -196,6 +205,7 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                         path: allocated.name.clone(),
                         component: component_name(file),
                         part: None,
+                        property_type: property_type.map(|t| t.name().to_owned()),
                         status,
                         reason,
                     });
@@ -209,6 +219,86 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
     Proposal {
         adapter: adapter.to_string(),
         items,
+    }
+}
+
+/// Why a unitless quantity property needs a human edit (7.3).
+const NEEDS_UNIT_REASON: &str =
+    "quantity needs an explicit native_unit; set `unit` in proposal.toml";
+
+/// The type of a property member (7.3): text, a unitless count, or a dimensioned quantity.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PropertyType {
+    /// Non-numeric authored text.
+    Text,
+    /// A unitless integer whose name reads as a count.
+    Count,
+    /// Any other number; it needs a unit.
+    Quantity,
+}
+
+impl PropertyType {
+    /// The proposal.toml spelling.
+    fn name(self) -> &'static str {
+        match self {
+            Self::Text => "Text",
+            Self::Count => "Count",
+            Self::Quantity => "Quantity",
+        }
+    }
+}
+
+/// Name tokens that read as a count when the value is a unitless integer.
+const COUNT_TOKENS: &[&str] = &["qty", "quantity", "count", "num", "number", "pcs"];
+
+/// Classifies a property by its authored text, unit and native name (7.3).
+fn classify_property(native_name: &str, authored: &str, unit: Option<String>) -> PropertyType {
+    let numeric = authored.trim().parse::<f64>().is_ok();
+    let is_int = authored.trim().parse::<i64>().is_ok();
+    let count_named = native_name
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .flat_map(split_camel)
+        .any(|t| COUNT_TOKENS.contains(&t.as_str()));
+    let kind = if !numeric {
+        PropertyType::Text
+    } else if unit.is_none() && is_int && count_named {
+        PropertyType::Count
+    } else {
+        PropertyType::Quantity
+    };
+    tracing::debug!(native_name, ?kind, "import: property classified");
+    kind
+}
+
+/// Splits `PartCount` into lowercase `part`, `count`.
+fn split_camel(word: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut prev_lower = false;
+    for c in word.chars() {
+        if c.is_ascii_uppercase() && prev_lower || out.is_empty() {
+            out.push(String::new());
+        }
+        prev_lower = c.is_ascii_lowercase();
+        if let Some(last) = out.last_mut() {
+            last.push(c.to_ascii_lowercase());
+        }
+    }
+    out
+}
+
+/// The unit recorded for a value: an assumed unit, else the locator's native unit.
+fn unit_of(value: &Value, loc: &Locator) -> Option<String> {
+    value
+        .unit_assumed
+        .clone()
+        .or_else(|| Some(loc.native_unit.clone()).filter(|u| !u.is_empty()))
+}
+
+/// The skip reason of a linked property (`prp` or `equation`; 7.3).
+fn linked_reason(kind: &str) -> String {
+    match kind {
+        "prp" => "$PRP-linked property: its value is derived from a native property".to_owned(),
+        _ => "equation-linked property: its value is derived from a native equation".to_owned(),
     }
 }
 
@@ -286,6 +376,7 @@ fn propose_geometry(
             path: allocated.name,
             component,
             part: None,
+            property_type: None,
             status,
             reason,
         });
@@ -324,6 +415,7 @@ fn propose_geometry(
             path: allocated.name,
             component: assembly,
             part: Some(part),
+            property_type: None,
             status,
             reason,
         });
@@ -385,6 +477,24 @@ pub fn render_model(component: &str, items: &[&Item]) -> String {
             if let Some(expr) = converted {
                 out.push_str(&format!("  {} = {expr}\n", i.path));
                 continue;
+            }
+            match i.property_type.as_deref() {
+                Some("Text") => {
+                    out.push_str(&format!("  {} = {:?}\n", i.path, i.value));
+                    continue;
+                }
+                Some("Count") => {
+                    out.push_str(&format!("  {} = {}\n", i.path, i.value));
+                    continue;
+                }
+                Some("Quantity") if i.unit.is_none() => {
+                    out.push_str(&format!(
+                        "  // {} = {} (set `unit` in proposal.toml)\n",
+                        i.path, i.value
+                    ));
+                    continue;
+                }
+                _ => {}
             }
             let unit = i.unit.as_deref().unwrap_or("");
             let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
@@ -496,6 +606,67 @@ mod tests {
         );
         assert_eq!(convert_expression("\"Q\" * 2", &names), None);
         assert_eq!(convert_expression("\"B * 2", &names), None);
+    }
+
+    fn property(name: &str, text: &str, unit: &str) -> ObservedParam {
+        let mut p = param(name, text.parse().unwrap_or(0), None, LocatorMode::Value);
+        p.locator.kind = LocatorKind::Property;
+        p.locator.native_unit = unit.into();
+        p.text = text.into();
+        p.expr = None;
+        p
+    }
+
+    fn property_project(params: Vec<ObservedParam>, linked: &[&str]) -> Project {
+        let pkg = PackageId {
+            name: "acme.rover".into(),
+            version: "0.0.0".into(),
+        };
+        let mut b = ObservedBuilder::new(pkg, "solidworks", "cover.SLDPRT").unwrap();
+        for p in params {
+            b.push(p).unwrap();
+        }
+        let mut project = b.build();
+        for m in project.components.iter_mut().flat_map(|c| &mut c.members) {
+            if let Provenance::Imported { native_name, .. } = &m.provenance
+                && linked.contains(&native_name.as_str())
+            {
+                m.attrs.insert("linked".into(), "prp".into());
+            }
+        }
+        project
+    }
+
+    // frob:tests classify_property
+    // frob:tests linked_reason
+    // frob:tests render_model
+    #[test]
+    fn property_types_status_and_linked_skip() {
+        let project = property_project(
+            vec![
+                property("Material", "Steel", ""),
+                property("Qty", "4", ""),
+                property("Mass", "2", ""),
+                property("Mass2", "2", "kg"),
+                property("Title", "Cover", ""),
+            ],
+            &["Title"],
+        );
+        let p = propose("solidworks", &[project]);
+        let by = |n: &str| p.items.iter().find(|i| i.locator == n).unwrap();
+        assert_eq!(by("Material").property_type.as_deref(), Some("Text"));
+        assert_eq!(by("Qty").property_type.as_deref(), Some("Count"));
+        assert_eq!(by("Mass").property_type.as_deref(), Some("Quantity"));
+        assert_eq!(by("Mass").status, Status::Rename);
+        assert_eq!(by("Mass2").status, Status::Accept);
+        assert_eq!(by("Title").status, Status::Skip);
+        assert!(by("Title").reason.is_some());
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("material = \"Steel\""), "{cdt}");
+        assert!(cdt.contains("qty = 4\n"), "{cdt}");
+        assert!(cdt.contains("// mass = 2"), "{cdt}");
+        assert!(cdt.contains("mass2 = 2kg"), "{cdt}");
+        assert!(!cdt.contains("title"), "{cdt}");
     }
 
     // frob:tests proposal_written_alone

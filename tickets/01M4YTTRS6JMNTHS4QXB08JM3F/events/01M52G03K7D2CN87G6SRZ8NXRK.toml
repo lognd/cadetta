@@ -1,0 +1,47 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T13:50:36Z"
+digest = "7bccfdcf0950c5a664f9bc39b7b5b3cbd47e259fbb135be66e46bb5202a9760a"
+exit_code = 100
+failed_tests = ["emitters_json_fixtures_match_the_spec"]
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 56.69s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b2dea4c0-c8b9-4622-bbf8-df4130b08cad with nextest profile: default
+    Starting 1 test across 76 binaries (1817 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        SLOW [>180.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        SLOW [>240.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+ TERMINATING [>300.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+     TIMEOUT [ 300.024s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    hello
+    test emitters_json_fixtures_match_the_spec has been running for over 60 seconds
+
+    (test timed out)
+
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 300.040s] 1 test run: 0 passed, 1 timed out, 1817 skipped
+     TIMEOUT [ 300.024s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec"
+size = 1840
+status = "measured"
+test_count = 1
+tests_digest = "8d91ed5cedfa3b7e1becf6e8624f947a0d3af9e2fbb687eae58dea3e83065801"
+at = "2026-10-16T13:50:36Z"
+actor = "lognd"
+rev = 1

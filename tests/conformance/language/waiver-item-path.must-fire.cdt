@@ -1,0 +1,4 @@
+model Part {
+  width = 5mm
+  check ok: width > 6mm
+}

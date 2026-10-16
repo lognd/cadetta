@@ -143,7 +143,9 @@ waive D001 on acme.parts::Bearing608.* for alt wheel=Colson2Series {
 Grammar: `waive CODE on GLOB [for alt SLOT=ALT] { because STRING
 [expires DATE] }` (production in language.md 3). GLOB is the path glob
 of obligations.md 2.2, shared with obligation selectors. A waiver
-suppresses one code on the paths matched. `for alt SLOT=ALT` scopes it
+suppresses one code on the paths matched, and on every path beneath a
+matched item path: `waive C001 on acme.demo::A` also covers
+`acme.demo::A.load_rating` (the package part is never an ancestor). `for alt SLOT=ALT` scopes it
 to one alternate's variant in one slot (language.md 3.2).
 
 Digests: when reviewed (`cadetta ack waiver:GLOB`), the closure digests

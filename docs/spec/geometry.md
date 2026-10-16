@@ -375,6 +375,12 @@ is the angle of the carried z direction, `atan2(lateral, axial)`, in
 along or across the axis (0, pi/2 or pi), otherwise inexact, marked
 `atan2` (Q006), with outward-padded bounds from the tolerance box.
 
+A geometry check written in a parameterized model reads the datum
+members of the instance it is checked under (the instance's arguments
+are bound), never the unbound model: `Shaft(bearing = b)` evaluates
+`seat_a.offset.z` in the instance, so `coaxial(seat_b, seat_a, ..)` in
+`Shaft` decides.
+
 ### 5.2 Bolt float
 
 A bolted part in clearance holes is not located exactly: it can sit up to
