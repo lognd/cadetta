@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = [".github/workflows/ci.yml"]
+new = [".github/workflows/ci.yml", "adapters/freecad/README.md"]
+at = "2026-10-16T17:54:31Z"
+actor = "lognd"
+rev = 1
