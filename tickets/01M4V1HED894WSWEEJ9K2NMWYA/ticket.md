@@ -4,9 +4,10 @@ title = "Quantities: expose the display formatter (CLI/binding verb) for conform
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-13T16:29:12Z"
+updated = "2026-10-16T03:36:02Z"
 idempotency_key = "Z48-display"
 scope = ["crates/cadetta-cli/**"]
 +++
