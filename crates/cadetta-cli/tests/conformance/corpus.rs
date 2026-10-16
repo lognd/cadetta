@@ -73,6 +73,9 @@ pub enum Outcome {
     Fail(Vec<String>),
     /// Failed, but allowlisted.
     KnownGap,
+    /// Replayed outside this runner (`kind=binding entry=python` fixtures are replayed by
+    /// `bindings/python/tests/test_binding_fixtures.py`).
+    External,
 }
 
 /// Everything a corpus run learned.
@@ -123,6 +126,13 @@ fn check_pair(dir: &Path, name: &str, doc: &str) -> Result<Outcome, String> {
             "expect.json doc `{}` != directory `{doc}`",
             expect.doc
         ));
+    }
+    let first = expect
+        .entry
+        .as_deref()
+        .and_then(|e| e.split_whitespace().next());
+    if expect.kind == "binding" && first == Some("python") {
+        return Ok(Outcome::External);
     }
     let mut problems = Vec::new();
     for (which, block) in [
