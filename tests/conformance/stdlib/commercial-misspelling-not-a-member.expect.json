@@ -2,13 +2,13 @@
   "spec": "1.4",
   "doc": "stdlib",
   "section": "stdlib.md 6",
-  "rule": "EVAL",
+  "rule": "E002",
   "kind": "source",
   "entry": "check",
   "must_fire": {
     "diagnostics": [
       {
-        "code": "EVAL",
+        "code": "E002",
         "severity": "error"
       }
     ]
@@ -16,5 +16,5 @@
   "must_not_fire": {
     "diagnostics": []
   },
-  "note": "internal evaluation code EVAL (language.md 3.5): no part contributes lead_time"
+  "note": "a roll-up over a member no part contributes is E002 at the roll-up expression (stdlib.md conformance decisions), never the internal EVAL"
 }

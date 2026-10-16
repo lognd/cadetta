@@ -41,6 +41,39 @@ enum Found {
     Lacks,
 }
 
+/// The diagnostic for a failed roll-up: E002 when parts exist but none has `param` (a misspelled
+/// member, reported at the roll-up like any other member read), else the internal `EVAL`.
+/// `declared` is true when some part type in the walk declares `param` (an absent argument is
+/// then a missing contribution, not a misspelling).
+// frob:ticket 01M51S49V6TVMESDJWKRE93MRS
+fn roll_failure(
+    e: &rollup::RollupError,
+    param: &str,
+    items: &[Contribution],
+    declared: bool,
+    span: Span,
+) -> Fail {
+    let none_has = !declared && !items.is_empty() && items.iter().all(|it| it.value.is_none());
+    if none_has
+        && matches!(
+            e,
+            rollup::RollupError::Missing { .. } | rollup::RollupError::Empty(_)
+        )
+    {
+        debug!(
+            param,
+            parts = items.len(),
+            "roll-up member is unknown to every part"
+        );
+        return diag(
+            "E002",
+            span,
+            format!("`{param}` is not a member of any part this roll-up reads"),
+        );
+    }
+    diag("EVAL", span, e.to_string())
+}
+
 impl<'r, 'p> Evaluator<'r, 'p> {
     /// Evaluates a roll-up over every part instance of the enclosing component.
     // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
@@ -68,8 +101,38 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
                 Ok(Val::Quantity(r.value))
             }
-            Err(e) => Err(diag("EVAL", span, e.to_string())),
+            Err(e) => {
+                let declared = self.walk_declares(&owner.path, owner.comp, param, 0);
+                Err(roll_failure(&e, param, &items, declared, span))
+            }
         }
+    }
+
+    /// True when `comp` or a part type below it declares `param` as a parameter or member.
+    // frob:ticket 01M51S49V6TVMESDJWKRE93MRS
+    fn comp_declares(&self, path: &CanonPath, comp: &Component, param: &str, depth: u8) -> bool {
+        let here = comp.params.iter().any(|p| p.name.name == param)
+            || comp
+                .members
+                .iter()
+                .any(|m| crate::visibility::member_name(m) == Some(param));
+        here || self.walk_declares(path, comp, param, depth)
+    }
+
+    /// True when a part type below `comp` declares `param` (bounded against recursive types).
+    // frob:ticket 01M51S49V6TVMESDJWKRE93MRS
+    fn walk_declares(&self, path: &CanonPath, comp: &Component, param: &str, depth: u8) -> bool {
+        if depth >= 8 {
+            return false;
+        }
+        comp.members.iter().any(|m| {
+            let MemberKind::Part(part) = &m.kind else {
+                return false;
+            };
+            self.resolver
+                .slot_component(&path.package, &path.modules, part)
+                .is_some_and(|(p, c)| self.comp_declares(&p, c, param, depth + 1))
+        })
     }
 
     /// The part slot a path expression names (`j.screw`), if it names one.
@@ -225,7 +288,13 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         debug!(op = op.name(), %param, parts = items.len(), "slot roll-up flattened");
         match rollup::roll_up(op, &param, optional, &items) {
             Ok(r) => Ok(Val::Quantity(r.value)),
-            Err(e) => Err(diag("EVAL", span, e.to_string())),
+            Err(e) => {
+                let declared = self
+                    .resolver
+                    .slot_component(&owner.path.package, &owner.path.modules, part)
+                    .is_some_and(|(p, c)| self.comp_declares(&p, c, &param, 0));
+                Err(roll_failure(&e, &param, &items, declared, span))
+            }
         }
     }
 
@@ -439,6 +508,19 @@ mod tests {
         assembly Five { unit_cost = 5mm }\n\
         assembly Bare { x = 1mm }\n";
 
+    // frob:ticket 01M51S49V6TVMESDJWKRE93MRS
+    // frob:tests misspelled_rollup_member_is_e002_not_eval
+    #[test]
+    fn misspelled_rollup_member_is_e002_not_eval() {
+        let f = file(&format!(
+            "{LEAVES}assembly Box {{\n  part a[2]: Two\n  let total = sum(self, unit_cst)\n}}\n"
+        ));
+        let ev = run(&f);
+        let codes: Vec<_> = ev.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, vec!["E002"], "{:?}", ev.diagnostics);
+        assert_eq!(eval_errors(&ev), 0);
+    }
+
     // frob:tests sum_counts_every_instance_of_an_array
     // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
     #[test]
@@ -466,16 +548,21 @@ mod tests {
         assert_eq!(milli(&ev, "lo"), m(2, 1000));
     }
 
-    // frob:tests misspelled_member_is_eval_not_e002
-    // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+    // frob:tests misspelled_member_is_e002_not_eval
+    // frob:ticket 01M51S49V6TVMESDJWKRE93MRS
     #[test]
-    fn misspelled_member_is_eval_not_e002() {
+    fn misspelled_member_is_e002_not_eval() {
         let f = file(&format!(
             "{LEAVES}assembly Box {{\n  part a: Bare\n  let hi = max(self, unit_cost)\n}}\n"
         ));
         let ev = run(&f);
-        assert_eq!(eval_errors(&ev), 1, "{:?}", ev.diagnostics);
-        assert!(ev.diagnostics.iter().all(|d| d.code != "E002"));
+        assert_eq!(eval_errors(&ev), 0, "{:?}", ev.diagnostics);
+        assert_eq!(
+            ev.diagnostics.iter().filter(|d| d.code == "E002").count(),
+            1,
+            "{:?}",
+            ev.diagnostics
+        );
     }
 
     // frob:tests optional_form_skips_parts_without_the_member
@@ -497,7 +584,7 @@ mod tests {
     #[test]
     fn optional_form_with_nothing_to_count_is_eval() {
         let f = file(&format!(
-            "{LEAVES}assembly Box {{\n  part a: Bare\n  let none = sum?(self, unit_cost)\n}}\n"
+            "{LEAVES}assembly Box {{\n  part a[0]: Bare\n  let none = sum?(self, unit_cost)\n}}\n"
         ));
         let ev = run(&f);
         assert_eq!(eval_errors(&ev), 1, "{:?}", ev.diagnostics);
