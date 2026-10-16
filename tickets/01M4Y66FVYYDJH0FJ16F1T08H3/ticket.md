@@ -2,7 +2,8 @@
 id = "01M4Y66FVYYDJH0FJ16F1T08H3"
 title = "Remove span-heuristic diagnostic attribution in the check pipeline"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
