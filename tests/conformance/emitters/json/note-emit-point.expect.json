@@ -23,10 +23,11 @@
     "exit": 0,
     "output": {
       "build/params.json": {
-        "contains": [],
+        "contains": [
+          "\"note\": \"12mm H7\""
+        ],
         "excludes": [
-          "emit=",
-          "\"note\""
+          "emit="
         ]
       }
     }

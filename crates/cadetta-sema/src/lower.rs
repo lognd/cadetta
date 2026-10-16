@@ -33,7 +33,7 @@ use cadetta_ir::path::{Path, PathContext, Seg};
 use cadetta_syntax::ast;
 use cadetta_syntax::lexer::Span;
 use cadetta_units::compare::{Note, Verdict};
-use cadetta_units::{Magnitude, Toleranced, VarId};
+use cadetta_units::{Magnitude, Role, Toleranced, VarId};
 use tracing::{debug, trace, warn};
 
 use crate::cite::{CiteIndex, effective};
@@ -543,6 +543,16 @@ impl Cx<'_> {
         let ev = self.input.evaluation;
         if let Some(e) = ev.get(&canon) {
             out.analysis = e.analysis || kind == MemberKind::Let;
+            // frob:ticket 01M4YTTRS6JMNTHS4QXB08JM3F
+            // An explicit role attribute wins; otherwise the evaluated role (ISO class letter
+            // case, fit side, inherited) so emit(mmc) works on `12mm H7` (quantities.md 5.6).
+            if out.role.is_none() {
+                out.role = e.role.map(|r| match r.role {
+                    Role::Hole => "hole".to_owned(),
+                    Role::Shaft => "shaft".to_owned(),
+                });
+                trace!(path = %canon, role = ?out.role, "lower: role from evaluation");
+            }
             let comp_out = self
                 .input
                 .compensation

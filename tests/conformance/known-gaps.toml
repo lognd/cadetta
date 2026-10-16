@@ -383,16 +383,6 @@ ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
-fixture = "emitters/csv/note-emit-point"
-ticket = "~B08JM3F"
-reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
-
-[[gap]]
-fixture = "emitters/json/note-emit-point"
-ticket = "~B08JM3F"
-reason = "emit(mmc) needs a role inferred from the fit class; json fixtures contradict csv on the nominal fit-class note"
-
-[[gap]]
 fixture = "ir/affine-term-ordered"
 ticket = "~ZM6GZJ0"
 reason = "ir-validate entry has no CLI form or executor yet"
