@@ -353,6 +353,9 @@ use as an argument or in a `let`; checks over instances use `for`.
 in another part (`count(j.screw)`, `sum(j.screw.unit_cost)`), and a
 `Part`-typed argument (`host = base`) is an ordinary part reference whose
 members (`host.material`) the callee reads.
+A whole array may be passed as one `Part` argument by its indexed instance
+(`bearing = b[0]`; any in-range index names the same arguments), and the
+callee's members and fits are evaluated per instance of the caller.
 `sum(self, mass)` (shorthand `mass(self)`) rolls a parameter up over all
 parts, recursively; `max(self, lead_time)` and `min(self, p)` do the
 same with maximum and minimum. Roll-ups count every instance: an array

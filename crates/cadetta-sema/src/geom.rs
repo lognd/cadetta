@@ -271,6 +271,30 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         Ok(cur)
     }
 
+    /// True when `base` names a counted `part` slot (`bearing` of `part bearing[2]: Skf608`).
+    // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+    fn is_part_array(&self, sc: &Scope, base: &Expr) -> bool {
+        let Ok((crate::resolve::Resolved::Part { path }, _)) =
+            self.renames.resolve_ref(self.resolver, &sc.ctx, base, None)
+        else {
+            return false;
+        };
+        let Some((last, outer)) = path.parts.split_last() else {
+            return false;
+        };
+        let mut owner = path.item_only();
+        for seg in outer {
+            match step_part(self.resolver, self.selection.as_ref(), &owner, &seg.name) {
+                Ok((next, _)) => owner = next,
+                Err(_) => return false,
+            }
+        }
+        self.resolver
+            .component(&owner)
+            .and_then(|c| find_part(c, &last.name))
+            .is_some_and(|p| p.count.is_some())
+    }
+
     /// `base[i]`: the i-th element of an evaluated array.
     pub(super) fn index(&mut self, sc: &mut Scope, base: &Expr, idx: &Expr, span: Span) -> R<Val> {
         let items = match self.eval(sc, base)? {
@@ -279,6 +303,17 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Val::Table(table) => {
                 let key = self.eval(sc, idx)?;
                 return self.table_index(&table, key, span);
+            }
+            // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+            Val::Component(path) if self.is_part_array(sc, base) => {
+                // Every element of a part array has the same arguments, so `wheel[i]` is the
+                // array's component (language.md 3.1); the index is still checked to be a count.
+                let q = self.quant(sc, idx)?;
+                let i = parts::array_count(&q).map_err(|_| {
+                    diag("EVAL", idx.span, "an index is a non-negative whole number")
+                })?;
+                trace!(slot = %path, index = i, "indexed part array reads its component");
+                return Ok(Val::Component(path));
             }
             _ => {
                 return Err(diag(
