@@ -7,12 +7,12 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T10:46:24Z"
-updated = "2026-10-16T11:29:30Z"
+updated = "2026-10-16T11:31:24Z"
 scope = ["crates/cadetta-cli/src/cmd/update.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "cadetta update exits 1 (not 2) when Project::open reports E012 or E013"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "the update-e012 and update-e013 lock-untouched conformance fixtures pass with their known-gaps entries removed"
