@@ -2,7 +2,7 @@
 id = "01M4YRFMRM5PTVK9TJ9ZRN2H8S"
 title = "registry dependency and reserved std name should be E005 diagnostics"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
