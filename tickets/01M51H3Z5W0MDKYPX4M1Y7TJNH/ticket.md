@@ -4,9 +4,10 @@ title = "Evaluator rejects .min/.max on fit.clearance in checks (EVAL)"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-16T04:56:54Z"
-updated = "2026-10-16T04:56:54Z"
+updated = "2026-10-16T04:59:08Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
