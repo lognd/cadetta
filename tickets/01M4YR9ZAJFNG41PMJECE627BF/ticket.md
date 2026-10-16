@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-16T05:30:53Z"
+updated = "2026-10-16T05:32:38Z"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/adapters/README.md"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "adapters/bind-invalid-* fixtures that now pass are removed from known-gaps.toml; any that cannot pass stay gapped with a follow-up ticket"
-bound = false
+bound = true
 +++
 
 Found while working ~X1PF271. adapters/bind-invalid-{component-form,empty-config,empty-for,empty-locator,ref-to-needs-dimension,ref-to-needs-ref-mode,sign-not-on-property}: must-fire entry does not observe names_path_or_key.
