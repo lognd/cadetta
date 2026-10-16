@@ -16,6 +16,8 @@ use crate::expect::{Block, Expect};
 mod import_exec; // nested like `protocol`, for the same reason
 #[path = "lockfix.rs"]
 pub mod lockfix; // nested like `protocol`, for the same reason
+#[path = "o004.rs"]
+pub mod o004; // nested like `protocol`, for the same reason
 #[path = "protocol.rs"]
 mod protocol; // nested so every conformance target gets it without a new `mod` line
 #[path = "push_plan.rs"]

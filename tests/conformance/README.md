@@ -275,8 +275,17 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   are adapter decisions, so `session.rs` runs the real FreeCAD adapter over
   a fake tool (`adapters/freecad/tests/conformance/session_driver.py`, via
   `uv run`; `uv` must be on PATH) and observes `attached`, `started`,
-  `hidden`, `closes_tool`, `closed` and `left_open`. Fixtures needing R006
-  dry-run, degrade or O004 are gaps) and `import` (`import.rs`: propose mode
+  `hidden`, `closes_tool`, `closed` and `left_open`. O004 fixtures (the `adapters` emitter
+  shape, `attested`, `drive_covers`, or an expected `obligation` from an
+  adapter without `drive`) run in `o004.rs` against the real CLI: a scratch
+  package with the named built-in adapters, `cadetta sync`, and for
+  `attested` a `cadetta ack sync:FILE` plus a second sync; `drive_covers`
+  stages a drive adapter stub with a `synced` lock record for that file.
+  Observed: `obligation`, `state` (`open` when O004 was reported, else
+  `current`) and `reason`; the report carries no severity, so O004 is
+  taken as `info`. For drive adapters the host model observes `state`
+  `open`/`reason` `unsaved` while a save is pending. Fixtures needing R006
+  dry-run or degrade are gaps) and `import` (`import.rs`: propose mode
   only; observed items are decoded as the CLI does and run through
   `propose`, observing `members`, `components`, `flagged`, `item_order`,
   `status` and `reason_present`; accept, update and richer item features

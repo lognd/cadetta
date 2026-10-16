@@ -148,41 +148,6 @@ ticket = "~A9M9EPG"
 reason = "R013/N005 mangling collision checks not implemented"
 
 [[gap]]
-fixture = "adapters/o004-ack-attests"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "adapters/o004-sw-equations"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "adapters/o004-unsaved"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/csv/obligation-open-without-drive"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/json/obligation-open-without-drive"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/sw-equations/obligation-open-unless-attested"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/sw-equations/obligation-open-without-drive"
-ticket = "~FEZDG87"
-reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
 ticket = "~6K6E7M4"
 reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"

@@ -29,7 +29,7 @@ use cadetta_adapter::{
 };
 use serde_json::{Value, json};
 
-use super::{Job, class_label, session};
+use super::{Job, class_label, o004, session};
 use crate::compare::Produced;
 use crate::run::Facts;
 
@@ -40,7 +40,7 @@ const DEFAULT_FILE: &str = "cad/plate.SLDPRT";
 const DEFAULT_LOCATOR: &str = "Plate_Thk";
 
 /// Fixture keys outside this model; a fixture using one must not be executed as if it passed.
-const UNMODELLED: &[&str] = &["attested", "drive_covers", "roles", "synced", "adapters"];
+const UNMODELLED: &[&str] = &["roles", "synced"];
 
 /// The simulated document: native values by locator, plus the fixture's faults.
 #[derive(Clone, Default)]
@@ -408,6 +408,9 @@ pub fn run(job: &Job) -> Result<Facts, String> {
     let spec: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
     if session::KEYS.iter().any(|k| spec.get(*k).is_some()) {
         return session::run(job);
+    }
+    if o004::applies(&spec, job) {
+        return o004::run(&spec);
     }
     if let Some(k) = UNMODELLED.iter().find(|k| spec.get(**k).is_some()) {
         return Err(format!("sync executor does not model fixture key `{k}`"));
@@ -780,8 +783,16 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         })
         .map(|r| r.file.as_str())
         .collect();
-    obs.insert("saved".into(), json!(saved));
+    // `saved` is the list of saved files; the O004 fixtures state it as a yes/no instead.
+    if job.block.extra.get("saved").is_some_and(Value::is_boolean) {
+        obs.insert("saved".into(), json!(!saved.is_empty()));
+    } else {
+        obs.insert("saved".into(), json!(saved));
+    }
     obs.insert("lock_records_file_digest".into(), json!(!saved.is_empty()));
+    // A drive adapter's file is judged by the drive: open only while its save is pending.
+    obs.insert("obligation".into(), json!(o004::OBLIGATION));
+    obs.insert("state".into(), json!("current"));
     if !touched.is_empty() && saved.is_empty() && !touched.iter().any(|r| blocked(r)) {
         obs.insert("state".into(), json!("open"));
         obs.insert("reason".into(), json!("unsaved"));
