@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-16T12:58:09Z"
+updated = "2026-10-16T12:59:23Z"
 idempotency_key = "split-0N41BNX-fit"
 scope = ["crates/cadetta-fits/**"]
 
