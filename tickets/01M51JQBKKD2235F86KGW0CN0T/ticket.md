@@ -4,9 +4,10 @@ title = "digest add_fit should skip accessor nodes already emitted as members"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-16T05:24:58Z"
-updated = "2026-10-16T05:24:58Z"
+updated = "2026-10-16T09:09:49Z"
 scope = ["crates/cadetta-ir/src/digest.rs"]
 +++
 
