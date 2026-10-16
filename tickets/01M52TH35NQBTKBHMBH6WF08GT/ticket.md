@@ -4,9 +4,10 @@ title = "ack: accept sync:FILE as an attestable obligation"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-16T17:00:36Z"
-updated = "2026-10-16T17:00:36Z"
+updated = "2026-10-16T17:21:50Z"
 scope = ["crates/cadetta-cli/src/cmd/ack.rs"]
 +++
 
