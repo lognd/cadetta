@@ -71,7 +71,19 @@ d.mid.to_float("in")       # a float only when asked for
 m.kind, m.citation         # "param" (the IR member kind), its CiteRef (ir.md 3)
 design.citation(m.citation.cite).unwrap().fields["rev"]   # Result[Citation, PathNotFound]
 d.kind                     # "Length" (the quantity kind)
-m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
+```
+
+A variant read, on the fixture package
+`bindings/python/tests/fixtures/alt-wheel` (`part wheel: Caster =
+Vendor4471B alt [Colson2Series]` and `bore: Length = wheel.hub_bore` in
+`Rover`, language.md 3.2):
+
+```python
+bore = design.get("acme.rover::Rover.bore").unwrap()
+bore.value.nominal.to_exact("mm")   # Fraction(12, 1): the primary, Vendor4471B
+alt = bore.variant("acme.rover::Rover/wheel", "acme.rover::Colson2Series")
+alt.value.nominal.to_exact("mm")    # Fraction(15, 1): bore under the alternate
+bore.variant("acme.rover::Rover/wheel", "acme.rover::Other")   # None: not an alternate
 ```
 
 - `design.get(path) -> Result[Member, PathNotFound]`; `design[path]` is
@@ -98,7 +110,10 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 - `member.variant(slot, alternate) -> Member | None` reads the value
   under a variant (language.md 3.2); `slot` is the canonical
   `Type/part` path and `alternate` the qualified component name, the
-  same strings as `impact --swap SLOT ALT`.
+  same strings as `impact --swap SLOT ALT`. It reads the IR member's
+  `variants` entry keyed `<slot>=<alternate>` (ir.md 2), so a member that
+  does not depend on the slot, or whose value is unchanged, has no
+  entry and returns `None`.
 - Arithmetic follows the language's kind rules and carries tolerance
   (affine forms, quantities.md 5.4), so Python results agree with
   checks. A violation raises `QuantityError`, whose `.code` is the
