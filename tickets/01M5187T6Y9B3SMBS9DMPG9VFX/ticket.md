@@ -2,7 +2,8 @@
 id = "01M5187T6Y9B3SMBS9DMPG9VFX"
 title = "Lower tables into the IR in cadetta-sema"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
