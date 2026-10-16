@@ -189,7 +189,8 @@ under that variant, with S006 (`solver-unsolved-variant`), and
 To find the changed inputs, `solve --variants` re-evaluates the solver's `in`
 expressions once per approved alternate of every part slot in the project,
 with that alternate standing in for the slot's primary wherever an `in`
-expression reads through the slot (`wheel.load_rating`); every other slot
+expression reads through the slot (`wheel.load_rating`; on a counted slot an
+unindexed read is `wheel[0].load_rating`, language.md 3.1); every other slot
 stays on its primary. The variant key is the full form `SLOT=ALT`
 (`acme.rover::Rover/wheel=acme.rover::Colson2Series`). An alternate whose
 inputs fail to evaluate is skipped with a logged warning, not an error.

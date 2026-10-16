@@ -13,16 +13,6 @@ ticket = "~0N41BNX"
 reason = "table/fit/variant pipeline not implemented yet"
 
 [[gap]]
-fixture = "language/i002-alternate-not-viable"
-ticket = "~0N5FY1T"
-reason = "variant verdicts are wired, but an unindexed read of a counted part array (wheel.load_rating on part wheel[4]) is an EVAL error pending ~0N5FY1T"
-
-[[gap]]
-fixture = "language/i003-alternate-undecided"
-ticket = "~0N5FY1T"
-reason = "variant verdicts are wired, but an unindexed read of a counted part array (wheel.load_rating on part wheel[4]) is an EVAL error pending ~0N5FY1T"
-
-[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
@@ -488,11 +478,6 @@ ticket = "~KKVE13B"
 reason = "import executor models propose mode only; this fixture needs more"
 
 [[gap]]
-fixture = "solvers/variants-flag-solves-alternates"
-ticket = "~0N5FY1T"
-reason = "unindexed read of a counted part array in an in-expression is an EVAL error"
-
-[[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
 ticket = "~6K6E7M4"
 reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"
@@ -506,16 +491,6 @@ reason = "fixture dirs are identical yet expect opposite output; active_alternat
 fixture = "adapters/tol-locator-needs-dimension"
 ticket = "~E5M0X1Q"
 reason = "emit does not reject a tolerance locator without a dimension kind"
-
-[[gap]]
-fixture = "solvers/variants-equal-inputs-share-one-run"
-ticket = "~420HBMQ"
-reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
-
-[[gap]]
-fixture = "solvers/variants-unchanged-inputs-read-primary"
-ticket = "~420HBMQ"
-reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
 
 [[gap]]
 fixture = "stdlib/fits-hole-mirrors-shaft"

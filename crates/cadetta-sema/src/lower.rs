@@ -1747,6 +1747,31 @@ mod tests {
         assert_eq!(exact_text(&b, "Frame", "reach"), "7/10");
     }
 
+    // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
+    // frob:tests crates/cadetta-sema/src/geom.rs::through_parts kind=unit
+    #[test]
+    fn an_unindexed_read_of_a_counted_part_is_instance_zero() {
+        let src = LEGS_SRC.replace("reach = leg[2].length", "reach = leg.length");
+        let b = build(&src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        assert_eq!(exact_text(&b, "Frame", "reach"), "7/10");
+    }
+
+    // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
+    // frob:tests crates/cadetta-sema/src/geom.rs::through_parts kind=unit
+    #[test]
+    fn an_index_on_a_non_array_part_is_an_error() {
+        let src = "model Leg {\n  length = 700mm\n  datum top = origin.offset(z = length)\n}\nassembly Frame {\n  part leg: Leg\n  reach = (leg[0].top in origin).y\n}\n";
+        let (ev, _, _) = evaluate(src);
+        assert!(
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("and only a part array")),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
     // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
     // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
     #[test]

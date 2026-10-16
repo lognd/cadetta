@@ -239,7 +239,8 @@ pub fn definition_path(resolver: &Resolver<'_>, path: &CanonPath) -> Option<Cano
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
-    /// Resolves a read through part slots to the part type's own member (`bracket.holes`).
+    /// Resolves a read through part slots to the part type's own member (`bracket.holes`); an
+    /// unindexed counted slot reads instance 0.
     pub(super) fn through_parts(&self, path: &CanonPath, span: Span) -> R<CanonPath> {
         let mut cur = path.item_only();
         for seg in &path.parts {
@@ -247,13 +248,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name)
                     .map_err(|m| diag("EVAL", span, m))?;
             // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+            // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
             match (counted, seg.index.is_some()) {
+                // Every instance of an array has the same arguments, so an unindexed read is
+                // `name[0].member` (language.md 3.1); a solver `in` reads `wheel.load_rating`.
                 (true, false) => {
-                    return Err(diag(
-                        "EVAL",
-                        span,
-                        format!("`{}` is a part array; read one instance of it", seg.name),
-                    ));
+                    trace!(slot = %seg.name, "unindexed read of a part array is instance 0")
                 }
                 (false, true) => {
                     return Err(diag(
