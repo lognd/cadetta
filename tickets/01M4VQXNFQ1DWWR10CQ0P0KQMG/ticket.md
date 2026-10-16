@@ -8,12 +8,12 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-16T19:51:25Z"
+updated = "2026-10-16T19:49:13Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-sema/src/attrs.rs"]
 
 [[acceptance]]
 text = "The listed fixtures pass and their gap entries are removed."
-bound = false
+bound = true
 
 [[acceptance]]
 text = "All 11 sw-equations emit fixtures listed under this ticket pass and their known-gaps entries are removed"
