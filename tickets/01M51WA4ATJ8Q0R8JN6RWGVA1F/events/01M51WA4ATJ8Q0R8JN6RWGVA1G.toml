@@ -1,0 +1,13 @@
+kind = "create"
+title = "check raises S006 for a variant when the solver has no primary result at all"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+labels = ["conformance"]
+scope = ["crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/s006-primary-missing-is-not-s006*", "tests/conformance/known-gaps.toml"]
+acceptance = ["A solver with no recorded primary result raises no S006 for its variants; s006-primary-missing-is-not-s006 passes and its gap is removed"]
+body = "solvers.md 4.1: a missing primary result is an unsolved output, not S006. variant_outputs (pipeline.rs) calls read_variant, which returns Unknown whenever the variant has no entry, so a project with no sizing.out.json at all raises S006 per alternate. Fix: skip the S006 push when the primary has no stored result (site.results.lookup(&site.key, None, ..) is Missing). The fixture's must-not-fire also needs C002 (the check reads an unknown output) listed in expect.json. Found while working ~QH5PDHZ; pipeline.rs is leased by ~3RK3GPH/C0B2X17."
+at = "2026-10-16T08:12:30Z"
+actor = "lognd"
+rev = 1
