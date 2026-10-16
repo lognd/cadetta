@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/tests/**"]
 
 [[acceptance]]
 text = "The four formerly gapped import fixtures (contract-no-source-write, import-never-overwrites, import-update-next-sync-no-op, resolve-drift-import-update) pass in the adapters corpus with their known-gaps entries removed"
-bound = false
+bound = true
 +++
 
 Found while working ~KKVE13B. import-update-next-sync-no-op and resolve-drift-import-update need then_sync/next_sync_class/design/native/lock modelling. import-never-overwrites contradicts import-propose-writes-proposal accept not-fire (same accept inputs; one expects writes [bindings, cdt], the other only [cdt]); contract-no-source-write not-fire expects writes_source true with no source (unsatisfiable). Resolve the fixtures, then model.
