@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T07:15:27Z"
+digest = "2cf4a70939ed964b6e69a4a148dd724085d81bd273571e4a0772a6c57605cc5a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID efca3174-20f8-4674-9c03-08f780a45aa3 with nextest profile: default
+    Starting 1 test across 45 binaries (634 tests skipped)
+        PASS [   0.009s] cadetta cmd::display::tests::exact_fraction_numerator
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.010s] 1 test run: 1 passed, 634 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta exact_fraction_numerator"
+size = 547
+status = "measured"
+test_count = 1
+tests_digest = "a8cd1f93178335188066ba41d3d583c5bf97c50a891d108d2970fd493979974e"
+at = "2026-10-16T07:15:27Z"
+actor = "lognd"
+rev = 1
