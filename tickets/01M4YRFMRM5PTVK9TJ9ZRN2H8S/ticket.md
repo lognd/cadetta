@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:07:53Z"
-updated = "2026-10-16T09:54:09Z"
-scope = ["crates/cadetta-cli/**", "changelog.d/**", "tests/conformance/packages/**", "docs/spec/packages.md", "docs/spec/config-cli.md"]
+updated = "2026-10-16T10:07:38Z"
+scope = ["crates/cadetta-cli/**", "changelog.d/**", "tests/conformance/packages/**", "docs/spec/packages.md", "docs/spec/config-cli.md", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "A registry-only dependency and a package, member or dependency named std are reported as E005, not a config error"
