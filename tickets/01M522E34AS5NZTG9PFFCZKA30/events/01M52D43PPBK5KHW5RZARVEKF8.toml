@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: frame-table members are read under the instance key (frame_member) inside a parameterized model; model-level keys are unbound there. Remaining golden-02 mismatches are hand-evaluation issues, filed separately."
+at = "2026-10-16T13:06:19Z"
+actor = "lognd"
+rev = 1
