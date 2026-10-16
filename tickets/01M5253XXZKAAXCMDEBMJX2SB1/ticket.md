@@ -7,8 +7,16 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T10:46:24Z"
-updated = "2026-10-16T11:08:30Z"
+updated = "2026-10-16T11:29:29Z"
 scope = ["crates/cadetta-cli/src/cmd/update.rs", "tests/conformance/known-gaps.toml"]
+
+[[acceptance]]
+text = "cadetta update exits 1 (not 2) when Project::open reports E012 or E013"
+bound = false
+
+[[acceptance]]
+text = "the update-e012 and update-e013 lock-untouched conformance fixtures pass with their known-gaps entries removed"
+bound = false
 +++
 
 Found in ~VD4Q7XX. run_update calls Project::open, which resolves the closure and returns E012/E013 as ProjectError -> EXIT_USAGE (2). config-cli.md and UpdateError::exit_code say 1. Fix: map dep diagnostics from open to exit 1. Then remove the two known-gaps entries packages/update-e012-lock-untouched and packages/update-e013-lock-untouched.
