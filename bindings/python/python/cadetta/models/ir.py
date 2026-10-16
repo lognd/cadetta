@@ -219,6 +219,7 @@ class Solver(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    citation: CiteRef | None = None
     deps: list[Path]
     inputs: dict[str, str]
     outputs: dict[str, str]
