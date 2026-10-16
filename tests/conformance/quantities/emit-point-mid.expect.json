@@ -1,0 +1,37 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.6",
+  "rule": "emit-point-mid",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "#[emit(mid)] writes the middle of the tolerance interval, the default writes the nominal",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"12.009\""
+        ],
+        "excludes": [
+          "\"value\": \"12\""
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"12\""
+        ],
+        "excludes": [
+          "12.009"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,3 @@
+model Part {
+  x = 12mm [+0.029mm +0.011mm] #[role(hole), emit(lmc)]
+}

@@ -295,3 +295,36 @@ fn bind_invalid_fixtures_observe_the_named_path_or_key() {
         "{report:?}"
     );
 }
+
+// frob:ticket 01M4V1HEFZVEV85KWZEZV526KN
+// frob:tests crates/cadetta-cli/tests/conformance/verify.rs::check_output
+#[test]
+fn emit_point_fixtures_observe_the_emitted_value() {
+    // Only the `emit-point-*` quantities fixtures are run, in a scratch corpus; the one
+    // for reference inheritance (`emit-point-inherited`) is a known gap (~AQ8KSJA).
+    let scratch =
+        std::env::temp_dir().join(format!("cadetta-emitpoint-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
+    let dest = scratch.join("quantities");
+    std::fs::create_dir_all(&dest).unwrap();
+    for entry in std::fs::read_dir(corpus_root().join("quantities")).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if file.starts_with("emit-point-") && !file.starts_with("emit-point-inherited.") {
+            if entry.file_type().unwrap().is_dir() {
+                copy_tree(&entry.path(), &dest.join(&file));
+            } else {
+                std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+            }
+        }
+    }
+    drop(writing);
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), 5, "{report:?}");
+    assert!(
+        report.outcomes.values().all(|o| matches!(o, Outcome::Pass)),
+        "{report:?}"
+    );
+}

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions in quantities.md 5.3/4.4: (1,2,7) reversed range, absent bound limit, divide by zero are all EVAL (no new user codes; keeps the code table small, and they are author errors reported at the member). (3) 2*0.5 is Count*anonymous scalar = Ratio. (4) mixed-pi is inexact+Q006 for plain values, EVAL only inside affine forms (matches eval-mixed-pi fixture). (5) enum is top-level; E009 path is the match member. (6) satisfies needs a named bound; bare bound literal is E001."
+at = "2026-10-16T07:13:35Z"
+actor = "lognd"
+rev = 1

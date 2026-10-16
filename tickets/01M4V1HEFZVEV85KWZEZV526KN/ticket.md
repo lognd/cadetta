@@ -2,12 +2,13 @@
 id = "01M4V1HEFZVEV85KWZEZV526KN"
 title = "Quantities: emit point not observable in conformance"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-16T07:11:45Z"
+updated = "2026-10-16T07:12:30Z"
 idempotency_key = "Z48-emitpoint"
 labels = ["creates:tests/conformance/quantities/emit-*"]
 scope = ["tests/conformance/README.md", "tests/conformance/quantities/emit-*", "crates/cadetta-cli/tests/conformance.rs", "tests/conformance/quantities/emit-*/**"]

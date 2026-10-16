@@ -177,6 +177,19 @@ tests/conformance/ir/
   (`Breaking` is spelled `major`). A fixture for a rule the implementation does
   not yet honour fails like any other and is listed in `known-gaps.toml`.
 
+## Observing the emitted point
+
+The point a parameter is written at (quantities.md 5.6: `nominal`, `mid`,
+`mmc`, `lmc`, from `[emit] point`, `#[emit(..)]` and `#![emit(..)]`,
+inherited through pure references) is observed through a package fixture
+(`NAME.must-fire/` with a `json` adapter, `bindings/json.toml` and
+`"entry": "emit json"`), not through `eval`, which reports designed
+values. The `output` expectation names `build/params.json` and lists the
+written `"value": "..."` text under `contains`/`excludes`; the json
+adapter writes the value in the locator's `native_unit`. The `quantities`
+`emit-point-*` fixtures follow this form; the emitters' own `note-*`
+fixtures observe the same point through the note text.
+
 ## Runner contract
 
 The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
