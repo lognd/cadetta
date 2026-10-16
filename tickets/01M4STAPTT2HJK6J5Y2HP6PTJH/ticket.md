@@ -2,7 +2,8 @@
 id = "01M4STAPTT2HJK6J5Y2HP6PTJH"
 title = "std 0.2.0 inch fasteners and inserts"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
