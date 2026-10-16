@@ -2,7 +2,8 @@
 id = "01M4W5J295H3ERXMW69QA1M8TZ"
 title = "Text members (callout) in the IR and runner; fmt over instance members"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
