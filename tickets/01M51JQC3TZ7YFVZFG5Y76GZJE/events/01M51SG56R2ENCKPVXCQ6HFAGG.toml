@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["ir.md documents fit accessor members as derived Let members"]
+moved = []
+at = "2026-10-16T07:23:22Z"
+actor = "lognd"
+rev = 1
