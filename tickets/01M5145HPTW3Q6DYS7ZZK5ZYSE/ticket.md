@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T01:10:33Z"
-updated = "2026-10-16T01:37:42Z"
+updated = "2026-10-16T01:38:00Z"
 scope = ["bindings/python/python/cadetta/project.py", "bindings/python/tests/test_binding_fixtures.py"]
 
 [[acceptance]]
