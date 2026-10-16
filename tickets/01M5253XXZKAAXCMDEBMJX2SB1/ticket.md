@@ -2,7 +2,8 @@
 id = "01M5253XXZKAAXCMDEBMJX2SB1"
 title = "cadetta update exits 2 on E012/E013; spec says exit 1"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
