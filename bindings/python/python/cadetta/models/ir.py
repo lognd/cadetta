@@ -427,6 +427,18 @@ class Placement(BaseModel):
     variants: dict[str, list[Op]] | None = None
 
 
+class Require(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    citation: CiteRef | None = None
+    conservative: bool
+    expr: str
+    message: str | None = None
+    path: Path
+    verdicts: Verdicts
+
+
 class Affine(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -620,6 +632,7 @@ class Project(BaseModel):
     interfaces: list[Interface] | None = None
     modules: list[str]
     package: PackageId
+    requires: list[Require] | None = None
     schema_: Annotated[
         Literal["cadetta.ir/1"],
         Field(alias="schema", description="Always `cadetta.ir/1`."),

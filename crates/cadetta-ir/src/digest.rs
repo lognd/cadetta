@@ -16,6 +16,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use tracing::{debug, trace};
 
+use crate::entities::Require;
 use crate::model::{
     Affine, Binding, Bound, Check, CitationType, CiteField, CiteRef, Component, Digest, Exact, Fit,
     Locator, Member, Nominal, Part, Project, Provenance, Solver, Value,
@@ -424,6 +425,18 @@ pub fn check_digest(c: &Check) -> Digest {
         .finish()
 }
 
+/// Own digest of a require: its path, expression, message and citation; verdicts are results.
+// frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+pub fn require_digest(r: &Require) -> Digest {
+    let mut e = Enc::new("require");
+    e.str(&r.path.to_string()).str(&r.expr);
+    e.opt(&r.message, |e, s| {
+        e.str(s);
+    });
+    e.opt(&r.citation, cite_ref);
+    e.finish()
+}
+
 fn locator(e: &mut Enc, l: &Locator) {
     e.str(&l.locator)
         .str(&format!("{:?}{:?}", l.kind, l.mode))
@@ -517,6 +530,11 @@ pub fn project_digest(p: &Project) -> Digest {
         p.checks
             .iter()
             .map(|c| (c.path.to_string(), check_digest(c))),
+    );
+    kids.extend(
+        p.requires
+            .iter()
+            .map(|r| (r.path.to_string(), require_digest(r))),
     );
     kids.extend(
         p.solvers

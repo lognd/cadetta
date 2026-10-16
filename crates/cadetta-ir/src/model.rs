@@ -18,7 +18,7 @@ use std::collections::BTreeMap;
 use cadetta_units::{Dim, Magnitude};
 use tracing::debug;
 
-use crate::entities::{Interface, Table, Waiver};
+use crate::entities::{Interface, Require, Table, Waiver};
 use crate::path::Path;
 
 /// Which producer built an IR (ir.md 1); the schema is the same for both.
@@ -763,6 +763,9 @@ pub struct Project {
     pub interfaces: Vec<Interface>,
     /// Lookup tables (ir.md 3; omitted from JSON when empty).
     pub tables: Vec<Table>,
+    /// Requires (ir.md 3; omitted from JSON when empty).
+    // frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+    pub requires: Vec<Require>,
     /// Waivers (ir.md 3; omitted from JSON when empty).
     pub waivers: Vec<Waiver>,
     /// Observed frames (observed flavour only).
@@ -794,6 +797,7 @@ impl Project {
             citations: Vec::new(),
             interfaces: Vec::new(),
             tables: Vec::new(),
+            requires: Vec::new(),
             waivers: Vec::new(),
             frames: Vec::new(),
             instances: Vec::new(),

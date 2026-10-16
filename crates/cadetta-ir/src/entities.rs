@@ -1,4 +1,4 @@
-//! The ir.md 3 entities `Interface`, `Table`, `Waiver` and `Process`, with their JSON encoding.
+//! The ir.md 3 entities `Interface`, `Table`, `Waiver`, `Process` and `Require`, with their JSON encoding.
 //!
 //! `Part`, `Fit`, `Solver` and `Check` already live in [`crate::model`] (with their encoding in
 //! the json module); this module adds the remaining item-level entities so every design entity
@@ -11,7 +11,9 @@
 //! enum variant name (`{ "variant": "M5" }`); `Waiver.targets_closure` maps each matched target
 //! path text to its closure digest (empty until reviewed, lints.md 2.1); `Waiver.expires` is the
 //! ISO date text; `Waiver.for_alt` is a full-form [`VariantName`] and serializes as
-//! `SLOT=ALT`; `Process.params[]` are `Member`s and `rules[]` are `{ role, expr }`.
+//! `SLOT=ALT`; `Require` is `{ path, expr, message?, citation?, verdicts, conservative }` (a
+//! `Check` without `waived_for`, since a require is never suppressed; `citation` is the
+//! `CiteRef` form); `Process.params[]` are `Member`s and `rules[]` are `{ role, expr }`.
 // frob:ticket 01M4SWK99ZRAYB4EQ355S4E2HA
 
 use std::collections::BTreeMap;
@@ -21,7 +23,8 @@ use serde::{Serialize, Serializer};
 use tracing::debug;
 
 // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-use crate::model::{Bound, CiteRef, Digest, Member, Value};
+use crate::model::{Bound, CiteRef, Digest, Member, Value, Verdicts};
+use crate::path::Path;
 use crate::variant_name::{ComponentPath, VariantName};
 
 /// An interface member requirement `name[?]: type` (language.md 3.2).
@@ -114,6 +117,41 @@ pub struct Waiver {
     pub for_alt: Option<VariantName>,
     /// Closure digest of each matched target, keyed by target path text.
     pub targets_closure: BTreeMap<String, Digest>,
+}
+
+/// A `require` obligation (ir.md 3 `Require`; language.md 3.11). Unlike a `Check` it has no
+/// `waived_for`: a require is never suppressed (obligations.md 4).
+// frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Require {
+    /// Canonical path (`Rover.mass_budget`; instance path for a callee's require).
+    pub path: Path,
+    /// Normalized expression text.
+    pub expr: String,
+    /// The optional message string after the expression.
+    pub message: Option<String>,
+    /// The optional trailing citation (`@customer:"REQ-12"`).
+    pub citation: Option<CiteRef>,
+    /// Primary and per-alternate verdicts.
+    pub verdicts: Verdicts,
+    /// True when a verdict rests on a conservative enclosure.
+    pub conservative: bool,
+}
+
+impl Require {
+    /// A new undecided require (no message, citation or verdicts).
+    pub fn new(path: Path, expr: impl Into<String>) -> Self {
+        let r = Self {
+            path,
+            expr: expr.into(),
+            message: None,
+            citation: None,
+            verdicts: Verdicts::default(),
+            conservative: false,
+        };
+        debug!(path = %r.path, "ir: require built");
+        r
+    }
 }
 
 /// One compensation rule of a process, by role (ir.md 3 `Process`).
@@ -268,6 +306,20 @@ impl Serialize for Waiver {
         opt(&mut m, "expires", &self.expires)?;
         opt(&mut m, "for_alt", &self.for_alt)?;
         m.serialize_entry("targets_closure", &self.targets_closure)?;
+        m.end()
+    }
+}
+
+impl Serialize for Require {
+    /// Serialize as `{ path, expr, message?, citation?, verdicts, conservative }`.
+    fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
+        let mut m = s.serialize_map(None)?;
+        m.serialize_entry("path", &self.path)?;
+        m.serialize_entry("expr", &self.expr)?;
+        opt(&mut m, "message", &self.message)?;
+        opt(&mut m, "citation", &self.citation)?;
+        m.serialize_entry("verdicts", &self.verdicts)?;
+        m.serialize_entry("conservative", &self.conservative)?;
         m.end()
     }
 }

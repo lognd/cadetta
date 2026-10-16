@@ -148,6 +148,9 @@ Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }   // a disc: paire
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
 Interface  { path, members[], bounds[], datums[] }
 Table      { path, key, cols[], rows[], citation?: CiteRef }
+Require    { path, expr, message?, citation?: CiteRef, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
+             conservative }
+             // a Check without waived_for: a require is never suppressed (obligations.md 4)
 Waiver     { code, glob, because, expires?, for_alt?: "<slot>=<alternate>",
              targets_closure }
 Process    { path, params[], rules: [ { role, expr } ] }
@@ -402,8 +405,12 @@ the schema is one definition table (`schema_value`) beside them rather
 than a derive; `cadetta.ir.1.json` has `Project` at the root and every
 entity of section 3 under `$defs` (including `Dim` and the item entities
 `Interface`, `Table`, `Waiver`, `Process`). `Project` carries optional
-`interfaces[]`, `tables[]` and `waivers[]` (minor change; absent means
-empty; the model fields are omitted from JSON when empty); `requires[]` has no entity shape yet. Objects are closed
+`interfaces[]`, `tables[]`, `requires[]` and `waivers[]` (minor change; absent means
+empty; the model fields are omitted from JSON when empty). `Require` (~JAVMC41) is a `Check`
+shape minus `waived_for` plus the source `message?` and `citation?`: a require is never
+suppressed (obligations.md 4), so it carries no waiver state, and it reuses `Verdicts` so
+per-alternate outcomes read the same as a check's. Its own digest covers path, expression,
+message and citation (not verdicts) and enters the project digest like a check's. Objects are closed
 (`additionalProperties: false`). A test regenerates the schema and
 compares it to the committed file, and validates a fully populated
 `Project` and each item entity against it, so a serializer change
