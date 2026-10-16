@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:35:33Z"
-updated = "2026-10-16T12:10:43Z"
+updated = "2026-10-16T12:19:15Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/tests/conformance/run.rs"]
 
 [[acceptance]]
 text = "language/e001-waive-date must-not-fire passes; gap entry removed"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "conformance runner ignores waived diagnostics; language/e001-waive-date passes and is removed from known-gaps.toml"
