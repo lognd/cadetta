@@ -7,9 +7,9 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T21:59:11Z"
-updated = "2026-10-14T21:59:11Z"
+updated = "2026-10-16T00:26:27Z"
 idempotency_key = "kindcheck-qualified-path-tests"
-scope = ["crates/cadetta-cli/src", "crates/cadetta-sema"]
+scope = ["crates/cadetta-sema", "crates/cadetta-cli/tests"]
 
 [[acceptance]]
 text = "cadetta check reports Q002 for a read of a pkg::Mod::Comp.member path whose dimension mismatches the declared kind"
