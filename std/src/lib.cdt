@@ -33,3 +33,15 @@ pub use self::retaining::din471
 
 /// DIN 472 retaining rings for bores.
 pub use self::retaining::din472
+
+/// ASME B1.1 unified inch threads.
+pub use self::fasteners::inch::asme_b1_1
+
+/// ASME B18.3 inch socket head cap screws.
+pub use self::fasteners::inch::asme_b18_3
+
+/// Machinery's Handbook inch tap drills.
+pub use self::fasteners::inch::inch_tapdrill
+
+/// Machinery's Handbook inch clearance drills.
+pub use self::fasteners::inch::inch_clearance

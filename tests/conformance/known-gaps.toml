@@ -169,178 +169,178 @@ reason = "R001-R006 not driven by observed IR and sync facts"
 
 [[gap]]
 fixture = "bindings/adapter-logs-stderr-only"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/affine-units-rejected"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/as-kind-q002"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/cli-only-verbs"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/design-get-path-not-found"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/design-getitem-not-offered"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/err-io-usage-only"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/error-diagnostics-are-ok"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/evaluate-validates-ir"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/fit-classes-rejected"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/floats-never-enter"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/format-source"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/instance-paths-only"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/member-kind-is-ir-kind"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/mmc-needs-role"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/modules-from-src"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/no-to-method"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/open-no-manifest"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/open-walks-up"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/ops-in-core-untoleranced"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/pint-currency-rejected"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/project-snapshot-reload"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/quantity-error-dimension"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/quantity-error-kind"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/quantity-parse-result"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/query-parity-with-cli"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/solver-decimal-strings"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/solver-wrong-kind-protocol-error"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/source-is-single-truth"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/temperature-kind-anonymous"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/to-exact-none-inexact-value"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/to-exact-none-when-inexact"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/to-float-always-works"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/tolerance-carried-in-arithmetic"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "bindings/workspace-root-has-no-package"
-ticket = "~6ZMPC6J"
-reason = "kind=binding entry=python is replayed by the Python binding suite, not this runner"
+ticket = "~KNWJCVG"
+reason = "kind=binding entry=python is replayed by bindings/python/tests/test_binding_fixtures.py; this runner has no python executor"
 
 [[gap]]
 fixture = "adapters/mangle-collision-module-r013"

@@ -5,6 +5,6 @@
   ],
   "files": {
     "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
-    "src/lib.cdt": "component Axle(wheel: Wheel, span: Length) { param end_diameter: Length = 12mm; }\npart Rover { part axle[2]: Axle; }\n"
+    "src/lib.cdt": "model Wheel {\n  r: Length = 40mm\n}\nmodel Axle(wheel: Wheel, span: Length) {\n  end_diameter: Length = 12mm\n}\nassembly Rover {\n  part wheel: Wheel\n  part axle[2]: Axle(wheel = wheel, span = 100mm)\n}\n"
   }
 }

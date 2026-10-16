@@ -5,6 +5,6 @@
   ],
   "files": {
     "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
-    "src/lib.cdt": "part Rover { param t: Temperature = 20K; }\n"
+    "src/lib.cdt": "model Rover {\n  t: Temperature = 20K\n}\n"
   }
 }

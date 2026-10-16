@@ -1,0 +1,164 @@
+// std::fasteners::inch: unified inch threads (UNC and UNF), clearance and tap
+// drills, ASME B18.3 socket head cap screws (stdlib.md 1, 2).
+//
+// Sizes #4 to 1/2 in, coarse and fine. Lengths and diameters are in inches as
+// the standards print them; limits are nominal (the published maximum for
+// head_dia, nominal for head_height). minor_ext is d3 = d - 1.22687 P and
+// minor_int is D1 = d - 1.08253 P (the 60 degree basic profile of ASME B1.1,
+// as ISO 724), rounded to 0.0001 in. Tap drills are the numbered, lettered or
+// fractional drills of Machinery's Handbook at about 75% thread; clearances
+// are its close-fit and free-fit drills.
+//
+// PROVENANCE WARNING: figures were entered from recall of ASME B1.1, ASME
+// B18.3 and Machinery's Handbook, not transcribed from the books. Least
+// certain: the close/free clearance drills for #8 and 1/2 in, the 5/16 in
+// socket size, and the preferred length list. The std citation audit must
+// verify every row. Inch heat-set and wire-thread inserts (std::inserts) are
+// not yet present: they have no single published standard to cite.
+
+/// The citation for unified inch threads: ASME B1.1.
+pub cite asme_b1_1: standard {
+    organization = "ASME"
+    number = "ASME B1.1-2003"
+    title = "Unified inch screw threads (UN and UNR thread form)"
+    date = "2003"
+}
+
+/// The citation for inch socket head cap screws: ASME B18.3.
+pub cite asme_b18_3: standard {
+    organization = "ASME"
+    number = "ASME B18.3-2012"
+    title = "Socket cap, shoulder, set screws and hex keys (inch series)"
+    date = "2012"
+}
+
+/// The citation for inch tap drills: Machinery's Handbook.
+pub cite inch_tapdrill: book {
+    title = "Machinery's Handbook"
+    publisher = "Industrial Press"
+    edition = "31st"
+    note = "Tap drill sizes for unified threads, 75% thread"
+}
+
+/// The citation for inch clearance drills: Machinery's Handbook.
+pub cite inch_clearance: book {
+    title = "Machinery's Handbook"
+    publisher = "Industrial Press"
+    edition = "31st"
+    note = "Clearance holes for screws, close and free fit"
+}
+
+/// Inch thread sizes std knows: UNC and UNF by number or fraction (F1x4 is 1/4 in, F5x16 is 5/16 in).
+pub enum InchThread { No4Unc40, No4Unf48, No6Unc32, No6Unf40, No8Unc32, No8Unf36, No10Unc24, No10Unf32, F1x4Unc20, F1x4Unf28, F5x16Unc18, F5x16Unf24, F3x8Unc16, F3x8Unf24, F1x2Unc13, F1x2Unf20 }
+
+/// Inch thread major, pitch and minor diameters, in (ASME B1.1).
+pub table InchThreadData @asme_b1_1:"UNC and UNF series" {
+  key thread: InchThread
+  cols major: Length, pitch: Length, minor_ext: Length, minor_int: Length
+  InchThread::No4Unc40 => 0.112in, 0.02500in, 0.0813in, 0.0849in
+  InchThread::No4Unf48 => 0.112in, 0.02083in, 0.0864in, 0.0894in
+  InchThread::No6Unc32 => 0.138in, 0.03125in, 0.0997in, 0.1042in
+  InchThread::No6Unf40 => 0.138in, 0.02500in, 0.1073in, 0.1109in
+  InchThread::No8Unc32 => 0.164in, 0.03125in, 0.1257in, 0.1302in
+  InchThread::No8Unf36 => 0.164in, 0.02778in, 0.1299in, 0.1339in
+  InchThread::No10Unc24 => 0.19in, 0.04167in, 0.1389in, 0.1449in
+  InchThread::No10Unf32 => 0.19in, 0.03125in, 0.1517in, 0.1562in
+  InchThread::F1x4Unc20 => 0.25in, 0.05000in, 0.1887in, 0.1959in
+  InchThread::F1x4Unf28 => 0.25in, 0.03571in, 0.2062in, 0.2113in
+  InchThread::F5x16Unc18 => 0.3125in, 0.05556in, 0.2443in, 0.2524in
+  InchThread::F5x16Unf24 => 0.3125in, 0.04167in, 0.2614in, 0.2674in
+  InchThread::F3x8Unc16 => 0.375in, 0.06250in, 0.2983in, 0.3073in
+  InchThread::F3x8Unf24 => 0.375in, 0.04167in, 0.3239in, 0.3299in
+  InchThread::F1x2Unc13 => 0.5in, 0.07692in, 0.4056in, 0.4167in
+  InchThread::F1x2Unf20 => 0.5in, 0.05000in, 0.4387in, 0.4459in
+}
+
+/// Tap drill diameters at about 75% thread for cutting taps, in (Machinery's Handbook).
+pub table InchTapDrill @inch_tapdrill:"tap drill sizes" {
+  key thread: InchThread
+  cols cut_75: Length
+  InchThread::No4Unc40 => 0.089in
+  InchThread::No4Unf48 => 0.0935in
+  InchThread::No6Unc32 => 0.1065in
+  InchThread::No6Unf40 => 0.113in
+  InchThread::No8Unc32 => 0.136in
+  InchThread::No8Unf36 => 0.136in
+  InchThread::No10Unc24 => 0.1495in
+  InchThread::No10Unf32 => 0.159in
+  InchThread::F1x4Unc20 => 0.201in
+  InchThread::F1x4Unf28 => 0.213in
+  InchThread::F5x16Unc18 => 0.257in
+  InchThread::F5x16Unf24 => 0.272in
+  InchThread::F3x8Unc16 => 0.3125in
+  InchThread::F3x8Unf24 => 0.332in
+  InchThread::F1x2Unc13 => 0.4219in
+  InchThread::F1x2Unf20 => 0.4531in
+}
+
+/// Close-fit and free-fit clearance hole diameters, in (Machinery's Handbook).
+pub table InchClearance @inch_clearance:"close and free fit" {
+  key thread: InchThread
+  cols close: Length, free: Length
+  InchThread::No4Unc40 => 0.116in, 0.122in
+  InchThread::No4Unf48 => 0.116in, 0.122in
+  InchThread::No6Unc32 => 0.144in, 0.1495in
+  InchThread::No6Unf40 => 0.144in, 0.1495in
+  InchThread::No8Unc32 => 0.1695in, 0.177in
+  InchThread::No8Unf36 => 0.1695in, 0.177in
+  InchThread::No10Unc24 => 0.196in, 0.201in
+  InchThread::No10Unf32 => 0.196in, 0.201in
+  InchThread::F1x4Unc20 => 0.257in, 0.266in
+  InchThread::F1x4Unf28 => 0.257in, 0.266in
+  InchThread::F5x16Unc18 => 0.323in, 0.332in
+  InchThread::F5x16Unf24 => 0.323in, 0.332in
+  InchThread::F3x8Unc16 => 0.386in, 0.397in
+  InchThread::F3x8Unf24 => 0.386in, 0.397in
+  InchThread::F1x2Unc13 => 0.5156in, 0.5312in
+  InchThread::F1x2Unf20 => 0.5156in, 0.5312in
+}
+
+/// Socket head cap screw head diameter, height and socket size, in (ASME B18.3).
+pub table InchSocketHead @asme_b18_3:"socket head cap screws" {
+  key thread: InchThread
+  cols head_dia: Length, head_height: Length, socket: Length
+  InchThread::No4Unc40 => 0.176in, 0.112in, 0.094in
+  InchThread::No4Unf48 => 0.176in, 0.112in, 0.094in
+  InchThread::No6Unc32 => 0.226in, 0.138in, 0.109in
+  InchThread::No6Unf40 => 0.226in, 0.138in, 0.109in
+  InchThread::No8Unc32 => 0.27in, 0.164in, 0.141in
+  InchThread::No8Unf36 => 0.27in, 0.164in, 0.141in
+  InchThread::No10Unc24 => 0.312in, 0.19in, 0.156in
+  InchThread::No10Unf32 => 0.312in, 0.19in, 0.156in
+  InchThread::F1x4Unc20 => 0.375in, 0.25in, 0.188in
+  InchThread::F1x4Unf28 => 0.375in, 0.25in, 0.188in
+  InchThread::F5x16Unc18 => 0.469in, 0.3125in, 0.25in
+  InchThread::F5x16Unf24 => 0.469in, 0.3125in, 0.25in
+  InchThread::F3x8Unc16 => 0.562in, 0.375in, 0.312in
+  InchThread::F3x8Unf24 => 0.562in, 0.375in, 0.312in
+  InchThread::F1x2Unc13 => 0.75in, 0.5in, 0.375in
+  InchThread::F1x2Unf20 => 0.75in, 0.5in, 0.375in
+}
+
+/// Preferred nominal screw lengths, in (ASME B18.3); key only.
+pub table InchLen @asme_b18_3:"standard lengths" {
+  key length: Length
+  0.25in
+  0.375in
+  0.5in
+  0.625in
+  0.75in
+  0.875in
+  1in
+  1.25in
+  1.5in
+  1.75in
+  2in
+  2.25in
+  2.5in
+  2.75in
+  3in
+  3.5in
+  4in
+  4.5in
+  5in
+}

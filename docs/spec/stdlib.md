@@ -31,7 +31,7 @@ disagree. Data can be cited, overridden and diffed; syntax cannot.
 | `std::commercial` | The `Sourced` interface: unit cost, lead time, MOQ, supplier, mass (section 6) | yes |
 | `std::bearings` | Deep-groove ball bearing envelopes (ISO 15) | later |
 | `std::fasteners::inch` | UNC/UNF, ASME B18.3, inch clearance and tap drills | 0.2.0 |
-| `std::inserts` | Heat-set and wire-thread inserts | 0.2.0 |
+| `std::inserts` | Heat-set and wire-thread inserts | 0.2.0 (pending) |
 | `std::fasteners` thread-forming | ISO 7049/7085 thread-forming screws and pilot holes | later |
 
 Paths are `std::module::Item`, and `std` is an implicit dependency
@@ -89,6 +89,19 @@ Engagement and tap class are shop policy, not published constants.
 is the nominal s (its deviation is written on the `ots`, golden 02);
 `edge_margin` is the minimum n and untoleranced. Figures were entered
 from recall and must be verified by the std citation audit.
+
+`std` is version 0.2.0 (`std/cadetta.toml`). `std::fasteners::inch`
+(`std/src/fasteners/inch.cdt`) adds the unified inch threads: the
+`InchThread` enum (UNC and UNF, #4 to 1/2 in; `No10Unc24` is #10-24,
+`F1x4Unf28` is 1/4-28) and the tables `InchThreadData` (`major pitch
+minor_ext minor_int`, ASME B1.1), `InchTapDrill` (`cut_75`),
+`InchClearance` (`close free`), `InchSocketHead` (`head_dia head_height
+socket`, ASME B18.3) and `InchLen`, all in inches and each cited
+(`asme_b1_1`, `asme_b18_3`, `inch_tapdrill`, `inch_clearance`). Minor
+diameters use the ISO 724 profile constants. Figures were entered from
+recall and the citation audit must verify them. `std::inserts` (heat-set
+and wire-thread) is not yet present: heat-set inserts are vendor parts
+with no standard to cite.
 
 `std::fasteners` tables (`std/src/fasteners/tables.cdt`) decisions:
 `MetricThread` is declared there with the 12 coarse sizes; `Thread`
