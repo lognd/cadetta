@@ -2,7 +2,8 @@
 id = "01M4Y6TG02JC7RX0PBN8HV1QQY"
 title = "KindChecker: untyped locals must shadow same-named component members"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 2
 reporter = "lognd"
