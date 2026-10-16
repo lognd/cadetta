@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:15:56Z"
-updated = "2026-10-16T16:49:48Z"
+updated = "2026-10-16T16:58:19Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**", "docs/spec/adapters.md"]
 
 [[acceptance]]
 text = "r006-dimension-equation-removed passes: dry-run shows the equation removal before the set, R006 warning, nothing written"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "sync-degrade-no-theirs-no-r001 and sync-degrades-without-drive pass: no drive degrades to emit plus instructions with no classification and no R001"
