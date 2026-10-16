@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-16T16:39:31Z"
 updated = "2026-10-16T17:54:32Z"
-scope = [".github/workflows/ci.yml", "adapters/freecad/README.md", "adapters/freecad/tests/conformance/session_driver.py", "adapters/freecad/tests/unit/test_session_driver.py", "crates/cadetta-cli/tests/conformance/exec.rs", "crates/cadetta-cli/tests/conformance/session.rs", "crates/cadetta-cli/tests/conformance/sync.rs"]
+scope = [".github/workflows/ci.yml", "adapters/freecad/README.md", "adapters/freecad/tests/conformance/session_driver.py", "adapters/freecad/tests/unit/test_session_driver.py", "crates/cadetta-cli/tests/conformance/exec.rs", "crates/cadetta-cli/tests/conformance/session.rs", "crates/cadetta-cli/tests/conformance/sync.rs", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "Fixtures adapters/session-attach-running and adapters/session-close-only-opened pass through an adapter-side harness and are no longer gapped"
