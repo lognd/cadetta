@@ -2,7 +2,8 @@
 id = "01M4VNC6QGY8T20VW77QCK9BKX"
 title = "IR Solver carries citation: CiteRef when solvers are lowered"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
