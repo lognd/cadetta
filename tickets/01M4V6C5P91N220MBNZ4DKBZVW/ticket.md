@@ -2,12 +2,12 @@
 id = "01M4V6C5P91N220MBNZ4DKBZVW"
 title = "packages.md: pub use of a private item and use of a plain use through a glob decide E002 versus E016"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
-updated = "2026-10-16T07:19:55Z"
+updated = "2026-10-16T07:24:29Z"
 scope = ["docs/spec/**"]
 +++
 
