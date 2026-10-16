@@ -2,7 +2,8 @@
 id = "01M4YXK7C0HSXAXCVS80N5FY1T"
 title = "Sema: unindexed read of a counted part array in a solver in-expression (wheel.load_rating) is EVAL error"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
