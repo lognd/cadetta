@@ -522,19 +522,23 @@ non-locating joint when a check re-expresses through the floated edge.
 ## 8. Conformance decisions
 
 Rules the fixtures under `tests/conformance/geometry/` pin where the
-sections above were silent (decided 2026-10-13, pending owner review):
+sections above were silent (decided 2026-10-13, settled on owner review
+2026-10-16):
 
 - `flip(z)` is an error (E006): `flip` takes `x` or `y` only, because
   flipping the normal is `flip(x)` or `flip(y)` and the third axis
-  would be a no-op on the frame.
+  would be a no-op on the frame. Rationale: one spelling per effect, and
+  a rejected form is cheaper than a silently ignored one.
 - A datum whose definition names a datum declared later, or one that
   does not exist, is E002 (not a reference); datums are built from
-  earlier datums only.
+  earlier datums only. Rationale: keeps the placement tree acyclic by
+  construction with no cycle search.
 - A pattern generator with a zero point count is E006.
 - A datum name that the placed part does not declare (`bracket.nope`)
   is E002, the same as any unknown member.
 - `circle_pattern` numbers its points counter-clockwise starting at
-  `+x` of its datum: point 0 is at `(r, 0)`.
+  `+x` of its datum: point 0 is at `(r, 0)`. Rationale: the right-handed
+  convention of the z axis, matching `rotate(z = +angle)`.
 - `aligned`, `coaxial`, `parallel` and `angle_between` are boolean
   or angle functions usable directly as a check condition, in addition
   to comparisons and `x satisfies P` (language.md 6).

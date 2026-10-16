@@ -196,7 +196,7 @@ cannot be resolved or evaluated.
 | E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
 | E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |
-| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml` (packages.md 1). |
+| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml`, or a dependency has no `path`/`git` source (registry, OQ-19), or a package is named `std` (packages.md 1). |
 | E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind); also a `cite` with an unknown type or field, a malformed date or URL, or a value of the wrong shape (language.md 3.9), and a `position` tolerance where it is not allowed (geometry.md 3.1). |
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
@@ -478,7 +478,7 @@ need observed facts (sketch planes, assembly slots, instance values) that
 | R012 | binding-divergent | error | | Reserved; unreachable from source today. A `[*]` binding over instances whose emitted values differ; instances of a part array share arguments (language.md 3.5), so none differ until the language gives instances differing arguments or index-dependent members. |
 | R013 | name-collision | error | yes | Two in-scope paths would create the same native name, bind one explicitly (adapters.md 3.1); or two component instances name the same part in their reference property (adapters.md 3.5). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
-| R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
+| R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). Also a `property`, `frame` or `instance` locator on `sw-equations`, whose format has only global and dimension lines (emitters/sw-equations.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
 | R016 | unbound-row | error | yes | A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (emitters/csv.md 3). The file is user-supplied and carries no path, so an unbound row is an error rather than the native-discovery warning R002; no observed IR is produced for the file. (`json` entries carry their own `path`.) |
 
 ### U, W

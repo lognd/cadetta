@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**", "docs/spec/solvers.md"]
+new = ["crates/cadetta-sema/**", "docs/spec/solvers.md", "tests/conformance/solvers/variants-*.expect.json"]
+at = "2026-10-16T07:31:17Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["geometry.md records the six decisions (flip(z) E006, datum order/unknown E002, zero point count E006, unknown placed-part datum E002, circle_pattern CCW from +x, relation conditions usable in check)"]
+moved = []
+at = "2026-10-16T07:19:49Z"
+actor = "lognd"
+rev = 1

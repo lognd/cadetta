@@ -489,6 +489,7 @@ fn lift_resolve_error(
     index: &SourceIndex,
 ) -> Option<Diagnostic> {
     let base = base?;
+    let base_path = base.path.clone();
     let mut finding = EFinding::new(
         err.code,
         base.path.as_deref().unwrap_or_default(),
@@ -505,6 +506,9 @@ fn lift_resolve_error(
         Some(mut d) => {
             // The resolver names the exact offender; the catalog template would only generalise it.
             d.message = err.message.clone();
+            // frob:ticket 01M51NC9FMMRMKC3NVMJKF14FE
+            // Keep the base path (None stays None) so the twin dedup still matches.
+            d.path = base_path;
             d
         }
         None => {
@@ -1986,6 +1990,7 @@ mod tests {
         assert_eq!(d.message, "`Part` is defined twice");
         assert_eq!(d.code, "E003");
         assert_eq!(d.notes.len(), 1);
+        assert_eq!(d.path, None, "a path-less base stays path-less");
         assert!(lift_resolve_error(&err, None, &ix).is_none());
     }
 

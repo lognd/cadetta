@@ -177,6 +177,59 @@ tests/conformance/ir/
   (`Breaking` is spelled `major`). A fixture for a rule the implementation does
   not yet honour fails like any other and is listed in `known-gaps.toml`.
 
+## Lock and obligations fixtures (entries `update`, `obligations`)
+
+Decided (~XXKBNB8): packages.md 1 (`cadetta update`) and 6 (trust,
+attested upstream) are tested through two more entries of `kind: "source"`
+package fixtures (a `NAME.must-fire/` directory holding the whole project,
+including any `cadetta.lock` to start from, and dependency packages as
+sibling `path` directories inside it). Rationale: the lock and the
+obligation rows are the observable output of those rules, and a package
+directory is already the fixture form for multi-package rules; no new
+`kind` is needed.
+
+- `"entry": "update"` runs `cadetta update` in the fixture; `args` carries
+  `NAME` when the fixture tests the one-record form. Observed keys:
+  - `exit`: 0, 1 (E012 or E013, lock not written) or 2 (`NAME` not in the
+    closure).
+  - `lock`: `{ "packages": [ { "name", "version"?, "source"? } ], "absent":
+    [ NAME ] }`. After the run the `cadetta.lock` must hold a record for
+    every listed package (listed fields compared exactly; `source` uses
+    the lock form `path:RELATIVE` or `git:URL#KIND=REF`) and none for the
+    `absent` names (records dropped for packages that left the closure).
+  - `lock_written`: boolean; false means the lock file is byte-identical
+    to the one the fixture started with.
+  - `digest_changed`: list of package names whose lock `digest` differs
+    from the starting lock (digests are never compared by value, only by
+    equality with the starting record, so the BLAKE3 framing stays free to
+    change within packages.md 1).
+  - `diagnostics` as usual (E012, E013, E005).
+  Git sources are not exercised (they need network); fixtures use `path`
+  sources only.
+- `"entry": "obligations"` runs `cadetta obligations` (json). Observed
+  keys: `rows`: `{ "id", "role"?, "listed": bool, "upstream"?: { "package",
+  "role", "by", "date" } }` per obligation of interest (`listed: false`
+  means a trusted upstream attestation discharged it, packages.md 6), and
+  the usual `output` `contains`/`excludes` over the text form. The
+  fixture's dependency carries its own `cadetta.lock` with the
+  attestations.
+
+Executors for both entries and the fixtures are follow-up work and are
+listed in `known-gaps.toml` until they exist.
+
+## Observing the emitted point
+
+The point a parameter is written at (quantities.md 5.6: `nominal`, `mid`,
+`mmc`, `lmc`, from `[emit] point`, `#[emit(..)]` and `#![emit(..)]`,
+inherited through pure references) is observed through a package fixture
+(`NAME.must-fire/` with a `json` adapter, `bindings/json.toml` and
+`"entry": "emit json"`), not through `eval`, which reports designed
+values. The `output` expectation names `build/params.json` and lists the
+written `"value": "..."` text under `contains`/`excludes`; the json
+adapter writes the value in the locator's `native_unit`. The `quantities`
+`emit-point-*` fixtures follow this form; the emitters' own `note-*`
+fixtures observe the same point through the note text.
+
 ## Runner contract
 
 The runner is `crates/cadetta-cli/tests/conformance.rs` (run with

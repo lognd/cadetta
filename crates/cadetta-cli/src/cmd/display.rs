@@ -15,13 +15,31 @@ pub const SCHEMA: &str = "cadetta.display/1";
 
 const USAGE: &str = "usage: cadetta display VALUE SPEC";
 
-/// Split a literal such as `45.9375in` or `0.0125` into its exact SI value and dimension.
+/// Split a literal such as `45.9375in`, `0.0125` or the exact fraction `1/3m` into its exact SI
+/// value and dimension; a `/` belongs to the number only when a digit follows it.
 fn parse_value(table: &UnitTable, literal: &str) -> Result<(Magnitude, Dim), String> {
+    let bytes = literal.as_bytes();
     let split = literal
-        .find(|c: char| !(c.is_ascii_digit() || matches!(c, '.' | 'e' | '-' | '+')))
-        .unwrap_or(literal.len());
+        .char_indices()
+        .find(|&(i, c)| {
+            let numeric = c.is_ascii_digit() || matches!(c, '.' | 'e' | '-' | '+');
+            let fraction = c == '/' && bytes.get(i + 1).is_some_and(u8::is_ascii_digit);
+            !(numeric || fraction)
+        })
+        .map_or(literal.len(), |(i, _)| i);
     let (num, unit) = literal.split_at(split);
-    let n = Rational::parse_decimal(num).map_err(|e| format!("value `{literal}`: {e}"))?;
+    let n = match num.split_once('/') {
+        Some((top, bottom)) => {
+            let top =
+                Rational::parse_decimal(top).map_err(|e| format!("value `{literal}`: {e}"))?;
+            let bottom =
+                Rational::parse_decimal(bottom).map_err(|e| format!("value `{literal}`: {e}"))?;
+            tracing::debug!(literal, "exact fraction numerator");
+            top.div(&bottom)
+                .map_err(|e| format!("value `{literal}`: {e}"))?
+        }
+        None => Rational::parse_decimal(num).map_err(|e| format!("value `{literal}`: {e}"))?,
+    };
     let n = Magnitude::new(n, 0);
     if unit.is_empty() {
         return Ok((n, Dim::default()));
@@ -104,6 +122,13 @@ mod tests {
         assert_eq!(display_text("45.9375in", "ft_in").unwrap(), "3'9-15/16\"");
         assert_eq!(display_text("0.0125", "%").unwrap(), "1.3%");
         assert_eq!(display_text("0.25m", "mm").unwrap(), "250mm");
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/display.rs::display_text
+    #[test]
+    fn exact_fraction_numerator() {
+        assert_eq!(display_text("1/3m", "mm").unwrap(), "333.333333mm");
+        assert!(display_text("1/0m", "mm").is_err());
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/display.rs::display_text

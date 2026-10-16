@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["language.md states the G001 typed/untyped split and the conformance label convention"]
+moved = []
+at = "2026-10-16T07:11:03Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 4",
+  "rule": "N001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      { "code": "N001", "severity": "warning" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

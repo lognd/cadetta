@@ -358,11 +358,6 @@ ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
-fixture = "quantities/display-plain-exact-decimal"
-ticket = "~E3MA4MY"
-reason = "cadetta display VALUE rejects the exact-fraction value 1/3m (decimal literals only)"
-
-[[gap]]
 fixture = "adapters/contract-no-source-write"
 ticket = "~KKVE13B"
 reason = "import executor models propose mode only; this fixture needs more"
@@ -488,34 +483,6 @@ ticket = "~6K6E7M4"
 reason = "fixture dirs are identical yet expect opposite output; active_alternate not exposed"
 
 [[gap]]
-fixture = "adapters/tol-locator-needs-dimension"
-ticket = "~E5M0X1Q"
-reason = "emit does not reject a tolerance locator without a dimension kind"
-
-[[gap]]
-fixture = "stdlib/fits-hole-mirrors-shaft"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-j-it5-7"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-js-half-width"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-k-outside-it4-7"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-size-range-upper-closed"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
 fixture = "stdlib/table-iso4032"
@@ -808,16 +775,6 @@ ticket = "~ZM6GZJ0"
 reason = "lint on IR JSON has no CLI form or executor yet"
 
 [[gap]]
-fixture = "geometry/pattern-count-structural"
-ticket = "~32TR561"
-reason = "extra E002 / expected nonzero exit"
-
-[[gap]]
-fixture = "lints/w005-waiver-expiring"
-ticket = "~32TR561"
-reason = "extra E002 / expected nonzero exit"
-
-[[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
@@ -851,3 +808,13 @@ reason = "w.mass in a let reports 'read one instance of it' although language.md
 fixture = "language/q009-part-count-fractional"
 ticket = "~BSPG4VY"
 reason = "fractional part count w[2.5] yields no Q009"
+
+[[gap]]
+fixture = "language/process-rule-kind"
+ticket = "~EQX7ZDY"
+reason = "language.md 3.8 says a process rule must keep the argument kind; sema only logs a warning and emits no EVAL diagnostic"
+
+[[gap]]
+fixture = "quantities/emit-point-inherited"
+ticket = "~AQ8KSJA"
+reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"

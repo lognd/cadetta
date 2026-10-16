@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["packages.md 1 and 7 and lints.md E005 name the codes for registry source, reserved std name and ignored differing source"]
+moved = []
+at = "2026-10-16T07:22:04Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: confirmed the four E006/E002/callout rules. engaged stays a defense-in-depth guard (at_least makes it unfireable; must-not-fire fixture only; any future length override must add must-fire). Misspelled roll-up member decided E002, not EVAL; sema follow-up ~RE93MRS filed."
+at = "2026-10-16T07:17:08Z"
+actor = "lognd"
+rev = 1

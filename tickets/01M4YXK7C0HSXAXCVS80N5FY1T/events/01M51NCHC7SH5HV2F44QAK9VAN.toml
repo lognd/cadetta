@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: allow the unindexed read. language.md 3.1 already states name.member reads name[0].member because every instance of an array has the same arguments; the solver in-expression (solvers.md 4.1 names wheel.load_rating) is the same case. through_parts rejected it only as a leftover from the indexed-geometry ticket. Indexing a non-array stays an error."
+at = "2026-10-16T06:11:29Z"
+actor = "lognd"
+rev = 1

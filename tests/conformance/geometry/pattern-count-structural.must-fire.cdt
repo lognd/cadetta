@@ -1,4 +1,4 @@
 model Part {
-  n: Int = 2
+  n = 2
   holes: [Point2 on origin; 2] = rect_pattern(n, 1, 30mm, 0mm)
 }
