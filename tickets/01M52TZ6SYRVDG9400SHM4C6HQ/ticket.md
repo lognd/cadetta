@@ -2,7 +2,8 @@
 id = "01M52TZ6SYRVDG9400SHM4C6HQ"
 title = "CI: per-doc conformance tests each run the whole corpus (28 full runs, rust job times out)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 3
 reporter = "lognd"
