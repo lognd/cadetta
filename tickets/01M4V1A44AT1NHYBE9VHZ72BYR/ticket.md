@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:25:12Z"
-updated = "2026-10-16T02:10:34Z"
+updated = "2026-10-16T02:10:41Z"
 scope = ["tests/conformance/language/**"]
 
 [[acceptance]]
