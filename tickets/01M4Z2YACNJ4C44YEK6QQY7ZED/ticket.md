@@ -7,9 +7,9 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T06:10:40Z"
-updated = "2026-10-16T00:52:44Z"
+updated = "2026-10-16T00:52:52Z"
 idempotency_key = "dx2kssf-point4"
-scope = ["docs/spec/bindings.md"]
+scope = ["docs/spec/bindings.md", "bindings/python/tests/fixtures/alt-wheel/**"]
 
 [[acceptance]]
 text = "bindings.md gives a concrete member.variant example backed by a fixture package"
