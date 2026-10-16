@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["sync JSON diagnostics carry severity (O004 info, blocking codes error, others warning); o004 conformance uses the reported severity"]
+moved = []
+at = "2026-10-16T18:53:51Z"
+actor = "lognd"
+rev = 1

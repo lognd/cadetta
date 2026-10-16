@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A locator bound for a slot primary is active and one for a non-primary is not (locator_active)", "slots-for-selects-active-locators and slots-swap-changes-active-set pass, observing active_alternate, with their known-gaps entries removed"]
+moved = []
+at = "2026-10-16T19:08:49Z"
+actor = "lognd"
+rev = 1
