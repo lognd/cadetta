@@ -378,6 +378,10 @@ impl Walker<'_, '_> {
                 self.expr(x);
                 terms.iter().for_each(|t| self.expr(&t.value));
             }
+            ExprKind::Position(x, d) => {
+                self.expr(x);
+                self.expr(d);
+            }
             ExprKind::If {
                 cond,
                 then,

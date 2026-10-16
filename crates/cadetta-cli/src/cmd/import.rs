@@ -610,7 +610,7 @@ fn resolve_sources(
                                 start: p.value.span.start,
                                 end: p.value.span.end,
                             },
-                            ExprKind::Tolerance(..) | ExprKind::IsoClass(..) => {
+                            ExprKind::Tolerance(..) | ExprKind::Position(..) | ExprKind::IsoClass(..) => {
                                 Definition::Toleranced
                             }
                             _ => Definition::Derived,

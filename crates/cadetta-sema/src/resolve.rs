@@ -1547,6 +1547,10 @@ fn expr_heads(e: &Expr, bound: &mut Vec<String>, out: &mut Vec<String>) {
             go(x, bound, out);
             terms.iter().for_each(|t| go(&t.value, bound, out));
         }
+        ExprKind::Position(x, d) => {
+            go(x, bound, out);
+            go(d, bound, out);
+        }
         ExprKind::If {
             cond,
             then,

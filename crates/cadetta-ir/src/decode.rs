@@ -429,6 +429,10 @@ fn point(o: &Json, ptr: &str) -> Res<Point> {
         path: path(o, ptr, "path")?,
         datum: frame_path(o, ptr, "datum")?,
         coords: many(o, ptr, "coords", value)?,
+        position: o
+            .get("position")
+            .map(|d| exact(d, &format!("{ptr}/position")))
+            .transpose()?,
     })
 }
 

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: the cli executor observes names_path_or_key as true when exit is 2 and the config-error message names a bound design path or a locator key (whole word; for only in backticks). Reuses bound_paths. All 7 fixtures pass; their gaps are removed."
+at = "2026-10-16T05:41:41Z"
+actor = "lognd"
+rev = 1

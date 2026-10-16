@@ -553,6 +553,7 @@ class Point(BaseModel):
     coords: list[Value]
     datum: Path
     path: Path
+    position: Exact | None = None
 
 
 class Process(BaseModel):

@@ -714,9 +714,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         match &strip(e).kind {
             ExprKind::Quantity(segs) => segs.first().map(|s| s.unit.clone()),
-            ExprKind::Unary(UnOp::Neg, x) | ExprKind::Tolerance(x, _) => {
-                self.authored_unit(sc, x, depth)
-            }
+            ExprKind::Unary(UnOp::Neg, x)
+            | ExprKind::Tolerance(x, _)
+            | ExprKind::Position(x, _) => self.authored_unit(sc, x, depth),
             ExprKind::Binary(BinOp::Add | BinOp::Sub, l, r) => self
                 .authored_unit(sc, l, depth)
                 .or_else(|| self.authored_unit(sc, r, depth)),
@@ -836,6 +836,10 @@ fn collect_calls<'e>(e: &'e Expr, out: &mut Vec<&'e Path>) {
         ExprKind::Tolerance(x, terms) => {
             collect_calls(x, out);
             terms.iter().for_each(|t| collect_calls(&t.value, out));
+        }
+        ExprKind::Position(x, d) => {
+            collect_calls(x, out);
+            collect_calls(d, out);
         }
         ExprKind::If {
             cond,

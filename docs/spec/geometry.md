@@ -214,7 +214,9 @@ pin: Point2 on base = Point2(10mm, 5mm) [position 0.1mm]
   independently; the generator's members are the drawing's basic
   dimensions. Tolerancing a generator member as well is E006 (a pattern
   is toleranced one way), as is combining `position` with a coordinate
-  tolerance on one value.
+  tolerance on one value (detected as any non-exact coordinate, so a
+  second `position` is E006 too). `Vec2` values accept `position` as
+  they share the point representation.
 - `position` applies to `Point2` values and arrays only. On a `Point3`
   it is E006 in 0.1.0: a cylindrical zone needs an axis direction, which
   a point does not carry.

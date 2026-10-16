@@ -2,12 +2,13 @@
 id = "01M50C0NEZM1R9KYFTRJCJY1Z8"
 title = "Syntax/sema/IR: [position d] on Point2, E006 rules, Point.position and .u/.v schema"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-16T05:26:55Z"
+updated = "2026-10-16T05:27:59Z"
 idempotency_key = "v2k95h5-slice-frontend"
 scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-ir/src/**", "crates/cadetta-cli/src/**", "crates/cadetta-solve/src/**", "crates/cadetta-geometry/src/placement.rs", "docs/spec/*.md", "docs/schemas/cadetta.ir.1.json", "bindings/python/python/cadetta/models/ir.py", "crates/cadetta-sema/src/**"]
 
