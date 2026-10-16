@@ -2,7 +2,8 @@
 id = "01M4ZJAYRJMG47610S0R0ANADA"
 title = "Lower solvers, tables and waivers into the IR in cadetta-sema"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
