@@ -266,7 +266,11 @@ pub fn check_d002(
     for c in &project.components {
         for f in &c.fits {
             for (role, p) in [("hole", &f.hole), ("shaft", &f.shaft)] {
-                if let Some(v) = find_member(project, p).and_then(|m| m.value.as_ref()) {
+                // frob:ticket 01M51NC9FMMRMKC3NVMJKF14FE
+                // A derived accessor member (`fit.hole`) restates its authored source; offering it
+                // would flag that very source literal.
+                let src = find_member(project, p).filter(|m| m.provenance != Provenance::Derived);
+                if let Some(v) = src.and_then(|m| m.value.as_ref()) {
                     add(format!("{}.{role}", f.path), v, Some(p.to_string()));
                 }
             }
