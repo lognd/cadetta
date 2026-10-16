@@ -4,9 +4,10 @@ title = "Conformance fixtures for language: EVAL pairs, waivers W003/W004, S002/
 type = "task"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-16T02:10:32Z"
-updated = "2026-10-16T02:10:32Z"
+updated = "2026-10-16T03:15:06Z"
 scope = ["tests/conformance/language/**"]
 +++
 
