@@ -2,12 +2,12 @@
 id = "01M4ZCEYCDVX99NY3JXE5M0X1Q"
 title = "emit rejects a tolerance locator without a dimension kind (config error, exit 2)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-16T15:28:43Z"
+updated = "2026-10-16T15:31:18Z"
 scope = ["crates/cadetta-adapter/src/locator.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
