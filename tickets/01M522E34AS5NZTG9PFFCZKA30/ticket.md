@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T09:59:32Z"
-updated = "2026-10-16T13:04:29Z"
+updated = "2026-10-16T13:04:33Z"
 scope = ["crates/cadetta-sema/src/geom.rs", "tests/conformance/geometry/coaxial-parameterized-model.*"]
+
+[[acceptance]]
+text = 'A check on datums (coaxial, aligned) inside a parameterized model evaluates in its instance, with no EVAL "failed to evaluate" on the model-level members'
+bound = false
 +++
 
 found while working ~NKXYVWC: tests/golden/02-bearing-housing line 64 yields EVAL 'Shaft.seat_a.offset.z failed to evaluate'; also axial_play tolerance propagation mismatches expected values (golden strict).
