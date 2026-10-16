@@ -18,11 +18,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "solvers/s006-primary-missing-is-not-s006"
-ticket = "~RWGVA1F"
-reason = "check raises S006 for a variant when the solver has no primary result at all; solvers.md 4.1 says that is an unsolved output"
-
-[[gap]]
 fixture = "geometry/datum-ots-needs-citation"
 ticket = "~S5DC5W0"
 reason = "sema does not enforce the datum declaration rule yet"

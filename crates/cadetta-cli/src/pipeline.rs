@@ -895,7 +895,15 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
                     out.insert(site.path.clone(), r.outputs.clone());
                 }
                 VariantReading::Unknown => {
-                    if site.in_scope {
+                    // solvers.md 4.1: with no primary result at all the outputs are simply
+                    // unsolved (C002 on the reads), not a stale variant.
+                    let primary_missing = matches!(
+                        site.results.lookup(&site.key, None, &site.current),
+                        Lookup::Missing
+                    );
+                    if primary_missing {
+                        tracing::debug!(solver = %site.key, %variant, "pipeline: no primary result; S006 not raised");
+                    } else if site.in_scope {
                         self.unsolved.borrow_mut().push(UnsolvedVariant {
                             key: site.module.clone(),
                             span: site.ast.name.span,
@@ -2204,6 +2212,20 @@ mod tests {
     #[test]
     fn variant_with_its_own_recorded_result_is_not_s006() {
         let analysis = analyze(&variant_project("solved", "Heavy", true), &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_no_primary_result_is_unsolved_not_s006() {
+        let project = variant_project("noprimary", "Heavy", false);
+        let out = std::env::temp_dir().join(format!(
+            "cadetta-s006-{}-noprimary/size.out.json",
+            std::process::id()
+        ));
+        std::fs::remove_file(out).unwrap();
+        let analysis = analyze(&project, &[0]);
         assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
     }
 
