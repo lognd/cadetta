@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Solvers and waivers declared in a package lower into ir.solvers and ir.waivers (solver deps, inputs, outputs, result state); tables are filed as a follow-up"]
+moved = []
+at = "2026-10-16T02:03:20Z"
+actor = "lognd"
+rev = 1
