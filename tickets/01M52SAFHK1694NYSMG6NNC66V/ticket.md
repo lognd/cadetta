@@ -11,7 +11,7 @@ updated = "2026-10-16T17:53:23Z"
 
 [[acceptance]]
 text = "Fixtures adapters/session-attach-running and adapters/session-close-only-opened pass through an adapter-side harness and are no longer gapped"
-bound = false
+bound = true
 +++
 
 Found while working ~TSTDBAZ. adapters.md 2.2 attach-to-running and close-only-what-it-opened live inside each adapter; the host only issues open/close over the protocol, so the executor cannot observe them without a tautological Sim. Needs a harness that drives a real adapter (solidworks/freecad) or a protocol-level contract for attached/opened sessions. Fixtures: adapters/session-attach-running, adapters/session-close-only-opened.
