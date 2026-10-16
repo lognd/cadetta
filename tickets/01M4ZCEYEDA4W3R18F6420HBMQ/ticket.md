@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-16T15:34:45Z"
+updated = "2026-10-16T15:35:05Z"
 scope = ["crates/cadetta-cli/tests/conformance.rs"]
 
 [[acceptance]]
 text = "solve --variants run-count fixtures (equal inputs share one run; unchanged inputs read the primary) evaluate and pass, the runner counting runs via the marker file"
-bound = false
+bound = true
 +++
 
 solvers/variants-equal-inputs-share-one-run and variants-unchanged-inputs-read-primary hit an EVAL error at acme.demo::Rover.sizing before any solver runs (runs observed 0). The runner now observes runs (marker line count) so these pass once evaluation works. Split from ~SK1B9S3.

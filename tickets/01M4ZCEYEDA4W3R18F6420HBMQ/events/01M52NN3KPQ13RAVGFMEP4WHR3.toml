@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T15:35:05Z"
+digest = "349d7dbdb21e5b3c08e5c58479c638b5a44a66f9885af22d64ab68ce30548fab"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.96s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bd2ecd9f-fae7-4760-b8c0-479835ca2d5c with nextest profile: default
+    Starting 1 test across 1 binary (25 tests skipped)
+        PASS [   0.130s] cadetta::conformance solve_variants_fixtures_observe_solver_runs_via_marker
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.131s] 1 test run: 1 passed, 25 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test conformance solve_variants_fixtures_observe_solver_runs_via_marker"
+size = 679
+status = "measured"
+test_count = 1
+tests_digest = "e1c259afdacb4944a21049618ff8bc5c7a093798c3f657b734a191ab59daa75f"
+at = "2026-10-16T15:35:05Z"
+actor = "lognd"
+rev = 1
