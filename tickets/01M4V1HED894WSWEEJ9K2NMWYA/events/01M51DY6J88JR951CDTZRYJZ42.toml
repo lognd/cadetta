@@ -1,0 +1,27 @@
+kind = "evidence"
+captured_at = "2026-10-16T04:00:49Z"
+digest = "aa6e7cff61ed13c4f8bb0d16919b8370a3f0e436791a5a00d7f71aaa1ea5c4b7"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 28.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 37beb014-ff7d-4f4e-9ce0-1286189b4dae with nextest profile: default
+    Starting 4 tests across 45 binaries (598 tests skipped)
+        PASS [   0.020s] cadetta cmd::display::tests::formats_the_documented_examples
+        PASS [   0.022s] cadetta cmd::display::tests::bad_input_is_an_error_message
+        PASS [   0.027s] cadetta cmd::display::tests::text_json_and_usage
+        PASS [   0.040s] cadetta cmd::display::tests::json_output_validates_against_display_schema
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.049s] 4 tests run: 4 passed, 598 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta cmd::display"
+size = 874
+status = "measured"
+test_count = 4
+tests_digest = "5a9d9e870c55c16336efd34c8225f4e582375e441bafe5d5ec4036422a0efaac"
+at = "2026-10-16T04:00:49Z"
+actor = "lognd"
+rev = 1
