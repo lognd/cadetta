@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: parser treats ident position as the postfix only when followed by an operand-start token, so holes[position] and holes[position + 1] stay Index. Disc outer bound is symmetric +-(|a|+|b|) per coordinate stem <point>.position.u/.v; each coordinate form carries the full pair so single-coordinate range is looser. A nonzero centre offset with no box terms is not applied to discs. Python models regenerated from docs/schemas."
+at = "2026-10-16T05:04:48Z"
+actor = "lognd"
+rev = 1
