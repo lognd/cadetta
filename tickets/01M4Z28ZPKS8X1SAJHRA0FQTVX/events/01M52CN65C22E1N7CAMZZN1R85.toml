@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T12:58:09Z"
+digest = "156503f0821f5395688301c5ea662bcae18176d8b4c90bde9d2f9abeb31f1d74"
+provider = "file"
+ref = "tests/conformance/language/f002-sub-nanometre.expect.json"
+size = 306
+status = "measured"
+at = "2026-10-16T12:58:09Z"
+actor = "lognd"
+rev = 1
