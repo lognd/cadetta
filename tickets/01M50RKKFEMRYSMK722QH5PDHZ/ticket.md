@@ -2,7 +2,8 @@
 id = "01M50RKKFEMRYSMK722QH5PDHZ"
 title = "Fix s006 solver fixtures: S008 cite and array-part solver input"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
