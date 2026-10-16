@@ -4,9 +4,10 @@ title = "emit rejects a tolerance locator without a dimension kind (config error
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-15T08:57:02Z"
+updated = "2026-10-16T15:08:04Z"
 scope = ["crates/**"]
 +++
 
