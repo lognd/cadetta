@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/ZK5ZYSE; scope: bindings/python/python/cadetta/project.py; ttl 7200s"
+at = "2026-10-16T01:24:28Z"
+actor = "lognd"
+rev = 1

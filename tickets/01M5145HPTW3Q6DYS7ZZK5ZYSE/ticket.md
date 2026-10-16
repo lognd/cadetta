@@ -2,12 +2,12 @@
 id = "01M5145HPTW3Q6DYS7ZZK5ZYSE"
 title = "Project.open(workspace root).evaluate() succeeds; bindings.md 3.2 says usage error"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T01:10:33Z"
-updated = "2026-10-16T01:10:33Z"
+updated = "2026-10-16T01:24:28Z"
 scope = ["bindings/python/python/cadetta/project.py"]
 
 [[acceptance]]
