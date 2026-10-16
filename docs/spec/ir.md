@@ -292,7 +292,12 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     inputs read as `deps`; its `@cite` lowers to `citation`, documentation
     only and never an input to the solver's digest or closure;
     `result_digest` and `stale` come from the recorded result file. A waiver keeps its glob as written.
-  - Not lowered yet: interfaces, tables, `require` obligations
+  - A `table` lowers to a `Table` (`PKG::Name`) with its key and value
+    columns (name and written type), one row per source row (key and one
+    cell per column, a quantity `Value` keeping its authored text or an
+    enum variant name) and its `@cite` as `citation`; a table that does
+    not evaluate, or holds another kind of cell, is skipped.
+  - Not lowered yet: interfaces, `require` obligations
     and bindings; parameterized components lower with valueless
     members. The datum and placement arguments of a parameterized
     instance lower as `datum` / `place` Members of the instantiating
