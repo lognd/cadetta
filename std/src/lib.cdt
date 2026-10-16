@@ -45,3 +45,9 @@ pub use self::fasteners::inch::inch_tapdrill
 
 /// Machinery's Handbook inch clearance drills.
 pub use self::fasteners::inch::inch_clearance
+
+/// ASME B18.29.1 inch helical coil (wire-thread) inserts.
+pub use self::inserts::asme_b18_29_1
+
+/// Vendor catalog dimensions for heat-set inserts (no standard exists).
+pub use self::inserts::heatset_catalog

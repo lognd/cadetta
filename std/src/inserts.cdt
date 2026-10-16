@@ -1,0 +1,79 @@
+// std::inserts: wire-thread (helical coil) and heat-set threaded inserts (stdlib.md 1, 2).
+//
+// WireInsertInch is keyed by the existing InchThread enum and follows ASME
+// B18.29.1 (helical coil screw thread inserts, free running and screw
+// locking, inch series). Columns: drill_dia (the pre-tap drill for the
+// insert's tapped hole), len_1d, len_1_5d, len_2d, len_3d (the standard
+// free-length series, nominal 1 D, 1.5 D, 2 D and 3 D in inches, where D is
+// the thread major). Pitch and major come from std::fasteners::inch
+// InchThreadData; the tapped hole is cut with the oversize insert tap, which
+// is the user's choice of tool and not tabulated here.
+//
+// HeatSet is keyed by MetricThread and is VENDOR data, not a standard: there
+// is no published standard for heat-set (thermal or ultrasonic) inserts, so
+// the table is the typical dimensions of the common brass knurled insert
+// catalogs (Ruthex, CNC Kitchen, McMaster). Columns: hole_dia (the molded or
+// drilled pilot hole in the plastic), hole_depth (insert length plus a
+// 1 mm sump so the insert never bottoms), outer_dia (insert body OD) and
+// length (insert length). All are nominal and untoleranced: a real part must
+// be checked against the chosen vendor's drawing, and a design that needs the
+// vendor's exact figures should model that insert as an ots with its own cite.
+// Only M2 to M8 are listed; larger sizes are not stocked as heat-set inserts.
+//
+// PROVENANCE WARNING: figures were entered from recall of ASME B18.29.1 and
+// of typical vendor catalogs, not transcribed from them. Least certain: all
+// UNF drill sizes, the 3 D lengths, and every heat-set hole_dia (vendors
+// differ by up to 0.2 mm). The std citation audit must verify every row.
+
+use package::fasteners::inch::InchThread
+use package::fasteners::tables::MetricThread
+
+/// The citation for inch wire-thread inserts: ASME B18.29.1.
+pub cite asme_b18_29_1: standard {
+    organization = "ASME"
+    number = "ASME B18.29.1-2010"
+    title = "Helical coil screw thread inserts: free running and screw locking (inch series)"
+    date = "2010"
+}
+
+/// The citation for heat-set inserts: typical vendor catalog dimensions (no standard exists).
+pub cite heatset_catalog: catalog {
+    organization = "Ruthex / CNC Kitchen / McMaster-Carr"
+    title = "Brass knurled heat-set threaded inserts, metric series"
+    note = "Typical catalog dimensions; not a standard, verify against the chosen vendor"
+}
+
+/// Pre-tap drill and standard insert lengths for inch helical coil inserts, in (ASME B18.29.1).
+pub table WireInsertInch @asme_b18_29_1:"installation data" {
+  key thread: InchThread
+  cols drill_dia: Length, len_1d: Length, len_1_5d: Length, len_2d: Length, len_3d: Length
+  InchThread::No4Unc40 => 0.116in, 0.112in, 0.168in, 0.224in, 0.336in
+  InchThread::No4Unf48 => 0.116in, 0.112in, 0.168in, 0.224in, 0.336in
+  InchThread::No6Unc32 => 0.144in, 0.138in, 0.207in, 0.276in, 0.414in
+  InchThread::No6Unf40 => 0.144in, 0.138in, 0.207in, 0.276in, 0.414in
+  InchThread::No8Unc32 => 0.170in, 0.164in, 0.246in, 0.328in, 0.492in
+  InchThread::No8Unf36 => 0.170in, 0.164in, 0.246in, 0.328in, 0.492in
+  InchThread::No10Unc24 => 0.199in, 0.190in, 0.285in, 0.380in, 0.570in
+  InchThread::No10Unf32 => 0.199in, 0.190in, 0.285in, 0.380in, 0.570in
+  InchThread::F1x4Unc20 => 0.266in, 0.250in, 0.375in, 0.500in, 0.750in
+  InchThread::F1x4Unf28 => 0.266in, 0.250in, 0.375in, 0.500in, 0.750in
+  InchThread::F5x16Unc18 => 0.332in, 0.3125in, 0.469in, 0.625in, 0.938in
+  InchThread::F5x16Unf24 => 0.332in, 0.3125in, 0.469in, 0.625in, 0.938in
+  InchThread::F3x8Unc16 => 0.397in, 0.375in, 0.563in, 0.750in, 1.125in
+  InchThread::F3x8Unf24 => 0.397in, 0.375in, 0.563in, 0.750in, 1.125in
+  InchThread::F1x2Unc13 => 0.531in, 0.500in, 0.750in, 1in, 1.5in
+  InchThread::F1x2Unf20 => 0.531in, 0.500in, 0.750in, 1in, 1.5in
+}
+
+/// Pilot hole, depth and body of metric brass heat-set inserts, mm (vendor catalogs).
+pub table HeatSet @heatset_catalog:"metric insert dimensions" {
+  key thread: MetricThread
+  cols hole_dia: Length, hole_depth: Length, outer_dia: Length, length: Length
+  MetricThread::M2 => 3.2mm, 5mm, 3.6mm, 4mm
+  MetricThread::M2_5 => 3.6mm, 5.5mm, 4.2mm, 4.5mm
+  MetricThread::M3 => 4mm, 6.7mm, 4.6mm, 5.7mm
+  MetricThread::M4 => 5.6mm, 9.1mm, 6.3mm, 8.1mm
+  MetricThread::M5 => 6.4mm, 10.5mm, 7.1mm, 9.5mm
+  MetricThread::M6 => 8mm, 13.7mm, 8.7mm, 12.7mm
+  MetricThread::M8 => 10.1mm, 13.7mm, 10.9mm, 12.7mm
+}
