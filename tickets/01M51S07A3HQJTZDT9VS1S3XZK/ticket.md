@@ -7,7 +7,7 @@ priority = "high"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:14:40Z"
-updated = "2026-10-16T07:48:59Z"
+updated = "2026-10-16T07:52:56Z"
 scope = ["tests/conformance/known-gaps.toml", ".config/nextest.toml"]
 
 [[acceptance]]
