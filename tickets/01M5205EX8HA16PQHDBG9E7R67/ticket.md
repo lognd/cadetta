@@ -2,7 +2,8 @@
 id = "01M5205EX8HA16PQHDBG9E7R67"
 title = "Import executor: then_sync/design/native/lock modelling and fixture inconsistencies"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
