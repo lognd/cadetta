@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:48:19Z"
-updated = "2026-10-16T01:33:06Z"
-scope = ["crates/cadetta-cli", "crates/cadetta-sema"]
+updated = "2026-10-16T01:33:19Z"
+scope = ["crates/cadetta-cli", "crates/cadetta-sema", "changelog.d"]
 
 [[acceptance]]
 text = "Every diagnostic reaching the pipeline carries a ModuleKey"
