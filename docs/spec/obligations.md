@@ -108,7 +108,9 @@ Diagnostic rules:
   built-in without `drive` (`json`, `csv`, `sw-equations`) is an open
   `sync` obligation, also O004, with the reason "unverifiable without
   drive" (adapters.md 2); an external `drive` adapter that synced the
-  same file discharges it.
+  same file discharges it, and so does an `attest` record on
+  `sync:FILE`. `cadetta sync` reports the open obligation itself (no
+  separate `check` run needed).
 - `[obligations.kinds.<kind>] required_for = "check" | "release"`
   makes `sync` and `solver` obligations gating, as for roles (4).
   Severity precedence is in lints.md 1.

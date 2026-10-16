@@ -1,0 +1,10 @@
+kind = "create"
+title = "ack: accept sync:FILE as an attestable obligation"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-cli/src/cmd/ack.rs"]
+body = "found while working ~FEZDG87. universe::sync_states now honours an Attest record on sync:FILE, but cadetta ack has no candidate for sync obligations."
+at = "2026-10-16T17:00:36Z"
+actor = "lognd"
+rev = 1

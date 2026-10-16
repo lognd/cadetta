@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["r006-dimension-equation-removed passes: dry-run shows the equation removal before the set, R006 warning, nothing written", "sync-degrade-no-theirs-no-r001 and sync-degrades-without-drive pass: no drive degrades to emit plus instructions with no classification and no R001", "the csv, json and sw-equations sync-header-excluded-from-noop fixtures pass: a header-only difference writes nothing", "session attach and close-only-opened fixtures stay gapped with a filed follow-up (~6NNC66V); R001 under --force-design decided and documented"]
+moved = []
+at = "2026-10-16T16:49:48Z"
+actor = "lognd"
+rev = 1

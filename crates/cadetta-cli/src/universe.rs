@@ -567,7 +567,7 @@ fn emitted_values(
 /// so every saved file of a drifted adapter is reported). A file synced only by built-in
 /// adapters, which lack `drive` (`json`, `csv`, `sw-equations`), is otherwise open,
 /// "unverifiable without drive" (adapters.md 2); an external adapter that synced the same
-/// file discharges it.
+/// file discharges it, and so does a role attestation of `sync:FILE` in the lock.
 // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
 // frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
 pub fn sync_states(
@@ -626,7 +626,10 @@ pub fn sync_states(
     }
     for file in open {
         let id = ObligationId::new(ObligationKind::Sync, file.clone());
-        if driven.contains(&file) || out.iter().any(|(i, _)| *i == id) {
+        let attested = lock
+            .records()
+            .any(|r| matches!(r, Record::Attest(a) if a.id == id));
+        if driven.contains(&file) || attested || out.iter().any(|(i, _)| *i == id) {
             continue;
         }
         tracing::debug!(%file, "universe: sync open, unverifiable without drive");
@@ -1172,6 +1175,32 @@ mod tests {
             "{v}"
         );
         assert_eq!(code, 0, "{v}");
+    }
+
+    // an attest record on sync:FILE discharges the open O004.
+    // frob:ticket 01M4YW6FFKS9DAYE3DAFEZDG87
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn attest_record_on_sync_file_discharges_o004() {
+        use cadetta_obligations::graph::{ObligationId, Verdict};
+        use cadetta_obligations::lock::{Attest, Date, Hex, Lock, Record};
+        let dir = synced_project("6mm", "");
+        let path = dir.0.join("cadetta.lock");
+        let mut lock = Lock::load(&path).unwrap();
+        lock.insert(Record::Attest(Attest {
+            id: ObligationId::parse("sync:part.FCStd").unwrap(),
+            role: "cad_review".into(),
+            by: "ana@acme.example".into(),
+            at: Date::new("2026-10-16").unwrap(),
+            digest: Hex::new("ab12").unwrap(),
+            verdict: Verdict::Holds,
+            margin: String::new(),
+            deps: vec![],
+            reason: "opened in CAD".into(),
+        }));
+        lock.save(&path).unwrap();
+        let (_, v) = check_json(&dir, &[]);
+        assert!(o004(&v).is_none(), "{v}");
     }
 
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0

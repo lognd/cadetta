@@ -54,6 +54,7 @@ use crate::output::Format;
 use crate::pipeline::analyze;
 use crate::project::{PackageDir, Project};
 use crate::scope::{Glob, Scope as RunScope};
+use crate::universe;
 use crate::{EXIT_FAIL, EXIT_OK, EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]";
@@ -163,6 +164,10 @@ pub struct SyncReport {
     pub manual: Vec<Manual>,
     /// Whether `cadetta.lock` was written.
     pub lock_written: bool,
+    /// Native files a non-drive adapter recorded this run (`synced file=`); their O004 is judged
+    /// once the run ends.
+    #[serde(skip)]
+    handed_over: BTreeSet<String>,
     /// Bound `(path, file, locator)` triples absent from the native files (structured R003).
     #[serde(skip)]
     pub missing: Vec<(String, String, String)>,
@@ -1364,6 +1369,81 @@ fn read_back_csv(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_>
     }
 }
 
+/// Record the native files a built-in adapter without `drive` handed over as `synced file=`
+/// lock records, so the "CAD file reflects design" obligation exists and stays open
+/// (adapters.md 2: unverifiable without drive).
+///
+/// The files are the adapter's literal `files` entries, else the emitted file; the digest is
+/// that of the emitted text cadetta wrote (the native file is not read, nothing can verify it).
+// frob:ticket 01M4YW6FFKS9DAYE3DAFEZDG87
+fn record_handed_over(
+    ctx: &mut Ctx<'_>,
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    emitted: Option<&str>,
+) {
+    let Some(written) = emitted.and_then(|e| std::fs::read(pkg.dir.join(e)).ok()) else {
+        tracing::warn!(adapter = %adapter.id(), "sync: nothing emitted, no native file recorded");
+        return;
+    };
+    let digest = match Hex::new(blake3::hash(&written).to_hex().as_str()) {
+        Ok(d) => d,
+        Err(e) => {
+            tracing::warn!(adapter = %adapter.id(), error = %e, "sync: digest unusable");
+            return;
+        }
+    };
+    let mut files: Vec<String> = adapter
+        .files
+        .iter()
+        .filter(|f| !f.contains('*'))
+        .cloned()
+        .collect();
+    if files.is_empty() {
+        files.extend(emitted.map(|e| {
+            FsPath::new(e)
+                .strip_prefix(&pkg.dir)
+                .map_or_else(|_| e.to_owned(), |p| p.to_string_lossy().into_owned())
+        }));
+    }
+    for file in files {
+        let rec = Record::SyncedFile(SyncedFile {
+            adapter: adapter.id().to_owned(),
+            file: file.clone(),
+            digest: digest.clone(),
+        });
+        tracing::info!(adapter = %adapter.id(), %file, "sync: native file handed over, O004 open");
+        ctx.lock.remove(&rec.key());
+        ctx.lock.insert(rec);
+        ctx.lock_changed = true;
+        ctx.report.handed_over.insert(file);
+    }
+}
+
+/// Report every file this run handed over whose `sync` obligation is still open as O004.
+fn report_open_sync(
+    report: &mut SyncReport,
+    project: &Project,
+    analysis: &crate::pipeline::Analysis,
+    lock: &FileLock,
+) {
+    use cadetta_obligations::graph::{ObligationKind, ObligationState};
+    for (id, state) in universe::sync_states(project, analysis, lock) {
+        if state == ObligationState::Open
+            && id.kind() == ObligationKind::Sync
+            && report.handed_over.contains(id.path())
+        {
+            report.diag(
+                "O004",
+                format!(
+                    "CAD file reflects design: `{id}` is open, {}; attest it with `cadetta ack`",
+                    cadetta_lint::rules::o004_w005::UNVERIFIABLE_REASON
+                ),
+            );
+        }
+    }
+}
+
 /// Fall back to emit plus manual instructions (no classification, nothing pushed).
 fn manual_adapter(
     pkg: &PackageDir,
@@ -1394,6 +1474,9 @@ fn manual_adapter(
             ctx.report.config_error = Some(message.clone());
             ctx.report.diag("R005", message);
         }
+    }
+    if !ctx.args.dry_run && adapter.command.is_none() {
+        record_handed_over(ctx, pkg, adapter, emitted.as_deref());
     }
     tracing::info!(adapter = %adapter.id(), "sync: no drive, manual instructions");
     ctx.report.manual.push(Manual {
@@ -1732,6 +1815,7 @@ pub fn run_sync(
             Err(e) => return fail(err, &format!("could not write cadetta.lock: {e}")),
         }
     }
+    report_open_sync(&mut report, &project, &analysis, &lock);
     let rendered = match globals.format {
         Format::Json => serde_json::to_string_pretty(&report).map_err(|e| e.to_string()),
         _ => Ok(render_text(&report, parsed.dry_run)),
@@ -2299,6 +2383,30 @@ mod tests {
         assert_eq!(code, EXIT_OK);
         assert!(!dir.0.join("build").exists(), "dry run wrote: {out}");
         assert!(out.contains("manual  equations:"), "{out}");
+    }
+
+    // an adapter without drive records the handed-over file and reports O004 (open, info).
+    // frob:ticket 01M4YW6FFKS9DAYE3DAFEZDG87
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::record_handed_over
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::report_open_sync
+    #[test]
+    fn adapter_without_drive_reports_open_o004_and_records_the_file() {
+        let dir = project("");
+        let (code, out, e) = run(&dir, Format::Text, &[]);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(
+            out.contains("O004") && out.contains("unverifiable without drive"),
+            "{out}"
+        );
+        let lock = std::fs::read_to_string(dir.0.join("cadetta.lock")).unwrap();
+        assert!(lock.contains("synced"), "{lock}");
+        let dir = project("");
+        let (code, out, _) = run(&dir, Format::Text, &["--dry-run"]);
+        assert_eq!(code, EXIT_OK);
+        assert!(
+            !out.contains("O004") && !dir.0.join("cadetta.lock").exists(),
+            "{out}"
+        );
     }
 
     // an unbound-name row in the on-disk csv exits with R016.

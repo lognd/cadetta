@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T17:03:09Z"
+digest = "6a89a3561874daacf6bc8f7c807ec6d32a4bed696f01deab5f6b19bd2d001f91"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 65e142f6-9bb6-4d1d-8a5e-fb3c8d709108 with nextest profile: default
+    Starting 1 test across 1 binary (366 tests skipped)
+        PASS [   0.404s] cadetta cmd::sync::tests::adapter_without_drive_reports_open_o004_and_records_the_file
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.405s] 1 test run: 1 passed, 366 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib adapter_without_drive_reports_open_o004_and_records_the_file"
+size = 577
+status = "measured"
+test_count = 1
+tests_digest = "ac92ac43688dc839a72b4e391a61e9f069d2727e047421e2d34d9bfb924048e6"
+at = "2026-10-16T17:03:09Z"
+actor = "lognd"
+rev = 1
