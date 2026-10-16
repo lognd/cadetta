@@ -19,9 +19,13 @@ use std::fs;
 
 use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::availability::{self, Verb as AvailVerb};
+use cadetta_adapter::builtin::{csv, json as json_emit, sw_equations};
 use cadetta_adapter::classify::{Class, R001};
 use cadetta_adapter::rpc::{DimTolerance, FileState, LocatorStatus, PushStatus, RpcError};
 use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options, PushItem, ReadBack, Verb};
+use cadetta_adapter::{
+    Adapter, AdapterResult, Capabilities, Capability, Outcome, SyncPlan, plan_sync,
+};
 use serde_json::{Value, json};
 
 use super::{Job, class_label};
@@ -38,15 +42,12 @@ const DEFAULT_LOCATOR: &str = "Plate_Thk";
 const UNMODELLED: &[&str] = &[
     "attested",
     "drive_covers",
-    "emitted",
-    "existing",
     "opened_by_adapter",
     "preopened",
     "roles",
     "running_instance",
     "synced",
     "adapters",
-    "locator_kind",
 ];
 
 /// The simulated document: native values by locator, plus the fixture's faults.
@@ -150,6 +151,9 @@ struct Design {
 #[derive(Default)]
 struct Item {
     expression: Option<String>,
+    /// How the native tool names the expression: `equation` or `expression`.
+    kind: &'static str,
+
     rejected: bool,
 }
 
@@ -308,6 +312,103 @@ impl Plan<'_> {
     }
 }
 
+/// The fixture's adapter as the planner sees it: a name and the capabilities it declares.
+struct FixtureAdapter {
+    name: String,
+    caps: Capabilities,
+}
+
+impl FixtureAdapter {
+    /// Read `adapter.id` and `adapter.capabilities`; `None` when the fixture declares none.
+    fn from_spec(spec: &Value) -> Option<Self> {
+        let caps: Vec<Capability> = spec["adapter"]["capabilities"]
+            .as_array()?
+            .iter()
+            .filter_map(|c| match c.as_str()? {
+                "emit" => Some(Capability::Emit),
+                "read" => Some(Capability::Read),
+                "drive" => Some(Capability::Drive),
+                _ => None,
+            })
+            .collect();
+        Some(Self {
+            name: spec["adapter"]["id"]
+                .as_str()
+                .unwrap_or("fixture")
+                .to_owned(),
+            caps: Capabilities::new(caps),
+        })
+    }
+}
+
+impl Adapter for FixtureAdapter {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn capabilities(&self) -> Capabilities {
+        self.caps.clone()
+    }
+
+    fn emit(&mut self) -> AdapterResult<Outcome> {
+        Ok(Outcome::default())
+    }
+
+    fn manual_step(&self) -> String {
+        "relink or reload the equations file".into()
+    }
+}
+
+/// The `--dry-run` plan lines of one push: the native expression it removes comes first (R006).
+fn plan_lines(report: &sync::Report, items: &BTreeMap<String, Item>) -> Vec<String> {
+    let mut lines = Vec::new();
+    for rec in report.records.iter().filter(|r| r.verb == Verb::Push) {
+        if let Some(old) = &rec.entry.replaces {
+            let kind = items
+                .get(&rec.entry.locator)
+                .map_or("expression", |i| i.kind);
+            lines.push(format!("remove {kind} {old}"));
+        }
+        lines.push(format!("set {}", rec.entry.ours));
+    }
+    lines
+}
+
+/// The emitters' header-noop check: a regenerated file differing only in its header comment
+/// (or digests) is not rewritten (adapters.md 2); anything else is.
+fn header_noop(spec: &Value) -> Result<Facts, String> {
+    let text = |k: &str| {
+        spec[k]
+            .as_str()
+            .ok_or_else(|| format!("header-noop fixture lacks `{k}`"))
+    };
+    let (existing, emitted) = (text("existing")?, text("emitted")?);
+    let (path, same) = if existing.starts_with('#') {
+        (
+            "build/params.csv",
+            csv::same_modulo_header(existing, emitted).map_err(|e| e.to_string())?,
+        )
+    } else if existing.starts_with('{') {
+        (
+            "build/params.json",
+            json_emit::same_modulo_header(existing, emitted).map_err(|e| e.to_string())?,
+        )
+    } else {
+        (
+            "build/eq.txt",
+            sw_equations::same_modulo_header(existing, emitted),
+        )
+    };
+    let mut facts = Facts::default();
+    facts.before.insert(path.into(), existing.to_owned());
+    facts.after.insert(
+        path.into(),
+        if same { existing } else { emitted }.to_owned(),
+    );
+    tracing::info!(path, same, "sync: header-noop compared");
+    Ok(facts)
+}
+
 /// Run the fixture's sync once against the simulated document.
 pub fn run(job: &Job) -> Result<Facts, String> {
     let text =
@@ -315,6 +416,9 @@ pub fn run(job: &Job) -> Result<Facts, String> {
     let spec: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
     if let Some(k) = UNMODELLED.iter().find(|k| spec.get(**k).is_some()) {
         return Err(format!("sync executor does not model fixture key `{k}`"));
+    }
+    if spec.get("existing").is_some() {
+        return header_noop(&spec);
     }
     let mut facts = Facts::default();
     if let Some(err) = availability_fault(&spec) {
@@ -332,6 +436,20 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         return Ok(facts);
     }
     facts.observed.insert("sync_ran".into(), json!(true));
+    if let Some(adapter) = FixtureAdapter::from_spec(&spec) {
+        let plan = plan_sync(&adapter).map_err(|e| e.to_string())?;
+        let degraded = matches!(plan, SyncPlan::EmitWithInstructions { .. });
+        facts.observed.insert("classified".into(), json!(!degraded));
+        facts.observed.insert("emitted".into(), json!(degraded));
+        if let SyncPlan::EmitWithInstructions { instructions } = plan {
+            // No `theirs` can be read, so nothing is classified and R001 cannot arise.
+            tracing::info!(adapter = %adapter.name, "sync: degraded to emit plus instructions");
+            facts
+                .observed
+                .insert("instructions".into(), json!([instructions]));
+            return Ok(facts);
+        }
+    }
 
     let args: Vec<&str> = spec["args"]
         .as_array()
@@ -417,6 +535,11 @@ pub fn run(job: &Job) -> Result<Facts, String> {
                     .as_str()
                     .or_else(|| v["equation"].as_str())
                     .map(str::to_owned),
+                kind: if v["equation"].is_string() {
+                    "equation"
+                } else {
+                    "expression"
+                },
                 rejected: v["driven"].as_bool() == Some(true)
                     || v["suppressed"].as_bool() == Some(true)
                     || v["unit_family"].as_str().is_some_and(|u| u != "Length"),
@@ -546,6 +669,14 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         }
     }
     facts.exit = i32::from((r001_exit && !opts.force_design) || error_exit);
+    if opts.dry_run {
+        let lines: Vec<String> = runs
+            .iter()
+            .flat_map(|r| plan_lines(&r.report, &items))
+            .collect();
+        facts.stdout = lines.join("\n");
+        facts.observed.insert("dry_run_shows".into(), json!(lines));
+    }
 
     let obs = &mut facts.observed;
     obs.insert(

@@ -23,7 +23,7 @@
     "acme.demo::Part.width": "12mm"
   },
   "native": {
-    "D1@Boss-Extrude1@Plate.SLDPRT": {
+    "Plate_Thk": {
       "value": "10mm",
       "equation": "\"A\" * 2"
     }

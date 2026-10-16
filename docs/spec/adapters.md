@@ -48,7 +48,9 @@ cadetta sync = compile -> lint -> read -> classify -> push -> regen
 | no base | theirs != ours | first push | push `ours` (R006 if it replaces an expression) |
 
 R001 states which side moved and shows base, ours and theirs.
-`sync --force-design` pushes `ours` over any R001 class.
+`sync --force-design` pushes `ours` over any R001 class. Under the flag R001
+is an audit record of what was overridden, not a refusal: it does not fail the
+run (conformance treats it as not fired).
 
 `sync` is idempotent: when every locator classifies as no-op or
 converged it writes nothing, triggers no regen and does not touch any

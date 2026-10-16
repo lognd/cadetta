@@ -163,29 +163,14 @@ ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
 
 [[gap]]
-fixture = "adapters/r006-dimension-equation-removed"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
-
-[[gap]]
 fixture = "adapters/session-attach-running"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
+ticket = "~6NNC66V"
+reason = "attach and close-only-opened are adapter-internal behaviours the host cannot observe (it only issues open and close over the protocol); needs an adapter-side harness, tracked by the ticket named here"
 
 [[gap]]
 fixture = "adapters/session-close-only-opened"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
-
-[[gap]]
-fixture = "adapters/sync-degrade-no-theirs-no-r001"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
-
-[[gap]]
-fixture = "adapters/sync-degrades-without-drive"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
+ticket = "~6NNC66V"
+reason = "attach and close-only-opened are adapter-internal behaviours the host cannot observe (it only issues open and close over the protocol); needs an adapter-side harness, tracked by the ticket named here"
 
 [[gap]]
 fixture = "emitters/csv/obligation-open-without-drive"
@@ -193,19 +178,9 @@ ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
 
 [[gap]]
-fixture = "emitters/csv/sync-header-excluded-from-noop"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
-
-[[gap]]
 fixture = "emitters/json/obligation-open-without-drive"
 ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/json/sync-header-excluded-from-noop"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
 
 [[gap]]
 fixture = "emitters/sw-equations/obligation-open-unless-attested"
@@ -216,11 +191,6 @@ reason = "the sync CLI does not open the O004 obligation (the tool-session model
 fixture = "emitters/sw-equations/obligation-open-without-drive"
 ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
-
-[[gap]]
-fixture = "emitters/sw-equations/sync-header-excluded-from-noop"
-ticket = "~TSTDBAZ"
-reason = "outside the tool-session sync model; see the ticket for what the executor still lacks"
 
 [[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
