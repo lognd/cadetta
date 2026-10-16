@@ -4,9 +4,10 @@ title = "Slots fixtures: activate an alternate and expose active_alternate"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-16T18:53:16Z"
+updated = "2026-10-16T18:53:20Z"
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/conformance/exec.rs"]
 +++
 
