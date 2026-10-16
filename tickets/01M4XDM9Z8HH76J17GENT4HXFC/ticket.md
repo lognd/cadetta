@@ -4,9 +4,10 @@ title = "sync: ref-mode locator support"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-14T14:38:58Z"
-updated = "2026-10-14T14:38:58Z"
+updated = "2026-10-16T07:38:07Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
 +++
 
