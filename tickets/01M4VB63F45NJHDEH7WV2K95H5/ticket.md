@@ -2,7 +2,8 @@
 id = "01M4VB63F45NJHDEH7WV2K95H5"
 title = "RFS true position: [position d] on Point2 with disc source variables"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
