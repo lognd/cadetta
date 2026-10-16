@@ -2,12 +2,12 @@
 id = "01M4W5J295H3ERXMW69QA1M8TZ"
 title = "Text members (callout) in the IR and runner; fmt over instance members"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T02:58:41Z"
-updated = "2026-10-14T02:58:41Z"
+updated = "2026-10-16T14:16:09Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
 
 [[acceptance]]
