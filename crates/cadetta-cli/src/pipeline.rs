@@ -19,6 +19,7 @@ use cadetta_ir::model::{
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::d::{Key, NamedValue};
+use cadetta_lint::rules::e::{self as e_rules, EFinding};
 use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableMiss};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::{c, d, f, interface, m, n, q, u002, unused};
@@ -32,7 +33,8 @@ use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
 use cadetta_sema::renames::Moves;
 use cadetta_sema::resolve::{
-    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
+    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc,
+    ResolveError, Resolver,
 };
 use cadetta_sema::visibility::VisibilityChecker;
 use cadetta_solve::decl::lower_solver;
@@ -476,6 +478,43 @@ fn display_name(root: &Path, file: &Path) -> String {
         .unwrap_or(file)
         .to_string_lossy()
         .replace('\\', "/")
+}
+
+/// Lifts a located resolver error through `e::lift_resolution` (E002-E011), keeping the
+/// resolver's own message text and adding the related spans (E003, E004) as notes.
+// frob:ticket 01M4YMYMB1NKFEWKHDYGGJ41H3
+fn lift_resolve_error(
+    err: &ResolveError,
+    base: Option<Diagnostic>,
+    index: &SourceIndex,
+) -> Option<Diagnostic> {
+    let base = base?;
+    let mut finding = EFinding::new(
+        err.code,
+        base.path.as_deref().unwrap_or_default(),
+        &err.message,
+        base.location.clone(),
+    );
+    if let Some(file) = err.module.as_deref().and_then(|k| index.file_for(k)) {
+        for span in &err.related {
+            finding = finding.with_related(SourceIndex::location(file, *span));
+        }
+    }
+    let lifted = e_rules::lift_resolution(&[finding], &LintConfig::new()).pop();
+    Some(match lifted {
+        Some(mut d) => {
+            // The resolver names the exact offender; the catalog template would only generalise it.
+            d.message = err.message.clone();
+            d
+        }
+        None => {
+            tracing::debug!(
+                code = err.code,
+                "pipeline: not an E001-E011 code; kept as located"
+            );
+            base
+        }
+    })
 }
 
 fn diag_at(
@@ -1552,26 +1591,28 @@ fn evaluate_stages(
     }
     // frob:ticket 01M4V13RVF8WWS2VMYE8WN9V3R
     // Eager E002 use targets, beside the lazy resolver errors.
-    out.extend(resolve_errors.iter().flat_map(|e| {
-        located(
+    out.extend(resolve_errors.iter().filter_map(|e| {
+        let base = located(
             e.code,
             Severity::Error,
             e.message.clone(),
             e.span,
             e.module.as_deref(),
-        )
+        );
+        lift_resolve_error(e, base, index)
     }));
     let eager_diags: Vec<Diagnostic> = resolver
         .check_use_targets()
         .iter()
-        .flat_map(|e| {
-            located(
+        .filter_map(|e| {
+            let base = located(
                 e.code,
                 Severity::Error,
                 e.message.clone(),
                 e.span,
                 e.module.as_deref(),
-            )
+            );
+            lift_resolve_error(e, base, index)
         })
         .collect();
     // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
@@ -1926,6 +1967,26 @@ mod tests {
             ix.file_for(&alpha).map(|f| f.name.as_str()),
             Some("src/alpha.cdt")
         );
+    }
+
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::lift_resolve_error
+    #[test]
+    fn lift_resolve_error_keeps_resolver_text_and_adds_related_notes() {
+        let ix = index();
+        let key = ModuleKey::new("p", &["alpha".to_owned()]);
+        let err = ResolveError {
+            code: "E003",
+            message: "`Part` is defined twice".to_owned(),
+            span: Span { start: 0, end: 5 },
+            related: vec![Span { start: 6, end: 9 }],
+            module: Some(Box::new(key)),
+        };
+        let base = Some(diag_at("E003", Severity::Error, "x", None, None));
+        let d = lift_resolve_error(&err, base, &ix).expect("lifted");
+        assert_eq!(d.message, "`Part` is defined twice");
+        assert_eq!(d.code, "E003");
+        assert_eq!(d.notes.len(), 1);
+        assert!(lift_resolve_error(&err, None, &ix).is_none());
     }
 
     // frob:tests file_for_drops_std_and_unknown_modules
