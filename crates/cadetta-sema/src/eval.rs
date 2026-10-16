@@ -1033,6 +1033,32 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Rejects `w.member` when `w` is a part array with no instance (language.md 3.5: an
+    /// unindexed read is instance 0, which an empty array lacks).
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    fn empty_part_read(&mut self, sc: &Scope, e: &Expr) -> R<()> {
+        let ExprKind::Field(base, member) = &e.kind else {
+            return Ok(());
+        };
+        if !matches!(base.kind, ExprKind::Path(_) | ExprKind::Field(..)) {
+            return Ok(());
+        }
+        if self
+            .part_array_values(sc, base)
+            .is_some_and(|items| items.is_empty())
+        {
+            return Err(diag(
+                "EVAL",
+                e.span,
+                format!(
+                    "`{}` is read without an index but the part array is empty",
+                    member.name
+                ),
+            ));
+        }
+        Ok(())
+    }
+
     /// Reads `.member` off a value held by a local (`b.bore` for `for b in bearing`).
     // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
     fn local_field(&mut self, sc: &mut Scope, e: &Expr) -> R<Option<Val>> {
@@ -1393,10 +1419,13 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Bool(b) => Ok(Val::Bool(*b)),
             ExprKind::Paren(inner) => self.eval(sc, inner),
             ExprKind::As(inner, _) => self.eval(sc, inner),
-            ExprKind::Path(_) | ExprKind::Field(..) => match self.local_field(sc, e)? {
-                Some(v) => Ok(v),
-                None => self.eval_ref(sc, e),
-            },
+            ExprKind::Path(_) | ExprKind::Field(..) => {
+                self.empty_part_read(sc, e)?;
+                match self.local_field(sc, e)? {
+                    Some(v) => Ok(v),
+                    None => self.eval_ref(sc, e),
+                }
+            }
             ExprKind::Unary(UnOp::Neg, x) => match self.eval(sc, x)? {
                 Val::Quantity(q) => Ok(Val::Quantity(q.neg())),
                 Val::Inexact(i) => Ok(Val::Inexact(func::inex_neg(&i))),
