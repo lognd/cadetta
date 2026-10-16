@@ -2,7 +2,8 @@
 id = "01M51JQBKKD2235F86KGW0CN0T"
 title = "digest add_fit should skip accessor nodes already emitted as members"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
