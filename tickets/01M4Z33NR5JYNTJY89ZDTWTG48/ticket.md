@@ -2,14 +2,14 @@
 id = "01M4Z33NR5JYNTJY89ZDTWTG48"
 title = "F002 fixture granularity contradicts language.md 3.7 (nm vs pm)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-15T06:13:36Z"
+updated = "2026-10-16T04:31:17Z"
 idempotency_key = "a0fq-f002"
-scope = ["tests/conformance/**"]
+scope = ["tests/conformance/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Decision recorded and fixture plus known-gaps entry consistent with language.md 3.7"

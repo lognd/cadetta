@@ -1,0 +1,36 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T04:26:58Z"
+digest = "b46700bd7227c472cdf1f03aacea141c845d3877a2fa39676db6c0b21366f2af"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on build directory
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0560]: struct `OtsValueFacts` has no field named `component`
+   --> crates/cadetta-cli/src/pipeline.rs:324:21
+    |
+324 |                     component: c.path.to_string(),
+    |                     ^^^^^^^^^ `OtsValueFacts` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+error[E0560]: struct `OtsValueFacts` has no field named `component_span`
+   --> crates/cadetta-cli/src/pipeline.rs:325:21
+    |
+325 |                     component_span: c.span.clone(),
+    |                     ^^^^^^^^^^^^^^ `OtsValueFacts` does not have this field
+    |
+    = note: all struct fields are already assigned
+
+For more information about this error, try `rustc --explain E0560`.
+error: could not compile `cadetta` (lib test) due to 2 previous errors
+error: command `~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics --package cadetta` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "-p cadetta lift_resolve_error"
+size = 1084
+status = "measured"
+at = "2026-10-16T04:26:58Z"
+actor = "lognd"
+rev = 1

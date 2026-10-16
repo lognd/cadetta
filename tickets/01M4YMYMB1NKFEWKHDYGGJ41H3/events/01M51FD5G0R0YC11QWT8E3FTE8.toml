@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: keep the resolver message text (it names the exact offender; the E template would generalise it) but route through e::lift_resolution so fixed severity, path and E003/E004 related-span notes (spec promise, previously dropped) apply. No conformance text changes."
+at = "2026-10-16T04:26:58Z"
+actor = "lognd"
+rev = 1

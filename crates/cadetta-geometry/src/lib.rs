@@ -14,3 +14,4 @@ pub mod placement;
 pub mod point;
 pub mod reexpress;
 pub mod transform;
+pub mod zone;
