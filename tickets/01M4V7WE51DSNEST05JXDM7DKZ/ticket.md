@@ -2,7 +2,8 @@
 id = "01M4V7WE51DSNEST05JXDM7DKZ"
 title = "sw-equations: property/frame locator kinds are undefined in the spec"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
