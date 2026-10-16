@@ -8,8 +8,8 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-16T19:27:12Z"
-scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs"]
+updated = "2026-10-16T19:31:08Z"
+scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-sema/src/attrs.rs"]
 
 [[acceptance]]
 text = "The listed fixtures pass and their gap entries are removed."
