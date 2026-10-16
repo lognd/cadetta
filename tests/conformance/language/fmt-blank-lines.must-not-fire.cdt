@@ -1,0 +1,5 @@
+model Part {
+  w = 5mm
+
+  width = 6mm
+}
