@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: adapter reports configurations/active_config beside observed; propose adds an info note (not a coded diagnostic) listing inactive configurations. Documented in adapters.md 7.3."
+at = "2026-10-16T14:04:54Z"
+actor = "lognd"
+rev = 1

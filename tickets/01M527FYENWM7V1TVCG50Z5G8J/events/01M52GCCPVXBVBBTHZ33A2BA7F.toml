@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs"]
+new = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs", "tests/conformance/known-gaps.toml"]
+at = "2026-10-16T14:03:16Z"
+actor = "lognd"
+rev = 1

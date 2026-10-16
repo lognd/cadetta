@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Assembly parts (YXYSDF5): library already complete, executor gap only; part type = UpperCamel stem of the component file, instances in fixture listing order. See adapters.md 7.2."
+at = "2026-10-16T14:04:55Z"
+actor = "lognd"
+rev = 1

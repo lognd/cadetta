@@ -478,7 +478,11 @@ the side a parameter plays in a `fit`, or from `#[role(hole)]`; pure
 references keep it. The point written to a CAD tool is chosen by policy:
 `nominal` (default), `mid`, `mmc`, `lmc`, set by `[emit] point` and
 overridden per parameter with `#[emit(mid)]` or for a scope with
-`#![emit(mid)]`. `mmc`/`lmc` without a role is E010. A pure
+`#![emit(mid)]`. `mmc`/`lmc` without a role is E010. The role is recorded on the IR member
+(`role`, ir.md 3) whatever its source, so an emitter reads `12mm H7
+#[emit(mmc)]` as a hole (smallest size) and `12mm g6 #[emit(mmc)]` as a
+shaft (largest) with no `#[role]` written; the uppercase/lowercase rule
+is the only inference from a class. A pure
 reference inherits its referent's emit point unless it sets its own, so
 an alias of a `#[emit(mid)]` fit side is emitted at mid too.
 

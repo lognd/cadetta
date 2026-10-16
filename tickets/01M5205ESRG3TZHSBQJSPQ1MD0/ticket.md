@@ -6,7 +6,7 @@ category = "todo"
 priority = "medium"
 reporter = "lognd"
 created = "2026-10-16T09:19:52Z"
-updated = "2026-10-16T11:28:01Z"
+updated = "2026-10-16T14:04:55Z"
 scope = ["crates/cadetta-adapter/src/import/**"]
 +++
 
