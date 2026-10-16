@@ -2,7 +2,8 @@
 id = "01M4Z28ZPKS8X1SAJHRA0FQTVX"
 title = "language: F002 sub-nanometre, fit clearance member, process-drawn value"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
