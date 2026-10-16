@@ -603,7 +603,7 @@ impl DigestGraph {
     }
 
     /// Add a fit keyed by its path plus its `<fit>.hole` and `<fit>.shaft` accessor nodes, which
-    /// derive from it. The accessors are keyed under the fit, never under the operand members
+    /// derive from it; an accessor already present as a member node is kept. The accessors are keyed under the fit, never under the operand members
     /// (`Fit.hole`/`Fit.shaft`), which are real members with their own nodes.
     pub fn add_fit(&mut self, f: &Fit) {
         let own = fit_digest(f);
@@ -611,6 +611,10 @@ impl DigestGraph {
         self.add_node(key.clone(), own.clone(), Vec::new());
         for side in ["hole", "shaft"] {
             let node = format!("{key}.{side}");
+            if self.nodes.contains_key(&node) {
+                debug!(%node, "digest: fit accessor already emitted as a member; kept");
+                continue;
+            }
             let mut e = Enc::new("fit-side");
             e.str(&node).digest(&own);
             self.add_node(node, e.finish(), vec![key.clone()]);
@@ -1207,5 +1211,32 @@ mod tests {
         );
         assert_eq!(own, member_digest(&m));
         assert_eq!(closure, g.closure("a.b::X.f").unwrap());
+    }
+
+    // frob:ticket 01M51JQBKKD2235F86KGW0CN0T
+    // frob:tests crates/cadetta-ir/src/digest.rs::add_fit kind=unit
+    #[test]
+    fn add_fit_keeps_accessor_nodes_already_emitted_as_members() {
+        let member_hole = mem("a.b::X.f.hole", 7, &[]);
+        let fit = Fit {
+            path: p("a.b::X.f"),
+            hole: p("a.b::X.h"),
+            shaft: p("a.b::X.s"),
+            clearance: member_hole.value.clone().unwrap(),
+            fit_type: "clearance".into(),
+            required: None,
+        };
+        let mut g = DigestGraph::new();
+        g.add_member(&member_hole);
+        g.add_fit(&fit);
+        assert_eq!(
+            g.own("a.b::X.f.hole").unwrap(),
+            &member_digest(&member_hole),
+            "the member node survives add_fit"
+        );
+        assert!(
+            g.own("a.b::X.f.shaft").is_ok(),
+            "the missing accessor is added"
+        );
     }
 }
