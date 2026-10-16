@@ -8,7 +8,7 @@ points = 2
 reporter = "lognd"
 created = "2026-10-16T06:11:45Z"
 updated = "2026-10-16T07:33:19Z"
-scope = ["crates/cadetta-sema/src/process.rs", "crates/cadetta-cli/src/pipeline.rs"]
+scope = ["crates/cadetta-sema/src/process.rs", "crates/cadetta-cli/src/pipeline.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "A rule changing the argument kind yields an EVAL error at check time; language/process-rule-kind gap removed"
