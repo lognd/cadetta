@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: D001/D002/G-pass were already landed; M003 and C004 verified end-to-end on a probe project (M003 fires on untoleranced path/path fit side, C004 fires per derived param). D002 on fit hole/shaft is bound via the IR-level lint tests (operand paths now real members after ~3YZ3NSG); lints.md D002 note records it. The .clearance.min EVAL gap is sema, filed separately."
+at = "2026-10-16T04:56:54Z"
+actor = "lognd"
+rev = 1
