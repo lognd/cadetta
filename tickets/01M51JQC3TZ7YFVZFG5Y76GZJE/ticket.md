@@ -12,7 +12,7 @@ scope = ["docs/spec/ir.md"]
 
 [[acceptance]]
 text = "ir.md documents fit accessor members as derived Let members"
-bound = false
+bound = true
 +++
 
 found while working ~93GZBM2 (ir.md leased by ~JCJY1Z8). After 'Fit operands' add: accessor reads are also emitted as derived Let members of the owning component (provenance derived, analysis, deps [fit path]); no schema change; digest keys .clearance on its member node, .hole/.shaft keep fit-side nodes until the add_fit follow-up lands.
