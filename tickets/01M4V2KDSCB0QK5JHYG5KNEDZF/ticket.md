@@ -2,12 +2,12 @@
 id = "01M4V2KDSCB0QK5JHYG5KNEDZF"
 title = "Lint gaps found probing lints: D001 severity, D002 fit members, M003, C004, geometry pass unwired"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:47:45Z"
-updated = "2026-10-16T04:35:07Z"
+updated = "2026-10-16T04:35:09Z"
 scope = ["crates/cadetta-lint/**"]
 
 [[acceptance]]
