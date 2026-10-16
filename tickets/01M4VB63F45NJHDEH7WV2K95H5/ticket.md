@@ -45,7 +45,7 @@ bound = true
 
 [[acceptance]]
 text = "Given .x of a position-toleranced point, when bounded, then it is exactly [-d/2, d/2]; a mixed projection after an off-90deg rotation uses the Euclidean norm, marked conservative (quantities.md 5.4)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given aligned over two coplanar position-toleranced patterns, when evaluated, then the worst offset is the nominal offset plus the sum of radii, exactly (0.1mm for the geometry.md 3.1 example) (geometry.md 3.1)"
