@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: disc terms are a separate BTreeMap<VarId,(Magnitude,Magnitude)> field on Affine (not a term enum, not two fake box terms). Rationale: box-only API (terms, coefficient, scale, from_hull) stays unchanged so L1 callers are unaffected; disc radius sqrt(a^2+b^2) is computed in one place (exact when a coefficient is 0 or a^2+b^2 is a rational square, else outward rational bound, reported by is_conservative); the IR still emits paired .u/.v terms so no schema change. Recorded in docs/spec/quantities.md 5.4."
+at = "2026-10-16T04:08:23Z"
+actor = "lognd"
+rev = 1
