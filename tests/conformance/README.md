@@ -92,8 +92,8 @@ Matching rules:
 Copied from `bindings/README.md` ("Entry and fixture form"). Binding
 pairs are `kind = "binding"`, `entry = "python"` and describe Python-API
 behaviour; the runner skips them except `classify` (see "Runner
-contract"). They are executable specifications for the Python binding
-test suite (ticket ~6ZMPC6J).
+contract"). They are replayed by the Python binding suite,
+`bindings/python/tests/test_binding_fixtures.py` (ticket ~CDRJTN9).
 
 A fixture is one API call:
 

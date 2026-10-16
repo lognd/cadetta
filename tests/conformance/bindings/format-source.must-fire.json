@@ -1,6 +1,6 @@
 {
   "api": "cadetta.format_source",
   "args": [
-    "part  Rover{param w:Length=10mm;}"
+    "model  Rover{w:Length=10mm}"
   ]
 }

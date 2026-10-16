@@ -4,6 +4,6 @@
     "."
   ],
   "files": {
-    "src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+    "src/lib.cdt": "model Rover {\n  w: Length = 10mm\n}\n"
   }
 }

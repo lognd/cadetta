@@ -1,6 +1,6 @@
 {
   "api": "cadetta.quantity",
   "args": [
-    "12mm [+0.018mm, 0mm]"
+    "12mm[+0.018mm -0mm]"
   ]
 }

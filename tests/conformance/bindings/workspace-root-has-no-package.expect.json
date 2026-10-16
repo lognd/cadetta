@@ -20,7 +20,7 @@
     "exit": 0,
     "package": "acme.demo",
     "modules": [
-      "lib"
+      "acme.demo"
     ],
     "evaluate_exit": 0
   }

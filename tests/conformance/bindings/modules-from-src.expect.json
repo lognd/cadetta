@@ -10,9 +10,9 @@
     "diagnostics": [],
     "result": "value",
     "value": [
-      "a",
-      "a.b",
-      "lib"
+      "acme.demo",
+      "acme.demo::a",
+      "acme.demo::a::b"
     ],
     "note": "implicit parent directories listed"
   },
@@ -20,7 +20,7 @@
     "diagnostics": [],
     "result": "value",
     "value": [
-      "lib"
+      "acme.demo"
     ]
   }
 }

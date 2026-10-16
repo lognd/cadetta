@@ -3,10 +3,10 @@
   "args": [],
   "files": {
     "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
-    "src/lib.cdt": "part Rover { param w: Length = 10mm; }\n"
+    "src/lib.cdt": "model Rover {\n  w: Length = 10mm\n}\n"
   },
   "edit": {
-    "src/lib.cdt": "part Rover { param w: Length = 11mm; }\n"
+    "src/lib.cdt": "model Rover {\n  w: Length = 11mm\n}\n"
   },
   "before_reload": "10mm"
 }
