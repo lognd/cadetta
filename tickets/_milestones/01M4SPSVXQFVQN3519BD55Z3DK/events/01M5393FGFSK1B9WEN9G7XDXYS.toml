@@ -1,0 +1,14 @@
+kind = "evidence"
+accepts = [9]
+captured_at = "2026-10-16T21:12:36Z"
+digest = "4d16f9272bf95bda8129703494d25d4ed5037a9016edba7f33f0c3363cf7a4a7"
+exit_code = 1
+passed = false
+provider = "command"
+ref = "uv run --project bindings/python pytest bindings/python/tests/test_conformance.py -q"
+size = 89492
+status = "measured"
+uri = "dir:.git/frob/artifacts/4d16f9272bf95bda8129703494d25d4ed5037a9016edba7f33f0c3363cf7a4a7"
+at = "2026-10-16T21:12:36Z"
+actor = "lognd"
+rev = 1
