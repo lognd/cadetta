@@ -2,13 +2,13 @@
 id = "01M4VQXNFQ1DWWR10CQ0P0KQMG"
 title = "sw-equations emit details: native pins, was comments, mangle prefix, order, comment shapes, native unit suffix, N005/R013 mangle checks"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
-points = 5
+points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-15T08:10:01Z"
+updated = "2026-10-16T19:14:30Z"
 scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
