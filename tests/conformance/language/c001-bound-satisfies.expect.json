@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 6",
+  "rule": "C001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      { "code": "C001", "severity": "error" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

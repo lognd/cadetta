@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["quantities/emit-point-lmc-hole, emit-point-lmc-shaft and emit-point-inherited conformance fixtures pass and are removed from known-gaps.toml"]
+new = ["quantities/emit-point-inherited conformance fixture passes and is removed from known-gaps.toml"]
+moved = [0]
+at = "2026-10-16T06:23:39Z"
+actor = "lognd"
+rev = 1

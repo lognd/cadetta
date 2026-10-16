@@ -610,9 +610,9 @@ fn resolve_sources(
                                 start: p.value.span.start,
                                 end: p.value.span.end,
                             },
-                            ExprKind::Tolerance(..) | ExprKind::Position(..) | ExprKind::IsoClass(..) => {
-                                Definition::Toleranced
-                            }
+                            ExprKind::Tolerance(..)
+                            | ExprKind::Position(..)
+                            | ExprKind::IsoClass(..) => Definition::Toleranced,
                             _ => Definition::Derived,
                         };
                         let literal = p.value.span.slice(text).to_owned();

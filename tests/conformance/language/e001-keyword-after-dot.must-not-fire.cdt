@@ -1,0 +1,9 @@
+table Len {
+  key l: Length
+  cols pitch: Length
+  3mm => 0.5mm
+  4mm => 0.7mm
+}
+model Part {
+  v = Len.at_least(3.5mm).key
+}

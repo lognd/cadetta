@@ -558,12 +558,16 @@ Arrays and points (decisions, cadetta-sema `array.rs`, `point.rs`): an
 array literal holds elements of one kind (one dimension, one point
 arity, one enum) or it is an error; a declared `[T; N]` checks the
 length against N (a whole number) and a `Point2`/`Point3` element type
-checks the arity. Until datum typing lands (geometry epic) points and
+checks the arity. Before a point is typed (no `Point2 on D`
+annotation reaches it; geometry epic) points and
 vectors share one value: `Point2(x, y)`, `Vec2(x, y)` and the 3D forms
 take Length components, `p + q`, `p - q` and `p * s` (or `p / s`, `s *
 p`; `s` dimensionless) each give a point, `.x .y .z` read a component,
-and an array combined with a point (either order, `+ -`) applies the
-point to every element. Array with array is an error. Pattern points
+and an array combined with an untyped point (either order, `+ -`)
+applies the point to every element. Once either side is a typed point
+(`Point2 on D`) that combination is G001 (3.8): the typed form must
+say which vector is meant, so write `holes + Vec2(..)`. Array with
+array is an error. Pattern points
 are exact when the angle is a special one (`circle_pattern(4, 10mm,
 0deg)`) and carry an inexact interval otherwise (Q006); `distance` is
 exact when the sum of squares is a perfect square. A component that
@@ -843,6 +847,17 @@ Precedence, high to low: postfix (`.member`, `[index]`, call, tolerance
 `IDENT in` is a bound (3.4) only when the right side is a range.
 Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
 `match` are expressions; `{ let a = ...; expr }` is a block expression.
+
+Conformance labels (`tests/conformance/language/*.expect.json`): the
+`rule` field is a free label, either a bare code (`T001`) or a code with
+a suffix naming the case (`E008-column`, `EVAL-index-range`,
+`F002-nanometre`); the suffix after the first `-` never changes the
+asserted `code`. Where one rule fires at two severities (L001 warning
+before its date, error after) the fixtures are split per severity and the
+`severity` in `must_fire` is the contract. Labels with no code prefix
+(`precedence`, `fmt-canonical`, `if-else`) name a language or formatter
+rule that raises no diagnostic code; their fixtures assert only
+accept/reject or formatted output.
 
 ## 5a. Parser decisions
 
