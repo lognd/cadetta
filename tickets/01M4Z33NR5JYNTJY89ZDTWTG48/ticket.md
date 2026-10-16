@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-16T04:31:09Z"
+updated = "2026-10-16T04:31:16Z"
 idempotency_key = "a0fq-f002"
-scope = ["tests/conformance/**"]
+scope = ["tests/conformance/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "Decision recorded and fixture plus known-gaps entry consistent with language.md 3.7"
