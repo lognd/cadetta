@@ -41,7 +41,7 @@ bound = false
 
 [[acceptance]]
 text = "Given position on a Point3, combined with a coordinate tolerance, or with a toleranced generator member, when checked, then E006 (geometry.md 3.1)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given .x of a position-toleranced point, when bounded, then it is exactly [-d/2, d/2]; a mixed projection after an off-90deg rotation uses the Euclidean norm, marked conservative (quantities.md 5.4)"
