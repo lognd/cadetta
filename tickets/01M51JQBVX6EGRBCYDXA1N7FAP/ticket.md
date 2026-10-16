@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T05:24:58Z"
-updated = "2026-10-16T09:08:45Z"
+updated = "2026-10-16T09:09:02Z"
 scope = ["crates/cadetta-sema/src/**", "docs/spec/language.md"]
 
 [[acceptance]]
