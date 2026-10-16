@@ -2,12 +2,12 @@
 id = "01M4V43BMZDEJT779G1N69K25Y"
 title = "Spec decisions from geometry conformance fixtures"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-16T07:19:49Z"
+updated = "2026-10-16T07:19:50Z"
 scope = ["docs/spec/geometry.md"]
 
 [[acceptance]]
