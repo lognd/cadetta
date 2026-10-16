@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-16T08:24:48Z"
-scope = ["tests/conformance/solvers/s006-*/**,tests/conformance/solvers/s006-*,tests/conformance/known-gaps.toml"]
+updated = "2026-10-16T08:25:00Z"
+scope = ["tests/conformance/solvers/s006-*/**,tests/conformance/solvers/s006-*,tests/conformance/known-gaps.toml", "tests/conformance/solvers/s006-*/**"]
 
 [[acceptance]]
 text = "The two s006 variant fixtures (unsolved-variant, unchanged-variant-reads-primary) pass in the conformance corpus; their gaps are removed; the primary-missing fixture is re-gapped under ~RWGVA1F"
