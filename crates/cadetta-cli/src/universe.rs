@@ -468,6 +468,37 @@ pub fn candidates(universes: &[Universe]) -> Vec<Candidate> {
     out
 }
 
+/// The `ack` candidates for `sync:FILE`: one attestable obligation per native file any adapter
+/// last saved (a `synced file=` lock record), carrying that saved digest. Attesting one
+/// discharges its open O004 in [`sync_states`] (obligations.md 2.3, 3).
+// frob:ticket 01M52TH35NQBTKBHMBH6WF08GT
+pub fn sync_candidates(lock: &Lock) -> Vec<AckCandidate> {
+    let mut by_file = std::collections::BTreeMap::new();
+    for r in lock.records() {
+        if let Record::SyncedFile(f) = r {
+            by_file
+                .entry(f.file.clone())
+                .or_insert_with(|| f.digest.clone());
+        }
+    }
+    tracing::debug!(count = by_file.len(), "universe: sync ack candidates");
+    by_file
+        .into_iter()
+        .map(|(file, digest)| AckCandidate {
+            id: ObligationId::new(ObligationKind::Sync, file),
+            subject: Subject::Attest {
+                covered: Digest(digest.as_str().to_owned()),
+                deps: Vec::new(),
+                judgement: Judgement {
+                    verdict: Verdict::Holds,
+                    margin: NO_MARGIN.to_owned(),
+                },
+                citations: Vec::new(),
+            },
+        })
+        .collect()
+}
+
 /// The `ack` candidates: one sign-off per IR check.
 pub fn ack_candidates(universes: &[Universe]) -> Vec<AckCandidate> {
     universes
@@ -1175,6 +1206,19 @@ mod tests {
             "{v}"
         );
         assert_eq!(code, 0, "{v}");
+    }
+
+    // sync_candidates offers each saved native file with its saved digest.
+    // frob:ticket 01M52TH35NQBTKBHMBH6WF08GT
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_candidates
+    #[test]
+    fn sync_candidates_offer_each_synced_file() {
+        use cadetta_obligations::lock::Lock;
+        let dir = synced_project("6mm", "");
+        let lock = Lock::load(&dir.0.join("cadetta.lock")).unwrap();
+        let c = super::sync_candidates(&lock);
+        assert_eq!(c.len(), 1);
+        assert_eq!(c[0].id.to_string(), "sync:part.FCStd");
     }
 
     // an attest record on sync:FILE discharges the open O004.
