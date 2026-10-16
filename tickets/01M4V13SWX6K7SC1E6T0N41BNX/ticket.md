@@ -2,12 +2,13 @@
 id = "01M4V13SWX6K7SC1E6T0N41BNX"
 title = "language: table lookup, fit and variant pipeline unimplemented (E007 E008 F001-F004 I001-I004 T001 G001 P001 U002)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-16T20:13:19Z"
+updated = "2026-10-16T20:13:52Z"
 scope = ["crates/**"]
 
 [[acceptance]]
