@@ -2,7 +2,8 @@
 id = "01M51S49V6TVMESDJWKRE93MRS"
 title = "Roll-up over misspelled member must report E002, not internal EVAL"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
