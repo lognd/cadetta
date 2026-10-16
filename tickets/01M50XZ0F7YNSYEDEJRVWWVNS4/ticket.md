@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T23:22:09Z"
-updated = "2026-10-16T00:06:07Z"
+updated = "2026-10-16T00:09:07Z"
 idempotency_key = "leftovers-k8v6dsy-fit-instances"
 scope = ["crates/cadetta-sema/src/**", "docs/spec/language.md"]
 
