@@ -19,7 +19,7 @@ use crate::config::{Config, Gate};
 use crate::output::Format;
 use crate::pipeline::analyze;
 use crate::project::Project;
-use crate::universe::{ack_candidates, universes, waiver_candidates};
+use crate::universe::{ack_candidates, sync_candidates, universes, waiver_candidates};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 const USAGE: &str = "usage: cadetta ack SELECTOR --role R --reason \"...\" \
@@ -417,6 +417,7 @@ pub fn run_ack(args: &[String], globals: &Globals, out: &mut dyn Write, err: &mu
     let universes = universes(&analysis);
     let mut candidates = ack_candidates(&universes);
     candidates.extend(waiver_candidates(&analysis, &universes));
+    candidates.extend(sync_candidates(&lock));
     let author = |_: &ObligationId| None;
     let env = AckEnv {
         policy: &policy,
@@ -519,6 +520,34 @@ mod tests {
     fn attest_of(lock: &Lock, path: &str, role: &str) -> Option<Attest> {
         lock.attestation(&ObligationId::new(ObligationKind::Check, path), role)
             .cloned()
+    }
+
+    // frob:ticket 01M52TH35NQBTKBHMBH6WF08GT
+    // frob:tests crates/cadetta-cli/src/cmd/ack.rs::ack
+    #[test]
+    fn sync_file_candidate_is_attested_under_its_role() {
+        let mut p = policy();
+        p.add_role("cad", &["sync:**"], None, None, false).unwrap();
+        let cand = Candidate {
+            id: ObligationId::new(ObligationKind::Sync, "part.FCStd"),
+            ..check("x", "0a")
+        };
+        let author = |_: &ObligationId| None;
+        let env = AckEnv {
+            policy: &p,
+            candidates: std::slice::from_ref(&cand),
+            by: "ana@x",
+            today: Date::new("2026-10-16").unwrap(),
+            author: &author,
+        };
+        let mut lock = Lock::new();
+        let a = args("sync:part.FCStd", "cad");
+        let first = ack(&a, &env, &mut lock).unwrap();
+        assert_eq!(first[0].1, Action::Recorded);
+        let id = ObligationId::new(ObligationKind::Sync, "part.FCStd");
+        assert!(lock.attestation(&id, "cad").is_some());
+        let again = ack(&a, &env, &mut lock).unwrap();
+        assert_eq!(again[0].1, Action::Unchanged);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/ack.rs::ack
