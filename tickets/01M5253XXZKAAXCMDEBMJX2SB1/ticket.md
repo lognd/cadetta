@@ -4,9 +4,10 @@ title = "cadetta update exits 2 on E012/E013; spec says exit 1"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-16T10:46:24Z"
-updated = "2026-10-16T10:46:24Z"
+updated = "2026-10-16T11:08:08Z"
 scope = ["crates/cadetta-cli/src/cmd/update.rs"]
 +++
 
