@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-16T05:32:41Z"
-scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/adapters/README.md"]
+updated = "2026-10-16T05:41:40Z"
+scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/adapters/README.md", "crates/cadetta-cli/tests/conformance.rs"]
 
 [[acceptance]]
 text = "The conformance runner observes names_path_or_key: true holds when the config-error message names a design path or locator key of the offending binding"
