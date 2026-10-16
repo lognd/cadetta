@@ -2,12 +2,12 @@
 id = "01M52N4A2CFMX2RJ32RWA4PAR9"
 title = "Conformance: waived diagnostics no longer counted; fix w001-w005 fixtures"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T15:26:14Z"
-updated = "2026-10-16T15:26:14Z"
+updated = "2026-10-16T15:26:16Z"
 scope = ["tests/conformance/lints/w00*", "tests/conformance/obligations/w003-*"]
 
 [[acceptance]]
