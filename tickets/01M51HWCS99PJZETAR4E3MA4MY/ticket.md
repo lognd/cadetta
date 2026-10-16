@@ -2,7 +2,8 @@
 id = "01M51HWCS99PJZETAR4E3MA4MY"
 title = "display VALUE: accept exact fraction numerators (1/3m) for quantities/display-plain-exact-decimal"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
