@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Fit.hole/shaft carry the real operand member paths (fitderive tests)", "M003 fires at the real fit operand (conformance stdlib/m003-hole-fit-side, gap removed)"]
+moved = []
+at = "2026-10-16T04:23:32Z"
+actor = "lognd"
+rev = 1

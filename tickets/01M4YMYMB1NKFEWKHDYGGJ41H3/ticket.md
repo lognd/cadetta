@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:06:10Z"
-updated = "2026-10-16T04:11:00Z"
-scope = ["crates/cadetta-cli/src/pipeline.rs"]
+updated = "2026-10-16T04:28:14Z"
+scope = ["crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "Resolver E-family errors are lifted through e::lift_resolution (notes for E003/E004 related spans), message text unchanged"

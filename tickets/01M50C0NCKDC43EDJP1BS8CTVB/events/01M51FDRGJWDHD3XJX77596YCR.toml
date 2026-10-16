@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: disc-aware norm via per-disc Gram/spectral-radius bounds. Exact for coplanar isotropic discs with no box part (sum of radii), conservative for tilted/elliptic/box-mixed or pi-factor forms. Inexact rotations use the Euclidean reach per disc and drop the disc identity (aligned/distance then conservative). Added Affine::disc_vars and box_radius. Documented in geometry.md 3.1 and quantities.md 5.4."
+at = "2026-10-16T04:27:17Z"
+actor = "lognd"
+rev = 1
