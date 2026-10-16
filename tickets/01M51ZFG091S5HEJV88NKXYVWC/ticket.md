@@ -4,9 +4,10 @@ title = "Evaluate checks ranging over part instances and reads of a part instanc
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-16T09:07:52Z"
-updated = "2026-10-16T09:07:52Z"
+updated = "2026-10-16T09:52:45Z"
 scope = ["crates/cadetta-sema/src/eval/**"]
 +++
 
