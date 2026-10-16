@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the two corrected fixtures, when the conformance corpus runs, then both pass with no known-gaps entry"]
+moved = []
+at = "2026-10-16T06:19:02Z"
+actor = "lognd"
+rev = 1
