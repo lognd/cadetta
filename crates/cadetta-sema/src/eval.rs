@@ -524,7 +524,7 @@ pub struct Evaluator<'r, 'p> {
     // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
     fit_defs: BTreeMap<CanonPath, FitDef<'p>>,
     /// Fit clearances computed so far (`None` when the fit could not be analysed).
-    fit_done: BTreeMap<CanonPath, Option<Quant>>,
+    fit_done: BTreeMap<CanonPath, Option<FitQuants>>,
     /// Compiled processes, so a check can read `x.drawn` (language.md 3.8).
     // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
     processes: Option<Rc<crate::process::Processes>>,
@@ -539,6 +539,18 @@ pub struct Evaluator<'r, 'p> {
 struct FitDef<'p> {
     fit: &'p ast::Fit,
     ctx: Ctx,
+    /// The instance the fit belongs to, when it is a member of a parameterized callee.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    inst: Option<Rc<instances::InstInfo>>,
+}
+
+/// The evaluated `hole`, `shaft` and `clearance` of one fit.
+// frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+#[derive(Clone)]
+struct FitQuants {
+    hole: Quant,
+    shaft: Quant,
+    clearance: Quant,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -949,8 +961,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         ));
                     }
                     path
-                } else if self.defs.contains_key(&first_member(&path)) {
+                } else if self.defs.contains_key(&first_member(&path))
+                    || self.is_fit(&first_member(&path))
+                {
                     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+                    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
                     path
                 } else {
                     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
@@ -1000,7 +1015,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
             RefKind::Table(path) => Ok(Val::Table(path)),
             RefKind::Component(path) => Ok(Val::Component(path)),
-            RefKind::Member { key, chain } if self.fit_defs.contains_key(&key) => {
+            RefKind::Member { key, chain } if self.is_fit(&key) => {
                 self.fit_member(&key, &chain, e.span)
             }
             RefKind::Member { key, chain } if self.solver_keys.contains(&key) => {
@@ -1068,57 +1083,117 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         self.processes = Some(Rc::new(processes));
     }
 
-    /// Reads `NAME.clearance` of a `fit` member (language.md 3.7): hole minus shaft, as an interval.
+    /// Reads `NAME.hole`, `NAME.shaft` or `NAME.clearance` of a `fit` member (language.md 3.7).
     // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
     fn fit_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
-        match chain {
-            [name] if name == "clearance" => {}
+        let side = match chain {
+            [name] if matches!(name.as_str(), "hole" | "shaft" | "clearance") => name.as_str(),
             _ => {
                 return Err(diag(
                     "EVAL",
                     span,
-                    "only `.clearance` is readable on a fit here",
+                    "only `.hole`, `.shaft` and `.clearance` are readable on a fit here",
                 ));
             }
+        };
+        if !self.fit_done.contains_key(key) {
+            if !self.in_progress.insert(key.clone()) {
+                trace!(%key, "evaluator: fit cycle, left to D003");
+                return Err(Fail::Silent);
+            }
+            let out = self.fit_quants(key);
+            self.in_progress.remove(key);
+            debug!(%key, ok = out.is_some(), "evaluator: fit evaluated");
+            self.fit_done.insert(key.clone(), out);
         }
-        if let Some(done) = self.fit_done.get(key) {
-            return done.clone().map(Val::Quantity).ok_or(Fail::Silent);
-        }
-        if !self.in_progress.insert(key.clone()) {
-            trace!(%key, "evaluator: fit cycle, left to D003");
-            return Err(Fail::Silent);
-        }
-        let out = self.fit_clearance(key);
-        self.in_progress.remove(key);
-        debug!(%key, ok = out.is_some(), "evaluator: fit clearance evaluated");
-        self.fit_done.insert(key.clone(), out.clone());
-        out.map(Val::Quantity).ok_or(Fail::Silent)
+        let done = self.fit_done.get(key).cloned().flatten();
+        let q = done.map(|f| match side {
+            "hole" => f.hole,
+            "shaft" => f.shaft,
+            _ => f.clearance,
+        });
+        q.map(Val::Quantity).ok_or(Fail::Silent)
     }
 
-    /// The clearance of fit `key`, or `None` when an operand or the analysis failed (F001/F002 are the lint's).
-    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
-    fn fit_clearance(&mut self, key: &CanonPath) -> Option<Quant> {
-        let FitDef { fit, ctx } = self.fit_defs.get(key)?.clone();
-        let operand = |this: &mut Self, p: &ast::Path| -> Option<Toleranced> {
-            let Ok(Resolved::Member { path, .. }) = this.resolver.resolve_path(&ctx, p, None)
-            else {
-                return None;
-            };
-            match this.value_of(&path)?.value {
-                Val::Quantity(q) => crate::fitderive::toleranced(&q).ok(),
-                _ => None,
-            }
+    /// The fit definition at `key`: a fit of a plain component, or of a parameterized instance.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn fit_def_of(&self, key: &CanonPath) -> Option<FitDef<'p>> {
+        if let Some(d) = self.fit_defs.get(key) {
+            return Some(d.clone());
+        }
+        let [MemberSeg::Name(name)] = key.members.as_slice() else {
+            return None;
         };
+        let mut prefix = key.clone();
+        prefix.members.clear();
+        let (info, component, ctx) = self.instances.lookup(&prefix)?;
+        component.members.iter().find_map(|m| match &m.kind {
+            MemberKind::Fit(f) if f.name.name == *name => Some(FitDef {
+                fit: f,
+                ctx: ctx.clone(),
+                inst: Some(info.clone()),
+            }),
+            _ => None,
+        })
+    }
+
+    /// True when `key` names a fit member, of a plain component or of an instance.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn is_fit(&self, key: &CanonPath) -> bool {
+        self.fit_def_of(key).is_some()
+    }
+
+    /// The tolerance of a fit operand as read in the fit's own scope (instance `inst` when given).
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn fit_operand(
+        &mut self,
+        ctx: &Ctx,
+        inst: Option<&Rc<instances::InstInfo>>,
+        p: &ast::Path,
+    ) -> Option<Toleranced> {
+        let (Ok(Resolved::Member { path, .. }) | Ok(Resolved::Arg { path, .. })) =
+            self.resolver.resolve_path(ctx, p, None)
+        else {
+            return None;
+        };
+        let saved = std::mem::replace(&mut self.cur_inst, inst.cloned());
+        let path = self.instance_path(&path).unwrap_or(path);
+        self.cur_inst = saved;
+        let Ok(RefKind::Member { key, chain }) = member_ref(path, p.span) else {
+            return None;
+        };
+        let v = self.value_of(&key)?;
+        let q = match self.apply_chain(v.value, v.role.map(|r| r.role), &chain, p.span) {
+            Ok(Val::Quantity(q)) => q,
+            _ => return None,
+        };
+        crate::fitderive::toleranced(&q).ok()
+    }
+
+    /// The hole, shaft and clearance of fit `key`, or `None` when an operand or the analysis failed (F001/F002 are the lint's).
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fn fit_quants(&mut self, key: &CanonPath) -> Option<FitQuants> {
+        let FitDef { fit, ctx, inst } = self.fit_def_of(key)?;
         let (first, second) = match &fit.spec {
-            ast::FitSpec::Paths(a, b) => (operand(self, a)?, Some(operand(self, b)?)),
-            _ => (operand(self, &fit.on)?, None),
+            ast::FitSpec::Paths(a, b) => (
+                self.fit_operand(&ctx, inst.as_ref(), a)?,
+                Some(self.fit_operand(&ctx, inst.as_ref(), b)?),
+            ),
+            _ => (self.fit_operand(&ctx, inst.as_ref(), &fit.on)?, None),
         };
         let result = crate::fits::analyze(&fit.spec, &first, second.as_ref(), None).ok()?;
-        let var = self.fresh_var();
-        let form = result.clearance.to_affine(var).ok()?;
-        Some(Quant {
-            form,
-            nominal: result.clearance.nominal().clone(),
+        let mut quant = |t: &Toleranced| -> Option<Quant> {
+            let var = self.fresh_var();
+            Some(Quant {
+                form: t.to_affine(var).ok()?,
+                nominal: t.nominal().clone(),
+            })
+        };
+        Some(FitQuants {
+            hole: quant(&result.hole.value)?,
+            shaft: quant(&result.shaft.value)?,
+            clearance: quant(&result.clearance)?,
         })
     }
 
@@ -1747,6 +1822,7 @@ fn index_fits<'p>(
                 FitDef {
                     fit: f,
                     ctx: ctx.clone(),
+                    inst: None,
                 },
             );
         }
@@ -2365,6 +2441,28 @@ mod tests {
         // H7 spans 0..+21um and p6 +22..+35um: clearance is -35um .. -1um.
         assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
         assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
+    }
+
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:tests fit_quants
+    #[test]
+    fn fit_hole_shaft_clearance_evaluate_in_a_parameterized_instance() {
+        let ev = run(&file(
+            "interface Brg {\n  outer_dia: Length\n}\n\
+             ots B1: Brg {\n  outer_dia = 22mm\n}\n\
+             model Housing(bearing: Brg) {\n  fit bore_fit = H7 on bearing.outer_dia\n  \
+             bore_dia = bore_fit.hole\n}\n\
+             assembly Unit {\n  part b: Brg = B1\n  part housing: Housing(bearing = b)\n  \
+             h = housing.bore_fit.hole\n  s = housing.bore_fit.shaft\n  \
+             c = housing.bore_fit.clearance\n  d = housing.bore_dia\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        // The 22mm bearing bore is the nominal of both sides of the fit.
+        let h = quant(&ev, "Unit", "h");
+        assert_eq!(h.nominal, m(22, 1_000));
+        assert_eq!(quant(&ev, "Unit", "d").nominal, h.nominal);
+        assert_eq!(quant(&ev, "Unit", "s").nominal, m(22, 1_000));
+        assert!(ev.get(&at("Unit", "c")).is_some());
     }
 
     // frob:tests drawn_member_reads_rule_applied_to_nominal

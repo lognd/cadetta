@@ -446,7 +446,10 @@ and a computed `NAME.type` (clearance, transition, interference), and
 gives each side its role. F003 when a side's own tolerance disagrees
 with the class it is declared to play. A check or `let` can read
 `NAME.clearance` (an interval quantity, so `.min`/`.max` apply); the
-evaluator computes it on demand from the fit's operands. Against a required range, a
+evaluator computes it on demand from the fit's operands. The same holds
+for `.hole` and `.shaft`, including a fit inside a parameterized component:
+its operands read the instance's arguments, so each instance evaluates its
+own fit (`Unit/housing.bore_fit.hole`). Against a required range, a
 clearance entirely outside it is F004 (violates); one that overlaps it
 only in part is C002 on the fit (undecided), like any check.
 
