@@ -2,12 +2,12 @@
 id = "01M4ZAN1F6F1R2DFW1PHMB7P7J"
 title = "Conformance: tool-session model for binding sync fixtures (R004 R008-R010 save attach O004)"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T08:25:25Z"
-updated = "2026-10-15T08:25:25Z"
+updated = "2026-10-16T15:53:01Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**"]
 
 [[acceptance]]
