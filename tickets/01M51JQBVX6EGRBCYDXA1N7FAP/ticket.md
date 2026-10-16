@@ -7,8 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T05:24:58Z"
-updated = "2026-10-16T09:04:20Z"
+updated = "2026-10-16T09:07:55Z"
 scope = ["crates/cadetta-sema/src/**", "docs/spec/language.md"]
+
+[[acceptance]]
+text = "An indexed part-array argument (bearing = b[0]) evaluates the callee's per-instance members and fits"
+bound = false
 +++
 
 found while working ~93GZBM2: golden reports BearingUnit/housing.bore_fit.* and other instance member paths as not in the IR; also Bracket.bore_fits_tube check not in the IR.
