@@ -1,0 +1,8 @@
+model Part {
+  width = 5mm
+  check ok: width > 6mm
+}
+waive C001 on acme.demo::Part.ok {
+  because "vendor data"
+  expires 2099-1-1
+}

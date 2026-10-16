@@ -1,0 +1,4 @@
+fn f(n: Count) -> Count { f(n) }
+model M {
+  x = f(1)
+}
