@@ -7,7 +7,7 @@ priority = "high"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T15:26:14Z"
-updated = "2026-10-16T15:48:03Z"
+updated = "2026-10-16T15:50:10Z"
 scope = ["tests/conformance/lints/w00*", "tests/conformance/obligations/w003-*"]
 
 [[acceptance]]
