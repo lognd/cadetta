@@ -2,7 +2,8 @@
 id = "01M51JQBVX6EGRBCYDXA1N7FAP"
 title = "Golden 02: per-instance member paths (BearingUnit/housing.*) missing from IR"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
