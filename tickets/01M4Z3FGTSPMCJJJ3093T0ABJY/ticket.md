@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T06:20:04Z"
-updated = "2026-10-16T13:05:47Z"
+updated = "2026-10-16T13:18:06Z"
 scope = ["crates/cadetta-lint/**", "crates/cadetta-lint/src/engine.rs", "docs/spec/lints.md", "tests/conformance/language/waiver-item-path*"]
+
+[[acceptance]]
+text = "A waiver on an item path covers diagnostics at paths beneath it (lints.md 2.1)"
+bound = false
 +++
 
 Found in ~8NXQSDY. 'waive C001 on acme.demo::A' does not match C001 at acme.demo::A.load_rating, so W004 fires and C001 stays an error.
