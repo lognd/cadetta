@@ -2,7 +2,7 @@
 id = "01M51C7447BXNMGJXBFBSPG4VY"
 title = "EVAL checks for part arrays and array literals not implemented (language.md 3.5/3.8)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
