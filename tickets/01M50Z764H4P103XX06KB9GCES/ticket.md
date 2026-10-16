@@ -7,7 +7,7 @@ priority = "high"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T23:44:05Z"
-updated = "2026-10-15T23:58:38Z"
+updated = "2026-10-16T00:20:29Z"
 idempotency_key = "s003-solver-stale-fix"
 scope = ["tests/conformance/**", "crates/cadetta-cli/src/**"]
 
