@@ -2,7 +2,8 @@
 id = "01M50C0NEZM1R9KYFTRJCJY1Z8"
 title = "Syntax/sema/IR: [position d] on Point2, E006 rules, Point.position and .u/.v schema"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
