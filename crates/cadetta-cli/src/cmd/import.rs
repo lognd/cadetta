@@ -172,6 +172,31 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
     })
 }
 
+/// The configurations the adapter reports besides the active one; import reads only the
+/// active configuration (adapters.md 7.3), so these are named in an info note instead.
+pub fn inactive_configurations(observed: &Value) -> Vec<String> {
+    let projects: Vec<&Value> = match observed {
+        Value::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    let mut out: Vec<String> = Vec::new();
+    for project in projects {
+        let active = project.get("active_config").and_then(Value::as_str);
+        let listed = project
+            .get("configurations")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str);
+        for name in listed.filter(|n| Some(*n) != active) {
+            if !out.iter().any(|o| o == name) {
+                out.push(name.to_owned());
+            }
+        }
+    }
+    out
+}
+
 /// Decode an adapter's `observed` JSON (one project, or an array of them) into one observed
 /// project per native file, applying `assume_unit` to unitless values.
 pub fn decode_observed(
@@ -533,6 +558,14 @@ fn propose_mode(
     }
     for d in &read.diagnostics {
         report.notes.push(d.0.to_string());
+    }
+    let others = inactive_configurations(&read.observed);
+    if !others.is_empty() {
+        tracing::info!(configurations = ?others, "import: only the active configuration is read");
+        report.notes.push(format!(
+            "info: only the active configuration was imported; not imported: {}",
+            others.join(", ")
+        ));
     }
     Ok(report)
 }
@@ -906,6 +939,17 @@ fn accept(project: &Project, scope: &[usize], parsed: &ImportArgs) -> Result<Imp
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::inactive_configurations
+    #[test]
+    fn inactive_configurations_lists_all_but_the_active() {
+        let obs =
+            serde_json::json!({"configurations": ["Default", "Heavy"], "active_config": "Default"});
+        assert_eq!(inactive_configurations(&obs), vec!["Heavy".to_owned()]);
+        let one = serde_json::json!({"configurations": ["Default"], "active_config": "Default"});
+        assert!(inactive_configurations(&one).is_empty());
+        assert!(inactive_configurations(&serde_json::json!({})).is_empty());
+    }
 
     /// A self-removing scratch directory (no extra dev-dependency).
     struct Dir(PathBuf);
