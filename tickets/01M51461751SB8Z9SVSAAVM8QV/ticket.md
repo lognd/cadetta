@@ -4,9 +4,10 @@ title = "std::inserts: heat-set and wire-thread inserts (0.2.0 remainder of HP6P
 type = "story"
 category = "todo"
 priority = "low"
+points = 3
 reporter = "lognd"
 created = "2026-10-16T01:10:50Z"
-updated = "2026-10-16T01:10:50Z"
+updated = "2026-10-16T09:21:34Z"
 scope = ["std/src/inserts.cdt"]
 +++
 
