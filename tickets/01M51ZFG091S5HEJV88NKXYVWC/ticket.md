@@ -7,7 +7,7 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-16T09:07:52Z"
-updated = "2026-10-16T09:58:35Z"
+updated = "2026-10-16T09:59:53Z"
 scope = ["crates/cadetta-sema/src/eval/**", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/geom.rs"]
 
 [[acceptance]]
