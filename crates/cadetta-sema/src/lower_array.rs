@@ -1,5 +1,5 @@
 // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
-//! Lowering of part-array instance members (language.md 3.5; ir.md 2).
+//! Lowering of part-array and singular `ots` part instance members (language.md 3.5; ir.md 2).
 //!
 //! `part axle[2]: Axle` over a component with no parameters has no per-instance definitions:
 //! every instance shares the callee's arguments, so each instance member `Rover/axle[i].len`
@@ -30,7 +30,7 @@ impl Cx<'_> {
             let ast::MemberKind::Part(part) = &m.kind else {
                 continue;
             };
-            if part.count.is_none() || part.primary.is_some() {
+            if part.primary.is_some() {
                 continue;
             }
             let Some((callee_path, callee)) = self.resolver.part_type(package, module, &part.ty)
@@ -41,11 +41,22 @@ impl Cx<'_> {
                 trace!(part = %part.name.name, "lower: array callee not lowered here");
                 continue;
             }
-            let mut slot = canon.clone();
-            slot.members.push(MemberSeg::Name(part.name.name.clone()));
-            let Some(&count) = ev.part_counts.get(&slot) else {
-                debug!(part = %part.name.name, "lower: array members skipped, count unknown");
-                continue;
+            // A singular part is lowered only for an `ots` callee (`Unit/ring.bore_nominal`):
+            // its members are catalogue data the instance carries as-is.
+            let indices: Vec<Option<u64>> = if part.count.is_none() {
+                if callee.class != ast::ComponentClass::Ots {
+                    trace!(part = %part.name.name, "lower: singular non-ots part not lowered here");
+                    continue;
+                }
+                vec![None]
+            } else {
+                let mut slot = canon.clone();
+                slot.members.push(MemberSeg::Name(part.name.name.clone()));
+                let Some(&count) = ev.part_counts.get(&slot) else {
+                    debug!(part = %part.name.name, "lower: array members skipped, count unknown");
+                    continue;
+                };
+                (0..count).map(Some).collect()
             };
             for cm in &callee.members {
                 let (name, private) = match &cm.kind {
@@ -55,11 +66,11 @@ impl Cx<'_> {
                 };
                 let def = member_path(&callee_path, name);
                 let Some(e) = ev.get(&def) else { continue };
-                for i in 0..count {
+                for i in &indices {
                     let mut key = canon.clone();
                     key.parts.push(PartSeg {
                         name: part.name.name.clone(),
-                        index: Some(Index::At(i)),
+                        index: i.map(Index::At),
                     });
                     key.members = vec![MemberSeg::Name(name.clone())];
                     let Some(path) = ir_path(&key) else { continue };
@@ -75,7 +86,7 @@ impl Cx<'_> {
                     out.push(mem);
                 }
             }
-            debug!(part = %part.name.name, count, "lower: array instance members");
+            debug!(part = %part.name.name, instances = indices.len(), "lower: part instance members");
         }
         out
     }

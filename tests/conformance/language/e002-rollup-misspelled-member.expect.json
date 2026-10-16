@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.5",
+  "rule": "E002-rollup-misspelled-member",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E002",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

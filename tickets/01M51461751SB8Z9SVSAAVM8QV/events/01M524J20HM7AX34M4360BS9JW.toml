@@ -1,0 +1,17 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T10:34:17Z"
+digest = "87eceb1be0c808be234fbf4599fd65ac802f4a187fe74d82239aee13c335ec27"
+exit_code = 100
+failed_tests = ["bare_adapter_command_is_not_run_from_path_and_finishes", "display_binding_fixtures_execute_and_match", "known_gap_tolerates_failure_and_flags_stale_entry", "unmet_expectation_fails_naming_fixture_doc_and_code", "adapters_and_sw_equations_corpus_is_not_empty", "editors_readme_indexes_and_root_links_it", "vscode_manifest_declares_language_matcher_and_task", "lint_fires_d003_with_exit_1_and_stays_quiet_with_exit_0", "span_offsets_become_line_and_column_of_the_source_beside_the_document", "q004_beyond_precision_fires_and_withholds_the_file", "geometry_codes_reach_check_and_stay_quiet_on_the_clean_twins", "sync_manual_fallback_raises_r014_and_withholds_the_file", "filtered_or_unbound_text_parameter_is_not_emitted_and_not_an_error", "bound_text_parameter_is_r014_and_withholds_the_file", "unsupported_locator_on_json_or_csv_is_r015_and_exit_1", "tests::cwd_and_config_are_validated"]
+passed = false
+provider = "nextest"
+ref = "package(cadetta-syntax) and test(inserts_tables_are_cited_with_expected_shape)"
+size = 60063
+status = "measured"
+test_count = 457
+tests_digest = "785aa3b221d0ff6200f198872ec84fd0f6994947d0df543636bd4b7046c37731"
+uri = "dir:.git/frob/artifacts/87eceb1be0c808be234fbf4599fd65ac802f4a187fe74d82239aee13c335ec27"
+at = "2026-10-16T10:34:17Z"
+actor = "lognd"
+rev = 1

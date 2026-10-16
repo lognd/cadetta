@@ -4,9 +4,10 @@ title = "Import executor: then_sync/design/native/lock modelling and fixture inc
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-16T09:19:52Z"
-updated = "2026-10-16T09:19:52Z"
+updated = "2026-10-16T09:23:36Z"
 scope = ["crates/cadetta-cli/tests/**"]
 +++
 

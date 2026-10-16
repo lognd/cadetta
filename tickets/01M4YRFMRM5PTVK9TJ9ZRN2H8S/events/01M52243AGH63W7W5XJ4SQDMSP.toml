@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A registry-only dependency and a package, member or dependency named std are reported as E005, not a config error"]
+moved = []
+at = "2026-10-16T09:54:04Z"
+actor = "lognd"
+rev = 1

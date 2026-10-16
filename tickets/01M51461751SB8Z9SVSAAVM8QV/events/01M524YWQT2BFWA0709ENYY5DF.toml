@@ -1,0 +1,26 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T10:43:35Z"
+digest = "4e2091b7695be491d0568252059c69ac16e0d9300a8a7200bd3857e2c98a8aa8"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.59s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID bb984dc0-ade2-4b91-a821-5575d4097fca with nextest profile: default
+    Starting 2 tests across 16 binaries (108 tests skipped)
+        PASS [   0.005s] cadetta-syntax::std_lib_root root_parses_clean_and_only_reexports
+        PASS [   0.005s] cadetta-syntax::std_inserts inserts_tables_are_cited_with_expected_shape
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 2 tests run: 2 passed, 108 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'test(=inserts_tables_are_cited_with_expected_shape) | test(=root_parses_clean_and_only_reexports)'"
+size = 729
+status = "measured"
+test_count = 2
+tests_digest = "6af4aa23dec68a65ffe3f1b4e5535921e6b937a8314e9804381c7a92691027cd"
+at = "2026-10-16T10:43:35Z"
+actor = "lognd"
+rev = 1

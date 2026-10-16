@@ -122,7 +122,7 @@ fn pipes(text: String) -> (Wire, Sink, Rc<Cell<usize>>) {
 }
 
 /// One JSON-RPC result line.
-fn rpc(id: usize, result: &Value) -> String {
+pub(super) fn rpc(id: usize, result: &Value) -> String {
     json!({"jsonrpc": "2.0", "id": id, "result": result}).to_string()
 }
 
@@ -392,7 +392,7 @@ fn launch(spec: &Value) -> Result<Facts, String> {
 }
 
 /// Write `text` under `root`.
-fn put(root: &Path, rel: &str, text: &str) -> Result<(), String> {
+pub(super) fn put(root: &Path, rel: &str, text: &str) -> Result<(), String> {
     let path = root.join(rel);
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
@@ -401,7 +401,7 @@ fn put(root: &Path, rel: &str, text: &str) -> Result<(), String> {
 }
 
 /// Write an executable script under `root`.
-fn put_exec(root: &Path, rel: &str, text: &str) -> Result<(), String> {
+pub(super) fn put_exec(root: &Path, rel: &str, text: &str) -> Result<(), String> {
     use std::os::unix::fs::PermissionsExt;
     put(root, rel, text)?;
     let path = root.join(rel);

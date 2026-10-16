@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: a roll-up is a misspelling (E002 at the roll-up expression, per stdlib.md conformance decisions) when parts contribute, none of them has the member, and no part type in the walk declares it as a parameter or member. Partial lack, zero instances, and an absent optional argument stay EVAL. Fixture eval-rollup-no-contributor must-fire changed to a zero-instance array; new fixture e002-rollup-misspelled-member."
+at = "2026-10-16T10:21:08Z"
+actor = "lognd"
+rev = 1

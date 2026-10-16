@@ -295,6 +295,44 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .is_some_and(|p| p.count.is_some())
     }
 
+    /// The per-instance values of a counted `part` slot named by `source`: one component value per
+    /// instance (every element shares the slot's component); `None` when `source` is not a part array
+    /// or its count does not evaluate.
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    pub(super) fn part_array_values(&mut self, sc: &Scope, source: &Expr) -> Option<Vec<Val>> {
+        let (crate::resolve::Resolved::Part { path }, _) = self
+            .renames
+            .resolve_ref(self.resolver, &sc.ctx, source, None)
+            .ok()?
+        else {
+            return None;
+        };
+        let (last, outer) = path.parts.split_last()?;
+        let mut owner = path.item_only();
+        for seg in outer {
+            owner = step_part(self.resolver, self.selection.as_ref(), &owner, &seg.name)
+                .ok()?
+                .0;
+        }
+        let count_expr = find_part(self.resolver.component(&owner)?, &last.name)?
+            .count
+            .as_ref()?;
+        let mut owner_sc = Scope {
+            ctx: Ctx {
+                package: owner.package.clone(),
+                module: owner.modules.clone(),
+                component: Some(owner.item.clone()),
+                locals: Vec::new(),
+            },
+            locals: Vec::new(),
+        };
+        let q = self.quant(&mut owner_sc, count_expr).ok()?;
+        let n = parts::array_count(&q).ok()?;
+        let def = definition_path(self.resolver, &path)?;
+        debug!(slot = %path, n, "evaluator: quantifier ranges over a part array");
+        Some((0..n).map(|_| Val::Component(def.clone())).collect())
+    }
+
     /// `base[i]`: the i-th element of an evaluated array.
     pub(super) fn index(&mut self, sc: &mut Scope, base: &Expr, idx: &Expr, span: Span) -> R<Val> {
         let items = match self.eval(sc, base)? {
@@ -312,6 +350,16 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let i = parts::array_count(&q).map_err(|_| {
                     diag("EVAL", idx.span, "an index is a non-negative whole number")
                 })?;
+                // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+                if let Some(n) = self.part_array_values(sc, base).map(|v| v.len())
+                    && i as usize >= n
+                {
+                    return Err(diag(
+                        "EVAL",
+                        span,
+                        format!("index {i} is out of range for a part array of {n}"),
+                    ));
+                }
                 trace!(slot = %path, index = i, "indexed part array reads its component");
                 return Ok(Val::Component(path));
             }
@@ -641,9 +689,16 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if self.part_counts.contains_key(&pp) {
                 continue;
             }
-            if let Some(n) = self.part_count(id, part) {
-                debug!(part = %part.name.name, n, "geometry: recorded part count");
-                self.part_counts.insert(pp, n);
+            match self.part_count_checked(id, part) {
+                Some(Ok(n)) => {
+                    debug!(part = %part.name.name, n, "geometry: recorded part count");
+                    self.part_counts.insert(pp, n);
+                }
+                Some(Err(Fail::Diag(d))) => {
+                    debug!(part = %part.name.name, "geometry: part count is invalid");
+                    self.diagnostics.push(d);
+                }
+                Some(Err(Fail::Silent)) | None => {}
             }
         }
     }
@@ -725,6 +780,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// The instance count of a `part name[N]` slot, when it has one and `N` evaluates.
     pub(super) fn part_count(&mut self, id: &ComponentId, part: &Part) -> Option<u64> {
+        self.part_count_checked(id, part)?.ok()
+    }
+
+    /// The instance count of a `part name[N]` slot with the reason it is not a count.
+    ///
+    /// `None` when the slot has no `[N]`; `Err` carries Q009 for a fractional dimensionless `N`
+    /// and EVAL for a dimensioned, negative or non-evaluating one.
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    pub(super) fn part_count_checked(&mut self, id: &ComponentId, part: &Part) -> Option<R<u64>> {
         let e = part.count.as_ref()?;
         let mut sc = Scope {
             ctx: Ctx {
@@ -735,8 +799,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             },
             locals: Vec::new(),
         };
-        let q = self.quant(&mut sc, e).ok()?;
-        parts::array_count(&q).ok().map(u64::from)
+        let q = match self.quant(&mut sc, e) {
+            Ok(q) => q,
+            Err(f) => return Some(Err(f)),
+        };
+        Some(match parts::array_count(&q) {
+            Ok(n) => Ok(u64::from(n)),
+            Err(err) => {
+                let fractional = matches!(err, parts::PartsError::NotACount(_))
+                    && q.dim() == &Dim::default()
+                    && q.form.is_exact();
+                let code = if fractional { "Q009" } else { "EVAL" };
+                Err(diag(code, e.span, format!("part count: {err}")))
+            }
+        })
     }
 
     /// Walks a reference chain from `comp`, crossing part slots; `Ok(None)` when it is not a

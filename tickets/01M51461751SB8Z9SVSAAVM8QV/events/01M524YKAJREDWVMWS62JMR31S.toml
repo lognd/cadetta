@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["std/src/inserts.cdt", "std/src/lib.cdt", "docs/spec/stdlib.md", "tests/conformance/stdlib/inserts-*", "crates/cadetta-syntax/tests/std_inserts.rs", "crates/cadetta-cli/src/std_embed.rs"]
+new = ["std/src/inserts.cdt", "std/src/lib.cdt", "docs/spec/stdlib.md", "tests/conformance/stdlib/inserts-*", "crates/cadetta-syntax/tests/std_inserts.rs", "crates/cadetta-cli/src/std_embed.rs", "crates/cadetta-syntax/tests/std_lib_root.rs"]
+at = "2026-10-16T10:43:29Z"
+actor = "lognd"
+rev = 1

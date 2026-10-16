@@ -1889,6 +1889,29 @@ mod tests {
         assert!(rover.members.iter().all(|m| m.value.is_some()));
     }
 
+    // frob:ticket 01M51ZFFQP22HJSYHXXGQGAT9X
+    // frob:tests crates/cadetta-sema/src/lower_array.rs::lower_array_members kind=unit
+    #[test]
+    fn singular_ots_part_members_lower_per_instance_but_models_do_not() {
+        let src = "pub ots Ring {\n  bore = 22mm\n}\n\
+            model Plain {\n  len = 1mm\n}\n\
+            model Unit {\n  part ring: Ring\n  part plain: Plain\n}\n";
+        let b = build(src, &[], &[]);
+        let unit = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Unit")
+            .expect("Unit");
+        let paths: Vec<String> = unit
+            .members
+            .iter()
+            .filter(|m| m.path.to_string().contains('.'))
+            .map(|m| m.path.to_string())
+            .collect();
+        assert_eq!(paths, ["p::Unit/ring.bore"]);
+    }
+
     // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V
     // frob:tests crates/cadetta-sema/src/instances.rs::expand_arrays kind=unit
     #[test]

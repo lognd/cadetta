@@ -1,0 +1,7 @@
+model Leaf {
+  mass = 2kg
+}
+pub assembly Top {
+  part w[2]: Leaf
+  total = sum(self, mass)
+}

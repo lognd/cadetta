@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T09:43:41Z"
+digest = "3951e78d30c40895cdcb71d7e70fbfc23b4db2d87979d549ed991ccf865ada96"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d1da9362-883f-4f75-b734-770e86dedd41 with nextest profile: default
+    Starting 4 tests across 2 binaries
+        PASS [   0.006s] cadetta-capi tests::null_argv_is_rejected
+        PASS [   0.007s] cadetta-capi tests::version_matches_core
+        PASS [   0.007s] cadetta-capi tests::run_version_flag_and_free
+        SLOW [> 60.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+        PASS [  77.906s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  77.907s] 4 tests run: 4 passed (1 slow), 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-capi"
+size = 854
+status = "measured"
+test_count = 4
+tests_digest = "01542875d18c6ff617699ab01e24d958bd0aec9836fa62b7f1bf5acfa515719b"
+at = "2026-10-16T09:43:41Z"
+actor = "lognd"
+rev = 1
