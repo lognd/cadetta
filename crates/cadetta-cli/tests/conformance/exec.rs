@@ -22,6 +22,8 @@ mod protocol; // nested so every conformance target gets it without a new `mod` 
 mod push_plan; // nested like `protocol`, for the same reason
 #[path = "read.rs"]
 mod read; // nested like `protocol`, for the same reason
+#[path = "session.rs"]
+mod session; // nested like `protocol`, for the same reason
 #[path = "sync.rs"]
 mod sync_exec;
 #[path = "two_input.rs"]

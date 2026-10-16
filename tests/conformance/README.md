@@ -270,7 +270,12 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   R009 partition refusal (`locked` counts as read-only), R010 rejected
   locators, save and adopted-clear observations. `push_status` values are a
   bare string for `rejected` and `skipped` and an object
-  `{status, old, new}` for `pushed`. Fixtures needing attach/close, R006
+  `{status, old, new}` for `pushed`. Sync fixtures with `running_instance`, `opened_by_adapter` or `preopened`
+  (attach to a running tool, close only what was opened; adapters.md 2.2)
+  are adapter decisions, so `session.rs` runs the real FreeCAD adapter over
+  a fake tool (`adapters/freecad/tests/conformance/session_driver.py`, via
+  `uv run`; `uv` must be on PATH) and observes `attached`, `started`,
+  `hidden`, `closes_tool`, `closed` and `left_open`. Fixtures needing R006
   dry-run, degrade or O004 are gaps) and `import` (`import.rs`: propose mode
   only; observed items are decoded as the CLI does and run through
   `propose`, observing `members`, `components`, `flagged`, `item_order`,

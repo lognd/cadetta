@@ -163,16 +163,6 @@ ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"
 
 [[gap]]
-fixture = "adapters/session-attach-running"
-ticket = "~6NNC66V"
-reason = "attach and close-only-opened are adapter-internal behaviours the host cannot observe (it only issues open and close over the protocol); needs an adapter-side harness, tracked by the ticket named here"
-
-[[gap]]
-fixture = "adapters/session-close-only-opened"
-ticket = "~6NNC66V"
-reason = "attach and close-only-opened are adapter-internal behaviours the host cannot observe (it only issues open and close over the protocol); needs an adapter-side harness, tracked by the ticket named here"
-
-[[gap]]
 fixture = "emitters/csv/obligation-open-without-drive"
 ticket = "~FEZDG87"
 reason = "the sync CLI does not open the O004 obligation (the tool-session model observes saves, not obligations)"

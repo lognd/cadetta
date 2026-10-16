@@ -12,7 +12,8 @@
 //! is treated as read-only, the library has no separate notion), `tool_installed`, `initialize` and
 //! `adapter_platforms` (R008), and native items that are `driven`, `suppressed` or of another
 //! `unit_family` (R010). `adapter.save` decides whether a clean run saves the document. Attach and
-//! close behaviour is adapter-internal and not modelled; those fixtures stay in `known-gaps.toml`.
+//! close behaviour is adapter-internal, so those fixtures (`running_instance`, `opened_by_adapter`,
+//! `preopened`) are handed to the adapter-side harness in `session.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -28,7 +29,7 @@ use cadetta_adapter::{
 };
 use serde_json::{Value, json};
 
-use super::{Job, class_label};
+use super::{Job, class_label, session};
 use crate::compare::Produced;
 use crate::run::Facts;
 
@@ -39,16 +40,7 @@ const DEFAULT_FILE: &str = "cad/plate.SLDPRT";
 const DEFAULT_LOCATOR: &str = "Plate_Thk";
 
 /// Fixture keys outside this model; a fixture using one must not be executed as if it passed.
-const UNMODELLED: &[&str] = &[
-    "attested",
-    "drive_covers",
-    "opened_by_adapter",
-    "preopened",
-    "roles",
-    "running_instance",
-    "synced",
-    "adapters",
-];
+const UNMODELLED: &[&str] = &["attested", "drive_covers", "roles", "synced", "adapters"];
 
 /// The simulated document: native values by locator, plus the fixture's faults.
 #[derive(Clone, Default)]
@@ -414,6 +406,9 @@ pub fn run(job: &Job) -> Result<Facts, String> {
     let text =
         fs::read_to_string(job.fixture).map_err(|e| format!("{}: {e}", job.fixture.display()))?;
     let spec: Value = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+    if session::KEYS.iter().any(|k| spec.get(*k).is_some()) {
+        return session::run(job);
+    }
     if let Some(k) = UNMODELLED.iter().find(|k| spec.get(**k).is_some()) {
         return Err(format!("sync executor does not model fixture key `{k}`"));
     }
