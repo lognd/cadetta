@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T06:17:54Z"
-updated = "2026-10-16T12:07:00Z"
+updated = "2026-10-16T12:09:56Z"
 labels = ["creates:crates/cadetta-cli/src/cmd/emit.rs", "creates:crates/cadetta-sema/src/lower.rs"]
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-sema/src/lower.rs", "tests/conformance/known-gaps.toml"]
 
