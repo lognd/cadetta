@@ -17,9 +17,12 @@
   "must_not_fire": {
     "diagnostics": [
       {
-        "code": "S003",
-        "severity": "warning"
+        "code": "C002",
+        "severity": "warning",
+        "path": "acme.demo::Frame.wall_ok"
       }
-    ]
+    ],
+    "diagnostics_exclude": ["S003"],
+    "note": "no recorded result: the output is unsolved (C002), never stale (S003)"
   }
 }
