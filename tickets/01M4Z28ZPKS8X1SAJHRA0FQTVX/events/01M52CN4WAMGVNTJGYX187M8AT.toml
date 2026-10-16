@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Audit: the three fixtures (f002-sub-nanometre, fit-clearance-member, process-drawn-value) already have no known-gaps entries; fixed by bfb4f903 (F002 surfaced through check) and 8acce33a (fit .clearance member, ~DGYN4CP). Verified on Dwarf with cadetta check: F002 fires/absent and C001 fires/absent as expected. No code change needed."
+at = "2026-10-16T12:58:07Z"
+actor = "lognd"
+rev = 1
