@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T01:37:01Z"
+digest = "ca683eacd65dcebc158cab5000717e0f5a30e50ab6a697f3e80791c82c1e0437"
+provider = "file"
+ref = "bindings/python/tests/test_binding_fixtures.py"
+size = 15569
+status = "measured"
+at = "2026-10-16T01:37:01Z"
+actor = "lognd"
+rev = 1
