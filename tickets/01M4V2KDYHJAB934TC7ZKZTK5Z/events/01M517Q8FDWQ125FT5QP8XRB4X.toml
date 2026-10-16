@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["D001 and D002 have a conformance pair under tests/conformance/lints that passes; lock/adapter/package codes are covered in their own docs, W002 is a registered gap"]
+moved = []
+at = "2026-10-16T02:12:41Z"
+actor = "lognd"
+rev = 1
