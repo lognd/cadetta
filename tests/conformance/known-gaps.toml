@@ -28,11 +28,6 @@ ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
 
 [[gap]]
-fixture = "stdlib/m003-hole-fit-side"
-ticket = "~3YZ3NSG"
-reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
-
-[[gap]]
 fixture = "solvers/s006-primary-missing-is-not-s006"
 ticket = "~QH5PDHZ"
 reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"

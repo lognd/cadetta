@@ -210,7 +210,7 @@ cannot be resolved or evaluated.
 | E016 | private-item | error | yes | An item is used outside its visibility, or a `priv` member is read from another package (packages.md 3). |
 | E017 | private-in-public | error | yes | A `pub` item's signature names a less visible item, or a member implementing an interface member is `priv`. |
 
-E003 and E004 attach the second definition or import span as a note on the diagnostic. Every E code is a fixed error: configuration cannot change its severity.
+E003 and E004 attach the second definition or import span as a note on the diagnostic. The CLI lifts resolver errors through the E-family lift, so the notes and fixed severity apply, but the message text stays the resolver's own: it names the exact offender, which the catalog template would only generalise. Every E code is a fixed error: configuration cannot change its severity.
 
 ### Q: quantities
 

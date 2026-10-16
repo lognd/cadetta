@@ -2,12 +2,13 @@
 id = "01M4YVXBJNDY2V33R593YZ3NSG"
 title = "M003 not raised: IR Fit has no real hole/shaft operand paths"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T04:07:49Z"
-updated = "2026-10-16T04:26:00Z"
+updated = "2026-10-16T04:31:58Z"
 scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lower.rs", "tests/conformance/known-gaps.toml", "docs/spec/ir.md", "docs/schemas/cadetta.ir.1.json", "crates/cadetta-lint/src/rules/m.rs"]
 
 [[acceptance]]

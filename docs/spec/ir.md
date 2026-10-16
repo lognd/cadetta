@@ -155,6 +155,7 @@ Part       { path, type, count?, primary, alternates[], args }
              // slot Part.path is "PKG::Type/part" (the `/part` step, no
              // ".member"), per cadetta-sema lower.rs (~137W4EE)
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
+             // hole/shaft are the REAL operand member paths (~3YZ3NSG), see "Fit operands"
 Op         = offset{x,y,z: member ref} | rotate{axis, angle: member ref}
              | flip{axis}                                // shared by Datum and Placement
 Datum      { path, parent: path, ops: [Op], variants?, digest, closure }  // geometry.md 2
@@ -360,6 +361,21 @@ is instead derived once per instance of the parameterized component
 (`fitderive.rs`): `Top/h.seat` for `part h: Housing(bearing = b)`, its
 operands read through the instance's argument values; a fit whose argument
 is not evaluated for an instance is skipped for that instance.
+
+Fit operands (decision, ~3YZ3NSG): `Fit.hole` and `Fit.shaft` are the
+canonical paths of the members the fit constrains, as resolved from the
+source and, for a per-instance fit, re-rooted at the instance (`Top/h.seat`
+reads `Top/h.bearing.outer_dia`). Rationale: lints (M003, D, unused) and the
+obligation graph need the operand, and the field names say "the hole
+member"; the alternative (keep synthetic `<fit>.hole` paths and add
+`hole_operand`/`shaft_operand`) would leave two meanings per name and make
+every consumer choose. The accessor reads `<fit>.hole`, `<fit>.shaft` and
+`<fit>.clearance` stay addressable value paths; the digest keys the first
+two as nodes under the fit (never under the operand, which has its own
+node). A side no member names (the class of a class fit `H7 on d`, both
+sides of a class pair) has no operand and keeps the synthetic
+`<fit>.hole`/`<fit>.shaft` path. The schema is unchanged (same fields, same
+types), only their content.
 
 ## 5. Stability
 
