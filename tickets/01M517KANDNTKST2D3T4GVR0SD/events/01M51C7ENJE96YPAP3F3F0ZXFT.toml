@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-16T03:31:25Z"
+digest = "a2f7f174971a63d14a9fd22a3f8a1644d0e6bbc7ded0f7c130e70479a004c6b5"
+provider = "file"
+ref = "tests/conformance/language/eval-rollup-no-contributor.expect.json"
+size = 308
+status = "measured"
+at = "2026-10-16T03:31:25Z"
+actor = "lognd"
+rev = 1

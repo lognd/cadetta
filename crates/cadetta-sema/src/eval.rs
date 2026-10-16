@@ -197,6 +197,19 @@ pub struct Evaluation {
     /// Datum and placement members evaluated per parameterized instance (`Box/j.mount.offset.x`).
     // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
     pub instance_geometry: BTreeMap<CanonPath, GeometryKind>,
+    /// The evaluated keys and cells of every table that built, by table path.
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    pub tables: BTreeMap<CanonPath, TableCells>,
+}
+
+/// The evaluated keys and cells of one table, in row order (language.md 3.3).
+// frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct TableCells {
+    /// Each row's key as a value.
+    pub keys: Vec<Val>,
+    /// Each row's cells in column order; `None` for a row without `=>`.
+    pub rows: Vec<Option<Vec<Val>>>,
 }
 
 /// Which geometry declaration an instance geometry member belongs to.
@@ -726,6 +739,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             self.value_of(k);
         }
         self.check_requires();
+        let tables = self.evaluate_tables();
         self.evaluate_geometry();
         let checks = self.run_checks();
         self.drop_shadowed_evals();
@@ -748,6 +762,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             part_counts: self.part_counts,
             instance_private,
             instance_geometry,
+            tables,
         }
     }
 

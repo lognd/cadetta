@@ -1,8 +1,8 @@
 //! Lints S001 `ots-without-citation` and S002 `citation-unreachable`.
 //!
 //! Both rules read fact tables the driver builds from the IR and the
-//! filesystem, so the rules stay pure. S001 fires per `ots` value with no
-//! citation on it or on its component; S002 fires per local-file citation whose
+//! filesystem, so the rules stay pure. S001 fires once per wholly uncited
+//! `ots` component, else per uncited value of a partly cited one; S002 fires per local-file citation whose
 //! path does not exist. Literal and URL citations are never checked.
 //!
 //! Specification: `docs/spec/lints.md` (S), `docs/spec/language.md` 3.
@@ -32,6 +32,10 @@ pub const CODE_S008: &str = "S008";
 pub struct OtsValueFacts {
     /// Canonical path of the value.
     pub path: String,
+    /// Canonical path of the owning `ots` component.
+    pub component: String,
+    /// Source span of the owning `ots` component.
+    pub component_span: Option<SpanRef>,
     /// True when the value itself carries a citation.
     pub cited: bool,
     /// True when the owning `ots` component carries a citation.
@@ -69,14 +73,40 @@ pub struct CitationFacts {
 }
 
 /// Run S001 over `values`: `ots` values with no citation on them or their component.
+///
+/// Reporting level: a component none of whose values is cited (and which is not itself cited)
+/// gets one diagnostic at the component path, since the one fix is to cite the component; a
+/// partly cited component gets one diagnostic per uncited value, naming the gaps.
+// frob:ticket 01M4YVXBMV71XB25G0Z9MJNAM5
 pub fn check_s001(
     values: &[OtsValueFacts],
     locate: impl Fn(&SpanRef) -> Location,
 ) -> Vec<Diagnostic> {
     let mut out = Vec::new();
+    let mut reported: Vec<&str> = Vec::new();
     for v in values {
         if v.cited || v.component_cited {
             trace!(path = %v.path, "S001: cited");
+            continue;
+        }
+        let any_cited = values.iter().any(|o| o.component == v.component && o.cited);
+        if !any_cited {
+            if reported.contains(&v.component.as_str()) {
+                continue;
+            }
+            reported.push(&v.component);
+            debug!(path = %v.component, "S001: ots component without any citation");
+            let mut d = Diagnostic::new(
+                CODE_S001,
+                Severity::Warning,
+                format!(
+                    "ots component `{}` has no citation on it or its values",
+                    v.component
+                ),
+            );
+            d.path = Some(v.component.clone());
+            d.location = v.component_span.as_ref().map(&locate);
+            out.push(d);
             continue;
         }
         debug!(path = %v.path, "S001: ots value without citation");
@@ -240,6 +270,8 @@ mod tests {
     fn val(cited: bool, component_cited: bool) -> OtsValueFacts {
         OtsValueFacts {
             path: "demo::Bolt.pitch".into(),
+            component: "demo::Bolt".into(),
+            component_span: None,
             cited,
             component_cited,
             note_only: false,
@@ -264,6 +296,22 @@ mod tests {
         assert_eq!(d.len(), 1);
         assert_eq!(d[0].code, "S001");
         assert_eq!(d[0].severity, Severity::Warning);
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s001
+    #[test]
+    fn s001_one_component_diagnostic_when_nothing_cited() {
+        let d = check_s001(&[val(false, false), val(false, false)], |_| unreachable!());
+        assert_eq!(d.len(), 1);
+        assert_eq!(d[0].path.as_deref(), Some("demo::Bolt"));
+    }
+
+    // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s001
+    #[test]
+    fn s001_per_value_when_component_partly_cited() {
+        let d = check_s001(&[val(true, false), val(false, false)], |_| unreachable!());
+        assert_eq!(d.len(), 1);
+        assert_eq!(d[0].path.as_deref(), Some("demo::Bolt.pitch"));
     }
 
     // frob:tests crates/cadetta-lint/src/rules/s.rs::check_s001

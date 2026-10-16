@@ -2,17 +2,18 @@
 id = "01M5187T6Y9B3SMBS9DMPG9VFX"
 title = "Lower tables into the IR in cadetta-sema"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T02:21:43Z"
-updated = "2026-10-16T03:13:58Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-16T03:20:23Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/ir.md"]
 
 [[acceptance]]
 text = "Tables declared in a package lower into ir.tables with their cell values"
-bound = false
+bound = true
 +++
 
 found while working ~R0ANADA: ir.tables is empty; the evaluator keeps table cell values private (table_vals), so lowering needs them exposed from Evaluation.

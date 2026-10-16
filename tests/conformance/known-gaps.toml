@@ -33,11 +33,6 @@ ticket = "~3YZ3NSG"
 reason = "IR Fit carries synthetic hole/shaft paths, not the operand"
 
 [[gap]]
-fixture = "stdlib/policy-iso-default-silent"
-ticket = "~Z0MJNAM5"
-reason = "S001 reports per member, fixture expects the component path"
-
-[[gap]]
 fixture = "solvers/s006-primary-missing-is-not-s006"
 ticket = "~QH5PDHZ"
 reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"

@@ -17,7 +17,8 @@
 //!   stores only the values that differ from the primary.
 //! - Solvers and waivers lower in `lower_solver.rs`; the recorded-result state of a solver comes
 //!   from the caller (`LowerInput::solver_states`).
-//! - Not lowered yet: interfaces, tables, `require` obligations and bindings; parameterized components lower with
+//! - Tables lower in `lower_table.rs`.
+//! - Not lowered yet: interfaces, `require` obligations and bindings; parameterized components lower with
 //!   valueless members. Datums, points and placements lower in `lower_geom.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -249,6 +250,8 @@ mod lower_array;
 mod lower_geom;
 #[path = "lower_solver.rs"]
 mod lower_solver;
+#[path = "lower_table.rs"]
+mod lower_table;
 pub use lower_solver::{SolverState, lower_waiver};
 
 /// Per-lowering shared state.
@@ -768,6 +771,17 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
             }
+            // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+            for item in module.file.items() {
+                if let ast::ItemKind::Table(t) = &item.kind {
+                    let canon = CanonPath::item(&pkg.name, &module.path, &t.name.name);
+                    let table = cx.lower_table(&canon, src, &idx, (&pkg.name, &module.path), t);
+                    if let Some(table) = table {
+                        cited.extend(table.citation.iter().filter_map(|r| r.cite.clone()));
+                        project.tables.push(table);
+                    }
+                }
+            }
             // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
             for item in module.file.items() {
                 if let ast::ItemKind::Waive(w) = &item.kind {
@@ -1024,6 +1038,71 @@ mod tests {
         assert!(b.project.citations.iter().any(|c| c.path == "p::fea"));
         let plain = build(SOLVER_SRC, &[], &[]);
         assert!(plain.project.solvers[0].citation.is_none());
+    }
+
+    const TABLE_SRC: &str = "cite iso: web { title = \"ISO\" }\n\
+        enum Th { A, B }\n\
+        table T @iso:\"t.1\" { key t: Th\n cols major: Length, fine: Ratio\n \
+        Th::A => 5mm, 0.5\n Th::B => 6mm, 0.25 }\n\
+        table D { key d: Length\n 3mm\n 4mm }\n";
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_table_lowers_with_its_columns_rows_and_cell_values() {
+        let b = build(TABLE_SRC, &[], &[]);
+        assert_eq!(b.project.tables.len(), 2);
+        let t = &b.project.tables[0];
+        assert_eq!(t.path.to_string(), "p::T");
+        assert_eq!((t.key.name.as_str(), t.key.type_name.as_str()), ("t", "Th"));
+        let cols: Vec<_> = t
+            .cols
+            .iter()
+            .map(|c| (c.name.as_str(), c.type_name.as_str()))
+            .collect();
+        assert_eq!(cols, [("major", "Length"), ("fine", "Ratio")]);
+        assert_eq!(t.rows.len(), 2);
+        assert_eq!(
+            t.rows[1].key,
+            cadetta_ir::entities::Cell::Variant("B".to_owned())
+        );
+        let cadetta_ir::entities::Cell::Value(v) = &t.rows[1].cells[0] else {
+            panic!("a quantity cell");
+        };
+        assert_eq!(v.authored, "6mm");
+        assert_eq!(
+            v.nominal,
+            Nominal::Exact(Exact(Magnitude::new(Rational::new(6, 1000).unwrap(), 0)))
+        );
+    }
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_key_only_table_has_quantity_keys_and_no_cells() {
+        let b = build(TABLE_SRC, &[], &[]);
+        let d = &b.project.tables[1];
+        assert!(d.cols.is_empty() && d.citation.is_none());
+        assert_eq!(d.rows.len(), 2);
+        assert!(d.rows.iter().all(|r| r.cells.is_empty()));
+        assert!(matches!(
+            d.rows[0].key,
+            cadetta_ir::entities::Cell::Value(_)
+        ));
+    }
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_table_citation_lowers_to_a_cite_ref() {
+        let b = build(TABLE_SRC, &[], &[]);
+        let c = b.project.tables[0]
+            .citation
+            .as_ref()
+            .expect("table citation");
+        assert_eq!(c.cite.as_deref(), Some("p::iso"));
+        assert_eq!(c.locator.as_deref(), Some("t.1"));
+        assert!(b.project.citations.iter().any(|c| c.path == "p::iso"));
     }
 
     // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA

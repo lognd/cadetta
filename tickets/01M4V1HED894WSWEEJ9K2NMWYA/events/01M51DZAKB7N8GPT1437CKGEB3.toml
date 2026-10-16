@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a value and a display spec, when 'cadetta display VALUE SPEC' runs, then it prints the formatted text (JSON schema cadetta.display/1) and bad input exits 2"]
+moved = []
+at = "2026-10-16T04:01:56Z"
+actor = "lognd"
+rev = 1

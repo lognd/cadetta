@@ -34,8 +34,10 @@ jobs:
         run: cargo fmt --all --check
       - name: cargo clippy
         run: cargo clippy --workspace --exclude cadetta-py --all-targets -- -D warnings
-      - name: cargo test
-        run: cargo test --workspace --exclude cadetta-py
+      - name: Install cargo-nextest
+        run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "${CARGO_HOME:-$HOME/.cargo}/bin"
+      - name: cargo nextest
+        run: cargo nextest run --workspace --exclude cadetta-py --profile ci
 
   python-adapter:
     name: python adapter (ruff, pytest)
