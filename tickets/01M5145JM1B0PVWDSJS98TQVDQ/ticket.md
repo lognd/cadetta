@@ -2,12 +2,12 @@
 id = "01M5145JM1B0PVWDSJS98TQVDQ"
 title = "to_pint accepts 5USD: currency quantity raises QuantityError Q002 instead of returning Err"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T01:10:35Z"
-updated = "2026-10-16T01:10:35Z"
+updated = "2026-10-16T01:39:24Z"
 scope = ["bindings/python/python/cadetta/pint_interop.py"]
 
 [[acceptance]]
