@@ -1,0 +1,19 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "cadetta",
+      "camelcase": "Cadetta",
+      "scope": "source.cadetta",
+      "path": ".",
+      "file-types": ["cdt"],
+      "highlights": "queries/highlights.scm"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for the Cadetta (.cdt) language",
+    "links": { "repository": "https://github.com/lognd/cadetta" }
+  }
+}
