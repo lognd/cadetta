@@ -1,0 +1,34 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T11:58:10Z"
+digest = "caeb7720c34dad2ee40582ca41871f88b7a0b9a6bb607e0732ce42114d0f8f12"
+exit_code = 0
+inline = '''
+   Compiling tracing-core v0.1.36
+   Compiling serde_json v1.0.154
+   Compiling thiserror v2.0.21
+   Compiling serde v1.0.229
+   Compiling ref-cast v1.0.27
+   Compiling tracing v0.1.44
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling schemars v1.2.3
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.79s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e4aa3ac6-d38f-40c5-9a63-44496263ca0c with nextest profile: default
+    Starting 1 test across 1 binary (175 tests skipped)
+        PASS [   0.006s] cadetta-adapter import::propose::tests::expression_becomes_member_references
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 1 test run: 1 passed, 175 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter expression_becomes_member_references"
+size = 984
+status = "measured"
+test_count = 1
+tests_digest = "29f2e2e97feffb244b770cb481eae21b56daf4ff987e57339899ee20dc4f415a"
+at = "2026-10-16T11:58:10Z"
+actor = "lognd"
+rev = 1
