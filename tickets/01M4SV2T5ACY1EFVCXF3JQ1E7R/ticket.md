@@ -8,12 +8,12 @@ points = 8
 parent = "01M4SV2RY3PVQ3TBN2CAYWAJQY"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-16T09:21:15Z"
+updated = "2026-10-16T09:28:18Z"
 persona = "C or MATLAB user"
 capability = "call cadetta through a stable C ABI"
 outcome_text = "non-Python languages get in-process interop"
 labels = ["later", "creates:bindings/c/**"]
-scope = ["bindings/c/**"]
+scope = ["bindings/c/**", ".github/workflows/ci.yml"]
 
 [[links]]
 kind = "blocked-by"
