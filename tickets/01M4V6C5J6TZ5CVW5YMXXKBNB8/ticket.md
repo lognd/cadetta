@@ -2,12 +2,12 @@
 id = "01M4V6C5J6TZ5CVW5YMXXKBNB8"
 title = "packages.md: no conformance entry for cadetta update and section 6 trust or attested-upstream"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
-updated = "2026-10-16T07:19:55Z"
+updated = "2026-10-16T07:25:49Z"
 scope = ["docs/spec/**"]
 +++
 
