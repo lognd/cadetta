@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-16T04:54:41Z"
+updated = "2026-10-16T06:18:28Z"
 scope = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*"]
 +++
 
