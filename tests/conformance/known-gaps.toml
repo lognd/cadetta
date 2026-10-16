@@ -33,61 +33,6 @@ ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
 
 [[gap]]
-fixture = "adapters/adapter-id-keys-bindings"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/bind-native-unit-default"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/bind-values-not-expressions"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/mangle-prefix"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/native-pin-accumulates"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/native-pin-replaces-file-entry"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/sw-eq-lines-topological"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "adapters/was-not-if-already-bound"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "emitters/sw-equations/comment-trailing-authored-literal"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "emitters/sw-equations/comment-trailing-fit-class"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
-fixture = "emitters/sw-equations/value-native-unit-suffix"
-ticket = "~0P0KQMG"
-reason = "sw-equations emit output differs from the spec"
-
-[[gap]]
 fixture = "adapters/bind-let-never-emitted"
 ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"

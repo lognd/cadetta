@@ -1,4 +1,4 @@
-["acme.demo.gear::X.width"]
+["acme.demo::gear::X.width"]
 locators = [
   { locator = "MAIN", kind = "global", mode = "value", native_unit = "mm" },
 

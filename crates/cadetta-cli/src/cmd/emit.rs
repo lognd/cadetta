@@ -12,7 +12,7 @@ use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_adapter::availability::{Verb as AvailVerb, unavailable};
 use cadetta_adapter::bindings::{
-    BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
+    BindingSet, NativePin, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
 };
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
@@ -381,6 +381,17 @@ struct Built {
     diagnostics: Vec<EmitDiag>,
 }
 
+/// The authored text to repeat in a trailing comment: only a literal, never an expression
+/// that reads other paths (sw-equations.md 1, Comments).
+fn authored_literal<'a>(member: &Member, value: &'a Value) -> Option<&'a str> {
+    if member.deps.is_empty() {
+        Some(value.authored.as_str())
+    } else {
+        tracing::debug!(path = %member.path, "emit: expression value, authored text not repeated");
+        None
+    }
+}
+
 pub(crate) fn native_unit(adapter: &Adapter, loc: &Locator) -> String {
     if !loc.native_unit.is_empty() {
         loc.native_unit.clone()
@@ -482,17 +493,42 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
 }
 
 /// `emitted` paths in dependency order, ties by canonical path (D003 on a cycle).
+///
+/// Besides the IR dependencies, a path whose dimension locator links (`ref_to`) to a global
+/// owned by another path depends on that path, so the global line comes first
+/// (emitters/sw-equations.md 2).
 fn dependency_order(job: &Job<'_>, emitted: &BTreeSet<String>) -> Result<Vec<String>, EmitDiag> {
-    let graph: BTreeMap<String, Vec<String>> = job
-        .ir
-        .components
-        .iter()
-        .flat_map(|c| &c.members)
+    let members = || job.ir.components.iter().flat_map(|c| &c.members);
+    let mut owner: HashMap<&str, String> = HashMap::new();
+    for m in members() {
+        for loc in locators_for(job.set, &m.path)
+            .into_iter()
+            .flatten()
+            .filter(|l| l.kind == LocatorKind::Global && locator_active(l, &job.active))
+        {
+            owner
+                .entry(loc.locator.as_str())
+                .or_insert_with(|| m.path.to_string());
+        }
+    }
+    let graph: BTreeMap<String, Vec<String>> = members()
         .map(|m| {
-            (
-                m.path.to_string(),
-                m.deps.iter().map(ToString::to_string).collect(),
-            )
+            let me = m.path.to_string();
+            let mut deps: Vec<String> = m.deps.iter().map(ToString::to_string).collect();
+            for loc in locators_for(job.set, &m.path)
+                .into_iter()
+                .flatten()
+                .filter(|l| l.kind == LocatorKind::Dimension && locator_active(l, &job.active))
+            {
+                let Some(target) = loc.ref_to.as_deref().and_then(|g| owner.get(g)) else {
+                    continue;
+                };
+                if *target != me && !deps.contains(target) {
+                    tracing::debug!(path = %me, on = %target, "emit: ref_to link orders after its global");
+                    deps.push(target.clone());
+                }
+            }
+            (me, deps)
         })
         .collect();
     sw_equations::order_paths(&graph, emitted).map_err(|e| diag("D003", e.to_string(), None))
@@ -575,7 +611,7 @@ fn build_value_rows(job: &Job<'_>) -> Built {
                     };
                     let written = format!("{decimal}{unit}");
                     let note = sw_equations::trailing_comment(
-                        Some(&value.authored),
+                        authored_literal(member, value),
                         &written,
                         point,
                         citation.as_deref(),
@@ -760,7 +796,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                 }
             };
             let comment = sw_equations::trailing_comment(
-                Some(&value.authored),
+                authored_literal(member, value),
                 &written,
                 point,
                 citation.as_deref(),
@@ -1090,7 +1126,50 @@ pub(crate) fn load_bindings(
             }
         }
     }
+    let (pins, renames) =
+        source_pins_and_renames(ir.components.iter().flat_map(|c| &c.members), adapter.id());
+    set.apply_native(&pins);
+    set.carry_forward(&renames);
     Ok((set, bindings_text))
+}
+
+/// The `#[native(adapter, "loc")]` pins for `adapter_id` and the `was` renames `(old, new)` in `ir`.
+// frob:ticket 01M4VQXNFQ1DWWR10CQ0P0KQMG
+fn source_pins_and_renames<'a>(
+    members: impl Iterator<Item = &'a Member>,
+    adapter_id: &str,
+) -> (Vec<NativePin>, Vec<(Path, Path)>) {
+    let mut pins = Vec::new();
+    let mut renames = Vec::new();
+    for m in members {
+        let prefix = format!("native:{adapter_id}:");
+        for (key, locator) in &m.attrs {
+            if key.starts_with(&prefix) {
+                pins.push(NativePin {
+                    path: m.path.clone(),
+                    adapter: adapter_id.to_owned(),
+                    locator: locator.clone(),
+                });
+            }
+        }
+        for old in &m.was {
+            // `was Item.member` names the old component and member in the same module.
+            let (item, name) = old.rsplit_once('.').unwrap_or((m.path.item.as_str(), old));
+            let mut p = m.path.clone();
+            item.clone_into(&mut p.item);
+            if let Some(last) = p.members.last_mut() {
+                *last = cadetta_ir::path::Seg::Name(name.to_owned());
+                renames.push((p, m.path.clone()));
+            }
+        }
+    }
+    tracing::debug!(
+        adapter = adapter_id,
+        pins = pins.len(),
+        renames = renames.len(),
+        "bindings: source pins and renames"
+    );
+    (pins, renames)
 }
 
 /// The `emit` params for an adapter: design IR, its bindings file text, and the emit policy.
@@ -1307,6 +1386,26 @@ mod tests {
             &loc_for(Some("acme.shop::Other")),
             &BTreeMap::new()
         ));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::source_pins_and_renames
+    #[test]
+    fn source_pins_and_was_renames_are_read_from_member_attrs() {
+        let path = Path::parse(
+            "acme.demo::Part.breadth",
+            cadetta_ir::path::PathContext::General,
+        )
+        .unwrap();
+        let mut m = Member::new(path.clone(), cadetta_ir::model::MemberKind::Param);
+        m.attrs.insert("native:eq:P1".into(), "P1".into());
+        m.attrs.insert("native:eq:P2".into(), "P2".into());
+        m.attrs.insert("native:other:Z".into(), "Z".into());
+        m.was = vec!["Part.width".into()];
+        let (pins, renames) = source_pins_and_renames([m].iter(), "eq");
+        assert_eq!(pins.len(), 2);
+        assert_eq!(renames.len(), 1);
+        assert_eq!(renames[0].0.to_string(), "acme.demo::Part.width");
+        assert_eq!(renames[0].1, path);
     }
 
     /// A self-removing scratch directory (no extra dev-dependency).

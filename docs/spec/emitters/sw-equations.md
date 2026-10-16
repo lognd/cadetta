@@ -62,7 +62,8 @@ pilot r2-05.
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
   on a global line carries, in this order and separated by spaces: the
-  authored literal with its tolerance or class when its source text
+  authored literal with its tolerance or class when the value is a
+  literal (not an expression) and its source text
   differs from the written value's text (`1/4in` written as `6.35mm`,
   `12mm H7` written as `12.009mm`; `5mm` written as `5mm` gets none),
   then `emit=POINT` when the emit point is not `nominal`, then the
@@ -74,7 +75,9 @@ pilot r2-05.
 Paths in dependency order, computed as a topological sort that always
 takes, among the paths whose dependencies are all placed, the smallest
 canonical path (byte order); dependencies count transitively through
-`let`s and unemitted paths; within one path, global lines in bindings-file order,
+`let`s and unemitted paths, and a `dimension` locator's `ref_to` global
+counts as a dependency of its path, so the referenced global is written
+first; within one path, global lines in bindings-file order,
 then dimension lines in bindings-file order. Emitted values are flat, so
 the order only makes the file read top-down; SOLIDWORKS does not need
 it.

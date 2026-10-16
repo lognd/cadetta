@@ -27,7 +27,6 @@
           "\"Plate_Thk\" = 5mm"
         ],
         "excludes": [
-          "'",
           "5mm  '"
         ]
       }
