@@ -2,12 +2,12 @@
 id = "01M4ZBN0XKQRTXW7AY1KKVE13B"
 title = "Conformance import executor: accept/update modes and richer item features"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T08:42:53Z"
-updated = "2026-10-16T07:54:16Z"
+updated = "2026-10-16T08:14:34Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/known-gaps.toml"]
 +++
 
