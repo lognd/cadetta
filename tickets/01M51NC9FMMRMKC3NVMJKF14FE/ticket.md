@@ -2,12 +2,12 @@
 id = "01M51NC9FMMRMKC3NVMJKF14FE"
 title = "Binding conformance red: duplicate E002 and false D002 on fit hole source"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T06:11:21Z"
-updated = "2026-10-16T06:11:21Z"
+updated = "2026-10-16T06:20:22Z"
 scope = ["bindings/python/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/lint_gaps_d001_d002.rs"]
 
 [[acceptance]]
