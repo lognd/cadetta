@@ -2,7 +2,8 @@
 id = "01M51C747FJGEBDNVCHEB0V9X7"
 title = "Conformance fixtures for language: process-rule kind, defaults precedence, case canon digits, fn/recursion, bound satisfies, keyword after dot, ISO class E001, waive date E001"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
