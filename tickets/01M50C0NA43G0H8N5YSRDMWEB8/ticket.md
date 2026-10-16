@@ -2,7 +2,8 @@
 id = "01M50C0NA43G0H8N5YSRDMWEB8"
 title = "Units: disc (u,v) source terms in Affine with exact and conservative bounds"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
