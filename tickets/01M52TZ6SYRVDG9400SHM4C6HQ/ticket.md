@@ -7,7 +7,7 @@ priority = "high"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T17:08:18Z"
-updated = "2026-10-16T17:39:54Z"
+updated = "2026-10-16T17:43:43Z"
 idempotency_key = "ci-conformance-per-doc-filter"
 scope = ["tests/conformance_*.rs", "crates/cadetta-cli/tests/conformance/corpus.rs"]
 
