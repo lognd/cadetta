@@ -188,7 +188,23 @@ impl Universe {
         }
         // A fit is a node over its hole and shaft members (obligations.md 1, `evaluates`).
         for f in components.iter().flat_map(|c| &c.fits) {
-            let deps = vec![f.hole.to_string(), f.shaft.to_string()];
+            let fit_key = f.path.to_string();
+            // The fit's own accessor members (`<fit>.hole`, `.shaft`, `.clearance`) read the fit,
+            // so a synthetic hole/shaft that is such a member is no dependency: the edge would
+            // close a cycle and drop every obligation of the package.
+            let deps: Vec<String> = [&f.hole, &f.shaft]
+                .into_iter()
+                .filter(|side| {
+                    let derived = members
+                        .iter()
+                        .any(|m| m.path == **side && m.deps.contains(&f.path));
+                    if derived {
+                        tracing::debug!(fit = %fit_key, side = %side, "universe: fit accessor is not a dependency");
+                    }
+                    !derived
+                })
+                .map(ToString::to_string)
+                .collect();
             nodes.push((f.path.to_string(), cadetta_ir::digest::fit_digest(f), deps));
         }
         // A table is a node a check can read (ir.md 4); editing a row stales its readers.
