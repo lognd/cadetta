@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
 reporter = "lognd"
 created = "2026-10-13T23:00:21Z"
-updated = "2026-10-16T19:58:03Z"
+updated = "2026-10-16T19:58:11Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-sema/src/attrs.rs", "docs/spec/emitters/sw-equations.md", "tests/conformance/adapters/adapter-id-keys-bindings*/**", "tests/conformance/adapters/adapter-id-keys-bindings.expect.json", "tests/conformance/adapters/bind-native-unit-default*/**", "tests/conformance/adapters/bind-native-unit-default.expect.json", "tests/conformance/adapters/mangle-prefix.must-fire/cadetta.toml", "tests/conformance/adapters/was-not-if-already-bound.*/src/lib.cdt", "tests/conformance/emitters/sw-equations/comment-trailing-authored-literal.expect.json", "tests/conformance/emitters/sw-equations/comment-trailing-fit-class.expect.json", "tests/conformance/emitters/sw-equations/value-native-unit-suffix.expect.json"]
 
 [[acceptance]]
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "All 11 sw-equations emit fixtures listed under this ticket pass and their known-gaps entries are removed"
-bound = false
+bound = true
 +++
 
 found while working ~6BCVN48: adapters/{native-pin-*,was-*,mangle-*,sw-eq-lines-topological,bind-values-not-expressions,bind-native-unit-default} and emitters/sw-equations/{comment-*,value-native-unit-suffix,naming-component-field,global-created-unit-from-locator} disagree with the spec (see known-gaps.toml entries under this ticket).
