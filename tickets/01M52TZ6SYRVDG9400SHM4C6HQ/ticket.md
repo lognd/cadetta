@@ -7,13 +7,13 @@ priority = "high"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T17:08:18Z"
-updated = "2026-10-16T17:20:57Z"
+updated = "2026-10-16T17:39:54Z"
 idempotency_key = "ci-conformance-per-doc-filter"
 scope = ["tests/conformance_*.rs", "crates/cadetta-cli/tests/conformance/corpus.rs"]
 
 [[acceptance]]
 text = "Each per-doc conformance test runs only its own doc's fixtures and finishes well under 300s on CI"
-bound = false
+bound = true
 +++
 
 Each tests/conformance_<doc>.rs test calls corpus::run_corpus over the WHOLE corpus then filters by doc prefix; ~14 binaries x 2 tests = ~28 full runs, each ~9 min on CI, so *_fixtures_match_the_spec and *_corpus_is_not_empty hit nextest's 300s limit (run 38927556347). Add a doc-filtered run_corpus (skip docs outside the requested one) and use it in doc_report; share doc_report/count_in instead of copying it per binary if feasible.
