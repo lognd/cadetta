@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: sync.rs now models a tool session (Sim faults regen_fail/restore_fail, R004 restore reporting collapsed to one Produced entry per file, R008 availability exit 2, R009 partition_busy with locked treated as read-only, R010 rejected locators excluded from sync::run, save/adopted/native_after observations). push_status: bare string for rejected/skipped, object {status,old,new} for pushed; four r003/r010 expect fixtures updated to that form. 19 former entries now pass and are removed. 15 remain gapped, retargeted: 7 O004 fixtures to ~FEZDG87 (sync CLI does not open O004), 8 attach/close, r006 dry-run, degrade, header-noop fixtures to new ~TSTDBAZ."
+at = "2026-10-16T16:16:54Z"
+actor = "lognd"
+rev = 1
