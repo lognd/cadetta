@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/conformance/o004.rs", "docs/spec/config-cli.md"]
+new = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/tests/conformance/o004.rs", "docs/spec/config-cli.md", "docs/schemas/sync.json"]
+at = "2026-10-16T19:13:52Z"
+actor = "lognd"
+rev = 1
