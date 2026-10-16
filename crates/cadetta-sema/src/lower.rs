@@ -374,6 +374,10 @@ impl Cx<'_> {
                 debug!(path = %p, "lower: dependency on a fit with component-argument operands dropped");
                 return None;
             }
+            if let Some(inst) = self.instance_fit(&p) {
+                debug!(path = %p, fit = %inst, "lower: dependency on a definition fit is its per-instance fit node");
+                return Some(inst);
+            }
             return Some(self.slot_node(p));
         }
         let d = crate::eval::geom::definition_path(&self.resolver, &p);
@@ -395,6 +399,23 @@ impl Cx<'_> {
             }
             d => d,
         }
+    }
+
+    /// The per-instance fit node (`Unit/housing.bore_fit`) standing in for definition fit `p`, when it is derived only per instance.
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    fn instance_fit(&self, p: &CanonPath) -> Option<CanonPath> {
+        if self.input.fits.iter().any(|f| f.path == *p) {
+            return None;
+        }
+        self.input
+            .fits
+            .iter()
+            .find(|f| {
+                !f.path.parts.is_empty()
+                    && crate::eval::geom::definition_path(&self.resolver, &f.path).as_ref()
+                        == Some(p)
+            })
+            .map(|f| f.path.clone())
     }
 
     /// True when `p` names a `fit` member that was not derived (its operands read component arguments).
@@ -1938,5 +1959,31 @@ mod tests {
             format!("{v:?}").contains("Rational(1/250)"),
             "w = 4mm: {v:?}"
         );
+    }
+
+    // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn indexed_part_array_argument_evaluates_the_instance_members() {
+        let src = "pub interface Brg {\n  outer_dia: Length\n}\n\
+            pub ots B1: Brg {\n  outer_dia = 22mm\n}\n\
+            pub model Housing(bearing: Brg) {\n  twice = bearing.outer_dia * 2\n}\n\
+            pub assembly Rig {\n  part b[2]: Brg = B1\n  \
+            part housing: Housing(bearing = b[0])\n}\n";
+        let b = build(src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let rig = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rig")
+            .expect("Rig");
+        let m = rig
+            .members
+            .iter()
+            .find(|m| m.path.to_string() == "p::Rig/housing.twice")
+            .expect("per-instance member");
+        let v = format!("{:?}", m.value);
+        assert!(v.contains("Rational(11/250)"), "2 * 22mm: {v}");
     }
 }
