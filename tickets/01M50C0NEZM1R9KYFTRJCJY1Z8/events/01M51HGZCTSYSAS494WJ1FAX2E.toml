@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-syntax/src/**", "crates/cadetta-ir/src/**", "crates/cadetta-cli/src/**", "crates/cadetta-solve/src/**", "crates/cadetta-geometry/src/placement.rs", "docs/spec/*.md", "docs/schemas/cadetta.ir.1.json"]
+new = ["crates/cadetta-syntax/src/**", "crates/cadetta-ir/src/**", "crates/cadetta-cli/src/**", "crates/cadetta-solve/src/**", "crates/cadetta-geometry/src/placement.rs", "docs/spec/*.md", "docs/schemas/cadetta.ir.1.json", "bindings/python/python/cadetta/models/ir.py"]
+at = "2026-10-16T05:04:00Z"
+actor = "lognd"
+rev = 1
