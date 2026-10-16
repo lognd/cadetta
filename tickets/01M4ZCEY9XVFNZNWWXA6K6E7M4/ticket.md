@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-cli/src/cmd/sync.
 
 [[acceptance]]
 text = "A locator bound for a slot primary is active and one for a non-primary is not (locator_active)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "slots-for-selects-active-locators and slots-swap-changes-active-set pass, observing active_alternate, with their known-gaps entries removed"
