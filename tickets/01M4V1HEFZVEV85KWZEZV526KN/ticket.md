@@ -7,10 +7,10 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-16T07:11:01Z"
+updated = "2026-10-16T07:11:45Z"
 idempotency_key = "Z48-emitpoint"
 labels = ["creates:tests/conformance/quantities/emit-*"]
-scope = ["tests/conformance/README.md", "tests/conformance/quantities/emit-*", "crates/cadetta-cli/tests/conformance.rs"]
+scope = ["tests/conformance/README.md", "tests/conformance/quantities/emit-*", "crates/cadetta-cli/tests/conformance.rs", "tests/conformance/quantities/emit-*/**"]
 
 [[acceptance]]
 text = "Conformance fixtures observe the emitted point (nominal default, mid, mmc, lmc, inherited by reference) through the emit entry output expectation"
