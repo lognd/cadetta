@@ -1082,7 +1082,7 @@ mod tests {
 
     /// A pure reference inherits its referent's emit point unless it sets its own.
     // frob:ticket 01M51NR9617ZM61WBT4AQ8KSJA
-    // frob:tests lower::inherit_emit_points
+    // frob:tests crates/cadetta-sema/src/lower.rs::inherit_emit_points kind=unit
     #[test]
     fn pure_reference_inherits_emit_point() {
         let b = build(
