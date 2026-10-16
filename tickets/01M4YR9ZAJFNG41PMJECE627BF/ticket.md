@@ -2,12 +2,12 @@
 id = "01M4YR9ZAJFNG41PMJECE627BF"
 title = "bind-invalid-* fixtures: binding-kind run does not observe names_path_or_key (7 adapters fixtures)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
-updated = "2026-10-16T05:28:34Z"
+updated = "2026-10-16T05:28:36Z"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml", "tests/conformance/adapters/README.md"]
 
 [[acceptance]]
