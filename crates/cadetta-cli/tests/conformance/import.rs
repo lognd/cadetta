@@ -7,7 +7,9 @@
 //! [`cadetta_adapter::import::propose::propose`]. File-level facts (writes, lock adoption,
 //! re-run, update diffs and edited sources) come from running the real `cadetta import` against
 //! a scratch package whose adapter is a scripted shell program replaying that `observed` JSON.
-//! Item features the library lacks fail loudly instead of passing.
+//! Item features the library lacks fail loudly instead of passing. `then_sync` classifies each
+//! updated locator the way the next `sync` would (lock base after the run, source value, native
+//! value), observed as `next_sync_class` (and `next_run_class` for a single locator).
 //!
 //! Executor conventions: `cadetta.lock` is left out of the `writes` view (the lock is observed
 //! through `lock_adds`); `--accept` fixtures run propose first, so the proposal files are not
@@ -15,6 +17,7 @@
 //! then accept against those bindings.
 
 use cadetta::cmd::import::decode_observed;
+use cadetta_adapter::classify::classify;
 use cadetta_adapter::import::naming::{component_name, member_name};
 use cadetta_adapter::import::propose::{Status, propose};
 use cadetta_ir::model::PackageId;
@@ -22,8 +25,8 @@ use serde_json::{Value, json};
 
 use std::collections::BTreeMap;
 
-use super::Job;
 use super::protocol::{put, put_exec, rpc};
+use super::{Job, class_label};
 use crate::run::{Facts, Scratch, parse_json, run_cli, writing};
 
 /// Fixture keys this executor understands (`files` only restates the item files).
@@ -35,6 +38,7 @@ const MODELLED: &[&str] = &[
     "files",
     "lock_base",
     "source",
+    "then_sync",
 ];
 
 /// Package name of the scratch package the CLI runs against.
@@ -393,6 +397,9 @@ fn file_facts(facts: &mut Facts) {
         .observed
         .insert("writes_bindings".into(), json!(bindings));
     facts.observed.insert("writes_source".into(), json!(source));
+    facts
+        .observed
+        .insert("source_modified".into(), json!(source));
     facts.observed.insert("lock_adds".into(), adds);
 }
 
@@ -428,6 +435,22 @@ fn accept_facts(spec: &Value, mut facts: Facts) -> Facts {
         .filter(|c| c.contains("::"))
         .filter_map(|c| named(c))
         .collect();
+    // File paths in `unchanged` are files left alone; `overwrote` is a pre-existing file whose
+    // text changed (never expected: adapters.md 7.1).
+    let refused: Vec<String> = strings_of(&report["unchanged"])
+        .into_iter()
+        .filter(|c| !c.contains("::"))
+        .collect();
+    let overwrote: Vec<&String> = spec["existing"]
+        .as_object()
+        .into_iter()
+        .flatten()
+        .filter(|(_, v)| v.is_string())
+        .map(|(p, _)| p)
+        .filter(|p| facts.after.get(*p) != facts.before.get(*p))
+        .collect();
+    facts.observed.insert("overwrote".into(), json!(overwrote));
+    facts.observed.insert("refused".into(), json!(refused));
     facts.observed.insert("proposed".into(), json!(proposed));
     facts.observed.insert("unchanged".into(), json!(unchanged));
     facts
@@ -435,6 +458,7 @@ fn accept_facts(spec: &Value, mut facts: Facts) -> Facts {
 
 /// Facts of an `--update` run: diff lines, reported skips, citation flags and the edited sources.
 fn update_facts(spec: &Value, mut facts: Facts) -> Facts {
+    let lock_after = facts.after.get("cadetta.lock").cloned().unwrap_or_default();
     file_facts(&mut facts);
     let report = report_of(&facts);
     let (mut diff, mut reported, mut flagged) = (Vec::new(), Vec::new(), Vec::new());
@@ -468,6 +492,24 @@ fn update_facts(spec: &Value, mut facts: Facts) -> Facts {
             source_after.insert(name.clone(), json!(v));
         }
     }
+    let before = facts.before.get("src/lib.cdt").cloned().unwrap_or_default();
+    let mut edits = Vec::new();
+    for (name, src) in spec["source"].as_object().into_iter().flatten() {
+        let full = src.as_str().is_some_and(|s| s.contains('='));
+        let (was, now) = (
+            source_view(&before, name, full),
+            source_view(&after, name, full),
+        );
+        if was != now
+            && let Some(now) = now
+        {
+            edits.push(format!("{name} = {now}"));
+        }
+    }
+    facts.observed.insert("source_edits".into(), json!(edits));
+    if spec["then_sync"].as_bool() == Some(true) {
+        next_sync(spec, &lock_after, &after, &mut facts);
+    }
     facts.observed.insert("diff".into(), json!(diff));
     facts.observed.insert("reported".into(), json!(reported));
     facts.observed.insert("flagged".into(), json!(flagged));
@@ -475,6 +517,51 @@ fn update_facts(spec: &Value, mut facts: Facts) -> Facts {
         .observed
         .insert("source_after".into(), Value::Object(source_after));
     facts
+}
+
+/// The `value=` of the lock's `synced` record for `locator`, when there is one.
+fn lock_value(lock: &str, locator: &str) -> Option<String> {
+    lock.lines()
+        .filter(|l| l.starts_with("synced "))
+        .find(|l| {
+            l.contains(&format!(" locator={locator} "))
+                || l.contains(&format!(" locator={locator}\t"))
+        })
+        .and_then(|l| l.split_once(" value="))
+        .map(|(_, v)| v.trim().to_owned())
+}
+
+/// Observe the class the next `sync` gives each item: lock base after the run, the source value
+/// now, and the CAD value (`then_sync`; adapters.md 7.4).
+fn next_sync(spec: &Value, lock_after: &str, source_after: &str, facts: &mut Facts) {
+    let mut classes = serde_json::Map::new();
+    for item in spec["items"].as_array().into_iter().flatten() {
+        let name = item["locator"].as_str().unwrap_or_default();
+        let full = spec["source"][name]
+            .as_str()
+            .is_some_and(|s| s.contains('='));
+        let ours = source_view(source_after, name, full).unwrap_or_default();
+        let theirs = format!(
+            "{}{}",
+            item["number"],
+            item["unit"].as_str().unwrap_or_default()
+        );
+        let base = lock_value(lock_after, name);
+        let class = classify(base.as_deref(), &ours, &theirs);
+        tracing::info!(name, ?base, %ours, %theirs, ?class, "import: next sync classified");
+        classes.insert(name.to_owned(), json!(class_label(class)));
+    }
+    if let [(_, only)] = classes.iter().collect::<Vec<_>>().as_slice() {
+        facts
+            .observed
+            .insert("next_run_class".into(), (*only).clone());
+        facts
+            .observed
+            .insert("next_sync_class".into(), (*only).clone());
+    }
+    facts
+        .observed
+        .insert("next_sync_classes".into(), Value::Object(classes));
 }
 
 /// Propose-shaped facts: components, members, flags, order and per-locator status.
@@ -563,4 +650,17 @@ fn proposal_facts(
         ),
     );
     Ok(out)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::lock_value;
+
+    // frob:tests crates/cadetta-cli/tests/conformance/import.rs::lock_value
+    #[test]
+    fn lock_value_reads_the_synced_record_for_a_locator() {
+        let lock = "synced solidworks acme::Part.width locator=width value=11mm\n";
+        assert_eq!(lock_value(lock, "width").as_deref(), Some("11mm"));
+        assert_eq!(lock_value(lock, "depth"), None);
+    }
 }

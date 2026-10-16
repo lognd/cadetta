@@ -14,6 +14,8 @@ use crate::compare::Produced;
 use crate::expect::{Block, Expect};
 #[path = "import.rs"]
 mod import_exec; // nested like `protocol`, for the same reason
+#[path = "lockfix.rs"]
+pub mod lockfix; // nested like `protocol`, for the same reason
 #[path = "protocol.rs"]
 mod protocol; // nested so every conformance target gets it without a new `mod` line
 #[path = "push_plan.rs"]
@@ -53,6 +55,8 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("source", "cite", cli),
     ("source", "eval", eval),
     ("source", "init", init),
+    ("source", "update", lockfix::update),
+    ("source", "obligations", lockfix::obligations),
     ("binding", "check", binding::display),
     ("binding", "classify", classify),
     ("binding", "emit", binding::emit_scope),

@@ -2,13 +2,14 @@
 id = "01M51SNBKJG1ZCJYKZ6VD4Q7XX"
 title = "conformance: executors and fixtures for the update and obligations entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:26:13Z"
-updated = "2026-10-16T10:47:32Z"
-scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/packages/**", "tests/conformance/known-gaps.toml"]
+updated = "2026-10-16T10:48:08Z"
+scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/packages/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "The conformance runner has update and obligations executors, and the update-*/trust-* package fixtures pass (E012/E013 exit mismatch tracked in known-gaps)."

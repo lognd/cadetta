@@ -1,0 +1,1 @@
+attest check:acme.shop::Part.fits_limit role=review by=a@x.org at=2026-10-13 digest=fe298faf1552223fffc01834840244b34a20d8bc50a4444657e7a1da7d8f3125 verdict=holds margin=- deps=33da32945bac61b7bfb58d40aaaee83ac3464bb3c443857c23dfbe1aa264cf67,6c3e4e2ad4964df78d6d51861fcbd055da3d936443a360a2fcf4535df740518a reason="ok"

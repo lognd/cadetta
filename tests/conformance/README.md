@@ -214,8 +214,13 @@ directory is already the fixture form for multi-package rules; no new
   fixture's dependency carries its own `cadetta.lock` with the
   attestations.
 
-Executors for both entries and the fixtures are follow-up work and are
-listed in `known-gaps.toml` until they exist.
+Executors: `crates/cadetta-cli/tests/conformance/lockfix.rs`. `update`
+turns the `error: E0NN` lines `cadetta update` prints on stderr into
+diagnostics (it has no diagnostics report) and observes `lock`,
+`lock_written` and `digest_changed` from the fixture's `cadetta.lock`
+before and after; `obligations` observes `rows` from the JSON report, each
+upstream string split into `package`, `role`, `by` and `date`. Fixtures:
+`packages/update-*` and `packages/trust-*`.
 
 ## Observing the emitted point
 

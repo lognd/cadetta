@@ -1,0 +1,32 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 1",
+  "rule": "E012",
+  "kind": "source",
+  "entry": "update",
+  "must_fire": {
+    "exit": 1,
+    "diagnostics": [
+      {
+        "code": "E012",
+        "severity": "error"
+      }
+    ],
+    "lock_written": false
+  },
+  "must_not_fire": {
+    "exit": 0,
+    "diagnostics": [],
+    "lock_written": true,
+    "lock": {
+      "packages": [
+        {
+          "name": "acme.shop",
+          "version": "1.2.4",
+          "source": "path:shop"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 6",
+  "rule": "trust",
+  "kind": "source",
+  "entry": "obligations",
+  "must_fire": {
+    "exit": 1,
+    "diagnostics": [],
+    "rows": [
+      {
+        "id": "check:acme.shop::Part.fits_limit",
+        "role": "review",
+        "listed": true,
+        "upstream": {
+          "package": "acme.shop",
+          "role": "review",
+          "by": "a@x.org",
+          "date": "2026-10-13"
+        }
+      }
+    ]
+  },
+  "must_not_fire": {
+    "exit": 0,
+    "diagnostics": [],
+    "rows": [
+      {
+        "id": "check:acme.shop::Part.fits_limit",
+        "listed": false
+      }
+    ]
+  }
+}

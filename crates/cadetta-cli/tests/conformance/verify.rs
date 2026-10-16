@@ -36,6 +36,8 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "results_order" => check_results_order(want, facts),
             "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
+            "lock" => crate::exec::lockfix::check_lock(want, facts),
+            "rows" => crate::exec::lockfix::check_rows(want, facts),
             "observed" => check_observed_subset(want, facts),
             "excludes" => check_observed_excludes(want, facts),
             _ => check_observed(key, want, facts),
