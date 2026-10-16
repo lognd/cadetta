@@ -1098,12 +1098,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         self.processes = Some(Rc::new(processes));
     }
 
-    /// Reads `NAME.hole`, `NAME.shaft` or `NAME.clearance` of a `fit` member (language.md 3.7).
+    /// Reads `NAME.hole`, `NAME.shaft` or `NAME.clearance` (plus trailing `.min`/`.max`) of a `fit` member (language.md 3.7).
     // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
     // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:ticket 01M51H3Z5W0MDKYPX4M1Y7TJNH
     fn fit_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
-        let side = match chain {
-            [name] if matches!(name.as_str(), "hole" | "shaft" | "clearance") => name.as_str(),
+        let (side, accessors) = match chain {
+            [name, rest @ ..] if matches!(name.as_str(), "hole" | "shaft" | "clearance") => {
+                (name.as_str(), rest)
+            }
             _ => {
                 return Err(diag(
                     "EVAL",
@@ -1128,7 +1131,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             "shaft" => f.shaft,
             _ => f.clearance,
         });
-        q.map(Val::Quantity).ok_or(Fail::Silent)
+        let v = q.map(Val::Quantity).ok_or(Fail::Silent)?;
+        trace!(%key, side, ?accessors, "evaluator: fit side read");
+        self.apply_chain(v, None, accessors, span)
     }
 
     /// The fit definition at `key`: a fit of a plain component, or of a parameterized instance.
@@ -2443,6 +2448,19 @@ mod tests {
         let r = ev.get(&at("P", "r")).expect("r").role.expect("inherited");
         assert_eq!(r.source, RoleSource::Inherited);
         assert_eq!(quant(&ev, "P", "rm").nominal, m(99, 10_000));
+    }
+
+    // frob:ticket 01M51H3Z5W0MDKYPX4M1Y7TJNH
+    // frob:tests fit_member
+    #[test]
+    fn fit_clearance_min_max_apply_directly() {
+        let ev = run(&file(
+            "model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n  hi = seat.clearance.max\n  \
+             lo = seat.clearance.min\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
+        assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
     }
 
     // frob:tests fit_clearance_member_is_readable
