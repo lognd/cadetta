@@ -2,7 +2,8 @@
 id = "01M51461751SB8Z9SVSAAVM8QV"
 title = "std::inserts: heat-set and wire-thread inserts (0.2.0 remainder of HP6PTJH)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 3
 reporter = "lognd"
