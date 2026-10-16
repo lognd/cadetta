@@ -12,7 +12,7 @@ scope = ["crates/cadetta-ir/src/digest.rs"]
 
 [[acceptance]]
 text = "add_fit keeps <fit>.hole/.shaft nodes already emitted as members"
-bound = false
+bound = true
 +++
 
 found while working ~93GZBM2: add_fit overwrites <fit>.hole/.shaft member nodes now that sema emits them; deterministic but should skip existing.
