@@ -4,10 +4,11 @@ title = "IR Solver carries citation: CiteRef when solvers are lowered"
 type = "task"
 category = "todo"
 priority = "low"
+points = 1
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T22:15:52Z"
-updated = "2026-10-13T22:15:52Z"
+updated = "2026-10-16T03:04:26Z"
 scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/lower.rs"]
 
 [[acceptance]]
