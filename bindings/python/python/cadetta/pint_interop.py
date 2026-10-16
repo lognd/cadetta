@@ -49,11 +49,16 @@ def to_pint(q: Quantity, registry: Any) -> Result[Any, QuantityError]:
         _log.warning("to_pint: quantity has a currency dimension: %r", q)
         return Err(QuantityError("quantity has a currency dimension; no pint unit"))
     if not terms:
-        magnitude = q.to_float("rad^0")
-        pint_unit = "dimensionless"
+        unit, pint_unit = "rad^0", "dimensionless"
     else:
-        magnitude = q.to_float("*".join(f"{u}^{e}" for u, e in terms))
+        unit = "*".join(f"{u}^{e}" for u, e in terms)
         pint_unit = " * ".join(f"{u} ** {e}" for u, e in terms)
+    try:
+        # A currency dimension is not exposed on `dim`; it surfaces as a Q002 here.
+        magnitude = q.to_float(unit)
+    except QuantityError as exc:
+        _log.warning("to_pint: no SI conversion to %r: %s", unit, exc)
+        return Err(QuantityError(f"quantity has no pint equivalent: {exc}"))
     try:
         result = registry.Quantity(magnitude, pint_unit)
     except Exception as exc:  # pint raises many error types for foreign registries

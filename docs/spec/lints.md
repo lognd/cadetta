@@ -291,7 +291,8 @@ reported once per fit-side member without a tolerance.
 and D002. An empty `precision` keeps the built-in defaults (Length 2, Angle 1); a `precision` key
 names a built-in quantity kind or a `kind` declared by the package or its dependencies (`Money`
 sets USD, EUR, GBP, CNY and JPY); the configuration loads before those declarations are known, so
-an unrecognised key is logged and ignored during analysis rather than rejected. A `common_values`
+an unrecognised key is ignored during analysis rather than rejected, and reported as an M001
+warning naming the key (so a typo such as `Lenth` is not silent). A `common_values`
 entry that is not a quantity is rejected when the configuration loads. D002 also sees the quantity cells of every `table` in the
 package and its dependencies, named `Table[key].column`. A D001 below `d001_min_digits` stays at
 info even though the engine otherwise resets severities, unless `[lint] severity` sets `D001`.

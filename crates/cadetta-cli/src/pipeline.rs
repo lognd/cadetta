@@ -463,6 +463,20 @@ fn diag_at(
     d
 }
 
+/// M001 diagnostic for a `[lint] precision` key that names no built-in or package kind.
+// frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+fn unknown_precision_diag(package: &str, kind: &str) -> Diagnostic {
+    diag_at(
+        "M001",
+        Severity::Warning,
+        format!(
+            "`[lint] precision` names unknown quantity kind `{kind}`; it is ignored (package `{package}`)"
+        ),
+        Some("cadetta.toml".to_owned()),
+        None,
+    )
+}
+
 fn sema_severity(s: SemaSeverity) -> Severity {
     match s {
         SemaSeverity::Error => Severity::Error,
@@ -1783,6 +1797,11 @@ fn evaluate_stages(
             .expect("[lint] settings were validated at load");
         // Package-declared kinds are known only now, so `precision` resolves here.
         let mcfg = lint.m_config_lenient(&kinds);
+        // A key naming no kind is a typo the lenient resolution would hide: report each one.
+        for kind in lint.unknown_precision_kinds(&kinds) {
+            tracing::warn!(package = %p.name, %kind, "pipeline: unknown [lint] precision kind");
+            out.push(unknown_precision_diag(&p.name, &kind));
+        }
         // C001-C003 come from the structured check results; C004 reads the lowered IR.
         out.extend(c::check_derived(&ir, locate));
         out.extend(c::check_fit_ranges(&ir, locate));
@@ -1927,6 +1946,26 @@ mod tests {
             .unwrap();
         }
         Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::unknown_precision_diag
+    #[test]
+    fn unknown_lint_precision_kind_is_reported() {
+        let project = solver_project("precision", false);
+        let toml = project.root.join("cadetta.toml");
+        let mut text = std::fs::read_to_string(&toml).unwrap();
+        text.push_str("[lint]\nprecision = { Lenth = 2, Length = 3 }\n");
+        std::fs::write(&toml, text).unwrap();
+        let project = Project::load(&toml).unwrap();
+        let analysis = analyze(&project, &[0]);
+        let hits: Vec<&Diagnostic> = analysis
+            .diagnostics
+            .iter()
+            .filter(|d| d.message.contains("unknown quantity kind"))
+            .collect();
+        assert_eq!(hits.len(), 1, "{hits:?}");
+        assert!(hits[0].message.contains("`Lenth`"), "{}", hits[0].message);
     }
 
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0

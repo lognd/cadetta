@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T01:57:35Z"
+digest = "11360ef58df48860c59fc4690197f6c20b4122c5cbfcd0001a2985fa1efa37a2"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 10s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID edf3afa5-c775-49a2-bde5-bd3bbb6d6f66 with nextest profile: default
+    Starting 1 test across 45 binaries (596 tests skipped)
+        PASS [   3.074s] cadetta::conformance known_gap_tolerates_failure_and_flags_stale_entry
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   3.076s] 1 test run: 1 passed, 596 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta known_gap_tolerates_failure_and_flags_stale_entry"
+size = 625
+status = "measured"
+test_count = 1
+tests_digest = "2413c28407d9eb73250fad732cb04c4509860a09e8ce14ce0e4640c395df94b3"
+at = "2026-10-16T01:57:35Z"
+actor = "lognd"
+rev = 1
