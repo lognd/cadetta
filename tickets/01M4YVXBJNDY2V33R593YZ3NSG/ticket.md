@@ -12,7 +12,7 @@ scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/fitderive.rs", "cr
 
 [[acceptance]]
 text = "Fit.hole/shaft carry the real operand member paths (fitderive tests)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "M003 fires at the real fit operand (conformance stdlib/m003-hole-fit-side, gap removed)"
