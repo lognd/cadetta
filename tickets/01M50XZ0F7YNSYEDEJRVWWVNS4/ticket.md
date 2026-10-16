@@ -2,7 +2,8 @@
 id = "01M50XZ0F7YNSYEDEJRVWWVNS4"
 title = "Evaluate .hole/.shaft/.clearance for fits in parameterized instances; fix is_underived_fit definition-level path"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
