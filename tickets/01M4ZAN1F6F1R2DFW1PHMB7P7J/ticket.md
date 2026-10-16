@@ -2,7 +2,8 @@
 id = "01M4ZAN1F6F1R2DFW1PHMB7P7J"
 title = "Conformance: tool-session model for binding sync fixtures (R004 R008-R010 save attach O004)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 reporter = "lognd"
