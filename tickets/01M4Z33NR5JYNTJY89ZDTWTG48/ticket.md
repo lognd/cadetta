@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-16T04:52:38Z"
+updated = "2026-10-16T04:53:23Z"
 idempotency_key = "a0fq-f002"
 scope = ["tests/conformance/**", "docs/spec/language.md", "crates/cadetta-cli/tests/lint_lifts.rs"]
 
