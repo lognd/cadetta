@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: (1) R001 under --force-design: library sync::run still emits R001 as an audit record; per adapters.md 2 force pushes over it, so the conformance executor filters it and exit stays 0; clarified in adapters.md 2. (2) r006 fixtures: native key corrected to Plate_Thk (it mismatched the lock locator, giving R003). (3) Degrade instruction text comes from the fixture adapter stand-in via cadetta_adapter::plan_sync; real CLI wording is ~FEZDG87 territory. (4) attach/close-only-opened stay gapped: adapter-internal, a Sim would be tautological; filed ~6NNC66V."
+at = "2026-10-16T16:49:41Z"
+actor = "lognd"
+rev = 1
