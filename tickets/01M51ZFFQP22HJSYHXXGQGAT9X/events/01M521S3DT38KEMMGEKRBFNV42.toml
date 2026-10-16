@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A singular ots part's members lower as per-instance IR members (Unit/ring.bore_nominal); non-ots singular parts are unchanged"]
+moved = []
+at = "2026-10-16T09:48:04Z"
+actor = "lognd"
+rev = 1
