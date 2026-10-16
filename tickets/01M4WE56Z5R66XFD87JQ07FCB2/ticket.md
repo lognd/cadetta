@@ -2,13 +2,14 @@
 id = "01M4WE56Z5R66XFD87JQ07FCB2"
 title = "Permanent S001 gate over the std tree"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 3
 reporter = "Claude"
 created = "2026-10-14T05:28:57Z"
-updated = "2026-10-14T05:28:57Z"
-scope = ["crates/cadetta-cli/src/pipeline.rs"]
+updated = "2026-10-16T00:38:22Z"
+labels = ["creates:crates/cadetta-cli/gates/std_s001.rs"]
+scope = ["crates/cadetta-cli/Cargo.toml", "docs/spec/stdlib.md", "crates/cadetta-cli/gates/std_s001.rs"]
 
 [[acceptance]]
 text = "Given an uncited ots value in std/src, when the gate runs, then it fails"
