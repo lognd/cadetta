@@ -1,0 +1,12 @@
+kind = "create"
+title = "Waive with a valid future expiry does not suppress C001 in check entry (language/e001-waive-date)"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+scope = ["crates/cadetta-sema/**"]
+acceptance = ["language/e001-waive-date must-not-fire passes; gap entry removed"]
+body = "conformance run: language/e001-waive-date [language]: must-not-fire: extra C001 (error) at acme.demo::Part.ok despite 'waive C001 on acme.demo::Part.ok ... expires 2099-01-01'. Found while fixing ~S1S3XZK."
+at = "2026-10-16T07:35:33Z"
+actor = "lognd"
+rev = 1

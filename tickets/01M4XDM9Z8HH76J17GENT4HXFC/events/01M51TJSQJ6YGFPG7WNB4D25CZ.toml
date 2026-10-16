@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A ref-mode dimension locator is link-checked by sync: R003 when absent or no longer linked to its target global, never pushed"]
+moved = []
+at = "2026-10-16T07:42:17Z"
+actor = "lognd"
+rev = 1

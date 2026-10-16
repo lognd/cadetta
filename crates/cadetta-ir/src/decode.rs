@@ -18,7 +18,7 @@ use tracing::{debug, trace};
 
 use crate::dim::DimWire;
 use crate::entities::{
-    Cell, Interface, InterfaceBound, InterfaceMember, Table, TableCol, TableRow, Waiver,
+    Cell, Interface, InterfaceBound, InterfaceMember, Require, Table, TableCol, TableRow, Waiver,
 };
 use crate::geometry::{Axis, Datum, OffsetArgs, Op, Placement, Point};
 use crate::model::{
@@ -458,7 +458,7 @@ fn verdict(s: &str, ptr: &str) -> Res<VerdictState> {
     }
 }
 
-fn check(o: &Json, ptr: &str) -> Res<Check> {
+fn verdicts(o: &Json, ptr: &str) -> Res<Verdicts> {
     let v = field(o, ptr, "verdicts")?;
     let vp = format!("{ptr}/verdicts");
     let primary = v
@@ -481,15 +481,31 @@ fn check(o: &Json, ptr: &str) -> Res<Check> {
             ))
         })
         .collect::<Res<BTreeMap<_, _>>>()?;
+    Ok(Verdicts {
+        primary,
+        per_alternate,
+    })
+}
+
+fn check(o: &Json, ptr: &str) -> Res<Check> {
     Ok(Check {
         path: path(o, ptr, "path")?,
         expr: text(o, ptr, "expr")?,
-        verdicts: Verdicts {
-            primary,
-            per_alternate,
-        },
+        verdicts: verdicts(o, ptr)?,
         conservative: flag(o, "conservative"),
         waived_for: strings(o, "waived_for"),
+    })
+}
+
+// frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+fn require(o: &Json, ptr: &str) -> Res<Require> {
+    Ok(Require {
+        path: path(o, ptr, "path")?,
+        expr: text(o, ptr, "expr")?,
+        message: opt_text(o, "message"),
+        citation: cite_ref(o, ptr)?,
+        verdicts: verdicts(o, ptr)?,
+        conservative: flag(o, "conservative"),
     })
 }
 
@@ -732,6 +748,7 @@ pub fn decode_project(doc: &Json) -> Result<Project, DecodeError> {
     project.citations = many(doc, "", "citations", citation)?;
     project.interfaces = many(doc, "", "interfaces", interface)?;
     project.tables = many(doc, "", "tables", table)?;
+    project.requires = many(doc, "", "requires", require)?;
     project.waivers = many(doc, "", "waivers", waiver)?;
     project.frames = many(doc, "", "frames", frame)?;
     project.instances = many(doc, "", "instances", instance)?;

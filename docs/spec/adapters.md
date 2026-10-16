@@ -231,6 +231,12 @@ variable `"Axle_end_diameter"` or to the dimension
   global is a `value` global whose unit is the dimension locator's
   `native_unit`, or the adapter's declared native unit when the locator
   has none; it is written before the path's dimension lines.
+- Sync of a `ref` locator: its value is carried by the target global, which
+  syncs as a value, so the dimension itself is never pushed or compared (a
+  push would replace the link, R006). `sync` instead checks the link: a `ref`
+  dimension absent from the CAD files, or whose native expression no longer
+  names its target global, is R003 (a named target must appear in the
+  expression; an alias or created global only needs an expression present).
 - File defaults (`cadetta-adapter` `bindings.rs`): `mode` defaults to
   `ref` for a `dimension` locator and `value` otherwise; an omitted
   `native_unit` means the adapter's declared native unit. A
