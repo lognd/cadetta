@@ -2,7 +2,8 @@
 id = "01M51S07A3HQJTZDT9VS1S3XZK"
 title = "Fix stale entries in conformance known-gaps.toml"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 2
 reporter = "lognd"
