@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = 'Decision: Fit.hole/shaft are the REAL operand member paths (per-instance re-rooted); no schema change. Class fits put the operand on the mate side and keep synthetic <fit>.hole/.shaft for the class side; class pairs keep both synthetic. Digest accessor nodes now keyed <fit>.hole/<fit>.shaft (previously keyed at Fit.hole, which would collide with real members). Rejected: separate hole_operand/shaft_operand fields (two meanings per name, every consumer must choose; d.rs and universe.rs already assumed real operands). Documented in docs/spec/ir.md "Fit operands". Emitting <fit>.hole/.shaft/.clearance as member values (~5KNEDZF/~93GZBM2) remains a follow-up.'
+at = "2026-10-16T04:31:37Z"
+actor = "lognd"
+rev = 1

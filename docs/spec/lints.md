@@ -383,7 +383,7 @@ through `lift_resolution`.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. |
+| S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. Reported once at the component path when nothing in the component is cited, else per uncited value. |
 | S002 | citation-unreachable | info | | A citation's `file` does not exist. URLs are never fetched by `check` (`cadetta cite pin` makes a URL checkable). |
 | S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
 | S004 | citation-changed | warning | | A citation's digest (its fields and, with `file`, the file's digest) differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only a `file` is drift-detected on disk; `cadetta cite pin` vendors a URL. |

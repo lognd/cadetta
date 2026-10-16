@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T04:08:23Z"
+digest = "bddec229e26dedc3dfbbd224115f912523ea27ec38d70a44c20b3ad0b4fe91b5"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.01s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cfe1b833-125e-4833-a807-6ede94d20662 with nextest profile: default
+    Starting 3 tests across 1 binary (77 tests skipped)
+        PASS [   0.005s] cadetta-units tolerance::tests::disc_nonlinear_falls_back_to_hull
+        PASS [   0.005s] cadetta-units tolerance::tests::disc_bounds_use_euclidean_radius
+        PASS [   0.006s] cadetta-units tolerance::tests::disc_terms_combine_cancel_and_scale
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 3 tests run: 3 passed, 77 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-units disc_"
+size = 794
+status = "measured"
+test_count = 3
+tests_digest = "d3ff5b78538b8376af3fe47db6398e481710b2c128fb521a50d39a2966f81130"
+at = "2026-10-16T04:08:23Z"
+actor = "lognd"
+rev = 1

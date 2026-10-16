@@ -233,6 +233,20 @@ pin: Point2 on base = Point2(10mm, 5mm) [position 0.1mm]
   offset is 0.05mm + 0.05mm = 0.1mm, against 0.1414mm for the
   coordinate box `[+-0.05mm]`. The result is conservative only when the
   chain has an inexact rotation or other nonlinear terms.
+- Decided in implementation (`cadetta-geometry` `zone`): `distance` and
+  `aligned` bound a difference of point coordinates by its per-disc Gram
+  matrix. The result is exact (rational square-root bounds, outward at
+  2^-32) when every disc is isotropic, no box term is present and the
+  discs lie in the measured plane: the extreme squared distance is
+  `|c|^2` plus `(max(0, m - R))^2` to `(m + R)^2`, with `R` the sum of
+  radii. Tilted, elliptic or box-mixed discs, and forms with a pi factor,
+  fall back to a conservative enclosure: `|c|` plus or minus the sum of
+  spectral radii and the box norm. An axial offset outside the disc plane
+  adds to `|c|^2` unchanged. Under an inexact rotation `Transform::apply`
+  bounds each disc's contribution by its Euclidean reach
+  `sqrt(U^2 + V^2)` instead of `|U| + |V|`; the disc identity is then
+  dropped, so later `aligned` and `distance` over that value are
+  conservative. Exact quarter turns keep the identity.
 - A position zone is not a dimension. It is not emitted or bound; the
   nominal coordinates and the generator members are.
 

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Scope added (fixtures + known-gaps). Blocked on lease DTWTG48 (tests/conformance/**). Not yet investigated: pattern-count-structural fires extra E002 at Part.n (n: Int = 2 used as pattern count; E006 expected only); w005 fixture exits 0 though C001 error fires with waiver expiring 2026-11-01 (waived C001 should be suppressed to info W005, expected nonzero per expect.json - check whether expect is wrong given today 2026-10-16)."
+at = "2026-10-16T04:31:32Z"
+actor = "lognd"
+rev = 1

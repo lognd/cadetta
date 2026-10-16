@@ -53,6 +53,7 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("source", "cite", cli),
     ("source", "eval", eval),
     ("source", "init", init),
+    ("binding", "check", binding::display),
     ("binding", "classify", classify),
     ("binding", "emit", binding::emit_scope),
     ("binding", "import", import_exec::run),

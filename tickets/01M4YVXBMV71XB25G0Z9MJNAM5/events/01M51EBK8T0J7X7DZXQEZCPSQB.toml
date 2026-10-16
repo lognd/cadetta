@@ -1,0 +1,59 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T04:07:03Z"
+digest = "8351ad53e3a089b57fc41da16460c79c5ddd239531c74f82abbbc13f2ee5f7c7"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.14
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.154
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling ref-cast v1.0.27
+   Compiling serde_derive v1.0.229
+   Compiling cpufeatures v0.3.1
+   Compiling constant_time_eq v0.4.2
+   Compiling cfg-if v1.0.5
+   Compiling arrayvec v0.7.8
+   Compiling serde_derive_internals v0.30.0
+   Compiling ref-cast-impl v1.0.27
+   Compiling cc v1.8.0
+   Compiling winnow v1.0.4
+   Compiling dyn-clone v1.0.20
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling schemars_derive v1.2.3
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling blake3 v1.8.7
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling serde_spanned v1.1.2
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 35s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 849b0bcd-da47-480d-bf30-408964974d61 with nextest profile: default
+    Starting 4 tests across 1 binary (142 tests skipped)
+        PASS [   0.005s] cadetta-lint rules::s::tests::s001_one_component_diagnostic_when_nothing_cited
+        PASS [   0.005s] cadetta-lint rules::s::tests::s001_per_value_when_component_partly_cited
+        PASS [   0.005s] cadetta-lint rules::s::tests::s001_fires_when_uncited
+        PASS [   0.005s] cadetta-lint rules::s::tests::s001_quiet_when_value_or_component_cited
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 4 tests run: 4 passed, 142 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint s001"
+size = 2058
+status = "measured"
+test_count = 4
+tests_digest = "0fac26f72b5de5ce7a2b1d140ec518bb94c49f98a5109755ddd22bae458b5057"
+at = "2026-10-16T04:07:03Z"
+actor = "lognd"
+rev = 1

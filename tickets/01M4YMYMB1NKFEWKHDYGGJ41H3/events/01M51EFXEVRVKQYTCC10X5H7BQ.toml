@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Resolver E-family errors are lifted through e::lift_resolution (notes for E003/E004 related spans), message text unchanged"]
+moved = []
+at = "2026-10-16T04:11:00Z"
+actor = "lognd"
+rev = 1

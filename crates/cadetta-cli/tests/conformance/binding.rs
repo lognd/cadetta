@@ -312,3 +312,28 @@ pub fn impact_swap(job: &Job) -> Result<Facts, String> {
         .insert("actions".into(), Value::Array(actions));
     Ok(facts)
 }
+
+/// `{ "call": "display", "value", "spec" }`: run `cadetta display` and observe the printed `result`.
+pub fn display(job: &Job) -> Result<Facts, String> {
+    let spec = read_spec(job)?;
+    let call = spec["call"].as_str().unwrap_or_default();
+    if call != "display" {
+        return Err(format!("binding call `{call}` has no executor"));
+    }
+    let field = |key: &str| {
+        spec[key]
+            .as_str()
+            .map(str::to_owned)
+            .ok_or_else(|| format!("display call lacks string `{key}`"))
+    };
+    let args = vec!["display".to_owned(), field("value")?, field("spec")?];
+    let scratch = Scratch::new()?;
+    let mut facts = run_cli(&scratch.0, &args)?;
+    if let Some(text) =
+        parse_json(&facts.stdout).and_then(|v| v["text"].as_str().map(str::to_owned))
+    {
+        facts.observed.insert("result".into(), json!(text));
+    }
+    tracing::debug!(?args, exit = facts.exit, "conformance: binding display");
+    Ok(facts)
+}
