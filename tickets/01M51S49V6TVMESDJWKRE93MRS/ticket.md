@@ -12,7 +12,7 @@ scope = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-co
 
 [[acceptance]]
 text = "A roll-up naming a member no part type declares reports E002, not EVAL"
-bound = false
+bound = true
 +++
 
 Per docs/spec/stdlib.md Conformance decisions (~MEM04J7): misspelled roll-up member is E002 at the roll-up expression, never internal EVAL.
