@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/packages/
 
 [[acceptance]]
 text = "The conformance runner has update and obligations executors, and the update-*/trust-* package fixtures pass (E012/E013 exit mismatch tracked in known-gaps)."
-bound = false
+bound = true
 +++
 
 Follow-up of ~XXKBNB8: implement the update and obligations entries specified in tests/conformance/README.md and add fixtures for update (drop records, NAME not in closure exit 2, E012/E013 not written) and obligations (attested upstream row, trusted role discharge).
