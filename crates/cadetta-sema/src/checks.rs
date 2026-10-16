@@ -482,13 +482,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match &strip(source).kind {
             ExprKind::Array(items) => items.iter().map(|e| self.eval(sc, e)).collect(),
             ExprKind::Path(_) | ExprKind::Field(..) => {
-                if let Ok(Resolved::Part { .. }) = self.resolver.resolve_ref(&sc.ctx, source, None)
-                {
-                    return Err(diag(
-                        "EVAL",
-                        source.span,
-                        "ranging over part instances is evaluated by the parts ticket",
-                    ));
+                if let Some(values) = self.part_array_values(sc, source) {
+                    return Ok(values);
                 }
                 Err(diag(
                     "EVAL",
@@ -746,6 +741,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             ExprKind::Field(base, id) => match self.resolver.resolve_ref(&sc.ctx, base, None) {
                 Ok(Resolved::Item { path, .. }) => (path, id.name.clone()),
+                // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+                Ok(Resolved::Part { path }) => (
+                    super::geom::definition_path(self.resolver, &path)?,
+                    id.name.clone(),
+                ),
+                Ok(Resolved::Local(n)) => match sc.locals.iter().rev().find(|(l, _)| *l == n) {
+                    Some((_, Val::Component(path))) => (path.clone(), id.name.clone()),
+                    _ => return None,
+                },
                 _ => return None,
             },
             _ => return None,
@@ -882,6 +886,27 @@ mod tests {
         );
         assert_eq!(v, vec![Verdict::Holds, Verdict::Violates, Verdict::Holds]);
         assert_eq!(codes, vec!["C001"]);
+    }
+
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    // frob:tests crates/cadetta-sema/src/geom.rs::part_array_values kind=unit
+    #[test]
+    fn check_ranges_over_part_array_instances_and_reads_members() {
+        let (v, codes, _) = verdicts(
+            "model Wheel {\n  dia = 10mm\n}\n\
+             model Rover {\n  part w[2]: Wheel\n  \
+             check small for b in w: b.dia < 20mm\n  check big for b in w: b.dia > 20mm\n}\n",
+        );
+        assert_eq!(
+            v,
+            vec![
+                Verdict::Holds,
+                Verdict::Holds,
+                Verdict::Violates,
+                Verdict::Violates
+            ]
+        );
+        assert_eq!(codes, vec!["C001", "C001"]);
     }
 
     // frob:tests require_is_a_check_with_citation_and_obligation

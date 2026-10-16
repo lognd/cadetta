@@ -295,6 +295,44 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             .is_some_and(|p| p.count.is_some())
     }
 
+    /// The per-instance values of a counted `part` slot named by `source`: one component value per
+    /// instance (every element shares the slot's component); `None` when `source` is not a part array
+    /// or its count does not evaluate.
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    pub(super) fn part_array_values(&mut self, sc: &Scope, source: &Expr) -> Option<Vec<Val>> {
+        let (crate::resolve::Resolved::Part { path }, _) = self
+            .renames
+            .resolve_ref(self.resolver, &sc.ctx, source, None)
+            .ok()?
+        else {
+            return None;
+        };
+        let (last, outer) = path.parts.split_last()?;
+        let mut owner = path.item_only();
+        for seg in outer {
+            owner = step_part(self.resolver, self.selection.as_ref(), &owner, &seg.name)
+                .ok()?
+                .0;
+        }
+        let count_expr = find_part(self.resolver.component(&owner)?, &last.name)?
+            .count
+            .as_ref()?;
+        let mut owner_sc = Scope {
+            ctx: Ctx {
+                package: owner.package.clone(),
+                module: owner.modules.clone(),
+                component: Some(owner.item.clone()),
+                locals: Vec::new(),
+            },
+            locals: Vec::new(),
+        };
+        let q = self.quant(&mut owner_sc, count_expr).ok()?;
+        let n = parts::array_count(&q).ok()?;
+        let def = definition_path(self.resolver, &path)?;
+        debug!(slot = %path, n, "evaluator: quantifier ranges over a part array");
+        Some((0..n).map(|_| Val::Component(def.clone())).collect())
+    }
+
     /// `base[i]`: the i-th element of an evaluated array.
     pub(super) fn index(&mut self, sc: &mut Scope, base: &Expr, idx: &Expr, span: Span) -> R<Val> {
         let items = match self.eval(sc, base)? {
