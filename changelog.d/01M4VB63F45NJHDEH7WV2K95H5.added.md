@@ -1,0 +1,1 @@
+True position: [position d] on a Point2 or array gives each point one disc variable, lowered to paired .u/.v terms with Point.position, E006 on Point3 or mixed tolerances, and exact sum-of-radii aligned checks.
