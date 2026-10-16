@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T02:21:43Z"
-updated = "2026-10-16T03:18:30Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-16T03:20:10Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/ir.md"]
 
 [[acceptance]]
 text = "Tables declared in a package lower into ir.tables with their cell values"
