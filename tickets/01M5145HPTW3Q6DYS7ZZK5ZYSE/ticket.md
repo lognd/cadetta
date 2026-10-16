@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T01:10:33Z"
-updated = "2026-10-16T01:37:01Z"
-scope = ["bindings/python/python/cadetta/project.py"]
+updated = "2026-10-16T01:37:42Z"
+scope = ["bindings/python/python/cadetta/project.py", "bindings/python/tests/test_binding_fixtures.py"]
 
 [[acceptance]]
 text = "Workspace-root evaluate() behaviour and spec agree; KNOWN_DIVERGENCES entries removed"
