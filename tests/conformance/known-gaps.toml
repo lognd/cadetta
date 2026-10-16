@@ -353,16 +353,6 @@ ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
-fixture = "adapters/import-expression-converted"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/import-item-keys"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
 fixture = "adapters/import-property-quantity-needs-unit"
 ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
@@ -374,11 +364,6 @@ reason = "import library lacks the item feature this fixture exercises (cadetta-
 
 [[gap]]
 fixture = "adapters/import-prp-linked-property-skipped"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/import-values-nominal-scalars"
 ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 

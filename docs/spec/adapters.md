@@ -723,7 +723,9 @@ by `file` then `locator`, with keys `file`, `locator`, `kind`
 (`global | dimension | property | frame`), `native_name`, `expression`
 (the native expression, when there is one), `value` (a source literal),
 `path` (the proposed canonical path), `type` (the proposed component),
-`status` (`accept | rename | skip`) and `reason` (for `skip`). The user edits
+`status` (`accept | rename | skip`) and `reason` (for `skip`, and for an
+accepted item whose native expression was converted, which asks the user
+to review the formula). The user edits
 `proposal.toml`. `--accept` writes `bindings/<id>.toml` and
 `cad/imported/<File>.cdt` from it. A re-run adds only locators not yet
 bound and reports the others as unchanged; existing files are never

@@ -30,6 +30,8 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "order" => check_order(want, facts),
             "stdout_contains" => check_contains(want, &facts.stdout, "stdout"),
             "stderr_contains" => check_contains(want, &facts.stderr, "stderr"),
+            "source_contains" => check_contains(want, &observed_text(facts, "source"), "source"),
+            "source_excludes" => check_excludes(want, &observed_text(facts, "source"), "source"),
             "message_contains" => check_contains(want, &facts.messages.join("\n"), "messages"),
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
             "diagnostics_exclude" => check_diagnostics_exclude(want, &facts.produced),
@@ -83,6 +85,16 @@ fn strings(want: &Value) -> Vec<String> {
         Value::String(s) => vec![s.clone()],
         _ => Vec::new(),
     }
+}
+
+/// The string observation `key` (empty when the executor did not observe it).
+fn observed_text(facts: &Facts, key: &str) -> String {
+    facts
+        .observed
+        .get(key)
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_owned()
 }
 
 fn check_flag(want: &Value, got: bool, key: &str) -> Result<(), String> {
