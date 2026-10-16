@@ -2,7 +2,8 @@
 id = "01M514JX5PKMQ4SEGBRKNWJCVG"
 title = "Conformance runner treats kind=binding entry=python as externally replayed, then drop the 35 bindings/* known-gaps"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
