@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-16T07:08:29Z"
+digest = "8859224ad7ca4feb568ddfdf7a34c5aadcadff038822c449093ac203b4974898"
+provider = "file"
+ref = "docs/spec/emitters/sw-equations.md"
+size = 6750
+status = "measured"
+at = "2026-10-16T07:08:29Z"
+actor = "lognd"
+rev = 1
