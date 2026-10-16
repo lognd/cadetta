@@ -2,7 +2,8 @@
 id = "01M51NR9617ZM61WBT4AQ8KSJA"
 title = "emit: a pure reference does not inherit its referent's emit point (quantities.md 5.6)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
