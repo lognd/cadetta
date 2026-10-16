@@ -316,6 +316,16 @@ impl Lint {
             .unwrap_or_else(|_| MConfig::default())
     }
 
+    /// The `precision` keys that name neither `Money` nor a kind in `kinds`, in key order.
+    // frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+    pub fn unknown_precision_kinds(&self, kinds: &KindTable) -> Vec<String> {
+        self.precision
+            .keys()
+            .filter(|k| k.as_str() != "Money" && kinds.dim_of(k).is_none())
+            .cloned()
+            .collect()
+    }
+
     /// The D001/D002 settings: `d001_min_digits`, parsed `common_values` and the caller's
     /// table cells.
     pub fn d_config(&self, table_cells: Vec<NamedValue>) -> Result<DConfig, ConfigError> {
