@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: O004 fixtures run on the real CLI (o004.rs: scratch package, cadetta sync, ack sync:FILE, resync) instead of extending the host model; drive adapters keep the host model and now also observe obligation/state. The sync report has no severity so the runner takes O004 as info; follow-up filed."
+at = "2026-10-16T18:11:25Z"
+actor = "lognd"
+rev = 1
