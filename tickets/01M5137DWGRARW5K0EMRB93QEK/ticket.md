@@ -2,12 +2,12 @@
 id = "01M5137DWGRARW5K0EMRB93QEK"
 title = "Unknown [lint] precision kind should surface as a diagnostic, not only a log warning"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:54:08Z"
-updated = "2026-10-16T00:54:08Z"
+updated = "2026-10-16T01:43:49Z"
 idempotency_key = "followup-76gmv4n-typo"
 scope = ["crates/cadetta-cli/src/pipeline.rs"]
 
