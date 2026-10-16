@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T06:11:21Z"
-updated = "2026-10-16T06:20:22Z"
-scope = ["bindings/python/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/lint_gaps_d001_d002.rs"]
+updated = "2026-10-16T06:27:06Z"
+scope = ["bindings/python/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/lint_gaps_d001_d002.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "binding pytest test_conformance passes for the 20 failing fixtures; no duplicate E002; D002 not raised on the authored fit hole source literal"
