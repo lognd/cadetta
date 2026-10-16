@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:54:08Z"
-updated = "2026-10-16T01:52:12Z"
+updated = "2026-10-16T01:55:21Z"
 idempotency_key = "followup-76gmv4n-typo"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/config.rs", "docs/spec/lints.md"]
 
