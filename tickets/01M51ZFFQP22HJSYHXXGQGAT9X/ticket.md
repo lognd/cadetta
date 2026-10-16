@@ -4,9 +4,10 @@ title = "Emit singular OTS part members (ring.bore_nominal etc.) as per-instance
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-16T09:07:52Z"
-updated = "2026-10-16T09:07:52Z"
+updated = "2026-10-16T09:36:13Z"
 scope = ["crates/cadetta-sema/src/lower.rs"]
 +++
 
