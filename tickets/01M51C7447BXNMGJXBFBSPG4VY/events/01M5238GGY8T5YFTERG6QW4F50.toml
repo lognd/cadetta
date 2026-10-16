@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Invalid part counts, out-of-range part-array indexing, mixed-kind array literals and unindexed reads of an empty part array each yield the EVAL/Q009 diagnostic the language fixtures require"]
+moved = []
+at = "2026-10-16T10:13:57Z"
+actor = "lognd"
+rev = 1

@@ -2,12 +2,12 @@
 id = "01M51SNBKJG1ZCJYKZ6VD4Q7XX"
 title = "conformance: executors and fixtures for the update and obligations entries"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:26:13Z"
-updated = "2026-10-16T09:23:35Z"
+updated = "2026-10-16T10:11:38Z"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/packages/**", "tests/conformance/known-gaps.toml"]
 +++
 
