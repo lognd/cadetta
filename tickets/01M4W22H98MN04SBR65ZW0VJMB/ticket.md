@@ -12,7 +12,7 @@ scope = ["docs/spec/adapters.md"]
 
 [[acceptance]]
 text = "adapters.md 3.4 states the transform composition rule"
-bound = false
+bound = true
 +++
 
 found while working 645FHJZ: the composition rule (datum ops left to right, anchor node resolution for at on another part) is documented in the geometry_bind.rs module docs; docs/spec/** was leased by ~MCJWA2D. Patch to apply: bullet 'Composition.' before 'A placement is verify-only' in 3.4.
