@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Conformance decisions in stdlib.md confirmed or decided, engaged check rationale recorded"]
+moved = []
+at = "2026-10-16T07:16:54Z"
+actor = "lognd"
+rev = 1
