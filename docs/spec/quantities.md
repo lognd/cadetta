@@ -322,7 +322,13 @@ centre, so `cb = head_dia + 1mm` stores the sum of nominals even when
 `head_dia` is asymmetric; `.max` and the other accessors read bounds
 and the tracked nominal. A parameter is an alias only when it is a pure
 reference to a non-`let` quantity; a parameter reading a `let` stores
-that `let`'s nominal untoleranced. A bracket with a single `+v` term has
+that `let`'s nominal untoleranced. A parameter that is a pure member
+read through a path or field (a fit side `bore_fit.hole`, a table cell
+`Din472[..].groove_dia`, a component member `ring.groove_width`) is a
+stored copy of the toleranced value it read, not a nominal-only
+constant, so `.min`/`.max` of it keep the tolerance. A bound such as
+`in 2um..13um` has no IR member path; a check reads its `.min`/`.max`
+instead. A bracket with a single `+v` term has
 0 on the lower side and a single `-v` term has 0 on the upper side; with
 more terms the lower and upper deviations are the least and greatest
 signed deviation. A tolerance written inside a larger expression or a
