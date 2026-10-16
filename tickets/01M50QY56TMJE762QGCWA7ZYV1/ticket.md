@@ -2,12 +2,12 @@
 id = "01M50QY56TMJE762QGCWA7ZYV1"
 title = "Dedupe negate_text: use cadetta_adapter::geometry_plan::negate_text in cadetta-cli"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T21:36:49Z"
-updated = "2026-10-16T00:26:10Z"
+updated = "2026-10-16T00:26:12Z"
 scope = ["crates/cadetta-cli/src/**"]
 
 [[acceptance]]
