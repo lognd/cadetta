@@ -4,9 +4,10 @@ title = "Write the transform composition rule into adapters.md 3.4"
 type = "task"
 category = "todo"
 priority = "low"
+points = 1
 reporter = "lognd"
 created = "2026-10-14T01:57:46Z"
-updated = "2026-10-14T01:57:46Z"
+updated = "2026-10-16T00:37:55Z"
 scope = ["docs/spec/adapters.md"]
 +++
 
