@@ -1,0 +1,10 @@
+kind = "create"
+title = "Roll-up over misspelled member must report E002, not internal EVAL"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/**"]
+body = "Per docs/spec/stdlib.md Conformance decisions (~MEM04J7): misspelled roll-up member is E002 at the roll-up expression, never internal EVAL."
+at = "2026-10-16T07:16:54Z"
+actor = "lognd"
+rev = 1
