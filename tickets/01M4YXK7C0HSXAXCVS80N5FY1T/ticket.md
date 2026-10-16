@@ -7,12 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T04:37:14Z"
-updated = "2026-10-16T07:19:52Z"
+updated = "2026-10-16T07:20:46Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
 text = "Given a solver in-expression reading wheel.load_rating on part wheel[4], when evaluated, then it reads instance 0 (the primary or the selected alternate) with no EVAL error"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a counted part array, when a member is read with an index on a non-array part, then it is still an error"
