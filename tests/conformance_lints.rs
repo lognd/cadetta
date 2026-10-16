@@ -33,11 +33,11 @@ fn corpus_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/conformance")
 }
 
-/// Run the whole corpus once and keep only the verdicts of `doc`.
+/// Run only the requested doc(s) of the corpus and keep only the verdicts of `doc`.
 fn doc_report(doc: &str) -> (corpus::Report, Vec<String>) {
     let allow = corpus::load_known_gaps(&corpus_root().join("known-gaps.toml"))
         .unwrap_or_else(|e| panic!("known-gaps.toml: {e}"));
-    let report = corpus::run_corpus(&corpus_root(), &allow);
+    let report = corpus::run_corpus_for(&corpus_root(), &allow, &[doc]);
     let prefix = format!("{doc}/");
     let failures = report
         .failures
