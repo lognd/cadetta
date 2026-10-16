@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: SyncDiag::new derives severity from code (O004 info; BLOCKING codes error; else warning) - one place, no per-call-site severities."
+at = "2026-10-16T18:53:53Z"
+actor = "lognd"
+rev = 1
