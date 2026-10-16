@@ -7,8 +7,8 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-13T18:20:04Z"
-updated = "2026-10-16T07:08:01Z"
-scope = ["docs/spec/emitters/**"]
+updated = "2026-10-16T07:08:14Z"
+scope = ["docs/spec/emitters/**", "docs/spec/adapters.md"]
 +++
 
 found while working ~EWSF8YR. Decide error or support; owner rule is error.
