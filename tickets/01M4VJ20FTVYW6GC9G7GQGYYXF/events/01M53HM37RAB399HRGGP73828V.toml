@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T23:44:11Z"
+digest = "7b0688938541c8d9071c0f4bf6cf940e019ddc40660eb330d893393c4d18ec7b"
+exit_code = 0
+inline = """
+INFO 12 files parsed, 0 with errors
+"""
+passed = true
+provider = "command"
+ref = "uv run editors/tree-sitter/check_golden.py /tmp/claude-1000/-home-logan-projects-cadetta/5bbabb83-32a3-446b-9e71-532cccb3fbd0/scratchpad/ts/inst/bin/tree-sitter"
+size = 36
+status = "measured"
+at = "2026-10-16T23:44:11Z"
+actor = "lognd"
+rev = 1

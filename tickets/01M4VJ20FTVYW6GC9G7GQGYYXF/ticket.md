@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:17:52Z"
-updated = "2026-10-16T23:44:04Z"
+updated = "2026-10-16T23:44:11Z"
 persona = "a designer using Helix, Zed or Neovim treesitter"
 capability = "highlight .cdt files with a tree-sitter grammar"
 outcome_text = "editors without TextMate support get accurate highlighting"
@@ -16,7 +16,7 @@ scope = ["editors/tree-sitter/**", "editors/generate.py", "editors/grammar/cadet
 
 [[acceptance]]
 text = "Given editors/tree-sitter, when tree-sitter generate and tree-sitter test run, then the grammar parses every tests/golden/*/src/*.cdt without ERROR nodes and ships highlights.scm queries"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given editors/README.md, when read, then it documents Helix, Zed and Neovim treesitter installation of the grammar"
