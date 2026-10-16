@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
-updated = "2026-10-16T07:26:13Z"
-scope = ["docs/spec/**"]
+updated = "2026-10-16T07:27:20Z"
+scope = ["docs/spec/**", "tests/conformance/README.md"]
 
 [[acceptance]]
 text = "conformance README specifies update and obligations entries and packages.md 6 points at them"
