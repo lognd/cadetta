@@ -2,7 +2,8 @@
 id = "01M4V1A44AT1NHYBE9VHZ72BYR"
 title = "Conformance fixtures for language: remaining rules"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
