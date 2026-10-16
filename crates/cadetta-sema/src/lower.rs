@@ -1631,6 +1631,19 @@ mod tests {
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
     #[test]
+    fn iso_class_letter_case_sets_the_ir_role() {
+        let b = build(
+            "model P {\n  h = 12mm H7\n  s = 12mm g6\n  n = 12mm\n}\n",
+            &[],
+            &[],
+        );
+        assert_eq!(member(&b, "P", "h").role.as_deref(), Some("hole"));
+        assert_eq!(member(&b, "P", "s").role.as_deref(), Some("shaft"));
+        assert_eq!(member(&b, "P", "n").role, None);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
     fn compensated_member_keeps_designed_nominal_and_drawn() {
         let b = build(PROCESS_SRC, &[], &[]);
         let m = member(&b, "Case", "insert_hole");
