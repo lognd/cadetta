@@ -2,7 +2,8 @@
 id = "01M4VJ20FTVYW6GC9G7GQGYYXF"
 title = "editors/: tree-sitter grammar for Helix, Zed and Neovim treesitter"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
