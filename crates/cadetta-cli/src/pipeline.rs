@@ -1810,9 +1810,8 @@ fn evaluate_stages(
                     .collect(),
             )
             .expect("[lint] settings were validated at load");
-        let mcfg = lint
-            .m_config()
-            .expect("[lint] settings were validated at load");
+        // Package-declared kinds are known only now, so `precision` resolves here.
+        let mcfg = lint.m_config_lenient(&kinds);
         // C001-C003 come from the structured check results; C004 reads the lowered IR.
         out.extend(c::check_derived(&ir, locate));
         out.extend(c::check_fit_ranges(&ir, locate));

@@ -22,7 +22,7 @@ pub const CODE_R007: &str = "R007";
 pub const CODE_R008: &str = "R008";
 /// R011 code.
 pub const CODE_R011: &str = "R011";
-/// R012 code.
+/// R012 code (reserved: unreachable from source, see lints.md).
 pub const CODE_R012: &str = "R012";
 /// R013 code.
 pub const CODE_R013: &str = "R013";
@@ -150,7 +150,10 @@ pub struct StarBinding {
     pub values: Vec<String>,
 }
 
-/// R012: a `[*]` binding over instances whose emitted values differ.
+/// R012 (reserved, dormant): a `[*]` binding over instances whose emitted values differ.
+///
+/// Unreachable from source today since part-array instances share arguments; kept for the
+/// future language feature named in adapters.md 3.
 pub fn check_r012(bindings: &[StarBinding]) -> Vec<Diagnostic> {
     bindings
         .iter()

@@ -72,6 +72,10 @@ path = "../../tests/conformance_emitters_csv.rs"
 name = "conformance_packages"
 path = "../../tests/conformance_packages.rs"
 
+[[test]]
+name = "std_s001"
+path = "gates/std_s001.rs"
+
 [dependencies]
 cadetta-adapter.workspace = true
 cadetta-ir.workspace = true

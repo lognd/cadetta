@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/spec/bindings.md"]
+new = ["docs/spec/bindings.md", "bindings/python/tests/fixtures/alt-wheel/**"]
+at = "2026-10-16T00:52:52Z"
+actor = "lognd"
+rev = 1

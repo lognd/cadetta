@@ -188,7 +188,7 @@ pub fn plan_tolerance(
     out
 }
 
-/// R012 for a `[*]` binding: `values` are the emitted values of instances 0, 1, ...
+/// R012 (reserved, dormant; unreachable from source) for a `[*]` binding: `values` are the emitted values of instances 0, 1, ...
 ///
 /// Returns an error diagnostic naming the first instance that differs from instance 0.
 pub fn check_star_divergence<T: PartialEq + fmt::Display>(
