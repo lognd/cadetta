@@ -368,54 +368,9 @@ ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
-fixture = "quantities/display-fraction-spec"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in-carry"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in-denominator"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-lowest-terms"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-percent-one-decimal"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
 fixture = "quantities/display-plain-exact-decimal"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-round-ties-away"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-zero-fraction-dropped"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-zero-whole-dropped"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
+ticket = "~E3MA4MY"
+reason = "cadetta display VALUE rejects the exact-fraction value 1/3m (decimal literals only)"
 
 [[gap]]
 fixture = "adapters/contract-no-source-write"
@@ -876,41 +831,6 @@ reason = "ir-validate entry has no CLI form or executor yet"
 fixture = "ir/d003-ir"
 ticket = "~ZM6GZJ0"
 reason = "lint on IR JSON has no CLI form or executor yet"
-
-[[gap]]
-fixture = "adapters/bind-invalid-component-form"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-empty-config"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-empty-for"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-empty-locator"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-ref-to-needs-dimension"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-ref-to-needs-ref-mode"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
-
-[[gap]]
-fixture = "adapters/bind-invalid-sign-not-on-property"
-ticket = "~CE627BF"
-reason = "binding-kind run does not observe names_path_or_key"
 
 [[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"

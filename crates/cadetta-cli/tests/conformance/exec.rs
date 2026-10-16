@@ -133,6 +133,13 @@ fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(),
             .observed
             .insert("stale_output".into(), out.map_or(Value::Null, Value::from));
     }
+    if wants("names_path_or_key") {
+        let names = names_path_or_key(facts);
+        tracing::debug!(names, "observed config error names path or key");
+        facts
+            .observed
+            .insert("names_path_or_key".into(), json!(names));
+    }
     if wants("unbound_params_not_written") {
         let clean = unbound_params_not_written(scratch, facts)?;
         tracing::debug!(clean, "observed unbound params not written");
@@ -141,6 +148,44 @@ fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(),
             .insert("unbound_params_not_written".into(), json!(clean));
     }
     Ok(())
+}
+
+/// The keys of one `locators` entry of a bindings file (adapters.md 3 field table).
+const LOCATOR_KEYS: &[&str] = &[
+    "locator",
+    "kind",
+    "mode",
+    "native_unit",
+    "ref_to",
+    "for",
+    "config",
+    "sign",
+    "component",
+    "tolerance",
+];
+
+/// True when the run is a configuration error (exit 2) whose message names a bound design path
+/// or a locator key of the offending binding.
+///
+/// A key is named as a whole word; `for` is also an English word, so it counts only in backticks.
+// frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+fn names_path_or_key(facts: &Facts) -> bool {
+    if facts.exit != 2 {
+        return false;
+    }
+    let message = facts.messages.join("\n");
+    let paths = bound_paths(&facts.after);
+    let words: Vec<&str> = message
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+        .collect();
+    paths.iter().any(|p| message.contains(p.as_str()))
+        || LOCATOR_KEYS.iter().any(|k| {
+            if *k == "for" {
+                message.contains("`for`")
+            } else {
+                words.contains(k)
+            }
+        })
 }
 
 /// The recorded output of a stale (S003) solver that checks still evaluated.
@@ -496,5 +541,37 @@ mod stale_output_tests {
     fn no_s003_or_no_check_verdict_observes_nothing() {
         assert_eq!(stale_output(&facts(&["C001"], RESULT)), None);
         assert_eq!(stale_output(&facts(&["S003"], RESULT)), None);
+    }
+
+    fn failed(exit: i32, message: &str) -> Facts {
+        let mut f = Facts {
+            exit,
+            messages: vec![message.to_owned()],
+            ..Facts::default()
+        };
+        f.after.insert(
+            "bindings/a.toml".into(),
+            "[\"acme::P.w\"]\nlocators = []\n".into(),
+        );
+        f
+    }
+
+    // frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::names_path_or_key
+    #[test]
+    fn config_error_naming_a_key_or_path_is_observed() {
+        assert!(names_path_or_key(&failed(2, "`sign` does not apply")));
+        assert!(names_path_or_key(&failed(2, "locator text is empty")));
+        assert!(names_path_or_key(&failed(2, "bad table acme::P.w here")));
+        assert!(names_path_or_key(&failed(2, "`for` is present but empty")));
+    }
+
+    // frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::names_path_or_key
+    #[test]
+    fn unspecific_or_non_config_error_is_not_observed() {
+        assert!(!names_path_or_key(&failed(2, "invalid bindings")));
+        assert!(!names_path_or_key(&failed(2, "not found for this")));
+        assert!(!names_path_or_key(&failed(1, "`sign` does not apply")));
     }
 }

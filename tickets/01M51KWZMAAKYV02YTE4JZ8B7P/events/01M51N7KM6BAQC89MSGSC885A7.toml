@@ -1,0 +1,37 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T06:07:31Z"
+digest = "4b57a82bf6796db46e91fe0dadc055c742983c89d775ca6994b1b6d5ff9a1ece"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 5d4928fe-f57f-434f-9527-f35c45f2afb8 with nextest profile: default
+    Starting 1 test across 45 binaries (633 tests skipped)
+        PASS [   0.183s] cadetta cmd::check::tests::ots_datum_offset_without_citation_is_s001
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.184s] 1 test run: 1 passed, 633 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta ots_datum_offset"
+size = 1453
+status = "measured"
+test_count = 1
+tests_digest = "8054c438fc006d4a57a6579f8de589dada4b2c5114d64797be9f08cafaeb3db5"
+at = "2026-10-16T06:07:31Z"
+actor = "lognd"
+rev = 1

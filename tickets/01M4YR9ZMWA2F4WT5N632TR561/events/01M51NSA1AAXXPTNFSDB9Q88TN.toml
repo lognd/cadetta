@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: both fixtures were wrong, not the implementation. pattern-count-structural used n: Int, but the spec has no Int type, so the E002 was correct; fixture now uses n = 2 (only E006 fires). w005-waiver-expiring: an expiring waiver still suppresses C001 (lints.md 2.1; waived diagnostic stays in the run) so the run exits 0; fixture now sets exit 0 in must_fire. Verified on goway Dwarf; removed both known-gaps entries."
+at = "2026-10-16T06:18:28Z"
+actor = "lognd"
+rev = 1

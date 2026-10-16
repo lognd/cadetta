@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a solver in-expression reading wheel.load_rating on part wheel[4], when evaluated, then it reads instance 0 (the primary or the selected alternate) with no EVAL error", "Given a counted part array, when a member is read with an index on a non-array part, then it is still an error"]
+moved = []
+at = "2026-10-16T06:11:22Z"
+actor = "lognd"
+rev = 1

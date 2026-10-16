@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["The conformance runner observes names_path_or_key: true holds when the config-error message names a design path or locator key of the offending binding", "adapters/bind-invalid-* fixtures that now pass are removed from known-gaps.toml; any that cannot pass stay gapped with a follow-up ticket"]
+moved = []
+at = "2026-10-16T05:28:34Z"
+actor = "lognd"
+rev = 1

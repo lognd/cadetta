@@ -14,7 +14,7 @@ use serde::ser::SerializeMap;
 use serde::{Serialize, Serializer};
 use tracing::debug;
 
-use crate::model::{Digest, Value};
+use crate::model::{Digest, Exact, Value};
 use crate::path::Path;
 
 /// A coordinate axis; `flip` is restricted to `X` and `Y` by sema (geometry.md 2).
@@ -174,15 +174,21 @@ pub struct Point {
     pub datum: Path,
     /// The coordinate values.
     pub coords: Vec<Value>,
+    /// The position-tolerance zone diameter, when the point is `[position d]`-toleranced.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    pub position: Option<Exact>,
 }
 
 impl Serialize for Point {
-    /// Serialize as `{ path, datum, coords }`.
+    /// Serialize as `{ path, datum, coords }` plus `position` when toleranced.
     fn serialize<S: Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
-        let mut m = s.serialize_map(Some(3))?;
+        let mut m = s.serialize_map(Some(3 + usize::from(self.position.is_some())))?;
         m.serialize_entry("path", &self.path)?;
         m.serialize_entry("datum", &self.datum)?;
         m.serialize_entry("coords", &self.coords)?;
+        if let Some(p) = &self.position {
+            m.serialize_entry("position", p)?;
+        }
         m.end()
     }
 }

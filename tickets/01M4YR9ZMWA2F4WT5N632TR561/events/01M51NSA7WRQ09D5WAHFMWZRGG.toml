@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*"]
+new = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*", "tests/conformance/known-gaps.toml"]
+at = "2026-10-16T06:18:28Z"
+actor = "lognd"
+rev = 1

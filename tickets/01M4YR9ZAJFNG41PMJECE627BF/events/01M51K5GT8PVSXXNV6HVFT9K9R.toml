@@ -1,0 +1,37 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T05:32:41Z"
+digest = "1cfd021c649efb8bcfaf9e8a5da603fb1100e8e423ae496f918cf77a56b77b3c"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e234f713-4ee6-4b34-aeb8-dd9b2bc3f47f with nextest profile: default
+    Starting 14 tests across 45 binaries (620 tests skipped)
+        PASS [   0.020s] cadetta::conformance exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.024s] cadetta::conformance_obligations exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.024s] cadetta::conformance_emitters_json exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.129s] cadetta::conformance_config_cli exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.151s] cadetta::conformance_lints exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.186s] cadetta::conformance_packages exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.220s] cadetta::conformance_solvers exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.243s] cadetta::conformance_emitters_csv exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.226s] cadetta::conformance_stdlib exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.256s] cadetta::conformance_geometry exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.256s] cadetta::conformance_language exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.266s] cadetta::conformance_quantities exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.276s] cadetta::conformance_ir exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.284s] cadetta::conformance_adapters exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.286s] 14 tests run: 14 passed, 620 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta config_error_naming"
+size = 2246
+status = "measured"
+test_count = 1
+tests_digest = "53d7b9e5d3156f2de26330c520179e7f50ad11ce668c462cea7a5b191520848f"
+at = "2026-10-16T05:32:41Z"
+actor = "lognd"
+rev = 1

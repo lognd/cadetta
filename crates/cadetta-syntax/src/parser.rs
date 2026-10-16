@@ -1496,7 +1496,10 @@ impl Parser<'_> {
                     e = self.mk(ExprKind::Field(Box::new(e), name), start);
                 }
                 Tok::P(Punct::LBracket) => {
-                    if matches!(self.nth_tok(1), Tok::P(Punct::Plus | Punct::Minus)) {
+                    if self.opens_position() {
+                        // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+                        e = self.position_tolerance(e, start)?;
+                    } else if matches!(self.nth_tok(1), Tok::P(Punct::Plus | Punct::Minus)) {
                         let terms = self.tolerance()?;
                         e = self.mk(ExprKind::Tolerance(Box::new(e), terms), start);
                     } else {
@@ -1539,6 +1542,32 @@ impl Parser<'_> {
             }
         }
         Ok(e)
+    }
+
+    /// True at `[position <operand>`: the contextual `position` then an operand start, so
+    /// `holes[position]` and `holes[position + 1]` stay indexes (language.md 5a).
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    fn opens_position(&self) -> bool {
+        matches!(self.nth_tok(1), Tok::Ident(n) if n == "position")
+            && matches!(
+                self.nth_tok(2),
+                Tok::Number(_)
+                    | Tok::Quantity(_)
+                    | Tok::Ident(_)
+                    | Tok::Keyword("self" | "origin" | "package" | "super")
+            )
+    }
+
+    /// `[position 0.2mm]` after `inner`: the zone diameter is a product-level operand.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    fn position_tolerance(&mut self, inner: Expr, start: usize) -> PResult<Expr> {
+        self.expect_p(Punct::LBracket)?;
+        self.bump();
+        self.nest += 1;
+        let d = self.mul()?;
+        self.expect_p(Punct::RBracket)?;
+        self.nest -= 1;
+        Ok(self.mk(ExprKind::Position(Box::new(inner), Box::new(d)), start))
     }
 
     /// `[+0.018mm -0]` or `[+-0.1mm]`; each term is a signed product-level operand.

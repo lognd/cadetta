@@ -1087,6 +1087,9 @@ pub enum ExprKind {
     },
     /// `expr [+0.1mm -0]`
     Tolerance(Box<Expr>, Vec<TolTerm>),
+    /// `expr [position 0.2mm]`: a true-position zone diameter on a `Point2` value or array
+    /// (geometry.md 3.1).
+    Position(Box<Expr>, Box<Expr>),
     /// `expr H8`
     IsoClass(Box<Expr>, Ident),
     /// `if cond { } else { }`

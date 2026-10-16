@@ -634,6 +634,10 @@ impl<'a> KindChecker<'a> {
                 }
                 Some(t)
             }
+            ExprKind::Position(inner, diameter) => {
+                self.expr(diameter);
+                self.expr(inner)
+            }
             ExprKind::IsoClass(inner, _) => self.expr(inner),
             ExprKind::If {
                 cond,

@@ -265,7 +265,7 @@ from the dependency graph.
 Implementation rules (decided with the D rules): a D001 group takes the largest
 significant-digit count among its members to choose between the configured severity and info; a
 group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
-never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members (the operand paths of `Fit.hole` and `Fit.shaft`, so M003 and D002 see path/path fits) and the fit
 clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
 D003 is computed on the member dependency graph, so a loop between components with no member-level
 loop is clean.

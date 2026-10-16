@@ -179,6 +179,7 @@ mod tests {
             alias_of: alias.then(unreachable_path),
             span: Span::default(),
             role: None,
+            owns_discs: false,
         }
     }
 

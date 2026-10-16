@@ -11,7 +11,7 @@
 
 use cadetta_syntax::ast::{Arg, BinOp, Expr, ExprKind};
 use cadetta_syntax::span::Span;
-use cadetta_units::{Dim, Dimension, Magnitude, Rational};
+use cadetta_units::{Affine, Dim, Dimension, Magnitude, Rational};
 use tracing::{debug, trace};
 
 use super::func::{sqrt, trig};
@@ -128,6 +128,89 @@ fn rotate(x: &Val, y: &Val, by: &Quant, span: Span) -> R<(Val, Val)> {
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// Evaluates `inner [position d]`: one independent disc variable per `Point2` (geometry.md 3.1).
+    ///
+    /// E006 when a point is not 2-D or any coordinate already carries a tolerance (a coordinate
+    /// tolerance on the same value, a toleranced generator member, or a second `position`).
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    pub(super) fn position_val(
+        &mut self,
+        sc: &mut Scope,
+        inner: &Expr,
+        diameter: &Expr,
+        span: Span,
+    ) -> R<Val> {
+        let v = self.eval(sc, inner)?;
+        let d = self.quant(sc, diameter)?;
+        d.dim()
+            .check_same_dimension(&length())
+            .map_err(|e| diag("Q002", diameter.span, e.to_string()))?;
+        let radius = d.nominal.mul(&Magnitude::new(
+            Rational::new(1, 2).expect("2 is nonzero"),
+            0,
+        ));
+        debug!("evaluator: position tolerance, one disc per point");
+        self.position_on(v, &radius, span)
+    }
+
+    /// Recurses into arrays and gives every 2-D point of `v` its own disc variable.
+    fn position_on(&mut self, v: Val, radius: &Magnitude, span: Span) -> R<Val> {
+        match v {
+            Val::Array(items) => items
+                .into_iter()
+                .map(|i| self.position_on(i, radius, span))
+                .collect::<R<Vec<_>>>()
+                .map(Val::Array),
+            Val::Point(cs) if cs.len() == 2 => {
+                let var = self.fresh_var();
+                let zero = Magnitude::new(Rational::from_int(0), 0);
+                let mut out = Vec::with_capacity(2);
+                for (k, c) in cs.into_iter().enumerate() {
+                    let Val::Quantity(q) = c else {
+                        return Err(diag(
+                            "E006",
+                            span,
+                            "a position tolerance needs exact length coordinates",
+                        ));
+                    };
+                    if !q.form.is_exact() {
+                        return Err(diag(
+                            "E006",
+                            span,
+                            "a position tolerance cannot combine with another tolerance on the same point",
+                        ));
+                    }
+                    let (a, b) = if k == 0 {
+                        (radius.clone(), zero.clone())
+                    } else {
+                        (zero.clone(), radius.clone())
+                    };
+                    let disc = Affine::disc(q.dim().clone(), zero.clone(), var, a, b);
+                    let form = q
+                        .form
+                        .add(&disc)
+                        .map_err(|e| diag("EVAL", span, e.to_string()))?;
+                    out.push(Val::Quantity(Quant {
+                        form,
+                        nominal: q.nominal,
+                    }));
+                }
+                trace!(?var, "evaluator: point owns a disc variable");
+                Ok(Val::Point(out))
+            }
+            Val::Point(_) => Err(diag(
+                "E006",
+                span,
+                "a position tolerance applies to Point2 only; a Point3 has no axis direction",
+            )),
+            _ => Err(diag(
+                "E006",
+                span,
+                "a position tolerance applies to a Point2 or an array of Point2",
+            )),
+        }
+    }
+
     /// Evaluates a whole-number argument (a count or an array length).
     pub(super) fn count_arg(&mut self, sc: &mut Scope, e: &Expr, what: &str) -> R<u64> {
         let q = self.quant(sc, e)?;
@@ -481,6 +564,60 @@ mod tests {
         };
         assert_eq!(pt(&a[0]), vec![s("0", "1"), s("0", "1")]);
         assert_eq!(pt(&a[1]), vec![s("1", "100"), s("0", "1")]);
+    }
+
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    // frob:tests crates/cadetta-sema/src/point.rs::position_val kind=unit
+    #[test]
+    fn position_on_point2_is_allowed_and_e006_cases_fire() {
+        let ok = run(&file(
+            "model M {\n  p = Point2(1mm, 2mm) [position 0.1mm]\n  \
+             a = [Point2(0mm, 0mm), Point2(1mm, 1mm)] [position 0.1mm]\n}\n",
+        ));
+        assert!(codes(&ok).is_empty(), "{:?}", ok.diagnostics);
+        let Val::Point(c) = val(&ok, "p") else {
+            panic!("not a point")
+        };
+        let Val::Quantity(x) = &c[0] else { panic!() };
+        let Val::Quantity(y) = &c[1] else { panic!() };
+        // One disc per point, shared by both coordinates.
+        assert_eq!(x.form.disc_vars().len(), 1);
+        assert_eq!(x.form.disc_vars(), y.form.disc_vars());
+        let Val::Array(a) = val(&ok, "a") else {
+            panic!("not an array")
+        };
+        let disc = |v: &Val| match v {
+            Val::Point(c) => match &c[0] {
+                Val::Quantity(q) => q.form.disc_vars()[0],
+                _ => panic!(),
+            },
+            _ => panic!(),
+        };
+        assert_ne!(disc(&a[0]), disc(&a[1]), "independent discs per element");
+        for (src, what) in [
+            ("Point3(1mm, 2mm, 3mm) [position 0.1mm]", "point3"),
+            (
+                "Point2(1mm [+-0.05mm], 2mm) [position 0.1mm]",
+                "coordinate tolerance",
+            ),
+            (
+                "Point2(1mm, 2mm) [position 0.1mm] [position 0.1mm]",
+                "double position",
+            ),
+        ] {
+            let ev = run(&file(&format!("model M {{\n  p = {src}\n}}\n")));
+            assert!(codes(&ev).contains(&"E006"), "{what}: {:?}", ev.diagnostics);
+        }
+        // A toleranced generator member.
+        let ev = run(&file(
+            "model M {\n  p = rect_pattern(2, 1, 10mm [+-0.1mm], 10mm) [position 0.1mm]\n}\n",
+        ));
+        assert!(codes(&ev).contains(&"E006"), "{:?}", ev.diagnostics);
+        // A diameter that is not a length is a dimension error.
+        let ev = run(&file(
+            "model M {\n  p = Point2(1mm, 2mm) [position 0.1s]\n}\n",
+        ));
+        assert!(codes(&ev).contains(&"Q002"), "{:?}", ev.diagnostics);
     }
 }
 

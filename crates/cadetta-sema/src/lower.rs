@@ -141,8 +141,41 @@ fn var_owners(ev: &Evaluation) -> BTreeMap<u32, CanonPath> {
         if let (Some(v), None) = (e.var, &e.alias_of) {
             owners.entry(v.0).or_insert_with(|| path.clone());
         }
+        if e.owns_discs && e.alias_of.is_none() {
+            disc_owners(path, &e.value, &mut owners);
+        }
     }
     owners
+}
+
+/// Records the `<point>.position` stem that owns each disc variable of a `[position d]` value.
+// frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+fn disc_owners(path: &CanonPath, value: &Val, owners: &mut BTreeMap<u32, CanonPath>) {
+    let mut stem_of = |point: CanonPath, cs: &[Val]| {
+        let mut stem = point;
+        stem.members.push(MemberSeg::Name("position".to_owned()));
+        for c in cs {
+            if let Val::Quantity(q) = c {
+                for v in q.form.disc_vars() {
+                    owners.entry(v.0).or_insert_with(|| stem.clone());
+                }
+            }
+        }
+    };
+    match value {
+        Val::Point(cs) => stem_of(path.clone(), cs),
+        Val::Array(items) => {
+            for (i, item) in (0u64..).zip(items) {
+                if let Val::Point(cs) = item {
+                    let mut p = path.clone();
+                    p.members
+                        .push(MemberSeg::Index(cadetta_ir::canon::Index::At(i)));
+                    stem_of(p, cs);
+                }
+            }
+        }
+        _ => {}
+    }
 }
 
 /// Builds the IR [`Value`] of a quantity (ir.md 3 `Value`).
@@ -202,10 +235,53 @@ fn quant_value(
             hi: Exact(hi),
         });
     }
+    disc_terms(&mut terms, owners, member, q);
     if !terms.is_empty() {
         v.tol = Some(ir::Affine { terms });
     }
     v
+}
+
+/// Appends the paired `.u`/`.v` terms of every disc variable of `q` (ir.md 3, geometry.md 3.1).
+///
+/// Both terms of a pair carry the same symmetric bounds `+-(|a| + |b|)`, which contain the disc
+/// radius `sqrt(a^2 + b^2)`; the pair names the shared disc, so the two coordinates of one point
+/// correlate through the common stem.
+// frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+fn disc_terms(
+    terms: &mut Vec<AffineTerm>,
+    owners: &BTreeMap<u32, CanonPath>,
+    member: &CanonPath,
+    q: &Quant,
+) {
+    for id in q.form.disc_vars() {
+        let Some((a, b)) = q.form.disc_coefficients(id) else {
+            continue;
+        };
+        let abs = |m: &Magnitude| if is_negative(m) { m.neg() } else { m.clone() };
+        let cadetta_units::Sum::Exact(r) = abs(a).add(&abs(b)) else {
+            warn!(path = %member, "lower: disc radius mixes pi exponents; disc dropped");
+            continue;
+        };
+        let stem = match owners.get(&id.0) {
+            Some(o) => ir_path(o),
+            None => ir_path(member).map(|mut p| {
+                p.members.push(Seg::Name(format!("position{}", id.0)));
+                p
+            }),
+        };
+        let Some(stem) = stem else { continue };
+        for axis in ["u", "v"] {
+            let mut var = stem.clone();
+            var.members.push(Seg::Name(axis.to_owned()));
+            trace!(path = %member, var = %var, "lower: disc term");
+            terms.push(AffineTerm {
+                var,
+                lo: Exact(r.neg()),
+                hi: Exact(r.clone()),
+            });
+        }
+    }
 }
 
 /// The IR value of an evaluated member, if it is numeric.
@@ -593,16 +669,16 @@ impl Cx<'_> {
         })
     }
 
-    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
-        let t: &Toleranced = &f.result.clearance;
-        let nominal = t.nominal().clone();
+    /// The value of one accessor of a fit (`<fit>.hole`, `.shaft`, `.clearance`): nominal plus a one-term affine over its own path.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn fit_side_value(f: &FitInput, side: &str, t: &Toleranced) -> Option<Value> {
         let mut v = Value::new(
-            Nominal::Exact(Exact(nominal)),
+            Nominal::Exact(Exact(t.nominal().clone())),
             t.dim().clone(),
             String::new(),
         );
         let mut var = ir_path(&f.path)?;
-        var.members.push(Seg::Name("clearance".to_owned()));
+        var.members.push(Seg::Name(side.to_owned()));
         v.tol = Some(ir::Affine {
             terms: vec![AffineTerm {
                 var,
@@ -610,14 +686,45 @@ impl Cx<'_> {
                 hi: Exact(t.upper().clone()),
             }],
         });
+        Some(v)
+    }
+
+    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
         Some(Fit {
             path: ir_path(&f.path)?,
             hole: ir_path(&f.hole)?,
             shaft: ir_path(&f.shaft)?,
-            clearance: v,
+            clearance: Self::fit_side_value(f, "clearance", &f.result.clearance)?,
             fit_type: f.result.fit_type.name().to_owned(),
             required: f.required.clone(),
         })
+    }
+
+    /// The derived members `<fit>.hole`, `.shaft` and `.clearance` of an analysed fit, so checks and goldens can address them.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn lower_fit_members(&self, f: &FitInput) -> Vec<Member> {
+        let Some(fit_path) = ir_path(&f.path) else {
+            return Vec::new();
+        };
+        let sides = [
+            ("hole", &f.result.hole.value),
+            ("shaft", &f.result.shaft.value),
+            ("clearance", &f.result.clearance),
+        ];
+        sides
+            .into_iter()
+            .map(|(side, t)| {
+                let mut path = fit_path.clone();
+                path.members.push(Seg::Name(side.to_owned()));
+                let mut m = Member::new(path, MemberKind::Let);
+                m.analysis = true;
+                m.provenance = Provenance::Derived;
+                m.deps = vec![fit_path.clone()];
+                m.value = Self::fit_side_value(f, side, t);
+                debug!(path = %m.path, "lower: fit accessor member");
+                m
+            })
+            .collect()
     }
 }
 
@@ -761,12 +868,15 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                         .filter_map(|s| s.citation.as_ref()?.cite.clone()),
                 );
                 project.solvers.extend(solvers);
-                comp.fits = input
+                let own_fits: Vec<&FitInput> = input
                     .fits
                     .iter()
                     .filter(|f| f.path.item_only() == canon)
-                    .filter_map(|f| cx.lower_fit(f))
                     .collect();
+                comp.fits = own_fits.iter().filter_map(|f| cx.lower_fit(f)).collect();
+                // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+                comp.members
+                    .extend(own_fits.iter().flat_map(|f| cx.lower_fit_members(f)));
                 cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
@@ -1281,6 +1391,17 @@ mod tests {
         assert_eq!(comp.class, ComponentClass::Model);
         assert_eq!(comp.fits.len(), 1);
         assert_eq!(comp.fits[0].fit_type, "interference");
+        // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+        for side in ["hole", "shaft", "clearance"] {
+            let want = vec![Seg::Name("seat_fit".to_owned()), Seg::Name(side.to_owned())];
+            let m = comp
+                .members
+                .iter()
+                .find(|m| m.path.members == want)
+                .unwrap_or_else(|| panic!("fit accessor member {side}"));
+            assert_eq!(m.provenance, Provenance::Derived, "{side}");
+            assert!(m.value.as_ref().is_some_and(|v| v.tol.is_some()), "{side}");
+        }
         assert_eq!(b.project.checks.len(), 1);
         assert_eq!(
             b.project.checks[0].verdicts.primary,
@@ -1465,6 +1586,61 @@ mod tests {
         assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  \
         place rail.origin at origin\n  place bracket.origin at origin.offset(x = 10mm)\n  \
         hx = (bracket.holes[1] in origin).x\n}\n";
+
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_geometry kind=unit
+    #[test]
+    fn position_point2_lowers_to_paired_uv_terms() {
+        let src = "model Plate {\n  holes: [Point2 on origin; 2] = \
+            [Point2(-25mm, 0mm), Point2(25mm, 0mm)] [position 0.2mm]\n  \
+            lone: Point2 on origin = Point2(1mm, 2mm)\n}\n";
+        let b = build(src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let plate = &b.project.components[0];
+        let mm = |n: i64, d: i64| Magnitude::new(Rational::new(n, d).unwrap(), 0);
+        // Every toleranced point has its own zone diameter and its own `.u/.v` stem.
+        let mut stems = Vec::new();
+        for pt in plate
+            .points
+            .iter()
+            .filter(|p| p.path.to_string().contains("holes"))
+        {
+            assert_eq!(pt.position, Some(Exact(mm(2, 10_000))), "{}", pt.path);
+            let tol_of = |c: usize| {
+                pt.coords[c]
+                    .tol
+                    .as_ref()
+                    .expect("coordinate tol")
+                    .terms
+                    .clone()
+            };
+            let (xt, yt) = (tol_of(0), tol_of(1));
+            let names: Vec<String> = xt.iter().map(|t| t.var.to_string()).collect();
+            assert_eq!(names.len(), 2, "{names:?}");
+            assert!(names[0].ends_with(".position.u"), "{names:?}");
+            assert!(names[1].ends_with(".position.v"), "{names:?}");
+            // The x and y coordinates share the disc, and the pair has equal symmetric bounds.
+            assert_eq!(
+                xt.iter().map(|t| t.var.to_string()).collect::<Vec<_>>(),
+                yt.iter().map(|t| t.var.to_string()).collect::<Vec<_>>()
+            );
+            assert_eq!(xt[0].lo, xt[1].lo);
+            assert_eq!(xt[0].hi, xt[1].hi);
+            assert_eq!(xt[0].hi, Exact(mm(1, 10_000)));
+            assert_eq!(xt[0].lo, Exact(mm(-1, 10_000)));
+            stems.push(names[0].clone());
+        }
+        assert_eq!(stems.len(), 2);
+        assert_ne!(stems[0], stems[1], "one disc per point");
+        let lone = plate
+            .points
+            .iter()
+            .find(|p| p.path.to_string().ends_with("lone"))
+            .expect("lone");
+        assert_eq!(lone.position, None);
+        assert!(lone.coords.iter().all(|c| c.tol.is_none()));
+    }
 
     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
     // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_geometry kind=unit

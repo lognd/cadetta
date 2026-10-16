@@ -1,0 +1,10 @@
+kind = "create"
+title = "Golden 02: per-instance member paths (BearingUnit/housing.*) missing from IR"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/**"]
+body = "found while working ~93GZBM2: golden reports BearingUnit/housing.bore_fit.* and other instance member paths as not in the IR; also Bracket.bore_fits_tube check not in the IR."
+at = "2026-10-16T05:24:58Z"
+actor = "lognd"
+rev = 1
