@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T21:59:11Z"
-updated = "2026-10-16T00:29:24Z"
+updated = "2026-10-16T00:31:13Z"
 idempotency_key = "kindcheck-qualified-path-tests"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli/tests"]
 
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check reports no Q or E diagnostic for a matching-dimension pkg::Mod::Comp.member read"
-bound = false
+bound = true
 +++
 
 Follow-up to ~CH5HR2K. The new path_type method threads :: separators, and docs/spec/quantities.md 4.4 plus the changelog claim qualified paths resolve, but no test covers them. Add tests for pkg::Mod::Comp.width read with a wrong and a matching dimension through cadetta check.
