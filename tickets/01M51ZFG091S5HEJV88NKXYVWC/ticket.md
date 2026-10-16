@@ -2,7 +2,8 @@
 id = "01M51ZFG091S5HEJV88NKXYVWC"
 title = "Evaluate checks ranging over part instances and reads of a part instance"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
