@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T14:38:58Z"
-updated = "2026-10-16T07:42:14Z"
+updated = "2026-10-16T07:42:17Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
+
+[[acceptance]]
+text = "A ref-mode dimension locator is link-checked by sync: R003 when absent or no longer linked to its target global, never pushed"
+bound = false
 +++
 
 found while working ~D4T6ATZ: ref-mode locators skipped
