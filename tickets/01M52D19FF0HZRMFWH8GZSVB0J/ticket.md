@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T13:04:47Z"
-updated = "2026-10-16T13:24:17Z"
+updated = "2026-10-16T13:28:04Z"
 scope = ["tests/golden/02-bearing-housing/**", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/tables.rs", "docs/spec/quantities.md", "crates/cadetta-cli/tests/golden/compare.rs"]
 
 [[acceptance]]
