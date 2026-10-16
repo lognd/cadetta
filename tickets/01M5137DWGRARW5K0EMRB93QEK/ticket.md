@@ -7,13 +7,13 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:54:08Z"
-updated = "2026-10-16T01:44:40Z"
+updated = "2026-10-16T01:52:12Z"
 idempotency_key = "followup-76gmv4n-typo"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/config.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "Given a [lint] precision key naming no builtin or package kind, when analysis runs, then a diagnostic is reported"
-bound = false
+bound = true
 +++
 
 ~76GMV4N made Lint::m_config_lenient skip unknown precision kinds with a tracing warning, so a typo (Lenth) is no longer caught at load. Surface it as a diagnostic or config error once the package kind table is known.
