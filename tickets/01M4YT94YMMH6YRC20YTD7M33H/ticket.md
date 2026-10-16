@@ -2,7 +2,8 @@
 id = "01M4YT94YMMH6YRC20YTD7M33H"
 title = "Wire csv read_bound (R016) into the CLI read path"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
