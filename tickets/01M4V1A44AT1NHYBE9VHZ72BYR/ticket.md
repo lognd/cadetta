@@ -4,9 +4,10 @@ title = "Conformance fixtures for language: remaining rules"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-13T16:25:12Z"
-updated = "2026-10-13T16:25:12Z"
+updated = "2026-10-16T02:02:27Z"
 scope = ["tests/conformance/language/**"]
 
 [[acceptance]]
