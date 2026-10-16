@@ -24,10 +24,13 @@ src = "src"                  # module root (default "src")
 ```
 
 - A dependency names a package and a source: `path`, or `git` with
-  `tag`, `rev` or `branch`. A registry source is OQ-19. `version` is a
+  `tag`, `rev` or `branch`. A registry source is OQ-19 and is E005 in
+  0.1.0 (see Loading rules). `version` is a
   semver requirement the resolved package must meet (E012 otherwise).
 - `std` is an implicit dependency at the compiler's own version, and no
-  package may be named `std`.
+  package may be named `std`: a `[package]` or workspace member named
+  `std`, or a dependency key `std`, is E005 (the name is reserved, so it
+  can never shadow the standard library).
 - Resolution yields exactly one version of each package for the whole
   project (E013 on a conflict). There is no side-by-side duplication: a
   part has one definition, so two versions of one library would be two
@@ -58,7 +61,7 @@ src = "src"                  # module root (default "src")
   shared shop package is one workspace.
 - Loading rules (0.1.0): a dependency with neither `path` nor `git`
   (a bare version string or `{ version = ".." }`) is rejected as an
-  unsupported registry source (OQ-19). A workspace member without a
+  unsupported registry source (OQ-19) with E005. A workspace member without a
   `cadetta.toml` is E005, and a member must be a package, not another
   workspace. The workspace lock is `<root>/cadetta.lock` and the build
   directory `<root>/build`. The implicit `std` dependency is versioned
@@ -68,7 +71,9 @@ src = "src"                  # module root (default "src")
   selects its source and version. A first requirement the selection
   fails is E012. A later requirement it fails is E013, and no second
   copy is loaded. A later, different source for a selected package is
-  ignored with a warning. A dependency without a `cadetta.toml`, a
+  ignored with a warning: an uncoded resolver notice (like the
+  missing-checkout warning below), not a diagnostic, so it cannot be
+  waived or promoted and has no fixture. A dependency without a `cadetta.toml`, a
   failed git checkout, or a workspace in place of a package is E005. A
   package that declares no `version` meets no `version` requirement.
   `version` accepts comma-joined `^`, `~`, `=`, `<`, `<=`, `>`, `>=`
@@ -252,6 +257,7 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
 
 | Code | Name | Default | Meaning |
 |---|---|---|---|
+| E005 | missing-package | error, fixed | Also: a registry-only dependency (no `path` or `git`), or a package, member or dependency named `std` (section 1). Defined in lints.md. |
 | E012 | version-unsatisfied | error, fixed | A resolved dependency does not meet the `version` requirement. |
 | E013 | version-conflict | error, fixed | Two requirements on one package cannot be met by a single version. |
 | E014 | dependency-changed | error, fixed | A dependency's content differs from the digest pinned in the lock; run `cadetta update`. |

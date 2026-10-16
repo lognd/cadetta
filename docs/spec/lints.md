@@ -196,7 +196,7 @@ cannot be resolved or evaluated.
 | E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
 | E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |
-| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml` (packages.md 1). |
+| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml`, or a dependency has no `path`/`git` source (registry, OQ-19), or a package is named `std` (packages.md 1). |
 | E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind); also a `cite` with an unknown type or field, a malformed date or URL, or a value of the wrong shape (language.md 3.9), and a `position` tolerance where it is not allowed (geometry.md 3.1). |
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
