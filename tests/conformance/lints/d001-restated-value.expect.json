@@ -1,0 +1,19 @@
+{
+  "spec": "1.4",
+  "doc": "lints",
+  "section": "lints.md 3",
+  "rule": "D001",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "D001",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

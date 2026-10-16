@@ -1,0 +1,29 @@
+{
+  "spec": "1.4",
+  "doc": "lints",
+  "section": "lints.md 2",
+  "rule": "W002",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "W002",
+        "severity": "warning"
+      },
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ],
+    "exit": 0
+  }
+}
