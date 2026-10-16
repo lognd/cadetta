@@ -2,7 +2,8 @@
 id = "01M51SNBKJG1ZCJYKZ6VD4Q7XX"
 title = "conformance: executors and fixtures for the update and obligations entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
