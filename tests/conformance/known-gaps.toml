@@ -368,11 +368,6 @@ ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
-fixture = "quantities/display-plain-exact-decimal"
-ticket = "~E3MA4MY"
-reason = "cadetta display VALUE rejects the exact-fraction value 1/3m (decimal literals only)"
-
-[[gap]]
 fixture = "adapters/contract-no-source-write"
 ticket = "~KKVE13B"
 reason = "import executor models propose mode only; this fixture needs more"
