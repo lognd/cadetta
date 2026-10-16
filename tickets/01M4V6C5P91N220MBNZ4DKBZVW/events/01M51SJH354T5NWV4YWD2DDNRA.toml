@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decided E002 for both: a pub use of a private item and a plain use reached through a glob are not in the public surface, so the dependent's name is unresolved; E016 would leak the private item's existence. Fixtures already assume E002."
+at = "2026-10-16T07:24:40Z"
+actor = "lognd"
+rev = 1
