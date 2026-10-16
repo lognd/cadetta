@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["tests/golden/02-bearing-housing/**", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/tables.rs", "docs/spec/quantities.md"]
+new = ["tests/golden/02-bearing-housing/**", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/tables.rs", "docs/spec/quantities.md", "crates/cadetta-cli/tests/golden/compare.rs"]
+at = "2026-10-16T13:23:16Z"
+actor = "lognd"
+rev = 1

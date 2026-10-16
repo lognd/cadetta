@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T13:24:17Z"
+digest = "993cb86735c9c2f57a14e40a64725972001f0bc2b8f1dfa76fe5cd676e1fd803"
+provider = "file"
+ref = "tests/golden/02-bearing-housing/expected.toml"
+size = 9968
+status = "measured"
+at = "2026-10-16T13:24:17Z"
+actor = "lognd"
+rev = 1
