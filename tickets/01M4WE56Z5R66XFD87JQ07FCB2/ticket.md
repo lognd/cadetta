@@ -2,7 +2,7 @@
 id = "01M4WE56Z5R66XFD87JQ07FCB2"
 title = "Permanent S001 gate over the std tree"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 3
 reporter = "Claude"
