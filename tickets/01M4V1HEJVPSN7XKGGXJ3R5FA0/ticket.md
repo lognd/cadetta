@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-16T07:13:36Z"
+updated = "2026-10-16T07:13:46Z"
 idempotency_key = "Z48-ambig"
 scope = ["docs/spec/quantities.md"]
 
