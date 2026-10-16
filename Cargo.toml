@@ -3,7 +3,7 @@
 resolver = "3"
 members = ["crates/*", "bindings/*"]
 # Language bindings need their language's toolchain, so the Rust gates
-# exclude them (`--exclude cadetta-py`) and each binding's own job builds
+# exclude them (`--exclude cadetta-py --exclude cadetta-capi`) and each binding's own job builds
 # and tests it (bindings/README.md).
 default-members = ["crates/*"]
 

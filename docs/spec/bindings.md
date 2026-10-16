@@ -24,8 +24,7 @@ and every capability is reachable the first way.
    its tests replay the conformance corpus to show it.
 
 A C ABI (`cadetta-capi`, a stable `extern "C"` surface over the same
-crates) is the planned base for C, C++, MATLAB (MEX) and Julia. It is
-built when the first of those is needed, not before.
+crates, section 4) is the base for C, C++, MATLAB (MEX) and Julia.
 
 ## 2. Repository layout
 
@@ -38,7 +37,7 @@ to its language's registry at the workspace version (lockstep).
 | Binding | Directory | Registry | Status |
 |---|---|---|---|
 | Python | `bindings/python` | PyPI `cadetta` | 0.1.0 |
-| C ABI | `bindings/c` | release archives | later |
+| C ABI | `bindings/c` | release archives | 0.1.0 (run/version/free) |
 
 ## 3. Python
 
@@ -250,6 +249,21 @@ Python does not define parameters that feed back into the design
 outside the solver protocol: `.cdt` source stays the single source of
 truth. Programs may generate `.cdt` text and format it with
 `cadetta.format_source`, but evaluated values flow only from source.
+
+## 4. C ABI
+
+`bindings/c` builds `libcadetta_capi` and `include/cadetta.h`. The
+surface is `cadetta_version`, `cadetta_run(argc, argv, &out, &err)` and
+`cadetta_free`. `cadetta_run` runs the CLI entry point in-process and
+returns its exit code with captured stdout and stderr, so with
+`--format json` it returns the CLI's document by construction. Decision
+(2026-10-16): one entry point rather than a function per query, because
+the JSON documents and their schemas are already the stable contract
+(tier 1); a typed per-query C API would duplicate them and drift. Exit
+0 and 1 carry a document; 2 is usage or I/O; negative returns are ABI
+failures (bad argv, core panic), never an abort. Its CI job replays the
+conformance `check`/`config`/`eval` fixtures through a C program and the
+CLI and compares exit code and stdout.
 
 ## Open questions
 
