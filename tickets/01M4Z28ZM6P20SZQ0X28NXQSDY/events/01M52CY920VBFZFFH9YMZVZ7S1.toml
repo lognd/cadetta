@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T12:57:24Z"
+digest = "c27d99a235a71c4df783661149f7afade56d89766e7e1696fa8b3c1464d9a6be"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 48dcad9e-6be3-4bef-9373-19049cca5b11 with nextest profile: default
+    Starting 1 test across 76 binaries (1817 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance_language language_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_language language_fixtures_match_the_spec
+        SLOW [>180.000s] cadetta::conformance_language language_fixtures_match_the_spec
+        SLOW [>240.000s] cadetta::conformance_language language_fixtures_match_the_spec
+        PASS [ 267.832s] cadetta::conformance_language language_fixtures_match_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 267.839s] 1 test run: 1 passed (1 slow), 1817 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta::conformance_language language_fixtures_match_the_spec"
+size = 1680
+status = "measured"
+test_count = 1
+tests_digest = "ec1ff71ec9e0893f0c6f398e43241c86ed59b194aada97d8446d41ed72dac673"
+at = "2026-10-16T12:57:24Z"
+actor = "lognd"
+rev = 1
