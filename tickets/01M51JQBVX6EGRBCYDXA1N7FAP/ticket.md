@@ -4,9 +4,10 @@ title = "Golden 02: per-instance member paths (BearingUnit/housing.*) missing fr
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-16T05:24:58Z"
-updated = "2026-10-16T05:24:58Z"
+updated = "2026-10-16T08:26:15Z"
 scope = ["crates/cadetta-sema/src/**"]
 +++
 
