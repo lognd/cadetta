@@ -12,7 +12,7 @@ scope = ["crates/cadetta-cli/src/cmd/sync.rs"]
 
 [[acceptance]]
 text = "A ref-mode dimension locator is link-checked by sync: R003 when absent or no longer linked to its target global, never pushed"
-bound = false
+bound = true
 +++
 
 found while working ~D4T6ATZ: ref-mode locators skipped
