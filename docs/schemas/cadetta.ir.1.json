@@ -728,6 +728,9 @@
         "span": {
           "$ref": "#/$defs/SpanRef"
         },
+        "text": {
+          "type": "string"
+        },
         "value": {
           "$ref": "#/$defs/Value"
         },

@@ -112,6 +112,11 @@ reordering; they change only by rename or move, which `was` records.
   binding emits once, at the emit point of instance 0. Because the
   instances share arguments, no source makes another instance's
   emitted value differ; R012 is reserved for that case (adapters.md 3).
+- Text members: a member whose evaluated value is Text (a `fmt` result such
+  as the std `ScrewJoint.callout`) lowers with `text` set to the string and
+  no `value` (a Text carries no dimension or tolerance). It is a `param`
+  Member like its numeric siblings, `analysis` and `priv` follow the
+  member, and `text` is part of the member's own digest only when present.
 - Part-array instance members: a counted part `part axle[2]: Axle` whose
   callee has no parameters lowers one member per instance and per
   parameter or `let` of the callee (`Rover/axle[0].len`,
@@ -135,7 +140,7 @@ Project    { schema, flavour, package, modules[], dependencies[], components[],
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
              citation?: CiteRef, attrs, members[], parts[], fits[], datums[], points[],
              placements[], span?, digest }
-Member     { path, kind, analysis: bool, priv: bool, value?: Value, bound?: Bound, expr?,
+Member     { path, kind, analysis: bool, priv: bool, value?: Value, text?: string, bound?: Bound, expr?,
              deps[], role?, citation?: CiteRef, was[], attrs, provenance, doc?, span?,
              variants?: { "<slot>=<alternate>": Value }, digest, closure }
 Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,

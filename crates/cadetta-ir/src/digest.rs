@@ -251,6 +251,10 @@ pub fn member_digest(m: &Member) -> Digest {
             value(e, v);
         }
     });
+    // Appended only when present so digests of non-Text members are unchanged.
+    if let Some(t) = &m.text {
+        e.str("text").str(t);
+    }
     let d = e.finish();
     trace!(path = %m.path, digest = %d.0, "digest: member own");
     d

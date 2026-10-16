@@ -530,6 +530,7 @@ class Member(BaseModel):
     provenance: Provenance
     role: str | None = None
     span: SpanRef | None = None
+    text: str | None = None
     value: Value | None = None
     variants: dict[str, Value] | None = None
     was: list[str]

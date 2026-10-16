@@ -288,6 +288,7 @@ fn defs() -> Map<String, J> {
             ],
             &[
                 ("value", r("Value")),
+                ("text", s()),
                 ("bound", r("Bound")),
                 ("expr", s()),
                 ("role", s()),

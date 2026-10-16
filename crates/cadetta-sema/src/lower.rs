@@ -575,7 +575,7 @@ impl Cx<'_> {
         Some(out)
     }
 
-    /// The numeric members of the parameterized instances declared in `comp` (`Box/j.depth`,
+    /// The numeric and Text members of the parameterized instances declared in `comp` (`Box/j.depth`,
     /// `Box/arm[1].depth` for one element of a part array).
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     fn lower_instance_members(&self, comp: &CanonPath) -> Vec<Member> {
@@ -588,13 +588,17 @@ impl Cx<'_> {
                 continue;
             }
             let Some(path) = ir_path(k) else { continue };
-            let Some(value) = evaluated_value(ev, &self.owners, k, e, "") else {
-                continue;
-            };
             let mut m = Member::new(path, MemberKind::Param);
+            // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+            if let Val::Text(t) = &e.value {
+                m.text = Some(t.clone());
+            } else if let Some(value) = evaluated_value(ev, &self.owners, k, e, "") {
+                m.value = Some(value);
+            } else {
+                continue;
+            }
             m.private = ev.instance_private.contains(k);
             m.analysis = e.analysis;
-            m.value = Some(value);
             m.provenance = Provenance::Derived;
             out.push(m);
         }
@@ -1988,6 +1992,28 @@ mod tests {
             .map(|m| m.path.to_string())
             .collect();
         assert_eq!(paths, ["p::Unit/ring.bore"]);
+    }
+
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower_instance_members kind=unit
+    #[test]
+    fn a_text_instance_member_lowers_as_text_without_a_value() {
+        let src = "model Tag(n: Count) {\n  label = fmt(\"n={}\", n)\n}\n\
+            model Box {\n  part t: Tag(n = 3)\n}\n";
+        let b = build(src, &[], &[]);
+        let bx = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Box")
+            .expect("Box");
+        let label = bx
+            .members
+            .iter()
+            .find(|m| m.path.to_string() == "p::Box/t.label")
+            .expect("label");
+        assert_eq!(label.text.as_deref(), Some("n=3"));
+        assert!(label.value.is_none());
     }
 
     // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V

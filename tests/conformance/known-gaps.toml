@@ -88,16 +88,6 @@ ticket = "~0P0KQMG"
 reason = "sw-equations emit output differs from the spec"
 
 [[gap]]
-fixture = "stdlib/joint-callout"
-ticket = "~QA1M8TZ"
-reason = "Text members are not lowered to IR members or compared by the runner"
-
-[[gap]]
-fixture = "stdlib/joint-vendor-callout"
-ticket = "~QA1M8TZ"
-reason = "Text members are not lowered to IR members or compared by the runner"
-
-[[gap]]
 fixture = "adapters/bind-let-never-emitted"
 ticket = "~50N0ZB6"
 reason = "R001-R006 not driven by observed IR and sync facts"

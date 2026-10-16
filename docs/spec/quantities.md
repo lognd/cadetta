@@ -375,7 +375,9 @@ under a fresh variable. `floor`, `ceil`, `round` take dimensionless
 values; `round` is half away from zero. `count` returns the length of
 an array. `fmt` substitutes `{}` positionally (`{{` and `}}` escape);
 a placeholder/argument mismatch is E006. A quantity renders in its
-authored unit when one is syntactically visible, else in SI base units;
+authored unit when one is syntactically visible, else a Length in
+mm (decided 2026-10-16), else in SI base units; a variant name shows an
+underscore between digits as a decimal point (`M2_5` is `M2.5`);
 attribute-driven display is applied by the output stages. Recursion,
 direct or mutual, is rejected with `EVAL` at the function's name. A
 non-exhaustive `match` is E009 naming each missing variant.

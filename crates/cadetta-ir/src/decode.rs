@@ -275,6 +275,7 @@ fn member(o: &Json, ptr: &str) -> Res<Member> {
             .get("value")
             .map(|v| value(v, &format!("{ptr}/value")))
             .transpose()?,
+        text: opt_text(o, "text"),
         bound: o
             .get("bound")
             .map(|b| bound(b, &format!("{ptr}/bound")))

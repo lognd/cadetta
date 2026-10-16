@@ -369,6 +369,12 @@ fn eval(job: &Job) -> Result<Facts, String> {
     };
     for comp in ir["components"].as_array().into_iter().flatten() {
         for member in comp["members"].as_array().into_iter().flatten() {
+            // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+            // A Text member compares as its quoted string (the fixtures' `"..."` form).
+            if let (Some(path), Some(t)) = (member["path"].as_str(), member["text"].as_str()) {
+                facts.members.insert(path.to_owned(), format!("\"{t}\""));
+                continue;
+            }
             let (Some(path), Some(r)) = (
                 member["path"].as_str(),
                 member["value"]["nominal"]["r"].as_str(),

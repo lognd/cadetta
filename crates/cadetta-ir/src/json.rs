@@ -321,6 +321,7 @@ impl Serialize for Member {
         m.serialize_entry("analysis", &self.analysis)?;
         m.serialize_entry("priv", &self.private)?;
         opt(&mut m, "value", &self.value)?;
+        opt(&mut m, "text", &self.text)?;
         opt(&mut m, "bound", &self.bound)?;
         opt(&mut m, "expr", &self.expr)?;
         m.serialize_entry("deps", &self.deps)?;

@@ -411,6 +411,9 @@ pub struct Member {
     pub private: bool,
     /// The evaluated value.
     pub value: Option<Value>,
+    /// The evaluated string, for a Text member (such as a `fmt` callout); absent otherwise.
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    pub text: Option<String>,
     /// The bound, for bound members.
     pub bound: Option<Bound>,
     /// The normalized expression text.
@@ -448,6 +451,7 @@ impl Member {
             kind,
             private: false,
             value: None,
+            text: None,
             bound: None,
             expr: None,
             deps: Vec::new(),
