@@ -8,8 +8,8 @@ points = 1
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T22:15:52Z"
-updated = "2026-10-16T03:04:29Z"
-scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/lower.rs"]
+updated = "2026-10-16T03:05:15Z"
+scope = ["crates/cadetta-ir/src/**", "crates/cadetta-sema/src/lower.rs", "crates/cadetta-sema/src/lower_solver.rs", "crates/cadetta-cli/src/cmd/impact.rs", "crates/cadetta-cli/src/universe.rs", "crates/cadetta-lint/src/rules/d.rs", "docs/spec/ir.md"]
 
 [[acceptance]]
 text = "Given a solver with @cite, when the IR Solver is built, then Solver.citation is its CiteRef and not an input to the solver closure (ir.md 3; solvers.md 1)"
