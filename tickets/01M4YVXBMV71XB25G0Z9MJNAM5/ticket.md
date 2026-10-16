@@ -2,7 +2,8 @@
 id = "01M4YVXBMV71XB25G0Z9MJNAM5"
 title = "S001 for an uncited user ots policy should report at component path"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
