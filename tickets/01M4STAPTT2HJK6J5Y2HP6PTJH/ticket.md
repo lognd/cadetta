@@ -8,7 +8,7 @@ points = 8
 parent = "01M4STANRAWHV180C7RH0NQAY9"
 reporter = "lognd"
 created = "2026-10-13T05:03:57Z"
-updated = "2026-10-16T01:02:31Z"
+updated = "2026-10-16T01:12:58Z"
 persona = "design engineer"
 capability = "use inch fasteners and inserts"
 idempotency_key = "replan13:std 0.2.0 inch fasteners and inserts"
@@ -17,5 +17,5 @@ scope = ["std/fasteners/inch.cdt", "std/src/fasteners/inch.cdt", "std/src/fasten
 
 [[acceptance]]
 text = "Given the inch fastener and insert scope in stdlib.md, when added, then each value is cited and the 0.2.0 version is set (stdlib.md 1)"
-bound = false
+bound = true
 +++
