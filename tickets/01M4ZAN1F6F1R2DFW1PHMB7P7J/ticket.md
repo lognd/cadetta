@@ -7,11 +7,11 @@ priority = "medium"
 points = 8
 reporter = "lognd"
 created = "2026-10-15T08:25:25Z"
-updated = "2026-10-16T16:16:54Z"
+updated = "2026-10-16T16:16:57Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**"]
 
 [[acceptance]]
-text = "Every remaining binding sync fixture in known-gaps.toml (session, restore, R008-R010, save, attach, O004, emitter sync fixtures) executes and is compared; their entries are removed."
+text = "Binding sync fixtures decided by the tool-session model (host faults, R004, R008-R010, save, adopted) execute and are compared and their known-gaps entries are removed; the rest are retargeted to ~FEZDG87 and ~TSTDBAZ."
 bound = false
 +++
 
