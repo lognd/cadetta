@@ -2,12 +2,12 @@
 id = "01M51461751SB8Z9SVSAAVM8QV"
 title = "std::inserts: heat-set and wire-thread inserts (0.2.0 remainder of HP6PTJH)"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T01:10:50Z"
-updated = "2026-10-16T09:21:34Z"
+updated = "2026-10-16T09:21:37Z"
 scope = ["std/src/inserts.cdt"]
 +++
 
