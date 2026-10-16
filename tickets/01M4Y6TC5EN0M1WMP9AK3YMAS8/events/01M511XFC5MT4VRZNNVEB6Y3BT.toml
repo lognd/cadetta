@@ -1,0 +1,126 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T00:29:24Z"
+digest = "a7c3396026427041c7907a340c6cf3254e2ffed97ed19fe99f5f245f134cd2d5"
+exit_code = 0
+inline = '''
+   Compiling serde_json v1.0.154
+   Compiling stable_deref_trait v1.2.1
+   Compiling libc v0.2.190
+   Compiling smallvec v1.16.3
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling regex-syntax v0.8.11
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling utf8_iter v1.0.4
+   Compiling log v0.4.34
+   Compiling icu_properties_data v2.3.0
+   Compiling icu_normalizer_data v2.3.0
+   Compiling yoke v0.8.3
+   Compiling version_check v0.9.5
+   Compiling zerocopy v0.8.59
+   Compiling percent-encoding v2.3.2
+   Compiling getrandom v0.3.4
+   Compiling zeroize v1.9.1
+   Compiling ahash v0.8.12
+   Compiling parking_lot_core v0.9.12
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling rustls-pki-types v1.15.1
+   Compiling regex-automata v0.4.18
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling crossbeam-utils v0.8.23
+   Compiling httparse v1.10.1
+   Compiling untrusted v0.9.0
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling scopeguard v1.2.0
+   Compiling icu_locale_core v2.3.0
+   Compiling jsonschema-value v0.58.5
+   Compiling icu_collections v2.3.0
+   Compiling lock_api v0.4.14
+   Compiling foldhash v0.2.0
+   Compiling unicode-general-category v1.1.0
+   Compiling heck v0.5.0
+   Compiling bit-vec v0.8.0
+   Compiling borrow-or-share v0.2.4
+   Compiling bytes v1.12.1
+   Compiling lazy_static v1.5.1
+   Compiling equivalent v1.0.2
+   Compiling icu_provider v2.3.1
+   Compiling rustls v0.23.45
+   Compiling allocator-api2 v0.2.21
+   Compiling sharded-slab v0.1.7
+   Compiling http v1.5.0
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling getrandom v0.2.17
+   Compiling hashbrown v0.17.1
+   Compiling regex v1.13.1
+   Compiling parking_lot v0.12.5
+   Compiling ring v0.17.14
+   Compiling matchers v0.2.0
+   Compiling bit-set v0.8.0
+   Compiling fluent-uri v0.4.1
+   Compiling strum_macros v0.28.0
+   Compiling form_urlencoded v1.2.2
+   Compiling idna_adapter v1.2.2
+   Compiling tracing-log v0.2.0
+   Compiling bytecount v0.6.9
+   Compiling idna v1.1.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling micromap v0.3.0
+   Compiling subtle v2.6.1
+   Compiling num-cmp v0.1.0
+   Compiling vsimd v0.8.0
+   Compiling outref v0.5.2
+   Compiling base64 v0.23.1
+   Compiling url v2.5.8
+   Compiling crossbeam-channel v0.5.17
+   Compiling rustls-webpki v0.103.15
+   Compiling ureq-proto v0.6.4
+   Compiling uuid-simd v0.8.0
+   Compiling fancy-regex v0.19.2
+   Compiling webpki-roots v1.0.9
+   Compiling jsonschema-regex v0.58.5
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling bitflags v1.3.2
+   Compiling utf8-zero v0.8.1
+   Compiling data-encoding v2.11.1
+   Compiling ureq v3.4.2
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling tracing-subscriber v0.3.23
+   Compiling lsp-server v0.7.9
+   Compiling referencing v0.58.5
+   Compiling lsp-types v0.95.1
+   Compiling strum v0.28.0
+   Compiling jsonschema v0.58.5
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 45s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID aa57446c-2cdf-4ce9-9c89-4516d4e8b22c with nextest profile: default
+    Starting 2 tests across 43 binaries (591 tests skipped)
+        PASS [   0.263s] cadetta::kind_qualified_paths qualified_path_read_with_wrong_dimension_is_q002
+        PASS [   0.267s] cadetta::kind_qualified_paths qualified_path_read_with_matching_dimension_is_clean
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.272s] 2 tests run: 2 passed, 591 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta qualified_path_read_with"
+size = 4352
+status = "measured"
+test_count = 2
+tests_digest = "0b8295179a90a669736cb89710fb552788b51e51ebe504ec211586f853db7de1"
+at = "2026-10-16T00:29:24Z"
+actor = "lognd"
+rev = 1
