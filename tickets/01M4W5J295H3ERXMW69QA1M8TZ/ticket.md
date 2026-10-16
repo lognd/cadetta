@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T02:58:41Z"
-updated = "2026-10-16T14:16:09Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/**"]
+updated = "2026-10-16T14:16:13Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/stdlib/joint-callout.*", "tests/conformance/stdlib/joint-vendor-callout.*"]
 
 [[acceptance]]
 text = "Given joint-callout and joint-vendor-callout, when the conformance runner runs, then the Text callout is compared"
