@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "needs run.rs lease held by ~ZRN2H8S; retry later"
+at = "2026-10-16T09:36:13Z"
+actor = "lognd"
+rev = 1

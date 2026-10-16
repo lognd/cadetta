@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Root cause: sema/CLI behave correctly (cadetta check marks the C001 waived: JSON waived != null, text output shows no error). The conformance runner (crates/cadetta-cli/tests/conformance/run.rs diagnostics_of) counts waived diagnostics as produced. Decision: runner skips diagnostics whose waived field is non-null (a waived diagnostic is suppressed per language.md waive), then remove the gap. Needs lease on run.rs, held by ~ZRN2H8S via crates/cadetta-cli/**."
+at = "2026-10-16T09:26:22Z"
+actor = "lognd"
+rev = 1

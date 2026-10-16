@@ -2,13 +2,13 @@
 id = "01M51T6EHNEGAJ9KYQ42VJQFPG"
 title = "Waive with a valid future expiry does not suppress C001 in check entry (language/e001-waive-date)"
 type = "bug"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:35:33Z"
-updated = "2026-10-16T09:13:37Z"
-scope = ["crates/cadetta-sema/**"]
+updated = "2026-10-16T09:36:13Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "language/e001-waive-date must-not-fire passes; gap entry removed"

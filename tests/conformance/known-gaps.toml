@@ -349,118 +349,68 @@ reason = "needs the tool-session model of sync (host faults, restore, save, atta
 
 [[gap]]
 fixture = "adapters/contract-no-source-write"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-accept-writes-adoption-marker"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~G9E7R67"
+reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
 
 [[gap]]
 fixture = "adapters/import-active-config-only"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-assembly-parts"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-equation-linked-property-skipped"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-expression-converted"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-item-keys"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-never-overwrites"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~G9E7R67"
+reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
 
 [[gap]]
 fixture = "adapters/import-property-quantity-needs-unit"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-property-types"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-propose-writes-proposal"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-prp-linked-property-skipped"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-rerun-adds-only-unbound"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-citation-flagged"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-derived-untouched"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-fit-skipped"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/import-update-next-sync-no-op"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-only-differing-from-lock-base"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-prints-diff"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-tolerance-skipped"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
-
-[[gap]]
-fixture = "adapters/import-update-write-applies"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~G9E7R67"
+reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
 
 [[gap]]
 fixture = "adapters/import-values-nominal-scalars"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~SPQ1MD0"
+reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
 fixture = "adapters/resolve-drift-import-update"
-ticket = "~KKVE13B"
-reason = "import executor models propose mode only; this fixture needs more"
+ticket = "~G9E7R67"
+reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
 
 [[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
