@@ -2,7 +2,8 @@
 id = "01M4V2NVHWKR28FV617MEM04J7"
 title = "stdlib spec: owner review of conformance decisions and engaged check"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
