@@ -4,9 +4,10 @@ title = "Observe facts for R007, R011, R012 and run them under check"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-14T23:12:16Z"
-updated = "2026-10-14T23:12:16Z"
+updated = "2026-10-16T07:49:28Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[links]]
