@@ -2,7 +2,8 @@
 id = "01M5145HPTW3Q6DYS7ZZK5ZYSE"
 title = "Project.open(workspace root).evaluate() succeeds; bindings.md 3.2 says usage error"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
