@@ -2,7 +2,8 @@
 id = "01M4YR9ZMWA2F4WT5N632TR561"
 title = "geometry/pattern-count-structural extra E002; lints/w005-waiver-expiring exit 0"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
