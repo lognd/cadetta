@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: T001 (language.md 3.6), EVAL codes with fractional count Q009 (3.5), and U002 vs unused private parameterless root (a root, evaluated, neither U002 nor I004) were already specified; kept. Fixed G001 vs decisions paragraph: untyped points apply per element, any typed Point2-on-D with an array is G001, arrays plus vectors always shift. Added a 'Conformance labels' paragraph: expect.json rule is a free label, code or code-suffix, suffix never changes asserted code; severity-split fixtures assert severity; code-less labels name non-diagnostic rules. No fixture edits needed."
+at = "2026-10-16T07:11:02Z"
+actor = "lognd"
+rev = 1

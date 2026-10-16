@@ -498,11 +498,6 @@ ticket = "~6K6E7M4"
 reason = "fixture dirs are identical yet expect opposite output; active_alternate not exposed"
 
 [[gap]]
-fixture = "adapters/tol-locator-needs-dimension"
-ticket = "~E5M0X1Q"
-reason = "emit does not reject a tolerance locator without a dimension kind"
-
-[[gap]]
 fixture = "solvers/variants-equal-inputs-share-one-run"
 ticket = "~420HBMQ"
 reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
@@ -511,31 +506,6 @@ reason = "solve --variants fails with EVAL at Rover.sizing before any solver run
 fixture = "solvers/variants-unchanged-inputs-read-primary"
 ticket = "~420HBMQ"
 reason = "solve --variants fails with EVAL at Rover.sizing before any solver runs"
-
-[[gap]]
-fixture = "stdlib/fits-hole-mirrors-shaft"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-j-it5-7"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-js-half-width"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-k-outside-it4-7"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
-
-[[gap]]
-fixture = "stdlib/fits-size-range-upper-closed"
-ticket = "~SK4E68X"
-reason = "std tables and fits not loadable (embed std)"
 
 [[gap]]
 fixture = "stdlib/table-iso4032"
@@ -866,3 +836,8 @@ reason = "fractional part count w[2.5] yields no Q009"
 fixture = "language/process-rule-kind"
 ticket = "~EQX7ZDY"
 reason = "language.md 3.8 says a process rule must keep the argument kind; sema only logs a warning and emits no EVAL diagnostic"
+
+[[gap]]
+fixture = "quantities/emit-point-inherited"
+ticket = "~AQ8KSJA"
+reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"

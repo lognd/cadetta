@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["bindings/python/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/lint_gaps_d001_d002.rs"]
+new = ["bindings/python/**", "crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-lint/src/rules/d.rs", "crates/cadetta-cli/tests/lint_gaps_d001_d002.rs", "tests/conformance/known-gaps.toml"]
+at = "2026-10-16T06:27:06Z"
+actor = "lognd"
+rev = 1

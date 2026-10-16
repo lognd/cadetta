@@ -116,7 +116,7 @@ other locators proceed.
 | value not representable at declared precision | Q004 | value withheld, path not written, exit 1 |
 | two emitted paths create one native name | R013 | hard failure before any write |
 | a bound `Text` parameter must be emitted to a format that cannot express `Text` | R014 | that adapter's file withheld, exit 1 |
-| a dimension, property or frame locator, or a `ref` binding, must be emitted to a `json` or `csv` file | R015 | that adapter's file withheld, exit 1 |
+| a dimension, property or frame locator, or a `ref` binding, must be emitted to a `json` or `csv` file; a property, frame or instance locator must be emitted to `sw-equations` | R015 | that adapter's file withheld, exit 1 |
 | a `csv` file has a row whose name matches no binding | R016 | no observed IR for that file, exit 1 |
 | bound path missing natively | R003 | locator skipped |
 

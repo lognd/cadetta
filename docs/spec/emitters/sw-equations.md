@@ -49,6 +49,16 @@ pilot r2-05.
   (adapters.md 3.3). A `Text` parameter that fails any of those, or that
   has no binding, is not emitted and is not an error. This holds whatever
   the locator kind (`global` or `dimension`).
+- **Only `global` and `dimension` locators are emitted.** An equations
+  file has no syntax for a custom property, a coordinate system or a
+  component placement, so a `property`, `frame` or `instance` locator
+  (adapters.md 3) bound to a path this run must emit is the error R015
+  (naming the path and the locator), the file is withheld and the exit
+  status is 1; it is never skipped silently and never emitted under its
+  locator string. "Must emit" is defined as for R014 above; a locator
+  that is filtered out, narrowed away or on a `let` is not reported.
+  Those kinds belong to the COM `solidworks` adapter (solidworks.md).
+  `read` is unaffected: it reads only equations (3).
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
   on a global line carries, in this order and separated by spaces: the

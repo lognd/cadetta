@@ -1,0 +1,4 @@
+["acme.demo::Part.x"]
+locators = [
+  { locator = "L_x", kind = "global", mode = "value", native_unit = "mm" },
+]
