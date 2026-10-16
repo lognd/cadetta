@@ -2,7 +2,8 @@
 id = "01M527FY962HMMFE3SPCJ33CAF"
 title = "Import: property types and skipped linked properties"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M5205ESRG3TZHSBQJSPQ1MD0"
