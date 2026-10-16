@@ -27,10 +27,11 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["code", "message"],
+        "required": ["code", "severity", "message"],
         "additionalProperties": false,
         "properties": {
           "code": { "description": "Rule code, e.g. R001 or R004.", "type": "string" },
+          "severity": { "description": "info (O004), error (a blocking code) or warning.", "enum": ["info", "warning", "error"] },
           "message": { "type": "string" }
         }
       }

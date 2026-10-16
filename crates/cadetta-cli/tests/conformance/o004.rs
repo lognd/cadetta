@@ -195,12 +195,6 @@ pub fn run(spec: &Value) -> Result<Facts, String> {
         }
         facts = sync("after attest")?;
     }
-    // The sync report omits a severity; O004 is info by definition (obligations.md 2.3).
-    for p in facts.produced.iter_mut().filter(|p| p.code == "O004") {
-        if p.severity.is_empty() {
-            p.severity = "info".into();
-        }
-    }
     let open = facts.produced.iter().any(|p| p.code == "O004");
     tracing::info!(%file, open, "o004: judged");
     facts
