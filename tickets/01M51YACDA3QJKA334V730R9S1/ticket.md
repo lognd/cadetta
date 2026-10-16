@@ -2,7 +2,8 @@
 id = "01M51YACDA3QJKA334V730R9S1"
 title = "universe test fit_obligation_is_listed_signed_off_and_stales_on_edit fails on main"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
