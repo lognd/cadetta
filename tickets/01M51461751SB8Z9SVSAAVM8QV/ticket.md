@@ -7,7 +7,7 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T01:10:50Z"
-updated = "2026-10-16T09:22:22Z"
+updated = "2026-10-16T09:39:57Z"
 scope = ["std/src/inserts.cdt", "std/src/lib.cdt", "docs/spec/stdlib.md", "tests/conformance/stdlib/inserts-*"]
 +++
 
