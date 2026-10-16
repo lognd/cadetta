@@ -1,0 +1,13 @@
+kind = "create"
+title = "Unknown [lint] precision kind should surface as a diagnostic, not only a log warning"
+type = "task"
+category = "todo"
+priority = "low"
+points = 1
+idempotency_key = "followup-76gmv4n-typo"
+scope = ["crates/cadetta-cli/src/pipeline.rs"]
+acceptance = ["Given a [lint] precision key naming no builtin or package kind, when analysis runs, then a diagnostic is reported"]
+body = "~76GMV4N made Lint::m_config_lenient skip unknown precision kinds with a tracing warning, so a typo (Lenth) is no longer caught at load. Surface it as a diagnostic or config error once the package kind table is known."
+at = "2026-10-16T00:54:08Z"
+actor = "lognd"
+rev = 1
