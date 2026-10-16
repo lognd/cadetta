@@ -2,7 +2,8 @@
 id = "01M52YJVS9MPHA0WKC0EPW3NH0"
 title = "cadetta sync report omits diagnostic severity (O004 info)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
