@@ -36,7 +36,7 @@ Rust, from the repository root:
 ```bash
 cargo fmt --all --check
 cargo clippy --workspace --all-targets -- -D warnings
-cargo test --workspace
+cargo nextest run --workspace
 ```
 
 Python, inside `adapters/freecad`:

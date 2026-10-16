@@ -1,0 +1,12 @@
+# cargo-nextest profiles; `cargo nextest run` is the repository's test runner.
+# nextest does not run doctests (the workspace has none worth running).
+
+[profile.default]
+# Report tests that run suspiciously long, and kill a hung one after 5 minutes.
+slow-timeout = { period = "60s", terminate-after = 5 }
+fail-fast = false
+
+[profile.ci]
+fail-fast = false
+retries = 0
+failure-output = "immediate-final"
