@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:16:54Z"
-updated = "2026-10-16T10:20:22Z"
+updated = "2026-10-16T10:21:08Z"
 scope = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-contributor.*", "tests/conformance/language/e002-rollup-misspelled-member.*"]
 +++
 
