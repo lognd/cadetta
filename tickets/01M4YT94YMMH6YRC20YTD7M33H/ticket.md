@@ -2,12 +2,12 @@
 id = "01M4YT94YMMH6YRC20YTD7M33H"
 title = "Wire csv read_bound (R016) into the CLI read path"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T03:39:18Z"
-updated = "2026-10-15T03:39:18Z"
+updated = "2026-10-16T09:12:39Z"
 idempotency_key = "wire-csv-read-bound"
 scope = ["crates/cadetta-cli/src/**", "crates/cadetta-adapter/src/builtin/csv.rs"]
 
