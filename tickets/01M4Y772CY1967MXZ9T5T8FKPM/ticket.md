@@ -2,7 +2,8 @@
 id = "01M4Y772CY1967MXZ9T5T8FKPM"
 title = "Derive file-scope fit items (ItemKind::Fit) into lowering"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 2
 reporter = "lognd"
