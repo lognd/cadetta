@@ -2,7 +2,8 @@
 id = "01M4YM3CKT4FBV4VXJD76GMV4N"
 title = "Lint precision config accepts custom quantity kinds"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 3
 reporter = "lognd"
