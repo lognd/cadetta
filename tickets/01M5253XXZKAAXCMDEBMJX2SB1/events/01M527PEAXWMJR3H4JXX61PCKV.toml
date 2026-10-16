@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T11:31:28Z"
+digest = "a96e72df508866b00c125cf99d76f596f70132813e7cefa9da614a9b329fe1e2"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e3a52d3d-390d-434d-8395-080ba952e960 with nextest profile: default
+    Starting 7 tests across 1 binary (356 tests skipped)
+        PASS [   0.022s] cadetta cmd::update::tests::e012_exits_one_and_leaves_the_lock_unchanged
+        PASS [   0.022s] cadetta project::tests::unsatisfied_version_requirement_is_e012
+        PASS [   0.022s] cadetta pkg::resolve::tests::unmet_version_requirement_is_e012
+        PASS [   0.025s] cadetta cmd::update::tests::e013_exits_one
+        PASS [   0.028s] cadetta pkg::resolve::tests::irreconcilable_requirements_are_e013_with_no_second_copy
+        PASS [   0.028s] cadetta project::tests::conflicting_requirements_on_one_package_are_e013
+        PASS [   0.040s] cadetta cmd::check::tests::changed_dependency_content_is_e014
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.042s] 7 tests run: 7 passed, 356 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib e01"
+size = 1106
+status = "measured"
+test_count = 7
+tests_digest = "b590eafb9214fae6a61fc8b28d520da2ab54e04fd2f4979aea18beff410ce006"
+at = "2026-10-16T11:31:28Z"
+actor = "lognd"
+rev = 1

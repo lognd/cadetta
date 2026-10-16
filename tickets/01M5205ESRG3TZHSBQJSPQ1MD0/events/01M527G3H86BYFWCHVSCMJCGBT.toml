@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: split into 4 children (expression/keys/scalars, property types+skips, assembly parts, active config). Executor modelling of new item keys lives in tests/conformance/import.rs; observed wire for text properties decided per child and recorded in docs/spec/adapters.md 7."
+at = "2026-10-16T11:28:01Z"
+actor = "lognd"
+rev = 1
