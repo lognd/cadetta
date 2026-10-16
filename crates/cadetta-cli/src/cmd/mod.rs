@@ -23,6 +23,7 @@ pub mod ir_lint;
 pub mod ir_validate;
 pub mod lock;
 pub mod lsp;
+pub mod lsp_query;
 pub mod names;
 pub mod obligations;
 pub mod solve;

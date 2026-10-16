@@ -181,7 +181,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
 | `display VALUE SPEC` | Print one quantity literal through the display formatter (quantities.md 6). | - | never (errors exit 2) | `display.json` |
-| `lsp` | Language server over stdio: diagnostics and formatting (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
+| `lsp` | Language server over stdio: diagnostics, formatting, hover, code lens, definition (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
 
 `check`, `emit`, `sync` and `solve` accept `--module PATH` (a module
 path prefix, e.g. `--module drive`) and canonical-path globs to scope a
@@ -475,11 +475,21 @@ editor shows exactly what `check` reports.
   stdio. stdout carries protocol only; logs go to stderr through
   `cadetta-log`, filtered by `CADETTA_LOG`, and `window/logMessage` is
   never used for diagnostics.
-- Capabilities in 0.1.0: `textDocumentSync` (open, change with full
-  text, save without text, close), `documentFormattingProvider`, and
-  `positionEncoding`. Nothing else is advertised; hover (`why`), code
-  lens (`impact`), go to definition and completion are later (a
+- Capabilities: `textDocumentSync` (open, change with full
+  text, save without text, close), `documentFormattingProvider`,
+  `hoverProvider`, `codeLensProvider` (no resolve),
+  `definitionProvider` and `positionEncoding`. Completion is later (a
   ticket).
+- Queries (answered from the package as last checked on disk, so they
+  are empty until the first check finishes and lag unsaved edits;
+  only members carry a source span, so checks and solvers get none):
+  hover over a member declaration shows its `why` chain as Markdown;
+  one code lens per member declaration, at its start, titled `impact:
+  N dependents` (or `no dependents`) with the client command
+  `cadetta.impact` and the canonical path as its only argument; go to
+  definition on a full canonical path, or on a name the enclosing
+  member reads (matched by last path segment among its dependencies),
+  answers the declaration's location, else `null`.
 - Projects: each open `.cdt` belongs to the package found by the
   config-cli.md 1.6 walk from its directory; a document outside any
   package gets only syntax diagnostics. Several packages may be open at

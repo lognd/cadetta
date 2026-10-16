@@ -15,10 +15,11 @@ use std::path::{Path, PathBuf};
 use crossbeam_channel::{Receiver, Sender, select, unbounded};
 use lsp_server::{Connection, ErrorCode, Message, Notification, Request, RequestId, Response};
 use lsp_types::{
-    Diagnostic as LspDiagnostic, DiagnosticSeverity, DocumentFormattingParams, InitializeParams,
-    NumberOrString, PositionEncodingKind, PublishDiagnosticsParams, Range as LspRange, SaveOptions,
-    ServerCapabilities, TextDocumentSyncCapability, TextDocumentSyncKind, TextDocumentSyncOptions,
-    TextDocumentSyncSaveOptions, TextEdit, Url,
+    CodeLensOptions, CodeLensParams, Diagnostic as LspDiagnostic, DiagnosticSeverity,
+    DocumentFormattingParams, GotoDefinitionParams, HoverParams, HoverProviderCapability,
+    InitializeParams, NumberOrString, PositionEncodingKind, PublishDiagnosticsParams,
+    Range as LspRange, SaveOptions, ServerCapabilities, TextDocumentSyncCapability,
+    TextDocumentSyncKind, TextDocumentSyncOptions, TextDocumentSyncSaveOptions, TextEdit, Url,
 };
 use serde_json::{Value, json};
 
@@ -28,7 +29,9 @@ use cadetta_syntax::parser::parse;
 use cadetta_syntax::span::SourceFile;
 
 use super::check::{no_drift, run_check_with};
+use super::lsp_query::{self, FileEntries};
 use crate::output::Format;
+use crate::pipeline::analyze;
 use crate::project::{CONFIG_FILE, Project, SOURCE_EXT, find_config};
 use crate::{EXIT_FAIL, EXIT_OK, EXIT_USAGE, Globals};
 
@@ -66,7 +69,7 @@ impl Encoding {
     }
 
     /// How many units `ch` takes in this encoding.
-    fn units(self, ch: char) -> u32 {
+    pub(super) fn units(self, ch: char) -> u32 {
         match self {
             Self::Utf16 => ch.len_utf16() as u32,
             Self::Utf32 => 1,
@@ -196,7 +199,7 @@ pub fn syntax_diagnostics(text: &str, enc: Encoding) -> Vec<LspDiagnostic> {
         .collect()
 }
 
-/// The server capabilities in 0.1.0: sync, formatting and the position encoding, nothing else.
+/// The server capabilities: sync, formatting, hover, code lens, definition and the encoding.
 fn capabilities(enc: Encoding) -> ServerCapabilities {
     ServerCapabilities {
         position_encoding: Some(enc.kind()),
@@ -212,6 +215,11 @@ fn capabilities(enc: Encoding) -> ServerCapabilities {
             },
         )),
         document_formatting_provider: Some(lsp_types::OneOf::Left(true)),
+        hover_provider: Some(HoverProviderCapability::Simple(true)),
+        code_lens_provider: Some(CodeLensOptions {
+            resolve_provider: Some(false),
+        }),
+        definition_provider: Some(lsp_types::OneOf::Left(true)),
         ..ServerCapabilities::default()
     }
 }
@@ -224,6 +232,8 @@ struct PackageResult {
     generation: u64,
     /// Diagnostics per file, empty lists included so stale ones clear.
     files: BTreeMap<PathBuf, Vec<LspDiagnostic>>,
+    /// The hover, lens and definition index of the package.
+    index: FileEntries,
 }
 
 /// Run the full `check` for the package containing `dir` against the files on disk and map
@@ -231,7 +241,7 @@ struct PackageResult {
 fn check_package(
     dir: &Path,
     enc: Encoding,
-) -> Result<BTreeMap<PathBuf, Vec<LspDiagnostic>>, String> {
+) -> Result<(BTreeMap<PathBuf, Vec<LspDiagnostic>>, FileEntries), String> {
     let (project, scope) = Project::open(Some(dir), None).map_err(|e| e.to_string())?;
     let globals = Globals {
         format: Format::Json,
@@ -277,7 +287,9 @@ fn check_package(
             files.entry(file).or_default().push(mapped);
         }
     }
-    Ok(files)
+    let analysis = analyze(&project, &scope);
+    let index = lsp_query::build_index(&project, &analysis);
+    Ok((files, index))
 }
 
 /// The server state behind the message loop.
@@ -290,6 +302,8 @@ struct Server<'a> {
     generation: HashMap<PathBuf, u64>,
     /// URIs last published by a package check, per root, to clear the ones that vanish.
     published: HashMap<PathBuf, HashSet<Url>>,
+    /// Query index per package root, replaced on each finished check.
+    index: HashMap<PathBuf, FileEntries>,
     results: Sender<PackageResult>,
     shutdown: bool,
 }
@@ -344,11 +358,12 @@ impl Server<'_> {
         tracing::info!(root = %root.display(), generation, "lsp: package check scheduled");
         let (tx, enc) = (self.results.clone(), self.enc);
         std::thread::spawn(move || match check_package(&dir, enc) {
-            Ok(files) => {
+            Ok((files, index)) => {
                 let _ = tx.send(PackageResult {
                     root,
                     generation,
                     files,
+                    index,
                 });
             }
             Err(message) => tracing::error!(%message, "lsp: package check failed"),
@@ -361,6 +376,7 @@ impl Server<'_> {
             tracing::info!(root = %result.root.display(), generation = result.generation, "lsp: superseded check dropped");
             return;
         }
+        self.index.insert(result.root.clone(), result.index);
         let mut now = HashSet::new();
         for (path, diagnostics) in result.files {
             let Ok(uri) = Url::from_file_path(&path) else {
@@ -475,6 +491,82 @@ impl Server<'_> {
         }
     }
 
+    /// The text of `uri`: the open buffer, else the file on disk.
+    fn text_of(&self, uri: &Url) -> String {
+        self.docs.get(uri).cloned().unwrap_or_else(|| {
+            uri.to_file_path()
+                .ok()
+                .and_then(|p| std::fs::read_to_string(p).ok())
+                .unwrap_or_default()
+        })
+    }
+
+    /// The indexed entries of the file `uri` names (empty before the first check).
+    fn entries_of(&self, uri: &Url) -> Vec<lsp_query::Entry> {
+        let Ok(path) = uri.to_file_path() else {
+            return Vec::new();
+        };
+        self.index
+            .values()
+            .find_map(|files| files.get(&path))
+            .cloned()
+            .unwrap_or_default()
+    }
+
+    /// Parse `params` as `P` and answer with `f`; bad params are an error response.
+    fn query<P: serde::de::DeserializeOwned>(
+        &self,
+        id: RequestId,
+        params: Value,
+        f: fn(&Self, P) -> Value,
+    ) -> Response {
+        match serde_json::from_value::<P>(params) {
+            Ok(p) => Response::new_ok(id, f(self, p)),
+            Err(error) => {
+                tracing::info!(%error, "lsp: bad query params");
+                Response::new_err(id, ErrorCode::InvalidParams as i32, error.to_string())
+            }
+        }
+    }
+
+    /// `textDocument/hover`: the `why` chain of the declaration under the cursor.
+    fn hover(&self, p: HoverParams) -> Value {
+        let at = p.text_document_position_params;
+        let text = self.text_of(&at.text_document.uri);
+        let entries = self.entries_of(&at.text_document.uri);
+        serde_json::to_value(lsp_query::hover(&entries, &text, at.position, self.enc))
+            .unwrap_or(Value::Null)
+    }
+
+    /// `textDocument/codeLens`: one `impact` lens per declaration of the file.
+    fn code_lens(&self, p: CodeLensParams) -> Value {
+        let uri = p.text_document.uri;
+        let lenses = lsp_query::lenses(&self.entries_of(&uri), &self.text_of(&uri), self.enc);
+        serde_json::to_value(lenses).unwrap_or(Value::Null)
+    }
+
+    /// `textDocument/definition`: the declaration a canonical path or read name points at.
+    fn definition(&self, p: GotoDefinitionParams) -> Value {
+        let at = p.text_document_position_params;
+        let uri = at.text_document.uri;
+        let here = self.entries_of(&uri);
+        let mut all = Vec::new();
+        for files in self.index.values() {
+            for (file, entries) in files {
+                all.extend(entries.iter().map(|e| (file.as_path(), e)));
+            }
+        }
+        let found = lsp_query::definition(
+            &all,
+            &here,
+            &self.text_of(&uri),
+            at.position,
+            self.enc,
+            |file| std::fs::read_to_string(file).unwrap_or_default(),
+        );
+        serde_json::to_value(found).unwrap_or(Value::Null)
+    }
+
     /// Handle one request.
     fn request(&mut self, req: Request) {
         tracing::debug!(method = %req.method, "lsp: request");
@@ -489,6 +581,12 @@ impl Server<'_> {
             )
         } else if req.method == "textDocument/formatting" {
             self.formatting(req.id, req.params)
+        } else if req.method == "textDocument/hover" {
+            self.query(req.id, req.params, Self::hover)
+        } else if req.method == "textDocument/codeLens" {
+            self.query(req.id, req.params, Self::code_lens)
+        } else if req.method == "textDocument/definition" {
+            self.query(req.id, req.params, Self::definition)
         } else {
             tracing::info!(method = %req.method, "lsp: unsupported request");
             Response::new_err(
@@ -559,6 +657,7 @@ pub fn serve(conn: &Connection) -> u8 {
         docs: HashMap::new(),
         generation: HashMap::new(),
         published: HashMap::new(),
+        index: HashMap::new(),
         results: tx,
         shutdown: false,
     };
@@ -648,6 +747,13 @@ mod tests {
             Encoding::Utf16
         );
         assert_eq!(Encoding::negotiate(&[]), Encoding::Utf16);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/lsp.rs::Encoding.kind
+    #[test]
+    fn kind_names_the_encoding() {
+        assert_eq!(Encoding::Utf32.kind(), PositionEncodingKind::UTF32);
+        assert_eq!(Encoding::Utf16.kind(), PositionEncodingKind::UTF16);
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/lsp.rs::map_diagnostic
