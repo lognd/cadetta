@@ -2,12 +2,12 @@
 id = "01M4V1A44AT1NHYBE9VHZ72BYR"
 title = "Conformance fixtures for language: remaining rules"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:25:12Z"
-updated = "2026-10-16T02:02:27Z"
+updated = "2026-10-16T02:02:30Z"
 scope = ["tests/conformance/language/**"]
 
 [[acceptance]]
