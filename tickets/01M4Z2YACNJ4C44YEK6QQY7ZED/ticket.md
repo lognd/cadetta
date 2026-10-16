@@ -2,12 +2,12 @@
 id = "01M4Z2YACNJ4C44YEK6QQY7ZED"
 title = "bindings.md: member.variant has no concrete alternate-part example"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T06:10:40Z"
-updated = "2026-10-15T06:10:40Z"
+updated = "2026-10-16T00:52:44Z"
 idempotency_key = "dx2kssf-point4"
 scope = ["docs/spec/bindings.md"]
 
