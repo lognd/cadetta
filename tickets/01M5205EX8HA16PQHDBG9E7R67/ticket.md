@@ -2,12 +2,12 @@
 id = "01M5205EX8HA16PQHDBG9E7R67"
 title = "Import executor: then_sync/design/native/lock modelling and fixture inconsistencies"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T09:19:52Z"
-updated = "2026-10-16T09:23:36Z"
+updated = "2026-10-16T10:49:50Z"
 scope = ["crates/cadetta-cli/tests/**"]
 +++
 
