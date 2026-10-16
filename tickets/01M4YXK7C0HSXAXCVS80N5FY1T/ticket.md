@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T04:37:14Z"
-updated = "2026-10-16T07:31:16Z"
-scope = ["crates/cadetta-sema/**", "docs/spec/solvers.md"]
+updated = "2026-10-16T07:31:17Z"
+scope = ["crates/cadetta-sema/**", "docs/spec/solvers.md", "tests/conformance/solvers/variants-*.expect.json"]
 
 [[acceptance]]
 text = "Given a solver in-expression reading wheel.load_rating on part wheel[4], when evaluated, then it reads instance 0 (the primary or the selected alternate) with no EVAL error"
