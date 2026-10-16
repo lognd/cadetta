@@ -2,7 +2,8 @@
 id = "01M4V2KDYHJAB934TC7ZKZTK5Z"
 title = "Conformance fixtures for lint codes not runnable via check source"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
