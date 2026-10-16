@@ -4,9 +4,10 @@ title = "Conformance fixtures for lint codes not runnable via check source"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-13T16:47:46Z"
-updated = "2026-10-13T16:47:46Z"
+updated = "2026-10-16T02:12:38Z"
 scope = ["tests/conformance/lints/**"]
 +++
 
