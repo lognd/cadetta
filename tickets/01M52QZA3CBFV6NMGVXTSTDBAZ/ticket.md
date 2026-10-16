@@ -2,7 +2,8 @@
 id = "01M52QZA3CBFV6NMGVXTSTDBAZ"
 title = "Conformance: sync entry model for attach/close, r006 dry-run, degrade and header-noop fixtures"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
