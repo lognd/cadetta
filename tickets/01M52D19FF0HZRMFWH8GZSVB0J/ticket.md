@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T13:04:47Z"
-updated = "2026-10-16T13:24:02Z"
+updated = "2026-10-16T13:24:17Z"
 scope = ["tests/golden/02-bearing-housing/**", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-sema/src/tables.rs", "docs/spec/quantities.md", "crates/cadetta-cli/tests/golden/compare.rs"]
 
 [[acceptance]]
 text = "Golden 02-bearing-housing reports zero mismatches (values 47/47, verdicts 10/10, diagnostics 5/5)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Pure member, fit-side and table-cell parameter reads keep their tolerance (unit test)"
