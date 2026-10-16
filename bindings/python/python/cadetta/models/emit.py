@@ -52,5 +52,11 @@ class EmitReport(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    active_alternates: Annotated[
+        dict[str, str] | None,
+        Field(
+            description="Slot path to the qualified name of its active alternate (the primary); absent when the package has no slot."
+        ),
+    ] = None
     files: list[File]
     diagnostics: list[Diagnostic]
