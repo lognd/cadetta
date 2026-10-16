@@ -114,6 +114,30 @@ fn kind_name(k: LocatorKind) -> &'static str {
     }
 }
 
+/// Why an accepted item carries a reason: its native expression is converted, not copied.
+const EXPRESSION_REASON: &str = "native expression converted; review the formula";
+
+/// Converts a native expression to `.cdt` syntax (adapters.md 7.2).
+///
+/// Each quoted native name (`"B"`) becomes the proposed member path found in `names`
+/// (native name to path). Returns `None` when a reference cannot be resolved or quoting is
+/// unbalanced, so the caller falls back to the literal value.
+pub fn convert_expression(expr: &str, names: &BTreeMap<&str, &str>) -> Option<String> {
+    let mut out = String::new();
+    let mut rest = expr;
+    while let Some(start) = rest.find('"') {
+        out.push_str(&rest[..start]);
+        let after = &rest[start + 1..];
+        let end = after.find('"')?;
+        let path = names.get(&after[..end])?;
+        out.push_str(path);
+        rest = &after[end + 1..];
+    }
+    out.push_str(rest);
+    tracing::debug!(%expr, converted = %out, "import: expression converted");
+    Some(out.trim().to_owned()).filter(|s| !s.is_empty())
+}
+
 /// Builds a proposal from observed IR, one project per native file (adapters.md 7.1).
 pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
     let mut items = Vec::new();
@@ -150,6 +174,8 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                             Status::Accept,
                             Some("name collided with an earlier member; suffixed".to_string()),
                         )
+                    } else if m.expr.is_some() {
+                        (Status::Accept, Some(EXPRESSION_REASON.to_string()))
                     } else {
                         (Status::Accept, None)
                     };
@@ -339,12 +365,25 @@ pub fn render_cdt(p: &Proposal) -> String {
 pub fn render_model(component: &str, items: &[&Item]) -> String {
     let (instances, members): (Vec<&Item>, Vec<&Item>) =
         items.iter().partition(|i| i.kind == "instance");
+    let names: BTreeMap<&str, &str> = members
+        .iter()
+        .filter(|i| i.kind != "frame")
+        .map(|i| (i.native_name.as_str(), i.path.as_str()))
+        .collect();
     let mut out = String::new();
     if !members.is_empty() || instances.is_empty() {
         out.push_str(&format!("model {component} {{\n"));
         for i in members {
             if i.kind == "frame" {
                 out.push_str(&format!("  datum {} = {}\n", i.path, i.value));
+                continue;
+            }
+            let converted = i
+                .expression
+                .as_deref()
+                .and_then(|e| convert_expression(e, &names));
+            if let Some(expr) = converted {
+                out.push_str(&format!("  {} = {expr}\n", i.path));
                 continue;
             }
             let unit = i.unit.as_deref().unwrap_or("");
@@ -439,6 +478,24 @@ mod tests {
         b.push(param("D1", 3, unit_assumed, LocatorMode::Ref))
             .unwrap();
         b.build()
+    }
+
+    // frob:tests convert_expression
+    // frob:tests render_model
+    #[test]
+    fn expression_becomes_member_references() {
+        let p = propose("solidworks", &[observed(None)]);
+        let a = p.items.iter().find(|i| i.locator == "A").unwrap();
+        assert_eq!(a.reason.as_deref(), Some(EXPRESSION_REASON));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("a = b * 2"), "{cdt}");
+        let names = BTreeMap::from([("B", "b")]);
+        assert_eq!(
+            convert_expression("\"B\" * 2", &names).as_deref(),
+            Some("b * 2")
+        );
+        assert_eq!(convert_expression("\"Q\" * 2", &names), None);
+        assert_eq!(convert_expression("\"B * 2", &names), None);
     }
 
     // frob:tests proposal_written_alone

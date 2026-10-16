@@ -19,7 +19,7 @@
 use cadetta::cmd::import::decode_observed;
 use cadetta_adapter::classify::classify;
 use cadetta_adapter::import::naming::{component_name, member_name};
-use cadetta_adapter::import::propose::{Status, propose};
+use cadetta_adapter::import::propose::{Proposal, Status, propose, render_cdt};
 use cadetta_ir::model::PackageId;
 use serde_json::{Value, json};
 
@@ -45,7 +45,30 @@ const MODELLED: &[&str] = &[
 const PACKAGE: &str = "acme.plate";
 
 /// Item keys this executor understands.
-const MODELLED_ITEM: &[&str] = &["file", "locator", "kind", "number", "unit", "driven"];
+const MODELLED_ITEM: &[&str] = &[
+    "file",
+    "locator",
+    "kind",
+    "number",
+    "unit",
+    "driven",
+    "expression",
+    "tolerance",
+];
+
+/// The `[[item]]` keys adapters.md 7.1 documents; `item_keys` reports the proposal's keys among them.
+const SPEC_ITEM_KEYS: &[&str] = &[
+    "file",
+    "locator",
+    "kind",
+    "native_name",
+    "expression",
+    "value",
+    "path",
+    "type",
+    "status",
+    "reason",
+];
 
 /// One fixture item as the adapter's `observed` JSON (member plus binding), or why it cannot.
 fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
@@ -72,12 +95,23 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
         other => return Err(format!("import executor does not model unit `{other}`")),
     };
     let path = format!("fixture.pkg::Observed.{n}");
-    let member = json!({
+    // A native tolerance is not recovered (7.2): the adapter reports it, import drops it.
+    if let Some(tol) = item["tolerance"].as_str() {
+        tracing::debug!(
+            locator,
+            tolerance = tol,
+            "import: tolerance reported, not recovered"
+        );
+    }
+    let mut member = json!({
         "path": path,
         "value": {"nominal": {"r": metres, "pi": 0}, "dim": {"m": 1},
                    "authored": number.to_string(), "exact": true},
         "provenance": {"imported": {"adapter": "fixture", "file": file, "native_name": locator}},
     });
+    if let Some(expr) = text("expression") {
+        member["expr"] = json!(expr);
+    }
     let mode = if item["driven"].as_bool() == Some(true) {
         "ref"
     } else {
@@ -564,6 +598,18 @@ fn next_sync(spec: &Value, lock_after: &str, source_after: &str, facts: &mut Fac
         .insert("next_sync_classes".into(), Value::Object(classes));
 }
 
+/// The documented `[[item]]` keys present in the first serialised item of `proposal`, in order.
+fn item_keys(proposal: &Proposal) -> Vec<String> {
+    let text = toml::to_string(proposal).unwrap_or_default();
+    text.lines()
+        .skip_while(|l| l.trim() != "[[item]]")
+        .skip(1)
+        .take_while(|l| l.trim() != "[[item]]")
+        .filter_map(|l| l.split_once(" = ").map(|(k, _)| k.trim().to_owned()))
+        .filter(|k| SPEC_ITEM_KEYS.contains(&k.as_str()))
+        .collect()
+}
+
 /// Propose-shaped facts: components, members, flags, order and per-locator status.
 fn proposal_facts(
     spec: &Value,
@@ -640,6 +686,8 @@ fn proposal_facts(
         })
         .collect();
     put("status", Value::Object(status));
+    put("source", json!(render_cdt(&proposal)));
+    put("item_keys", json!(item_keys(&proposal)));
     put(
         "reason_present",
         json!(
