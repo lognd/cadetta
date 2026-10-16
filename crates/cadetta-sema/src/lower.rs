@@ -751,7 +751,13 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 comp.members.extend(cx.lower_solver_outputs(&canon, c));
                 cx.lower_geometry(&canon, src, c, &mut comp);
                 // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
-                project.solvers.extend(cx.lower_solvers(&canon, src, c));
+                let solvers = cx.lower_solvers(&canon, src, &idx, (&pkg.name, &module.path), c);
+                cited.extend(
+                    solvers
+                        .iter()
+                        .filter_map(|s| s.citation.as_ref()?.cite.clone()),
+                );
+                project.solvers.extend(solvers);
                 comp.fits = input
                     .fits
                     .iter()
@@ -999,6 +1005,25 @@ mod tests {
         let s = &b.project.solvers[0];
         assert_eq!(s.result_digest, Some(Digest("ab".to_owned())));
         assert!(s.stale);
+    }
+
+    // frob:ticket 01M4VNC6QGY8T20VW77QCK9BKX
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_citation_lowers_to_a_cite_ref_and_is_not_an_input() {
+        let src = "cite fea: web { title = \"FEA\" }\n\
+            model Frame { span = 2m\n  \
+            solver beam @fea:\"p.4\" {\n    script \"beam.sh\"\n    in len = span\n    out defl: Length\n  }\n}\n";
+        let b = build(src, &[], &[]);
+        let s = &b.project.solvers[0];
+        let c = s.citation.as_ref().expect("solver citation");
+        assert_eq!(c.cite.as_deref(), Some("p::fea"));
+        assert_eq!(c.locator.as_deref(), Some("p.4"));
+        assert_eq!(s.inputs.len(), 1, "the citation is not an input");
+        assert!(s.deps.iter().all(|d| d.to_string() != "p::fea"));
+        assert!(b.project.citations.iter().any(|c| c.path == "p::fea"));
+        let plain = build(SOLVER_SRC, &[], &[]);
+        assert!(plain.project.solvers[0].citation.is_none());
     }
 
     // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA

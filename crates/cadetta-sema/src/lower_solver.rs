@@ -4,7 +4,8 @@
 //!
 //! A solver lowers to `PKG::Comp.name` with its `script`, one `inputs` entry per `in` binding
 //! (the binding's expression text), one `outputs` entry per `out` (the path of the recorded
-//! output member), and the members its inputs read as `deps`. The recorded-result state
+//! output member), the members its inputs read as `deps`, and its `@cite` as `citation`
+//! (documentation only, never an input). The recorded-result state
 //! (`result_digest`, `stale`) is the caller's, because only the caller reads the result file.
 
 use std::collections::BTreeMap;
@@ -16,6 +17,7 @@ use cadetta_syntax::ast;
 use tracing::{debug, trace, warn};
 
 use super::{Cx, SourceText, ir_path, member_path, text_of};
+use crate::cite::CiteIndex;
 use crate::resolve::CanonPath;
 
 /// What the caller knows of one solver's recorded primary result.
@@ -49,6 +51,8 @@ impl Cx<'_> {
         &self,
         comp: &CanonPath,
         src: Option<&SourceText<'_>>,
+        idx: &CiteIndex,
+        module: (&str, &[String]),
         c: &ast::Component,
     ) -> Vec<Solver> {
         let mut out = Vec::new();
@@ -93,9 +97,15 @@ impl Cx<'_> {
                 trace!(solver = %canon, "lower: solver has no recorded result state");
             }
             debug!(solver = %canon, inputs = inputs.len(), outputs = outputs.len(), "lower: solver");
+            let citation = sv.citation.as_ref().and_then(|cc| {
+                idx.lower_ref(module.0, module.1, cc)
+                    .map_err(|e| warn!(solver = %canon, code = e.code, "lower: solver citation unresolved"))
+                    .ok()
+            });
             out.push(Solver {
                 path,
                 script: sv.script.clone(),
+                citation,
                 inputs,
                 outputs,
                 deps,

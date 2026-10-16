@@ -889,6 +889,7 @@ mod tests {
         ir.solvers.push(Solver {
             path: Path::parse("a::M.sz", PathContext::General).unwrap(),
             script: "sz.py".into(),
+            citation: None,
             inputs: Default::default(),
             outputs: Default::default(),
             deps: Vec::new(),

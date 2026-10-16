@@ -574,6 +574,8 @@ pub struct Solver {
     pub path: Path,
     /// The script reference.
     pub script: String,
+    /// The citation of the method; documentation only, never an input to the solver closure.
+    pub citation: Option<CiteRef>,
     /// Input name to member path text.
     pub inputs: BTreeMap<String, String>,
     /// Output name to member path text.
@@ -890,6 +892,7 @@ mod tests {
         let s = Solver {
             path: p("acme.rover::Axle.sol"),
             script: "s.py".into(),
+            citation: None,
             inputs: BTreeMap::new(),
             outputs: BTreeMap::new(),
             deps: vec![],

@@ -664,6 +664,7 @@ fn solver(o: &Json, ptr: &str) -> Res<Solver> {
     Ok(Solver {
         path: path(o, ptr, "path")?,
         script: text(o, ptr, "script")?,
+        citation: cite_ref(o, ptr)?,
         inputs: string_map(o, "inputs"),
         outputs: string_map(o, "outputs"),
         deps: paths(o, ptr, "deps")?,

@@ -289,8 +289,9 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
   - Solvers and waivers lower into `solvers` and `waivers`: a solver keeps
     its script, one input per `in` binding (the expression text), one output
     per `out` (the path of the recorded output member) and the members its
-    inputs read as `deps`; `result_digest` and `stale` come from the recorded
-    result file. A waiver keeps its glob as written.
+    inputs read as `deps`; its `@cite` lowers to `citation`, documentation
+    only and never an input to the solver's digest or closure;
+    `result_digest` and `stale` come from the recorded result file. A waiver keeps its glob as written.
   - Not lowered yet: interfaces, tables, `require` obligations
     and bindings; parameterized components lower with valueless
     members. The datum and placement arguments of a parameterized
