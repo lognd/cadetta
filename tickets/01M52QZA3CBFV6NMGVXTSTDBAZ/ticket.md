@@ -2,12 +2,12 @@
 id = "01M52QZA3CBFV6NMGVXTSTDBAZ"
 title = "Conformance: sync entry model for attach/close, r006 dry-run, degrade and header-noop fixtures"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:15:56Z"
-updated = "2026-10-16T16:36:15Z"
+updated = "2026-10-16T16:36:19Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**"]
 +++
 
