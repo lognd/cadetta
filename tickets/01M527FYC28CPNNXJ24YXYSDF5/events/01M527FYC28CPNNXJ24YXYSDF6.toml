@@ -1,0 +1,13 @@
+kind = "create"
+title = "Import: assembly parts"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+parent = "01M5205ESRG3TZHSBQJSPQ1MD0"
+scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs"]
+acceptance = ["Fixture import-assembly-parts passes"]
+body = "Child of ~SPQ1MD0."
+at = "2026-10-16T11:27:55Z"
+actor = "lognd"
+rev = 1
