@@ -2,7 +2,8 @@
 id = "01M51NC9FMMRMKC3NVMJKF14FE"
 title = "Binding conformance red: duplicate E002 and false D002 on fit hole source"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
