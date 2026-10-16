@@ -2,12 +2,12 @@
 id = "01M51JQBVX6EGRBCYDXA1N7FAP"
 title = "Golden 02: per-instance member paths (BearingUnit/housing.*) missing from IR"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T05:24:58Z"
-updated = "2026-10-16T08:26:15Z"
+updated = "2026-10-16T08:47:30Z"
 scope = ["crates/cadetta-sema/src/**"]
 +++
 
