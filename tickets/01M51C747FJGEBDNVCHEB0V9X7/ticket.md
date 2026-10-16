@@ -2,12 +2,12 @@
 id = "01M51C747FJGEBDNVCHEB0V9X7"
 title = "Conformance fixtures for language: process-rule kind, defaults precedence, case canon digits, fn/recursion, bound satisfies, keyword after dot, ISO class E001, waive date E001"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T03:31:15Z"
-updated = "2026-10-16T05:28:44Z"
+updated = "2026-10-16T05:28:47Z"
 scope = ["tests/conformance/language/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
