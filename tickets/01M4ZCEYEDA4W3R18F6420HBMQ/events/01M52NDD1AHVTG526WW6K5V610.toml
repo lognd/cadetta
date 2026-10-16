@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["solve --variants run-count fixtures (equal inputs share one run; unchanged inputs read the primary) evaluate and pass, the runner counting runs via the marker file"]
+moved = []
+at = "2026-10-16T15:31:12Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Rationale: the EVAL at Rover.sizing no longer reproduces at main (solve --variants runs 2 and 1 for the two fixtures); the runner already counts marker lines (exec.rs solver_runs). The remaining gap was a bound regression test, added as solve_variants_fixtures_observe_solver_runs_via_marker."
+at = "2026-10-16T15:34:45Z"
+actor = "lognd"
+rev = 1
