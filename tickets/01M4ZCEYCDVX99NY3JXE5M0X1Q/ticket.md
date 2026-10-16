@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-16T15:31:18Z"
+updated = "2026-10-16T15:34:43Z"
 scope = ["crates/cadetta-adapter/src/locator.rs", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
