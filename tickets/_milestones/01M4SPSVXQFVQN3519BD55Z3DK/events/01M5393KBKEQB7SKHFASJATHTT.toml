@@ -1,0 +1,46 @@
+kind = "evidence"
+accepts = [7]
+captured_at = "2026-10-16T21:15:22Z"
+digest = "463a38b8e0c4e7ee36b74b2bab088c726ae7839fea26b981a3d3b952d1f5dd4b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ea5835cd-48ef-413b-9d76-f572e3f8e6fe with nextest profile: default
+    Starting 23 tests across 45 binaries (706 tests skipped)
+        PASS [   0.009s] cadetta cmd::cite::tests::file_names_are_sanitised
+        PASS [   0.009s] cadetta cmd::cite::tests::ieee_authors_join_and_truncate
+        PASS [   0.009s] cadetta cmd::cite::tests::ieee_labels_by_type
+        PASS [   0.009s] cadetta cmd::cite::tests::ieee_book_template
+        PASS [   0.010s] cadetta cmd::cite::tests::ieee_dates_print_at_their_precision
+        PASS [   0.010s] cadetta cmd::cite::tests::ieee_article_template
+        PASS [   0.010s] cadetta cmd::cite::tests::ieee_who_is_authors_else_organization
+        PASS [   0.010s] cadetta cmd::cite::tests::ieee_separators_collapse_and_one_final_period
+        PASS [   0.010s] cadetta cmd::cite::tests::bibtex_maps_types_and_fields
+        PASS [   0.010s] cadetta cmd::cite::tests::ieee_online_parts_need_a_url
+        PASS [   0.015s] cadetta cmd::cite::tests::ieee_other_template_with_url_and_accessed
+        PASS [   0.010s] cadetta cmd::cite::tests::list_format_parses
+        PASS [   0.011s] cadetta cmd::cite::tests::pin_rejects_missing_url_unknown_non_http_and_failed_downloads
+        PASS [   0.011s] cadetta cmd::cite::tests::pin_replaces_an_earlier_file_and_keeps_an_existing_accessed
+        PASS [   0.012s] cadetta cmd::cite::tests::pin_edits_a_single_line_body_and_unformatted_source_in_place
+        PASS [   0.013s] cadetta cmd::cite::tests::pin_stores_bytes_sets_file_keeps_url_and_adds_accessed
+        PASS [   0.015s] cadetta cmd::cite::tests::pin_matches_bare_relative_and_qualified_names
+        PASS [   0.010s] cadetta cmd::cite::tests::same_name_in_two_modules_is_ambiguous_unless_qualified
+        PASS [   0.027s] cadetta cmd::cite::tests::list_of_a_broken_design_is_an_error
+        PASS [   0.202s] cadetta cmd::cite::tests::list_numbers_by_path_order_with_dependencies_after_their_reader
+        PASS [   0.329s] cadetta cmd::cite::tests::list_bibtex_is_keyed_by_canonical_path
+        PASS [   0.337s] cadetta cmd::cite::tests::list_json_validates_against_the_schema
+        PASS [   0.369s] cadetta cmd::cite::tests::list_scope_limits_the_roots_but_not_what_they_read
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.380s] 23 tests run: 23 passed, 706 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(/cmd::cite::/) | test(/s008/)'"
+size = 2570
+status = "measured"
+test_count = 23
+tests_digest = "e9419762bb97686215eeed7860da94972de6e5b48b8f8c50d8cd1bb53a6b35f8"
+at = "2026-10-16T21:15:22Z"
+actor = "lognd"
+rev = 1
