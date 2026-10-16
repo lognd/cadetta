@@ -5,7 +5,8 @@ ordinary `.cdt`: every table is a `table`, every part family a
 parameterized `ots`, every helper a `fn` or a parameterized `assembly`.
 Nothing in `std` needs a language feature user code cannot use; if it
 did, that feature would be missing from the language. Every value in
-`std` is cited to its standard or handbook (S001 applies to `std` too).
+`std` is cited to its standard or handbook (S001 applies to `std` too). The `std_s001` test target (`crates/cadetta-cli/gates/std_s001.rs`) analyses a
+copy of `std/` renamed `stdgate` (`std` is reserved) as a project and fails on any S001, so a new uncited value cannot land.
 `std` exports one `cite` per standard at its root (`std::iso273`,
 `std::iso286`, `std::din472`, ...), each a typed `standard` or `book`
 citation (language.md 3.9) with `organization`, `number`, `title` and
