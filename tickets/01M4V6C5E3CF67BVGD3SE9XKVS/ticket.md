@@ -2,7 +2,8 @@
 id = "01M4V6C5E3CF67BVGD3SE9XKVS"
 title = "packages.md: diagnostic codes for registry source, reserved std name and ignored differing source"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
