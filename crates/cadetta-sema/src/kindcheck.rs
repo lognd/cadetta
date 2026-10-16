@@ -282,7 +282,8 @@ pub struct KindChecker<'a> {
     kinds: &'a KindTable,
     units: &'a UnitTable,
     env: &'a dyn TypeEnv,
-    locals: BTreeMap<String, Ty>,
+    /// In-scope locals; `None` is a local of unknown type that shadows same-named members.
+    locals: BTreeMap<String, Option<Ty>>,
     diags: Vec<KindDiagnostic>,
 }
 
@@ -402,10 +403,15 @@ impl<'a> KindChecker<'a> {
             MemberKind::Param(p) => {
                 let t = self.check_param(p.ty.as_ref(), &p.value);
                 if let Some(t) = t {
-                    self.locals.insert(p.name.name.clone(), t);
+                    self.locals.insert(p.name.name.clone(), Some(t));
                 }
             }
-            MemberKind::Let(l) => self.check_let(l),
+            MemberKind::Let(l) => {
+                // A component member of unknown type is still typed from the environment.
+                if let Some(t) = self.check_param(l.ty.as_ref(), &l.value) {
+                    self.locals.insert(l.name.name.clone(), Some(t));
+                }
+            }
             // Conditions are typed expressions too: `x >= 5` on a length is Q001.
             // frob:ticket 01M4V1HDJS2MDQF8GRK4QX9B1C
             MemberKind::Check(c) => {
@@ -418,10 +424,13 @@ impl<'a> KindChecker<'a> {
         }
     }
 
-    fn check_let(&mut self, l: &Let) {
-        if let Some(t) = self.check_param(l.ty.as_ref(), &l.value) {
-            self.locals.insert(l.name.name.clone(), t);
-        }
+    /// Bind a block `let`; one of unknown type is recorded as a shadow so a same-named
+    /// component member is not read in its place (quantities.md 4.4).
+    // frob:ticket 01M4Y6TG02JC7RX0PBN8HV1QQY
+    fn check_block_let(&mut self, l: &Let) {
+        let t = self.check_param(l.ty.as_ref(), &l.value);
+        trace!(name = %l.name.name, typed = t.is_some(), "block let bound");
+        self.locals.insert(l.name.name.clone(), t);
     }
 
     /// Check `value` against an optional declared type and return the stored type. A bare
@@ -662,7 +671,7 @@ impl<'a> KindChecker<'a> {
     fn block(&mut self, b: &Block) -> Option<Ty> {
         let saved = self.locals.clone();
         for l in &b.lets {
-            self.check_let(l);
+            self.check_block_let(l);
         }
         let out = self.expr(&b.tail);
         self.locals = saved;
@@ -701,9 +710,9 @@ impl<'a> KindChecker<'a> {
 
     fn lookup(&self, segs: &[String], seps: &[PathSep]) -> Option<Ty> {
         if let [one] = segs
-            && let Some(t) = self.locals.get(one)
+            && let Some(local) = self.locals.get(one)
         {
-            return Some(Self::mark_absolute_temperature(t.clone()));
+            return local.clone().map(Self::mark_absolute_temperature);
         }
         self.env
             .path_type(segs, seps)

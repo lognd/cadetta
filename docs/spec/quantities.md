@@ -229,6 +229,9 @@ change, 2 and 4.1-4.3.
   turns a Count into a Ratio; other bare numbers are anonymous scalars.
 - `x ^ n` with a dimensioned base needs an integer literal `n`; any
   other exponent is Q002.
+- A block `let` whose type is unknown shadows a same-named component
+  member: reads of that name inside the block are untyped, never the
+  member's dimension.
 - `sin cos tan` take an Angle: a bare argument is Q001, any other
   dimension Q002, a wrong angle exponent Q008. They return Ratio.
 - A tolerance deviation of a dimensioned nominal must have its
