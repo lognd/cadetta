@@ -2,7 +2,8 @@
 id = "01M4YKTX2YMSXVE4CK0JAVMC41"
 title = "IR: define a Require entity shape and Project requires[]"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
