@@ -2,12 +2,12 @@
 id = "01M52TZ6SYRVDG9400SHM4C6HQ"
 title = "CI: per-doc conformance tests each run the whole corpus (28 full runs, rust job times out)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "high"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T17:08:18Z"
-updated = "2026-10-16T17:08:18Z"
+updated = "2026-10-16T17:20:57Z"
 idempotency_key = "ci-conformance-per-doc-filter"
 scope = ["tests/conformance_*.rs", "crates/cadetta-cli/tests/conformance/corpus.rs"]
 
