@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:39:31Z"
-updated = "2026-10-16T17:54:33Z"
+updated = "2026-10-16T17:55:07Z"
 scope = [".github/workflows/ci.yml", "adapters/freecad/README.md", "adapters/freecad/tests/conformance/session_driver.py", "adapters/freecad/tests/unit/test_session_driver.py", "crates/cadetta-cli/tests/conformance/exec.rs", "crates/cadetta-cli/tests/conformance/session.rs", "crates/cadetta-cli/tests/conformance/sync.rs", "tests/conformance/README.md", "tests/conformance/known-gaps.toml", "changelog.d/01M52SAFHK1694NYSMG6NNC66V.changed.md"]
 
 [[acceptance]]
