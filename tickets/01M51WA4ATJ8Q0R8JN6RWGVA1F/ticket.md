@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T08:12:30Z"
-updated = "2026-10-16T11:54:30Z"
+updated = "2026-10-16T11:57:43Z"
 labels = ["conformance"]
 scope = ["crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/s006-primary-missing-is-not-s006*", "tests/conformance/known-gaps.toml"]
 
