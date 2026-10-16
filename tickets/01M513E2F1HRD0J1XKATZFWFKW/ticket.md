@@ -4,9 +4,10 @@ title = "ir.md variants key example is short-form but the IR emits qualified key
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-16T00:57:45Z"
-updated = "2026-10-16T00:57:45Z"
+updated = "2026-10-16T00:59:32Z"
 scope = ["docs/spec/ir.md"]
 +++
 
