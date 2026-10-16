@@ -2,7 +2,8 @@
 id = "01M4V2KDSCB0QK5JHYG5KNEDZF"
 title = "Lint gaps found probing lints: D001 severity, D002 fit members, M003, C004, geometry pass unwired"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
