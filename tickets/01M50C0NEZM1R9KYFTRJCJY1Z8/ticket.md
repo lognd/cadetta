@@ -9,7 +9,7 @@ reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
 updated = "2026-10-16T05:03:59Z"
 idempotency_key = "v2k95h5-slice-frontend"
-scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-ir/src/**", "crates/cadetta-cli/src/**"]
+scope = ["crates/cadetta-syntax/src/**", "crates/cadetta-ir/src/**", "crates/cadetta-cli/src/**", "crates/cadetta-solve/src/**"]
 
 [[links]]
 kind = "blocked-by"
