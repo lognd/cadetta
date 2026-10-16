@@ -2,7 +2,8 @@
 id = "01M52SAFHK1694NYSMG6NNC66V"
 title = "Conformance: adapter-side harness for session attach and close-only-opened fixtures"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
