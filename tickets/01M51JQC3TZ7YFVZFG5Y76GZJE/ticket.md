@@ -2,7 +2,8 @@
 id = "01M51JQC3TZ7YFVZFG5Y76GZJE"
 title = "docs/spec/ir.md: document fit accessor members (<fit>.hole/.shaft/.clearance)"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
