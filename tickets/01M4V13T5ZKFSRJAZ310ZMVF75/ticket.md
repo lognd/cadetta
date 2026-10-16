@@ -2,7 +2,8 @@
 id = "01M4V13T5ZKFSRJAZ310ZMVF75"
 title = "language.md ambiguities found writing conformance fixtures"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
