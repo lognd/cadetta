@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:47:45Z"
-updated = "2026-10-16T04:57:04Z"
-scope = ["crates/cadetta-lint/**"]
+updated = "2026-10-16T04:57:29Z"
+scope = ["crates/cadetta-lint/**", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "D001 is info below d001_min_digits"
