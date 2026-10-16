@@ -4,9 +4,10 @@ title = "language.md ambiguities found writing conformance fixtures"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-13T16:21:45Z"
+updated = "2026-10-16T07:10:18Z"
 scope = ["docs/spec/language.md"]
 +++
 
