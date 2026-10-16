@@ -2,12 +2,12 @@
 id = "01M4V1HED894WSWEEJ9K2NMWYA"
 title = "Quantities: expose the display formatter (CLI/binding verb) for conformance"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-16T03:36:16Z"
+updated = "2026-10-16T03:36:18Z"
 idempotency_key = "Z48-display"
 labels = ["creates:crates/cadetta-cli/src/cmd/display.rs", "creates:docs/schemas/display.json"]
 scope = ["crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "crates/cadetta-cli/tests/**", "docs/spec/quantities.md", "docs/spec/config-cli.md", "crates/cadetta-cli/src/cmd/display.rs", "docs/schemas/display.json"]
