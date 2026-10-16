@@ -7,8 +7,8 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T01:10:50Z"
-updated = "2026-10-16T09:21:37Z"
-scope = ["std/src/inserts.cdt"]
+updated = "2026-10-16T09:22:22Z"
+scope = ["std/src/inserts.cdt", "std/src/lib.cdt", "docs/spec/stdlib.md", "tests/conformance/stdlib/inserts-*"]
 +++
 
 Inch fasteners and version 0.2.0 landed under ~HP6PTJH; inserts need a citable source (ASME B18.29.1 for helical coil inserts; heat-set inserts are vendor data) before values may be added.
