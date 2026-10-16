@@ -2,7 +2,8 @@
 id = "01M4XB33RBF6FWZ1GJ3CDRJTN9"
 title = "Python binding suite replays the 35 kind=binding entry=python conformance fixtures (follow-up to 6ZMPC6J)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 5
 reporter = "lognd"
