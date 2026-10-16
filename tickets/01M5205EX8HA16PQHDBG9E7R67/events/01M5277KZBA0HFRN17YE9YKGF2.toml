@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: import-never-overwrites must_not_fire writes now lists bindings/solidworks.toml plus cad/imported/CoverPlate.cdt (adapters.md 7.1: --accept writes both; import-propose-writes-proposal was right). contract-no-source-write and resolve-drift-import-update fixtures rewritten to the modelled keys (adapter/items/lock_base/source/then_sync) since flags/design/native/lock were unmodelled and unsatisfiable. Executor gained then_sync (next sync class via classify), refused/overwrote, source_modified, source_edits observations."
+at = "2026-10-16T11:23:22Z"
+actor = "lognd"
+rev = 1
