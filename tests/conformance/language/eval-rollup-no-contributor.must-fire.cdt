@@ -1,0 +1,7 @@
+pub assembly Top {
+  part w[2]: Bare
+  total = sum(self, mass)
+}
+model Bare {
+  len = 1mm
+}

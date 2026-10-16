@@ -1,0 +1,3 @@
+model Top {
+  let a = [1mm, 2mm]
+}
