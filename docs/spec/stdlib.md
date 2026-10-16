@@ -31,7 +31,7 @@ disagree. Data can be cited, overridden and diffed; syntax cannot.
 | `std::commercial` | The `Sourced` interface: unit cost, lead time, MOQ, supplier, mass (section 6) | yes |
 | `std::bearings` | Deep-groove ball bearing envelopes (ISO 15) | later |
 | `std::fasteners::inch` | UNC/UNF, ASME B18.3, inch clearance and tap drills | 0.2.0 |
-| `std::inserts` | Heat-set and wire-thread inserts | 0.2.0 (pending) |
+| `std::inserts` | Heat-set and wire-thread inserts | 0.2.0 |
 | `std::fasteners` thread-forming | ISO 7049/7085 thread-forming screws and pilot holes | later |
 
 Paths are `std::module::Item`, and `std` is an implicit dependency
@@ -99,9 +99,20 @@ minor_ext minor_int`, ASME B1.1), `InchTapDrill` (`cut_75`),
 socket`, ASME B18.3) and `InchLen`, all in inches and each cited
 (`asme_b1_1`, `asme_b18_3`, `inch_tapdrill`, `inch_clearance`). Minor
 diameters use the ISO 724 profile constants. Figures were entered from
-recall and the citation audit must verify them. `std::inserts` (heat-set
-and wire-thread) is not yet present: heat-set inserts are vendor parts
-with no standard to cite.
+recall and the citation audit must verify them.
+
+`std::inserts` (`std/src/inserts.cdt`) decisions: `WireInsertInch` is
+keyed by `InchThread` and cites ASME B18.29.1 (`asme_b18_29_1`); columns
+`drill_dia` (pre-tap drill for the insert's tapped hole) and the free
+length series `len_1d len_1_5d len_2d len_3d` (nominal multiples of the
+major diameter, in). `HeatSet` is keyed by `MetricThread` (M2 to M8 only)
+and is vendor data, cited as a `catalog` (`heatset_catalog`) because no
+standard exists; columns `hole_dia hole_depth outer_dia length`, all
+nominal and untoleranced (`hole_depth` is the insert length plus a 1 mm
+sump). A design needing one vendor's exact figures models that insert as
+an `ots` with its own cite. Metric wire inserts (ASME B18.29.2M) are not
+included. Figures were entered from recall and the citation audit must
+verify them (least certain: UNF drills, 3 D lengths, heat-set `hole_dia`).
 
 `std::fasteners` tables (`std/src/fasteners/tables.cdt`) decisions:
 `MetricThread` is declared there with the 12 coarse sizes; `Thread`

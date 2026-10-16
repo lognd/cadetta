@@ -708,36 +708,6 @@ ticket = "~V9JHZEN"
 reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
 
 [[gap]]
-fixture = "language/eval-array-literal-mixed-kinds"
-ticket = "~BSPG4VY"
-reason = "mixed-kind array literal reports Q002 instead of EVAL"
-
-[[gap]]
-fixture = "language/eval-index-out-of-range"
-ticket = "~BSPG4VY"
-reason = "indexing a part array in a let reports 'only an array or a table can be indexed'"
-
-[[gap]]
-fixture = "language/eval-part-count-dimensioned"
-ticket = "~BSPG4VY"
-reason = "dimensioned part count w[3mm] yields no diagnostic"
-
-[[gap]]
-fixture = "language/eval-part-count-negative"
-ticket = "~BSPG4VY"
-reason = "negative part count w[-1] yields no diagnostic"
-
-[[gap]]
-fixture = "language/eval-unindexed-empty-array"
-ticket = "~BSPG4VY"
-reason = "w.mass in a let reports 'read one instance of it' although language.md 3.5 allows it"
-
-[[gap]]
-fixture = "language/q009-part-count-fractional"
-ticket = "~BSPG4VY"
-reason = "fractional part count w[2.5] yields no Q009"
-
-[[gap]]
 fixture = "quantities/emit-point-inherited"
 ticket = "~AQ8KSJA"
 reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"

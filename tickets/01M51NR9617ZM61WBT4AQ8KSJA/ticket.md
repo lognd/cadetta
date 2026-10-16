@@ -2,12 +2,12 @@
 id = "01M51NR9617ZM61WBT4AQ8KSJA"
 title = "emit: a pure reference does not inherit its referent's emit point (quantities.md 5.6)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T06:17:54Z"
-updated = "2026-10-16T06:23:39Z"
+updated = "2026-10-16T10:47:29Z"
 labels = ["creates:crates/cadetta-cli/src/cmd/emit.rs", "creates:crates/cadetta-sema/src/lower.rs"]
 scope = ["crates/cadetta-cli/src/cmd/emit.rs", "crates/cadetta-sema/src/lower.rs"]
 

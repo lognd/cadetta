@@ -2,12 +2,12 @@
 id = "01M51WA4ATJ8Q0R8JN6RWGVA1F"
 title = "check raises S006 for a variant when the solver has no primary result at all"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T08:12:30Z"
-updated = "2026-10-16T08:12:30Z"
+updated = "2026-10-16T10:47:32Z"
 labels = ["conformance"]
 scope = ["crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/s006-primary-missing-is-not-s006*", "tests/conformance/known-gaps.toml"]
 

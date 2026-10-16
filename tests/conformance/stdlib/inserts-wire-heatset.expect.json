@@ -1,0 +1,22 @@
+{
+  "spec": "1.4",
+  "doc": "stdlib",
+  "section": "stdlib.md 2",
+  "rule": "inserts-tables",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      { "path": "acme.demo::P.hole", "nominal": "4mm" },
+      { "path": "acme.demo::P.coil", "nominal": "9.525mm" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      { "path": "acme.demo::P.hole", "nominal": "5.6mm" },
+      { "path": "acme.demo::P.coil", "nominal": "12.7mm" }
+    ]
+  }
+}

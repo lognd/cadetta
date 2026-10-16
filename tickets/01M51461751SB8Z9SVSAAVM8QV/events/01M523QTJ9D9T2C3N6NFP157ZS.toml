@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["std::inserts ships cited WireInsertInch (ASME B18.29.1) and HeatSet (vendor catalog) tables, registered in std lib and the embedded std, with a conformance fixture and a parse/shape test"]
+moved = []
+at = "2026-10-16T10:22:19Z"
+actor = "lognd"
+rev = 1

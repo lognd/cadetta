@@ -585,6 +585,15 @@ impl<'a> KindChecker<'a> {
                 for it in items {
                     let t = self.expr(it);
                     acc = match (acc, t) {
+                        // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+                        // A mixed-kind element is not Q002 (language.md 3.8): the evaluator
+                        // rejects the literal as EVAL, so only the bare/typed mix is checked.
+                        (Some(a), Some(b)) if !a.bare && !b.bare => {
+                            self.kinds.combine(&a.kd, &b.kd).ok().map(|c| {
+                                self.warnings(&c.warnings, it.span);
+                                Ty::quantity(c.value)
+                            })
+                        }
                         (Some(a), Some(b)) => self.operands(&a, &b, it.span, it.span, it.span),
                         (None, t) => t,
                         (a, None) => a,

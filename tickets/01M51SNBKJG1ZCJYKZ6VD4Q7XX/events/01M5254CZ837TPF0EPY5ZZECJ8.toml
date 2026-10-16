@@ -1,0 +1,27 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T10:46:35Z"
+digest = "325646bbeb963834e7cda290001045caf6e16d4f37869196b481a4008e1dc09f"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 4.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c0ed4644-dfa2-4831-ab93-111364327ed4 with nextest profile: default
+    Starting 3 tests across 1 binary (11 tests skipped)
+        PASS [   0.006s] cadetta::conformance_packages exec::lockfix::tests::package_lines_become_records
+        PASS [   0.008s] cadetta::conformance_packages exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.008s] cadetta::conformance_packages exec::lockfix::tests::upstream_text_is_split
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 3 tests run: 3 passed, 11 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test conformance_packages lockfix"
+size = 832
+status = "measured"
+test_count = 3
+tests_digest = "098e517563c576d79e4c829bca42615b35e7e7c2d29175a7d02630048b0b452b"
+at = "2026-10-16T10:46:35Z"
+actor = "lognd"
+rev = 1

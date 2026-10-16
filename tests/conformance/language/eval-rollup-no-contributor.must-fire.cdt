@@ -1,5 +1,5 @@
 pub assembly Top {
-  part w[2]: Bare
+  part w[0]: Bare
   total = sum(self, mass)
 }
 model Bare {

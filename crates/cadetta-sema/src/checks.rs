@@ -909,6 +909,22 @@ mod tests {
         assert_eq!(codes, vec!["C001", "C001"]);
     }
 
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    // frob:tests crates/cadetta-sema/src/geom.rs::part_count_checked kind=unit
+    #[test]
+    fn invalid_part_counts_are_diagnosed() {
+        let codes_of = |count: &str| {
+            let src = format!(
+                "model Leaf {{\n  m = 2kg\n}}\npub assembly Top {{\n  part w[{count}]: Leaf\n}}\n"
+            );
+            verdicts(&src).1
+        };
+        assert_eq!(codes_of("3mm"), vec!["EVAL"]);
+        assert_eq!(codes_of("-1"), vec!["EVAL"]);
+        assert_eq!(codes_of("2.5"), vec!["Q009"]);
+        assert!(codes_of("2").is_empty());
+    }
+
     // frob:tests require_is_a_check_with_citation_and_obligation
     #[test]
     fn require_is_a_check_with_citation_and_obligation() {
