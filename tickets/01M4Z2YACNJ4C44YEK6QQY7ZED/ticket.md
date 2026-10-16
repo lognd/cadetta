@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T06:10:40Z"
-updated = "2026-10-16T00:57:48Z"
+updated = "2026-10-16T00:57:54Z"
 idempotency_key = "dx2kssf-point4"
 scope = ["docs/spec/bindings.md", "bindings/python/tests/fixtures/alt-wheel/**"]
 
