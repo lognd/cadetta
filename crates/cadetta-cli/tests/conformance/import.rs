@@ -39,6 +39,7 @@ const MODELLED: &[&str] = &[
     "lock_base",
     "source",
     "then_sync",
+    "native_unit_in_proposal",
 ];
 
 /// Package name of the scratch package the CLI runs against.
@@ -54,6 +55,7 @@ const MODELLED_ITEM: &[&str] = &[
     "driven",
     "expression",
     "tolerance",
+    "equation_linked",
 ];
 
 /// The `[[item]]` keys adapters.md 7.1 documents; `item_keys` reports the proposal's keys among them.
@@ -85,15 +87,27 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     else {
         return Err("item lacks file, locator or kind".into());
     };
-    let number = item["number"]
-        .as_i64()
-        .ok_or("import executor models integer `number` only")?;
-    let unit = text("unit").ok_or("import executor models items with a `unit` only")?;
-    let metres = match unit.as_str() {
-        "mm" => format!("{number}/1000"),
-        "m" => format!("{number}/1"),
-        other => return Err(format!("import executor does not model unit `{other}`")),
+    // A string `number` is a text property; an integer is a magnitude in `unit` (none: unitless).
+    let (nominal, dim, authored) = match (&item["number"], text("unit")) {
+        (Value::String(t), None) => ("0/1".to_owned(), json!({}), t.clone()),
+        (Value::String(_), Some(_)) => return Err("a text `number` takes no `unit`".into()),
+        (n, unit) => {
+            let number = n
+                .as_i64()
+                .ok_or("import executor models integer or text `number` only")?;
+            let (si, dim) = match unit.as_deref() {
+                None => (format!("{number}/1"), json!({})),
+                Some("mm") => (format!("{number}/1000"), json!({"m": 1})),
+                Some("m") => (format!("{number}/1"), json!({"m": 1})),
+                Some("kg") => (format!("{number}/1"), json!({"kg": 1})),
+                Some(other) => {
+                    return Err(format!("import executor does not model unit `{other}`"));
+                }
+            };
+            (si, dim, number.to_string())
+        }
     };
+    let unit = text("unit").unwrap_or_default();
     let path = format!("fixture.pkg::Observed.{n}");
     // A native tolerance is not recovered (7.2): the adapter reports it, import drops it.
     if let Some(tol) = item["tolerance"].as_str() {
@@ -105,12 +119,15 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     }
     let mut member = json!({
         "path": path,
-        "value": {"nominal": {"r": metres, "pi": 0}, "dim": {"m": 1},
-                   "authored": number.to_string(), "exact": true},
+        "value": {"nominal": {"r": nominal, "pi": 0}, "dim": dim,
+                   "authored": authored, "exact": true},
         "provenance": {"imported": {"adapter": "fixture", "file": file, "native_name": locator}},
     });
     if let Some(expr) = text("expression") {
         member["expr"] = json!(expr);
+    }
+    if item["equation_linked"].as_bool() == Some(true) {
+        member["equation_linked"] = json!(true);
     }
     let mode = if item["driven"].as_bool() == Some(true) {
         "ref"
@@ -677,16 +694,53 @@ fn proposal_facts(
         .items
         .iter()
         .map(|i| {
-            let s = if i.status == Status::Skip {
-                "skip"
-            } else {
-                "accept"
+            let s = match i.status {
+                Status::Skip => "skip",
+                Status::Rename => "rename",
+                Status::Accept => "accept",
             };
             (i.locator.clone(), json!(s))
         })
         .collect();
     put("status", Value::Object(status));
     put("source", json!(render_cdt(&proposal)));
+    let properties: Vec<&_> = proposal
+        .items
+        .iter()
+        .filter(|i| i.property_type.is_some())
+        .collect();
+    put(
+        "types",
+        json!(
+            properties
+                .iter()
+                .filter_map(|i| i
+                    .property_type
+                    .as_ref()
+                    .map(|t| (i.locator.clone(), t.clone())))
+                .collect::<BTreeMap<_, _>>()
+        ),
+    );
+    put(
+        "needs_edit",
+        json!(proposal.items.iter().any(|i| i.status == Status::Rename)),
+    );
+    put(
+        "needs_explicit_native_unit",
+        json!(
+            properties
+                .iter()
+                .any(|i| i.property_type.as_deref() == Some("Quantity"))
+        ),
+    );
+    if let Some(want) = spec["native_unit_in_proposal"].as_str()
+        && let Some(bad) = properties.iter().find(|i| i.unit.as_deref() != Some(want))
+    {
+        return Err(format!(
+            "proposal item `{}` has unit {:?}, fixture says {want:?}",
+            bad.locator, bad.unit
+        ));
+    }
     put("item_keys", json!(item_keys(&proposal)));
     put(
         "reason_present",

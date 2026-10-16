@@ -343,26 +343,6 @@ ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
-fixture = "adapters/import-equation-linked-property-skipped"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/import-property-quantity-needs-unit"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/import-property-types"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/import-prp-linked-property-skipped"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
 ticket = "~6K6E7M4"
 reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"

@@ -723,6 +723,7 @@ by `file` then `locator`, with keys `file`, `locator`, `kind`
 (`global | dimension | property | frame`), `native_name`, `expression`
 (the native expression, when there is one), `value` (a source literal),
 `path` (the proposed canonical path), `type` (the proposed component),
+`property_type` (`property` items only; `Text | Count | Quantity`, 7.3),
 `status` (`accept | rename | skip`) and `reason` (for `skip`, and for an
 accepted item whose native expression was converted, which asks the user
 to review the formula). The user edits
@@ -769,6 +770,20 @@ overwritten.
 - Custom properties bind as `Text`, `Count` or `Quantity`; a quantity
   needs an explicit `native_unit` in the proposal. Properties that are
   `$PRP`-linked or equation-linked are skipped with a reason.
+
+  Type rule (decision, ~CJ33CAF): a property whose authored value is not
+  a number is `Text`; a unitless integer whose name has a count token
+  (`qty`, `quantity`, `count`, `num`, `number`, `pcs`, split on
+  separators and camelCase) is `Count`; any other number is a
+  `Quantity`. A `Quantity` with no unit gets status `rename` and a
+  `reason` asking for `unit` in `proposal.toml`; with a unit (native or
+  assumed) it is `accept`. `Text` renders as a string literal, `Count`
+  as a bare number, and a unit-less `Quantity` as a commented line until
+  it is edited.
+  Linked rule: a property is linked when its value is `$PRP:"..."` text
+  or the adapter marks the member `equation_linked`; decode records it
+  as the member attribute `linked` (`prp | equation`) and the proposal
+  skips it with a reason naming the link kind.
 
 ### 7.4 Adoption marker and updating from CAD
 

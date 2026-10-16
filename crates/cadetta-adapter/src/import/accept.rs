@@ -118,6 +118,7 @@ mod tests {
             path: path.into(),
             component: "Cover".into(),
             part: None,
+            property_type: None,
             status,
             reason: None,
         }

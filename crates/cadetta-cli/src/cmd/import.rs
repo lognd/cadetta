@@ -24,7 +24,7 @@ use cadetta_adapter::rpc::types::{ReadParams, ReadResult, ReadSource};
 use cadetta_adapter::sync::Entry;
 use cadetta_ir::dim::DimWire;
 use cadetta_ir::model::{
-    Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Sign,
+    Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Provenance, Sign,
 };
 use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
 use cadetta_obligations::lock::{Adopted, Lock, Record, SyncedValue};
@@ -185,6 +185,7 @@ pub fn decode_observed(
         v => vec![v],
     };
     let mut by_file: BTreeMap<String, ObservedBuilder> = BTreeMap::new();
+    let mut linked: BTreeMap<(String, String), &'static str> = BTreeMap::new();
     for project in projects {
         let empty = Vec::new();
         let bindings = project
@@ -235,6 +236,10 @@ pub fn decode_observed(
                 .get("unit_assumed")
                 .and_then(Value::as_str)
                 .map(|u| assume_unit.unwrap_or(u).to_owned());
+            if let Some(kind) = linked_kind(member, value) {
+                tracing::debug!(file, native_name, kind, "import: linked property observed");
+                linked.insert((file.to_owned(), native_name.to_owned()), kind);
+            }
             let builder = builder_for(&mut by_file, &package, adapter, file)?;
             for loc in locators {
                 let param = ObservedParam {
@@ -287,7 +292,39 @@ pub fn decode_observed(
             .push_instance(i)
             .map_err(|e| e.to_string())?;
     }
-    Ok(by_file.into_values().map(ObservedBuilder::build).collect())
+    let mut built: Vec<Ir> = by_file.into_values().map(ObservedBuilder::build).collect();
+    mark_linked(&mut built, &linked);
+    Ok(built)
+}
+
+/// How a property's value is linked rather than authored: `prp` (`$PRP:"..."` text) or
+/// `equation` (the adapter's `equation_linked` flag); adapters.md 7.3.
+fn linked_kind(member: &Value, value: &Value) -> Option<&'static str> {
+    if member.get("equation_linked").and_then(Value::as_bool) == Some(true) {
+        return Some("equation");
+    }
+    value
+        .get("authored")
+        .and_then(Value::as_str)
+        .filter(|t| t.starts_with("$PRP:"))
+        .map(|_| "prp")
+}
+
+/// Record each linked member's kind in its `linked` attribute, where `propose` reads it.
+fn mark_linked(projects: &mut [Ir], linked: &BTreeMap<(String, String), &'static str>) {
+    for member in projects
+        .iter_mut()
+        .flat_map(|p| &mut p.components)
+        .flat_map(|c| &mut c.members)
+    {
+        if let Provenance::Imported {
+            file, native_name, ..
+        } = &member.provenance
+            && let Some(kind) = linked.get(&(file.clone(), native_name.clone()))
+        {
+            member.attrs.insert("linked".to_owned(), (*kind).to_owned());
+        }
+    }
 }
 
 /// The per-file observed builder for `file`, created on first use.
