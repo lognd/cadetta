@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-15T03:00:53Z"
-updated = "2026-10-16T00:55:23Z"
+updated = "2026-10-16T00:56:05Z"
 idempotency_key = "r012-reserved-cleanup"
 scope = ["crates/cadetta-adapter/src/locator.rs", "crates/cadetta-lint/src/rules/r_adapter.rs", "tests/conformance/**", "changelog.d/**"]
 
