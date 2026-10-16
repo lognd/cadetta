@@ -5,8 +5,8 @@
 //! [`analyze`] is the one entry point; `check` renders its diagnostics, and later verbs
 //! (`why`, `impact`, `ir`, `ack`, `obligations`) reuse the lowered packages it returns.
 //! Resolver, evaluator and dependency diagnostics carry the module their span lives in
-//! (`ModuleKey`), so [`SourceIndex::file_for`] maps them to the exact file; only a
-//! diagnostic without a module falls back to the span heuristic ([`SourceIndex::attribute`]).
+//! (`ModuleKey`), so [`SourceIndex::file_for`] maps them to the exact file; a diagnostic
+//! without a module is dropped with a warning (no span guessing).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
@@ -136,18 +136,9 @@ impl SourceIndex {
         }
     }
 
-    /// The file a diagnostic belongs to: the file of its `module` when it has one
-    /// (None for std, whose findings are not the project's), else the span heuristic.
-    // frob:ticket 01M4TA3BTW256J8FKMS6KASY82
-    fn file_for<'a>(
-        &'a self,
-        module: Option<&ModuleKey>,
-        span: Span,
-        covering: &dyn Fn(&IndexedFile) -> bool,
-    ) -> Option<&'a IndexedFile> {
-        let Some(key) = module else {
-            return self.attribute(span, covering);
-        };
+    /// The project file of a diagnostic's `module` (None for std or an unknown module).
+    // frob:ticket 01M4Y66FVYYDJH0FJ16F1T08H3
+    fn file_for(&self, key: &ModuleKey) -> Option<&IndexedFile> {
         let file = self.module(&key.package, &key.module).filter(|f| !f.is_std);
         if file.is_none() {
             tracing::debug!(
@@ -157,34 +148,6 @@ impl SourceIndex {
             );
         }
         file
-    }
-
-    /// Pick the project file a module-less span belongs to.
-    ///
-    /// Only used for diagnostics that carry no `ModuleKey`. The rule: among non-std files
-    /// whose text covers the span, the one whose AST has a member covering it
-    /// (`members`), else the first covering file.
-    fn attribute<'a>(
-        &'a self,
-        span: Span,
-        covering: &dyn Fn(&IndexedFile) -> bool,
-    ) -> Option<&'a IndexedFile> {
-        let fits: Vec<&IndexedFile> = self
-            .files
-            .iter()
-            .filter(|f| !f.is_std && f.source.text().len() >= span.end)
-            .collect();
-        if fits.len() > 1 {
-            tracing::trace!(
-                candidates = fits.len(),
-                start = span.start,
-                "pipeline: ambiguous span attribution"
-            );
-        }
-        fits.iter()
-            .copied()
-            .find(|f| covering(f))
-            .or_else(|| fits.first().copied())
     }
 }
 
@@ -1420,13 +1383,21 @@ fn evaluate_stages(
         .collect();
     let located =
         |code: &str, sev: Severity, message: String, span: Span, module: Option<&ModuleKey>| {
+            let Some(key) = module else {
+                tracing::warn!(
+                    code,
+                    start = span.start,
+                    "pipeline: diagnostic has no module; dropped"
+                );
+                return None;
+            };
             let member_in = |f: &IndexedFile| {
                 in_scope.iter().find(|p| p.name == f.package).and_then(|p| {
                     let m = p.modules.iter().find(|m| m.path == f.module)?;
                     member_path_at(&p.name, &m.path, &m.file, span)
                 })
             };
-            let file = index.file_for(module, span, &|f| member_in(f).is_some());
+            let file = index.file_for(key);
             let path = file.and_then(member_in);
             if file.is_none() {
                 tracing::debug!(
@@ -1896,19 +1867,15 @@ mod tests {
     #[test]
     fn file_for_picks_the_diagnostics_own_module() {
         let ix = index();
-        let span = Span::new(0, 5);
-        let all = |_: &IndexedFile| true;
-        // The span fits every file; the module key, not the span, decides.
+        // The module key alone decides the file.
         let frame = ModuleKey::new("p", &["frame".to_owned()]);
         assert_eq!(
-            ix.file_for(Some(&frame), span, &all)
-                .map(|f| f.name.as_str()),
+            ix.file_for(&frame).map(|f| f.name.as_str()),
             Some("src/frame.cdt")
         );
         let alpha = ModuleKey::new("p", &["alpha".to_owned()]);
         assert_eq!(
-            ix.file_for(Some(&alpha), span, &all)
-                .map(|f| f.name.as_str()),
+            ix.file_for(&alpha).map(|f| f.name.as_str()),
             Some("src/alpha.cdt")
         );
     }
@@ -1917,20 +1884,10 @@ mod tests {
     #[test]
     fn file_for_drops_std_and_unknown_modules() {
         let ix = index();
-        let span = Span::new(0, 5);
-        let all = |_: &IndexedFile| true;
         let std = ModuleKey::new("std", &["s".to_owned()]);
-        assert!(ix.file_for(Some(&std), span, &all).is_none());
+        assert!(ix.file_for(&std).is_none());
         let none = ModuleKey::new("p", &["missing".to_owned()]);
-        assert!(ix.file_for(Some(&none), span, &all).is_none());
-    }
-
-    // frob:tests file_for_without_a_module_uses_the_heuristic
-    #[test]
-    fn file_for_without_a_module_uses_the_heuristic() {
-        let ix = index();
-        let got = ix.file_for(None, Span::new(0, 5), &|_: &IndexedFile| true);
-        assert!(got.is_some_and(|f| !f.is_std));
+        assert!(ix.file_for(&none).is_none());
     }
 
     /// A one-package project whose solver has a recorded result with the given digest.
