@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T23:12:16Z"
-updated = "2026-10-16T08:11:25Z"
+updated = "2026-10-16T08:12:54Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[links]]
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "read carries assembly slot component files and cadetta check reports R011 on a swapped component"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "cadetta check reports R012 for a [*] binding over instances with differing emitted values"
