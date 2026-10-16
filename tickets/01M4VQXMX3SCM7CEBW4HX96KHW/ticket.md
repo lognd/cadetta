@@ -2,7 +2,8 @@
 id = "01M4VQXMX3SCM7CEBW4HX96KHW"
 title = "Conformance runner: executor for quantities binding check entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
