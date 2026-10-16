@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T09:19:52Z"
-updated = "2026-10-16T11:23:23Z"
-scope = ["crates/cadetta-cli/tests/**", "tests/conformance/adapters/**"]
+updated = "2026-10-16T11:23:24Z"
+scope = ["crates/cadetta-cli/tests/**", "tests/conformance/adapters/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "The four formerly gapped import fixtures (contract-no-source-write, import-never-overwrites, import-update-next-sync-no-op, resolve-drift-import-update) pass in the adapters corpus with their known-gaps entries removed"
