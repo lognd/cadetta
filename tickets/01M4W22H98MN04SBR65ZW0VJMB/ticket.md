@@ -2,7 +2,7 @@
 id = "01M4W22H98MN04SBR65ZW0VJMB"
 title = "Write the transform composition rule into adapters.md 3.4"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 1
 reporter = "lognd"
