@@ -67,12 +67,8 @@ if the adapter can read the live model.
 native document itself) discharges this obligation (obligations.md 2).
 The `sw-equations`, `json` and `csv` adapters never do (none has `drive`):
 the file they read is the file cadetta wrote, so the obligation stays open with the reason
-"unverifiable without drive", and `sync` itself reports it as O004 (info by
-default, exit status 0): a non-dry-run `sync` records the handed-over file
-(`synced file=`, digest of the emitted text) in `cadetta.lock`, so the
-obligation exists from the first run. `--dry-run` records nothing and reports
-nothing. The user may attest it with a role: an `attest` lock record on
-`sync:FILE` discharges the obligation.
+"unverifiable without drive", and `sync` reports it as O004 (info by
+default). The user may attest it with a role (`ack`).
 
 ### 2.1 Cadetta owns the dependency structure
 
