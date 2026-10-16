@@ -2,7 +2,8 @@
 id = "01M4XDM9Z8HH76J17GENT4HXFC"
 title = "sync: ref-mode locator support"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
