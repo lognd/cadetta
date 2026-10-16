@@ -7,9 +7,9 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:54:08Z"
-updated = "2026-10-16T01:43:49Z"
+updated = "2026-10-16T01:44:40Z"
 idempotency_key = "followup-76gmv4n-typo"
-scope = ["crates/cadetta-cli/src/pipeline.rs"]
+scope = ["crates/cadetta-cli/src/pipeline.rs", "crates/cadetta-cli/src/config.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
 text = "Given a [lint] precision key naming no builtin or package kind, when analysis runs, then a diagnostic is reported"
