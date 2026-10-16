@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-16T08:21:06Z"
+updated = "2026-10-16T08:21:16Z"
 persona = "design engineer"
 capability = "tolerance hole patterns by true position as drawings do"
 outcome_text = "aligned checks match the drawing and are exact for round zones"
@@ -53,5 +53,5 @@ bound = true
 
 [[acceptance]]
 text = "Given [position], when parsed, then holes[position] remains an index (language.md 5a)"
-bound = false
+bound = true
 +++
