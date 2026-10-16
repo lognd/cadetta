@@ -2,12 +2,13 @@
 id = "01M4YMYMB1NKFEWKHDYGGJ41H3"
 title = "Lint E-family resolution errors through e::lift_resolution in check"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:06:10Z"
-updated = "2026-10-16T04:32:20Z"
+updated = "2026-10-16T04:32:21Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md"]
 
 [[acceptance]]

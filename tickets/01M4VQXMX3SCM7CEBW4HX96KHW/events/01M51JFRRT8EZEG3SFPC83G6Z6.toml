@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Executor (binding::display) landed with ~K2NMWYA; this ticket removes 9 stale known-gaps and adds a focused scratch-corpus test. display-plain-exact-decimal stays gapped: value 1/3m is rejected by cadetta display (decimal literals only); filed ~E3MA4MY. Full corpus test exceeds the nextest 300s slow-timeout on Dwarf (pre-existing)."
+at = "2026-10-16T05:20:49Z"
+actor = "lognd"
+rev = 1

@@ -469,6 +469,10 @@ b` the first path is the hole and the second the shaft. For `H7/p6 on
 x` the fitted parameter x may be untoleranced or carry exactly one of
 the two classes' deviations; any other tolerance on it is F003. A
 nominal that is not a whole number of nanometres has no table row (F002).
+The granularity is deliberately 1 nm, not 1 pm: the tables are exact to
+0.1 um, so finer resolution adds no information. `20000001nm` is whole;
+`20.0000000005mm` (0.5 nm) is not. Conformance fixture
+`language/f002-sub-nanometre` pins both sides of this boundary.
 
 Pipeline (cadetta-sema `fitderive`): `cadetta check` evaluates each
 component fit's operands and required range after the member values are

@@ -210,7 +210,7 @@ cannot be resolved or evaluated.
 | E016 | private-item | error | yes | An item is used outside its visibility, or a `priv` member is read from another package (packages.md 3). |
 | E017 | private-in-public | error | yes | A `pub` item's signature names a less visible item, or a member implementing an interface member is `priv`. |
 
-E003 and E004 attach the second definition or import span as a note on the diagnostic. Every E code is a fixed error: configuration cannot change its severity.
+E003 and E004 attach the second definition or import span as a note on the diagnostic. The CLI lifts resolver errors through the E-family lift, so the notes and fixed severity apply, but the message text stays the resolver's own: it names the exact offender, which the catalog template would only generalise. Every E code is a fixed error: configuration cannot change its severity.
 
 ### Q: quantities
 
@@ -265,7 +265,7 @@ from the dependency graph.
 Implementation rules (decided with the D rules): a D001 group takes the largest
 significant-digit count among its members to choose between the configured severity and info; a
 group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
-never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members (the operand paths of `Fit.hole` and `Fit.shaft`, so M003 and D002 see path/path fits) and the fit
 clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
 D003 is computed on the member dependency graph, so a loop between components with no member-level
 loop is clean.
