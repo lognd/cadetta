@@ -913,16 +913,6 @@ ticket = "~CE627BF"
 reason = "binding-kind run does not observe names_path_or_key"
 
 [[gap]]
-fixture = "geometry/pattern-count-structural"
-ticket = "~32TR561"
-reason = "extra E002 / expected nonzero exit"
-
-[[gap]]
-fixture = "lints/w005-waiver-expiring"
-ticket = "~32TR561"
-reason = "extra E002 / expected nonzero exit"
-
-[[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
