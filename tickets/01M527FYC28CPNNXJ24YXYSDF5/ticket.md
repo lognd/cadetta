@@ -9,7 +9,7 @@ parent = "01M5205ESRG3TZHSBQJSPQ1MD0"
 reporter = "lognd"
 created = "2026-10-16T11:27:55Z"
 updated = "2026-10-16T13:40:36Z"
-scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs", "tests/conformance/known-gaps.toml"]
+scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs", "tests/conformance/known-gaps.toml", "docs/spec/adapters.md"]
 
 [[acceptance]]
 text = "Fixture import-assembly-parts passes"
