@@ -338,11 +338,6 @@ ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
-fixture = "adapters/contract-no-source-write"
-ticket = "~G9E7R67"
-reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
-
-[[gap]]
 fixture = "adapters/import-active-config-only"
 ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
@@ -368,11 +363,6 @@ ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
-fixture = "adapters/import-never-overwrites"
-ticket = "~G9E7R67"
-reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
-
-[[gap]]
 fixture = "adapters/import-property-quantity-needs-unit"
 ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
@@ -388,19 +378,9 @@ ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
-fixture = "adapters/import-update-next-sync-no-op"
-ticket = "~G9E7R67"
-reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
-
-[[gap]]
 fixture = "adapters/import-values-nominal-scalars"
 ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
-fixture = "adapters/resolve-drift-import-update"
-ticket = "~G9E7R67"
-reason = "executor cannot model this fixture: needs then_sync/design/native/lock keys or the fixture contradicts another"
 
 [[gap]]
 fixture = "adapters/slots-for-selects-active-locators"

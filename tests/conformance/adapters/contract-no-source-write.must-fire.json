@@ -1,7 +1,26 @@
 {
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
   "args": [
     "solidworks",
     "cad/plate.SLDPRT"
   ],
-  "flags": []
+  "items": [
+    {
+      "file": "cad/plate.SLDPRT",
+      "locator": "width",
+      "kind": "global",
+      "number": 11,
+      "unit": "mm"
+    }
+  ],
+  "existing": {},
+  "lock_base": {
+    "width": "10mm"
+  },
+  "source": {
+    "width": "10mm"
+  }
 }
