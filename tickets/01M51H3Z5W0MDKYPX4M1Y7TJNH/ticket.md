@@ -2,12 +2,12 @@
 id = "01M51H3Z5W0MDKYPX4M1Y7TJNH"
 title = "Evaluator rejects .min/.max on fit.clearance in checks (EVAL)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T04:56:54Z"
-updated = "2026-10-16T04:59:08Z"
+updated = "2026-10-16T04:59:10Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
