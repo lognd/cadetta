@@ -1,0 +1,45 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T12:19:15Z"
+digest = "daa8d48b6461a332f8db52143ced365e6008f75a989e6eb130571626d11aaab3"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 54.38s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e1e7a13d-f10b-4d44-a921-22104c6e9e58 with nextest profile: default
+    Starting 14 tests across 76 binaries (1804 tests skipped)
+        PASS [   0.012s] cadetta::conformance_config_cli run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.012s] cadetta::conformance run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.029s] cadetta::conformance_geometry run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.065s] cadetta::conformance_emitters_csv run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.066s] cadetta::conformance_language run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.081s] cadetta::conformance_adapters run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.082s] cadetta::conformance_emitters_json run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.083s] cadetta::conformance_packages run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.086s] cadetta::conformance_quantities run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.083s] cadetta::conformance_solvers run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.096s] cadetta::conformance_lints run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.102s] cadetta::conformance_ir run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.105s] cadetta::conformance_obligations run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.093s] cadetta::conformance_stdlib run::tests::waived_diagnostics_are_not_produced
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.110s] 14 tests run: 14 passed, 1804 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta run::tests::waived_diagnostics_are_not_produced"
+size = 2457
+status = "measured"
+test_count = 1
+tests_digest = "b04b9dbeb221a1017fbf4efcafbd88edc2d1597157f5a363ffc01c6f96bfc3d7"
+at = "2026-10-16T12:19:15Z"
+actor = "lognd"
+rev = 1

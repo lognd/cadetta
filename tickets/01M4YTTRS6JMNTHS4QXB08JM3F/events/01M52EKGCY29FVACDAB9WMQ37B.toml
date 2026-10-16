@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: IR Member.role is filled from the evaluated role (explicit attr, ISO class letter case: capital=hole, lowercase=shaft, fit side, inherited) in sema lower.rs, so emitters need no class parsing. json note-emit-point must-not-fire corrected: the nominal note '12mm H7' is present (matches csv + emitters spec); only emit= is excluded. Spec: quantities.md 5.6."
+at = "2026-10-16T13:32:12Z"
+actor = "lognd"
+rev = 1

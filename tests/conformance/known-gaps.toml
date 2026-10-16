@@ -8,11 +8,6 @@
 # reason = "Q006 not emitted for inexact pi products yet"
 
 [[gap]]
-fixture = "language/i001-fixed"
-ticket = "~0N41BNX"
-reason = "table/fit/variant pipeline not implemented yet"
-
-[[gap]]
 fixture = "obligations/o003-require-signoff-open"
 ticket = "~Y0NVZAF"
 reason = "CLI obligation universe does not enumerate require obligations, so O003 never fires"
@@ -646,14 +641,3 @@ reason = "lint on IR JSON has no CLI form or executor yet"
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
-
-[[gap]]
-fixture = "quantities/emit-point-inherited"
-ticket = "~AQ8KSJA"
-reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"
-
-[[gap]]
-fixture = "language/e001-waive-date"
-ticket = "~2VJQFPG"
-reason = "a waive with a valid future expiry does not suppress C001 on the check in the check entry"
-

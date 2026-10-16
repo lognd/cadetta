@@ -800,6 +800,38 @@ fn group_checks(
     m
 }
 
+/// Gives every pure reference the `emit` attribute of its referent unless it sets its own (quantities.md 5.6).
+// frob:ticket 01M51NR9617ZM61WBT4AQ8KSJA
+fn inherit_emit_points(ev: &Evaluation, project: &mut Project) {
+    let emits: BTreeMap<String, String> = project
+        .components
+        .iter()
+        .flat_map(|c| &c.members)
+        .filter_map(|m| Some((m.path.to_string(), m.attrs.get("emit")?.clone())))
+        .collect();
+    for (path, e) in &ev.values {
+        let Some(root) = &e.alias_of else { continue };
+        let (Some(me), Some(target)) = (ir_path(path), ir_path(root)) else {
+            continue;
+        };
+        let Some(point) = emits.get(&target.to_string()) else {
+            continue;
+        };
+        let me = me.to_string();
+        let member = project
+            .components
+            .iter_mut()
+            .flat_map(|c| c.members.iter_mut())
+            .find(|m| m.path.to_string() == me);
+        if let Some(m) = member
+            && !m.attrs.contains_key("emit")
+        {
+            debug!(member = %me, referent = %target, point = %point, "lower: pure reference inherits emit point");
+            m.attrs.insert("emit".to_owned(), point.clone());
+        }
+    }
+}
+
 /// Lowers the evaluated program of one package into a design-flavour IR project.
 pub fn lower(input: &LowerInput<'_>) -> Project {
     let mut project = Project::new(
@@ -929,6 +961,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
             }
         }
     }
+    inherit_emit_points(input.evaluation, &mut project);
     // frob:ticket 01M4YR871RH1TPH8854X50QNG4
     let folded = |obligation: bool| {
         let primary = group_checks(input.evaluation, obligation);
@@ -1046,6 +1079,28 @@ mod tests {
         hole_comp = 0.2mm [+-0.05mm]\n  \
         rule hole(d: Length) -> Length = d + hole_comp\n}\n\
         model Case {\n  #![process(Fdm)]\n  insert_hole = 3.4mm [+-0.1mm] #[hole]\n}\n";
+
+    /// A pure reference inherits its referent's emit point unless it sets its own.
+    // frob:ticket 01M51NR9617ZM61WBT4AQ8KSJA
+    // frob:tests crates/cadetta-sema/src/lower.rs::inherit_emit_points kind=unit
+    #[test]
+    fn pure_reference_inherits_emit_point() {
+        let b = build(
+            "model M {\n  a = 12mm [+0.018mm -0] #[emit(mid)]\n  b = a\n  c = a #[emit(mmc)]\n  d = a + 1mm\n}\n",
+            &[],
+            &[],
+        );
+        let attr = |n: &str| {
+            b.project.components[0]
+                .members
+                .iter()
+                .find(|m| m.path.to_string().ends_with(n))
+                .and_then(|m| m.attrs.get("emit").cloned())
+        };
+        assert_eq!(attr(".b").as_deref(), Some("mid"));
+        assert_eq!(attr(".c").as_deref(), Some("mmc"));
+        assert_eq!(attr(".d"), None);
+    }
 
     const SRC: &str = "model Axle {\n  /// the seat\n  seat = 20mm [+0.021mm -0]\n  \
         wall = 2.5mm [+-0.1mm]\n  od = seat + 2 * wall\n  let slack = od - seat\n  let stack = seat + 2 * wall\n  \

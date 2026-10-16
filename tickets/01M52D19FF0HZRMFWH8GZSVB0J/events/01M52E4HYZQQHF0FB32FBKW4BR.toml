@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Golden 02-bearing-housing reports zero mismatches (values 47/47, verdicts 10/10, diagnostics 5/5)"]
+moved = []
+at = "2026-10-16T13:24:02Z"
+actor = "lognd"
+rev = 1

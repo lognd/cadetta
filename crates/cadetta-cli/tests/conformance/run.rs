@@ -139,12 +139,18 @@ pub fn parse_json(stdout: &str) -> Option<Value> {
     })
 }
 
-/// Diagnostics (`code`, `severity`, `path`) and messages from a `diagnostics` list.
+/// Diagnostics (`code`, `severity`, `path`) and messages from a `diagnostics` list; waived ones are suppressed.
+// frob:ticket 01M51T6EHNEGAJ9KYQ42VJQFPG
 fn diagnostics_of(report: &Value) -> (Vec<Produced>, Vec<String>) {
     let field = |d: &Value, k: &str| d[k].as_str().map(str::to_owned);
-    let list = report["diagnostics"]
+    let list: Vec<Value> = report["diagnostics"]
         .as_array()
-        .cloned()
+        .map(|a| {
+            a.iter()
+                .filter(|d| d["waived"].is_null())
+                .cloned()
+                .collect()
+        })
         .unwrap_or_default();
     let produced = list
         .iter()
@@ -189,4 +195,25 @@ pub fn run_cli(root: &Path, args: &[String]) -> Result<Facts, String> {
         facts.messages.push(facts.stderr.trim().to_owned());
     }
     Ok(facts)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A waived diagnostic is not counted as produced; an unwaived one is.
+    // frob:ticket 01M51T6EHNEGAJ9KYQ42VJQFPG
+    // frob:tests crates/cadetta-cli/tests/conformance/run.rs::diagnostics_of kind=unit
+    #[test]
+    fn waived_diagnostics_are_not_produced() {
+        let report = serde_json::json!({"diagnostics": [
+            {"code": "C001", "severity": "warning", "message": "m", "waived": {"by": "w"}},
+            {"code": "C002", "severity": "warning", "message": "n", "waived": null},
+            {"code": "C003", "severity": "warning", "message": "o"}
+        ]});
+        let (produced, messages) = diagnostics_of(&report);
+        let codes: Vec<&str> = produced.iter().map(|p| p.code.as_str()).collect();
+        assert_eq!(codes, ["C002", "C003"]);
+        assert_eq!(messages.len(), 2);
+    }
 }

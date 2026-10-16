@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Only i001-fixed remained a gap (others already pass). Its must-not-fire waived C001 on the item A, but the C001 is raised at A.load_rating and a waiver glob matches whole paths (lints.md 2.1), so it suppressed nothing (C001 + W004). Fixture glob corrected to A.load_rating; gap entry removed."
+at = "2026-10-16T12:57:23Z"
+actor = "lognd"
+rev = 1

@@ -276,7 +276,10 @@ def _replay(case: Case, scratch: Path) -> Replay:
         k: v.replace(str(c_root), "<ROOT>") for k, v in _snapshot(c_root).items()
     }
     if rep.binding[0] == "ok" and head == "check":
-        rep.diagnostics = rep.binding[1].get("diagnostics", [])
+        # A waived diagnostic is not produced (as in the Rust runner).
+        rep.diagnostics = [
+            d for d in rep.binding[1].get("diagnostics", []) if not d.get("waived")
+        ]
     return rep
 
 

@@ -1,0 +1,19 @@
+{
+  "spec": "1.5",
+  "doc": "geometry",
+  "section": "geometry.md 5.1",
+  "rule": "coaxial-parameterized-model",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C001",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

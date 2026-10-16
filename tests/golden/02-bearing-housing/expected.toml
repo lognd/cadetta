@@ -86,10 +86,8 @@ min = "6.88mm"
 max = "7mm"
 note = "SKF B, +0 -0.12"
 
-[[value]]
-path = "acme.bearing_housing::BearingUnit/bearing[0].radial_clearance.min"
-nominal = "2um"
-note = "lower limit of the C0 Normal bound 2um..13um"
+# radial_clearance (`in 2um..13um`) is a bound, not a member value: it has no IR path.
+# Its lower limit 2um is read by seat_squeeze (.min of the bound) and judged there.
 
 [[value]]
 path = "acme.bearing_housing::BearingUnit/bearing[0].mass"
@@ -113,10 +111,10 @@ note = "Din472[22mm].ring_thickness, +0 -0.06 written on the ots"
 
 [[value]]
 path = "acme.bearing_housing::BearingUnit/ring.groove_dia"
-nominal = "23mm"
-min = "23mm"
-max = "23.13mm"
-note = "Din472[22mm].groove_dia, H11"
+nominal = "23.5mm"
+min = "23.5mm"
+max = "23.63mm"
+note = "Din472[22mm].groove_dia, 23.5mm H11 (DIN 472 d2 for a 22mm bore; the first hand value 23mm was a slip)"
 
 [[value]]
 path = "acme.bearing_housing::BearingUnit/ring.groove_width"
@@ -170,9 +168,9 @@ note = "alias of Layout.ring_support_dia"
 
 [[value]]
 path = "acme.bearing_housing::BearingUnit/housing.groove_dia"
-nominal = "23mm"
-min = "23mm"
-max = "23.13mm"
+nominal = "23.5mm"
+min = "23.5mm"
+max = "23.63mm"
 note = "alias of ring.groove_dia"
 
 [[value]]
@@ -396,19 +394,29 @@ note = "axial_play in [0, 0.64mm]; 0 <= x holds, x <= 0.5mm does not; linear, so
 [[verdict]]
 path = "acme.bearing_housing::BearingUnit/shaft.seats_coaxial"
 result = "holds"
-conservative = true
-note = "radial sup = 0.01mm x sqrt(2) = 0.01414mm <= 0.02mm; square-aware interval, conservative evaluation"
+conservative = false
+note = "radial sup = 0.01mm x sqrt(2) = 0.01414mm <= 0.02mm; the square-aware interval is the exact range over the tolerance box, so not conservative (unlike aligned, geometry.md 5)"
 
 # Diagnostics: errors and warnings are closed.
 
 [[diagnostic]]
 code = "C002"
-path = "acme.bearing_housing::BearingUnit/seat_creep"
+path = "acme.bearing_housing::BearingUnit.seat_creep"
+
+# one per bearing instance (`for b in bearing` over two bearings); the path carries no instance index
+[[diagnostic]]
+code = "C002"
+path = "acme.bearing_housing::BearingUnit.seat_creep"
 
 [[diagnostic]]
 code = "C002"
-path = "acme.bearing_housing::BearingUnit/seat_squeeze"
+path = "acme.bearing_housing::BearingUnit.seat_squeeze"
+
+# one per bearing instance (`for b in bearing` over two bearings); the path carries no instance index
+[[diagnostic]]
+code = "C002"
+path = "acme.bearing_housing::BearingUnit.seat_squeeze"
 
 [[diagnostic]]
 code = "C002"
-path = "acme.bearing_housing::BearingUnit/axial_play_ok"
+path = "acme.bearing_housing::BearingUnit.axial_play_ok"

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: an item-path waiver covers members; ancestors are stripped at '.' after '::' only (package part never an ancestor). Rationale: waive on A should not need per-member waivers. Documented in lints.md 2.1."
+at = "2026-10-16T13:22:09Z"
+actor = "lognd"
+rev = 1

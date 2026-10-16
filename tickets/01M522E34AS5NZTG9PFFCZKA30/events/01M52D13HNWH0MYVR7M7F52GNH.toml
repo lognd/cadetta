@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T13:04:40Z"
+digest = "0f47192d2ad8bf0c76d8f7724301cfe252dbd3ccba02f8e5739aa5e1f44bcf5b"
+provider = "file"
+ref = "tests/conformance/geometry/coaxial-parameterized-model.expect.json"
+size = 319
+status = "measured"
+at = "2026-10-16T13:04:40Z"
+actor = "lognd"
+rev = 1

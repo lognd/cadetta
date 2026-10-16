@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T12:07:00Z"
+digest = "7b6b4725bcbc040587f464f0b2505d43dfc5de6a9b1588044fa2cba919b84fad"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 54.60s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 058d2c39-1fdc-412e-97d1-8cd62569c51e with nextest profile: default
+    Starting 1 test across 76 binaries (1802 tests skipped)
+        PASS [   0.010s] cadetta-sema lower::tests::pure_reference_inherits_emit_point
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 1802 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta-sema lower::tests::pure_reference_inherits_emit_point"
+size = 1034
+status = "measured"
+test_count = 1
+tests_digest = "a4eb9916ed239ac2f5ad907cf3d80619332a0465948ed7e18d9a34bae62a2fe2"
+at = "2026-10-16T12:07:00Z"
+actor = "lognd"
+rev = 1
