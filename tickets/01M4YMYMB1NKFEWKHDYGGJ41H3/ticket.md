@@ -2,7 +2,8 @@
 id = "01M4YMYMB1NKFEWKHDYGGJ41H3"
 title = "Lint E-family resolution errors through e::lift_resolution in check"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
