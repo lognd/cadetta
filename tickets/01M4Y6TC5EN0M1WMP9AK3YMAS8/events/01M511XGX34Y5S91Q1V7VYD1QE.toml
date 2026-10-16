@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T00:31:13Z"
+digest = "3620d8bce1b0e97fba3edb1d0936d771e278011d48301656f5503c4d08838545"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID e77aa94b-5726-4123-a67c-e49fc423420b with nextest profile: default
+    Starting 2 tests across 43 binaries (591 tests skipped)
+        PASS [   0.233s] cadetta::kind_qualified_paths qualified_path_read_with_wrong_dimension_is_q002
+        PASS [   0.238s] cadetta::kind_qualified_paths qualified_path_read_with_matching_dimension_is_clean
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.240s] 2 tests run: 2 passed, 591 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta qualified_path_read_with"
+size = 682
+status = "measured"
+test_count = 2
+tests_digest = "0b8295179a90a669736cb89710fb552788b51e51ebe504ec211586f853db7de1"
+at = "2026-10-16T00:31:13Z"
+actor = "lognd"
+rev = 1
