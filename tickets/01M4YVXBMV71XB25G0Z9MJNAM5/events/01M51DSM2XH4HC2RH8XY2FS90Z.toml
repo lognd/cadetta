@@ -1,0 +1,31 @@
+kind = "evidence"
+captured_at = "2026-10-16T03:58:29Z"
+digest = "fe711ac6604a2e18f63f2672e23e128d5a258a6a89ea10cfb170c7c138876cad"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.69s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1a150917-1bb3-49f9-8362-b60b379d3084 with nextest profile: default
+    Starting 4 tests across 1 binary (142 tests skipped)
+        PASS [   0.007s] cadetta-lint rules::s::tests::s001_quiet_when_value_or_component_cited
+        PASS [   0.007s] cadetta-lint rules::s::tests::s001_fires_when_uncited
+        PASS [   0.007s] cadetta-lint rules::s::tests::s001_per_value_when_component_partly_cited
+        PASS [   0.008s] cadetta-lint rules::s::tests::s001_one_component_diagnostic_when_nothing_cited
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 4 tests run: 4 passed, 142 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint s001"
+size = 1193
+status = "measured"
+test_count = 4
+tests_digest = "b1c99ff95c124765150b687130350fd7f73fb10160973ec1b78f1e01bb34e59a"
+at = "2026-10-16T03:58:29Z"
+actor = "lognd"
+rev = 1
