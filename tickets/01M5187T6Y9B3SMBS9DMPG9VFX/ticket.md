@@ -4,9 +4,10 @@ title = "Lower tables into the IR in cadetta-sema"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-16T02:21:43Z"
-updated = "2026-10-16T02:21:43Z"
+updated = "2026-10-16T03:13:55Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
