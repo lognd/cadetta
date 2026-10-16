@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: Require = Check shape minus waived_for (a require is never suppressed, obligations.md 4) plus message? and citation?; reuses Verdicts. Optional Project.requires[] (minor schema change), omitted when empty; own digest over path/expr/message/citation. Documented in docs/spec/ir.md 3."
+at = "2026-10-16T07:43:43Z"
+actor = "lognd"
+rev = 1

@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T01:46:40Z"
-updated = "2026-10-16T07:43:42Z"
+updated = "2026-10-16T07:43:43Z"
 scope = ["crates/cadetta-ir/**", "docs/spec/ir.md", "bindings/python/python/cadetta/models/ir.py", "docs/schemas/cadetta.ir.1.json"]
 +++
 
