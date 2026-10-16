@@ -16,7 +16,7 @@
 //! counted as accept writes; `existing` bindings with no `--accept` mean a re-run, i.e. propose
 //! then accept against those bindings.
 
-use cadetta::cmd::import::decode_observed;
+use cadetta::cmd::import::{decode_observed, inactive_configurations};
 use cadetta_adapter::classify::classify;
 use cadetta_adapter::import::naming::{component_name, member_name};
 use cadetta_adapter::import::propose::{Proposal, Status, propose, render_cdt};
@@ -42,6 +42,8 @@ const MODELLED: &[&str] = &[
     "native_unit_in_proposal",
     "assembly",
     "components",
+    "configurations",
+    "active_config",
 ];
 
 /// Package name of the scratch package the CLI runs against.
@@ -58,6 +60,7 @@ const MODELLED_ITEM: &[&str] = &[
     "expression",
     "tolerance",
     "equation_linked",
+    "config",
 ];
 
 /// The `[[item]]` keys adapters.md 7.1 documents; `item_keys` reports the proposal's keys among them.
@@ -136,8 +139,11 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     } else {
         "value"
     };
-    let binding = json!({"path": path, "adapter": "fixture", "locators": [
-        {"locator": locator, "kind": kind, "mode": mode, "native_unit": unit}]});
+    let mut loc = json!({"locator": locator, "kind": kind, "mode": mode, "native_unit": unit});
+    if let Some(config) = text("config") {
+        loc["config"] = json!(config);
+    }
+    let binding = json!({"path": path, "adapter": "fixture", "locators": [loc]});
     Ok((member, binding))
 }
 
@@ -212,7 +218,13 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         bindings.push(binding);
     }
     let instances = observed_instances(&spec, &text)?;
-    let observed = json!({"components": components, "bindings": bindings, "instances": instances});
+    let mut observed =
+        json!({"components": components, "bindings": bindings, "instances": instances});
+    for key in ["configurations", "active_config"] {
+        if !spec[key].is_null() {
+            observed[key] = spec[key].clone();
+        }
+    }
     let update = flag("--update");
     let mut observations = BTreeMap::new();
     if !update {
@@ -778,6 +790,16 @@ fn proposal_facts(
         ));
     }
     put("item_keys", json!(item_keys(&proposal)));
+    let config = projects
+        .iter()
+        .flat_map(|p| &p.bindings)
+        .flat_map(|b| &b.locators)
+        .find_map(|l| l.config.as_deref());
+    put("locator_config", json!(config));
+    put(
+        "info_diagnostic_lists",
+        json!(inactive_configurations(observed)),
+    );
     let mut instances: Vec<&_> = proposal
         .items
         .iter()

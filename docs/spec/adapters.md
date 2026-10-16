@@ -769,6 +769,12 @@ overwritten.
 - Configurations: only the active configuration is imported and
   recorded as `config` on each locator; an info diagnostic lists other
   configurations when they exist.
+
+  Decision (~50Z5G8J): the adapter reports `configurations` and
+  `active_config` beside `observed`; `config` is set on each locator by
+  the adapter. Propose adds one `info:` note naming every configuration
+  other than the active one; it is a note, not a coded diagnostic, so it
+  never changes the exit code.
 - Custom properties bind as `Text`, `Count` or `Quantity`; a quantity
   needs an explicit `native_unit` in the proposal. Properties that are
   `$PRP`-linked or equation-linked are skipped with a reason.
