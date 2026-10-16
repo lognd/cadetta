@@ -2,7 +2,8 @@
 id = "01M51WA4ATJ8Q0R8JN6RWGVA1F"
 title = "check raises S006 for a variant when the solver has no primary result at all"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
