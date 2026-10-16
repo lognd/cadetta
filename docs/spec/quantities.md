@@ -395,6 +395,13 @@ before. The disc radius is exact when a coefficient is zero or
 A `VarId` is a box or a disc variable, never both. The IR needs no change:
 the two coefficients serialise as the `.u` and `.v` terms (ir.md).
 
+Decided in implementation: `Affine::disc_vars` lists a form's disc
+variables and `Affine::box_radius` returns the radius of the box part
+alone (`radius` is now `box_radius` plus the disc radii). Geometry uses
+them to build the per-disc Gram bound for `aligned` and `distance`
+(geometry.md 3.1): exact for coplanar isotropic discs without a box
+part, conservative otherwise.
+
 Decided in implementation: "the same affine form" means structurally
 equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`
 with differing slack are not detected and use the ordinary product. The

@@ -289,6 +289,27 @@ impl Affine {
         self.discs.get(&var).map(|(a, b)| (a, b))
     }
 
+    /// The disc variables that contribute to the form, in id order.
+    // frob:ticket 01M50C0NCKDC43EDJP1BS8CTVB
+    pub fn disc_vars(&self) -> Vec<VarId> {
+        self.discs.keys().copied().collect()
+    }
+
+    /// The radius of the box part: slack plus `sum |c_i|`, excluding disc terms.
+    // frob:ticket 01M50C0NCKDC43EDJP1BS8CTVB
+    pub fn box_radius(&self) -> Result<Magnitude, ToleranceError> {
+        let mut r = self.slack.clone();
+        for c in self.terms.values() {
+            let abs = if sign(c) == Ordering::Less {
+                c.neg()
+            } else {
+                c.clone()
+            };
+            r = add(&r, &abs)?;
+        }
+        Ok(r)
+    }
+
     /// The dimension of the form.
     pub fn dim(&self) -> &Dim {
         &self.dim
@@ -321,15 +342,7 @@ impl Affine {
     }
 
     fn radius(&self) -> Result<Magnitude, ToleranceError> {
-        let mut r = self.slack.clone();
-        for c in self.terms.values() {
-            let abs = if sign(c) == Ordering::Less {
-                c.neg()
-            } else {
-                c.clone()
-            };
-            r = add(&r, &abs)?;
-        }
+        let mut r = self.box_radius()?;
         for (a, b) in self.discs.values() {
             let (norm, _) = disc_norm(a, b).ok_or(ToleranceError::MixedPiExponent)?;
             r = add(&r, &norm)?;
@@ -722,6 +735,23 @@ mod tests {
         assert_eq!(lo, hi.neg());
         // all-zero pair carries no term
         assert!(disc(0, m(0, 1), m(0, 1)).is_exact());
+    }
+
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.disc_vars kind=unit
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.box_radius kind=unit
+    #[test]
+    fn disc_vars_and_box_radius_split_the_form() {
+        let f = disc(2, mm(3, 1), mm(4, 1))
+            .add(
+                &Toleranced::symmetric(len(), mm(1, 1), (len(), mm(1, 2)))
+                    .unwrap()
+                    .to_affine(VarId(7))
+                    .unwrap(),
+            )
+            .unwrap();
+        assert_eq!(f.disc_vars(), vec![VarId(2)]);
+        assert_eq!(f.box_radius().unwrap(), mm(1, 2));
+        assert!(disc(0, m(0, 1), m(0, 1)).disc_vars().is_empty());
     }
 
     // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.add kind=unit
