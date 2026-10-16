@@ -21,7 +21,11 @@
   "must_not_fire": {
     "diagnostics": [],
     "push_status": {
-      "Plate_Thk": "pushed"
+      "Plate_Thk": {
+          "status": "pushed",
+          "old": "10mm",
+          "new": "12mm"
+        }
     }
   }
 }

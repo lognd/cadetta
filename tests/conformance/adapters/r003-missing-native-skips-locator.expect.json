@@ -16,14 +16,26 @@
     "exit": 1,
     "push_status": {
       "Plate_Thk": "skipped",
-      "Other": "pushed"
+      "Other": {
+          "status": "pushed",
+          "old": "1mm",
+          "new": "6mm"
+        }
     }
   },
   "must_not_fire": {
     "diagnostics": [],
     "push_status": {
-      "Plate_Thk": "pushed",
-      "Other": "pushed"
+      "Plate_Thk": {
+          "status": "pushed",
+          "old": "10mm",
+          "new": "12mm"
+        },
+      "Other": {
+          "status": "pushed",
+          "old": "1mm",
+          "new": "6mm"
+        }
     }
   }
 }

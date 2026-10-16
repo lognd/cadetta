@@ -264,8 +264,14 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   that plan text; geometry push-plan fixtures remain gaps) and `sync`
   (`sync.rs`: the adapter host's sync loop against a simulated native
   document, observing `class`, `writes`, `regen`, `lock_updated`,
-  `lock_synced_updated`, `push_status` and the next run's class; fixtures
-  needing a tool session are gaps) and `import` (`import.rs`: propose mode
+  `lock_synced_updated`, `push_status` and the next run's class). The
+  simulated tool session also models host faults (`regen_fail`,
+  `restore_fail`), R004 restore reporting, R008 availability (exit 2),
+  R009 partition refusal (`locked` counts as read-only), R010 rejected
+  locators, save and adopted-clear observations. `push_status` values are a
+  bare string for `rejected` and `skipped` and an object
+  `{status, old, new}` for `pushed`. Fixtures needing attach/close, R006
+  dry-run, degrade or O004 are gaps) and `import` (`import.rs`: propose mode
   only; observed items are decoded as the CLI does and run through
   `propose`, observing `members`, `components`, `flagged`, `item_order`,
   `status` and `reason_present`; accept, update and richer item features
