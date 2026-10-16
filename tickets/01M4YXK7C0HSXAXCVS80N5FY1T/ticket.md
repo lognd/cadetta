@@ -2,12 +2,12 @@
 id = "01M4YXK7C0HSXAXCVS80N5FY1T"
 title = "Sema: unindexed read of a counted part array in a solver in-expression (wheel.load_rating) is EVAL error"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T04:37:14Z"
-updated = "2026-10-16T06:11:22Z"
+updated = "2026-10-16T06:11:23Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
