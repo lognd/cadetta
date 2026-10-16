@@ -329,6 +329,37 @@ fn emit_point_fixtures_observe_the_emitted_value() {
     );
 }
 
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+// frob:tests crates/cadetta-cli/tests/conformance/exec.rs::sole_active_alternate
+#[test]
+fn slot_fixtures_observe_the_active_alternate_and_active_locators() {
+    // Only the two `slots-*` emit fixtures (a primary selects the `for` locators) are run.
+    let scratch = std::env::temp_dir().join(format!("cadetta-slots-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
+    let dest = scratch.join("adapters");
+    std::fs::create_dir_all(&dest).unwrap();
+    for entry in std::fs::read_dir(corpus_root().join("adapters")).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if file.starts_with("slots-for-selects-") || file.starts_with("slots-swap-changes-") {
+            if entry.file_type().unwrap().is_dir() {
+                copy_tree(&entry.path(), &dest.join(&file));
+            } else {
+                std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+            }
+        }
+    }
+    drop(writing);
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), 2, "{report:?}");
+    assert!(
+        report.outcomes.values().all(|o| matches!(o, Outcome::Pass)),
+        "{report:?}"
+    );
+}
+
 // frob:ticket 01M4ZCEYEDA4W3R18F6420HBMQ
 // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::solver_runs
 #[test]

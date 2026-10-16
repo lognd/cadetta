@@ -1,6 +1,5 @@
-["acme.demo::Part.width"]
+["acme.shop::Colson2Series.width"]
 locators = [
   { locator = "A", kind = "global", mode = "value", native_unit = "mm", for = "acme.shop::Colson2Series" },
   { locator = "B", kind = "global", mode = "value", native_unit = "mm", for = "acme.shop::Other" },
-
 ]

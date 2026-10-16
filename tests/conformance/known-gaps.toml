@@ -148,16 +148,6 @@ ticket = "~A9M9EPG"
 reason = "R013/N005 mangling collision checks not implemented"
 
 [[gap]]
-fixture = "adapters/slots-for-selects-active-locators"
-ticket = "~6K6E7M4"
-reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"
-
-[[gap]]
-fixture = "adapters/slots-swap-changes-active-set"
-ticket = "~6K6E7M4"
-reason = "fixture dirs are identical yet expect opposite output; active_alternate not exposed"
-
-[[gap]]
 fixture = "stdlib/table-iso4032"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"

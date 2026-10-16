@@ -155,7 +155,30 @@ fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(),
             .observed
             .insert("unbound_params_not_written".into(), json!(clean));
     }
+    if wants("active_alternate") {
+        let active = sole_active_alternate(facts)?;
+        tracing::debug!(active, "observed active alternate");
+        facts
+            .observed
+            .insert("active_alternate".into(), json!(active));
+    }
     Ok(())
+}
+
+/// The single active alternate named by the emit report (the fixture has exactly one slot).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+fn sole_active_alternate(facts: &Facts) -> Result<String, String> {
+    let report = parse_json(&facts.stdout).ok_or("stdout is not a JSON report")?;
+    let map = report["active_alternates"]
+        .as_object()
+        .ok_or("report has no active_alternates")?;
+    match map.values().collect::<Vec<_>>().as_slice() {
+        [one] => one
+            .as_str()
+            .map(str::to_owned)
+            .ok_or_else(|| "active alternate is not a string".to_owned()),
+        other => Err(format!("expected exactly one slot, found {}", other.len())),
+    }
 }
 
 /// The keys of one `locators` entry of a bindings file (adapters.md 3 field table).

@@ -173,7 +173,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `names [ADAPTER-ID] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with a `read` adapter, reads CAD | R013 | `names.json` |
 | `bind PATH --adapter ID --locator L --kind K [--mode M] [--native-unit U] [--for ALT] [--config C] [--sign -1] [--component C] [--tolerance drive\|ignore]` / `bind --remove PATH --adapter ID --locator L` | Add or remove one explicit locator in `bindings/<id>.toml`, validated and written in canonical order. | writes the bindings file | never (errors exit 2) | `bind.json` |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
-| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013, R014, R015 | `emit.json` |
+| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs; `emit.json` also lists `active_alternates` (slot path to its primary, adapters.md 3.3) when the package has interface-typed slots | Q004, R013, R014, R015 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
 | `import --accept` | Write bindings and `.cdt` scaffold from the proposal. | writes `bindings/`, `cad/imported/`, lock | never | `import.json` |
 | `import ADAPTER FILE... --update [--write]` | Diff of `.cdt` literal edits from observed values; `--write` applies. | writes sources with `--write` | never | `import.json` |

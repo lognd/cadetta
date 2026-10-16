@@ -46,7 +46,7 @@ pilot r2-05.
   path is bound by a locator of this adapter, passes the adapter's
   `modules`/`paths` filters and the run's `--module`/glob narrowing, is not
   a `let` and (for an interface-typed slot) belongs to an active alternate
-  (adapters.md 3.3). A `Text` parameter that fails any of those, or that
+  (the slot's primary, adapters.md 3.3). A `Text` parameter that fails any of those, or that
   has no binding, is not emitted and is not an error. This holds whatever
   the locator kind (`global` or `dimension`).
 - **Only `global` and `dimension` locators are emitted.** An equations

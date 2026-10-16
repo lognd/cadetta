@@ -42,9 +42,10 @@ use serde::Serialize;
 use serde_json::{Value as Json, json};
 
 use crate::cmd::emit::{
-    DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
-    designed, emit_package_texts, emit_params, kind_of, load_bindings, locators_for, native_unit,
-    package_ir, text_params_of, to_ratio, value_row_rel, written_for,
+    DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, active_alternates,
+    attr_point, config_point, designed, emit_package_texts, emit_params, kind_of, load_bindings,
+    locator_active, locators_for, native_unit, package_ir, text_params_of, to_ratio, value_row_rel,
+    written_for,
 };
 use cadetta_adapter::geometry_plan::negate_text;
 
@@ -670,6 +671,7 @@ fn build_entries(
     let precision = read.precision;
     let cfg_point = config_point(pkg.config.emit.point);
     let has_tolerances = read.features.contains(&Feature::Tolerances);
+    let active = active_alternates(ir);
     let mut entries = Vec::new();
     let mut units = BTreeMap::new();
     let mut clean = true;
@@ -685,8 +687,8 @@ fn build_entries(
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], cfg_point);
         for loc in locators {
-            if loc.for_alternate.is_some() {
-                tracing::debug!(path = %canonical, locator = %loc.locator, "sync: alternate locator not synced");
+            if !locator_active(loc, &active) {
+                tracing::debug!(path = %canonical, locator = %loc.locator, "sync: inactive alternate locator not synced");
                 continue;
             }
             if loc.mode == LocatorMode::Ref {

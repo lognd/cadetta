@@ -24,7 +24,8 @@ use cadetta_adapter::geometry_plan::negate_text;
 
 use crate::cmd::ack::{Candidate as AckCandidate, Subject};
 use crate::cmd::emit::{
-    attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, written_for,
+    active_alternates, attr_point, config_point, kind_of, load_bindings, locator_active,
+    locators_for, native_unit, written_for,
 };
 use crate::cmd::obligations::Candidate;
 use crate::cmd::sync::normalize;
@@ -552,6 +553,7 @@ fn emitted_values(
     let table = UnitTable::builtin();
     let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
     let cfg_point = config_point(pkg.config.emit.point);
+    let active = active_alternates(ir);
     for member in ir.components.iter().flat_map(|c| &c.members) {
         let canonical = member.path.to_string();
         let Some(value) = &member.value else { continue };
@@ -565,7 +567,7 @@ fn emitted_values(
         let point = resolve_point(&[attr_point(member)], cfg_point);
         for loc in locators
             .iter()
-            .filter(|l| l.for_alternate.is_none() && l.mode != LocatorMode::Ref)
+            .filter(|l| locator_active(l, &active) && l.mode != LocatorMode::Ref)
         {
             let unit = native_unit(adapter, loc);
             let Ok(Some(written)) =

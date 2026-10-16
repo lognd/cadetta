@@ -120,6 +120,10 @@ pub struct EmitReport {
     pub files: Vec<EmitFile>,
     /// Diagnostics, errors first by occurrence.
     pub diagnostics: Vec<EmitDiag>,
+    /// The active alternate of each interface-typed slot (its primary): slot path to the
+    /// qualified component name (adapters.md 3.3). Absent when the package has no slot.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub active_alternates: BTreeMap<String, String>,
     /// A bindings configuration error that stops the run with exit 2 (adapters.md 3); not reported.
     #[serde(skip)]
     pub config_error: Option<String>,
@@ -239,6 +243,44 @@ fn wildcard(path: &str) -> (String, bool) {
     (out, all_zero)
 }
 
+/// The active alternate of every part slot: slot path to its primary's qualified component name.
+///
+/// A slot's primary is the alternate in force; swapping is one edit of the primary (language.md
+/// 3.2), so this is what a `for` locator is matched against (adapters.md 3.3).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+pub(crate) fn active_alternates(ir: &Ir) -> BTreeMap<String, String> {
+    ir.components
+        .iter()
+        .flat_map(|c| &c.parts)
+        .map(|p| {
+            let slot = p.path.to_string();
+            let qualified = if p.primary.contains("::") {
+                p.primary.clone()
+            } else {
+                let package = slot.split_once("::").map_or("", |(pkg, _)| pkg);
+                format!("{package}::{}", p.primary)
+            };
+            (slot, qualified)
+        })
+        .collect()
+}
+
+/// True when `loc` is in force: it has no `for`, or its `for` names the primary of a slot in `active`.
+///
+/// A `for` may be written bare or qualified, as `impact --swap` accepts (adapters.md 3.3).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+pub(crate) fn locator_active(loc: &Locator, active: &BTreeMap<String, String>) -> bool {
+    let Some(alt) = loc.for_alternate.as_deref() else {
+        return true;
+    };
+    let tail = |s: &str| s.rsplit("::").next().map(str::to_owned);
+    let hit = active
+        .values()
+        .any(|p| p == alt || (!alt.contains("::") && tail(p).as_deref() == Some(alt)));
+    tracing::debug!(locator = %loc.locator, alt, hit, "emit: alternate locator activity");
+    hit
+}
+
 /// The locators bound to `path`: an exact binding, or a `[*]` binding at instance 0 only.
 pub(crate) fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [Locator]> {
     if let Some(b) = set.get(path) {
@@ -329,6 +371,8 @@ struct Job<'a> {
     /// The package's `Text` parameters: canonical path to text.
     texts: &'a TextParams,
     bindings_digest: String,
+    /// Slot path to the primary in force (see [`active_alternates`]).
+    active: BTreeMap<String, String>,
 }
 
 /// The built output of one adapter: the text plus the diagnostics met on the way.
@@ -376,7 +420,7 @@ fn is_withholding(d: &EmitDiag) -> bool {
 /// R015 for every dimension, property or frame locator, or `ref`-mode binding, this run must emit
 /// to a `json` or `csv` file (emitters/json.md 1, emitters/csv.md 1).
 ///
-/// Must-emit is as for R014: a non-alternate locator of a non-`let` member that the adapter and
+/// Must-emit is as for R014: a locator in force (adapters.md 3.3) of a non-`let` member that the adapter and
 /// run filters accept; anything else is silently not emitted.
 // frob:ticket 01M4V7WCM9TBRWY007WWS81S98
 fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
@@ -393,7 +437,7 @@ fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
         let Some(locators) = locators_for(job.set, &member.path) else {
             continue;
         };
-        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+        for loc in locators.iter().filter(|l| locator_active(l, &job.active)) {
             if loc.kind == LocatorKind::Global && loc.mode == LocatorMode::Value {
                 continue;
             }
@@ -410,7 +454,7 @@ fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
 
 /// R014 for every bound `Text` parameter this run must emit (emitters/sw-equations.md 1).
 ///
-/// Must-emit means: bound by a non-alternate locator of this adapter, accepted by the adapter
+/// Must-emit means: bound by a locator in force (adapters.md 3.3) of this adapter, accepted by the adapter
 /// and run filters, and not a `let`; anything else is silently not emitted.
 // frob:ticket 01M4V7WC7QPQ4RH2902T8PTE0A
 fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
@@ -424,7 +468,7 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
             continue;
         }
         let Some(loc) = locators_for(job.set, &member.path)
-            .and_then(|ls| ls.iter().find(|l| l.for_alternate.is_none()))
+            .and_then(|ls| ls.iter().find(|l| locator_active(l, &job.active)))
         else {
             continue;
         };
@@ -510,7 +554,7 @@ fn build_value_rows(job: &Job<'_>) -> Built {
         };
         let citation = source_citation(member);
         let point = resolve_point(&[attr_point(member)], job.config_point);
-        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+        for loc in locators.iter().filter(|l| locator_active(l, &job.active)) {
             let row = match (&member.value, job.texts.get(&canonical)) {
                 (Some(value), _) => {
                     let kind = kind_of(value);
@@ -701,8 +745,8 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         let citation = source_citation(member);
         let mut own_global_written = false;
         for loc in locators {
-            if loc.for_alternate.is_some() {
-                tracing::debug!(path = %member.path, "emit: alternate-only locator skipped");
+            if !locator_active(loc, &job.active) {
+                tracing::debug!(path = %member.path, "emit: inactive alternate locator skipped");
                 continue;
             }
             let unit = native_unit(job.adapter, loc);
@@ -1142,6 +1186,7 @@ pub(crate) fn emit_package_texts(
     report: &mut EmitReport,
 ) {
     let cfg_point = config_point(pkg.config.emit.point);
+    report.active_alternates.extend(active_alternates(ir));
     for adapter in &pkg.config.adapters {
         if !parsed.adapters.is_empty() && !parsed.adapters.iter().any(|a| a == adapter.id()) {
             continue;
@@ -1179,6 +1224,7 @@ pub(crate) fn emit_package_texts(
             run: run_scope,
             texts,
             bindings_digest: digest_text(bindings_text.as_bytes()),
+            active: active_alternates(ir),
         };
         let built = if value_row {
             build_value_rows(&job)
@@ -1223,6 +1269,45 @@ pub(crate) fn emit_package_texts(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A locator bound `for` the given alternate.
+    fn loc_for(alt: Option<&str>) -> Locator {
+        Locator {
+            locator: "A".into(),
+            kind: LocatorKind::Global,
+            mode: LocatorMode::Value,
+            native_unit: "mm".into(),
+            ref_to: None,
+            for_alternate: alt.map(str::to_owned),
+            config: None,
+            sign: None,
+            component: None,
+            implicit: None,
+            tolerance: None,
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::locator_active
+    #[test]
+    fn locator_activity_follows_the_slot_primary() {
+        let active: BTreeMap<String, String> = [(
+            "acme.shop::Rover/wheel".to_owned(),
+            "acme.shop::Other".to_owned(),
+        )]
+        .into();
+        assert!(locator_active(&loc_for(None), &active));
+        assert!(locator_active(&loc_for(Some("acme.shop::Other")), &active));
+        assert!(locator_active(&loc_for(Some("Other")), &active));
+        assert!(!locator_active(
+            &loc_for(Some("acme.shop::Colson2Series")),
+            &active
+        ));
+        assert!(!locator_active(&loc_for(Some("Colson2Series")), &active));
+        assert!(!locator_active(
+            &loc_for(Some("acme.shop::Other")),
+            &BTreeMap::new()
+        ));
+    }
 
     /// A self-removing scratch directory (no extra dev-dependency).
     struct Dir(PathBuf);

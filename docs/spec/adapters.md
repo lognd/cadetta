@@ -322,7 +322,13 @@ A binding for a path under an interface-typed slot carries
 `for = "<alternate>"` (a qualified component name, e.g.
 `for = "acme.shop::Colson2Series"`). Only locators whose `for`
 matches the slot's primary (or locators with no `for`) are active; a
-swap changes which locator set is active. `read` of an assembly records
+swap changes which locator set is active. The slot's active alternate is
+its primary: swapping is one edit of the primary (language.md 3.2), so
+the primary is the alternate in force. A `for` may be written qualified or
+bare and is active when it names the primary of any slot of the package.
+`emit` reports each slot's active alternate in `active_alternates`
+(slot path to qualified primary; config-cli.md 3), and `sync` and the
+staleness universe apply the same rule. `read` of an assembly records
 the file each component instance uses; R011 (warning) fires when the
 file instantiated is not the file bound to the slot's primary.
 `impact --swap` lists the replace-component action (obligations.md 5.1).
