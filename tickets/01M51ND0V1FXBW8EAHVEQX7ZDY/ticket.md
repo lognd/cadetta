@@ -2,7 +2,8 @@
 id = "01M51ND0V1FXBW8EAHVEQX7ZDY"
 title = "process rule that changes the argument kind is only logged, never an EVAL diagnostic"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
