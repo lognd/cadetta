@@ -1,0 +1,10 @@
+kind = "create"
+title = "Import library: property types, expressions, assembly parts, config filtering for conformance fixtures"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/src/import/**"]
+body = "Found while working ~KKVE13B. Fixtures still gapped: import-active-config-only, import-assembly-parts, import-equation-linked-property-skipped, import-expression-converted, import-item-keys, import-property-quantity-needs-unit, import-property-types, import-prp-linked-property-skipped, import-values-nominal-scalars. They need richer item features in the import library (cadetta-adapter), not the executor."
+at = "2026-10-16T09:19:52Z"
+actor = "lognd"
+rev = 1
