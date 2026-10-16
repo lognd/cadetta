@@ -7,8 +7,12 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:57:45Z"
-updated = "2026-10-16T00:59:44Z"
+updated = "2026-10-16T00:59:47Z"
 scope = ["docs/spec/ir.md"]
+
+[[acceptance]]
+text = "Given ir.md, when reading the variants note, then the key example is the full qualified SLOT=ALT form the IR emits"
+bound = false
 +++
 
 found while working ~QQY7ZED: cadetta ir emits 'acme.rover::Rover/wheel=acme.rover::Colson2Series' (see bindings/python/tests/fixtures/alt-wheel); ir.md line ~259 documents 'Rover/wheel=Colson2Series'. Reconcile doc or emitter.
