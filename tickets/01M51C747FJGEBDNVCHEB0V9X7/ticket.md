@@ -12,7 +12,7 @@ scope = ["tests/conformance/language/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "Fixture pairs exist for process-rule kind, defaults precedence, case canon digits, fn recursion, bound satisfies, keyword after dot, ISO class E001, waive date E001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Each fixture matches the spec or is gapped in known-gaps.toml with reason and ticket"
