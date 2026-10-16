@@ -2,7 +2,8 @@
 id = "01M510QYB5KCDF6BBB893GZBM2"
 title = "Emit fit .hole/.shaft/.clearance as IR member values (goldens 02, Bracket)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
