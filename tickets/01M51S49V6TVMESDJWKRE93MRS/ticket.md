@@ -2,12 +2,12 @@
 id = "01M51S49V6TVMESDJWKRE93MRS"
 title = "Roll-up over misspelled member must report E002, not internal EVAL"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:16:54Z"
-updated = "2026-10-16T10:17:12Z"
+updated = "2026-10-16T10:17:51Z"
 scope = ["crates/cadetta-sema/**"]
 +++
 
