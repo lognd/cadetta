@@ -4,9 +4,10 @@ title = "Lint E-family resolution errors through e::lift_resolution in check"
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T02:06:10Z"
-updated = "2026-10-15T02:06:10Z"
+updated = "2026-10-16T04:10:12Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs"]
 +++
 
