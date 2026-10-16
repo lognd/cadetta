@@ -328,3 +328,38 @@ fn emit_point_fixtures_observe_the_emitted_value() {
         "{report:?}"
     );
 }
+
+// frob:ticket 01M4ZCEYEDA4W3R18F6420HBMQ
+// frob:tests crates/cadetta-cli/tests/conformance/exec.rs::solver_runs
+#[test]
+fn solve_variants_fixtures_observe_solver_runs_via_marker() {
+    // Only the two `solve --variants` run-count fixtures are run, in a scratch corpus: equal
+    // alternate inputs share one run (2 total) and unchanged inputs read the primary (1 total).
+    let scratch =
+        std::env::temp_dir().join(format!("cadetta-variants-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
+    let dest = scratch.join("solvers");
+    std::fs::create_dir_all(&dest).unwrap();
+    for entry in std::fs::read_dir(corpus_root().join("solvers")).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if file.starts_with("variants-equal-inputs-share-one-run.")
+            || file.starts_with("variants-unchanged-inputs-read-primary.")
+        {
+            if entry.file_type().unwrap().is_dir() {
+                copy_tree(&entry.path(), &dest.join(&file));
+            } else {
+                std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+            }
+        }
+    }
+    drop(writing);
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), 2, "{report:?}");
+    assert!(
+        report.outcomes.values().all(|o| matches!(o, Outcome::Pass)),
+        "{report:?}"
+    );
+}
