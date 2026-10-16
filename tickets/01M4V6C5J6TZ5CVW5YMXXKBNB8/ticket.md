@@ -4,9 +4,10 @@ title = "packages.md: no conformance entry for cadetta update and section 6 trus
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
-updated = "2026-10-13T17:53:42Z"
+updated = "2026-10-16T07:19:55Z"
 scope = ["docs/spec/**"]
 +++
 
