@@ -373,11 +373,22 @@ Fixed while writing `tests/conformance/stdlib/` (ticket ~GDYVJ8R):
 - Under `tap = Vendor`, reading `tap_drill` or `drill_depth` is E002 (the
   members are absent). The Vendor `callout` is
   `fmt("{} - 6H, {} DP", thread, thread_depth)`.
-- The `engaged` check guards an invariant: `screw_length` is derived with
-  `at_least`, so no source can make it fire. It has a must-not-fire
-  fixture only.
-- A roll-up (`max`, `sum`) over a misspelled member contributes nothing and
-  fails with the internal code EVAL.
+- The `engaged` check is a defense-in-depth guard, kept on purpose.
+  `screw_length` is derived with `at_least`, so for every joint the
+  stdlib can build the check holds, and a table with no long-enough
+  length fails the lookup itself (a table error), not `engaged`. The
+  check therefore cannot fire from any source today and has a
+  must-not-fire fixture only; a must-fire fixture is not required. It
+  exists so a future `length` override argument, or a hand-edited length
+  table policy, is caught without a new check. Adding such an override
+  MUST add a must-fire fixture in the same change.
+- Owner review (2026-10-16, ~MEM04J7): the four rules above (count with
+  pattern E006, Vendor without `depth_available` E006, absent Vendor
+  members E002, the Vendor `callout` text) are confirmed as the spec.
+- A roll-up (`max`, `sum`) over a misspelled member is E002 (unknown
+  member), reported at the roll-up expression, like any other member
+  read. It must never contribute nothing silently, and the internal code
+  EVAL must not reach users. Implementation conforms in a follow-up.
 
 ## Open questions
 
