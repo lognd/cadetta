@@ -2,12 +2,12 @@
 id = "01M51ZFG091S5HEJV88NKXYVWC"
 title = "Evaluate checks ranging over part instances and reads of a part instance"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-16T09:07:52Z"
-updated = "2026-10-16T09:52:45Z"
+updated = "2026-10-16T09:52:49Z"
 scope = ["crates/cadetta-sema/src/eval/**"]
 +++
 
