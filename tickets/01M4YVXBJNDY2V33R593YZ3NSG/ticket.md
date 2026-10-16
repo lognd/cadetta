@@ -2,7 +2,7 @@
 id = "01M4YVXBJNDY2V33R593YZ3NSG"
 title = "M003 not raised: IR Fit has no real hole/shaft operand paths"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
