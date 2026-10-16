@@ -2,12 +2,12 @@
 id = "01M4YKTX2YMSXVE4CK0JAVMC41"
 title = "IR: define a Require entity shape and Project requires[]"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T01:46:40Z"
-updated = "2026-10-16T07:38:02Z"
+updated = "2026-10-16T07:38:05Z"
 scope = ["crates/cadetta-ir/**", "docs/spec/ir.md"]
 +++
 
