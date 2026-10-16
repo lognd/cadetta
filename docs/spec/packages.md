@@ -260,6 +260,11 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   dependent's `[obligations.roles]` and the upstream attestation's
   closure digest equals the current one.
 
+- Conformance (~XXKBNB8): `cadetta update` and the `obligations` output of
+  this section are tested by the `update` and `obligations` entries
+  described in `tests/conformance/README.md` (lock contents, dropped
+  records, exit codes, trust discharge and the attested-upstream row).
+
 ## 7. Diagnostics
 
 | Code | Name | Default | Meaning |
