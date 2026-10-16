@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: host executor cannot observe attach/close-only-opened without a tautological Sim, so the harness drives the real FreeCAD reference adapter (Python FreeCadAdapter open/close via DriveSessions) over a fake tool mirroring LiveBackend._attach rules. Rust corpus runner invokes it via uv run. Python chosen: no Rust-side adapter exists; solidworks is C# and CI cannot run it. Limitation: hidden is a constant (openDocument creates no view). CI rust job gains setup-uv."
+at = "2026-10-16T17:54:23Z"
+actor = "lognd"
+rev = 1
