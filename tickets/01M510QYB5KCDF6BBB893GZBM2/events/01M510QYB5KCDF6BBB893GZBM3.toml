@@ -1,0 +1,13 @@
+kind = "create"
+title = "Emit fit .hole/.shaft/.clearance as IR member values (goldens 02, Bracket)"
+type = "task"
+category = "todo"
+priority = "medium"
+points = 3
+idempotency_key = "fit-member-values"
+scope = ["crates/cadetta-sema/src/**"]
+acceptance = ["tests/golden/02-bearing-housing no longer reports fit paths missing from the IR"]
+body = "After ~VWWVNS4 fits evaluate per instance, but goldens still report bore_fit.hole/shaft/clearance, bearing_seat.* and Bracket.tube_seat.hole as 'path not in the IR': fits are not emitted as member values. Likely needs an IR-shape decision (see ~3YZ3NSG)."
+at = "2026-10-16T00:10:43Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T23:58:38Z"
+digest = "0566e50649860e1a3d15d45709b809edfe20bb9587256120b4f58cd223b41839"
+provider = "file"
+ref = "tests/conformance/obligations/s003-solver-stale.expect.json"
+size = 560
+status = "measured"
+at = "2026-10-15T23:58:38Z"
+actor = "lognd"
+rev = 1

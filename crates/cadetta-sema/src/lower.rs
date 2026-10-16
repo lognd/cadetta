@@ -321,7 +321,15 @@ impl Cx<'_> {
                 .iter()
                 .any(|m| matches!(&m.kind, ast::MemberKind::Fit(f) if f.name.name == *name))
         });
-        is_fit && !self.input.fits.iter().any(|f| f.path == *p)
+        // A fit derived inside a parameterized instance carries a per-instance path
+        // (`Unit/housing.bore_fit`); it is derived when it maps back to this definition path.
+        is_fit
+            && !self.input.fits.iter().any(|f| {
+                f.path == *p
+                    || (!f.path.parts.is_empty()
+                        && crate::eval::geom::definition_path(&self.resolver, &f.path).as_ref()
+                            == Some(p))
+            })
     }
 
     /// A read of a bare part slot (`Unit.bearing`) is the slot's own `Unit/bearing` node.
@@ -977,6 +985,49 @@ mod tests {
                 m.deps
             );
         }
+    }
+
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:tests crates/cadetta-sema/src/lower.rs::is_underived_fit kind=unit
+    #[test]
+    fn fit_derived_in_an_instance_is_a_dependency_of_the_definition() {
+        let src = "pub interface Motor {\n  pilot_dia: Length\n}\n\
+            pub ots M1: Motor {\n  pilot_dia = 12mm [-0.006mm -0.017mm]\n}\n\
+            pub model Plate(motor: Motor) {\n  fit pilot = H7 on motor.pilot_dia\n  \
+            pilot_bore = pilot.hole\n}\n\
+            pub assembly Rig {\n  part m: Motor = M1\n  part plate: Plate(motor = m)\n}\n";
+        let mut path = CanonPath::item("p", &[], "Rig");
+        path.parts.push(PartSeg {
+            name: "plate".to_owned(),
+            index: None,
+        });
+        path.members.push(MemberSeg::Name("pilot".to_owned()));
+        let spec = FitSpec::Class(Ident {
+            name: "H7".into(),
+            span: Span::default(),
+        });
+        let dim =
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        let nominal = Toleranced::symmetric(
+            dim.clone(),
+            Magnitude::new(Rational::new(12, 1000).unwrap(), 0),
+            (dim, Magnitude::new(Rational::from_int(0), 0)),
+        )
+        .unwrap();
+        let fit = FitInput {
+            path: path.clone(),
+            hole: path.clone(),
+            shaft: path,
+            result: analyze(&spec, &nominal, None, None).expect("fit"),
+            required: None,
+        };
+        let b = build(src, &[], &[fit]);
+        let bore = member(&b, "Plate", "pilot_bore");
+        assert!(
+            bore.deps.iter().any(|d| d.to_string().ends_with(".pilot")),
+            "{:?}",
+            bore.deps
+        );
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
