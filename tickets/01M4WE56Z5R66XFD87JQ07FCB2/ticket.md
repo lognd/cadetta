@@ -7,9 +7,9 @@ priority = "low"
 points = 3
 reporter = "Claude"
 created = "2026-10-14T05:28:57Z"
-updated = "2026-10-16T00:38:16Z"
-labels = ["creates:crates/cadetta-cli/tests/std_s001_gate.rs"]
-scope = ["crates/cadetta-cli/tests/std_s001_gate.rs"]
+updated = "2026-10-16T00:38:22Z"
+labels = ["creates:crates/cadetta-cli/gates/std_s001.rs"]
+scope = ["crates/cadetta-cli/Cargo.toml", "docs/spec/stdlib.md", "crates/cadetta-cli/gates/std_s001.rs"]
 
 [[acceptance]]
 text = "Given an uncited ots value in std/src, when the gate runs, then it fails"
