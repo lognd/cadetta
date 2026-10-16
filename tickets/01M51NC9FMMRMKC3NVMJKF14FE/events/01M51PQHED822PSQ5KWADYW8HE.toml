@@ -1,0 +1,23 @@
+kind = "evidence"
+captured_at = "2026-10-16T06:34:58Z"
+digest = "de90e6dc7ea359a01d1384a417513be805edc774dbc94fec9b7ab28b880c4428"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID fad36aeb-d637-4496-a48b-4029787b1c43 with nextest profile: default
+    Starting 1 test across 75 binaries (1718 tests skipped)
+        PASS [   0.161s] cadetta::lint_gaps_d001_d002 d002_quiet_for_the_authored_source_of_a_fit_side
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.164s] 1 test run: 1 passed, 1718 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta::lint_gaps_d001_d002 d002_quiet_for_the_authored_source_of_a_fit_side"
+size = 573
+status = "measured"
+test_count = 1
+tests_digest = "3e1a17a3930061e02a86ebe9e71006ff23c9fc1d93c7602bce675fc5c3b25621"
+at = "2026-10-16T06:34:58Z"
+actor = "lognd"
+rev = 1
