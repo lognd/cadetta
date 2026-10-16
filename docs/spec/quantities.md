@@ -380,6 +380,21 @@ and adds `sqrt(a^2 + b^2)` for the coefficients `a` of `u` and `b` of
 zero and otherwise outward-widened and conservative. Treating the pair
 as two independent terms is never unsound, only looser.
 
+Decided in implementation (`cadetta-units` `Affine`): disc variables
+live in their own map of `VarId -> (a, b)` beside the box terms, rather
+than as a tagged term enum, so every existing box-only accessor and
+caller is unchanged and the form's radius is `slack + sum |c_i| +
+sum sqrt(a^2 + b^2)`. `Affine::disc` builds `center + a*u + b*v`;
+`disc_coefficients` reads a pair. Sum and difference combine pairs
+componentwise (a pair cancels when both coefficients reach zero), negation
+and exact scaling act on both coefficients, and the nonlinear fallbacks
+(product, quotient) read the bounds and drop the pair into the hull as
+before. The disc radius is exact when a coefficient is zero or
+`a^2 + b^2` is a rational square; otherwise it is the smallest multiple of
+`1 / (den * 2^32)` not below the root, and `is_conservative` reports it.
+A `VarId` is a box or a disc variable, never both. The IR needs no change:
+the two coefficients serialise as the `.u` and `.v` terms (ir.md).
+
 Decided in implementation: "the same affine form" means structurally
 equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`
 with differing slack are not detected and use the ordinary product. The

@@ -220,6 +220,7 @@ impl Toleranced {
             dim: self.dim.clone(),
             center: add(&self.nominal, &mid_dev)?,
             terms,
+            discs: BTreeMap::new(),
             slack: Magnitude::new(Rational::from_int(0), 0),
             conservative: false,
         })
@@ -230,11 +231,20 @@ impl Toleranced {
 ///
 /// `slack` is a non-negative symmetric radius from nonlinear fallbacks; it
 /// is independent of every variable, so it only ever grows.
+///
+/// Besides the box variables `terms` (each `e_i` in `[-1, 1]`), a form may
+/// carry disc variables `discs`: a pair `(u, v)` with `u^2 + v^2 <= 1`
+/// contributing `a*u + b*v` (quantities.md 5.4, a position tolerance). They
+/// live in a separate map so box-only callers are untouched; a [`VarId`]
+/// is either a box or a disc variable, never both (the registry allocates
+/// distinct ids).
+// frob:ticket 01M50C0NA43G0H8N5YSRDMWEB8
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Affine {
     dim: Dim,
     center: Magnitude,
     terms: BTreeMap<VarId, Magnitude>,
+    discs: BTreeMap<VarId, (Magnitude, Magnitude)>,
     slack: Magnitude,
     conservative: bool,
 }
@@ -257,9 +267,26 @@ impl Affine {
             dim,
             center: value,
             terms: BTreeMap::new(),
+            discs: BTreeMap::new(),
             slack: Magnitude::new(Rational::from_int(0), 0),
             conservative: false,
         }
+    }
+
+    /// `center + a*u + b*v` over the disc variable `var` (`u^2 + v^2 <= 1`).
+    ///
+    /// A pair with both coefficients zero contributes no term.
+    pub fn disc(dim: Dim, center: Magnitude, var: VarId, a: Magnitude, b: Magnitude) -> Self {
+        let mut f = Self::constant(dim, center);
+        if !(a.is_zero() && b.is_zero()) {
+            f.discs.insert(var, (a, b));
+        }
+        f
+    }
+
+    /// The `(u, v)` coefficients of disc variable `var`, if it contributes.
+    pub fn disc_coefficients(&self, var: VarId) -> Option<(&Magnitude, &Magnitude)> {
+        self.discs.get(&var).map(|(a, b)| (a, b))
     }
 
     /// The dimension of the form.
@@ -278,13 +305,19 @@ impl Affine {
     }
 
     /// True when a nonlinear fallback was used somewhere upstream.
+    ///
+    /// A disc whose radius `sqrt(a^2 + b^2)` is irrational also counts.
     pub fn is_conservative(&self) -> bool {
         self.conservative
+            || self
+                .discs
+                .values()
+                .any(|(a, b)| disc_norm(a, b).is_none_or(|(_, exact)| !exact))
     }
 
     /// True when the form has no variable terms and no slack.
     pub fn is_exact(&self) -> bool {
-        self.terms.is_empty() && self.slack.is_zero()
+        self.terms.is_empty() && self.discs.is_empty() && self.slack.is_zero()
     }
 
     fn radius(&self) -> Result<Magnitude, ToleranceError> {
@@ -296,6 +329,10 @@ impl Affine {
                 c.clone()
             };
             r = add(&r, &abs)?;
+        }
+        for (a, b) in self.discs.values() {
+            let (norm, _) = disc_norm(a, b).ok_or(ToleranceError::MixedPiExponent)?;
+            r = add(&r, &norm)?;
         }
         Ok(r)
     }
@@ -336,11 +373,29 @@ impl Affine {
         } else {
             add(&self.center, &o.center)?
         };
+        let mut discs = self.discs.clone();
+        for (v, (a, b)) in &o.discs {
+            let (a, b) = if negate {
+                (a.neg(), b.neg())
+            } else {
+                (a.clone(), b.clone())
+            };
+            let (a, b) = match discs.get(v) {
+                Some((ma, mb)) => (add(ma, &a)?, add(mb, &b)?),
+                None => (a, b),
+            };
+            if a.is_zero() && b.is_zero() {
+                discs.remove(v);
+            } else {
+                discs.insert(*v, (a, b));
+            }
+        }
         trace!(negate, "tolerance: affine combine");
         Ok(Self {
             dim: self.dim.clone(),
             center,
             terms,
+            discs,
             slack: add(&self.slack, &o.slack)?,
             conservative: self.conservative || o.conservative,
         })
@@ -352,6 +407,11 @@ impl Affine {
             dim: self.dim.clone(),
             center: self.center.neg(),
             terms: self.terms.iter().map(|(v, c)| (*v, c.neg())).collect(),
+            discs: self
+                .discs
+                .iter()
+                .map(|(v, (a, b))| (*v, (a.neg(), b.neg())))
+                .collect(),
             slack: self.slack.clone(),
             conservative: self.conservative,
         }
@@ -372,6 +432,12 @@ impl Affine {
                 .iter()
                 .map(|(v, c)| (*v, c.mul(k)))
                 .filter(|(_, c)| !c.is_zero())
+                .collect(),
+            discs: self
+                .discs
+                .iter()
+                .map(|(v, (a, b))| (*v, (a.mul(k), b.mul(k))))
+                .filter(|(_, (a, b))| !(a.is_zero() && b.is_zero()))
                 .collect(),
             slack: self.slack.mul(&abs),
             conservative: self.conservative,
@@ -423,6 +489,7 @@ impl Affine {
             dim,
             center: add(&lo, &hi)?.mul(&half()),
             terms: BTreeMap::new(),
+            discs: BTreeMap::new(),
             slack: sub(&hi, &lo)?.mul(&half()),
             conservative: true,
         })
@@ -492,6 +559,45 @@ impl Affine {
         debug!("tolerance: trig is inexact and conservative");
         Ok(outward(mn, mx))
     }
+}
+
+/// `sqrt(a^2 + b^2)` as an upper bound, and whether it is exact.
+///
+/// Exact when either coefficient is zero or the sum is a rational square;
+/// otherwise the smallest multiple of `1 / (den * 2^32)` not below the root,
+/// so the bound never undershoots. `None` when `a`, `b` mix `pi` exponents.
+fn disc_norm(a: &Magnitude, b: &Magnitude) -> Option<(Magnitude, bool)> {
+    use num_bigint::BigInt;
+    let abs = |m: &Magnitude| {
+        if sign(m) == Ordering::Less {
+            m.neg()
+        } else {
+            m.clone()
+        }
+    };
+    if a.is_zero() {
+        return Some((abs(b), true));
+    }
+    if b.is_zero() {
+        return Some((abs(a), true));
+    }
+    let s = add(&a.mul(a), &b.mul(b)).ok()?;
+    let k = s.pi_exp() / 2;
+    let (n, d) = (s.rational().numer(), s.rational().denom());
+    let (rn, rd) = (n.sqrt(), d.sqrt());
+    if &(&rn * &rn) == n && &(&rd * &rd) == d {
+        let r = Rational::new(rn, rd).ok()?;
+        return Some((Magnitude::new(r, k), true));
+    }
+    let scale = BigInt::from(1u64 << 32);
+    let m = n * d * &scale * &scale;
+    let mut q = m.sqrt();
+    if &q * &q < m {
+        q += 1;
+    }
+    let r = Rational::new(q, d * &scale).ok()?;
+    trace!("tolerance: disc radius is an outward rational bound");
+    Some((Magnitude::new(r, k), false))
 }
 
 /// Widen an f64 interval by a few ulps so rounding never shrinks it.
@@ -587,6 +693,75 @@ mod tests {
             .unwrap()
             .to_affine(VarId(n))
             .unwrap()
+    }
+
+    fn disc(n: u32, a: Magnitude, b: Magnitude) -> Affine {
+        Affine::disc(len(), m(0, 1), VarId(n), a, b)
+    }
+
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.disc kind=unit
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.bounds kind=unit
+    #[test]
+    fn disc_bounds_use_euclidean_radius() {
+        // 3-4-5: exact and not conservative, tighter than the L1 box (7).
+        let f = disc(0, mm(3, 1), mm(4, 1));
+        assert_eq!(f.bounds().unwrap(), (mm(-5, 1), mm(5, 1)));
+        assert!(!f.is_conservative() && !f.is_exact());
+        assert_eq!(f.disc_coefficients(VarId(0)), Some((&mm(3, 1), &mm(4, 1))));
+        // one zero coefficient: exact |a|
+        let g = disc(0, mm(-3, 1), m(0, 1));
+        assert_eq!(g.bounds().unwrap(), (mm(-3, 1), mm(3, 1)));
+        assert!(!g.is_conservative());
+        // irrational radius: outward bound, conservative
+        let h = disc(0, mm(1, 1), mm(1, 1));
+        let (lo, hi) = h.bounds().unwrap();
+        assert!(h.is_conservative());
+        assert!(
+            hi.to_f64() >= 2f64.sqrt() / 1000.0 && hi.to_f64() < 1.0000001 * 2f64.sqrt() / 1000.0
+        );
+        assert_eq!(lo, hi.neg());
+        // all-zero pair carries no term
+        assert!(disc(0, m(0, 1), m(0, 1)).is_exact());
+    }
+
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.add kind=unit
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.neg kind=unit
+    #[test]
+    fn disc_terms_combine_cancel_and_scale() {
+        let f = disc(0, mm(3, 1), mm(4, 1));
+        assert!(f.sub(&f).unwrap().is_exact());
+        let twice = f.add(&f).unwrap();
+        assert_eq!(
+            twice.disc_coefficients(VarId(0)),
+            Some((&mm(6, 1), &mm(8, 1)))
+        );
+        assert_eq!(twice.bounds().unwrap(), (mm(-10, 1), mm(10, 1)));
+        assert_eq!(
+            f.neg().disc_coefficients(VarId(0)),
+            Some((&mm(-3, 1), &mm(-4, 1)))
+        );
+        // scale by an exact constant, and the box term adds on top
+        let k = Affine::constant(Dim::default(), m(2, 1));
+        let s = f.mul(&k).unwrap();
+        assert_eq!(s.disc_coefficients(VarId(0)), Some((&mm(6, 1), &mm(8, 1))));
+        let boxed = Toleranced::symmetric(len(), m(0, 1), (len(), mm(1, 1)))
+            .unwrap()
+            .to_affine(VarId(1))
+            .unwrap();
+        let both = f.add(&boxed).unwrap();
+        assert_eq!(both.bounds().unwrap(), (mm(-6, 1), mm(6, 1)));
+    }
+
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.mul kind=unit
+    // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.div kind=unit
+    #[test]
+    fn disc_nonlinear_falls_back_to_hull() {
+        let f = disc(0, mm(3, 1), mm(4, 1));
+        let p = f.mul(&f).unwrap();
+        assert!(p.is_conservative() && p.disc_coefficients(VarId(0)).is_none());
+        let shifted = Affine::disc(len(), m(1, 1), VarId(0), mm(3, 1), mm(4, 1));
+        let q = shifted.div(&shifted).unwrap();
+        assert!(q.is_conservative());
     }
 
     // frob:tests crates/cadetta-units/src/tolerance.rs::Affine.sub kind=unit
