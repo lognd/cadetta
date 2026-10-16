@@ -1,0 +1,30 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T00:55:23Z"
+digest = "5f814d2ccf5b7c8ccbd4329725e1da327e836ef8b0e605ab255c05244a3fc14c"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.97s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 65dceb67-01c0-4f18-bc26-c1579995af58 with nextest profile: default
+    Starting 2 tests across 2 binaries (317 tests skipped)
+        PASS [   0.007s] cadetta-adapter locator::tests::star_divergence_fires_r012
+        PASS [   0.007s] cadetta-lint rules::r_adapter::tests::r012_fires_on_differing_values
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 2 tests run: 2 passed, 317 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint -p cadetta-adapter r012"
+size = 996
+status = "measured"
+test_count = 2
+tests_digest = "c6c14ac5255664a7ae026ecd40a6a41fd48813f46efc1341390be139df783fce"
+at = "2026-10-16T00:55:23Z"
+actor = "lognd"
+rev = 1
