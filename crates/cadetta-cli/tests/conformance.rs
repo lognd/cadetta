@@ -234,3 +234,32 @@ fn script_spawns_never_overlap_concurrent_script_writes() {
     }
     let _ = std::fs::remove_dir_all(&base);
 }
+
+// frob:ticket 01M4VQXMX3SCM7CEBW4HX96KHW
+// frob:tests crates/cadetta-cli/tests/conformance/binding.rs::display
+#[test]
+fn display_binding_fixtures_execute_and_match() {
+    // Only the `display-*` quantities fixtures are run, in a scratch corpus; the one with a
+    // fraction value (`1/3m`) is a known gap (~E3MA4MY) and is not run here.
+    let scratch =
+        std::env::temp_dir().join(format!("cadetta-display-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
+    let dest = scratch.join("quantities");
+    std::fs::create_dir_all(&dest).unwrap();
+    for entry in std::fs::read_dir(corpus_root().join("quantities")).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if file.starts_with("display-") && !file.starts_with("display-plain-exact-decimal.") {
+            std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+        }
+    }
+    drop(writing);
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), 9, "{report:?}");
+    assert!(
+        report.outcomes.values().all(|o| matches!(o, Outcome::Pass)),
+        "{report:?}"
+    );
+}

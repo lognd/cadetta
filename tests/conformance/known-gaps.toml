@@ -368,54 +368,9 @@ ticket = "~PHMB7P7J"
 reason = "needs the tool-session model of sync (host faults, restore, save, attach)"
 
 [[gap]]
-fixture = "quantities/display-fraction-spec"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in-carry"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-ft-in-denominator"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-lowest-terms"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-percent-one-decimal"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
 fixture = "quantities/display-plain-exact-decimal"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-round-ties-away"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-zero-fraction-dropped"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
-
-[[gap]]
-fixture = "quantities/display-zero-whole-dropped"
-ticket = "~HX96KHW"
-reason = "quantities binding check (display formatter) has no executor yet"
+ticket = "~E3MA4MY"
+reason = "cadetta display VALUE rejects the exact-fraction value 1/3m (decimal literals only)"
 
 [[gap]]
 fixture = "adapters/contract-no-source-write"
