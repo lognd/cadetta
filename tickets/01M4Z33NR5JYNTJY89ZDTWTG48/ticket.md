@@ -2,7 +2,8 @@
 id = "01M4Z33NR5JYNTJY89ZDTWTG48"
 title = "F002 fixture granularity contradicts language.md 3.7 (nm vs pm)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
