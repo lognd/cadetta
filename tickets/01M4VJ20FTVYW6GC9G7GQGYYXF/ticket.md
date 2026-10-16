@@ -8,7 +8,7 @@ points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
 reporter = "lognd"
 created = "2026-10-13T21:17:52Z"
-updated = "2026-10-16T23:44:11Z"
+updated = "2026-10-16T23:44:12Z"
 persona = "a designer using Helix, Zed or Neovim treesitter"
 capability = "highlight .cdt files with a tree-sitter grammar"
 outcome_text = "editors without TextMate support get accurate highlighting"
@@ -20,7 +20,7 @@ bound = true
 
 [[acceptance]]
 text = "Given editors/README.md, when read, then it documents Helix, Zed and Neovim treesitter installation of the grammar"
-bound = false
+bound = true
 +++
 
 found while working ~98FFJ8V; TextMate grammars there cannot serve Helix or Zed.
