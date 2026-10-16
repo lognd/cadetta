@@ -2,7 +2,8 @@
 id = "01M527FYENWM7V1TVCG50Z5G8J"
 title = "Import: active configuration only"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M5205ESRG3TZHSBQJSPQ1MD0"
