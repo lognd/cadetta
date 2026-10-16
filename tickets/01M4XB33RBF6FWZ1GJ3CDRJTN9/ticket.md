@@ -7,7 +7,7 @@ priority = "low"
 points = 5
 reporter = "lognd"
 created = "2026-10-14T13:54:37Z"
-updated = "2026-10-16T01:20:19Z"
+updated = "2026-10-16T01:21:07Z"
 scope = ["bindings/python/tests/test_binding_fixtures.py", "tests/conformance/bindings/**", "tests/conformance/known-gaps.toml", "tests/conformance/README.md"]
 
 [[acceptance]]
