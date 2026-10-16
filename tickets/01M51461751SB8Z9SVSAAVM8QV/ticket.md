@@ -7,7 +7,7 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T01:10:50Z"
-updated = "2026-10-16T10:27:32Z"
+updated = "2026-10-16T10:34:17Z"
 scope = ["std/src/inserts.cdt", "std/src/lib.cdt", "docs/spec/stdlib.md", "tests/conformance/stdlib/inserts-*", "crates/cadetta-syntax/tests/std_inserts.rs", "crates/cadetta-cli/src/std_embed.rs"]
 
 [[acceptance]]
