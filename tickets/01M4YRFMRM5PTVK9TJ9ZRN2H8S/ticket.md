@@ -4,9 +4,10 @@ title = "registry dependency and reserved std name should be E005 diagnostics"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T03:07:53Z"
-updated = "2026-10-15T03:07:53Z"
+updated = "2026-10-16T09:23:35Z"
 scope = ["crates/cadetta-cli/**", "tests/conformance/**", "changelog.d/**", "docs/**"]
 +++
 
