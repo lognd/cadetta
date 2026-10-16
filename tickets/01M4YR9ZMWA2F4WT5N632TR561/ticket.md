@@ -12,7 +12,7 @@ scope = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conform
 
 [[acceptance]]
 text = "Given the two corrected fixtures, when the conformance corpus runs, then both pass with no known-gaps entry"
-bound = false
+bound = true
 +++
 
 Found while working ~X1PF271. geometry/pattern-count-structural must-fire: extra E002 at acme.demo::Part.n. lints/w005-waiver-expiring must-fire: exit status 0, expected nonzero.
