@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at d6c1ac654815 (binding (python) (failure) https://github.com/lognd/cadetta/actions/runs/38954265658/job/117155741117; freecadcmd (live round trip) (failure) https://github.com/lognd/cadetta/actions/runs/38954265580/job/117153043323): known red base; user authorized"
+at = "2026-10-16T20:03:53Z"
+actor = "lognd"
+rev = 1
