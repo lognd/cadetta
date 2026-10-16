@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T04:37:14Z"
-updated = "2026-10-16T07:20:46Z"
+updated = "2026-10-16T07:20:47Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Given a counted part array, when a member is read with an index on a non-array part, then it is still an error"
-bound = false
+bound = true
 +++
 
 found while working ~NDGXJQ1. solvers/variants-flag-solves-alternates reads 'in load = wheel.load_rating' with 'part wheel[4]'; geom.rs through_parts rejects it ('part array; read one instance') so solve --variants cannot run. solvers.md 4.1 names wheel.load_rating as the example read. Needs a spec/sema decision: allow unindexed reads of identical instances in in-expressions (or change the fixture to wheel[0]).
