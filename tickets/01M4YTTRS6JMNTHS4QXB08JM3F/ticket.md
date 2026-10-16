@@ -2,7 +2,8 @@
 id = "01M4YTTRS6JMNTHS4QXB08JM3F"
 title = "conformance: emitters/json|csv note-emit-point need hole/shaft role from fit class (H7) for emit(mmc)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
