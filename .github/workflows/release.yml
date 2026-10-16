@@ -165,6 +165,43 @@ jobs:
           path: bindings/python/dist/*.tar.gz
           if-no-files-found: error
 
+  capi:
+    name: c abi (${{ matrix.name }})
+    needs: ci
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: linux-x86_64, os: ubuntu-latest }
+          - { name: macos-arm64, os: macos-latest }
+          - { name: windows-x86_64, os: windows-latest }
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        shell: bash
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - name: Build libcadetta_capi
+        run: cargo build --release -p cadetta-capi
+      - name: Stage the archive (library, static library, header)
+        shell: bash
+        run: |
+          mkdir -p stage/cadetta-capi
+          cp bindings/c/include/cadetta.h bindings/c/README.md stage/cadetta-capi/
+          cp target/release/libcadetta_capi.* target/release/cadetta_capi.* stage/cadetta-capi/ 2>/dev/null || true
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist-capi-${{ matrix.name }}
+          path: stage/cadetta-capi
+          if-no-files-found: error
+
   freecad:
     name: build (cadetta-freecad)
     needs: ci

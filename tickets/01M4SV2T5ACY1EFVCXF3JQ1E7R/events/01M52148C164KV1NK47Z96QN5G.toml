@@ -1,0 +1,43 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T09:31:39Z"
+digest = "de30ff65c62e47f4b46e7ad6ece8e18941128b6f20e27d29f45442cae5bdb2c7"
+exit_code = 100
+failed_tests = ["c_abi_matches_cli_json_over_the_corpus"]
+inline = '''
+   Compiling cadetta-capi v0.0.0 (<worktree>/bindings/c)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.87s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 815b6757-a29a-4460-873b-1dcff8b609c0 with nextest profile: default
+    Starting 4 tests across 2 binaries
+        PASS [   0.008s] cadetta-capi tests::null_argv_is_rejected
+        PASS [   0.010s] cadetta-capi tests::run_version_flag_and_free
+        PASS [   0.010s] cadetta-capi tests::version_matches_core
+        SLOW [> 60.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+        SLOW [>120.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+        SLOW [>180.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+        SLOW [>240.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+ TERMINATING [>300.000s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+     TIMEOUT [ 300.009s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    test c_abi_matches_cli_json_over_the_corpus has been running for over 60 seconds
+
+    (test timed out)
+
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 300.011s] 4 tests run: 3 passed, 1 timed out, 0 skipped
+     TIMEOUT [ 300.009s] cadetta-capi::conformance_parity c_abi_matches_cli_json_over_the_corpus
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-p cadetta-capi"
+size = 1585
+status = "measured"
+test_count = 4
+tests_digest = "ece7a42adba14be473436b25168f63198d1da611e2d1a70b07449b4f3f43c9a9"
+at = "2026-10-16T09:31:39Z"
+actor = "lognd"
+rev = 1

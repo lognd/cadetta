@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: single cadetta_run entry point over run_with_logging (parity by construction, JSON schemas stay the contract) plus version/free; crate sets its own lints because the workspace forbids unsafe. Parity test replays corpus check/config/eval source fixtures vs CLI; emit/solve/ack entries not replayed in this slice."
+at = "2026-10-16T09:31:24Z"
+actor = "lognd"
+rev = 1

@@ -1033,6 +1033,24 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Reads `.member` off a value held by a local (`b.bore` for `for b in bearing`).
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    fn local_field(&mut self, sc: &mut Scope, e: &Expr) -> R<Option<Val>> {
+        let ExprKind::Field(base, member) = &e.kind else {
+            return Ok(None);
+        };
+        if !matches!(
+            self.resolver.resolve_ref(&sc.ctx, base, None),
+            Ok(Resolved::Local(_))
+        ) {
+            return Ok(None);
+        }
+        let v = self.eval(sc, base)?;
+        trace!(member = %member.name, "evaluator: field of a local value");
+        self.apply_chain(v, None, std::slice::from_ref(&member.name), e.span)
+            .map(Some)
+    }
+
     fn eval_ref(&mut self, sc: &Scope, e: &Expr) -> R<Val> {
         match self.classify(sc, e)? {
             RefKind::Local(n) => sc
@@ -1349,6 +1367,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         {
             return match self.eval(sc, base)? {
                 Val::Row { table, row } => self.row_field(&table, row, member, span),
+                // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+                c @ Val::Component(_) => {
+                    self.apply_chain(c, None, std::slice::from_ref(&member.name), span)
+                }
                 _ => Err(diag(
                     "EVAL",
                     span,
@@ -1371,7 +1393,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Bool(b) => Ok(Val::Bool(*b)),
             ExprKind::Paren(inner) => self.eval(sc, inner),
             ExprKind::As(inner, _) => self.eval(sc, inner),
-            ExprKind::Path(_) | ExprKind::Field(..) => self.eval_ref(sc, e),
+            ExprKind::Path(_) | ExprKind::Field(..) => match self.local_field(sc, e)? {
+                Some(v) => Ok(v),
+                None => self.eval_ref(sc, e),
+            },
             ExprKind::Unary(UnOp::Neg, x) => match self.eval(sc, x)? {
                 Val::Quantity(q) => Ok(Val::Quantity(q.neg())),
                 Val::Inexact(i) => Ok(Val::Inexact(func::inex_neg(&i))),
