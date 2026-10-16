@@ -1739,6 +1739,17 @@ fn evaluate_stages(
             d.module.as_ref(),
         ));
     }
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    for d in &outcome.diagnostics {
+        tracing::debug!(code = d.code, "pipeline: process rule problem surfaced");
+        out.extend(located(
+            d.code,
+            sema_severity(d.severity),
+            d.message.clone(),
+            d.span,
+            d.module.as_ref(),
+        ));
+    }
     for r in &evaluation.checks {
         if r.obligation && scope.contains(&r.path.package) {
             analysis
@@ -2194,5 +2205,52 @@ mod tests {
     fn variant_with_its_own_recorded_result_is_not_s006() {
         let analysis = analyze(&variant_project("solved", "Heavy", true), &[0]);
         assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    /// A one-package project holding a process whose `hole` rule is `rule`, applied to a member.
+    fn process_rule_project(tag: &str, rule: &str) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-prule-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            format!(
+                "process Fdm {{\n  rule hole(d: Length) -> Length = {rule}\n}}\n\
+                 model Case {{\n  #![process(Fdm)]\n  insert_hole = 3.4mm #[hole]\n  \
+                 check drawn_ok: insert_hole.drawn > 3mm\n}}\n"
+            ),
+        )
+        .unwrap();
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze
+    #[test]
+    fn process_rule_changing_the_kind_is_an_eval_error() {
+        let analysis = analyze(&process_rule_project("kind", "d * 2mm"), &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "EVAL")
+            .expect("EVAL for a rule that changes the argument kind");
+        assert!(d.message.contains("changes the kind"), "{}", d.message);
+    }
+
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze
+    #[test]
+    fn process_rule_keeping_the_kind_has_no_eval_error() {
+        let analysis = analyze(&process_rule_project("keep", "d + 0.2mm"), &[0]);
+        assert!(
+            analysis.diagnostics.iter().all(|d| d.code != "EVAL"),
+            "{:?}",
+            analysis.diagnostics
+        );
     }
 }
