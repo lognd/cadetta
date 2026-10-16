@@ -7,13 +7,13 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T08:12:30Z"
-updated = "2026-10-16T11:01:09Z"
+updated = "2026-10-16T11:01:10Z"
 labels = ["conformance"]
 scope = ["crates/cadetta-cli/src/pipeline.rs", "tests/conformance/solvers/s006-primary-missing-is-not-s006*", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
 text = "A solver with no recorded primary result raises no S006 for its variants; s006-primary-missing-is-not-s006 passes and its gap is removed"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A project whose solver has no primary result raises no S006 for its alternates (the outputs are unsolved, C002 on reads)"
