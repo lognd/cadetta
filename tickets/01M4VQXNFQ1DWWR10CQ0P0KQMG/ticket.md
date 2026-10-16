@@ -2,7 +2,7 @@
 id = "01M4VQXNFQ1DWWR10CQ0P0KQMG"
 title = "sw-equations emit details: native pins, was comments, mangle prefix, order, comment shapes, native unit suffix, N005/R013 mangle checks"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SPWH74K9QQS72Z9YMTPD72"
