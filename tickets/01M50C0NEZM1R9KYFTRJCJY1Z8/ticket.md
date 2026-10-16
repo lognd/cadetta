@@ -2,12 +2,12 @@
 id = "01M50C0NEZM1R9KYFTRJCJY1Z8"
 title = "Syntax/sema/IR: [position d] on Point2, E006 rules, Point.position and .u/.v schema"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-15T18:09:51Z"
+updated = "2026-10-16T04:33:37Z"
 idempotency_key = "v2k95h5-slice-frontend"
 scope = ["crates/cadetta-syntax/src/**"]
 
