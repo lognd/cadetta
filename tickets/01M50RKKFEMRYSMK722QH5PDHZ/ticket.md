@@ -4,9 +4,10 @@ title = "Fix s006 solver fixtures: S008 cite and array-part solver input"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-15T21:48:32Z"
-updated = "2026-10-15T21:48:32Z"
+updated = "2026-10-16T07:47:37Z"
 scope = ["tests/conformance/solvers/s006-*/**,tests/conformance/solvers/s006-*,tests/conformance/known-gaps.toml"]
 +++
 
