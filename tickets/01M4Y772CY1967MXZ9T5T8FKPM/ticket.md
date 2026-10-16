@@ -7,7 +7,7 @@ priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T22:06:07Z"
-updated = "2026-10-16T01:55:41Z"
+updated = "2026-10-16T01:56:53Z"
 scope = ["crates/cadetta-sema/src/fitderive.rs", "crates/cadetta-sema/src/lower.rs", "docs/spec/language.md"]
 
 [[acceptance]]
