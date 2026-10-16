@@ -14,7 +14,7 @@ scope = ["crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "
 
 [[acceptance]]
 text = "Given a value and a display spec, when 'cadetta display VALUE SPEC' runs, then it prints the formatted text (JSON schema cadetta.display/1) and bad input exits 2"
-bound = false
+bound = true
 +++
 
 found while working ~Z48GXKX. quantities.md 6; cadetta-units display exists but no surface. display-* fixtures are binding-call JSON {call,value,spec} with expected result; the runner needs to adopt that form.
