@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 9",
+  "rule": "fmt-one-final-newline",
+  "kind": "source",
+  "entry": "fmt --check",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 1
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0
+  }
+}

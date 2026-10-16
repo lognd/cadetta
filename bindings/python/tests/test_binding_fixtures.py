@@ -43,8 +43,7 @@ SIDES = ("must-fire", "must-not-fire")
 IGNORED_KEYS = {"diagnostics", "why", "note"}
 # must_fire blocks that describe a violating binding (see module docstring).
 # "name/side" -> follow-up ticket: the binding genuinely diverges from the fixture.
-KNOWN_DIVERGENCES = {
-}
+KNOWN_DIVERGENCES = {}
 VIOLATIONS = {"cli-only-verbs", "query-parity-with-cli", "solver-decimal-strings"}
 
 Obs = dict[str, Any]
