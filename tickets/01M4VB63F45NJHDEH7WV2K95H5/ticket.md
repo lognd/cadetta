@@ -8,7 +8,7 @@ points = 8
 parent = "01M4VB1MJC8NTMD6AAZR5Y5J08"
 reporter = "lognd"
 created = "2026-10-13T19:17:46Z"
-updated = "2026-10-16T08:19:38Z"
+updated = "2026-10-16T08:20:16Z"
 persona = "design engineer"
 capability = "tolerance hole patterns by true position as drawings do"
 outcome_text = "aligned checks match the drawing and are exact for round zones"
@@ -37,7 +37,7 @@ target = "01M50C0NEZM1R9KYFTRJCJY1Z8"
 
 [[acceptance]]
 text = "Given [position d] after a Point2 value or array, when evaluated, then each point gets one disc variable entering x and y with coefficient d/2, and the IR carries paired .u/.v terms and Point.position (geometry.md 3.1; quantities.md 5.4; ir.md 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given position on a Point3, combined with a coordinate tolerance, or with a toleranced generator member, when checked, then E006 (geometry.md 3.1)"
