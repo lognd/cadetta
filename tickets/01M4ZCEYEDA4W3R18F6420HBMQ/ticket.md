@@ -2,12 +2,12 @@
 id = "01M4ZCEYEDA4W3R18F6420HBMQ"
 title = "solve --variants fixtures fail with EVAL at Rover.sizing; runner observes runs via marker file"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T08:57:02Z"
-updated = "2026-10-16T15:08:06Z"
+updated = "2026-10-16T15:08:11Z"
 scope = ["crates/**"]
 +++
 
