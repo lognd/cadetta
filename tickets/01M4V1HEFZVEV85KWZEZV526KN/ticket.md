@@ -2,7 +2,7 @@
 id = "01M4V1HEFZVEV85KWZEZV526KN"
 title = "Quantities: emit point not observable in conformance"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
