@@ -146,10 +146,7 @@ pub fn find_config(start: &Path) -> Result<PathBuf, ProjectError> {
                 tracing::debug!(path = %candidate.display(), "skipping cadetta.toml without a project table");
             }
             Err(source) => {
-                return Err(ProjectError::Config {
-                    path: candidate,
-                    source,
-                });
+                return Err(config_error(candidate, source));
             }
         }
     }
@@ -334,10 +331,17 @@ fn load_dependencies(
 
 /// Load a `cadetta.toml`, mapping the error with its path.
 fn load_config(path: &Path) -> Result<Config, ProjectError> {
-    Config::load(path).map_err(|source| ProjectError::Config {
-        path: path.to_owned(),
-        source,
-    })
+    Config::load(path).map_err(|source| config_error(path.to_owned(), source))
+}
+
+/// Map a config failure to a project error: an unloadable package or dependency is E005
+/// (packages.md 1), any other config problem is a usage error.
+// frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+fn config_error(path: PathBuf, source: ConfigError) -> ProjectError {
+    match source {
+        ConfigError::Unloadable { .. } => e005(&path, source.to_string()),
+        source => ProjectError::Config { path, source },
+    }
 }
 
 impl PackageDir {
@@ -453,6 +457,21 @@ mod tests {
         let pkg = PackageDir::load(&root).unwrap();
         let rels: Vec<_> = pkg.modules.iter().map(|m| m.rel_path.as_str()).collect();
         assert_eq!(rels, ["a.cdt", "drive/motor.cdt", "z.cdt"]);
+    }
+
+    // frob:tests crates/cadetta-cli/src/project.rs::config_error
+    #[test]
+    fn reserved_name_and_registry_dependency_are_e005() {
+        let root = scratch();
+        put(&root, "cadetta.toml", "[package]\nname = \"std\"\n");
+        put(&root, "src/a.cdt", "");
+        assert_eq!(code(PackageDir::load(&root).unwrap_err()), "E005");
+        put(
+            &root,
+            "cadetta.toml",
+            "[package]\nname = \"a.b\"\n[dependencies]\n\"x.y\" = \"1\"\n",
+        );
+        assert_eq!(code(PackageDir::load(&root).unwrap_err()), "E005");
     }
 
     // frob:tests crates/cadetta-cli/src/project.rs::PackageDir

@@ -36,6 +36,16 @@ pub enum ConfigError {
     /// Both a `[package]` and a `[workspace]` table are present.
     #[error("cadetta.toml has both a [package] and a [workspace] table; use one")]
     BothProjectKinds,
+    /// A package or dependency the loader must refuse: the reserved name `std`, or a
+    /// registry-only dependency (packages.md 1); reported as E005 (missing-package).
+    // frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+    #[error("E005 missing-package: `{key}`: {reason}")]
+    Unloadable {
+        /// The dotted key path of the offending value.
+        key: String,
+        /// Why the loader refuses it.
+        reason: String,
+    },
     /// A key parsed but its value is not acceptable.
     #[error("invalid value for `{key}`: {reason}")]
     Invalid {
@@ -51,6 +61,13 @@ fn invalid<T>(key: impl Into<String>, reason: impl Into<String>) -> Result<T, Co
     let (key, reason) = (key.into(), reason.into());
     tracing::warn!(%key, %reason, "rejecting configuration value");
     Err(ConfigError::Invalid { key, reason })
+}
+
+/// Build a [`ConfigError::Unloadable`] result (E005 once it reaches the project loader).
+fn unloadable<T>(key: impl Into<String>, reason: impl Into<String>) -> Result<T, ConfigError> {
+    let (key, reason) = (key.into(), reason.into());
+    tracing::warn!(%key, %reason, "refusing unloadable package or dependency");
+    Err(ConfigError::Unloadable { key, reason })
 }
 
 /// `[lint] fail_on`: the lowest severity that makes a command exit 1.
@@ -187,6 +204,48 @@ pub struct Dependency {
     /// Roles whose upstream attestations discharge dependent obligations.
     #[serde(default)]
     pub trust: Vec<String>,
+}
+
+/// A `[dependencies]` value: a table, or a bare version string (a registry source, E005).
+// frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+struct DependencyEntry(Dependency);
+
+impl<'de> Deserialize<'de> for DependencyEntry {
+    /// Accept a table or a bare version string; unknown table keys are still named.
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct Visitor;
+        impl<'de> serde::de::Visitor<'de> for Visitor {
+            type Value = DependencyEntry;
+
+            fn expecting(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.write_str("a dependency table or a version string")
+            }
+
+            fn visit_str<E: serde::de::Error>(self, version: &str) -> Result<Self::Value, E> {
+                Ok(DependencyEntry(Dependency {
+                    version: Some(version.to_owned()),
+                    ..Dependency::default()
+                }))
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                map: A,
+            ) -> Result<Self::Value, A::Error> {
+                Dependency::deserialize(serde::de::value::MapAccessDeserializer::new(map))
+                    .map(DependencyEntry)
+            }
+        }
+        deserializer.deserialize_any(Visitor)
+    }
+}
+
+/// Deserialize `[dependencies]`, letting a bare version string stand for a registry source.
+fn deserialize_dependencies<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<BTreeMap<String, Dependency>, D::Error> {
+    let raw = BTreeMap::<String, DependencyEntry>::deserialize(deserializer)?;
+    Ok(raw.into_iter().map(|(k, v)| (k, v.0)).collect())
 }
 
 /// `[workspace]` (packages.md 1).
@@ -515,7 +574,7 @@ pub struct Config {
     #[serde(default)]
     pub workspace: Option<Workspace>,
     /// `[dependencies]` by package name.
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_dependencies")]
     pub dependencies: BTreeMap<String, Dependency>,
     /// `[defaults]`: qualified path to value, lowest precedence.
     #[serde(default)]
@@ -647,8 +706,17 @@ impl Config {
     }
 }
 
+/// The package name reserved for the standard library (packages.md 1).
+const RESERVED_NAME: &str = "std";
+
 /// Validate a `[package]` table.
 fn validate_package(package: &Package) -> Result<(), ConfigError> {
+    if package.name.as_deref() == Some(RESERVED_NAME) {
+        return unloadable(
+            "package.name",
+            "the name `std` is reserved for the standard library",
+        );
+    }
     if let Some(name) = &package.name
         && !is_valid_package_name(name)
     {
@@ -682,11 +750,22 @@ fn validate_package(package: &Package) -> Result<(), ConfigError> {
 /// Validate one `[dependencies]` entry.
 fn validate_dependency(name: &str, dep: &Dependency) -> Result<(), ConfigError> {
     let key = format!("dependencies.{name}");
+    if name == RESERVED_NAME {
+        return unloadable(
+            &key,
+            "the dependency name `std` is reserved for the standard library",
+        );
+    }
     if !is_valid_package_name(name) {
         return invalid(&key, "the key is not a valid package name or is reserved");
     }
     match (&dep.path, &dep.git) {
-        (None, None) => return invalid(&key, "needs a `path` or a `git` source"),
+        (None, None) => {
+            return unloadable(
+                &key,
+                "needs a `path` or a `git` source; a registry source is unsupported (OQ-19)",
+            );
+        }
         (Some(_), Some(_)) => return invalid(&key, "`path` and `git` are exclusive"),
         _ => {}
     }
@@ -705,7 +784,7 @@ fn validate_dependency(name: &str, dep: &Dependency) -> Result<(), ConfigError> 
 
 /// Whether `name` is `lower.dotted` (segments of `[a-z][a-z0-9_]*`) and not `std`.
 pub fn is_valid_package_name(name: &str) -> bool {
-    name != "std"
+    name != RESERVED_NAME
         && !name.is_empty()
         && name.split('.').all(|seg| {
             let mut chars = seg.chars();
@@ -1054,6 +1133,22 @@ native_unit = "mm"
             assert!(
                 Config::parse(&format!("[package]\n[dependencies]\n{bad}\n")).is_err(),
                 "{bad}"
+            );
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/config.rs::validate_dependency
+    // frob:tests crates/cadetta-cli/src/config.rs::validate_package
+    #[test]
+    fn reserved_and_registry_sources_are_unloadable() {
+        for text in [
+            "[package]\nname = \"std\"\n",
+            "[package]\n[dependencies]\nstd = { path = \"a\" }\n",
+            "[package]\n[dependencies]\n\"x.y\" = \"1\"\n",
+        ] {
+            assert!(
+                matches!(Config::parse(text), Err(ConfigError::Unloadable { .. })),
+                "{text}"
             );
         }
     }

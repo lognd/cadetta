@@ -38,16 +38,6 @@ ticket = "~6K58FR1"
 reason = "use std:: imports do not resolve yet"
 
 [[gap]]
-fixture = "packages/e005-registry-dependency-rejected"
-ticket = "~ZRN2H8S"
-reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
-
-[[gap]]
-fixture = "packages/e005-std-name-reserved"
-ticket = "~ZRN2H8S"
-reason = "registry dependency and reserved std name fail as config errors (exit 2) instead of E005"
-
-[[gap]]
 fixture = "packages/pub-use-private-item-not-reexported"
 ticket = "~992PZ41"
 reason = "check does not load dependencies (E012-E014, cross-package use)"
