@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:35:33Z"
-updated = "2026-10-16T12:10:27Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml"]
+updated = "2026-10-16T12:10:29Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/known-gaps.toml", "crates/cadetta-cli/tests/conformance/run.rs"]
 
 [[acceptance]]
 text = "language/e001-waive-date must-not-fire passes; gap entry removed"
