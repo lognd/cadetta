@@ -801,3 +801,8 @@ reason = "fractional part count w[2.5] yields no Q009"
 fixture = "quantities/emit-point-inherited"
 ticket = "~AQ8KSJA"
 reason = "a pure reference does not inherit its referent's emit point yet (alias emitted at nominal)"
+
+[[gap]]
+fixture = "language/e001-waive-date"
+ticket = "~2VJQFPG"
+reason = "a waive with a valid future expiry does not suppress C001 on the check in the check entry"

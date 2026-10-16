@@ -1140,6 +1140,37 @@
         }
       ]
     },
+    "Require": {
+      "additionalProperties": false,
+      "description": "A require obligation and its verdicts; never suppressed.",
+      "properties": {
+        "citation": {
+          "$ref": "#/$defs/CiteRef"
+        },
+        "conservative": {
+          "type": "boolean"
+        },
+        "expr": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "path": {
+          "$ref": "#/$defs/Path"
+        },
+        "verdicts": {
+          "$ref": "#/$defs/Verdicts"
+        }
+      },
+      "required": [
+        "conservative",
+        "expr",
+        "path",
+        "verdicts"
+      ],
+      "type": "object"
+    },
     "Solver": {
       "additionalProperties": false,
       "description": "A solver script with its declared inputs and outputs.",
@@ -1467,6 +1498,12 @@
     },
     "package": {
       "$ref": "#/$defs/PackageId"
+    },
+    "requires": {
+      "items": {
+        "$ref": "#/$defs/Require"
+      },
+      "type": "array"
     },
     "schema": {
       "const": "cadetta.ir/1",

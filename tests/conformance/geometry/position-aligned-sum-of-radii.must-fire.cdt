@@ -1,0 +1,15 @@
+model Rail {
+  tapped: [Point2 on origin; 2] = rect_pattern(2, 1, 50mm, 0mm) [position 0.1mm]
+}
+
+model Bracket {
+  holes: [Point2 on origin; 2] = rect_pattern(2, 1, 50mm, 0mm) [position 0.1mm]
+}
+
+assembly Mount {
+  part rail: Rail
+  part bracket: Bracket
+  place rail.origin at origin
+  place bracket.origin at origin
+  check al: aligned(bracket.holes, rail.tapped, 0.09mm) "holes line up"
+}

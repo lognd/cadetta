@@ -463,6 +463,19 @@ fn defs() -> Map<String, J> {
         ),
     ));
     d.push((
+        "Require",
+        obj(
+            "A require obligation and its verdicts; never suppressed.",
+            &[
+                ("path", r("Path")),
+                ("expr", s()),
+                ("verdicts", r("Verdicts")),
+                ("conservative", b()),
+            ],
+            &[("message", s()), ("citation", r("CiteRef"))],
+        ),
+    ));
+    d.push((
         "Solver",
         obj(
             "A solver script with its declared inputs and outputs.",
@@ -698,6 +711,7 @@ pub fn schema_value() -> J {
             ("instances", arr(r("ObservedInstance"))),
             ("interfaces", arr(r("Interface"))),
             ("tables", arr(r("Table"))),
+            ("requires", arr(r("Require"))),
             ("waivers", arr(r("Waiver"))),
             ("digest", r("Digest")),
         ],
@@ -808,8 +822,8 @@ fn diff_props(a: &Map<String, J>, b: &Map<String, J>) -> Change {
 mod tests {
     use super::*;
     use crate::entities::{
-        Cell, Interface, InterfaceBound, InterfaceMember, Process, ProcessRule, Table, TableCol,
-        TableRow, Waiver,
+        Cell, Interface, InterfaceBound, InterfaceMember, Process, ProcessRule, Require, Table,
+        TableCol, TableRow, Waiver,
     };
     use crate::model::*;
     use crate::path::{Path, PathContext};
@@ -1189,6 +1203,27 @@ mod tests {
         assert_eq!(j["tables"][0]["path"], "a.b::T");
         assert_eq!(j["waivers"][0]["code"], "R001");
         assert_eq!(validate(None, &j), Vec::<String>::new());
+    }
+
+    // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit
+    // frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+    #[test]
+    fn project_carries_and_validates_requires() {
+        let mut pr = full_project();
+        let bare = serde_json::to_value(&pr).unwrap();
+        assert!(bare.get("requires").is_none(), "empty requires omitted");
+        let mut r = Require::new(p("a.b::C.budget"), "mass <= 6kg");
+        r.message = Some("under budget".into());
+        r.citation = Some(CiteRef::item("a.b::spec", Some("REQ-12".into())));
+        r.verdicts.primary = Some(VerdictState::Pass);
+        pr.requires.push(r.clone());
+        let j = serde_json::to_value(&pr).unwrap();
+        assert_eq!(j["requires"][0]["path"], "a.b::C.budget");
+        assert_eq!(j["requires"][0]["message"], "under budget");
+        assert!(j["requires"][0].get("waived_for").is_none());
+        assert_eq!(validate(None, &j), Vec::<String>::new());
+        let back = crate::decode::decode_project(&j).unwrap();
+        assert_eq!(back.requires, vec![r]);
     }
 
     // frob:tests crates/cadetta-ir/src/schema.rs::schema_value kind=unit

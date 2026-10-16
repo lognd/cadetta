@@ -524,6 +524,10 @@ impl Serialize for Project {
         if !self.tables.is_empty() {
             m.serialize_entry("tables", &self.tables)?;
         }
+        // frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+        if !self.requires.is_empty() {
+            m.serialize_entry("requires", &self.requires)?;
+        }
         if !self.waivers.is_empty() {
             m.serialize_entry("waivers", &self.waivers)?;
         }

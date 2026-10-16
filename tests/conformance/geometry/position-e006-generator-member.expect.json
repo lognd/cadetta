@@ -1,0 +1,20 @@
+{
+  "spec": "1.5",
+  "doc": "geometry",
+  "section": "geometry.md 3.1",
+  "rule": "E006",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "E006",
+        "severity": "error"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "position cannot combine with a toleranced generator member"
+}
