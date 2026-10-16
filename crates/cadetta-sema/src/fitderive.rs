@@ -6,12 +6,14 @@
 //! the required range as an IR [`Bound`]. A fit whose operands are not evaluated values (a
 //! component argument of the definition, an unevaluated member) is skipped with a log line; a
 //! fit of a parameterized component is derived again per instance (`Parent/part.fit`), reading
-//! its argument operands from the instance's evaluated members.
+//! its argument operands from the instance's evaluated members. A file-scope `fit` (no
+//! enclosing component) is derived once and lowered into the component that owns its first
+//! operand (the hole path of `a / b`, else the `on` path), under the path `Owner.fit_name`.
 
 use std::collections::BTreeMap;
 
 use cadetta_ir::model::{Bound, BoundOp, Exact};
-use cadetta_syntax::ast::{self, Component, Fit, FitSpec, MemberKind};
+use cadetta_syntax::ast::{self, Component, Fit, FitSpec, ItemKind, MemberKind};
 use cadetta_syntax::span::Span;
 use cadetta_units::{Magnitude, Role, ToleranceError, Toleranced};
 use tracing::{debug, trace, warn};
@@ -26,23 +28,55 @@ use crate::resolve::{CanonPath, Ctx, MemberSeg, PackageSrc, Resolved, Resolver};
 #[derive(Default, Debug)]
 pub struct FitRanges(BTreeMap<CanonPath, (Quant, Quant)>);
 
-fn ctx_of(package: &str, module: &[String], c: &Component) -> Ctx {
+/// The name scope of a fit: inside component `c`, or file scope when `c` is `None`.
+fn ctx_of(package: &str, module: &[String], c: Option<&Component>) -> Ctx {
     Ctx {
         package: package.to_owned(),
         module: module.to_vec(),
-        component: Some(c.name.name.clone()),
+        component: c.map(|c| c.name.name.clone()),
         locals: Vec::new(),
     }
 }
 
-fn fit_path(package: &str, module: &[String], c: &Component, f: &Fit) -> CanonPath {
-    let mut p = CanonPath::item(package, module, &c.name.name);
-    p.members.push(MemberSeg::Name(f.name.name.clone()));
+/// The key a fit's required range is stored under: `Component.fit`, or `module::fit` at file scope.
+fn fit_path(package: &str, module: &[String], c: Option<&Component>, f: &Fit) -> CanonPath {
+    let owner = c.map_or(f.name.name.as_str(), |c| c.name.name.as_str());
+    let mut p = CanonPath::item(package, module, owner);
+    if c.is_some() {
+        p.members.push(MemberSeg::Name(f.name.name.clone()));
+    }
     p
 }
 
-/// One fit member with where it lives: package, module path, component, fit and member span.
-type FitSite<'a> = (&'a str, &'a [String], &'a Component, &'a Fit, Span);
+/// One fit with where it lives: package, module path, component (`None` at file scope), fit and span.
+type FitSite<'a> = (&'a str, &'a [String], Option<&'a Component>, &'a Fit, Span);
+
+/// The path a fit is derived under: its range key, or `Owner.fit` for a file-scope fit.
+///
+/// A file-scope fit is owned by the component its first operand names; `None` when that operand
+/// is not a member of a component.
+fn definition_path(resolver: &Resolver, site: &FitSite) -> Option<CanonPath> {
+    let (pkg, module, c, f, _) = *site;
+    if c.is_some() {
+        return Some(fit_path(pkg, module, c, f));
+    }
+    let first = match &f.spec {
+        FitSpec::Paths(a, _) => a,
+        _ => &f.on,
+    };
+    match resolver.resolve_path(&ctx_of(pkg, module, None), first, None) {
+        Ok(Resolved::Member { path, .. }) => {
+            let mut p = path.item_only();
+            p.members.push(MemberSeg::Name(f.name.name.clone()));
+            debug!(fit = %p, "fits: file-scope fit owned by its first operand's component");
+            Some(p)
+        }
+        _ => {
+            debug!(fit = %f.name.name, "fits: file-scope fit operand is not a component member; fit skipped");
+            None
+        }
+    }
+}
 
 /// An F001, F002 or F003 finding about one fit, for the F lift (lints.md F).
 // frob:ticket 01M4TRKDAC6FR44KEW64H7PTZX
@@ -58,18 +92,23 @@ pub struct FitFinding {
     pub span: Span,
 }
 
-/// Every fit member of every component, with the component and its location.
+/// Every fit: each component's `fit` members, then each file-scope `fit` item, with locations.
 fn each_fit<'a>(packages: &'a [PackageSrc<'a>]) -> impl Iterator<Item = FitSite<'a>> {
     packages.iter().flat_map(|p| {
         p.modules.iter().flat_map(move |m| {
-            m.file.components().flat_map(move |c| {
+            let in_components = m.file.components().flat_map(move |c| {
                 c.members.iter().filter_map(move |mem| match &mem.kind {
                     MemberKind::Fit(f) => {
-                        Some((p.name.as_str(), m.path.as_slice(), c, f, mem.span))
+                        Some((p.name.as_str(), m.path.as_slice(), Some(c), f, mem.span))
                     }
                     _ => None,
                 })
-            })
+            });
+            let file_scope = m.file.items().filter_map(move |i| match &i.kind {
+                ItemKind::Fit(f) => Some((p.name.as_str(), m.path.as_slice(), None, f, i.span)),
+                _ => None,
+            });
+            in_components.chain(file_scope)
         })
     })
 }
@@ -221,12 +260,13 @@ fn derive_one(
     resolver: &Resolver,
     evaluation: &Evaluation,
     ranges: &FitRanges,
-    (pkg, module, c, f, span): FitSite,
+    site: FitSite,
     inst: Option<&InstanceSite>,
     findings: &mut Vec<FitFinding>,
 ) -> Option<FitInput> {
+    let (pkg, module, c, f, span) = site;
     let ctx = ctx_of(pkg, module, c);
-    let def_path = fit_path(pkg, module, c, f);
+    let def_path = definition_path(resolver, &site)?;
     // A per-instance fit lives under the instance prefix; ranges and findings stay on the definition.
     let path = match inst {
         Some(i) => {
@@ -244,7 +284,7 @@ fn derive_one(
         }
         _ => (operand(resolver, evaluation, &ctx, &f.on, inst)?, None),
     };
-    let required = ranges.0.get(&def_path);
+    let required = ranges.0.get(&fit_path(pkg, module, c, f));
     let range = required.map(|(l, h)| Ok::<_, ToleranceError>((toleranced(l)?, toleranced(h)?)));
     let range = match range.transpose() {
         Ok(r) => r,
@@ -341,11 +381,14 @@ pub fn derive_fits_with_findings(
     let mut findings = Vec::new();
     let mut fits = Vec::new();
     for site in each_fit(packages) {
-        let callee = CanonPath::item(site.0, site.1, &site.2.name.name);
+        let callee = site
+            .2
+            .map(|c| CanonPath::item(site.0, site.1, &c.name.name));
         let own = derive_one(resolver, evaluation, ranges, site, None, &mut findings);
+        // Only a component's own fits are derived per instance; a file-scope fit is derived once.
         let per_instance = sites
             .iter()
-            .filter(|i| i.callee == callee)
+            .filter(|i| Some(&i.callee) == callee.as_ref())
             .filter_map(|i| derive_one(resolver, evaluation, ranges, site, Some(i), &mut findings));
         fits.extend(own.into_iter().chain(per_instance));
     }
@@ -438,5 +481,31 @@ mod tests {
              assembly Top { part a: Plate }\n",
         );
         assert!(fits.is_empty(), "{fits:?}");
+    }
+
+    // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits kind=unit
+    // frob:ticket 01M4Y772CY1967MXZ9T5T8FKPM
+    #[test]
+    fn file_scope_fit_is_derived_under_its_first_operands_component() {
+        let fits = derive(
+            "model Bore { d = 22mm [+0.021mm -0] }\n\
+             model Pin { d = 22mm [+0.0mm -0.009mm] }\n\
+             fit press = Bore.d / Pin.d [-0.05mm .. 0.05mm]\n",
+        );
+        assert_eq!(fits.len(), 1, "{fits:?}");
+        assert_eq!(fits[0].path.to_string(), "p::Bore.press");
+        assert_eq!(fits[0].hole.to_string(), "p::Bore.press.hole");
+        assert!(fits[0].required.is_some(), "range is carried");
+    }
+
+    // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits kind=unit
+    // frob:ticket 01M4Y772CY1967MXZ9T5T8FKPM
+    #[test]
+    fn file_scope_class_fit_uses_the_on_path_and_unresolved_operand_derives_nothing() {
+        let fits = derive("model Shaft { d = 20mm [+0mm -0.013mm] }\nfit seat = H7 on Shaft.d\n");
+        assert_eq!(fits.len(), 1, "{fits:?}");
+        assert_eq!(fits[0].path.to_string(), "p::Shaft.seat");
+        let none = derive("model Plate(d: Length) { }\nfit seat = H7 on d\n");
+        assert!(none.is_empty(), "{none:?}");
     }
 }

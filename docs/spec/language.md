@@ -419,6 +419,11 @@ ships, and their column names, are in stdlib.md.
 
 `fit NAME = SPEC on PATH` inside a component, or at file scope.
 
+A file-scope fit has no enclosing component, so its paths name components
+(`Bore.d / Pin.d`). It is derived once and lowered into the component that
+owns its first operand (the hole path of `a / b`, else the `on` path), under
+the path `Owner.NAME`.
+
 - `H7/p6 on x`: both sides from ISO 286 on x's nominal.
 - `p6 on x` / `H7 on x`: one-sided; the class's letter case picks the
   side it plays (lowercase shaft, uppercase hole), and x is the other

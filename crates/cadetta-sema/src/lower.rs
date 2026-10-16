@@ -1096,6 +1096,40 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    // frob:ticket 01M4Y772CY1967MXZ9T5T8FKPM
+    #[test]
+    fn file_scope_fit_lowers_into_its_owner_component() {
+        let src = "model Bore { d = 22mm [+0.021mm -0] }\n\
+                   model Pin { d = 22mm [+0.0mm -0.009mm] }\n\
+                   fit press = Bore.d / Pin.d\n";
+        let p = parse(src);
+        assert!(p.diags.is_empty(), "{:?}", p.diags);
+        let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &p.file,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty());
+        let units = UnitTable::builtin();
+        let mut ev = Evaluator::new(&resolver, &units, &pkgs);
+        let ranges = crate::fitderive::eval_ranges(&mut ev, &pkgs);
+        let evaluation = ev.evaluate();
+        let fits = crate::fitderive::derive_fits(&resolver, &evaluation, &ranges, &pkgs);
+        let b = build(src, &[], &fits);
+        let bore = b.project.components.iter().find(|c| c.path.item == "Bore");
+        let pin = b.project.components.iter().find(|c| c.path.item == "Pin");
+        assert_eq!(bore.expect("Bore").fits.len(), 1);
+        assert_eq!(bore.expect("Bore").fits[0].path.members.len(), 1);
+        assert!(pin.expect("Pin").fits.is_empty());
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
     #[test]
     fn let_is_analysis() {
         let b = build(SRC, &[], &[]);
