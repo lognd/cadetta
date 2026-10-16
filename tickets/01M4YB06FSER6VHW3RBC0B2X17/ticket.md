@@ -2,7 +2,8 @@
 id = "01M4YB06FSER6VHW3RBC0B2X17"
 title = "Observe facts for R007, R011, R012 and run them under check"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
