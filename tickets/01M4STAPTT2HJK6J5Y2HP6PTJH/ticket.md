@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "use inch fasteners and inserts"
 idempotency_key = "replan13:std 0.2.0 inch fasteners and inserts"
 labels = ["creates:std/fasteners/inch.cdt"]
-scope = ["std/fasteners/inch.cdt", "std/src/fasteners/inch.cdt", "std/src/fasteners.cdt", "std/src/lib.cdt", "std/cadetta.toml", "docs/spec/stdlib.md"]
+scope = ["std/fasteners/inch.cdt", "std/src/fasteners/inch.cdt", "std/src/fasteners.cdt", "std/src/lib.cdt", "std/cadetta.toml", "docs/spec/stdlib.md", "crates/cadetta-syntax/tests/std_fasteners_inch.rs"]
 
 [[acceptance]]
 text = "Given the inch fastener and insert scope in stdlib.md, when added, then each value is cited and the 0.2.0 version is set (stdlib.md 1)"
