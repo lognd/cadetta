@@ -32,10 +32,7 @@ pub const STD_FILES: &[(&str, &str)] = &[
         include_str!("../../../std/src/fasteners/tables.cdt"),
     ),
     ("fits.cdt", include_str!("../../../std/src/fits.cdt")),
-    (
-        "inserts.cdt",
-        include_str!("../../../std/src/inserts.cdt"),
-    ),
+    ("inserts.cdt", include_str!("../../../std/src/inserts.cdt")),
     ("lib.cdt", include_str!("../../../std/src/lib.cdt")),
     (
         "materials.cdt",

@@ -1,0 +1,31 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T11:54:30Z"
+digest = "dd855478ebb2287eea2ade8edbc7e8751870f896887569ea9654564bf63090aa"
+exit_code = 0
+inline = '''
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b749b2da-da82-4035-b580-7c08d9f5ec16 with nextest profile: default
+    Starting 1 test across 76 binaries (1744 tests skipped)
+        PASS [   0.390s] cadetta pipeline::tests::variant_with_no_primary_result_is_unsolved_not_s006
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.395s] 1 test run: 1 passed, 1744 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta pipeline::tests::variant_with_no_primary_result_is_unsolved_not_s006"
+size = 1049
+status = "measured"
+test_count = 1
+tests_digest = "b1051a751a1a7cfe9547aea898dd12a6d7cb315a9d458d17a23c9d4611cf16fc"
+at = "2026-10-16T11:54:30Z"
+actor = "lognd"
+rev = 1

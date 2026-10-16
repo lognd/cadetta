@@ -19,7 +19,12 @@
     "exit": 0
   },
   "must_not_fire": {
-    "diagnostics": [],
+    "diagnostics": [
+      {
+        "code": "C002",
+        "severity": "warning"
+      }
+    ],
     "exit": 0,
     "note": "a missing primary result is an unsolved output, not S006"
   }

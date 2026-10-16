@@ -12,7 +12,7 @@ use serde_json::{Value, json};
 use crate::output::{EXIT_DIAGNOSTICS, Format};
 use crate::pkg::manifest::{self, GitRef, Manifest, PackageManifest, Source};
 use crate::pkg::resolve::{self, ResolveError};
-use crate::project::Project;
+use crate::project::{Project, ProjectError};
 use crate::{EXIT_OK, EXIT_USAGE, Globals};
 
 /// Schema tag of the JSON report; the schema is `docs/schemas/update.json`.
@@ -88,6 +88,15 @@ impl UpdateError {
             ) => EXIT_DIAGNOSTICS,
             _ => EXIT_USAGE,
         }
+    }
+}
+
+/// Exit code for a `Project::open` failure: E012/E013 are diagnostics (1), the rest usage (2).
+// frob:ticket 01M5253XXZKAAXCMDEBMJX2SB1
+fn open_exit_code(e: &ProjectError) -> u8 {
+    match e {
+        ProjectError::Diag(d) if matches!(d.code, "E012" | "E013") => EXIT_DIAGNOSTICS,
+        _ => EXIT_USAGE,
     }
 }
 
@@ -347,7 +356,7 @@ pub fn run_update(
     };
     let project = match Project::open(globals.cwd.as_deref(), globals.config.as_deref()) {
         Ok((project, _scope)) => project,
-        Err(e) => return fail(err, EXIT_USAGE, &e.to_string()),
+        Err(e) => return fail(err, open_exit_code(&e), &e.to_string()),
     };
     let roots = match roots_of(&project) {
         Ok(r) => r,
@@ -613,5 +622,25 @@ mod tests {
             EXIT_USAGE
         );
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/update.rs::open_exit_code
+    #[test]
+    fn open_diagnostics_exit_one_others_two() {
+        let diag = |code| {
+            ProjectError::Diag(crate::project::ProjectDiag {
+                code,
+                message: String::new(),
+                path: PathBuf::new(),
+                spans: Vec::new(),
+            })
+        };
+        assert_eq!(open_exit_code(&diag("E012")), EXIT_DIAGNOSTICS);
+        assert_eq!(open_exit_code(&diag("E013")), EXIT_DIAGNOSTICS);
+        assert_eq!(open_exit_code(&diag("E005")), EXIT_USAGE);
+        let nf = ProjectError::NotFound {
+            start: PathBuf::new(),
+        };
+        assert_eq!(open_exit_code(&nf), EXIT_USAGE);
     }
 }
