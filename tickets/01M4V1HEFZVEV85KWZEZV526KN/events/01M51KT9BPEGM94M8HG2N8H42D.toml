@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["tests/conformance/README.md"]
+new = ["tests/conformance/README.md", "tests/conformance/quantities/emit-*"]
+at = "2026-10-16T05:44:03Z"
+actor = "lognd"
+rev = 1
