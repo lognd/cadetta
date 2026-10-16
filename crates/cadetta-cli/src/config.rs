@@ -873,7 +873,14 @@ native_unit = "mm"
             "[lint]\nprecision = { Length = 4 }\ncommon_values = [\"0.5in\"]\n",
         ))
         .unwrap();
-        assert_eq!(c.lint.m_config(&KindTable::builtin()).unwrap().precision.len(), 1);
+        assert_eq!(
+            c.lint
+                .m_config(&KindTable::builtin())
+                .unwrap()
+                .precision
+                .len(),
+            1
+        );
         assert_eq!(c.lint.d_config(Vec::new()).unwrap().common_values.len(), 1);
     }
 
@@ -887,7 +894,10 @@ native_unit = "mm"
         let mut kinds = KindTable::builtin();
         kinds.register("Widget", "Length").unwrap();
         let m = c.lint.m_config(&kinds).unwrap();
-        assert_eq!(m.precision, vec![(kinds.dim_of("Length").unwrap().clone(), 3)]);
+        assert_eq!(
+            m.precision,
+            vec![(kinds.dim_of("Length").unwrap().clone(), 3)]
+        );
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::Lint
