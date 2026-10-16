@@ -2,7 +2,8 @@
 id = "01M52D19FF0HZRMFWH8GZSVB0J"
 title = "Golden 02-bearing-housing: remaining value/verdict mismatches after EVAL fix"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
