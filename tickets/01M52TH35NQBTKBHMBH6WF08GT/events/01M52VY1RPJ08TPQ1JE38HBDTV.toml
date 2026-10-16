@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta ack sync:FILE --role R records an attest that discharges the open O004"]
+moved = []
+at = "2026-10-16T17:25:09Z"
+actor = "lognd"
+rev = 1
