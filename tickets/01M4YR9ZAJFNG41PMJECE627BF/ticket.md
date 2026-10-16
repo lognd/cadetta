@@ -2,7 +2,8 @@
 id = "01M4YR9ZAJFNG41PMJECE627BF"
 title = "bind-invalid-* fixtures: binding-kind run does not observe names_path_or_key (7 adapters fixtures)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
