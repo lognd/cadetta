@@ -593,16 +593,16 @@ impl Cx<'_> {
         })
     }
 
-    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
-        let t: &Toleranced = &f.result.clearance;
-        let nominal = t.nominal().clone();
+    /// The value of one accessor of a fit (`<fit>.hole`, `.shaft`, `.clearance`): nominal plus a one-term affine over its own path.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn fit_side_value(f: &FitInput, side: &str, t: &Toleranced) -> Option<Value> {
         let mut v = Value::new(
-            Nominal::Exact(Exact(nominal)),
+            Nominal::Exact(Exact(t.nominal().clone())),
             t.dim().clone(),
             String::new(),
         );
         let mut var = ir_path(&f.path)?;
-        var.members.push(Seg::Name("clearance".to_owned()));
+        var.members.push(Seg::Name(side.to_owned()));
         v.tol = Some(ir::Affine {
             terms: vec![AffineTerm {
                 var,
@@ -610,14 +610,45 @@ impl Cx<'_> {
                 hi: Exact(t.upper().clone()),
             }],
         });
+        Some(v)
+    }
+
+    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
         Some(Fit {
             path: ir_path(&f.path)?,
             hole: ir_path(&f.hole)?,
             shaft: ir_path(&f.shaft)?,
-            clearance: v,
+            clearance: Self::fit_side_value(f, "clearance", &f.result.clearance)?,
             fit_type: f.result.fit_type.name().to_owned(),
             required: f.required.clone(),
         })
+    }
+
+    /// The derived members `<fit>.hole`, `.shaft` and `.clearance` of an analysed fit, so checks and goldens can address them.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn lower_fit_members(&self, f: &FitInput) -> Vec<Member> {
+        let Some(fit_path) = ir_path(&f.path) else {
+            return Vec::new();
+        };
+        let sides = [
+            ("hole", &f.result.hole.value),
+            ("shaft", &f.result.shaft.value),
+            ("clearance", &f.result.clearance),
+        ];
+        sides
+            .into_iter()
+            .map(|(side, t)| {
+                let mut path = fit_path.clone();
+                path.members.push(Seg::Name(side.to_owned()));
+                let mut m = Member::new(path, MemberKind::Let);
+                m.analysis = true;
+                m.provenance = Provenance::Derived;
+                m.deps = vec![fit_path.clone()];
+                m.value = Self::fit_side_value(f, side, t);
+                debug!(path = %m.path, "lower: fit accessor member");
+                m
+            })
+            .collect()
     }
 }
 
@@ -761,12 +792,15 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                         .filter_map(|s| s.citation.as_ref()?.cite.clone()),
                 );
                 project.solvers.extend(solvers);
-                comp.fits = input
+                let own_fits: Vec<&FitInput> = input
                     .fits
                     .iter()
                     .filter(|f| f.path.item_only() == canon)
-                    .filter_map(|f| cx.lower_fit(f))
                     .collect();
+                comp.fits = own_fits.iter().filter_map(|f| cx.lower_fit(f)).collect();
+                // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+                comp.members
+                    .extend(own_fits.iter().flat_map(|f| cx.lower_fit_members(f)));
                 cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
@@ -1281,6 +1315,17 @@ mod tests {
         assert_eq!(comp.class, ComponentClass::Model);
         assert_eq!(comp.fits.len(), 1);
         assert_eq!(comp.fits[0].fit_type, "interference");
+        // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+        for side in ["hole", "shaft", "clearance"] {
+            let want = vec![Seg::Name("seat_fit".to_owned()), Seg::Name(side.to_owned())];
+            let m = comp
+                .members
+                .iter()
+                .find(|m| m.path.members == want)
+                .unwrap_or_else(|| panic!("fit accessor member {side}"));
+            assert_eq!(m.provenance, Provenance::Derived, "{side}");
+            assert!(m.value.as_ref().is_some_and(|v| v.tol.is_some()), "{side}");
+        }
         assert_eq!(b.project.checks.len(), 1);
         assert_eq!(
             b.project.checks[0].verdicts.primary,
