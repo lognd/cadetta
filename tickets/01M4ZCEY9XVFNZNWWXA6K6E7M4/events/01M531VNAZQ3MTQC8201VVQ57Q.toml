@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: the active alternate of a slot is its primary (swap = one edit of the primary, language.md 3.2). A locator with for=X is active iff X (qualified or bare) names the primary of some slot; locators without for are always active. emit.json gains active_alternates (slot path -> qualified primary, omitted when no slot); conformance harness observes active_alternate as the sole value. sync and universe use the same rule. Fixtures rewritten with a real interface/ots/assembly slot; two known-gaps entries removed."
+at = "2026-10-16T19:08:42Z"
+actor = "lognd"
+rev = 1
