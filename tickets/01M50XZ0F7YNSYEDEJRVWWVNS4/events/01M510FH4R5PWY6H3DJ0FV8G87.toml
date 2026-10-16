@@ -1,0 +1,35 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T00:05:35Z"
+digest = "f5eda9a2ec65a49546ca24de98959b23348017bddedcb26b3d1ede74b57a9e3d"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.50s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 3a8dd7c8-5b98-47a6-bd3d-a643bce80bc3 with nextest profile: default
+    Starting 1 test across 5 binaries (247 tests skipped)
+        PASS [   0.010s] cadetta-sema eval::tests::fit_hole_shaft_clearance_evaluate_in_a_parameterized_instance
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 247 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema fit_hole_shaft_clearance_evaluate_in_a_parameterized_instance"
+size = 1347
+status = "measured"
+test_count = 1
+tests_digest = "0fb0d5e68834ed2711ea636728e3593eebbdc323f4766f7bec4b672f5c46aa79"
+at = "2026-10-16T00:05:35Z"
+actor = "lognd"
+rev = 1

@@ -7,13 +7,13 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T23:22:09Z"
-updated = "2026-10-16T00:05:31Z"
+updated = "2026-10-16T00:05:35Z"
 idempotency_key = "leftovers-k8v6dsy-fit-instances"
 scope = ["crates/cadetta-sema/src/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "A fit .hole/.shaft/.clearance read inside a parameterized instance (and via the instance, e.g. housing.bore_fit.hole) evaluates to a quantity"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A dependency on a definition-level fit whose fit is derived per instance is kept (not treated as underived)"
