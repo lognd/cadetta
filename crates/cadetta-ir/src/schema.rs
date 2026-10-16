@@ -391,7 +391,7 @@ fn defs() -> Map<String, J> {
                 ("datum", r("Path")),
                 ("coords", arr(r("Value"))),
             ],
-            &[],
+            &[("position", r("Exact"))],
         ),
     ));
     d.push((
@@ -1307,6 +1307,7 @@ mod tests {
             path: p("a.b::C.pt"),
             datum: p("a.b::C.d"),
             coords: vec![full_value()],
+            position: Some(ex(1, 10, 0)),
         };
         assert_eq!(
             validate(Some("Point"), &serde_json::to_value(&point).unwrap()),

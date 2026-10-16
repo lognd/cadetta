@@ -206,9 +206,10 @@ impl<'a, 'r> PosCheck<'a, 'r> {
                 }
                 s
             }
-            ExprKind::Unary(_, x) | ExprKind::Tolerance(x, _) | ExprKind::IsoClass(x, _) => {
-                self.walk(x)
-            }
+            ExprKind::Unary(_, x)
+            | ExprKind::Tolerance(x, _)
+            | ExprKind::Position(x, _)
+            | ExprKind::IsoClass(x, _) => self.walk(x),
             _ => None,
         }
     }

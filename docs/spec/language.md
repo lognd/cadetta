@@ -857,9 +857,10 @@ Rules the grammar left open, fixed by the reference parser:
   is constructed directly, as `part axle[2]: Axle(wheel = ...)`).
 - A postfix `[` followed by `+` or `-` opens a tolerance bracket
   (`12mm [+0.018mm -0]`, `[+-0.1mm]`); a postfix `[` followed by the
-  identifier `position` and then a token other than `]` opens a position
+  identifier `position` and then a token that starts an operand (a number,
+  quantity, name, or `self`/`origin`/`package`/`super`) opens a position
   tolerance (`[position 0.2mm]`, geometry.md 3.1), so `holes[position]`
-  stays an index; any other `[` is an index. Each
+  and `holes[position + 1]` stay indexes; any other `[` is an index. Each
   tolerance term is a sign (`+`, `-`, or `+-` with no space) and a
   product-level expression.
 - An ISO class (`H8`, `p6`, `js6`: one or two letters then one or two

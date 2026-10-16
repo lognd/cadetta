@@ -192,7 +192,7 @@ fn check_expr(e: &Expr, reads: &mut BTreeSet<String>) -> Result<(), SolverDeclEr
             }
             _ => bad("logic, range or membership operator"),
         },
-        ExprKind::Tolerance(x, _) => check_expr(x, reads),
+        ExprKind::Tolerance(x, _) | ExprKind::Position(x, _) => check_expr(x, reads),
         ExprKind::Index(x, i) => {
             check_expr(x, reads)?;
             // The index only selects; it is read like any value.

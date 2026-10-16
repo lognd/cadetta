@@ -134,6 +134,9 @@ pub struct Evaluated {
     pub span: Span,
     /// The hole/shaft role (quantities.md 5.6): explicit, from a class letter, or inherited.
     pub role: Option<RoleInfo>,
+    /// True when the value is a `[position d]` point whose disc variables this member owns.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    pub owns_discs: bool,
 }
 
 /// A finding made while evaluating.
@@ -690,6 +693,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                                 alias_of: None,
                                 span: Span::new(0, 0),
                                 role: None,
+                                owns_discs: false,
                             }),
                         );
                     }
@@ -846,6 +850,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 alias_of: None,
                 span: def.span,
                 role: None,
+                owns_discs: false,
             })
         } else if def.is_let {
             self.eval_let(scope, def)
@@ -873,6 +878,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     fn eval_let(&mut self, sc: &mut Scope, def: &Def<'p>) -> R<Evaluated> {
         let value = self.eval(sc, def.expr)?;
         trace!("evaluator: let evaluated, analysis form kept");
+        let owns_discs = matches!(strip(def.expr).kind, ExprKind::Position(..));
         Ok(Evaluated {
             value,
             analysis: true,
@@ -880,6 +886,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             alias_of: None,
             span: def.span,
             role: None,
+            owns_discs,
         })
     }
 
@@ -907,12 +914,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 alias_of: Some(ev.alias_of.unwrap_or(rk)),
                 span,
                 role: resolve_role(None, ev.role),
+                owns_discs: false,
             });
         }
         match &e.kind {
             ExprKind::Tolerance(inner, terms) => {
                 let (v, var) = self.tolerance_val(sc, inner, terms, e.span)?;
                 Ok(owned(v, var, span))
+            }
+            // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+            ExprKind::Position(inner, d) => {
+                let v = self.position_val(sc, inner, d, e.span)?;
+                let mut ev = owned(v, None, span);
+                ev.owns_discs = true;
+                Ok(ev)
             }
             ExprKind::Binary(BinOp::Range, l, r) => {
                 let var = self.fresh_var();
@@ -1370,6 +1385,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Index(base, idx) => self.index(sc, base, idx, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
             ExprKind::Tolerance(inner, terms) => Ok(self.tolerance_val(sc, inner, terms, span)?.0),
+            // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+            ExprKind::Position(inner, d) => self.position_val(sc, inner, d, span),
             ExprKind::IsoClass(inner, class) => {
                 let var = self.fresh_var();
                 Ok(Val::Quantity(
@@ -1718,6 +1735,7 @@ fn owned(value: Val, var: Option<VarId>, span: Span) -> Evaluated {
         alias_of: None,
         span,
         role: None,
+        owns_discs: false,
     }
 }
 

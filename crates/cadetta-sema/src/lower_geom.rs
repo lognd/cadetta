@@ -17,7 +17,7 @@ use cadetta_geometry::placement::{Anchor, Cover, Placement as GeoPlacement};
 use cadetta_geometry::point::point_type;
 use cadetta_ir::canon::{Index, PartSeg};
 use cadetta_ir::geometry::{Axis as IrAxis, Datum, OffsetArgs, Op, Placement, Point};
-use cadetta_ir::model::{Component, Member, MemberKind, Provenance, Value};
+use cadetta_ir::model::{Component, Exact, Member, MemberKind, Provenance, Value};
 use cadetta_ir::path::Path;
 use cadetta_syntax::ast;
 use tracing::{debug, trace, warn};
@@ -388,12 +388,39 @@ impl Cx<'_> {
             coords.push(coord_value.0);
             comp.members.push(m);
         }
-        debug!(point = %path, coords = coords.len(), "lower: point");
+        let position = self.position_diameter(decl, i);
+        debug!(point = %path, coords = coords.len(), toleranced = position.is_some(), "lower: point");
         comp.points.push(Point {
             path,
             datum: datum.clone(),
             coords,
+            position,
         });
+    }
+
+    /// The `[position d]` zone diameter of a point (twice its disc radius), when it has a disc.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    fn position_diameter(&self, decl: &CanonPath, i: Option<u64>) -> Option<Exact> {
+        let e = self.input.evaluation.get(decl)?;
+        let cs = match (&e.value, i) {
+            (Val::Point(cs), None) => cs,
+            (Val::Array(vs), Some(i)) => match vs.get(usize::try_from(i).ok()?)? {
+                Val::Point(cs) => cs,
+                _ => return None,
+            },
+            _ => return None,
+        };
+        let Val::Quantity(q) = cs.first()? else {
+            return None;
+        };
+        let var = *q.form.disc_vars().first()?;
+        let (a, b) = q.form.disc_coefficients(var)?;
+        let abs = |m: &cadetta_units::Magnitude| if m.to_f64() < 0.0 { m.neg() } else { m.clone() };
+        let cadetta_units::Sum::Exact(r) = abs(a).add(&abs(b)) else {
+            return None;
+        };
+        let two = cadetta_units::Magnitude::new(cadetta_units::Rational::from_int(2), 0);
+        Some(Exact(r.mul(&two)))
     }
 
     /// The value (and differing variant values) of one coordinate of a point member.
