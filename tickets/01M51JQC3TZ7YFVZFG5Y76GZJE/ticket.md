@@ -4,9 +4,10 @@ title = "docs/spec/ir.md: document fit accessor members (<fit>.hole/.shaft/.clea
 type = "docs"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-16T05:24:59Z"
-updated = "2026-10-16T05:24:59Z"
+updated = "2026-10-16T07:22:21Z"
 scope = ["docs/spec/ir.md"]
 +++
 
