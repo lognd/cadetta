@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision (delegated): hybrid reporting. A wholly uncited ots component (no component citation, no cited value) yields ONE S001 at the component path, because the single fix is citing the component and N per-member warnings are noise; a partly cited component still yields per-value S001 at each uncited member, since only that pinpoints the gap. Fixture stdlib/policy-iso-default-silent stays unchanged; known-gaps entry removed. Recorded in docs/spec/lints.md S001 row."
+at = "2026-10-16T03:58:26Z"
+actor = "lognd"
+rev = 1
