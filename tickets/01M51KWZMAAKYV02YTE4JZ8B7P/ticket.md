@@ -2,7 +2,8 @@
 id = "01M51KWZMAAKYV02YTE4JZ8B7P"
 title = "cmd::check ots_datum_offset_without_citation_is_s001 stale after ~9MJNAM5 component-level S001"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 1
 reporter = "lognd"
