@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:39:31Z"
-updated = "2026-10-16T17:53:23Z"
+updated = "2026-10-16T17:54:23Z"
 
 [[acceptance]]
 text = "Fixtures adapters/session-attach-running and adapters/session-close-only-opened pass through an adapter-side harness and are no longer gapped"
