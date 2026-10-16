@@ -7,7 +7,7 @@ priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-13T17:13:56Z"
-updated = "2026-10-16T07:19:59Z"
+updated = "2026-10-16T07:20:09Z"
 scope = ["docs/spec/geometry.md"]
 
 [[acceptance]]
