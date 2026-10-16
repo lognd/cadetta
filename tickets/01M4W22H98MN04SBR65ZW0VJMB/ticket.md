@@ -2,12 +2,13 @@
 id = "01M4W22H98MN04SBR65ZW0VJMB"
 title = "Write the transform composition rule into adapters.md 3.4"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T01:57:46Z"
-updated = "2026-10-16T00:38:03Z"
+updated = "2026-10-16T00:38:26Z"
 scope = ["docs/spec/adapters.md"]
 
 [[acceptance]]
