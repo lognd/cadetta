@@ -7,7 +7,7 @@ priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T21:59:15Z"
-updated = "2026-10-16T00:44:54Z"
+updated = "2026-10-16T00:46:09Z"
 idempotency_key = "kindcheck-untyped-local-shadow"
 scope = ["crates/cadetta-sema", "docs/spec/quantities.md", "changelog.d", "crates/cadetta-cli/tests", "crates/cadetta-cli/tests/**"]
 
@@ -17,7 +17,7 @@ bound = true
 
 [[acceptance]]
 text = "Typed locals and genuine member reads keep their existing behaviour (existing cross-component tests still pass)"
-bound = false
+bound = true
 +++
 
 Follow-up to ~CH5HR2K. In kindcheck.rs, locals only holds locals whose type is known, so an untyped let/for variable sharing a name with a quantity member resolves to that member and can produce a false Q002. Record unknown-typed locals as shadows so lookup stops at them.
