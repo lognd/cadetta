@@ -2,7 +2,8 @@
 id = "01M4V43BMZDEJT779G1N69K25Y"
 title = "Spec decisions from geometry conformance fixtures"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
