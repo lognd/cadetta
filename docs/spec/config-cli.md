@@ -231,7 +231,8 @@ A scope matching no node is not an error for these commands.
 Text: one line per locator,
 `push|skip|drift|converged|fail  path  locator  old -> new`, then a
 summary and a per-file regen status. JSON (`sync.json`): the same
-records plus diagnostics. "Changed" means the emit value differs from
+records plus diagnostics, each carrying `code`, `severity` (`info` for O004,
+`error` for the blocking codes, else `warning`) and `message`. "Changed" means the emit value differs from
 the lock base. `--dry-run` prints every push, including each native
 expression it would replace (R006), and writes nothing. `--only GLOB`
 limits to matching canonical paths; `--no-regen` pushes without

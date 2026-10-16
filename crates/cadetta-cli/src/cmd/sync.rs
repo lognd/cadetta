@@ -128,8 +128,29 @@ pub struct SyncRecord {
 pub struct SyncDiag {
     /// Rule code.
     pub code: String,
+    /// Severity: `info` (O004), `error` (a blocking code) or `warning`.
+    pub severity: &'static str,
     /// Message.
     pub message: String,
+}
+
+impl SyncDiag {
+    /// Build a diagnostic whose severity follows its code (obligations.md 2.3, config-cli.md 3).
+    pub fn new(code: impl Into<String>, message: impl Into<String>) -> Self {
+        let code = code.into();
+        let severity = if code == "O004" {
+            "info"
+        } else if BLOCKING.contains(&code.as_str()) {
+            "error"
+        } else {
+            "warning"
+        };
+        Self {
+            code,
+            severity,
+            message: message.into(),
+        }
+    }
 }
 
 /// Rebuild outcome of one pushed file.
@@ -181,10 +202,7 @@ impl SyncReport {
     fn diag(&mut self, code: &str, message: impl Into<String>) {
         let message = message.into();
         tracing::warn!(code, %message, "sync diagnostic");
-        self.diagnostics.push(SyncDiag {
-            code: code.to_owned(),
-            message,
-        });
+        self.diagnostics.push(SyncDiag::new(code, message));
     }
 
     /// True when the run must exit 1.
@@ -475,10 +493,7 @@ struct SessionBackend<R: BufRead, W: Write> {
 
 impl<R: BufRead, W: Write> SessionBackend<R, W> {
     fn note(&mut self, code: &str, message: String) {
-        self.diags.push(SyncDiag {
-            code: code.to_owned(),
-            message,
-        });
+        self.diags.push(SyncDiag::new(code, message));
     }
 
     fn fail(&mut self, e: &cadetta_adapter::session::SessionError) {
@@ -1243,10 +1258,9 @@ fn drive_adapter<R: BufRead, W: Write>(
     ctx.report.regen.append(&mut backend.regen);
     // R010: one diagnostic per file naming the locators the adapter rejected.
     for r in rejections(&backend.pushed) {
-        backend.diags.push(SyncDiag {
-            code: r.diagnostic.code,
-            message: r.diagnostic.message,
-        });
+        backend
+            .diags
+            .push(SyncDiag::new(r.diagnostic.code, r.diagnostic.message));
     }
     let blocked = backend.failure.is_some()
         || real.records.iter().any(|r| r.verb == Verb::Fail)
