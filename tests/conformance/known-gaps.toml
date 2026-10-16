@@ -483,8 +483,6 @@ ticket = "~6K6E7M4"
 reason = "fixture dirs are identical yet expect opposite output; active_alternate not exposed"
 
 [[gap]]
-
-[[gap]]
 fixture = "stdlib/table-iso4032"
 ticket = "~SK4E68X"
 reason = "std tables and fits not loadable (embed std)"
