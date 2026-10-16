@@ -2,7 +2,8 @@
 id = "01M52N4A2CFMX2RJ32RWA4PAR9"
 title = "Conformance: waived diagnostics no longer counted; fix w001-w005 fixtures"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 3
 reporter = "lognd"
