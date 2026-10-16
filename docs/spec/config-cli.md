@@ -180,6 +180,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2), then geometry verification (R001) and, under `datums = "create"`, datum frame creation (adapters.md 3.4). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
+| `display VALUE SPEC` | Print one quantity literal through the display formatter (quantities.md 6). | - | never (errors exit 2) | `display.json` |
 | `lsp` | Language server over stdio: diagnostics and formatting (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
 
 `check`, `emit`, `sync` and `solve` accept `--module PATH` (a module
@@ -258,7 +259,7 @@ Implementation notes (`cadetta sync`, schema `docs/schemas/sync.json`):
 - Exit 1: R001, R004, R009, R010, Q004, R013-R016 or any `fail`; exit 2:
   usage, IO, config, unknown adapter id, unavailable adapter (R008).
 
-### 3.3 `ir`, `explain`, `units`
+### 3.3 `ir`, `explain`, `units`, `display`
 
 Decided (0.1.0): `explain CODE` takes the code case-insensitively and
 prints the lints.md 3 catalog row (code, name, default severity, fixed or
@@ -271,6 +272,10 @@ as pretty `cadetta.ir/1` JSON (`cadetta.ir.1.json`) and exits 2 when the
 run scopes to several workspace members; `--observed ADAPTER` names a
 configured `[[adapter]]` (by `name` or `id`, else exit 2) and prints the
 `observed` flavour; `--assume-unit U` must parse as a unit.
+`display VALUE SPEC` takes a quantity literal and a display spec
+(`in/32`, `ft_in`, `mm`, `%`), prints the formatted text and a newline, or
+`display.json` (`cadetta.display/1`: `value`, `spec`, `text`) with
+`--format json`; a malformed literal, spec or dimension mismatch exits 2.
 
 ### 3.2 `init`
 

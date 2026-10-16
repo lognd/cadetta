@@ -1,0 +1,15 @@
+{
+  "$id": "cadetta.display/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta display VALUE SPEC --format json`: one quantity printed by the display formatter.",
+  "properties": {
+    "schema": { "const": "cadetta.display/1" },
+    "spec": { "type": "string" },
+    "text": { "type": "string" },
+    "value": { "type": "string" }
+  },
+  "required": ["schema", "value", "spec", "text"],
+  "title": "DisplayOutput",
+  "type": "object"
+}

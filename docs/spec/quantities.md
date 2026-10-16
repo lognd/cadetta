@@ -503,10 +503,17 @@ Display rules (decided 2026-10-13, cadetta-units `display`):
   KWD, for example) and `%` prints one decimal, both half away from
   zero (obligations.md 5.1). Fractional specs need a length unit.
 
-Conformance surface: the display rules are exercised by `kind =
-"binding"` fixtures under `tests/conformance/quantities/`, a
-`{ "call": "display", "value", "spec" }` JSON whose expected `result` is
-the printed text, until a CLI or binding verb exposes the formatter.
+Conformance surface (decided 2026-10-16): `cadetta display VALUE SPEC`
+prints one quantity through the formatter (config-cli.md 3.3). `VALUE` is
+a quantity literal (`45.9375in`, `0.25m`; a bare number is dimensionless)
+and `SPEC` is the text inside `#[display(...)]`. The `kind = "binding"`
+fixtures under `tests/conformance/quantities/` are
+`{ "call": "display", "value", "spec" }` JSON; the runner invokes the verb
+and compares its printed text with the expected `result`. A separate verb
+(not `units display`) was chosen because `units` lists tables keyed by
+KIND while `display` is a pure computation on a value and spec: the
+arguments map one to one onto the fixture call and the future
+`cadetta.display(value, spec)` binding, and it needs no project.
 
 ## 7. Diagnostics owned by this document
 
