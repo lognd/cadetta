@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:48:19Z"
-updated = "2026-10-16T01:32:00Z"
+updated = "2026-10-16T01:33:06Z"
 scope = ["crates/cadetta-cli", "crates/cadetta-sema"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "SourceIndex::attribute is removed"
-bound = false
+bound = true
 +++
 
 Follow-up of ~6KASY82. SourceIndex::attribute still guesses a file from the span for diagnostics with module None (lowering, lint and other producers). Stamp a ModuleKey on every remaining producer, then delete attribute and make file_for require a module.
