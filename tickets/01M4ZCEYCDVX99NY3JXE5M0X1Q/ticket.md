@@ -2,7 +2,8 @@
 id = "01M4ZCEYCDVX99NY3JXE5M0X1Q"
 title = "emit rejects a tolerance locator without a dimension kind (config error, exit 2)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
