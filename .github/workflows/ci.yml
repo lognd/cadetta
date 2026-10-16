@@ -33,11 +33,11 @@ jobs:
       - name: cargo fmt
         run: cargo fmt --all --check
       - name: cargo clippy
-        run: cargo clippy --workspace --exclude cadetta-py --all-targets -- -D warnings
+        run: cargo clippy --workspace --exclude cadetta-py --exclude cadetta-capi --all-targets -- -D warnings
       - name: Install cargo-nextest
         run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C "${CARGO_HOME:-$HOME/.cargo}/bin"
       - name: cargo nextest
-        run: cargo nextest run --workspace --exclude cadetta-py --profile ci
+        run: cargo nextest run --workspace --exclude cadetta-py --exclude cadetta-capi --profile ci
 
   python-adapter:
     name: python adapter (ruff, pytest)
@@ -101,6 +101,27 @@ jobs:
           uv pip install --python "$RUNNER_TEMP/smoke" --find-links "$RUNNER_TEMP/wheels" cadetta
           "$RUNNER_TEMP/smoke/bin/cadetta" --version
           "$RUNNER_TEMP/smoke/bin/python" -c "import cadetta; print(cadetta.core_version())"
+
+  # The C ABI (bindings/c): builds the library and the CLI, compiles the C
+  # parity harness and replays the conformance corpus through it.
+  c-binding:
+    name: binding (c)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal --component clippy
+          rustup default 1.98.0
+      - name: Build the library and the CLI oracle
+        run: cargo build -p cadetta-capi -p cadetta
+      - name: clippy
+        run: cargo clippy -p cadetta-capi --all-targets -- -D warnings
+      - name: Test (unit + C parity over the corpus)
+        run: cargo test -p cadetta-capi
 
   # frob is on PyPI, so the repository gate runs in CI from the published
   # release. Pin a version here once cadetta's frob.toml needs one.
