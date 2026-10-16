@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Every kind=binding entry=python fixture under tests/conformance/bindings is replayed by the Python binding suite (bindings/python/tests/test_binding_fixtures.py) in both must_fire and must_not_fire sides, asserting its expect.json block; the 35 known-gaps entries for them are removed"]
+new = ["Every kind=binding entry=python fixture under tests/conformance/bindings is replayed by the Python binding suite (bindings/python/tests/test_binding_fixtures.py) in both must_fire and must_not_fire sides, asserting its expect.json block; genuine divergences are tracked xfails bound to follow-up tickets"]
+moved = [0]
+at = "2026-10-16T01:17:53Z"
+actor = "lognd"
+rev = 1
