@@ -261,6 +261,47 @@ pub struct ObservedTolerance {
     pub tolerance: Option<DimTolerance>,
 }
 
+/// Where one bound sketch dimension sits, read for R007 (adapters.md 3.4).
+// frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ObservedSketch {
+    /// The document holding the sketch.
+    pub file: String,
+    /// The dimension locator.
+    pub locator: String,
+    /// True when the sketch lies on its datum's plane.
+    pub on_datum_plane: bool,
+    /// What the dimension is measured from; `sketch origin` is the only clean answer.
+    pub measured_from: String,
+}
+
+/// The file an assembly actually holds for one component instance, read for R011 (adapters.md 3.3).
+// frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ObservedComponent {
+    /// The assembly document.
+    pub file: String,
+    /// The `instance` locator of the slot's binding.
+    pub locator: String,
+    /// The component file the instance uses.
+    pub component_file: String,
+}
+
+/// The value each instance matched by one `[*]` binding holds, read for R012 (adapters.md 3).
+// frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ObservedInstanceValues {
+    /// The document holding the instances.
+    pub file: String,
+    /// The locator the `[*]` binding names.
+    pub locator: String,
+    /// One value text per instance, in instance order.
+    pub values: Vec<String>,
+}
+
 /// Result of `read`.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -271,6 +312,18 @@ pub struct ReadResult {
     // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tolerances: Vec<ObservedTolerance>,
+    /// Sketch-plane and origin facts for R007, only from adapters that can see them.
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub sketches: Vec<ObservedSketch>,
+    /// Component files held by assembly slots, for R011.
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub components: Vec<ObservedComponent>,
+    /// Per-instance values of `[*]` bindings, for R012.
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub instance_values: Vec<ObservedInstanceValues>,
     /// Diagnostics.
     pub diagnostics: Vec<DiagRecord>,
 }

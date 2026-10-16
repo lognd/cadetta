@@ -579,6 +579,16 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
   fractional decimal digits of the native number format.
 - `read` takes `{source: {files: [...]}}` or `{source: {session:
   handle}}`. `regen` per-target status is `ok` or `failed`.
+- `read` may also return three optional fact lists (each omitted when
+  empty), which `cadetta check` turns into lints: `sketches` (`file`,
+  `locator`, `on_datum_plane`, `measured_from`; `measured_from` is
+  `sketch origin` when clean) for R007; `components` (`file`, `locator` of
+  the slot's `instance` binding, `component_file` the instance uses) for
+  R011, compared with the file of the slot primary's observed members; and
+  `instance_values` (`file`, `locator`, `values` per matched instance) for
+  R012. Rationale: the adapter alone sees the native model, the host alone
+  knows bindings, so facts are keyed by locator and the host maps them to
+  IR paths.
 - The host refuses `open`, `save`, `close`, `push` and `regen` unless
   `drive` was declared, and `emit` unless `emit` was.
 - A drive sync runs `open`, `push` per file, `save` (per `[[adapter]]

@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/V2K95H5; scope: crates/cadetta-syntax/src/expr.rs, crates/cadetta-syntax/src/ast.rs, crates/cadetta-units/src/**, crates/cadetta-sema/src/affine.rs, crates/cadetta-sema/src/point.rs, crates/cadetta-geometry/src/**, crates/cadetta-ir/src/model.rs, docs/schemas/cadetta.ir.1.json, tests/conformance/geometry/**, tests/conformance/quantities/**; ttl 7200s"
+at = "2026-10-16T07:48:42Z"
+actor = "lognd"
+rev = 1

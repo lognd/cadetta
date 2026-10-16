@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T07:48:59Z"
+digest = "6c2b3ce5de3a5c38abfaab062d0d0c50aebfb595edd282354aa45fe659d2b94e"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.33s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 4a0727c0-61a2-459c-b120-c64d75a6a7dd with nextest profile: default
+    Starting 1 test across 1 binary (19 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>180.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        PASS [ 209.102s] cadetta::conformance conformance_corpus_matches_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 209.104s] 1 test run: 1 passed (1 slow), 19 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test conformance conformance_corpus"
+size = 861
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-16T07:48:59Z"
+actor = "lognd"
+rev = 1

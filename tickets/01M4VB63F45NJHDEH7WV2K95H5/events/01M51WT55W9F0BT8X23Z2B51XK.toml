@@ -1,0 +1,29 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-16T08:21:06Z"
+digest = "eed0d6e60b371b412bab5578cc41add075f1fbbda06c68dacc006c6939c2eb9f"
+exit_code = 0
+inline = '''
+   Compiling serde_json v1.0.154
+   Compiling serde v1.0.229
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.30s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 8f926935-3f45-4f41-89b7-8a3b3d4d4153 with nextest profile: default
+    Starting 1 test across 1 binary (85 tests skipped)
+        PASS [   0.006s] cadetta-geometry aligned::tests::two_position_zones_are_at_worst_one_diameter_apart
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 85 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-geometry two_position_zones_are_at_worst_one_diameter_apart"
+size = 843
+status = "measured"
+test_count = 1
+tests_digest = "02e3364bff01de4cbc043ebd3f88f41106fabb00e96e7edc36b897bc1e99cd59"
+at = "2026-10-16T08:21:06Z"
+actor = "lognd"
+rev = 1
