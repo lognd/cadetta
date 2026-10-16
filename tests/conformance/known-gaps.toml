@@ -666,9 +666,3 @@ reason = "lint on IR JSON has no CLI form or executor yet"
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
 reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
-
-[[gap]]
-fixture = "language/e001-waive-date"
-ticket = "~2VJQFPG"
-reason = "a waive with a valid future expiry does not suppress C001 on the check in the check entry"
-
