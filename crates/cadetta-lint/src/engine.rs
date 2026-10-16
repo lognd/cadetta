@@ -1093,6 +1093,24 @@ fn resolve_severity(
     }
 }
 
+/// True when `glob` matches `path` or an ancestor item path of it (lints.md 2.1).
+fn covers(glob: &Glob, path: &str) -> bool {
+    let mut cur = path;
+    loop {
+        if glob.matches(cur) {
+            return true;
+        }
+        // Ancestors stop at the item: never strip into the package part.
+        let Some(item_at) = cur.find("::").map(|i| i + 2) else {
+            return false;
+        };
+        match cur[item_at..].rfind('.') {
+            Some(i) => cur = &cur[..item_at + i],
+            None => return false,
+        }
+    }
+}
+
 /// Apply severity precedence, then waivers and allows, to a run (lints.md 1 and 2).
 pub fn apply(mut diags: Vec<Diagnostic>, cfg: &LintConfig, sup: &Suppressions) -> Outcome {
     let mut out = Outcome::default();
@@ -1129,7 +1147,7 @@ pub fn apply(mut diags: Vec<Diagnostic>, cfg: &LintConfig, sup: &Suppressions) -
         let Some(path) = d.path.clone() else { continue };
         let by_waiver = active.iter().find_map(|(i, g)| {
             let w = &sup.waivers[*i];
-            (w.code == d.code && alt_matches(w, d) && g.as_ref().is_some_and(|g| g.matches(&path)))
+            (w.code == d.code && alt_matches(w, d) && g.as_ref().is_some_and(|g| covers(g, &path)))
                 .then(|| (waiver_id(w), w.because.clone()))
         });
         let hit = by_waiver.or_else(|| {
@@ -1254,6 +1272,26 @@ mod tests {
         assert!(out.diagnostics[1].waived.is_none());
         assert!(out.unused.is_empty());
         assert!(!out.fails(FailOn::Info) || out.diagnostics[1].severity != Severity::Hint);
+    }
+
+    // frob:tests crates/cadetta-lint/src/engine.rs::apply kind=unit
+    #[test]
+    fn waiver_on_item_path_covers_members() {
+        let sup = Suppressions {
+            waivers: vec![Waiver::new("M001", "acme.rover::Axle", "ok")],
+            ..Default::default()
+        };
+        let out = apply(
+            vec![
+                d("M001", "acme.rover::Axle.a.b"),
+                d("M001", "acme.rover::Axle2.a"),
+            ],
+            &LintConfig::new(),
+            &sup,
+        );
+        assert!(out.diagnostics[0].waived.is_some());
+        assert!(out.diagnostics[1].waived.is_none());
+        assert!(out.unused.is_empty());
     }
 
     // frob:tests crates/cadetta-lint/src/engine.rs::Allow.new kind=unit
