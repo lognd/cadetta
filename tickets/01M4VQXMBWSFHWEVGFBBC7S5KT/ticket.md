@@ -2,7 +2,8 @@
 id = "01M4VQXMBWSFHWEVGFBBC7S5KT"
 title = "Conformance runner: executors for binding sync and push-plan entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
