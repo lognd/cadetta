@@ -227,6 +227,9 @@ change, 2 and 4.1-4.3.
   comparison or a range is Q001 at the bare operand.
 - In `*` and `/` an integer bare number acts as a Count, so it never
   turns a Count into a Ratio; other bare numbers are anonymous scalars.
+  So `2 * 0.5` is a Count times an anonymous scalar and is therefore a
+  Ratio (4.1 rule 6 wins over the anonymous-kind default of rule 3),
+  while `2 * 3` is a Count.
 - `x ^ n` with a dimensioned base needs an integer literal `n`; any
   other exponent is Q002.
 - A block `let` whose type is unknown shadows a same-named component
@@ -327,6 +330,29 @@ signed deviation. A tolerance written inside a larger expression or a
 spec code (division by a divisor containing zero, mixed `pi` exponents,
 a construct evaluated by a later stage) carry the internal code `EVAL`.
 Parameterized components are evaluated only as instances.
+
+Decided (spec ambiguities found writing the conformance fixtures; every
+case below is an error `EVAL` at the failing member's path, since none
+has a user-facing code):
+
+- Division by zero, or by a divisor whose interval contains zero, is
+  `EVAL` (section 1: an error value, never a panic).
+- A reversed range `x in 6mm..4mm` (`lo > hi`, 5.7) is `EVAL` at the
+  member holding the range.
+- Reading a limit a bound does not have (`P.min` of `x <= v`, `P.max`
+  of `x >= v`, 5.7) is `EVAL` at the reading member.
+- Mixed `pi` exponents in an affine (toleranced) sum are `EVAL`
+  (5.4); the same sum of untoleranced values is inexact with a Q006
+  root (section 1). The two are consistent: only a form must stay
+  exact.
+- `x satisfies <= 8.5mm` is not valid: the right side of `satisfies`
+  must name a bound (`P` or `Item.P`, language.md 6). A bare bound
+  literal there is a parse error E001. Write the comparison
+  `x <= 8.5mm`, or declare a bound `P <= 8.5mm` in the component and use
+  `x satisfies P`.
+- E009 is raised for a `match` over an enum, which is declared at the
+  top level of a module (`enum M { A, B }`), never inside a component.
+  The diagnostic path is the member holding the `match`.
 
 Standard functions (language.md 3.8) follow these rules. An inexact value
 (`sqrt` of a non-square, `cbrt` of a non-cube, `sin`, `cos`, `tan`, `atan2` off the special
