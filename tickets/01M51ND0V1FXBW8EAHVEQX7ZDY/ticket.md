@@ -2,12 +2,12 @@
 id = "01M51ND0V1FXBW8EAHVEQX7ZDY"
 title = "process rule that changes the argument kind is only logged, never an EVAL diagnostic"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T06:11:45Z"
-updated = "2026-10-16T06:11:45Z"
+updated = "2026-10-16T07:32:51Z"
 scope = ["crates/cadetta-sema/src/process.rs"]
 
 [[acceptance]]
