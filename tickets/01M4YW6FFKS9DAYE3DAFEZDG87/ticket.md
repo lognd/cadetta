@@ -16,7 +16,7 @@ target = "01M4ZAN1F6F1R2DFW1PHMB7P7J"
 
 [[acceptance]]
 text = "cadetta sync with a built-in adapter lacking drive (sw-equations, json, csv) records the handed-over file and reports an open O004 info diagnostic (exit 0); --dry-run records nothing"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "An attest lock record on sync:FILE discharges the open O004"
