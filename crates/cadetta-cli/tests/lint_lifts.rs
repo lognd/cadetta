@@ -112,6 +112,21 @@ fn f001_and_f002_fire_for_a_bad_class_and_an_out_of_range_size() {
 
 // frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits_with_findings kind=unit
 #[test]
+fn f002_granularity_is_one_nanometre_not_one_picometre() {
+    let half_nm = run(
+        "f002-half-nm",
+        "model Part {\n  bore = 20.0000000005mm [+-0.01mm]\n  fit seat = H7/p6 on bore\n}\n",
+    );
+    assert!(has(&half_nm, "F002"), "{:?}", codes(&half_nm));
+    let whole_nm = run(
+        "f002-whole-nm",
+        "model Part {\n  bore = 20000001nm\n  fit seat = H7/p6 on bore\n}\n",
+    );
+    assert!(!has(&whole_nm, "F002"), "{:?}", codes(&whole_nm));
+}
+
+// frob:tests crates/cadetta-sema/src/fitderive.rs::derive_fits_with_findings kind=unit
+#[test]
 fn f001_and_f002_are_quiet_for_a_valid_fit() {
     let a = run(
         "fok",
