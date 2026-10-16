@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-16T12:48:31Z"
+updated = "2026-10-16T12:57:23Z"
 idempotency_key = "split-0N41BNX-i001"
 scope = ["crates/cadetta-variants/**", "tests/conformance/language/i001-fixed.must-not-fire.cdt", "tests/conformance/known-gaps.toml"]
 
