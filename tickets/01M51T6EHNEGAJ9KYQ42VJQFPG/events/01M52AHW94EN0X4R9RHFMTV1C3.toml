@@ -1,0 +1,37 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T12:21:24Z"
+digest = "fcd3d3b576c1cce6f708ec75e2ee062e6e9f93a8db83a187954cd5e1dd3f3846"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.20s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1c25bdbe-9486-4d5e-9e74-64fac8bf5373 with nextest profile: default
+    Starting 14 tests across 76 binaries (1804 tests skipped)
+        PASS [   0.011s] cadetta::conformance run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.011s] cadetta::conformance_packages run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.014s] cadetta::conformance_quantities run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.014s] cadetta::conformance_ir run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.014s] cadetta::conformance_config_cli run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.013s] cadetta::conformance_geometry run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.016s] cadetta::conformance_adapters run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.019s] cadetta::conformance_lints run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.020s] cadetta::conformance_emitters_json run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.020s] cadetta::conformance_emitters_csv run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.013s] cadetta::conformance_solvers run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.026s] cadetta::conformance_obligations run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.009s] cadetta::conformance_stdlib run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.030s] cadetta::conformance_language run::tests::waived_diagnostics_are_not_produced
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.032s] 14 tests run: 14 passed, 1804 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta run::tests::waived_diagnostics_are_not_produced"
+size = 1912
+status = "measured"
+test_count = 1
+tests_digest = "b04b9dbeb221a1017fbf4efcafbd88edc2d1597157f5a363ffc01c6f96bfc3d7"
+at = "2026-10-16T12:21:24Z"
+actor = "lognd"
+rev = 1
