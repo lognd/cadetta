@@ -2,7 +2,8 @@
 id = "01M4V1HEJVPSN7XKGGXJ3R5FA0"
 title = "Spec: quantities.md ambiguities found writing fixtures"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
