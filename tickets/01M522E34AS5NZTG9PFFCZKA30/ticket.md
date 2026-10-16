@@ -2,13 +2,14 @@
 id = "01M522E34AS5NZTG9PFFCZKA30"
 title = "Shaft.seat_a.offset.z fails to evaluate in golden 02-bearing-housing (EVAL)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T09:59:32Z"
-updated = "2026-10-16T13:04:40Z"
-scope = ["crates/cadetta-sema/src/geom.rs", "tests/conformance/geometry/coaxial-parameterized-model.*"]
+updated = "2026-10-16T13:06:19Z"
+scope = ["crates/cadetta-sema/src/geom.rs", "tests/conformance/geometry/coaxial-parameterized-model.*", "docs/spec/geometry.md", "changelog.d/01M522E34AS5NZTG9PFFCZKA30.*.md"]
 
 [[acceptance]]
 text = 'A check on datums (coaxial, aligned) inside a parameterized model evaluates in its instance, with no EVAL "failed to evaluate" on the model-level members'

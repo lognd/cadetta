@@ -383,6 +383,24 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         })
     }
 
+    /// Evaluates a member read by a frame table: inside an instance of the member's own
+    /// component it is the instance's member (keyed under the prefix), else the model's.
+    // frob:ticket 01M522E34AS5NZTG9PFFCZKA30
+    fn frame_member(&mut self, m: &GeoMember) -> Option<Evaluated> {
+        let inst = self
+            .cur_inst
+            .clone()
+            .filter(|i| i.callee.item == m.path.item && i.callee.modules == m.path.modules);
+        let Some(info) = inst else {
+            return self.geom_member(m);
+        };
+        let mut key = info.prefix.clone();
+        key.parts.extend(m.path.parts.iter().cloned());
+        key.members = m.path.members.clone();
+        trace!(%key, "geometry: frame member read in its instance");
+        self.geom_member_at(m, key, Some(info))
+    }
+
     /// Evaluates one datum or placement member, memoised under its canonical path.
     pub(super) fn geom_member(&mut self, m: &GeoMember) -> Option<Evaluated> {
         self.geom_member_at(m, m.path.clone(), None)
@@ -1132,7 +1150,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if let Some(Evaluated {
                 value: Val::Quantity(q),
                 ..
-            }) = self.geom_member(m)
+            }) = self.frame_member(m)
             {
                 nominals.insert(m.path.clone(), nominal_form(&q));
                 forms.insert(m.path.clone(), q.form);

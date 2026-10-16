@@ -1,0 +1,10 @@
+model Seat(n: Length) {
+  seat = n
+  datum a = origin.offset(z = seat)
+  datum b = a.offset(x = 0.1mm, z = 30mm)
+  check c: coaxial(b, a, 0.5mm, 30mm) "axes"
+}
+
+assembly S {
+  part s: Seat(n = 22mm)
+}
