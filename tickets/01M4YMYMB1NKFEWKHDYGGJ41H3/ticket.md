@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-15T02:06:10Z"
-updated = "2026-10-16T04:28:14Z"
+updated = "2026-10-16T04:29:52Z"
 scope = ["crates/cadetta-cli/src/pipeline.rs", "docs/spec/lints.md"]
 
 [[acceptance]]
