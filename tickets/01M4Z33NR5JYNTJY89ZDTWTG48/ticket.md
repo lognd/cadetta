@@ -7,9 +7,9 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-16T04:31:17Z"
+updated = "2026-10-16T04:43:08Z"
 idempotency_key = "a0fq-f002"
-scope = ["tests/conformance/**", "docs/spec/language.md"]
+scope = ["tests/conformance/**", "docs/spec/language.md", "crates/cadetta-cli/tests/lint_lifts.rs"]
 
 [[acceptance]]
 text = "Decision recorded and fixture plus known-gaps entry consistent with language.md 3.7"
