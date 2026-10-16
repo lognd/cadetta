@@ -4,9 +4,10 @@ title = "Lint gaps found probing lints: D001 severity, D002 fit members, M003, C
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-13T16:47:45Z"
-updated = "2026-10-15T04:14:41Z"
+updated = "2026-10-16T04:35:07Z"
 scope = ["crates/cadetta-lint/**"]
 
 [[acceptance]]
