@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T06:13:36Z"
-updated = "2026-10-16T04:31:16Z"
+updated = "2026-10-16T04:31:17Z"
 idempotency_key = "a0fq-f002"
 scope = ["tests/conformance/**", "docs/spec/language.md"]
 
