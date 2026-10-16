@@ -2,7 +2,8 @@
 id = "01M51ZFFQP22HJSYHXXGQGAT9X"
 title = "Emit singular OTS part members (ring.bore_nominal etc.) as per-instance IR members"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
