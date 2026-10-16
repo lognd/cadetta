@@ -20,8 +20,9 @@ use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedTolerance,
-    PushMode, PushStatus, ReadParams, ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedComponent,
+    ObservedInstanceValues, ObservedSketch, ObservedTolerance, PushMode, PushStatus, ReadParams,
+    ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -1446,6 +1447,46 @@ pub(crate) struct Probe {
     pub bindings: Vec<(String, String)>,
     /// The adapter's own diagnostics from `read`, as `(code, message)`.
     pub reports: Vec<(String, String)>,
+    /// Every bound `(path, locator)` pair, not only the first locator of each path.
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    pub locator_paths: Vec<(String, String)>,
+    /// `(path, file)` of each observed member that names its native file.
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    pub member_files: Vec<(String, String)>,
+    /// Sketch facts the adapter read (R007).
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    pub sketches: Vec<ObservedSketch>,
+    /// Assembly component facts the adapter read (R011).
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    pub components: Vec<ObservedComponent>,
+    /// Per-instance values of `[*]` bindings the adapter read (R012).
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    pub instance_values: Vec<ObservedInstanceValues>,
+}
+
+/// `(path, file)` for each observed member whose provenance names its native file.
+// frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+fn member_files(observed: &Json) -> Vec<(String, String)> {
+    let projects: Vec<&Json> = match observed {
+        Json::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    projects
+        .iter()
+        .filter_map(|p| p.get("components").and_then(Json::as_array))
+        .flatten()
+        .filter_map(|c| c.get("members").and_then(Json::as_array))
+        .flatten()
+        .filter_map(|m| {
+            let path = m.get("path")?.as_str()?;
+            let file = m
+                .get("provenance")?
+                .get("imported")?
+                .get("file")?
+                .as_str()?;
+            Some((path.to_owned(), file.to_owned()))
+        })
+        .collect()
 }
 
 /// Read an adapter's files over `client` and compare them with the design IR without writing
@@ -1493,6 +1534,10 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
     let mut probe = Probe {
         entries: built.map(|(entries, _)| entries).unwrap_or_default(),
         reports: read.diagnostics.iter().map(|d| diag_parts(&d.0)).collect(),
+        member_files: member_files(&read.observed),
+        sketches: read.sketches.clone(),
+        components: read.components.clone(),
+        instance_values: read.instance_values.clone(),
         ..Probe::default()
     };
     probe.diagnostics = report
@@ -1516,6 +1561,15 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
             .entries()
             .iter()
             .filter_map(|b| Some((b.path.to_string(), b.locators.first()?.locator.clone())))
+            .collect();
+        probe.locator_paths = set
+            .entries()
+            .iter()
+            .flat_map(|b| {
+                b.locators
+                    .iter()
+                    .map(|l| (b.path.to_string(), l.locator.clone()))
+            })
             .collect();
     }
     tracing::info!(adapter = %id, entries = probe.entries.len(), missing = probe.missing.len(), unbound = probe.unbound.len(), "check: adapter probed");

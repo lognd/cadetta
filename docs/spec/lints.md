@@ -459,8 +459,11 @@ that advertises `read` (hook: `cadetta-cli` `check_drift::process_drift`):
 the adapter is spawned, its files are read, and R001, R002, R003, R005 and
 the adapter's own R004/R009/R010 are reported; an adapter that cannot
 start is R008 at info. Nothing is pushed or written. R007, R011 and R012
-need observed facts (sketch planes, assembly slots, instance values) that
-`read` does not yet carry, so they are not run by `check`.
+run on the optional `sketches`, `components` and `instance_values` lists of
+the `read` result (adapters.md 5); an adapter that reports none of them
+raises none of these codes. A fact whose locator has no binding is skipped
+(R002 names it). For R011 the slot's primary file is the native file of the
+first observed member under the slot path.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
