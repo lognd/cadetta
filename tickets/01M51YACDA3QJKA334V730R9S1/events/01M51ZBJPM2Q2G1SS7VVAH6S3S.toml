@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Root cause: b0c8969a emits <fit>.hole/.shaft/.clearance members whose deps are [fit]; the fit node depended on its synthetic hole/shaft, closing a cycle so Universe::of failed and every obligation vanished. Fix in universe.rs (sema out of scope, leased): skip fit deps that are accessor members reading the fit."
+at = "2026-10-16T09:05:43Z"
+actor = "lognd"
+rev = 1
