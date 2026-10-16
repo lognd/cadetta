@@ -2,11 +2,12 @@
 id = "01M517KANDNTKST2D3T4GVR0SD"
 title = "Conformance fixtures for language: EVAL pairs, waivers W003/W004, S002/S004, O003, misc"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
+points = 5
 reporter = "lognd"
 created = "2026-10-16T02:10:32Z"
-updated = "2026-10-16T02:10:32Z"
+updated = "2026-10-16T03:15:08Z"
 scope = ["tests/conformance/language/**"]
 +++
 
