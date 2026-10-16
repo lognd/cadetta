@@ -7,9 +7,9 @@ priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T21:59:15Z"
-updated = "2026-10-14T21:59:15Z"
+updated = "2026-10-16T00:26:27Z"
 idempotency_key = "kindcheck-untyped-local-shadow"
-scope = ["crates/cadetta-sema", "crates/cadetta-cli/src", "docs/spec/quantities.md", "changelog.d"]
+scope = ["crates/cadetta-sema", "docs/spec/quantities.md", "changelog.d", "crates/cadetta-cli/tests"]
 
 [[acceptance]]
 text = "A for/let local of unknown type that shares a name with a component quantity member does not resolve to the member: cadetta check reports no Q diagnostic from the member's dimension"
