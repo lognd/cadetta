@@ -2,7 +2,8 @@
 id = "01M51T6EHNEGAJ9KYQ42VJQFPG"
 title = "Waive with a valid future expiry does not suppress C001 in check entry (language/e001-waive-date)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
