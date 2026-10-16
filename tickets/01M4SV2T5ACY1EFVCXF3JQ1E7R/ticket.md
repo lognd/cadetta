@@ -2,7 +2,8 @@
 id = "01M4SV2T5ACY1EFVCXF3JQ1E7R"
 title = "C ABI binding (bindings/c)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 8
 parent = "01M4SV2RY3PVQ3TBN2CAYWAJQY"
