@@ -1,0 +1,165 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T01:54:04Z"
+digest = "a2ace74da2c27332024dba432ebcb43b7f161d7d2a452d7a4f5efda609ecbd56"
+exit_code = 100
+failed_tests = ["conformance_corpus_matches_the_spec"]
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.26s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 105367da-9c8e-49c4-bd5f-dcd8bdd74487 with nextest profile: default
+    Starting 1 test across 45 binaries (597 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        SLOW [>120.000s] cadetta::conformance conformance_corpus_matches_the_spec
+        FAIL [ 165.828s] cadetta::conformance conformance_corpus_matches_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    hello
+    test conformance_corpus_matches_the_spec has been running for over 60 seconds
+
+    thread 'conformance_corpus_matches_the_spec' (441505) panicked at crates/cadetta-cli/tests/conformance.rs:44:5:
+    115 conformance failure(s):
+    quantities/count-floor [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/count-round-ties [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/design-param-max-accessor [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/design-param-stores-nominal [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/div-zero [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-compound-decimal [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-compound-dimension [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-compound-order [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-leading-dot [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-quote-suffix [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e001-trailing-dot [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e002-kind [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e002-unit [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e006 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e006-escape [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e009 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e010 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/e010-lmc [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/eval-atan2-origin [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/eval-mixed-pi [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/eval-recursion [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/eval-tan-pole [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/exact-inch [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/exact-pi-cancel [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/exact-zero-normalised [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/f002 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/independent-variables [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-angle-times-ratio [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-anonymous-named [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-count-product [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-count-quotient-anonymous [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-acceleration [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-angular-velocity [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-area-product [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-area-square [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-density [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-force [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-length-from-cbrt [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-length-from-sqrt [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-power [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-pressure [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-velocity [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-volume-cube [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-volume-flow [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-row-volume-product [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/kind-scaled-keeps-kind [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-compound-time [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-exponent [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-mixed-number [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-percent [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-quote-alias [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-unit-exponent [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/lit-whitespace-fraction [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-bare-fraction [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-compare [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-operand [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-tolerance [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-tolerance-zero [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-trig [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q001-untyped [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-add [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-affine-multiply [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-as [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-atan2 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-count [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-currency [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-power-dimension [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-power-noninteger [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-round-step [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-tolerance [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-torque-length [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-trig [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q002-trig-returns-ratio [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-as [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-frequency [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-min-kinds [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-package-kind [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-ratio-count [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q003-temperature-delta [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q004 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q006 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q006-count-pi [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q006-trig [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q007 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-angle-product [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-as [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-canonical-after-assign [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-compare [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-efficiency [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-lever [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-rpm [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q008-trig-exponent [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q009 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q009-division [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q010 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q010-ceil [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q010-floor [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q011 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/q011-cbrt [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/round-ceil-floor [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/round-keeps-deviations [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/round-ties-away [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/square-aware [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/square-aware-pow [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-any-expression [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-asymmetric [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-binds-tight [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-both-below [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-interval [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-mixed-units [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/tol-single-sided [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/trig-exact-atan2 [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/trig-exact-sin [quantities]: expect.json: No such file or directory (os error 2)
+    quantities/trig-exact-tan [quantities]: expect.json: No such file or directory (os error 2)
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test conformance_corpus_matches_the_spec ... FAILED
+
+    failures:
+
+    failures:
+        conformance_corpus_matches_the_spec
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 14 filtered out; finished in 165.82s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 165.857s] 1 test run: 0 passed, 1 failed, 597 skipped
+        FAIL [ 165.828s] cadetta::conformance conformance_corpus_matches_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "-p cadetta conformance_corpus_matches_the_spec"
+size = 12650
+status = "measured"
+test_count = 1
+tests_digest = "8bc93ae9a272f8d246fc83aa0079e182a9254b7bc42d887435573a91da9ed778"
+at = "2026-10-16T01:54:04Z"
+actor = "lognd"
+rev = 1
