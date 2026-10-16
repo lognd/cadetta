@@ -2,12 +2,12 @@
 id = "01M4Y66FVYYDJH0FJ16F1T08H3"
 title = "Remove span-heuristic diagnostic attribution in the check pipeline"
 type = "chore"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:48:19Z"
-updated = "2026-10-16T00:59:43Z"
+updated = "2026-10-16T00:59:44Z"
 scope = ["crates/cadetta-cli", "crates/cadetta-sema"]
 
 [[acceptance]]
