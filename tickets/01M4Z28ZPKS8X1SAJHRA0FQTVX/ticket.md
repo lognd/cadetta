@@ -2,12 +2,12 @@
 id = "01M4Z28ZPKS8X1SAJHRA0FQTVX"
 title = "language: F002 sub-nanometre, fit clearance member, process-drawn value"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T05:59:01Z"
-updated = "2026-10-15T06:13:21Z"
+updated = "2026-10-16T12:23:23Z"
 idempotency_key = "split-0N41BNX-fit"
 scope = ["crates/cadetta-fits/**"]
 
