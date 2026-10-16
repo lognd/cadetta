@@ -2,12 +2,12 @@
 id = "01M4ZJAYRJMG47610S0R0ANADA"
 title = "Lower solvers, tables and waivers into the IR in cadetta-sema"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-15T10:39:43Z"
-updated = "2026-10-16T02:03:20Z"
+updated = "2026-10-16T02:03:23Z"
 scope = ["crates/cadetta-sema/**"]
 
 [[acceptance]]
