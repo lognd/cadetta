@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-16T16:15:56Z"
-updated = "2026-10-16T16:58:19Z"
+updated = "2026-10-16T17:05:29Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**", "docs/spec/adapters.md"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "sync-degrade-no-theirs-no-r001 and sync-degrades-without-drive pass: no drive degrades to emit plus instructions with no classification and no R001"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "the csv, json and sw-equations sync-header-excluded-from-noop fixtures pass: a header-only difference writes nothing"
