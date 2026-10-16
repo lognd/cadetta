@@ -8,7 +8,7 @@ points = 5
 reporter = "lognd"
 created = "2026-10-15T10:39:43Z"
 updated = "2026-10-16T02:03:30Z"
-scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs"]
+scope = ["crates/cadetta-sema/**", "crates/cadetta-cli/src/pipeline.rs", "docs/spec/ir.md"]
 
 [[acceptance]]
 text = "Solvers and waivers declared in a package lower into ir.solvers and ir.waivers (solver deps, inputs, outputs, result state); tables are filed as a follow-up"
