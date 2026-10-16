@@ -2,7 +2,8 @@
 id = "01M5137DWGRARW5K0EMRB93QEK"
 title = "Unknown [lint] precision kind should surface as a diagnostic, not only a log warning"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
