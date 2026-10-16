@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T21:48:19Z"
-updated = "2026-10-16T00:59:44Z"
+updated = "2026-10-16T01:32:00Z"
 scope = ["crates/cadetta-cli", "crates/cadetta-sema"]
 
 [[acceptance]]
 text = "Every diagnostic reaching the pipeline carries a ModuleKey"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "SourceIndex::attribute is removed"
