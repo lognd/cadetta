@@ -18,6 +18,7 @@ use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
 use cadetta_adapter::builtin::{csv, json};
+use cadetta_adapter::geometry_plan::negate_text;
 use cadetta_adapter::policy::{
     Designed, EmitPoint as PolicyPoint, EmitRequest, Ratio, Role, build_request, resolve_point,
     to_decimal,
@@ -210,22 +211,6 @@ fn role_of(member: &Member) -> Option<Role> {
         Some("hole") => Some(Role::Hole),
         Some("shaft") => Some(Role::Shaft),
         _ => None,
-    }
-}
-
-/// Prefix `-` on a written decimal (`6.35mm` -> `-6.35mm`), keeping zero unsigned.
-pub(crate) fn negate_text(text: &str) -> String {
-    if let Some(rest) = text.strip_prefix('-') {
-        return rest.to_owned();
-    }
-    let numeric: String = text
-        .chars()
-        .take_while(|c| c.is_ascii_digit() || *c == '.')
-        .collect();
-    if numeric.chars().all(|c| c == '0' || c == '.') {
-        text.to_owned()
-    } else {
-        format!("-{text}")
     }
 }
 

@@ -20,10 +20,11 @@ use cadetta_obligations::lock::{AltBinding, Attest, Lock, Record};
 use cadetta_obligations::staleness::Judgement;
 use cadetta_obligations::why_stale::{WhyStale, why_stale};
 
+use cadetta_adapter::geometry_plan::negate_text;
+
 use crate::cmd::ack::{Candidate as AckCandidate, Subject};
 use crate::cmd::emit::{
-    attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, negate_text,
-    written_for,
+    attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, written_for,
 };
 use crate::cmd::obligations::Candidate;
 use crate::cmd::sync::normalize;
