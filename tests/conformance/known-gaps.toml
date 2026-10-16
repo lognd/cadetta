@@ -333,11 +333,6 @@ ticket = "~SPQ1MD0"
 reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
 
 [[gap]]
-fixture = "adapters/import-assembly-parts"
-ticket = "~SPQ1MD0"
-reason = "import library lacks the item feature this fixture exercises (cadetta-adapter import)"
-
-[[gap]]
 fixture = "adapters/slots-for-selects-active-locators"
 ticket = "~6K6E7M4"
 reason = "no source activates an alternate and the CLI does not expose the active alternate (active_alternate)"

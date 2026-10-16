@@ -744,7 +744,9 @@ overwritten.
   `a = b * 2`; the references are to the proposed members.
 - Assemblies: a `.SLDASM` becomes an `assembly` with one `part`
   declaration per distinct component file; instance bindings carry
-  `component` (3).
+  `component` (3). The part type is the UpperCamel stem of the instance's
+  component file (`cad/wheel.SLDPRT` -> `Wheel`), so `wheel<1>` and
+  `wheel<2>` share the part `Wheel`; instances keep observation order.
 - Values are imported as nominal scalars. Native tolerances are not
   recovered in 0.1.0. Driven (reference) dimensions are skipped with a
   reason.

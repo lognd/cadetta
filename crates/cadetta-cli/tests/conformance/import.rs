@@ -40,6 +40,8 @@ const MODELLED: &[&str] = &[
     "source",
     "then_sync",
     "native_unit_in_proposal",
+    "assembly",
+    "components",
 ];
 
 /// Package name of the scratch package the CLI runs against.
@@ -139,6 +141,39 @@ fn observed_item(n: usize, item: &Value) -> Result<(Value, Value), String> {
     Ok((member, binding))
 }
 
+/// The fixture's `components` map as observed assembly instances, in the order the fixture
+/// lists them (the parsed map is sorted, so the order is recovered from the source text).
+fn observed_instances(spec: &Value, text: &str) -> Result<Vec<Value>, String> {
+    let Some(map) = spec["components"].as_object() else {
+        return Ok(Vec::new());
+    };
+    let document = spec["assembly"]
+        .as_str()
+        .ok_or("fixture `components` needs an `assembly` file")?;
+    let row = |n: i64| {
+        let cell = |v: i64| json!({"nominal": {"r": format!("{v}/1"), "pi": 0}});
+        (0..4).map(|c| cell(i64::from(c == n))).collect::<Vec<_>>()
+    };
+    let mut names: Vec<&String> = map.keys().collect();
+    names.sort_by_key(|k| text.find(&format!("\"{k}\"")));
+    names
+        .into_iter()
+        .map(|name| {
+            let file = map[name]
+                .as_str()
+                .ok_or_else(|| format!("component `{name}` must name a file"))?;
+            let stem = std::path::Path::new(file)
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or(file);
+            Ok(
+                json!({"component": name, "document": document, "reference": stem,
+                      "transform": [row(0), row(1), row(2)]}),
+            )
+        })
+        .collect()
+}
+
 /// Run the fixture's `import`: propose-shaped facts in process, file-level facts through the CLI.
 pub fn run(job: &Job) -> Result<Facts, String> {
     let text = std::fs::read_to_string(job.fixture)
@@ -176,7 +211,8 @@ pub fn run(job: &Job) -> Result<Facts, String> {
         components.push(json!({"members": [member]}));
         bindings.push(binding);
     }
-    let observed = json!({"components": components, "bindings": bindings});
+    let instances = observed_instances(&spec, &text)?;
+    let observed = json!({"components": components, "bindings": bindings, "instances": instances});
     let update = flag("--update");
     let mut observations = BTreeMap::new();
     if !update {
@@ -742,6 +778,29 @@ fn proposal_facts(
         ));
     }
     put("item_keys", json!(item_keys(&proposal)));
+    let mut instances: Vec<&_> = proposal
+        .items
+        .iter()
+        .filter(|i| i.kind == "instance")
+        .collect();
+    let seen: Vec<&str> = observed["instances"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|i| i["component"].as_str())
+        .collect();
+    instances.sort_by_key(|i| seen.iter().position(|c| *c == i.locator));
+    let mut parts: Vec<&str> = Vec::new();
+    for part in instances.iter().filter_map(|i| i.part.as_deref()) {
+        if !parts.contains(&part) {
+            parts.push(part);
+        }
+    }
+    put("parts", json!(parts));
+    put(
+        "instance_components",
+        json!(instances.iter().map(|i| &i.locator).collect::<Vec<_>>()),
+    );
     put(
         "reason_present",
         json!(
