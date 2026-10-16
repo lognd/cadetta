@@ -691,7 +691,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 format!("({})", items.join(", "))
             }
             Val::Quantity(q) => {
-                // frob:ticket ~QA1M8TZ
+                // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
                 let unit = unit.or_else(|| default_display_unit(q.dim()));
                 if let Some(u) = unit {
                     match format_value(
@@ -896,7 +896,7 @@ fn split_template(t: &str) -> Result<Vec<Option<String>>, String> {
 }
 
 /// A variant name as displayed: an underscore between digits is the decimal mark (`M2_5` is `M2.5`).
-// frob:ticket ~QA1M8TZ
+// frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
 fn display_variant(name: &str) -> String {
     let cs: Vec<char> = name.chars().collect();
     cs.iter()
@@ -911,7 +911,7 @@ fn display_variant(name: &str) -> String {
 }
 
 /// The unit a value renders in when none was authored: millimetres for a Length, else none.
-// frob:ticket ~QA1M8TZ
+// frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
 fn default_display_unit(dim: &Dim) -> Option<&'static str> {
     (dim.angle == 0 && dim.dimension == Dimension::from_si([1, 0, 0, 0, 0, 0, 0])).then_some("mm")
 }
@@ -1210,7 +1210,7 @@ mod tests {
         assert!(split_template("a { b").is_err());
     }
 
-    // frob:ticket ~QA1M8TZ
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
     // frob:tests crates/cadetta-sema/src/func.rs::display_variant
     #[test]
     fn a_digit_underscore_digit_variant_displays_with_a_decimal_point() {
@@ -1219,7 +1219,7 @@ mod tests {
         assert_eq!(display_variant("Cut_75"), "Cut_75");
     }
 
-    // frob:ticket ~QA1M8TZ
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
     // frob:tests crates/cadetta-sema/src/func.rs::default_display_unit
     #[test]
     fn a_unitless_length_defaults_to_millimetres() {
