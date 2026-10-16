@@ -1,0 +1,51 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T01:52:41Z"
+digest = "02bfc8b261d4fcd526ead3d9774a840e7bb444227aab7748b6c2f99a95fd860c"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling tracing-core v0.1.36
+   Compiling serde_json v1.0.154
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling serde_derive_internals v0.30.0
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling ref-cast-impl v1.0.27
+   Compiling schemars_derive v1.2.3
+   Compiling tracing-attributes v0.1.31
+   Compiling ref-cast v1.0.27
+   Compiling thiserror v2.0.21
+   Compiling tracing v0.1.44
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling serde v1.0.229
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 56s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b800d7de-27d3-4d23-b5ad-539f6e45d507 with nextest profile: default
+    Starting 1 test across 5 binaries (250 tests skipped)
+        PASS [   0.012s] cadetta-sema lower::tests::file_scope_fit_lowers_into_its_owner_component
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.090s] 1 test run: 1 passed, 250 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema file_scope_fit_lowers_into_its_owner_component"
+size = 1877
+status = "measured"
+test_count = 1
+tests_digest = "217104d4a0eceea925922b3da95511145d030f6c15371318e49dcc9daa6bd3b7"
+at = "2026-10-16T01:52:41Z"
+actor = "lognd"
+rev = 1

@@ -44,7 +44,6 @@ IGNORED_KEYS = {"diagnostics", "why", "note"}
 # must_fire blocks that describe a violating binding (see module docstring).
 # "name/side" -> follow-up ticket: the binding genuinely diverges from the fixture.
 KNOWN_DIVERGENCES = {
-    "pint-currency-rejected/must-fire": "~98TQVDQ",
 }
 VIOLATIONS = {"cli-only-verbs", "query-parity-with-cli", "solver-decimal-strings"}
 
