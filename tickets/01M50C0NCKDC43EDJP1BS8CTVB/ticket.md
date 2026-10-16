@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-16T04:14:15Z"
+updated = "2026-10-16T04:27:17Z"
 idempotency_key = "v2k95h5-slice-geometry"
 scope = ["crates/cadetta-geometry/src/**", "crates/cadetta-units/src/tolerance.rs"]
 
