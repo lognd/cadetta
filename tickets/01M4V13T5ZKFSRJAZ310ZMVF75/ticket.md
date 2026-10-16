@@ -2,12 +2,12 @@
 id = "01M4V13T5ZKFSRJAZ310ZMVF75"
 title = "language.md ambiguities found writing conformance fixtures"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T16:21:45Z"
-updated = "2026-10-16T07:10:18Z"
+updated = "2026-10-16T07:10:31Z"
 scope = ["docs/spec/language.md"]
 +++
 
