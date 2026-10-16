@@ -1,0 +1,39 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-16T21:11:57Z"
+digest = "7b937201534829fc7d0d9a1e95990b0518c8702e4c686d8e34d65176c13b824b"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID cb5e7767-d408-4a60-8e7a-5e8d555986fd with nextest profile: default
+    Starting 16 tests across 1 binary (44 binaries skipped)
+        PASS [   0.008s] cadetta::conformance_ir exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.008s] cadetta::conformance_ir exec::two_input::tests::node_field_finds_nested_path
+        PASS [   0.009s] cadetta::conformance_ir exec::import_exec::tests::lock_value_reads_the_synced_record_for_a_locator
+        PASS [   0.009s] cadetta::conformance_ir exec::lockfix::tests::upstream_text_is_split
+        PASS [   0.010s] cadetta::conformance_ir compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.009s] cadetta::conformance_ir exec::lockfix::tests::package_lines_become_records
+        PASS [   0.010s] cadetta::conformance_ir exec::stale_output_tests::no_s003_or_no_check_verdict_observes_nothing
+        PASS [   0.009s] cadetta::conformance_ir exec::stale_output_tests::unspecific_or_non_config_error_is_not_observed
+        PASS [   0.010s] cadetta::conformance_ir exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.010s] cadetta::conformance_ir compare::tests::closed_list_and_duplicates
+        PASS [   0.012s] cadetta::conformance_ir exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.012s] cadetta::conformance_ir exec::two_input::tests::label_spells_breaking_as_major
+        PASS [   0.007s] cadetta::conformance_ir exec::two_input::tests::relation_distinguishes_same_from_differs
+        PASS [   0.006s] cadetta::conformance_ir run::tests::waived_diagnostics_are_not_produced
+        PASS [   1.301s] cadetta::conformance_ir ir_fixtures_match_the_spec
+        PASS [   1.303s] cadetta::conformance_ir ir_corpus_is_not_empty
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.311s] 16 tests run: 16 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'binary(conformance_ir)'"
+size = 2145
+status = "measured"
+test_count = 16
+tests_digest = "fdda6afdd7ec8b7e81ee6b37f9d8e8ed4e3cc5a7bf0dd530283da3ff85ddf028"
+at = "2026-10-16T21:11:57Z"
+actor = "lognd"
+rev = 1
