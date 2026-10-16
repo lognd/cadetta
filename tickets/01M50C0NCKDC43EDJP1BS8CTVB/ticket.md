@@ -2,12 +2,12 @@
 id = "01M50C0NCKDC43EDJP1BS8CTVB"
 title = "Geometry: disc arithmetic for point.x/.y projection, aligned and distance"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T18:08:29Z"
-updated = "2026-10-15T18:09:51Z"
+updated = "2026-10-16T04:12:25Z"
 idempotency_key = "v2k95h5-slice-geometry"
 scope = ["crates/cadetta-geometry/src/**"]
 
