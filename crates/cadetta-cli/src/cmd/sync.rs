@@ -40,8 +40,10 @@ use serde_json::{Value as Json, json};
 use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
     designed, emit_package_texts, emit_params, kind_of, load_bindings, locators_for, native_unit,
-    negate_text, package_ir, text_params_of, to_ratio, written_for,
+    package_ir, text_params_of, to_ratio, written_for,
 };
+use cadetta_adapter::geometry_plan::negate_text;
+
 use crate::cmd::import::program;
 use crate::config::{Adapter, SaveMode};
 use crate::output::Format;
