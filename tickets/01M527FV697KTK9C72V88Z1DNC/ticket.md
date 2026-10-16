@@ -8,8 +8,8 @@ points = 5
 parent = "01M5205ESRG3TZHSBQJSPQ1MD0"
 reporter = "lognd"
 created = "2026-10-16T11:27:52Z"
-updated = "2026-10-16T11:28:08Z"
-scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs"]
+updated = "2026-10-16T11:29:17Z"
+scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-cli/src/cmd/import.rs", "crates/cadetta-cli/tests/conformance/import.rs", "crates/cadetta-cli/tests/conformance/verify.rs"]
 
 [[acceptance]]
 text = "Fixtures import-expression-converted, import-item-keys, import-values-nominal-scalars pass"
