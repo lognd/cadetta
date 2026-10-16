@@ -2,7 +2,8 @@
 id = "01M4VQXMH7YHJT18D9NJBHTKF3"
 title = "Conformance runner: executor for binding import entries"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4STAPYJBMRZBEY8HJH6F6XS"
