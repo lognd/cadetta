@@ -2,7 +2,8 @@
 id = "01M4V1HED894WSWEEJ9K2NMWYA"
 title = "Quantities: expose the display formatter (CLI/binding verb) for conformance"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
