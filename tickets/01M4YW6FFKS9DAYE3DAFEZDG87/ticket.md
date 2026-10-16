@@ -2,12 +2,12 @@
 id = "01M4YW6FFKS9DAYE3DAFEZDG87"
 title = "sync: report open O004 obligation for json/csv/sw-equations bindings without drive"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T04:12:47Z"
-updated = "2026-10-16T16:36:12Z"
+updated = "2026-10-16T16:36:18Z"
 scope = ["crates/cadetta-cli/src/cmd/sync.rs", "crates/cadetta-cli/src/universe.rs", "crates/cadetta-obligations/**", "tests/conformance/known-gaps.toml"]
 
 [[links]]
