@@ -2,12 +2,12 @@
 id = "01M4V6C5E3CF67BVGD3SE9XKVS"
 title = "packages.md: diagnostic codes for registry source, reserved std name and ignored differing source"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
-updated = "2026-10-16T07:19:55Z"
+updated = "2026-10-16T07:21:48Z"
 scope = ["docs/spec/**"]
 +++
 
