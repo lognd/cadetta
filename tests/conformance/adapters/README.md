@@ -30,9 +30,9 @@ or JSON files next to the expect file.
 ## Extra expect keys
 
 Beyond `diagnostics` and `exit`, the blocks may carry descriptive keys
-read by the runner: `message_contains`, `writes`, `output` (`contains`,
+read by the runner: `message_contains`, `writes`, `names_path_or_key` (a config error naming a bound design path or a locator key), `output` (`contains`,
 `excludes`), `config_error`, `order`. `why` is ignored. A key the runner
-does not observe (for example `class`, `action`, `names_path_or_key`)
+does not observe (for example `class`, `action`)
 fails the entry until support exists, so it is gapped, not dropped.
 
 ## Rule names

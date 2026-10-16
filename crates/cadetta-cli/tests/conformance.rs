@@ -263,3 +263,35 @@ fn display_binding_fixtures_execute_and_match() {
         "{report:?}"
     );
 }
+
+// frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+// frob:tests crates/cadetta-cli/tests/conformance/exec.rs::names_path_or_key
+#[test]
+fn bind_invalid_fixtures_observe_the_named_path_or_key() {
+    // Only the seven `bind-invalid-*` adapters fixtures are run, in a scratch corpus.
+    let scratch =
+        std::env::temp_dir().join(format!("cadetta-bindinv-corpus-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&scratch);
+    let writing = run::writing();
+    let dest = scratch.join("adapters");
+    for entry in std::fs::read_dir(corpus_root().join("adapters")).unwrap() {
+        let entry = entry.unwrap();
+        let file = entry.file_name().to_string_lossy().into_owned();
+        if file.starts_with("bind-invalid-") {
+            if entry.file_type().unwrap().is_dir() {
+                copy_tree(&entry.path(), &dest.join(&file));
+            } else {
+                std::fs::create_dir_all(&dest).unwrap();
+                std::fs::copy(entry.path(), dest.join(&file)).unwrap();
+            }
+        }
+    }
+    drop(writing);
+    let report = corpus::run_corpus(&scratch, &corpus::KnownGaps::default());
+    let _ = std::fs::remove_dir_all(&scratch);
+    assert_eq!(report.outcomes.len(), 7, "{report:?}");
+    assert!(
+        report.outcomes.values().all(|o| matches!(o, Outcome::Pass)),
+        "{report:?}"
+    );
+}
