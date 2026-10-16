@@ -319,6 +319,8 @@ pub(crate) fn s_facts(
                 let applied = m.citation.as_ref().or(c.citation.as_ref());
                 values.push(OtsValueFacts {
                     path: m.path.to_string(),
+                    component: c.path.to_string(),
+                    component_span: c.span.clone(),
                     cited: m.citation.is_some(),
                     component_cited: c.citation.is_some(),
                     note_only: applied.is_some_and(|r| r.builtin == Some(CiteBuiltin::Note)),
