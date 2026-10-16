@@ -1,0 +1,16 @@
+{
+  "spec": "1.4",
+  "doc": "language",
+  "section": "language.md 3.8",
+  "rule": "fn-no-recursion",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      { "code": "EVAL", "severity": "error" }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  }
+}

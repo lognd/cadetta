@@ -836,3 +836,8 @@ reason = "w.mass in a let reports 'read one instance of it' although language.md
 fixture = "language/q009-part-count-fractional"
 ticket = "~BSPG4VY"
 reason = "fractional part count w[2.5] yields no Q009"
+
+[[gap]]
+fixture = "language/process-rule-kind"
+ticket = "~EQX7ZDY"
+reason = "language.md 3.8 says a process rule must keep the argument kind; sema only logs a warning and emits no EVAL diagnostic"

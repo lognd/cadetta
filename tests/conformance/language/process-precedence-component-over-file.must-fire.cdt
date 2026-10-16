@@ -1,0 +1,14 @@
+process Thin {
+  hole_comp = 0.2mm
+  rule hole(d: Length) -> Length = d + hole_comp
+}
+process Wide {
+  hole_comp = 0.3mm
+  rule hole(d: Length) -> Length = d + hole_comp
+}
+#![process(Thin)]
+model Case {
+  #![process(Wide)]
+  insert_hole = 3.4mm  #[hole]
+  check drawn_ok: insert_hole.drawn == 3.6mm
+}

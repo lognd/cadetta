@@ -1,0 +1,5 @@
+model Part {
+  width = 7mm
+  w in 4mm..6mm
+  check fits: width satisfies w
+}
