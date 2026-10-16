@@ -2,7 +2,8 @@
 id = "01M50Z764H4P103XX06KB9GCES"
 title = "Fix s003-solver-stale conformance: must-fire loses S003 and gets C002"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "high"
 points = 2
 reporter = "lognd"
