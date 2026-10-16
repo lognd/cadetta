@@ -9,7 +9,7 @@ reporter = "lognd"
 created = "2026-10-15T23:22:09Z"
 updated = "2026-10-16T00:05:31Z"
 idempotency_key = "leftovers-k8v6dsy-fit-instances"
-scope = ["crates/cadetta-sema/src/**"]
+scope = ["crates/cadetta-sema/src/**", "docs/spec/language.md"]
 
 [[acceptance]]
 text = "A fit .hole/.shaft/.clearance read inside a parameterized instance (and via the instance, e.g. housing.bore_fit.hole) evaluates to a quantity"
