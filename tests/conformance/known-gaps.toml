@@ -19,18 +19,8 @@ reason = "CLI obligation universe does not enumerate require obligations, so O00
 
 [[gap]]
 fixture = "solvers/s006-primary-missing-is-not-s006"
-ticket = "~QH5PDHZ"
-reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
-
-[[gap]]
-fixture = "solvers/s006-unchanged-variant-reads-primary"
-ticket = "~QH5PDHZ"
-reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
-
-[[gap]]
-fixture = "solvers/s006-unsolved-variant"
-ticket = "~QH5PDHZ"
-reason = "fixture defects: cite lacks accessed (S008) and the solver input reads an unindexed part array; check itself emits S006"
+ticket = "~RWGVA1F"
+reason = "check raises S006 for a variant when the solver has no primary result at all; solvers.md 4.1 says that is an unsolved output"
 
 [[gap]]
 fixture = "geometry/datum-ots-needs-citation"

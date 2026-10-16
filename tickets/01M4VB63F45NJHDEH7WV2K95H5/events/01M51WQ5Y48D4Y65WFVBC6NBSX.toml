@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T08:19:38Z"
+digest = "0f52e06be7a22d861de60dd14358d5c4f4f177537708af4a0978f2f52aaeb4c5"
+provider = "file"
+ref = "tests/conformance/geometry/position-e006-point3.expect.json"
+size = 363
+status = "measured"
+at = "2026-10-16T08:19:38Z"
+actor = "lognd"
+rev = 1

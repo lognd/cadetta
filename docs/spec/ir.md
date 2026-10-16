@@ -308,7 +308,11 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     cell per column, a quantity `Value` keeping its authored text or an
     enum variant name) and its `@cite` as `citation`; a table that does
     not evaluate, or holds another kind of cell, is skipped.
-  - Not lowered yet: interfaces, `require` obligations
+  - A `require` lowers to a `Require` in `requires[]` (never into `checks[]`; ~X50QNG4): same
+    path and folded verdicts (primary and per alternate) as a check, plus its `message` and its
+    `@cite` as `citation`. The CLI obligation universe reads `requires[]` as `require` obligations
+    (a check-shaped graph node, offered for sign-off only while it holds).
+  - Not lowered yet: interfaces
     and bindings; parameterized components lower with valueless
     members. The datum and placement arguments of a parameterized
     instance lower as `datum` / `place` Members of the instantiating

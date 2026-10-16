@@ -1,0 +1,27 @@
+{
+  "spec": "1.5",
+  "doc": "quantities",
+  "section": "quantities.md 5.4",
+  "rule": "position-projection",
+  "kind": "source",
+  "entry": "eval",
+  "must_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.r",
+        "nominal": "10.1mm"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "values": [
+      {
+        "path": "acme.demo::P.r",
+        "nominal": "9.9mm"
+      }
+    ]
+  },
+  "note": "a [position 0.2mm] point ranges over [-0.1mm, 0.1mm] about nominal on each axis, exactly; the must-not-fire reads .min, which is 9.9mm, so it differs from the must-fire value"
+}

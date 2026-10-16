@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["An indexed part-array argument (bearing = b[0]) evaluates the callee's per-instance members and fits"]
+moved = []
+at = "2026-10-16T09:07:55Z"
+actor = "lognd"
+rev = 1

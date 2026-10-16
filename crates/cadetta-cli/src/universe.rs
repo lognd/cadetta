@@ -188,7 +188,23 @@ impl Universe {
         }
         // A fit is a node over its hole and shaft members (obligations.md 1, `evaluates`).
         for f in components.iter().flat_map(|c| &c.fits) {
-            let deps = vec![f.hole.to_string(), f.shaft.to_string()];
+            let fit_key = f.path.to_string();
+            // The fit's own accessor members (`<fit>.hole`, `.shaft`, `.clearance`) read the fit,
+            // so a synthetic hole/shaft that is such a member is no dependency: the edge would
+            // close a cycle and drop every obligation of the package.
+            let deps: Vec<String> = [&f.hole, &f.shaft]
+                .into_iter()
+                .filter(|side| {
+                    let derived = members
+                        .iter()
+                        .any(|m| m.path == **side && m.deps.contains(&f.path));
+                    if derived {
+                        tracing::debug!(fit = %fit_key, side = %side, "universe: fit accessor is not a dependency");
+                    }
+                    !derived
+                })
+                .map(ToString::to_string)
+                .collect();
             nodes.push((f.path.to_string(), cadetta_ir::digest::fit_digest(f), deps));
         }
         // A table is a node a check can read (ir.md 4); editing a row stales its readers.
@@ -225,7 +241,11 @@ impl Universe {
                 .find(|dc| dc.path == c.path)
                 .unwrap_or(c)
         };
-        for c in ir.checks.iter().map(authored) {
+        // A require is a check-shaped node that is never suppressed (ir.md 3); IR `requires[]`
+        // are the authority, `requires` (lint paths) only marks checks the IR lacks.
+        // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+        let req_checks: Vec<Check> = ir.requires.iter().map(|r| r.as_check()).collect();
+        for c in ir.checks.iter().map(authored).chain(req_checks.iter()) {
             let reads = read_targets
                 .iter()
                 .filter(|m| check_reads(&c.path.to_string(), &c.expr, m))
@@ -249,11 +269,11 @@ impl Universe {
             g.add_node(key, own, deps);
         }
         let mut checks = Vec::new();
-        for c in &ir.checks {
+        for (i, c) in ir.checks.iter().chain(req_checks.iter()).enumerate() {
             let key = c.path.to_string();
             let covered = g.closure(&key)?;
             let deps = g.dep_owns(&key)?;
-            let kind = if requires.contains(&key) {
+            let kind = if requires.contains(&key) || i >= ir.checks.len() {
                 ObligationKind::Require
             } else {
                 ObligationKind::Check
@@ -1240,5 +1260,19 @@ mod tests {
         assert_eq!(ids, vec!["require:a::M.ok"]);
         let plain = super::Universe::of(&ir).unwrap();
         assert_eq!(plain.checks[0].id.to_string(), "check:a::M.ok");
+    }
+
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn ir_requires_become_require_obligations() {
+        let mut ir = ir_with_requires();
+        let moved = ir.checks.remove(0);
+        let mut r = cadetta_ir::entities::Require::new(moved.path.clone(), "x");
+        r.verdicts = moved.verdicts.clone();
+        ir.requires.push(r);
+        let u = super::Universe::of(&ir).unwrap();
+        let ids: Vec<String> = u.checks.iter().map(|c| c.id.to_string()).collect();
+        assert_eq!(ids, vec!["check:a::M.bad", "require:a::M.ok"]);
     }
 }

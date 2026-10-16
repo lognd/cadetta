@@ -32,7 +32,7 @@
         "min_wall": "1mm"
       },
       "diagnostics": [],
-      "variant": "wheel=Heavy"
+      "variant": "acme.demo::Rover/wheel=acme.demo::Heavy"
     }
   ]
 }

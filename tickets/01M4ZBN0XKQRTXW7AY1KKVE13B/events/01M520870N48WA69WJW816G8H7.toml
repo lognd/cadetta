@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["The conformance import executor drives propose, accept, rerun and --update through the CLI and passes the corresponding fixtures"]
+moved = []
+at = "2026-10-16T09:21:22Z"
+actor = "lognd"
+rev = 1

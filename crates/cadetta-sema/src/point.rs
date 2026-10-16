@@ -619,6 +619,18 @@ mod tests {
         ));
         assert!(codes(&ev).contains(&"Q002"), "{:?}", ev.diagnostics);
     }
+
+    // frob:ticket 01M4VB63F45NJHDEH7WV2K95H5
+    // frob:tests crates/cadetta-sema/src/point.rs::position_val kind=unit
+    #[test]
+    fn position_projection_ranges_over_half_the_diameter() {
+        let ev = run(&file(
+            "model M {\n  p = Point2(10mm, 5mm) [position 0.2mm]\n  hi = p.x.max\n  lo = p.x.min\n}\n",
+        ));
+        assert!(codes(&ev).is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(frac(&val(&ev, "hi")), s("101", "10000"));
+        assert_eq!(frac(&val(&ev, "lo")), s("99", "10000"));
+    }
 }
 
 #[cfg(test)]

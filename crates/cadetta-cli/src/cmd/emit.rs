@@ -631,6 +631,11 @@ fn build_value_rows(job: &Job<'_>) -> Built {
     }
 }
 
+/// Default package-relative output of a value-row (`json`/`csv`) adapter: `build/<id>.<name>`.
+pub(crate) fn value_row_rel(adapter: &Adapter) -> String {
+    format!("build/{}.{}", adapter.id(), adapter.name)
+}
+
 /// Build the `sw-equations` file for one adapter.
 fn build_sw_equations(job: &Job<'_>) -> Built {
     let mut diagnostics = Vec::new();
@@ -1186,7 +1191,7 @@ pub(crate) fn emit_package_texts(
         };
         let rel = adapter.out.clone().unwrap_or_else(|| {
             if value_row {
-                format!("build/{}.{}", adapter.id(), adapter.name)
+                value_row_rel(adapter)
             } else {
                 format!("build/solidworks/{}.txt", adapter.id())
             }

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: requires lower into Project.requires[] (Require entity from JAVMC41), never checks[]; verdict folding shared with checks via one closure; Universe treats ir.requires as check-shaped graph nodes (Require::as_check) and require obligations, keeping the lint require_paths marking as a fallback. No schema change. Note: cadetta universe::tests::fit_obligation_is_listed_signed_off_and_stales_on_edit already fails on main."
+at = "2026-10-16T08:45:09Z"
+actor = "lognd"
+rev = 1

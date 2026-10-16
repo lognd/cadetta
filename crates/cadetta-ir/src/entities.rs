@@ -23,7 +23,7 @@ use serde::{Serialize, Serializer};
 use tracing::debug;
 
 // frob:ticket 01M4VB62VJQV9AKSSQME8NWW6Y
-use crate::model::{Bound, CiteRef, Digest, Member, Value, Verdicts};
+use crate::model::{Bound, Check, CiteRef, Digest, Member, Value, Verdicts};
 use crate::path::Path;
 use crate::variant_name::{ComponentPath, VariantName};
 
@@ -151,6 +151,18 @@ impl Require {
         };
         debug!(path = %r.path, "ir: require built");
         r
+    }
+
+    /// The require as a [`Check`] (no waivers), so graph and digest code treats both alike.
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    pub fn as_check(&self) -> Check {
+        Check {
+            path: self.path.clone(),
+            expr: self.expr.clone(),
+            verdicts: self.verdicts.clone(),
+            conservative: self.conservative,
+            waived_for: Vec::new(),
+        }
     }
 }
 

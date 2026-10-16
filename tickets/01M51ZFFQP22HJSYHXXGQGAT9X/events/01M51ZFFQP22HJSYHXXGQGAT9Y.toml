@@ -1,0 +1,10 @@
+kind = "create"
+title = "Emit singular OTS part members (ring.bore_nominal etc.) as per-instance IR members"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-sema/src/lower.rs"]
+body = "found while working ~A1N7FAP: lower_instance_members emits only parts.len()==1 && members.len()==1 evaluation entries; golden 02 BearingUnit/ring.* and nested instance paths missing"
+at = "2026-10-16T09:07:52Z"
+actor = "lognd"
+rev = 1

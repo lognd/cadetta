@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: rerun = propose then accept in one fixture run; cadetta.lock excluded from the write view and observed via lock_adds; update mode stages src/lib.cdt + bindings + lock bases and reports diff/reported/flagged/source_after. Gaps remaining: library-feature fixtures -> ~SPQ1MD0; then_sync modelling and never-overwrites/contract-no-source-write fixture inconsistencies -> ~G9E7R67."
+at = "2026-10-16T09:21:19Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [4]
+captured_at = "2026-10-16T08:19:38Z"
+digest = "6eabc9c39906a05df0036c21a08028dd8e416ed06bd7aafeccec7c12b489da6d"
+provider = "file"
+ref = "tests/conformance/geometry/position-aligned-sum-of-radii.expect.json"
+size = 444
+status = "measured"
+at = "2026-10-16T08:19:38Z"
+actor = "lognd"
+rev = 1

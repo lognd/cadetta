@@ -14,10 +14,12 @@ use std::path::{Path as FsPath, PathBuf};
 use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::availability::{Verb as AvailVerb, rejections, unavailable};
 use cadetta_adapter::bindings::{BindingSet, RefTarget, mangle};
+use cadetta_adapter::builtin::csv;
 use cadetta_adapter::builtin::sw_equations::{ADAPTER as SW_EQUATIONS, ValueKind};
 use cadetta_adapter::geometry_bind::{datum_entries, verify_geometry};
 use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_tolerance};
 use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
+use cadetta_adapter::read_units::UnitPolicy;
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
     CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedComponent,
@@ -42,7 +44,7 @@ use serde_json::{Value as Json, json};
 use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitArgs, EmitReport, LoadError, TextParams, attr_point, config_point,
     designed, emit_package_texts, emit_params, kind_of, load_bindings, locators_for, native_unit,
-    package_ir, text_params_of, to_ratio, written_for,
+    package_ir, text_params_of, to_ratio, value_row_rel, written_for,
 };
 use cadetta_adapter::geometry_plan::negate_text;
 
@@ -1321,6 +1323,47 @@ fn instructions(adapter: &Adapter, emitted: Option<&str>) -> String {
     }
 }
 
+/// Read the on-disk csv of a built-in `csv` adapter before it is re-emitted, so a row naming
+/// nothing the bindings bind is R016 (emitters/csv.md 3) instead of being silently overwritten.
+// frob:ticket 01M4YT94YMMH6YRC20YTD7M33H
+fn read_back_csv(pkg: &PackageDir, adapter: &Adapter, ir: &Ir, ctx: &mut Ctx<'_>) {
+    let rel = adapter
+        .out
+        .clone()
+        .unwrap_or_else(|| value_row_rel(adapter));
+    let Ok(text) = std::fs::read_to_string(pkg.dir.join(&rel)) else {
+        tracing::debug!(file = %rel, "sync: no csv on disk to read back");
+        return;
+    };
+    let Ok((set, _)) = load_bindings(pkg, adapter, ir) else {
+        return;
+    };
+    let bound: Vec<&str> = set
+        .entries()
+        .iter()
+        .flat_map(|b| b.locators.iter().map(|l| l.locator.as_str()))
+        .collect();
+    let units = UnitPolicy {
+        native_unit: Some(
+            adapter
+                .native_unit
+                .clone()
+                .unwrap_or_else(|| DEFAULT_NATIVE_UNIT.to_owned()),
+        ),
+        assume_unit: None,
+    };
+    match csv::read_bound(&text, &units, &rel, &bound) {
+        Ok(params) => tracing::info!(file = %rel, rows = params.len(), "sync: csv read back"),
+        Err(e) => {
+            let code = match e {
+                csv::CsvError::UnboundRow { .. } => "R016",
+                _ => "R005",
+            };
+            ctx.report.diag(code, e.to_string());
+        }
+    }
+}
+
 /// Fall back to emit plus manual instructions (no classification, nothing pushed).
 fn manual_adapter(
     pkg: &PackageDir,
@@ -1330,6 +1373,9 @@ fn manual_adapter(
     external: Option<String>,
 ) {
     let mut emitted = external;
+    if adapter.command.is_none() && adapter.name == csv::ADAPTER {
+        read_back_csv(pkg, adapter, ir, ctx);
+    }
     if !ctx.args.dry_run && adapter.command.is_none() {
         let mut report = EmitReport::default();
         let parsed = EmitArgs {
@@ -2253,6 +2299,27 @@ mod tests {
         assert_eq!(code, EXIT_OK);
         assert!(!dir.0.join("build").exists(), "dry run wrote: {out}");
         assert!(out.contains("manual  equations:"), "{out}");
+    }
+
+    // an unbound-name row in the on-disk csv exits with R016.
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::read_back_csv
+    #[test]
+    fn unbound_csv_row_exits_with_r016() {
+        let dir = project_with("", SOURCE, BINDINGS);
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml"))
+            .unwrap()
+            .replace("sw-equations", "csv");
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        let (code, out, _) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_OK, "{out}");
+        let file = dir.0.join("build/equations.csv");
+        let mut text = std::fs::read_to_string(&file).unwrap();
+        assert!(!text.contains("Stray"), "{text}");
+        text.push_str("Stray,1,mm,\n");
+        std::fs::write(&file, text).unwrap();
+        let (code, out, _) = run(&dir, Format::Text, &[]);
+        assert_eq!(code, EXIT_FAIL, "{out}");
+        assert!(out.contains("R016") && out.contains("Stray"), "{out}");
     }
 
     // criterion 3: usage errors, exit codes and the JSON schema.

@@ -1,0 +1,50 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T08:20:16Z"
+digest = "fea2be4ce2c8b4c108e781566b039b6e21d9d4a57e02e86effad97c94fabf2f8"
+exit_code = 0
+inline = '''
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling tracing-core v0.1.36
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_json v1.0.154
+   Compiling thiserror v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling tracing-attributes v0.1.31
+   Compiling tracing v0.1.44
+   Compiling serde v1.0.229
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling ref-cast-impl v1.0.27
+   Compiling serde_derive_internals v0.30.0
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars_derive v1.2.3
+   Compiling ref-cast v1.0.27
+   Compiling schemars v1.2.3
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 48.57s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6be9d07c-d008-46e1-bcd2-260741008077 with nextest profile: default
+    Starting 1 test across 5 binaries (263 tests skipped)
+        PASS [   0.009s] cadetta-sema lower::tests::position_point2_lowers_to_paired_uv_terms
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.009s] 1 test run: 1 passed, 263 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema position_point2_lowers_to_paired_uv_terms"
+size = 1818
+status = "measured"
+test_count = 1
+tests_digest = "97d0ee12794c87ac5794204da1111eb9a9cc51562f0d61fe1276fd3114d07ba6"
+at = "2026-10-16T08:20:16Z"
+actor = "lognd"
+rev = 1

@@ -18,11 +18,12 @@
 //! - Solvers and waivers lower in `lower_solver.rs`; the recorded-result state of a solver comes
 //!   from the caller (`LowerInput::solver_states`).
 //! - Tables lower in `lower_table.rs`.
-//! - Not lowered yet: interfaces, `require` obligations and bindings; parameterized components lower with
+//! - Not lowered yet: interfaces and bindings; parameterized components lower with
 //!   valueless members. Datums, points and placements lower in `lower_geom.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use cadetta_ir::entities::Require;
 use cadetta_ir::model::{
     self as ir, AffineTerm, Check, Component, ComponentClass, Exact, Fit, Flavour, Inexact, Member,
     MemberKind, Nominal, PackageId, Part, Project, Provenance, SpanRef, Value, VerdictState,
@@ -373,6 +374,10 @@ impl Cx<'_> {
                 debug!(path = %p, "lower: dependency on a fit with component-argument operands dropped");
                 return None;
             }
+            if let Some(inst) = self.instance_fit(&p) {
+                debug!(path = %p, fit = %inst, "lower: dependency on a definition fit is its per-instance fit node");
+                return Some(inst);
+            }
             return Some(self.slot_node(p));
         }
         let d = crate::eval::geom::definition_path(&self.resolver, &p);
@@ -394,6 +399,23 @@ impl Cx<'_> {
             }
             d => d,
         }
+    }
+
+    /// The per-instance fit node (`Unit/housing.bore_fit`) standing in for definition fit `p`, when it is derived only per instance.
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    fn instance_fit(&self, p: &CanonPath) -> Option<CanonPath> {
+        if self.input.fits.iter().any(|f| f.path == *p) {
+            return None;
+        }
+        self.input
+            .fits
+            .iter()
+            .find(|f| {
+                !f.path.parts.is_empty()
+                    && crate::eval::geom::definition_path(&self.resolver, &f.path).as_ref()
+                        == Some(p)
+            })
+            .map(|f| f.path.clone())
     }
 
     /// True when `p` names a `fit` member that was not derived (its operands read component arguments).
@@ -766,9 +788,13 @@ fn fold_verdicts(results: &[&crate::eval::checks::CheckResult]) -> VerdictState 
     state
 }
 
-fn group_checks(ev: &Evaluation) -> BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> {
+/// Groups the instance results of the checks (`obligation == false`) or the requires (`true`) by path.
+fn group_checks(
+    ev: &Evaluation,
+    obligation: bool,
+) -> BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> {
     let mut m: BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> = BTreeMap::new();
-    for r in ev.checks.iter().filter(|r| !r.obligation) {
+    for r in ev.checks.iter().filter(|r| r.obligation == obligation) {
         m.entry(r.path.clone()).or_default().push(r);
     }
     m
@@ -903,36 +929,69 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
             }
         }
     }
-    let primary = group_checks(input.evaluation);
-    let variant_checks: BTreeMap<&String, _> = input
-        .variants
-        .iter()
-        .map(|(k, e)| (k, group_checks(e)))
-        .collect();
-    for (path, results) in &primary {
-        let Some(p) = ir_path(path) else { continue };
-        let src = input.sources.get(&path.modules);
-        let mut verdicts = Verdicts {
-            primary: Some(fold_verdicts(results)),
-            ..Verdicts::default()
-        };
-        for (k, vc) in &variant_checks {
-            if let Some(r) = vc.get(path) {
-                verdicts
-                    .per_alternate
-                    .insert((*k).clone(), fold_verdicts(r));
-            }
-        }
-        let conservative = results
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    let folded = |obligation: bool| {
+        let primary = group_checks(input.evaluation, obligation);
+        let variants: BTreeMap<&String, _> = input
+            .variants
             .iter()
-            .any(|r| r.notes.contains(&Note::Conservative));
+            .map(|(k, e)| (k, group_checks(e, obligation)))
+            .collect();
+        let mut out = Vec::new();
+        for (path, results) in &primary {
+            let Some(p) = ir_path(path) else { continue };
+            let mut verdicts = Verdicts {
+                primary: Some(fold_verdicts(results)),
+                ..Verdicts::default()
+            };
+            for (k, vc) in &variants {
+                if let Some(r) = vc.get(path) {
+                    verdicts
+                        .per_alternate
+                        .insert((*k).clone(), fold_verdicts(r));
+                }
+            }
+            let conservative = results
+                .iter()
+                .any(|r| r.notes.contains(&Note::Conservative));
+            let src = input.sources.get(&path.modules);
+            out.push((
+                p,
+                path.clone(),
+                text_of(src, results[0].span),
+                verdicts,
+                conservative,
+                results[0],
+            ));
+        }
+        out
+    };
+    for (path, _, expr, verdicts, conservative, _) in folded(false) {
         project.checks.push(Check {
-            path: p,
-            expr: text_of(src, results[0].span),
+            path,
+            expr,
             verdicts,
             conservative,
             waived_for: Vec::new(),
         });
+    }
+    // A require is never suppressed, so it keeps no waiver list but its message and citation.
+    for (path, canon, expr, verdicts, conservative, first) in folded(true) {
+        let mut req = Require::new(path, expr);
+        req.message = first.message.clone();
+        req.citation = first.citation.as_ref().and_then(|cc| {
+            match idx.lower_ref(&canon.package, &canon.modules, cc) {
+                Ok(r) => Some(r),
+                Err(e) => {
+                    debug!(path = %canon, error = %e.message, "lower: require citation unresolved");
+                    None
+                }
+            }
+        });
+        cited.extend(req.citation.iter().filter_map(|r| r.cite.clone()));
+        req.verdicts = verdicts;
+        req.conservative = conservative;
+        project.requires.push(req);
     }
     project.set_modules(modules.into_iter().collect());
     project.citations = cited
@@ -942,6 +1001,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
     debug!(
         components = project.components.len(),
         checks = project.checks.len(),
+        requires = project.requires.len(),
         "lower: project built"
     );
     project
@@ -1184,6 +1244,20 @@ mod tests {
             v.nominal,
             Nominal::Exact(Exact(Magnitude::new(Rational::new(6, 1000).unwrap(), 0)))
         );
+    }
+
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn a_require_lowers_to_requires_not_checks() {
+        let src = "model R {\n  w = 2mm\n  check ok: w > 1mm\n  require budget: w < 1mm \"too wide\"\n}\n";
+        let b = build(src, &[], &[]);
+        assert_eq!(b.project.checks.len(), 1, "a require is not a check");
+        let r = &b.project.requires[0];
+        assert!(r.path.to_string().ends_with("R.budget"), "{}", r.path);
+        assert_eq!(r.message.as_deref(), Some("too wide"));
+        assert_eq!(r.verdicts.primary, Some(VerdictState::Fail));
+        assert!(r.citation.is_none());
     }
 
     // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
@@ -1885,5 +1959,31 @@ mod tests {
             format!("{v:?}").contains("Rational(1/250)"),
             "w = 4mm: {v:?}"
         );
+    }
+
+    // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn indexed_part_array_argument_evaluates_the_instance_members() {
+        let src = "pub interface Brg {\n  outer_dia: Length\n}\n\
+            pub ots B1: Brg {\n  outer_dia = 22mm\n}\n\
+            pub model Housing(bearing: Brg) {\n  twice = bearing.outer_dia * 2\n}\n\
+            pub assembly Rig {\n  part b[2]: Brg = B1\n  \
+            part housing: Housing(bearing = b[0])\n}\n";
+        let b = build(src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let rig = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rig")
+            .expect("Rig");
+        let m = rig
+            .members
+            .iter()
+            .find(|m| m.path.to_string() == "p::Rig/housing.twice")
+            .expect("per-instance member");
+        let v = format!("{:?}", m.value);
+        assert!(v.contains("Rational(11/250)"), "2 * 22mm: {v}");
     }
 }
