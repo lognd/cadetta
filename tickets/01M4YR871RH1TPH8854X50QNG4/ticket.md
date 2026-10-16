@@ -2,7 +2,8 @@
 id = "01M4YR871RH1TPH8854X50QNG4"
 title = "Lower require items into IR so require sign-off obligations exist"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
