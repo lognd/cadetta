@@ -2,12 +2,12 @@
 id = "01M4Y6TG02JC7RX0PBN8HV1QQY"
 title = "KindChecker: untyped locals must shadow same-named component members"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 2
 reporter = "lognd"
 created = "2026-10-14T21:59:15Z"
-updated = "2026-10-16T00:26:27Z"
+updated = "2026-10-16T00:34:00Z"
 idempotency_key = "kindcheck-untyped-local-shadow"
 scope = ["crates/cadetta-sema", "docs/spec/quantities.md", "changelog.d", "crates/cadetta-cli/tests"]
 
