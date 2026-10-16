@@ -2,12 +2,12 @@
 id = "01M514JX5PKMQ4SEGBRKNWJCVG"
 title = "Conformance runner treats kind=binding entry=python as externally replayed, then drop the 35 bindings/* known-gaps"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T01:17:52Z"
-updated = "2026-10-16T01:17:52Z"
+updated = "2026-10-16T01:43:35Z"
 scope = ["crates/cadetta-cli/tests/conformance/**", "tests/conformance/known-gaps.toml"]
 
 [[acceptance]]
