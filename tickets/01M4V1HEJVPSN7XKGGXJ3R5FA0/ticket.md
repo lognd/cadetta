@@ -2,12 +2,12 @@
 id = "01M4V1HEJVPSN7XKGGXJ3R5FA0"
 title = "Spec: quantities.md ambiguities found writing fixtures"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-13T16:29:12Z"
-updated = "2026-10-16T07:13:04Z"
+updated = "2026-10-16T07:13:07Z"
 idempotency_key = "Z48-ambig"
 scope = ["docs/spec/quantities.md"]
 +++
