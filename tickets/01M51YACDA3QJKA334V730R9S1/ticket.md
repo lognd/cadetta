@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T08:47:36Z"
-updated = "2026-10-16T08:48:06Z"
+updated = "2026-10-16T09:05:43Z"
 idempotency_key = "universe-fit-obligation-test"
 scope = ["crates/cadetta-cli/src/universe.rs"]
 
