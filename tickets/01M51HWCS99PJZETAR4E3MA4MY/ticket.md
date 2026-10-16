@@ -4,9 +4,10 @@ title = "display VALUE: accept exact fraction numerators (1/3m) for quantities/d
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-16T05:10:15Z"
-updated = "2026-10-16T05:10:15Z"
+updated = "2026-10-16T06:20:53Z"
 scope = ["crates/cadetta-cli/src/cmd/display.rs"]
 +++
 
