@@ -7,7 +7,7 @@ priority = "low"
 points = 1
 reporter = "lognd"
 created = "2026-10-14T21:59:11Z"
-updated = "2026-10-16T00:31:32Z"
+updated = "2026-10-16T00:32:30Z"
 idempotency_key = "kindcheck-qualified-path-tests"
 scope = ["crates/cadetta-sema", "crates/cadetta-cli/tests", "crates/cadetta-cli/tests/**"]
 
