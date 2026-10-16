@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Fixture-vs-spec fixes: value-native-unit-suffix (comment repeats 6.35mm since authored text differs from written 0.25in); bind-native-unit-default (Q004 never rounds, use exactly representable 25.4mm); mangle-prefix (fixture lacked prefix); adapter-id-keys-bindings (output key, emit entry, pkg::module path form); was-not-if-already-bound (was syntax is 'was Item.member', not an attribute); comment-trailing-* and unit-suffix excludes tightened because the header line starts with a quote and contains 'in' (bindings=). Sema: repeated #[native] now keyed native:ADAPTER:LOCATOR so pins accumulate."
+at = "2026-10-16T19:51:25Z"
+actor = "lognd"
+rev = 1
