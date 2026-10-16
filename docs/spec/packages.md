@@ -150,7 +150,12 @@ The module tree is the file tree under `src`:
   through `part` slots by their declared type and checks each step; it
   stops at the first non-part member, whose value type resolution does
   not carry. A private item that is `pub use`d is not re-exported, so it
-  never needs the E016 check across packages.
+  never needs the E016 check across packages. Decided (~4DKBZVW): a
+  dependent that names it gets E002 (unresolved), not E016. Rationale: the
+  name is not in the module's public surface, so there is nothing to
+  judge visible or not, and E016 would also leak that a private item of
+  that name exists. The `pub use` itself raises nothing in the declaring
+  package.
 - A private item that nothing uses is U002 (warning), the analogue of
   Rust's dead-code lint. A private parameterized component with no
   instances is U002, not I004. I004 applies only to roots of the
@@ -191,7 +196,9 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   name is ever used.
 
   Decided: a glob imports only `pub` items and `pub use` re-exports of
-  the module (a plain `use` is private and not re-exported); an explicit
+  the module (a plain `use` is private and not re-exported, so a name that only a
+  plain `use` brought into the module is E002 for a glob importer, the
+  same unresolved code as a `pub use` of a private item); an explicit
   `use` name beats a glob name; the prelude holds the built-in types,
   `origin`, `self` and the units, kinds and built-in functions, and
   nothing from `std`.
