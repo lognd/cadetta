@@ -12,7 +12,7 @@ scope = ["docs/spec/stdlib.md"]
 
 [[acceptance]]
 text = "Conformance decisions in stdlib.md confirmed or decided, engaged check rationale recorded"
-bound = false
+bound = true
 +++
 
 Found while working ~GDYVJ8R. Review the 'Conformance decisions' section of stdlib.md (count+pattern E006, Vendor without depth_available E006, absent Vendor members E002, Vendor callout text, roll-up misspelling EVAL) and decide whether the engaged check can ever fire (no must-fire fixture exists).
