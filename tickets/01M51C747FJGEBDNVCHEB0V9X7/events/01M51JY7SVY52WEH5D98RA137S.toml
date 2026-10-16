@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Fixture pairs exist for process-rule kind, defaults precedence, case canon digits, fn recursion, bound satisfies, keyword after dot, ISO class E001, waive date E001", "Each fixture matches the spec or is gapped in known-gaps.toml with reason and ticket"]
+moved = []
+at = "2026-10-16T05:28:44Z"
+actor = "lognd"
+rev = 1
