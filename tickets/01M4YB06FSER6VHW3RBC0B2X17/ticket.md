@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-14T23:12:16Z"
-updated = "2026-10-16T08:12:54Z"
+updated = "2026-10-16T08:12:55Z"
 scope = ["crates/cadetta-adapter/**", "crates/cadetta-cli/**", "crates/cadetta-lint/**", "docs/**", "changelog.d/**"]
 
 [[links]]
@@ -24,7 +24,7 @@ bound = true
 
 [[acceptance]]
 text = "cadetta check reports R012 for a [*] binding over instances with differing emitted values"
-bound = false
+bound = true
 +++
 
 Follow-up to ~3RK3GPH: check_r007/check_r011/check_r012/check_r013 exist in cadetta-lint r_adapter.rs but the observed-IR read result has no sketch plane, assembly slot or per-instance facts to build their inputs, so check cannot run them. Extend the read response schema (adapters.md) and cadetta-cli check_drift::lint_probe.
