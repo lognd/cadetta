@@ -4,9 +4,10 @@ title = "Conformance: sync entry model for attach/close, r006 dry-run, degrade a
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-16T16:15:56Z"
-updated = "2026-10-16T16:15:56Z"
+updated = "2026-10-16T16:36:15Z"
 scope = ["crates/cadetta-cli/tests/**", "tests/conformance/**"]
 +++
 
