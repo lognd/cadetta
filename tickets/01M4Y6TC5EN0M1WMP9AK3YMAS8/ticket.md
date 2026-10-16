@@ -2,7 +2,7 @@
 id = "01M4Y6TC5EN0M1WMP9AK3YMAS8"
 title = "KindChecker: test :: qualified paths through path_type"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "low"
 points = 1
 reporter = "lognd"
