@@ -1110,4 +1110,4 @@ reason = "extra E002 / expected nonzero exit"
 [[gap]]
 fixture = "adapters/r012-star-binding-differing-instances"
 ticket = "~V9JHZEN"
-reason = "part-array instance members now lower (~9WDH9XE), but the must-fire half (differing instance values) is unreachable from source until ~V9JHZEN"
+reason = "R012 is reserved and dormant by decision (~G49G4TT, lints.md): the must-fire half is unreachable from source until the language gives instances differing arguments"
