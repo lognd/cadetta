@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T07:45:48Z"
+digest = "b6f33fdc69889c47d08b9db99a76c1cc004297017f91aa9c1cedacc85a3e223d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7f60b343-b19d-4d98-97c2-1d2bea401454 with nextest profile: default
+    Starting 1 test across 45 binaries (638 tests skipped)
+        PASS [   0.222s] cadetta pipeline::tests::process_rule_changing_the_kind_is_an_eval_error
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.223s] 1 test run: 1 passed, 638 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta process_rule_changing"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "beffce48f3cc49a505061d9c7f39c6db802a6290db34ac8022ad3a3ed1ea7223"
+at = "2026-10-16T07:45:48Z"
+actor = "lognd"
+rev = 1

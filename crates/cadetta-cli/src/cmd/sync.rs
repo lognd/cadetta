@@ -7,12 +7,13 @@
 //! adapter falls back to `emit` plus printed manual instructions. Values are compared
 //! as normalized `{number}{unit}` text; differing units are compared textually.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::{BufRead, Write};
 use std::path::{Path as FsPath, PathBuf};
 
 use cadetta_adapter::atomic::{AtomicOutcome, Document};
 use cadetta_adapter::availability::{Verb as AvailVerb, rejections, unavailable};
+use cadetta_adapter::bindings::{BindingSet, RefTarget, mangle};
 use cadetta_adapter::builtin::sw_equations::{ADAPTER as SW_EQUATIONS, ValueKind};
 use cadetta_adapter::geometry_bind::{datum_entries, verify_geometry};
 use cadetta_adapter::locator::{DesignForm, DesignTolerance, TolerancePlan, plan_tolerance};
@@ -676,8 +677,12 @@ fn build_entries(
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], cfg_point);
         for loc in locators {
-            if loc.for_alternate.is_some() || loc.mode == LocatorMode::Ref {
-                tracing::debug!(path = %canonical, locator = %loc.locator, "sync: locator not synced (alternate or ref mode)");
+            if loc.for_alternate.is_some() {
+                tracing::debug!(path = %canonical, locator = %loc.locator, "sync: alternate locator not synced");
+                continue;
+            }
+            if loc.mode == LocatorMode::Ref {
+                check_ref_link(adapter, &set, &member.path, loc, observed, ctx);
                 continue;
             }
             let unit = native_unit(adapter, loc);
@@ -831,6 +836,60 @@ fn wire_transform(v: &Json) -> Option<Vec<Vec<IrValue>>> {
         .iter()
         .map(|row| row.as_array()?.iter().map(wire_value).collect())
         .collect()
+}
+
+/// True when a `ref` dimension's native expression still links to its target global.
+///
+/// A named target must appear in the expression; an alias or created global (whose name this
+/// side cannot verify) only needs some expression to be present.
+fn link_intact(target: &RefTarget, expr: Option<&str>) -> bool {
+    match (target, expr) {
+        (_, None) => false,
+        (RefTarget::Global(g), Some(e)) => e.contains(g.as_str()),
+        (_, Some(e)) => !e.trim().is_empty(),
+    }
+}
+
+/// Verify a `ref`-mode locator: its value is carried by the target global (which syncs as a
+/// value), so the dimension is never pushed or compared; a missing or unlinked dimension is R003.
+fn check_ref_link(
+    adapter: &Adapter,
+    set: &BindingSet,
+    path: &cadetta_ir::path::Path,
+    loc: &cadetta_ir::model::Locator,
+    observed: &[Observed],
+    ctx: &mut Ctx<'_>,
+) {
+    let canonical = path.to_string();
+    let own = mangle(path, &adapter.prefix);
+    let target = set.resolve_ref(path, loc, &HashMap::new(), &own);
+    let found = observed.iter().find(|o| o.native == loc.locator);
+    let Some(found) = found else {
+        ctx.report.missing.push((
+            canonical.clone(),
+            adapter.files.join(", "),
+            loc.locator.clone(),
+        ));
+        ctx.report.diag(
+            R003,
+            format!(
+                "{canonical}: native item `{}` is not in the CAD files",
+                loc.locator
+            ),
+        );
+        return;
+    };
+    if link_intact(&target, found.expr.as_deref()) {
+        tracing::debug!(path = %canonical, locator = %loc.locator, ?target, "sync: ref link intact");
+    } else {
+        ctx.report.diag(
+            R003,
+            format!(
+                "{canonical}: native link `{}` to {target:?} is gone",
+                loc.locator
+            ),
+        );
+    }
 }
 
 /// The observed `frames[]` and `instances[]` of an adapter's `read`; malformed items are skipped.
@@ -1917,6 +1976,17 @@ mod tests {
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn ref_link_needs_the_target_in_the_expression() {
+        let g = RefTarget::Global("Plate_Thk".into());
+        assert!(link_intact(&g, Some("=\"Plate_Thk\"")));
+        assert!(!link_intact(&g, Some("=5")));
+        assert!(!link_intact(&g, None));
+        let own = RefTarget::OwnGlobal("X__y".into());
+        assert!(link_intact(&own, Some("=\"X__y\"")));
+        assert!(!link_intact(&own, None));
+    }
+
     #[test]
     fn read_back_mismatch_fails_and_skips_save() {
         let (report, calls, _) = drive(&[], Some("5mm"), &{
