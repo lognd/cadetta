@@ -2,7 +2,8 @@
 id = "01M50C0NCKDC43EDJP1BS8CTVB"
 title = "Geometry: disc arithmetic for point.x/.y projection, aligned and distance"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
