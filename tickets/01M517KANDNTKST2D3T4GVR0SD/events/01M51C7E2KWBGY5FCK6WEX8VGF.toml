@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-16T03:31:25Z"
+digest = "70da1ec852163f716d2930fb916334c0b9f1e658b128735d82de2c84fd3823c5"
+provider = "file"
+ref = "tests/conformance/language/eval-array-literal-mixed-kinds.expect.json"
+size = 316
+status = "measured"
+at = "2026-10-16T03:31:25Z"
+actor = "lognd"
+rev = 1
