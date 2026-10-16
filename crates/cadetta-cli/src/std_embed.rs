@@ -12,6 +12,10 @@ pub const STD_FILES: &[(&str, &str)] = &[
         include_str!("../../../std/src/fasteners.cdt"),
     ),
     (
+        "fasteners/inch.cdt",
+        include_str!("../../../std/src/fasteners/inch.cdt"),
+    ),
+    (
         "fasteners/policy.cdt",
         include_str!("../../../std/src/fasteners/policy.cdt"),
     ),
