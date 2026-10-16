@@ -9,6 +9,10 @@ reporter = "lognd"
 created = "2026-10-13T17:53:42Z"
 updated = "2026-10-16T07:24:40Z"
 scope = ["docs/spec/**"]
+
+[[acceptance]]
+text = "packages.md 3 and 4 state that pub use of a private item and a glob over a plain use give E002"
+bound = false
 +++
 
 Spec ambiguity found while writing ~JKTB9TF fixtures. packages.md 3 says a pub use of a private item is not re-exported and 4 says a glob skips plain use, but neither names the diagnostic a dependent gets. Fixtures packages/pub-use-private-item-not-reexported and e002-glob-skips-plain-use assume E002 (unresolved). Confirm or specify.

@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["packages.md 3 and 4 state that pub use of a private item and a glob over a plain use give E002"]
+moved = []
+at = "2026-10-16T07:24:40Z"
+actor = "lognd"
+rev = 1
