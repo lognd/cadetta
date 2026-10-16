@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-15T03:04:48Z"
 updated = "2026-10-16T06:18:28Z"
-scope = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*"]
+scope = ["tests/conformance/geometry/pattern-count-structural.*", "tests/conformance/lints/w005-waiver-expiring.*", "tests/conformance/known-gaps.toml"]
 +++
 
 Found while working ~X1PF271. geometry/pattern-count-structural must-fire: extra E002 at acme.demo::Part.n. lints/w005-waiver-expiring must-fire: exit status 0, expected nonzero.
