@@ -2,7 +2,8 @@
 id = "01M4YR2T1ETTN2BE6X7G49G4TT"
 title = "R012 reserved: decide whether to retire code and fixture or keep dormant"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 1
 reporter = "lognd"
