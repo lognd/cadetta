@@ -2,7 +2,8 @@
 id = "01M4Z28ZM6P20SZQ0X28NXQSDY"
 title = "language: I001-I003 interface and variant semantics"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
