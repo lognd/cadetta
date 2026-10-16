@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "see a value's derivation and impact from the editor"
 outcome_text = "why and impact are one hover away"
 idempotency_key = "d15:lsp-queries"
-scope = ["crates/cadetta-cli/src/cmd/lsp.rs", "crates/cadetta-cli/src/cmd/lsp_query.rs", "crates/cadetta-cli/src/cmd/mod.rs"]
+scope = ["crates/cadetta-cli/src/cmd/lsp.rs", "crates/cadetta-cli/src/cmd/lsp_query.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/tests/lsp.rs"]
 
 [[acceptance]]
 text = "Given the 0.1.0 lsp, when extended after 0.1.0, then hover shows why, a code lens shows impact and go to definition follows canonical paths, specified in config-cli.md 3.8 first"
