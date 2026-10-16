@@ -2,7 +2,8 @@
 id = "01M5145JM1B0PVWDSJS98TQVDQ"
 title = "to_pint accepts 5USD: currency quantity raises QuantityError Q002 instead of returning Err"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
