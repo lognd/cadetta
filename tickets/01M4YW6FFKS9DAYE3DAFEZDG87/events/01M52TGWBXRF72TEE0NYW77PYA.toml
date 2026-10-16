@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: non-drive built-in adapters now record a synced-file lock record on sync (digest of emitted text), and sync reports O004 info for still-open sync:FILE obligations (exit 0). Attestation path: an Attest lock record with id sync:FILE discharges it in universe::sync_states; a 'cadetta ack sync:FILE' CLI front-end is out of scope (cmd/ack.rs) and filed separately."
+at = "2026-10-16T17:00:29Z"
+actor = "lognd"
+rev = 1

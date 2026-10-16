@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta sync with a built-in adapter lacking drive (sw-equations, json, csv) records the handed-over file and reports an open O004 info diagnostic (exit 0); --dry-run records nothing", "An attest lock record on sync:FILE discharges the open O004"]
+moved = []
+at = "2026-10-16T17:03:09Z"
+actor = "lognd"
+rev = 1
