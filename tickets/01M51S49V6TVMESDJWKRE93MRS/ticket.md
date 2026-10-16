@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-16T07:16:54Z"
-updated = "2026-10-16T10:21:08Z"
-scope = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-contributor.*", "tests/conformance/language/e002-rollup-misspelled-member.*"]
+updated = "2026-10-16T10:29:09Z"
+scope = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-contributor.*", "tests/conformance/language/e002-rollup-misspelled-member.*", "tests/conformance/stdlib/commercial-misspelling-not-a-member.*"]
 
 [[acceptance]]
 text = "A roll-up naming a member no part type declares reports E002, not EVAL"

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-contributor.*", "tests/conformance/language/e002-rollup-misspelled-member.*"]
+new = ["crates/cadetta-sema/**", "tests/conformance/language/eval-rollup-no-contributor.*", "tests/conformance/language/e002-rollup-misspelled-member.*", "tests/conformance/stdlib/commercial-misspelling-not-a-member.*"]
+at = "2026-10-16T10:29:09Z"
+actor = "lognd"
+rev = 1
