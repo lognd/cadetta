@@ -2,12 +2,12 @@
 id = "01M51HWCS99PJZETAR4E3MA4MY"
 title = "display VALUE: accept exact fraction numerators (1/3m) for quantities/display-plain-exact-decimal"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T05:10:15Z"
-updated = "2026-10-16T06:20:53Z"
+updated = "2026-10-16T06:23:28Z"
 scope = ["crates/cadetta-cli/src/cmd/display.rs"]
 +++
 
