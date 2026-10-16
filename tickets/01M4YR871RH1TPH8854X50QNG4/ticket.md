@@ -2,12 +2,12 @@
 id = "01M4YR871RH1TPH8854X50QNG4"
 title = "Lower require items into IR so require sign-off obligations exist"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-15T03:03:50Z"
-updated = "2026-10-16T08:24:08Z"
+updated = "2026-10-16T08:24:11Z"
 scope = ["crates/cadetta-sema/src/lower.rs", "crates/cadetta-ir/src/**", "docs/spec/ir.md", "crates/cadetta-cli/src/universe.rs", "changelog.d/**"]
 +++
 
