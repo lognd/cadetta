@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Golden 02-bearing-housing reports zero mismatches (values 47/47, verdicts 10/10, diagnostics 5/5)"]
+new = ["Golden 02-bearing-housing reports zero mismatches (values 47/47, verdicts 10/10, diagnostics 5/5)", "Pure member, fit-side and table-cell parameter reads keep their tolerance (unit test)"]
+moved = [1]
+at = "2026-10-16T13:24:02Z"
+actor = "lognd"
+rev = 1

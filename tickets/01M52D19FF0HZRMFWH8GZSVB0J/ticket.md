@@ -13,6 +13,10 @@ scope = ["tests/golden/02-bearing-housing/**", "crates/cadetta-sema/src/eval.rs"
 [[acceptance]]
 text = "Golden 02-bearing-housing reports zero mismatches (values 47/47, verdicts 10/10, diagnostics 5/5)"
 bound = false
+
+[[acceptance]]
+text = "Pure member, fit-side and table-cell parameter reads keep their tolerance (unit test)"
+bound = false
 +++
 
 found while working ~FCZKA30: run is clean now; 18 mismatches left (groove_dia/width, bore_dia.max, seat_dia.min, groove_side/axial_play max, axial_play_ok undecided vs holds, seats_coaxial conservative, C002 and S008 expectations, bearing[0].radial_clearance.min missing). Triage hand-evaluation vs implementation.
