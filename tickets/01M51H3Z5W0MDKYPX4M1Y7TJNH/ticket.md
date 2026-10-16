@@ -2,7 +2,8 @@
 id = "01M51H3Z5W0MDKYPX4M1Y7TJNH"
 title = "Evaluator rejects .min/.max on fit.clearance in checks (EVAL)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
