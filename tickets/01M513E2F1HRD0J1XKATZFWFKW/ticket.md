@@ -2,12 +2,13 @@
 id = "01M513E2F1HRD0J1XKATZFWFKW"
 title = "ir.md variants key example is short-form but the IR emits qualified keys"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-16T00:57:45Z"
-updated = "2026-10-16T00:59:47Z"
+updated = "2026-10-16T01:00:45Z"
 scope = ["docs/spec/ir.md"]
 
 [[acceptance]]

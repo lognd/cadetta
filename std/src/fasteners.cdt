@@ -15,3 +15,6 @@ pub use self::policy::{FastenerPolicy, IsoDefault, IsoDrills, IsoEngagement, Iso
 
 /// Thread and hole tables and the thread enum.
 pub use self::tables::{Iso273, Iso10642Head, Iso4032, Iso4762Head, Iso4762Len, Iso7380Head, MetricThread, TapDrill, Thread}
+
+/// Inch threads, clearance and tap drills, and ASME B18.3 socket head data.
+pub use self::inch::{InchClearance, InchLen, InchSocketHead, InchTapDrill, InchThread, InchThreadData}

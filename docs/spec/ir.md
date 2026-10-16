@@ -258,7 +258,8 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
 - `analysis` marks a `let` (quantities.md 5.3): never emitted or bound.
 - `variants` holds, per part slot and alternate, only the values that
   differ from the primary evaluation (variant evaluation, language.md
-  3.2). Keys are `"Rover/wheel=Colson2Series"`.
+  3.2). Keys are the full qualified form
+  `"acme.rover::Rover/wheel=acme.rover::Colson2Series"`.
 - Lowering (`cadetta-sema` `lower.rs`, `lower::lower`): the lowerer lives
   in sema, not `cadetta-ir`, because sema depends on ir (ir <- sema).
   Rules it fixes:
