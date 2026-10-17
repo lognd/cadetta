@@ -9,5 +9,5 @@ reporter = "lognd"
 created = "2026-10-17T06:52:46Z"
 updated = "2026-10-17T07:08:18Z"
 idempotency_key = "sw-addin-ci"
-scope = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/DEVELOPING.md"]
+scope = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/DEVELOPING.md", "changelog.d/01M54A4VH0WRVFQCQE4991JKVP.added.md"]
 +++
