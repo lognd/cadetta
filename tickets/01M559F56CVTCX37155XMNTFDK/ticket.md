@@ -2,7 +2,8 @@
 id = "01M559F56CVTCX37155XMNTFDK"
 title = "SOLIDWORKS: pattern count dimension scaled by length factor (reads x1000)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
