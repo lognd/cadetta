@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T19:18:44Z"
-updated = "2026-10-17T06:37:38Z"
+updated = "2026-10-17T06:49:39Z"
 persona = "design engineer"
 capability = "see a part's cadetta paths beside the model in SOLIDWORKS"
 outcome_text = "linking starts from what the engineer selects"
@@ -38,7 +38,7 @@ bound = false
 
 [[acceptance]]
 text = "Given the add-in, when it runs the cadetta binary, then design/model.grmb records the exec flow from adapter_solidworks to cli and grimble check passes on the local and published frob"
-bound = false
+bound = true
 
 [[acceptance]]
 text = 'Given the add-in, when logging, then it writes %LOCALAPPDATA%\cadetta\addin.log filtered by CADETTA_LOG (solidworks.md 1)'
