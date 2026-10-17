@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/FakeSwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwHost.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/SwConnection.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/FakeSwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwHost.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/SwConnection.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/src/cadetta-solidworks/Program.cs"]
+at = "2026-10-17T06:49:22Z"
+actor = "lognd"
+rev = 1
