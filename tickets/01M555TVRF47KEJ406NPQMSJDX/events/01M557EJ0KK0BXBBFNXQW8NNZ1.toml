@@ -1,0 +1,12 @@
+kind = "comment"
+subtype = "note"
+body = """
+## Done report
+
+Changed: adapters/fusion (adapter.py FusionAdapter, drive.py DriveSessions, read.py observed_from_parameters, session.py FusionSession/RpcSession/connect, addin/CadettaFusion), docs/spec/fusion.md, docs/spec/adapters.md (Fusion matrix row), .github/workflows/fusion.yml
+Evidence: adapters/fusion/tests/unit (17 pytest tests: test_adapter.py, test_session.py, test_main.py) bound via frob:tests
+Filed: ~DW3NEMP (live nova run, not attempted: add-in unrun in Fusion), ~HXSWJEE (extract shared unit_scale)
+Gates: frob check --ticket ~PQMSJDX leaves only pre-existing CAP001 on the known-red base; COV001 ambiguous-call unresolved items are non-required."""
+at = "2026-10-17T15:24:53Z"
+actor = "lognd"
+rev = 1
