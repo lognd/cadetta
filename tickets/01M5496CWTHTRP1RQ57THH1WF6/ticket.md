@@ -4,9 +4,10 @@ title = "Wire protocol: add locator kind to ChangedParam so new custom propertie
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T06:36:08Z"
-updated = "2026-10-17T06:36:08Z"
+updated = "2026-10-17T06:57:34Z"
 scope = ["docs/spec/adapters.md", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**"]
 +++
 
