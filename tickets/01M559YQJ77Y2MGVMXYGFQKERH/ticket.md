@@ -2,7 +2,8 @@
 id = "01M559YQJ77Y2MGVMXYGFQKERH"
 title = "SwComDocumentReader.ReadDimension scales pattern counts by 1000 on read"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
