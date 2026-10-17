@@ -12,7 +12,7 @@ scope = ["adapters/solidworks/**"]
 
 [[acceptance]]
 text = "Given a push whose rebuild fails at a feature, when R004 is reported, then the message names that feature"
-bound = false
+bound = true
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
