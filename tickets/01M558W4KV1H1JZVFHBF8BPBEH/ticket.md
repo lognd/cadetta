@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:27:56Z"
+updated = "2026-10-17T16:34:26Z"
 scope = ["crates/**"]
+
+[[acceptance]]
+text = "Given an adapter reports an observed file by base name, when sync pushes, then the package-relative path is opened"
+bound = false
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). Worked around by FindUnderCwd in the drive server.
