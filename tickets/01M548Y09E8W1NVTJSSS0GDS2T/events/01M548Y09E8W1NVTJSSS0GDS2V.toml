@@ -1,0 +1,10 @@
+kind = "create"
+title = "Wire read method to ReadService in SOLIDWORKS RpcServer"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/**"]
+body = "found while working ~1EJXSV4: ReadService exists (Core/Read) and SwComSession.ReadObserved works on real SOLIDWORKS, but RpcServer does not dispatch the read method yet."
+at = "2026-10-17T06:31:33Z"
+actor = "lognd"
+rev = 1

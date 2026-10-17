@@ -76,3 +76,30 @@ rebuilds again, returning an R004 diagnostic that says whether the
 restore succeeded (adapters.md 2.3). The Com build's
 `SwComRestorableDocument` maps locators to dimension names and uses
 `SetSystemValue3` and `ForceRebuild3`.
+
+## Frames, coordinate bindings and R007
+
+`Core/Frames` carries the frame side of the adapter protocol (solidworks.md 4,
+adapters.md 3.4, geometry.md 6):
+
+- `FrameReader` reads each bound frame locator (a coordinate system or a
+  reference plane feature name) into `frames[]`, translated to the native unit.
+  A plane feature compares only its origin and z axis.
+- `FrameWriter` serves `datums = create`: it creates the coordinate system from
+  numeric values, skips it when it already matches within `0.5 * 10^-precision`,
+  and updates it otherwise. A plane feature locator cannot be driven and fails.
+- `CoordinateBinder` pushes a datum-plane sketch coordinate through its bound
+  dimension as `sign * value * unit`; sign must be 1 or -1.
+- `SketchObserver` produces the `sketches[]` facts (`on_datum_plane`,
+  `measured_from`) from which the host raises R007. The push still proceeds
+  for an unclean sketch, with a warning, since R007 is only a warning.
+
+`Com/Frames` is the SOLIDWORKS binding. Known limitations, to confirm on a
+licensed machine:
+
+- The API has no in-place coordinate system update, so an update deletes and
+  recreates the feature under the same name (references to it are lost).
+- Euler angles are assumed `R = Rz * Ry * Rx`; the read-back comparison (R001)
+  exposes a mismatch. API-SURFACE.md confirms only the z rotation case.
+- `measured_from` is not yet derivable from the sketch through the API and is
+  reported as `unknown`, so R007 fires conservatively for real documents.

@@ -2,13 +2,13 @@
 id = "01M4SV2TR8ENTA87J1DDKCF816"
 title = "SOLIDWORKS emit and push: globals, dimension values and ref mode"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T21:03:05Z"
+updated = "2026-10-17T06:19:05Z"
 persona = "design engineer"
 capability = "write cadetta values into SOLIDWORKS and keep dimensions linked"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**"]
