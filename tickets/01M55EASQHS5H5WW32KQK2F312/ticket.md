@@ -4,9 +4,10 @@ title = "SOLIDWORKS: Link of a count dimension creates the global as 4000mm (sca
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T17:25:10Z"
-updated = "2026-10-17T17:25:10Z"
+updated = "2026-10-17T17:27:18Z"
 scope = ["adapters/solidworks/src/**"]
 +++
 
