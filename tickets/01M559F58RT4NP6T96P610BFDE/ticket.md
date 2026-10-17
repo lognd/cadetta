@@ -7,8 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T16:06:29Z"
+updated = "2026-10-17T16:07:17Z"
 scope = ["adapters/solidworks/**"]
+
+[[acceptance]]
+text = "Given a push whose rebuild fails at a feature, when R004 is reported, then the message names that feature"
+bound = false
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
