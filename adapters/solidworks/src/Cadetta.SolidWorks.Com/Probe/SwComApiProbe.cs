@@ -10,7 +10,7 @@ using SolidWorks.Interop.swconst;
 
 namespace Cadetta.SolidWorks.Com.Probe
 {
-    // frob:ticket ~Z9SWC8W
+    // frob:ticket 01M4VH6XQF4GRQM20G0Z9SWC8W
     /// <summary>
     /// ISwApiProbe over COM: builds a small part and assembly in a scratch
     /// directory and exercises each API solidworks.md 4 expects, recording the

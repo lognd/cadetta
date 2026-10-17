@@ -4,7 +4,7 @@ using Cadetta.SolidWorks.Logging;
 
 namespace Cadetta.SolidWorks.Com.Session
 {
-    // frob:ticket ~Z9SWC8W
+    // frob:ticket 01M4VH6XQF4GRQM20G0Z9SWC8W
     /// <summary>
     /// Resolves SolidWorks.Interop.* assemblies from SOLIDWORKS_API_DIR at run
     /// time. The interop assemblies are referenced but never copied next to the
