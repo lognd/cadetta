@@ -1,0 +1,6 @@
+kind = "criterion"
+op = "add"
+text = "SOLIDWORKS add-in links a dimension, a pattern count and a tolerance by selection, creates datum frames and assigns parts, with no bindings-file entry for native links"
+at = "2026-10-17T20:06:31Z"
+actor = "lognd"
+rev = 1

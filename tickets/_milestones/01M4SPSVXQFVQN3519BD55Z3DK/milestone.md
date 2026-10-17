@@ -38,4 +38,8 @@ bound = true
 [[criteria]]
 text = "The Python binding wheel imports cadetta and replays the conformance corpus"
 bound = true
+
+[[criteria]]
+text = "SOLIDWORKS add-in links a dimension, a pattern count and a tolerance by selection, creates datum frames and assigns parts, with no bindings-file entry for native links"
+bound = false
 +++
