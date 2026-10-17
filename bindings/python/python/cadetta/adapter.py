@@ -86,7 +86,7 @@ class PushMode(StrEnum):
 
 
 class LocatorKind(StrEnum):
-    """What a pushed locator addresses (adapters.md 3); the wire form of a binding's kind."""
+    """What a pushed locator addresses (adapters.md 3); a binding kind on the wire."""
 
     GLOBAL = "global"
     DIMENSION = "dimension"
