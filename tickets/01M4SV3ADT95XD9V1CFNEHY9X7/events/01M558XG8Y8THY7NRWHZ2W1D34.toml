@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:50:31Z"
+digest = "57d9f1ce6674a49cf390e773e66e8e7e8a621ea722b1d6b3f88b9f54d565cd35"
+provider = "file"
+ref = "adapters/solidworks/evidence/nehy-live/drive-sync-pushed-and-noop.txt"
+size = 13855
+status = "measured"
+at = "2026-10-17T15:50:31Z"
+actor = "lognd"
+rev = 1
