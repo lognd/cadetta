@@ -2,7 +2,8 @@
 id = "01M5496CQE8FPX6F7PD9Y6EMX0"
 title = "SOLIDWORKS RpcServer push dispatch and ISwSession wiring to PushService"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
