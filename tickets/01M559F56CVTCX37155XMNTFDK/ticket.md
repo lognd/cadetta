@@ -12,7 +12,7 @@ scope = ["adapters/solidworks/**"]
 
 [[acceptance]]
 text = "Given a scalar (pattern count) dimension, when pushed or read through SwComPushDocument, then its value is not scaled by the length factor"
-bound = false
+bound = true
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
