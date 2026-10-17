@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- Tests for the add-in's interop-free logic (Client, Pane, Logging); the sources are linked so no net48 or SOLIDWORKS is needed. -->
+  <!-- Tests for the add-in's interop-free logic (Client, Pane, Logging, AddInSettings); the sources are linked so no net48 or SOLIDWORKS is needed. -->
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -14,6 +14,7 @@
     <Compile Include="..\..\..\src\Cadetta.SolidWorks.AddIn\Client\*.cs" LinkBase="Client" />
     <Compile Include="..\..\..\src\Cadetta.SolidWorks.AddIn\Pane\*.cs" LinkBase="Pane" />
     <Compile Include="..\..\..\src\Cadetta.SolidWorks.AddIn\Logging\*.cs" LinkBase="Logging" />
+    <Compile Include="..\..\..\src\Cadetta.SolidWorks.AddIn\AddInSettings.cs" LinkBase="." />
     <ProjectReference Include="..\..\..\src\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
   </ItemGroup>
 </Project>
