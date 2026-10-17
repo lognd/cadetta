@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T17:51:45Z"
-updated = "2026-10-17T18:06:30Z"
+updated = "2026-10-17T18:06:55Z"
 scope = ["adapters/freecad/**"]
 
 [[acceptance]]
