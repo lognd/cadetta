@@ -557,20 +557,29 @@ namespace Cadetta.SolidWorks.Push
         private void RestoreAfterFailure(Run run, Dictionary<Entry, LocatorStatus> statuses)
         {
             run.Out.RebuildFailed = true;
-            _log.Warn(AtomicCode + ": rebuild failed after push; restoring snapshot");
+            var failing = FailureText(run.Doc.LastRebuildFailures);
+            _log.Warn(AtomicCode + ": rebuild failed" + failing + " after push; restoring snapshot");
             for (var i = run.Undo.Count - 1; i >= 0; i--)
             {
                 run.Undo[i]();
             }
             var restored = run.Doc.Rebuild();
             var msg = restored
-                ? AtomicCode + ": rebuild failed; the pre-push values were restored"
-                : AtomicCode + ": rebuild failed and the restore also failed; the document may be inconsistent";
+                ? AtomicCode + ": rebuild failed" + failing + "; the pre-push values were restored"
+                : AtomicCode + ": rebuild failed" + failing + " and the restore also failed; the document may be inconsistent";
             Diag(run, AtomicCode, "error", msg, null);
             foreach (var s in statuses.Values)
             {
                 if (s.Status == PushStatus.Pushed) s.Status = PushStatus.Failed;
             }
+        }
+
+        // frob:ticket 01M559F58RT4NP6T96P610BFDE
+        /// <summary>Text naming the failed features (" at feature 'X' (msg)"), or empty when the rebuild named none.</summary>
+        private static string FailureText(IReadOnlyList<Regen.RebuildError> failures)
+        {
+            var named = failures.Where(f => f.Feature.Length > 0).Select(f => "'" + f.Feature + "' (" + f.Message + ")").ToList();
+            return named.Count == 0 ? "" : " at feature " + string.Join(", ", named);
         }
 
         private const string AtomicCode = Restore.AtomicPush.Code;

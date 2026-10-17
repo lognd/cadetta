@@ -367,8 +367,13 @@ namespace Cadetta.SolidWorks.Com.Push
         {
             var ok = _model.ForceRebuild3(false);
             AdapterModified = true;
-            _log.Debug("rebuild ok: " + ok);
+            // frob:ticket 01M559F58RT4NP6T96P610BFDE
+            LastRebuildFailures = ok ? new System.Collections.Generic.List<Cadetta.SolidWorks.Regen.RebuildError>() : Regen.SwComFeatureErrors.Collect(_model, false);
+            _log.Debug("rebuild ok: " + ok + " failing features=" + LastRebuildFailures.Count);
             return ok;
         }
+
+        /// <summary>The features that failed in the most recent rebuild; empty when it rebuilt cleanly.</summary>
+        public System.Collections.Generic.IReadOnlyList<Cadetta.SolidWorks.Regen.RebuildError> LastRebuildFailures { get; private set; } = new System.Collections.Generic.List<Cadetta.SolidWorks.Regen.RebuildError>();
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 namespace Cadetta.SolidWorks.Push
 {
     // frob:ticket 01M4SV2TR8ENTA87J1DDKCF816
@@ -91,5 +92,8 @@ namespace Cadetta.SolidWorks.Push
 
         /// <summary>Rebuilds the document; false when the rebuild reports errors.</summary>
         bool Rebuild();
+
+        /// <summary>The features that failed in the most recent <see cref="Rebuild"/>; empty when it rebuilt cleanly or names none.</summary>
+        IReadOnlyList<Regen.RebuildError> LastRebuildFailures { get; }
     }
 }

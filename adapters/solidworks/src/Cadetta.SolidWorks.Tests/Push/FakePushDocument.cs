@@ -91,12 +91,24 @@ namespace Cadetta.SolidWorks.Tests.Push
 
         public bool DeleteFrame(string name) => Frames.Remove(name);
 
+        public IReadOnlyList<Cadetta.SolidWorks.Regen.RebuildError> LastRebuildFailures { get; private set; } = new List<Cadetta.SolidWorks.Regen.RebuildError>();
+
+        public string? FailingFeature;
+
         public bool Rebuild()
         {
             Rebuilds++;
+            LastRebuildFailures = new List<Cadetta.SolidWorks.Regen.RebuildError>();
             foreach (var v in Globals.Values)
             {
-                if (v > RebuildFailsAbove) return false;
+                if (v > RebuildFailsAbove)
+                {
+                    if (FailingFeature != null)
+                    {
+                        LastRebuildFailures = new List<Cadetta.SolidWorks.Regen.RebuildError> { new Cadetta.SolidWorks.Regen.RebuildError { Feature = FailingFeature, Code = 7, Message = "feature error code 7" } };
+                    }
+                    return false;
+                }
             }
             return true;
         }
