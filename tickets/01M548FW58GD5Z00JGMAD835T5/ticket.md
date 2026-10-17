@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T06:23:50Z"
-updated = "2026-10-17T07:10:04Z"
+updated = "2026-10-17T07:25:37Z"
 +++
 
 found while working VTE7XA4: CS update is delete+recreate, Euler R=Rz*Ry*Rx assumed, sketch measured_from reported as unknown; C# build not run (no dotnet on any reachable goway host).
