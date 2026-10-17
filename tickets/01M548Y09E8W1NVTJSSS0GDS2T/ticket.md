@@ -2,7 +2,8 @@
 id = "01M548Y09E8W1NVTJSSS0GDS2T"
 title = "Wire read method to ReadService in SOLIDWORKS RpcServer"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
