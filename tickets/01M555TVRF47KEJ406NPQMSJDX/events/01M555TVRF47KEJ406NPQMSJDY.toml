@@ -1,0 +1,8 @@
+kind = "create"
+title = "Fusion adapter: spec and Python external adapter (read, drive)"
+type = "story"
+category = "todo"
+priority = "medium"
+at = "2026-10-17T14:56:39Z"
+actor = "lognd"
+rev = 1
