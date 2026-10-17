@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "Service path verified live; real pilot and menu clicks tracked in ~W5MBBTB; base CI red, user authorized"
+at = "2026-10-17T16:02:28Z"
+actor = "lognd"
+rev = 1
