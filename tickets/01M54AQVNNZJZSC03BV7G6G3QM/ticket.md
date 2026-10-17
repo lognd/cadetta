@@ -2,7 +2,8 @@
 id = "01M54AQVNNZJZSC03BV7G6G3QM"
 title = "Host: send the binding locator kind in push ChangedParam (cmd/sync.rs sets kind: None)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
