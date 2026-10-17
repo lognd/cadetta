@@ -2,12 +2,12 @@
 id = "01M55E3PRRE8344MJC1YMEEPJ0"
 title = "import --update writes a SOLIDWORKS unitless count (pattern count) as 4mm: empty adapter unit means assume native"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:21:18Z"
-updated = "2026-10-17T17:27:17Z"
+updated = "2026-10-17T17:27:25Z"
 scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-adapter/src/read_units.rs"]
 +++
 
