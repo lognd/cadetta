@@ -2,7 +2,8 @@
 id = "01M55G9F07E4321285KVRQX89A"
 title = "Fusion: doc.open accepts a local .f3d path so live runs need no cloud design id"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
