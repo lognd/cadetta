@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:24:44Z"
-updated = "2026-10-17T15:44:10Z"
+updated = "2026-10-17T15:44:40Z"
 scope = ["adapters/freecad/src/cadetta_freecad/read.py", "adapters/fusion/src/cadetta_fusion/read.py", "bindings/python/python/cadetta/adapter.py", "bindings/python/tests/test_adapter.py", "changelog.d/01M557E9DXNA27TQJG7HXSWJEE.changed.md", "docs/spec/bindings.md"]
 +++
 
