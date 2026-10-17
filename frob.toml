@@ -9,6 +9,8 @@ base = "main"
 sibling_timeout_secs = 120
 # When true an unusable configured sibling is a required Unresolved (`SIB001`).
 require_siblings = true
+# The published frob cannot read C# test functions, so its TEST001 rejects every `frob:tests` in the SOLIDWORKS test project; the dev build binds them.
+exclude = ["adapters/solidworks/src/Cadetta.SolidWorks.Tests/**"]
 
 [compute]
 # How an unannotated public signature is treated (`warn-unresolved` or `required`).
