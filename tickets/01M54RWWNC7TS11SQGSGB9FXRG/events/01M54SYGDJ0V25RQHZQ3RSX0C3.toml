@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T11:28:55Z"
+digest = "ea0528f905427f8e641f12f2055a4b4170000bbe35f0e1db1fdcbaaeeaed50ba"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0b771ca4-b7ce-4ce6-a037-8ff5f88fc1bb with nextest profile: default
+    Starting 2 tests across 76 binaries (1843 tests skipped)
+        PASS [   0.004s] cadetta-sema resolve::tests::resolution_error_does_not_log_at_warn
+        PASS [   0.004s] cadetta-sema eval::tests::evaluation_diagnostic_does_not_log_at_warn
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.007s] 2 tests run: 2 passed, 1843 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "does_not_log_at_warn"
+size = 658
+status = "measured"
+test_count = 2
+tests_digest = "a2026e8494d86a29fb757f5711e086f4189805e987e5ef92ec7451aec2651ea9"
+at = "2026-10-17T11:28:55Z"
+actor = "lognd"
+rev = 1
