@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["docs/spec/adapters.md", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "docs/schemas/adapter-protocol.json", "crates/cadetta-adapter/src/rpc/types.rs", "crates/cadetta-adapter/src/rpc/client.rs"]
+new = ["docs/spec/adapters.md", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Protocol/**", "docs/schemas/adapter-protocol.json", "crates/cadetta-adapter/src/rpc/types.rs", "crates/cadetta-adapter/src/rpc/client.rs", "crates/cadetta-adapter/src/session.rs"]
+at = "2026-10-17T06:58:09Z"
+actor = "lognd"
+rev = 1
