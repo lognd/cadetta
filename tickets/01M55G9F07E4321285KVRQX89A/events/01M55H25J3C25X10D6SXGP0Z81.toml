@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-17T18:12:53Z"
+digest = "28a6f46c61805a2b646e91d2894d313e5e7191dd48f166ea8bb6f7658157bc9e"
+provider = "file"
+ref = "adapters/fusion/evidence/vqrx89a-live/live-run.log"
+size = 2763
+status = "measured"
+at = "2026-10-17T18:12:53Z"
+actor = "lognd"
+rev = 1
