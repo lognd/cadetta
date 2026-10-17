@@ -60,3 +60,9 @@ the push with R009 and nothing is written (adapters.md 2.3). The Com
 build's `SwComBusyProbe` uses `CommandInProgress` and a disabled main
 window. The guard is not yet wired into a `push` method (it does not
 exist yet).
+
+## Probing the API
+
+`cadetta-solidworks --probe-api <scratch-dir>` exercises the SOLIDWORKS
+calls of the spec against a running instance (manual, not in CI). See
+`DEVELOPING.md` for bootstrap and `API-SURFACE.md` for results.

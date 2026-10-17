@@ -1,4 +1,7 @@
+using System;
+using Cadetta.SolidWorks.Com.Probe;
 using Cadetta.SolidWorks.Logging;
+using Cadetta.SolidWorks.Probe;
 using Cadetta.SolidWorks.Session;
 using SolidWorks.Interop.sldworks;
 
@@ -9,14 +12,14 @@ namespace Cadetta.SolidWorks.Com
     {
         private readonly ISldWorks _sw;
 
-        /// <summary>Wraps a SOLIDWORKS application object.</summary>
-        public SwComSession(ISldWorks sw)
+        /// <summary>Wraps a SOLIDWORKS application object; internal so callers need no interop reference.</summary>
+        internal SwComSession(ISldWorks sw)
         {
             _sw = sw;
         }
 
         /// <summary>The connection that owns the application lifetime, or null when built from a bare handle.</summary>
-        public SwConnection<ISldWorks>? Connection { get; }
+        public IDisposable? Connection { get; }
 
         private SwComSession(SwConnection<ISldWorks> connection)
             : this(connection.App)
@@ -29,6 +32,9 @@ namespace Cadetta.SolidWorks.Com
         {
             return new SwComSession(SwConnection<ISldWorks>.Connect(new SwComHost(log), log));
         }
+
+        /// <summary>The API probe for this application (solidworks.md 4).</summary>
+        public ISwApiProbe ApiProbe(Log log) => new SwComApiProbe(_sw, log);
 
         /// <summary>The SOLIDWORKS revision number.</summary>
         public string ProductVersion() => _sw.RevisionNumber();

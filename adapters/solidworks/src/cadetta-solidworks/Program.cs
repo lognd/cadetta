@@ -24,6 +24,15 @@ namespace Cadetta.SolidWorks.Cli
                 return 0;
             }
 
+#if CADETTA_COM
+            Cadetta.SolidWorks.Com.Session.InteropResolver.Install(log);
+#endif
+            var probeAt = Array.IndexOf(args, "--probe-api");
+            if (probeAt >= 0)
+            {
+                return RunProbe(args, probeAt, log);
+            }
+
             var fake = Array.IndexOf(args, "--fake") >= 0
                 || Environment.GetEnvironmentVariable("CADETTA_SW_FAKE") == "1";
             ISwSession session;
@@ -57,6 +66,31 @@ namespace Cadetta.SolidWorks.Cli
                 // Quits SOLIDWORKS only if this process started it.
                 owner?.Dispose();
             }
+        }
+
+        /// <summary>Runs the SOLIDWORKS API probe and prints its markdown table (intentional command output).</summary>
+        private static int RunProbe(string[] args, int at, Log log)
+        {
+#if CADETTA_COM
+            var scratch = at + 1 < args.Length ? args[at + 1] : Path.Combine(Path.GetTempPath(), "cadetta-api-probe");
+            log.Info("probing the SOLIDWORKS API surface in " + scratch);
+            var com = Cadetta.SolidWorks.Com.SwComSession.Attach(log);
+            try
+            {
+                var results = com.ApiProbe(log).Run(scratch);
+                var md = Cadetta.SolidWorks.Probe.ApiProbeReport.ToMarkdown(results);
+                Console.Out.Write(md);
+                File.WriteAllText(Path.Combine(scratch, "probe-result.md"), md);
+                return Cadetta.SolidWorks.Probe.ApiProbeReport.AllOk(results) ? 0 : 1;
+            }
+            finally
+            {
+                com.Connection?.Dispose();
+            }
+#else
+            log.Error("built without the COM session; --probe-api needs SOLIDWORKS");
+            return 2;
+#endif
         }
     }
 }
