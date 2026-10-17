@@ -2,7 +2,8 @@
 id = "01M4VB7VTPQEHBVQ8ZCR2T1G5K"
 title = "SOLIDWORKS add-in: task pane, project discovery and CLI client"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
