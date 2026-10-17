@@ -51,3 +51,11 @@ tickets were filed.
   calling `GetErrorCode2(out warn)`.
 - COM attach works only from the same logon session as SOLIDWORKS (see
   DEVELOPING.md).
+- `IEquationMgr.get_Value` returns the document length unit, not metres;
+  `Dimension.SystemValue` is metres.
+- `Dimension.DrivenState` returns 1 for normal dimensions; use
+  `IsReference()` to detect driven dimensions.
+- Symmetric tolerance is type 4 (`SetValues(max, min)`); read back via
+  `DimensionTolerance`.
+- Component `ComponentReference` round-trips through the assembly save.
+

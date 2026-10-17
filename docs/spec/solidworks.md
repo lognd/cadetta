@@ -213,3 +213,24 @@ writes nothing and the documents stay dirty. `SwComSaveTarget` saves a
   count and a tolerance through the add-in; create datum frames; assign
   parts in a two-part assembly; `sync`, edit a value in SOLIDWORKS,
   `sync` again (R001 cad moved), `import --update`, `sync` (no-op).
+
+## Read to observed IR
+
+`read` maps a document to the observed IR (`cadetta.ir/1`, flavour
+observed): one `<pkg>::Observed` model component whose members are params
+with `provenance.imported`. Bindings carry the locator and kind
+(`global`, `dimension`, `property`), the native unit and the mode.
+
+- Globals and equations: the document length unit is the native unit;
+  mm is assumed when the unit is unknown and recorded as `unit_assumed`.
+- Dimensions are named `D1@Feature@File`; the value is `SystemValue`
+  (metres) converted to the native unit. Dimension tolerances travel in
+  `ReadResult.Tolerances`, dimension equations in the equation list.
+- Custom properties are observed with kind `property`.
+- Reference (driven) dimensions and values that cannot be extracted get
+  `exact: false` with a reason; values over 15 significant digits are
+  also inexact.
+- Parts carry `frames[]` (coordinate systems, 3x4 transforms); assemblies
+  carry `instances[]` with component, document, transform and the
+  ComponentReference text as `reference`.
+

@@ -29,6 +29,17 @@ and prints a markdown table (API | Call | Result | Detail). It is a manual
 tool: it is not run in CI and the exe returns 2 without COM. Results go in
 `API-SURFACE.md`.
 
+## Read to observed IR
+
+`cadetta-solidworks.exe --read-doc <file> <out.json>` opens the document
+through `SwComSession.ReadObserved` (`SwComDocumentReader`), builds the
+observed IR via `ReadService` and writes the serialized `ReadResult`.
+`--make-read-fixture <part>` authors `Fix.SLDPRT` (symmetric tolerance on
+`D1@Boss-Extrude1`) and `FixAsm.SLDASM` (one component with reference
+`REF_A`) beside the part. Both need COM and run in the interactive
+session; they return 2 otherwise. Core logic (`ObservedIrBuilder`,
+`ReadService`, `FakeNativeDocumentReader`) is covered by unit tests.
+
 ## ARM64 notes
 
 - The net48 AnyCPU exe runs on nova and loads the interop assemblies.

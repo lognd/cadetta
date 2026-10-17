@@ -33,6 +33,18 @@ namespace Cadetta.SolidWorks.Cli
                 return RunProbe(args, probeAt, log);
             }
 
+            var fixAt = Array.IndexOf(args, "--make-read-fixture");
+            if (fixAt >= 0 && fixAt + 1 < args.Length)
+            {
+                return RunMakeFixture(args[fixAt + 1], log);
+            }
+
+            var readAt = Array.IndexOf(args, "--read-doc");
+            if (readAt >= 0 && readAt + 2 < args.Length)
+            {
+                return RunReadDoc(args[readAt + 1], args[readAt + 2], log);
+            }
+
             var fake = Array.IndexOf(args, "--fake") >= 0
                 || Environment.GetEnvironmentVariable("CADETTA_SW_FAKE") == "1";
             ISwSession session;
@@ -66,6 +78,47 @@ namespace Cadetta.SolidWorks.Cli
                 // Quits SOLIDWORKS only if this process started it.
                 owner?.Dispose();
             }
+        }
+
+        /// <summary>Authors the read-verification fixture from a source part (frob:ticket 01M4SV2TKZD26CK9FFA1EJXSV4).</summary>
+        private static int RunMakeFixture(string sourcePart, Log log)
+        {
+#if CADETTA_COM
+            var com = Cadetta.SolidWorks.Com.SwComSession.Attach(log);
+            try
+            {
+                log.Info("fixture assembly: " + com.MakeReadFixture(sourcePart, log));
+                return 0;
+            }
+            finally
+            {
+                com.Connection?.Dispose();
+            }
+#else
+            log.Error("built without the COM session; --make-read-fixture needs SOLIDWORKS");
+            return 2;
+#endif
+        }
+
+        /// <summary>Reads one document to observed IR JSON for verification (frob:ticket 01M4SV2TKZD26CK9FFA1EJXSV4).</summary>
+        private static int RunReadDoc(string file, string outPath, Log log)
+        {
+#if CADETTA_COM
+            var com = Cadetta.SolidWorks.Com.SwComSession.Attach(log);
+            try
+            {
+                var r = com.ReadObserved(file, log);
+                File.WriteAllText(outPath, System.Text.Json.JsonSerializer.Serialize(r, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+                return 0;
+            }
+            finally
+            {
+                com.Connection?.Dispose();
+            }
+#else
+            log.Error("built without the COM session; --read-doc needs SOLIDWORKS");
+            return 2;
+#endif
         }
 
         /// <summary>Runs the SOLIDWORKS API probe and prints its markdown table (intentional command output).</summary>
