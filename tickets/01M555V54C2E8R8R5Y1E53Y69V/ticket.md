@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "The spec maps bindings to the product parameters, units and the update/solve cycle, and states the licensing and test-host requirement (no Ansys install was found on nova on 2026-10-17)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "The adapters.md target matrix gains an Ansys row"
