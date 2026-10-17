@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Cadetta.SolidWorks.Com.Assembly;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Read;
 using SolidWorks.Interop.sldworks;
@@ -70,6 +71,7 @@ namespace Cadetta.SolidWorks.Com.Read
                 if (model is AssemblyDoc asm)
                 {
                     ReadInstances(asm, doc);
+                    SwComComponentReader.ReadDimensions(this, asm, doc, _log);
                 }
             }
             finally
@@ -148,6 +150,12 @@ namespace Cadetta.SolidWorks.Com.Read
 
         private void ReadDimensions(ModelDoc2 model, NativeDocument doc)
         {
+            WalkDimensions(model, doc.Dimensions, null, null);
+        }
+
+        /// <summary>Appends every distinct dimension of <paramref name="model"/>; component dimensions carry the instance and the component file in the locator.</summary>
+        internal void WalkDimensions(ModelDoc2 model, List<NativeDimension> into, string? component, string? file)
+        {
             var seen = new HashSet<string>(StringComparer.Ordinal);
             for (var f = model.FirstFeature() as Feature; f != null; f = f.GetNextFeature() as Feature)
             {
@@ -158,14 +166,16 @@ namespace Cadetta.SolidWorks.Com.Read
                     {
                         continue;
                     }
-                    doc.Dimensions.Add(ReadDimension(dim));
+                    var d = ReadDimension(dim, file);
+                    d.Component = component;
+                    into.Add(d);
                 }
             }
         }
 
-        private NativeDimension ReadDimension(Dimension dim)
+        private NativeDimension ReadDimension(Dimension dim, string? file = null)
         {
-            var name = dim.Name + "@" + dim.FullName.Split('@')[1];
+            var name = dim.Name + "@" + dim.FullName.Split('@')[1] + (file == null ? "" : "@" + file);
             var angular = ((IDimension)dim).GetType() == (int)swDimensionType_e.swAngularDimension;
             var raw = dim.SystemValue;
             var q = angular ? NativeQuantity.Of(Num(raw, 12), "rad") : NativeQuantity.Of(Mm(raw));

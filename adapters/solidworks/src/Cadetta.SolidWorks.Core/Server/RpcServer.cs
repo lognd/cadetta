@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Protocol;
+using Cadetta.SolidWorks.Read;
 using Cadetta.SolidWorks.Session;
 
 namespace Cadetta.SolidWorks.Server
@@ -20,6 +21,7 @@ namespace Cadetta.SolidWorks.Server
         private const int InvalidRequest = -32600;
         private const int MethodNotFound = -32601;
         private const int InvalidParams = -32602;
+        private const int ServerError = -32000;
 
         private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
@@ -28,13 +30,15 @@ namespace Cadetta.SolidWorks.Server
 
         private readonly ISwSession _session;
         private readonly Log _log;
+        private readonly ReadService? _read;
         private bool _stop;
 
-        /// <summary>Creates a server over a session.</summary>
-        public RpcServer(ISwSession session, Log log)
+        /// <summary>Creates a server over a session; `read` is answered by <paramref name="read"/> when given (frob:ticket 01M548Y09E8W1NVTJSSS0GDS2T).</summary>
+        public RpcServer(ISwSession session, Log log, ReadService? read = null)
         {
             _session = session;
             _log = log;
+            _read = read;
         }
 
         /// <summary>The adapter's initialize result: read and drive plus the five features.</summary>
@@ -120,12 +124,46 @@ namespace Cadetta.SolidWorks.Server
             {
                 case "initialize":
                     return Initialize(id, ps);
+                case "read" when _read != null:
+                    return Read(id, ps);
                 case "shutdown":
                     _stop = true;
                     return Result(id, "null");
                 default:
                     _log.Warn("method not implemented: " + method);
                     return Error(id, MethodNotFound, "method not implemented: " + method);
+            }
+        }
+
+        /// <summary>Answers `read` for a single file through the read service (frob:ticket 01M548Y09E8W1NVTJSSS0GDS2T).</summary>
+        private string Read(JsonElement id, JsonElement ps)
+        {
+            ReadParams? p;
+            try
+            {
+                p = ps.ValueKind == JsonValueKind.Undefined ? null : ps.Deserialize<ReadParams>(Options);
+            }
+            catch (JsonException e)
+            {
+                _log.Warn("bad read params: " + e.Message);
+                return Error(id, InvalidParams, "bad read params: " + e.Message);
+            }
+            var files = p?.Source?.Files;
+            if (files == null || files.Count != 1)
+            {
+                _log.Warn("read needs source.files with exactly one file");
+                return Error(id, InvalidParams, "read needs source.files with exactly one file");
+            }
+            try
+            {
+                var result = _read!.Read(files[0]);
+                _log.Info("read " + files[0] + " done");
+                return Result(id, JsonSerializer.Serialize(result, Options));
+            }
+            catch (Exception e) when (e is IOException || e is InvalidOperationException || e is System.Runtime.InteropServices.COMException)
+            {
+                _log.Error("read " + files[0] + " failed: " + e.Message);
+                return Error(id, ServerError, "read failed: " + e.Message);
             }
         }
 
