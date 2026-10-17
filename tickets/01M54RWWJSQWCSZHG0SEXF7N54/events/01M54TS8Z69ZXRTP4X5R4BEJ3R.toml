@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/evidence/exf-live/**"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/evidence/exf-live/**", "changelog.d/*EXF7N54*"]
+at = "2026-10-17T11:43:33Z"
+actor = "lognd"
+rev = 1
