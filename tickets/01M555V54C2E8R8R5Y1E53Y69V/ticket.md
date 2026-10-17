@@ -2,7 +2,8 @@
 id = "01M555V54C2E8R8R5Y1E53Y69V"
 title = "Ansys adapter: choose the product and write the spec"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 3
 reporter = "lognd"
