@@ -37,7 +37,7 @@ use crate::project::{PackageDir, Project};
 use crate::scope::Scope as RunScope;
 use crate::{EXIT_FAIL, EXIT_OK, EXIT_USAGE, Globals};
 
-const USAGE: &str = "usage: cadetta names [ADAPTER-ID] [--module PATH] [GLOB...]";
+const USAGE: &str = "usage: cadetta names [ADAPTER-ID] [--observe] [--module PATH] [GLOB...]";
 
 /// The binding state of one path (config-cli.md 3).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -255,12 +255,14 @@ fn observe_cad(pkg: &PackageDir, adapter: &Adapter) -> Option<Vec<Ir>> {
     observed
 }
 
-/// Names of one adapter in one package, appended to `report`.
+/// Names of one adapter in one package, appended to `report`; `observe` allows reading CAD.
+// frob:ticket 01M558W4FD3Z4AFNX2538V8M62
 fn adapter_names(
     pkg: &PackageDir,
     ir: &Ir,
     adapter: &Adapter,
     run_scope: &RunScope,
+    observe: bool,
     report: &mut NamesReport,
 ) {
     let bindings = adapter.bindings_path();
@@ -310,7 +312,14 @@ fn adapter_names(
             true
         }
     };
-    let observed = observe_cad(pkg, adapter);
+    // Reading opens the files in the adapter's CAD (possibly the user's live session), so it
+    // happens only when asked for with `--observe`.
+    let observed = if observe {
+        observe_cad(pkg, adapter)
+    } else {
+        tracing::info!(adapter = %adapter.id(), "names: not observing CAD (no --observe); states stay unknown");
+        None
+    };
     let can_read = observed.is_some();
     if let (Some(observed), false) = (&observed, collided) {
         let sources: Vec<NameSource> = bindable
@@ -435,7 +444,9 @@ pub fn run_names(
         let _ = writeln!(err, "error: {message}");
         EXIT_USAGE
     };
-    let parsed = match parse_args(args) {
+    let observe = args.iter().any(|a| a == "--observe");
+    let args: Vec<String> = args.iter().filter(|a| *a != "--observe").cloned().collect();
+    let parsed = match parse_args(&args) {
         Ok(p) if p.adapters.len() <= 1 => p,
         Ok(_) => return fail(err, &format!("at most one adapter id; {USAGE}")),
         Err(message) => return fail(err, &format!("{message}; {USAGE}")),
@@ -480,7 +491,7 @@ pub fn run_names(
             if parsed.adapters.first().is_some_and(|a| a != adapter.id()) {
                 continue;
             }
-            adapter_names(pkg, &ir, adapter, &run_scope, &mut report);
+            adapter_names(pkg, &ir, adapter, &run_scope, observe, &mut report);
             if let Some(message) = report.config_error.take() {
                 return fail(err, &message);
             }
@@ -719,7 +730,7 @@ for line in sys.stdin:
         let extra = fake_adapter(&dir, &global_scenario(&created), "[\"read\"]");
         let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
         std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{extra}")).unwrap();
-        let v = json(&dir, &[]);
+        let v = json(&dir, &["--observe"]);
         let names = &v["adapters"][0]["names"];
         assert_eq!(names[0]["path"], "acme.plate::CoverPlate.offset");
         assert_eq!(names[0]["state"], "unbound", "{v}");
@@ -733,6 +744,20 @@ for line in sys.stdin:
     fn adapter_without_read_capability_keeps_unknown() {
         let dir = project(SOURCE, "", "");
         let extra = fake_adapter(&dir, &global_scenario("X"), "[]");
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{extra}")).unwrap();
+        let v = json(&dir, &["--observe"]);
+        for n in v["adapters"][0]["names"].as_array().unwrap() {
+            assert_eq!(n["state"], "unknown", "{v}");
+        }
+    }
+
+    // frob:ticket 01M558W4FD3Z4AFNX2538V8M62
+    // frob:tests crates/cadetta-cli/src/cmd/names.rs::run_names
+    #[test]
+    fn without_observe_a_reading_adapter_is_never_spawned() {
+        let dir = project(SOURCE, "", "");
+        let extra = fake_adapter(&dir, &global_scenario("X"), "[\"read\"]");
         let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
         std::fs::write(dir.0.join("cadetta.toml"), format!("{toml}{extra}")).unwrap();
         let v = json(&dir, &[]);

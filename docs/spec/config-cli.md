@@ -170,7 +170,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
 | `cite pin NAME [--as-of DATE]` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |
 | `cite list [--format ieee\|bibtex\|json] [--module PATH] [GLOB...]` | The reference list of the citations the scoped design reaches (language.md 3.9.1). | reads | never | `cite-list.json` |
-| `names [ADAPTER-ID] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with a `read` adapter, reads CAD | R013 | `names.json` |
+| `names [ADAPTER-ID] [--observe] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with `--observe` and a `read` adapter, reads CAD | R013 | `names.json` |
 | `bind PATH --adapter ID --locator L --kind K [--mode M] [--native-unit U] [--for ALT] [--config C] [--sign -1] [--component C] [--tolerance drive\|ignore]` / `bind --remove PATH --adapter ID --locator L` | Add or remove one explicit locator in `bindings/<id>.toml`, validated and written in canonical order. | writes the bindings file | never (errors exit 2) | `bind.json` |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
 | `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs; `emit.json` also lists `active_alternates` (slot path to its primary, adapters.md 3.3) when the package has interface-typed slots | Q004, R013, R014, R015 | `emit.json` |
@@ -338,8 +338,9 @@ validation of adapters.md 3 and is idempotent: binding an identical
 locator again changes nothing.
 
 Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y and
-01M4VPEFSVBXSEKWHTQ48SAEKA: `names` asks an adapter that can read (a
-`command`, the `read` capability and literal `files`) for its CAD, so a
+01M4VPEFSVBXSEKWHTQ48SAEKA: `names --observe` asks an adapter that can read (a
+`command`, the `read` capability and literal `files`) for its CAD (opening files in a
+live CAD session), and without `--observe` it never reads, so every unbound path stays `unknown`. With it, a
 path without a locator is `unbound` and native-link discoveries
 (adapters.md 3.5) show as implicit `global`, `link`, `frame` or
 `reference`. An adapter that cannot read, or whose spawn or read fails,
