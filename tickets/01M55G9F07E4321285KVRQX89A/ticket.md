@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T17:59:23Z"
-updated = "2026-10-17T18:12:59Z"
+updated = "2026-10-17T18:13:56Z"
 scope = ["adapters/fusion/**", "docs/spec/fusion.md"]
 
 [[acceptance]]
