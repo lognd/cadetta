@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "Live smoke done on a stand-in rig with gaps filed as a follow-up ticket; evidence files attached; base CI red, user authorized"
+at = "2026-10-17T15:50:55Z"
+actor = "lognd"
+rev = 1
