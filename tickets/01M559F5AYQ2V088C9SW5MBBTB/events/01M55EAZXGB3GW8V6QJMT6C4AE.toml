@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Round trip of the r3-05 lib.cdt on nova: sync, R001 cad move, import --update, no-op re-sync (evidence/w5mb-live run2/run4/run5)", "Pattern count reads as a unitless 4 (DimensionUnitsTests KindOf)", "Menu Link callback exercised for a tolerance and a count; real click not automatable, reason recorded (evidence/w5mb-live/addin-menu.log, SMOKE.md)"]
+moved = []
+at = "2026-10-17T17:25:16Z"
+actor = "lognd"
+rev = 1

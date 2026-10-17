@@ -7,8 +7,20 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T17:07:36Z"
+updated = "2026-10-17T17:25:16Z"
 scope = ["adapters/solidworks/**"]
+
+[[acceptance]]
+text = "Round trip of the r3-05 lib.cdt on nova: sync, R001 cad move, import --update, no-op re-sync (evidence/w5mb-live run2/run4/run5)"
+bound = false
+
+[[acceptance]]
+text = "Pattern count reads as a unitless 4 (DimensionUnitsTests KindOf)"
+bound = false
+
+[[acceptance]]
+text = "Menu Link callback exercised for a tolerance and a count; real click not automatable, reason recorded (evidence/w5mb-live/addin-menu.log, SMOKE.md)"
+bound = false
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
