@@ -1,0 +1,14 @@
+  Determining projects to restore...
+  Restored C:\src\wt-cmds\adapters\solidworks\src\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj (in 143 ms).
+  Restored C:\src\wt-cmds\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\Cadetta.SolidWorks.Commands.Tests.csproj (in 143 ms).
+  Cadetta.SolidWorks.Core -> C:\src\wt-cmds\adapters\solidworks\src\Cadetta.SolidWorks.Core\bin\Debug\netstandard2.0\Cadetta.SolidWorks.Core.dll
+  Cadetta.SolidWorks.Commands.Tests -> C:\src\wt-cmds\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\bin\Debug\net8.0\Cadetta.SolidWorks.Commands.Tests.dll
+Test run for C:\src\wt-cmds\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\bin\Debug\net8.0\Cadetta.SolidWorks.Commands.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.14.0 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 116 ms - Cadetta.SolidWorks.Commands.Tests.dll (net8.0)
+
+Workload updates are available. Run `dotnet workload list` for more information.

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.AddIn", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.Tests", "src\Cadetta.SolidWorks.Tests\Cadetta.SolidWorks.Tests.csproj", "{55D0916E-758C-5D49-8824-7803A4D1132C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cadetta.SolidWorks.AddIn.Tests", "tests\Cadetta.SolidWorks.Tests\AddIn\Cadetta.SolidWorks.AddIn.Tests.csproj", "{3C1A7E52-9B4D-5F60-8E21-6A0D4B7C9F13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{55D0916E-758C-5D49-8824-7803A4D1132C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55D0916E-758C-5D49-8824-7803A4D1132C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55D0916E-758C-5D49-8824-7803A4D1132C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C1A7E52-9B4D-5F60-8E21-6A0D4B7C9F13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C1A7E52-9B4D-5F60-8E21-6A0D4B7C9F13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C1A7E52-9B4D-5F60-8E21-6A0D4B7C9F13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C1A7E52-9B4D-5F60-8E21-6A0D4B7C9F13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

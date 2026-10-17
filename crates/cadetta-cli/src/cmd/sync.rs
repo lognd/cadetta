@@ -22,9 +22,9 @@ use cadetta_adapter::policy::{EmitPoint, resolve_point, to_decimal};
 use cadetta_adapter::read_units::UnitPolicy;
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{
-    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorStatus, ObservedComponent,
-    ObservedInstanceValues, ObservedSketch, ObservedTolerance, PushMode, PushStatus, ReadParams,
-    ReadSource, RegenState,
+    CapabilityName, ChangedParam, Client, DimTolerance, Feature, LocatorKind as WireKind,
+    LocatorStatus, ObservedComponent, ObservedInstanceValues, ObservedSketch, ObservedTolerance,
+    PushMode, PushStatus, ReadParams, ReadSource, RegenState,
 };
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_adapter::session::{DriveSession, SaveMode as SessionSaveMode};
@@ -225,6 +225,22 @@ struct Observed {
 
 /// Default native unit per `(adapter, locator)`.
 type UnitMap = BTreeMap<(String, String), String>;
+
+/// Binding kind per `(adapter, locator)`, sent as `ChangedParam.kind` on push.
+// frob:ticket 01M54AQVNNZJZSC03BV7G6G3QM
+type KindMap = BTreeMap<(String, String), WireKind>;
+
+/// The wire kind of a binding kind; `Instance` placements are never pushed as values.
+// frob:ticket 01M54AQVNNZJZSC03BV7G6G3QM
+fn wire_kind(kind: LocatorKind) -> Option<WireKind> {
+    match kind {
+        LocatorKind::Global => Some(WireKind::Global),
+        LocatorKind::Dimension => Some(WireKind::Dimension),
+        LocatorKind::Property => Some(WireKind::Property),
+        LocatorKind::Frame => Some(WireKind::Frame),
+        LocatorKind::Instance => None,
+    }
+}
 
 /// Per-run state shared by the adapters of a project.
 struct Ctx<'a> {
@@ -482,6 +498,8 @@ fn diag_parts(v: &Json) -> (String, String) {
 struct SessionBackend<R: BufRead, W: Write> {
     session: DriveSession<R, W>,
     default_unit: UnitMap,
+    /// Binding kinds of the pushed locators.
+    kinds: KindMap,
     /// The adapter's decimal places, for converting read-back units.
     precision: u32,
     regen: Vec<RegenRecord>,
@@ -582,7 +600,7 @@ impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
                 mode: PushMode::Value,
                 ref_to: None,
                 tolerance: i.tolerance.clone(),
-                kind: None,
+                kind: i.kind,
             })
             .collect();
         match self.backend.session.push(&self.file, params) {
@@ -629,6 +647,12 @@ impl<R: BufRead, W: Write> Backend for SessionBackend<R, W> {
         })
     }
 
+    fn locator_kind(&self, adapter: &str, locator: &str) -> Option<WireKind> {
+        self.kinds
+            .get(&(adapter.to_owned(), locator.to_owned()))
+            .copied()
+    }
+
     fn pushed(&mut self, file: &str, regen: bool, outcome: &AtomicOutcome) {
         for d in &outcome.diagnostics {
             self.note(&d.code, d.message.clone());
@@ -670,7 +694,7 @@ fn build_entries(
     observed: &[Observed],
     read: &Geometry<'_>,
     ctx: &mut Ctx<'_>,
-) -> Option<(Vec<Entry>, UnitMap)> {
+) -> Option<(Vec<Entry>, UnitMap, KindMap)> {
     let (set, _) = match load_bindings(pkg, adapter, ir) {
         Ok(loaded) => loaded,
         Err(e) => {
@@ -690,6 +714,7 @@ fn build_entries(
     let active = active_alternates(ir);
     let mut entries = Vec::new();
     let mut units = BTreeMap::new();
+    let mut kinds = KindMap::new();
     let mut clean = true;
     for member in ir.components.iter().flat_map(|c| &c.members) {
         let canonical = member.path.to_string();
@@ -778,6 +803,9 @@ fn build_entries(
                 (adapter.id().to_owned(), loc.locator.clone()),
                 default_unit.clone(),
             );
+            if let Some(k) = wire_kind(loc.kind) {
+                kinds.insert((adapter.id().to_owned(), loc.locator.clone()), k);
+            }
             let key = cadetta_obligations::lock::Record::SyncedValue(SyncedValue {
                 adapter: adapter.id().to_owned(),
                 path: canonical.clone(),
@@ -812,7 +840,7 @@ fn build_entries(
         ctx,
     ));
     tracing::info!(adapter = %adapter.id(), entries = entries.len(), "sync: entries built");
-    clean.then_some((entries, units))
+    clean.then_some((entries, units, kinds))
 }
 
 /// What an adapter's `read` reported that the geometry pass needs.
@@ -1164,7 +1192,8 @@ fn drive_adapter<R: BufRead, W: Write>(
         precision: client.effective_precision(adapter.precision.map(u32::from)),
     };
     let precision = geometry.precision;
-    let Some((mut entries, units)) = build_entries(pkg, adapter, ir, &observed, &geometry, ctx)
+    let Some((mut entries, units, kinds)) =
+        build_entries(pkg, adapter, ir, &observed, &geometry, ctx)
     else {
         let _ = client.shutdown();
         return Ok(());
@@ -1239,6 +1268,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     let mut backend = SessionBackend {
         session,
         default_unit: units,
+        kinds,
         precision,
         regen: Vec::new(),
         diags: Vec::new(),
@@ -1678,7 +1708,7 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
     };
     let built = build_entries(pkg, adapter, ir, &observed, &geometry, &mut ctx);
     let mut probe = Probe {
-        entries: built.map(|(entries, _)| entries).unwrap_or_default(),
+        entries: built.map(|(entries, _, _)| entries).unwrap_or_default(),
         reports: read.diagnostics.iter().map(|d| diag_parts(&d.0)).collect(),
         member_files: member_files(&read.observed),
         sketches: read.sketches.clone(),

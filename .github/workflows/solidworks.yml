@@ -3,7 +3,7 @@ name: solidworks
 # The SOLIDWORKS adapter (adapters/solidworks). CI has no SOLIDWORKS and no
 # interop assemblies, so it builds only the projects that do not reference
 # them: Core, the executable (with -p:CadettaNoCom=true, run against the
-# fake session) and the tests. Cadetta.SolidWorks.Com and .AddIn are built
+# fake session) and the tests (adapter and add-in logic). Cadetta.SolidWorks.Com and .AddIn are built
 # on a machine with SOLIDWORKS_API_DIR set. The hosted runners ship the
 # .NET 8 SDK and Python, so no setup action is used.
 
@@ -57,6 +57,8 @@ jobs:
         run: dotnet build src/cadetta-solidworks -c Release -p:CadettaNoCom=true
       - name: test
         run: dotnet test src/Cadetta.SolidWorks.Tests -c Release
+      - name: test the add-in logic (interop-free, linked sources)
+        run: dotnet test tests/Cadetta.SolidWorks.Tests/AddIn -c Release
       - name: transcript replay
         run: dotnet test src/Cadetta.SolidWorks.Tests -c Release --no-build --filter FullyQualifiedName~TranscriptTests
       - name: executable answers initialize against the fake session
