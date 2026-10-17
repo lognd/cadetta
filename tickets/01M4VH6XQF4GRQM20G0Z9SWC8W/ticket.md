@@ -22,7 +22,7 @@ bound = true
 
 [[acceptance]]
 text = "Given solidworks.md 4, when each listed API (equation manager globals and equations, IDimension and IDimensionTolerance, custom properties, coordinate system creation from numeric values, the coordinate system transform query, IComponent2 transform and reference property, ForceRebuild3) is exercised on the installed SOLIDWORKS version, then adapters/solidworks/API-SURFACE.md records the call used and the result, and any API that is missing becomes a spec ticket that removes or replaces the dependent feature"
-bound = false
+bound = true
 +++
 
 Run on the owner's Windows machine with a licensed SOLIDWORKS. Do this before ~1EJXSV4, ~DKCF816 and the add-in tickets so they are built against confirmed calls.
