@@ -2,7 +2,8 @@
 id = "01M55FVFFAPM6FT7HTC9KSAN8K"
 title = "FreeCAD: live round trip on nova with freecadcmd (milestone 0.1.0 criterion 3)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
