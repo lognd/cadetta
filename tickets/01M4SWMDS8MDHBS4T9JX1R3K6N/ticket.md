@@ -2,7 +2,8 @@
 id = "01M4SWMDS8MDHBS4T9JX1R3K6N"
 title = "Push guard R010 and R006"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
