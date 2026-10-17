@@ -231,3 +231,34 @@ def test_initialize_result_features_round_trip():
     ]
     with pytest.raises(ValidationError):
         InitializeResult(**base, features=["bogus"])
+
+
+# frob:tests bindings/python/python/cadetta/adapter.py::unit_scale
+def test_observed_helpers_shared() -> None:
+    """unit_scale, safe_name, package_name and observed_project work standalone."""
+    from fractions import Fraction
+
+    from cadetta.adapter import (
+        observed_binding,
+        observed_member,
+        observed_project,
+        package_name,
+        safe_name,
+        unit_scale,
+    )
+
+    dim, factor, pi, angle = unit_scale("mm")
+    assert (dim["m"], factor, pi, angle) == (1, Fraction(1, 1000), 0, 0)
+    taken: set[str] = set()
+    assert [safe_name("a b", taken), safe_name("a b", taken)] == ["a_b", "a_b_2"]
+    assert package_name("/x/3D Part.FCStd") == "p3d_part"
+    assert package_name(None) == "observed"
+    value = {
+        "angle": 0, "authored": "1", "conservative": False, "dim": dim,
+        "exact": True, "nominal": {"r": "1/1000", "pi": 0},
+    }  # fmt: skip
+    path = "p::Observed.a_b"
+    member = observed_member(path, value, "t", "f", "a b")
+    binding = observed_binding("t", path, "global", "a b", "mm")
+    project = observed_project("p", "p::Observed", [member], [binding])
+    assert project.flavour == "observed"

@@ -447,6 +447,11 @@ fn observe(observed: &Json) -> Vec<Observed> {
     rows
 }
 
+/// Render a package-relative path with `/` separators so globs match on Windows too.
+fn rel_glob_path(rel: &FsPath) -> String {
+    rel.to_string_lossy().replace('\\', "/")
+}
+
 /// Expand an adapter's `files` globs (relative to the package) to absolute paths.
 fn expand_files(pkg: &PackageDir, adapter: &Adapter) -> Vec<String> {
     let mut out = BTreeSet::new();
@@ -473,7 +478,7 @@ fn expand_files(pkg: &PackageDir, adapter: &Adapter) -> Vec<String> {
                 if path.is_dir() {
                     stack.push(path);
                 } else if let Ok(rel) = path.strip_prefix(&pkg.dir)
-                    && glob.matches(&rel.to_string_lossy())
+                    && glob.matches(&rel_glob_path(rel))
                 {
                     out.insert(path.to_string_lossy().into_owned());
                 }
@@ -1883,6 +1888,15 @@ mod tests {
     /// Serializes writing and spawning of script adapters (ETXTBSY on a still-open writer).
     static SPAWN_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
     use std::io::Cursor;
+
+    /// A backslash-separated relative path (Windows) still matches a `/` glob.
+    // frob:tests rel_glob_path
+    #[test]
+    fn rel_glob_path_normalises_backslashes() {
+        let rel = rel_glob_path(FsPath::new("parts\\a.SLDPRT"));
+        assert_eq!(rel, "parts/a.SLDPRT");
+        assert!(Glob::new("parts/*.SLDPRT").unwrap().matches(&rel));
+    }
 
     /// A self-removing scratch directory.
     struct Dir(PathBuf);

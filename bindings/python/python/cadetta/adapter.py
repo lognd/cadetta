@@ -1,18 +1,23 @@
 """Write a CAD adapter by subclassing Adapter (bindings.md 3.4, adapters.md 5)."""
 
 # frob:ticket 01M4SV2NZT32CAT33D13T86646
+# frob:ticket 01M557E9DXNA27TQJG7HXSWJEE
 
 from __future__ import annotations
 
 import json
+import re
 import sys
 from collections.abc import Callable
 from enum import StrEnum
+from fractions import Fraction
+from pathlib import PurePath
 from typing import Any, ClassVar, TextIO
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from typani import Err, Ok, Result
 
+from cadetta import Quantity, QuantityError
 from cadetta.logging import get_logger, use_protocol_logging
 from cadetta.models import ir
 
@@ -49,6 +54,14 @@ __all__ = [
     "Session",
     "SessionParams",
     "TargetStatus",
+    "ZERO_DIM",
+    "observed_binding",
+    "observed_member",
+    "observed_project",
+    "package_name",
+    "ratio",
+    "safe_name",
+    "unit_scale",
 ]
 
 PROTOCOL = "cadetta.adapter/1"
@@ -86,7 +99,7 @@ class PushMode(StrEnum):
 
 
 class LocatorKind(StrEnum):
-    """What a pushed locator addresses (adapters.md 3); the wire form of a binding's kind."""
+    """What a pushed locator addresses (adapters.md 3); a binding kind on the wire."""
 
     GLOBAL = "global"
     DIMENSION = "dimension"
@@ -511,3 +524,149 @@ def _error_reply(rid: Any, err: RpcError) -> dict[str, Any]:
     """Build a JSON-RPC error response."""
     body = err.model_dump(exclude_none=True)
     return {"jsonrpc": JSONRPC, "id": rid, "error": body}
+
+
+# -- shared observed-IR helpers (read side of every adapter) -----------------
+
+_SI_UNITS = ("m", "kg", "s", "A", "K", "mol", "cd")
+#: The all-zero IR `dim` object; copy before filling in exponents.
+ZERO_DIM: dict[str, Any] = {
+    "A": 0,
+    "K": 0,
+    "angle": 0,
+    "cd": 0,
+    "currency": {},
+    "kg": 0,
+    "m": 0,
+    "mol": 0,
+    "s": 0,
+}
+
+
+def ratio(frac: Fraction, pi: int = 0) -> dict[str, Any]:
+    """An exact nominal `{r, pi}` from a Fraction."""
+    return {"r": f"{frac.numerator}/{frac.denominator}", "pi": pi}
+
+
+def unit_scale(unit: str) -> tuple[dict[str, Any], Fraction, int, int]:
+    """Return (dim, SI value of 1 `unit`, pi multiple, angle exponent) or raise."""
+    one = Quantity._parse(f"1{unit}")
+    angle = one.angle
+    dim = dict(ZERO_DIM)
+    if angle:
+        deg = one.to_exact("deg")
+        if deg is None:
+            raise QuantityError(f"angle unit {unit} is not a rational of a degree")
+        dim["angle"] = angle
+        return dim, deg / 180, 1, angle
+    parts = []
+    for sym, e in zip(_SI_UNITS, list(one.dim), strict=True):
+        if e:
+            parts.append(f"{sym}^{e}")
+            dim[sym] = e
+    if not parts:
+        raise QuantityError(f"unit {unit} is dimensionless")
+    factor = one.to_exact("*".join(parts))
+    if factor is None:
+        raise QuantityError(f"unit {unit} has no exact SI scale")
+    return dim, factor, 0, 0
+
+
+def safe_name(raw: str, taken: set[str]) -> str:
+    """Path-safe member name; non-alphanumerics become `_`, collisions get `_2`."""
+    base = re.sub(r"[^A-Za-z0-9]", "_", raw) or "_"
+    if base[0].isdigit():
+        base = "_" + base
+    name, n = base, 1
+    while name in taken:
+        n += 1
+        name = f"{base}_{n}"
+    taken.add(name)
+    return name
+
+
+def package_name(path: str | None) -> str:
+    """Lowercase identifier-safe stem of `path`; `observed` when none."""
+    name = (
+        re.sub(r"[^a-z0-9_]", "_", PurePath(path).stem.lower()).strip("_")
+        if path
+        else ""
+    )
+    if not name:
+        return "observed"
+    return "p" + name if name[0].isdigit() else name
+
+
+def observed_member(
+    path: str,
+    value: dict[str, Any],
+    adapter: str,
+    file: str,
+    native_name: str,
+    expr: str | None = None,
+) -> dict[str, Any]:
+    """An imported `param` member of the observed component."""
+    member: dict[str, Any] = {
+        "analysis": False,
+        "attrs": {},
+        "deps": [],
+        "kind": "param",
+        "path": path,
+        "priv": False,
+        "provenance": {
+            "imported": {"adapter": adapter, "file": file, "native_name": native_name}
+        },
+        "value": value,
+        "was": [],
+    }
+    if expr is not None:
+        member["expr"] = expr
+    return member
+
+
+def observed_binding(
+    adapter: str, path: str, kind: str, locator: str, native_unit: str
+) -> dict[str, Any]:
+    """A one-locator value binding for an observed member."""
+    return {
+        "adapter": adapter,
+        "path": path,
+        "locators": [
+            {
+                "kind": kind,
+                "locator": locator,
+                "mode": "value",
+                "native_unit": native_unit,
+            }
+        ],
+    }
+
+
+def observed_project(
+    pkg: str, comp: str, members: list[dict[str, Any]], bindings: list[dict[str, Any]]
+) -> ir.Project:
+    """Assemble and validate the observed IR project around one component."""
+    return ir.Project.model_validate(
+        {
+            "schema": "cadetta.ir/1",
+            "bindings": bindings,
+            "checks": [],
+            "citations": [],
+            "components": [
+                {
+                    "attrs": {},
+                    "class": "model",
+                    "fits": [],
+                    "implements": [],
+                    "members": members,
+                    "parts": [],
+                    "path": comp,
+                }
+            ],
+            "dependencies": [],
+            "flavour": "observed",
+            "modules": [],
+            "package": {"name": pkg, "version": "0.0.0"},
+            "solvers": [],
+        }
+    )

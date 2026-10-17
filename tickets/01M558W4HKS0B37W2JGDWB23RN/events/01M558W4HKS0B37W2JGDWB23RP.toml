@@ -1,0 +1,10 @@
+kind = "create"
+title = "import: OpenDoc6 fails on relative paths"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). Relative document paths fail to open; absolute paths work."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1

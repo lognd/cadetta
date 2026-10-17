@@ -1,0 +1,10 @@
+kind = "create"
+title = "Read-back mismatch when CAD has a tolerance the design lacks"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). matched_locators requires tolerance equality, so sync reports a mismatch."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1

@@ -2,17 +2,17 @@
 id = "01M4SV3ADT95XD9V1CFNEHY9X7"
 title = "SOLIDWORKS release smoke on a licensed machine"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:23Z"
-updated = "2026-10-13T19:19:06Z"
+updated = "2026-10-17T15:50:35Z"
 persona = "release manager"
 capability = "verify the real COM path before release"
 labels = ["creates:adapters/solidworks/SMOKE.md"]
-scope = ["adapters/solidworks/SMOKE.md"]
+scope = ["adapters/solidworks/SMOKE.md", "adapters/solidworks/evidence/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/src/**", "adapters/solidworks/tests/**"]
 
 [[links]]
 kind = "blocked-by"

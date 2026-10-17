@@ -1,0 +1,10 @@
+kind = "create"
+title = "Transient RPC_E_SERVERFAULT on first drive read"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["adapters/solidworks/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). First read after attach failed once, then succeeded."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1

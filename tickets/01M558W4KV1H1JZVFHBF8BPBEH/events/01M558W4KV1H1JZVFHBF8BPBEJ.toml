@@ -1,0 +1,10 @@
+kind = "create"
+title = "Adapter reports observed IR file names bare"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). Worked around by FindUnderCwd in the drive server."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1

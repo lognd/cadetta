@@ -1,0 +1,10 @@
+kind = "create"
+title = "Failed atomic restore can leave a half-pushed document"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/cadetta-adapter/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). Seen only by reading the restore path; not reproduced live."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1

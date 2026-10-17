@@ -1,0 +1,17 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-17T15:26:39Z"
+digest = "4c648544db865dc12a2c153af1aff1c728eef4e5bad40c5a6dcbb1b1f7fcf8e3"
+exit_code = 0
+inline = """
+.................                                                        [100%]
+17 passed in 0.20s
+"""
+passed = true
+provider = "command"
+ref = "uv run --project adapters/fusion pytest -q adapters/fusion/tests/unit"
+size = 99
+status = "measured"
+at = "2026-10-17T15:26:39Z"
+actor = "lognd"
+rev = 1
