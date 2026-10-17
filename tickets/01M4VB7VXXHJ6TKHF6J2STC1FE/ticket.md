@@ -34,5 +34,5 @@ bound = true
 
 [[acceptance]]
 text = "Given Create datum frames, Show path, Sync and Dry run, when run, then they behave as solidworks.md 3 states and refuse a document a running sync holds"
-bound = false
+bound = true
 +++
