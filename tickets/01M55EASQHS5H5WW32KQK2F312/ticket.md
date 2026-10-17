@@ -2,7 +2,8 @@
 id = "01M55EASQHS5H5WW32KQK2F312"
 title = "SOLIDWORKS: Link of a count dimension creates the global as 4000mm (scalar scaled as length)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
