@@ -2,7 +2,8 @@
 id = "01M4SV2TVM50WJRZ42ZHXVD96N"
 title = "SOLIDWORKS regen with rebuild-error mapping to R004"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
