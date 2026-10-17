@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:52:15Z"
+updated = "2026-10-17T16:53:44Z"
 scope = ["adapters/solidworks/**"]
+
+[[acceptance]]
+text = "A read that hits a transient COM fault (RPC_E_SERVERFAULT) is retried with bounded backoff and succeeds; non-transient errors are not retried."
+bound = false
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). First read after attach failed once, then succeeded.

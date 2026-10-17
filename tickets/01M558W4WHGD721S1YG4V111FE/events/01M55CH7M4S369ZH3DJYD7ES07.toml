@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A read that hits a transient COM fault (RPC_E_SERVERFAULT) is retried with bounded backoff and succeeds; non-transient errors are not retried."]
+moved = []
+at = "2026-10-17T16:53:44Z"
+actor = "lognd"
+rev = 1
