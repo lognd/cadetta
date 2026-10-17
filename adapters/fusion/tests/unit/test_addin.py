@@ -142,3 +142,26 @@ def test_documents_lists_open_document_names(addin):
         [types.SimpleNamespace(name="a"), types.SimpleNamespace(name="b")]
     )
     assert addin._handle(_req("fusion.documents"))["result"] == ["a", "b"]
+
+
+# frob:tests adapters/fusion/addin/CadettaFusion/CadettaFusion.py::run kind=unit
+# frob:tests adapters/fusion/addin/CadettaFusion/CadettaFusion.py::stop kind=unit
+def test_run_listens_and_stop_unregisters(addin, monkeypatch):
+    events = []
+    ev = types.SimpleNamespace(add=lambda h: events.append(("add", h)))
+    app = types.SimpleNamespace(
+        registerCustomEvent=lambda name: ev,
+        unregisterCustomEvent=lambda name: events.append(("unregister", name)),
+        log=lambda msg: events.append(("log", msg)),
+    )
+    monkeypatch.setattr(
+        sys.modules["adsk.core"],
+        "Application",
+        types.SimpleNamespace(get=lambda: app),
+        raising=False,
+    )
+    addin.ADDR = "127.0.0.1:0"
+    addin.run(None)
+    assert addin._server.getsockname()[0] == "127.0.0.1"
+    addin.stop(None)
+    assert ("unregister", addin.EVENT_ID) in events
