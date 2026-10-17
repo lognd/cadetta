@@ -37,3 +37,12 @@ else `cadetta` on `PATH`. Log level comes from `CADETTA_LOG` (for example `debug
 
 `regasm /codebase Cadetta.SolidWorks.AddIn.dll` (elevated) writes the
 `HKLM\SOFTWARE\SolidWorks\Addins` key; `regasm /u` removes it.
+
+## Commands (link, assign, datums, sync)
+
+- `Core/Commands/LinkCommands` links or unlinks a dimension to a created global (`"D1@Feature" = "NAME"`); the name comes from `cadetta names`, never computed here. Driven, suppressed, read-only or conflicting dimensions are refused (R010).
+- `Core/Commands/DocumentGate` refuses any write while a sync is running, the document is read-only, or the session is busy (R009).
+- `Core/Commands/FrameMatcher` assigns an array instance by the unique nearest pose, and refuses when empty, too far or tied.
+- `AddIn/Commands/CadettaCommands` drives `cadetta bind`, `bind --remove`, `sync [--dry-run] [--only GLOB]` and `why`; it never edits bindings or the .cdt itself. Create datum frames is `sync --only <datum paths>` and needs `datums = "create"`.
+
+Not exercised live: the COM wiring (menu items, selection reading) is not part of this change; the logic above is unit-tested through `tests/Cadetta.SolidWorks.Tests/Commands`. No CLI verb yet reports composed datum or instance frames, so assign array needs a `cadetta frames` surface.
