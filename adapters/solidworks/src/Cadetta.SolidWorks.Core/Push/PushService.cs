@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.Json;
+using Cadetta.SolidWorks.Guard;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Protocol;
 using Cadetta.SolidWorks.Save;
@@ -239,16 +240,29 @@ namespace Cadetta.SolidWorks.Push
                 _log.Debug("global " + name + " unchanged");
                 return PushStatus.Skipped;
             }
+            var expression = doc.GetGlobalExpression(name);
+            var gv = PushGuard.ForGlobal(name, expression);
             if (!doc.SetGlobal(name, num.Value))
             {
                 Diag(run, R010, "error", "global " + name + " refused the write", null);
                 return PushStatus.Rejected;
             }
             run.Wrote = true;
+            if (gv.Action == GuardAction.ReplaceExpression)
+            {
+                Diag(run, R006, "warning", gv.Reason!, null);
+            }
             if (prior.HasValue)
             {
                 var p = prior.Value;
-                run.Undo.Add(() => doc.SetGlobal(name, p));
+                if (expression != null)
+                {
+                    run.Undo.Add(() => doc.RestoreEquation(name, expression));
+                }
+                else
+                {
+                    run.Undo.Add(() => doc.SetGlobal(name, p));
+                }
             }
             else
             {
@@ -314,10 +328,10 @@ namespace Cadetta.SolidWorks.Push
                 return Make(loc, PushStatus.Skipped, null, null);
             }
             var oldText = Fmt(info.Value, prec);
-            if (info.Driven || info.Suppressed || info.Conflict)
+            var verdict = PushGuard.ForDimension(e.Name, info);
+            if (verdict.Action == GuardAction.Reject)
             {
-                var why = info.Driven ? "is driven (reference)" : info.Suppressed ? "belongs to a suppressed feature" : "has an equation or unit conflict";
-                Diag(run, R010, "error", "dimension " + e.Name + " " + why, e.Param.Path);
+                Diag(run, R010, "error", verdict.Reason!, e.Param.Path);
                 return Make(loc, PushStatus.Rejected, oldText, null);
             }
             var num = e.Number!;
@@ -336,6 +350,21 @@ namespace Cadetta.SolidWorks.Push
             var changed = false;
             string? newText;
             var isRef = e.Param.Mode == PushMode.Ref;
+            if (verdict.Action == GuardAction.ReplaceExpression)
+            {
+                var expr = verdict.OldExpression;
+                Diag(run, R006, "warning", verdict.Reason!, e.Param.Path);
+                if (!doc.RestoreEquation(e.Name, null))
+                {
+                    Diag(run, R010, "error", "dimension " + e.Name + " refused to drop its equation", e.Param.Path);
+                    return Make(loc, PushStatus.Rejected, oldText, null);
+                }
+                run.Wrote = true;
+                changed = true;
+                run.Undo.Add(() => doc.RestoreEquation(e.Name, expr));
+                info.Expression = null;
+                info.LinkedGlobal = null;
+            }
             var undoMark = run.Undo.Count;
             if (isRef)
             {

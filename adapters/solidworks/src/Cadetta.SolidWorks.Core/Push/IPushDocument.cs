@@ -16,6 +16,12 @@ namespace Cadetta.SolidWorks.Push
         /// <summary>True when an equation or unit conflict prevents a write: R010 on push.</summary>
         public bool Conflict { get; set; }
 
+        /// <summary>True when the dimension is read-only (its file or reference cannot be edited): R010 on push.</summary>
+        public bool ReadOnly { get; set; }
+
+        /// <summary>The native expression driving the dimension that a push would replace (R006), or null.</summary>
+        public string? Expression { get; set; }
+
         /// <summary>The global the dimension is linked to by an equation, or null.</summary>
         public string? LinkedGlobal { get; set; }
 
@@ -41,6 +47,9 @@ namespace Cadetta.SolidWorks.Push
         /// <summary>The value of a global, or null when it does not exist.</summary>
         double? GetGlobal(string name);
 
+        /// <summary>The native expression defining a global that a push would replace (R006), or null when it is a plain value.</summary>
+        string? GetGlobalExpression(string name);
+
         /// <summary>Creates or updates a global.</summary>
         bool SetGlobal(string name, double value);
 
@@ -55,6 +64,9 @@ namespace Cadetta.SolidWorks.Push
 
         /// <summary>Links a dimension to a global by the equation `"dim" = "global"`; a null global removes the link, keeping the value.</summary>
         bool SetDimensionLink(string name, string? global);
+
+        /// <summary>Writes the equation `"lhs" = rhs` verbatim (undo of an R006 replacement); a null rhs removes any equation on lhs.</summary>
+        bool RestoreEquation(string lhs, string? rhs);
 
         /// <summary>Writes a dimension's tolerance; <see cref="ToleranceSpec.None"/> clears it.</summary>
         bool SetDimensionTolerance(string name, ToleranceSpec tolerance);

@@ -217,8 +217,16 @@ native units are mm and deg).
   rebuild.
 - Guards: a dirty (user-edited) or read-only document rejects every
   locator with R009. An equation-linked dimension is pushable; a true
-  reference dimension, a suppressed feature or an equation conflict is
-  R010. A value that does not fit the precision is Q004 (rejected).
+  reference dimension, a suppressed feature, a read-only dimension (its
+  file or reference cannot be edited) or an equation conflict is R010.
+  A value that does not fit the precision is Q004 (rejected).
+- Replacement guard (`Cadetta.SolidWorks.Guard.PushGuard`, facts read by
+  `SwComGuardFacts`): a dimension driven by an equation that is not a
+  plain number or a single quoted global, and a global defined by such
+  an expression, is replaced with R006 (warning) whose message lists the
+  old expression; the equation is removed first, then the value set, and
+  a rebuild failure restores it (`RestoreEquation`). The wire has no
+  dry-run flag, so the adapter always writes when `push` is called.
 - Tolerances use `IDimensionTolerance` (`symmetric`, `bilateral`,
   `limits`, `fit`); frames use
   `CreateCoordinateSystemUsingNumericalValues` (rotation transposed in

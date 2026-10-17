@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Globalization;
+using Cadetta.SolidWorks.Com.Guard;
+using Cadetta.SolidWorks.Guard;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Push;
 using SolidWorks.Interop.sldworks;
@@ -90,6 +92,32 @@ namespace Cadetta.SolidWorks.Com.Push
             return Eq.get_Value(i);
         }
 
+        /// <summary>The expression defining a global that a push would replace (R006), or null for a plain value.</summary>
+        public string? GetGlobalExpression(string name)
+        {
+            var i = FindEquation(name, out var rhs);
+            if (i < 0 || !Eq.get_GlobalVariable(i)) return null;
+            return PushGuard.ForeignExpression(rhs);
+        }
+
+        /// <summary>Writes the equation lhs = rhs verbatim, or removes the equation on lhs when rhs is null.</summary>
+        public bool RestoreEquation(string lhs, string? rhs)
+        {
+            var i = FindEquation(lhs, out _);
+            if (rhs == null)
+            {
+                if (i >= 0) Eq.Delete(i);
+                return true;
+            }
+            var text = "\"" + lhs + "\" = " + rhs;
+            if (i >= 0)
+            {
+                Eq.set_Equation(i, text);
+                return true;
+            }
+            return Eq.Add2(-1, text, true) >= 0;
+        }
+
         /// <summary>Creates or edits a global; an angle is not guessed, so globals take the length unit unless they already hold degrees.</summary>
         public bool SetGlobal(string name, double value)
         {
@@ -141,26 +169,10 @@ namespace Cadetta.SolidWorks.Com.Push
             var info = new DimensionInfo
             {
                 Value = ToNative(d.SystemValue, angle),
-                Driven = d.DrivenState != (int)swDimensionDrivenState_e.swDimensionDriving,
-                Suppressed = (d.GetFeatureOwner() as IFeature)?.IsSuppressed() ?? false,
-                Conflict = false,
                 Tolerance = ReadTolerance(d, angle),
             };
             var i = FindEquation(name, out var rhs);
-            if (i >= 0)
-            {
-                // an equation-linked dimension reports the driven state, but it is still ours to push
-                info.Driven = false;
-                var r = rhs.Trim();
-                if (r.Length > 2 && r[0] == '"' && r[r.Length - 1] == '"' && r.IndexOf('"', 1) == r.Length - 1)
-                {
-                    info.LinkedGlobal = r.Substring(1, r.Length - 2);
-                }
-                else
-                {
-                    info.Conflict = true;
-                }
-            }
+            SwComGuardFacts.Fill(info, d, name, i >= 0 ? rhs : null, _log);
             return info;
         }
 
