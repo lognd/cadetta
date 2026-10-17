@@ -133,16 +133,21 @@ pub fn push_atomic(
 }
 
 /// Locators whose read-back equals the pushed record; only these get a `synced` record.
+///
+/// A tolerance the design does not declare is ignored: CAD may carry its own default tolerance.
+// frob:ticket 01M558W4P4ZETDB9F923651CEJ
 pub fn matched_locators(items: &[PushItem], back: &[ReadBack]) -> Vec<String> {
     items
         .iter()
         .filter(|it| {
             let want = record_literal(&it.value, it.tolerance.as_ref());
             back.iter().any(|b| {
+                // Only compare tolerances when the design declares one.
+                let tol = it.tolerance.as_ref().and(b.tolerance.as_ref());
                 b.locator == it.locator
                     && b.value
                         .as_deref()
-                        .map(|v| record_literal(v, b.tolerance.as_ref()))
+                        .map(|v| record_literal(v, tol))
                         .as_deref()
                         == Some(want.as_str())
             })
@@ -260,5 +265,17 @@ mod tests {
         let items = [item("a", "7"), item("b", "8")];
         let out = push_atomic(&mut d, "Part1", &items, true);
         assert_eq!(matched_locators(&items, &out.read_back), vec!["a"]);
+    }
+
+    // frob:tests matched_locators
+    #[test]
+    fn cad_only_tolerance_still_matches() {
+        let items = [item("a", "7")];
+        let back = [ReadBack {
+            locator: "a".into(),
+            value: Some("7".into()),
+            tolerance: Some(crate::rpc::DimTolerance::Symmetric { t: "0.1mm".into() }),
+        }];
+        assert_eq!(matched_locators(&items, &back), vec!["a"]);
     }
 }
