@@ -12,7 +12,7 @@ scope = ["crates/**"]
 
 [[acceptance]]
 text = "Given a locator whose push status is skipped, when the document is read back, then its value is returned and recorded as synced"
-bound = false
+bound = true
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). Re-sync can then report a spurious mismatch.
