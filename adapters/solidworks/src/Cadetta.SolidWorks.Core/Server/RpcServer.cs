@@ -182,7 +182,7 @@ namespace Cadetta.SolidWorks.Server
             }
             try
             {
-                var file = files[0];
+                var file = FindUnderCwd(files[0]);
                 var result = TransientRetry.Run("read " + file, _log, () => _read!.Read(file));
                 _log.Info("read " + files[0] + " done");
                 return Result(id, JsonSerializer.Serialize(result, Options));
@@ -197,9 +197,14 @@ namespace Cadetta.SolidWorks.Server
         /// <summary>Finds a missing relative file by name under the working directory when exactly one matches: the observed IR names files bare, so sync hands the adapter `Plate.SLDPRT` for `parts/Plate.SLDPRT` (frob:ticket ~NEHY9X7).</summary>
         private string FindUnderCwd(string file)
         {
-            if (Path.IsPathRooted(file) || File.Exists(file))
+            if (Path.IsPathRooted(file))
             {
                 return file;
+            }
+            if (File.Exists(file))
+            {
+                // SOLIDWORKS resolves a relative path against its own cwd, not ours: hand it the full path (frob:ticket ~W5MBBTB).
+                return Path.GetFullPath(file);
             }
             try
             {
@@ -235,7 +240,7 @@ namespace Cadetta.SolidWorks.Server
                     }
                 }
             }
-            return file;
+            return FindUnderCwd(file);
         }
 
         /// <summary>Answers `open` with a handle only: each push opens, saves and closes its own file, so no document is held (frob:ticket ~NEHY9X7).</summary>

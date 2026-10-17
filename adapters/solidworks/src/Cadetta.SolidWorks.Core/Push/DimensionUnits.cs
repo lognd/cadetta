@@ -24,11 +24,11 @@ namespace Cadetta.SolidWorks.Push
         private const double Mm = 1000.0;
         private const double Deg = 180.0 / Math.PI;
 
-        /// <summary>The unit kind for a swDimensionType_e value (3 is angular, 13 is scalar, anything else a length).</summary>
+        /// <summary>The unit kind for an IDimension.GetType() swDimensionParamType_e value (1 is angular, 2 is integer such as a pattern count, anything else a length).</summary>
         public static DimensionUnitKind KindOf(int swDimensionType) => swDimensionType switch
         {
-            3 => DimensionUnitKind.Angle,
-            13 => DimensionUnitKind.Count,
+            1 => DimensionUnitKind.Angle,
+            2 => DimensionUnitKind.Count,
             _ => DimensionUnitKind.Length,
         };
 

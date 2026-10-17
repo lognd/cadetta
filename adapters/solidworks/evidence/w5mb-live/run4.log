@@ -1,0 +1,42 @@
+== edit D1@Sketch2 to 130 in CAD 
+== w5mb edit
+docs[before] count=0 : 
+before D1@Sketch2 = 0.12
+set rc=0
+after D1@Sketch2 = 0.13
+saved=True
+docs[after] count=0 : 
+== sync (expect R001 drift) 
+2026-10-17T17:20:21.043909Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T17:20:21.044233Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T17:20:21.044354Z  WARN cadetta::cmd::sync: sync diagnostic code="R001" cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+drift  acme.gearbox::CoverPlate.length  D1@Sketch2  120mm -> 120mm
+skip  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+skip  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12.009mm [12mm, 12.018mm] -> 12.009mm [12mm, 12.018mm]
+skip  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+skip  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+R001: cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+0 pushed, 4 skipped, 1 drift, 0 converged, 0 failed
+exit=1 
+== import --update 
+2026-10-17T17:20:21.161623Z ERROR cadetta::cmd::import: import failed an ADAPTER is required; usage: cadetta import ADAPTER FILE... [--assume-unit U] | import --accept | import ADAPTER FILE... --update [--write]
+error: an ADAPTER is required; usage: cadetta import ADAPTER FILE... [--assume-unit U] | import --accept | import ADAPTER FILE... --update [--write]
+exit=2 
+== sync (no-op) 
+2026-10-17T17:20:23.927185Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T17:20:23.927494Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T17:20:23.927613Z  WARN cadetta::cmd::sync: sync diagnostic code="R001" cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+drift  acme.gearbox::CoverPlate.length  D1@Sketch2  120mm -> 120mm
+skip  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+skip  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12.009mm [12mm, 12.018mm] -> 12.009mm [12mm, 12.018mm]
+skip  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+skip  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+R001: cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+0 pushed, 4 skipped, 1 drift, 0 converged, 0 failed
+exit=1 
+== names --observe (explicit only) 
+  acme.gearbox::CoverPlate.length  param  explicit  emit=120mm  name=CoverPlate__length
+  acme.gearbox::CoverPlate.pilot_bore  param  explicit  emit=12.009mm  name=CoverPlate__pilot_bore
+  acme.gearbox::CoverPlate.thickness  param  explicit  emit=6.35mm  name=CoverPlate__thickness
+  acme.gearbox::CoverPlate.width  param  explicit  emit=80mm  name=CoverPlate__width
+  acme.gearbox::GearboxCover.bolt_count  param  explicit  emit=4  name=GearboxCover__bolt_count

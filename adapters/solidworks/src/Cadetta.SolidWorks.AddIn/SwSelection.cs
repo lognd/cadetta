@@ -38,7 +38,7 @@ namespace Cadetta.SolidWorks.AddIn
             {
                 return null;
             }
-            var angular = ((IDimension)dim).GetType() == (int)swDimensionType_e.swAngularDimension;
+            var angular = ((IDimension)dim).GetType() == (int)swDimensionParamType_e.swDimensionParamTypeDoubleAngular;
             return new SelectedDimension(angular ? QuantityKind.Angle : QuantityKind.Length, dim.SystemValue);
         }
 

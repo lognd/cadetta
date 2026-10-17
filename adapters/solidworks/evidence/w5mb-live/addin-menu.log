@@ -1,0 +1,60 @@
+2026-10-17T17:20:40.138207Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:20:40.385242Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:20:43.010578Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:20:43.268683Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:20:45.995011Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:20:46.236458Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:33.191630Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:33.431292Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:48.885578Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.bolt_pitch_x
+2026-10-17T17:22:48.971603Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"100mm","kind":"member","path":"acme.gearbox::CoverPlate.bolt_pitch_x","repeated":false,"upstream":[],"value":"100mm"},"path":"acme.gearbox::CoverPlate.bolt_pitch_x","schema":"cadetta.why/1"}
+2026-10-17T17:22:49.101687Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:22:49.213992Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:51.977325Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.bolt_pitch_y
+2026-10-17T17:22:52.053872Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"60mm","kind":"member","path":"acme.gearbox::CoverPlate.bolt_pitch_y","repeated":false,"upstream":[{"detail":"assumed (bare 60 in legacy file, --assume-unit mm) [note]","expr":null,"kind":"citation","path":"assumed","repeated":false,"upstream":[],"value":null}],"value":"60mm"},"path":"acme.gearbox::CoverPlate.bolt_pitch_y","schema":"cadetta.why/1"}
+2026-10-17T17:22:52.144451Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:22:52.198526Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:55.001539Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.cbore_depth
+2026-10-17T17:22:55.071908Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"thickness / 2","kind":"member","path":"acme.gearbox::CoverPlate.cbore_depth","repeated":false,"upstream":[{"detail":null,"expr":"0.25in","kind":"member","path":"acme.gearbox::CoverPlate.thickness","repeated":false,"upstream":[{"detail":"ASTM B209 6061-T6 plate, 1/4 in nominal [note]","expr":null,"kind":"citation","path":"ASTM B209 6061-T6 plate, 1/4 in nominal","repeated":false,"upstream":[],"value":null}],"value":"0.25in"}],"value":"thickness / 2"},"path":"acme.gearbox::CoverPlate.cbore_depth","schema":"cadetta.why/1"}
+2026-10-17T17:22:55.175932Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:22:55.219752Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:22:58.001032Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.cbore_dia
+2026-10-17T17:22:58.075068Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"Bolt.head_dia + 1mm","kind":"member","path":"acme.gearbox::CoverPlate.cbore_dia","repeated":false,"upstream":[{"detail":null,"expr":"Iso4762Head[thread].head_dia","kind":"member","path":"acme.gearbox::Bolt.head_dia","repeated":false,"upstream":[{"detail":null,"expr":"MetricThread::M6","kind":"member","path":"acme.gearbox::Bolt.thread","repeated":false,"upstream":[],"value":null}],"value":"Iso4762Head[thread].head_dia"}],"value":"Bolt.head_dia + 1mm"},"path":"acme.gearbox::CoverPlate.cbore_dia","schema":"cadetta.why/1"}
+2026-10-17T17:22:58.175426Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:22:58.219094Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:01.017478Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.corner_radius
+2026-10-17T17:23:01.086691Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"5mm","kind":"member","path":"acme.gearbox::CoverPlate.corner_radius","repeated":false,"upstream":[],"value":"5mm"},"path":"acme.gearbox::CoverPlate.corner_radius","schema":"cadetta.why/1"}
+2026-10-17T17:23:01.176631Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:01.219919Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:04.056697Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.hole_dia
+2026-10-17T17:23:04.131002Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"Iso273[Bolt.thread].medium","kind":"member","path":"acme.gearbox::CoverPlate.hole_dia","repeated":false,"upstream":[{"detail":null,"expr":"MetricThread::M6","kind":"member","path":"acme.gearbox::Bolt.thread","repeated":false,"upstream":[],"value":null}],"value":"Iso273[Bolt.thread].medium"},"path":"acme.gearbox::CoverPlate.hole_dia","schema":"cadetta.why/1"}
+2026-10-17T17:23:04.228920Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:04.285544Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:07.049080Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.length
+2026-10-17T17:23:07.116967Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"130mm","kind":"member","path":"acme.gearbox::CoverPlate.length","repeated":false,"upstream":[],"value":"130mm"},"path":"acme.gearbox::CoverPlate.length","schema":"cadetta.why/1"}
+2026-10-17T17:23:07.223066Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:07.264758Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:10.055945Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.pilot_bore
+2026-10-17T17:23:10.127217Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"12mm H7","kind":"member","path":"acme.gearbox::CoverPlate.pilot_bore","repeated":false,"upstream":[],"value":"12mm H7"},"path":"acme.gearbox::CoverPlate.pilot_bore","schema":"cadetta.why/1"}
+2026-10-17T17:23:10.223826Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:10.267841Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:13.068925Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.thickness
+2026-10-17T17:23:13.144536Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"0.25in","kind":"member","path":"acme.gearbox::CoverPlate.thickness","repeated":false,"upstream":[{"detail":"ASTM B209 6061-T6 plate, 1/4 in nominal [note]","expr":null,"kind":"citation","path":"ASTM B209 6061-T6 plate, 1/4 in nominal","repeated":false,"upstream":[],"value":null}],"value":"0.25in"},"path":"acme.gearbox::CoverPlate.thickness","schema":"cadetta.why/1"}
+2026-10-17T17:23:13.235794Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:13.280923Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:23:16.085192Z  INFO cadetta_solidworks: add-in: command Why on acme.gearbox::CoverPlate.width
+2026-10-17T17:23:16.156883Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"80mm","kind":"member","path":"acme.gearbox::CoverPlate.width","repeated":false,"upstream":[{"detail":"assumed (bare 80 in legacy file, --assume-unit mm) [note]","expr":null,"kind":"citation","path":"assumed","repeated":false,"upstream":[],"value":null}],"value":"80mm"},"path":"acme.gearbox::CoverPlate.width","schema":"cadetta.why/1"}
+2026-10-17T17:23:16.250808Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:23:16.295458Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:24:12.662837Z  INFO cadetta_solidworks: add-in: command Link on acme.gearbox::CoverPlate.pilot_bore
+2026-10-17T17:24:13.087849Z DEBUG cadetta_solidworks: global add "CoverPlate__pilot_bore" = 12.009mm -> 0
+2026-10-17T17:24:13.168331Z  INFO cadetta_solidworks: linked D1@Sketch3 to CoverPlate__pilot_bore (global created)
+2026-10-17T17:24:13.168331Z  INFO cadetta_solidworks: add-in: command Link ok: linked D1@Sketch3 to CoverPlate__pilot_bore
+2026-10-17T17:24:13.255812Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:24:13.312741Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)
+2026-10-17T17:24:17.560749Z  INFO cadetta_solidworks: add-in: command Link on acme.gearbox::CoverPlate.bolt_pitch_x
+2026-10-17T17:24:17.917781Z DEBUG cadetta_solidworks: global add "CoverPlate__bolt_pitch_x" = 4000mm -> 2
+2026-10-17T17:24:17.994798Z  INFO cadetta_solidworks: linked D1@LPattern1 to CoverPlate__bolt_pitch_x (global created)
+2026-10-17T17:24:17.994798Z  INFO cadetta_solidworks: add-in: command Link ok: linked D1@LPattern1 to CoverPlate__bolt_pitch_x
+2026-10-17T17:24:18.076908Z  INFO cadetta_solidworks: pane: 10 path(s) for CoverPlate (adapter solidworks)
+2026-10-17T17:24:18.126935Z DEBUG cadetta_solidworks: pane: view 10 of 10 (no selection)

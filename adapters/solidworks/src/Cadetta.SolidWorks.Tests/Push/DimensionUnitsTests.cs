@@ -7,10 +7,10 @@ namespace Cadetta.SolidWorks.Tests.Push
     public sealed class DimensionUnitsTests
     {
         [Theory]
-        [InlineData(2, DimensionUnitKind.Length)]
-        [InlineData(3, DimensionUnitKind.Angle)]
-        [InlineData(13, DimensionUnitKind.Count)]
-        [InlineData(6, DimensionUnitKind.Length)]
+        [InlineData(0, DimensionUnitKind.Length)]
+        [InlineData(1, DimensionUnitKind.Angle)]
+        [InlineData(2, DimensionUnitKind.Count)]
+        [InlineData(-1, DimensionUnitKind.Length)]
         public void KindOfMapsSwDimensionType(int sw, DimensionUnitKind want) => Assert.Equal(want, DimensionUnits.KindOf(sw));
 
         [Fact]

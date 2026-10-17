@@ -1,0 +1,27 @@
+== w5mb build
+docs[before] count=0 : 
+rect seg type=0
+rect seg type=0
+rect seg type=0
+rect seg type=0
+dim length = True
+dim width = True
+plate=Boss-Extrude1
+dim diameter = True
+boss=Boss-Extrude2
+direction edge selected=True
+pattern=LPattern1 type=LPattern
+pattern dim: D3@LPattern1@Part4.Part = 0.015
+pattern dim: D1@LPattern1@Part4.Part = 4
+dim D1@Sketch2@Part4.Part = 0.12
+dim D2@Sketch2@Part4.Part = 0.08
+dim D1@Boss-Extrude1@Part4.Part = 0.00635
+dim D1@Sketch2@Part4.Part = 0.12
+dim D2@Sketch2@Part4.Part = 0.08
+dim D1@Sketch3@Part4.Part = 0.012
+dim D1@Boss-Extrude2@Part4.Part = 0.01
+dim D1@Sketch3@Part4.Part = 0.012
+dim D3@LPattern1@Part4.Part = 0.015
+dim D1@LPattern1@Part4.Part = 4
+saved=True err=0
+docs[after] count=0 : 

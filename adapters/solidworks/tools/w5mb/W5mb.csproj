@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>disable</Nullable>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup><SOLIDWORKS_API_DIR>C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist</SOLIDWORKS_API_DIR></PropertyGroup>
+  <Import Project="..\..\Interop.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Cadetta.SolidWorks.Com\Cadetta.SolidWorks.Com.csproj" />
+  </ItemGroup>
+</Project>

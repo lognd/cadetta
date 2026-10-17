@@ -330,7 +330,7 @@ Failure handling:
 - Release smoke, on a licensed machine, recorded as transcripts for the
   next CI run (the service path for a pattern count, a tolerance and a
   rebuild-failure restore ran live under ~PF7XCNP; datum frames come from
-  `sync`, with no menu verb; see `adapters/solidworks/SMOKE.md`): open the pilot r3-05 part; link a dimension, a pattern
+  `sync`, with no menu verb; see `adapters/solidworks/SMOKE.md`; the sync, R001, `import --update`, no-op loop ran live on an r3-05 stand-in under ~W5MBBTB, with the menu callback invoked in-process because the menu is not UI-automatable): open the pilot r3-05 part; link a dimension, a pattern
   count and a tolerance through the add-in; create datum frames; assign
   parts in a two-part assembly; `sync`, edit a value in SOLIDWORKS,
   `sync` again (R001 cad moved), `import --update`, `sync` (no-op).

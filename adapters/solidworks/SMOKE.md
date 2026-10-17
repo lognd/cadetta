@@ -49,12 +49,19 @@ before and after each step: none left open.
 
 Findings (not fixed here, filed as tickets):
 
-- A pattern count reads back x1000 and a re-push of it writes 4000: every
-  non-angle dimension was scaled by the length factor in `SwComPushDocument`.
-  Fixed: scalar dimensions (swScalarDimension) are now unscaled
-  (`DimensionUnits`). The read path in `SwComDocumentReader` now uses
-  the same `DimensionUnits.ToQuantity`, so a count reads as a unitless
-  number (unit empty), with no tolerance.
+- A pattern count read back x1000 (and a re-push wrote 4000). The earlier
+  claim that this was fixed was wrong: `IDimension.GetType()` returns
+  `swDimensionParamType_e` (linear 0, angular 1, integer 2), but
+  `DimensionUnits.KindOf` decoded it as `swDimensionType_e`. Fixed in the
+  w5mb run: 2 maps to Count; verified live (`bolt_count` reads `4`).
+- `OpenDoc6` resolves relative paths against SOLIDWORKS' cwd, so `import`
+  failed to open a relative part path. Fixed: `RpcServer.FindUnderCwd`
+  returns an absolute path. Verified live.
+- Linking a count dimension writes the global as `4000mm` (scalar scaled
+  as a length on global create). Filed as a ticket.
+- The pane lists only the active document's model members; an assembly
+  member such as `GearboxCover.bolt_count` has no row when its part is
+  active, so the Link verb cannot target it from the part.
 - The push-path R004 message does not name the failing feature.
 
 ## Datum frame verb: dropped
@@ -65,9 +72,17 @@ No menu verb for datum frame creation is added. Frames are created by
 
 ## NOT exercised
 
-- The r3-05 pilot itself (stand-in used again).
-- The true menu-click path (select dimension, Link verb) for a pattern
-  count and a tolerance; only the service path beneath it ran.
+- The r3-05 pilot file itself: a CoverPlate part built from the real r3-05
+  `lib.cdt` (stand-in part) was round-tripped live: sync, a CAD move
+  (R001 drift), `import --update --write`, and a no-op re-sync. See
+  `evidence/w5mb-live/`.
+- A real mouse click on the Cadetta menu: UI Automation exposes no menu
+  elements for the SOLIDWORKS add-in menu, so it was not automated. The
+  registered callback `MenuLink` was invoked in-process
+  (`GetAddInObject` + `MenuLink`) with the dimension and pane row selected:
+  `D1@Sketch3` linked to `pilot_bore` (global 12.009mm, H7 midpoint) and
+  `D1@LPattern1` linked (count; global written as 4000mm, see above).
+  Documents were closed unsaved.
 - `import --update` on a toleranced or fit value (refused by design).
 - Moving `D1@Shell1` through the API: it does not take effect, so `wall`
   stayed at 1 mm.
@@ -75,8 +90,7 @@ No menu verb for datum frame creation is added. Frames are created by
 ## Findings left as tickets
 
 Filed as separate tickets (see the ticket Done report): `cadetta names`
-opening the project file in the running SOLIDWORKS; OpenDoc6 relative-path
-failure in `import`; read-back mismatch when CAD carries a tolerance the
+opening the project file in the running SOLIDWORKS; read-back mismatch when CAD carries a tolerance the
 design lacks; `read_current` returning None for skipped statuses; a failed
 atomic restore leaving a half-pushed document; a transient
 RPC_E_SERVERFAULT on the first read.
