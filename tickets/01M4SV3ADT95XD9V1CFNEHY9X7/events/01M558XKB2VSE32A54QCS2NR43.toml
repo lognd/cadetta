@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:50:35Z"
+digest = "9998bcdfc0459c07b72a7792901f294060d7a5ff7a4051c1de0af703d817347f"
+provider = "file"
+ref = "adapters/solidworks/evidence/nehy-live/drive-cad-moved-import-update-noop.txt"
+size = 21249
+status = "measured"
+at = "2026-10-17T15:50:35Z"
+actor = "lognd"
+rev = 1
