@@ -628,6 +628,7 @@ built-in `sw-equations` row.
 | SOLIDWORKS | external, C# | - | 0.1.0 | 0.1.0 | COM API from .NET: global variables, dimensions and their tolerances, custom properties, coordinate systems, component transforms, rebuild (push covers emit); plus an add-in for linking by selection (solidworks.md); Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
 | Fusion | external, Python | - | 0.1.0 | 0.1.0 | user parameters through an in-Fusion add-in over local JSON-RPC (fusion.md); live run pending |
+| Ansys | external, Python | - | later | later | Workbench input parameters through PyAnsys, with a separate update (`regen`) cycle (ansys.md); spec only, needs an Ansys license and host |
 | Inventor | external | - | later | later | parameters API |
 | OpenSCAD / CadQuery | built-in | later | - | - | `-D` defines / Python constants |
 | KiCad | - | out | out | out | electrical CAD is out of 0.1.0 |
