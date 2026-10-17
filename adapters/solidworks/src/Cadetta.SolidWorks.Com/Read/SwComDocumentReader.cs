@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using Cadetta.SolidWorks.Com.Assembly;
+using Cadetta.SolidWorks.Com.Props;
+using Cadetta.SolidWorks.Props;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Read;
 using SolidWorks.Interop.sldworks;
@@ -214,29 +216,7 @@ namespace Cadetta.SolidWorks.Com.Read
 
         private void ReadProperties(ModelDoc2 model, NativeDocument doc)
         {
-            ReadPropertySet(model, null, doc);
-            foreach (var cfg in (string[]?)model.GetConfigurationNames() ?? new string[0])
-            {
-                ReadPropertySet(model, cfg, doc);
-            }
-        }
-
-        private void ReadPropertySet(ModelDoc2 model, string? config, NativeDocument doc)
-        {
-            var mgr = model.Extension.CustomPropertyManager[config ?? ""];
-            foreach (var name in (string[]?)mgr.GetNames() ?? new string[0])
-            {
-                string val, resolved;
-                bool was;
-                mgr.Get5(name, false, out val, out resolved, out was);
-                doc.Properties.Add(new NativeProperty
-                {
-                    Name = name,
-                    Config = config,
-                    Value = resolved ?? val ?? "",
-                    Expression = val != null && val != resolved ? val : null,
-                });
-            }
+            ConfigPropertyReader.Apply(ConfigPropertyReader.Collect(new SwComPropertySource(model, _log), _log), doc);
         }
 
         private void ReadFrames(ModelDoc2 model, NativeDocument doc)

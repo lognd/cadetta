@@ -26,6 +26,20 @@ namespace Cadetta.SolidWorks.Tests.Push
         {
             Writes.Add("global:" + name);
             Globals[name] = value;
+            GlobalExpressions.Remove(name);
+            return true;
+        }
+
+        public Dictionary<string, string> GlobalExpressions = new Dictionary<string, string>();
+
+        public string? GetGlobalExpression(string name) => GlobalExpressions.TryGetValue(name, out var v) ? v : null;
+
+        public bool RestoreEquation(string lhs, string? rhs)
+        {
+            Writes.Add("eq:" + lhs);
+            if (Dims.TryGetValue(lhs, out var d)) d.Expression = rhs;
+            else if (rhs == null) GlobalExpressions.Remove(lhs);
+            else GlobalExpressions[lhs] = rhs;
             return true;
         }
 
