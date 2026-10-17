@@ -8,11 +8,11 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-17T06:19:05Z"
+updated = "2026-10-17T06:37:01Z"
 persona = "design engineer"
 capability = "write cadetta values into SOLIDWORKS and keep dimensions linked"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Push/**"]
 
 [[links]]
 kind = "blocked-by"
