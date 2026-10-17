@@ -2,7 +2,8 @@
 id = "01M4SWMDXKYAFXR9GEKVTE7XA4"
 title = "Frame locators, geometry bindings and R007"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
