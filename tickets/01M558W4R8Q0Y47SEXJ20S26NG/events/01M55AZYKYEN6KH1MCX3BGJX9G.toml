@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T16:25:49Z"
+digest = "659f50c79cc0d7b7f5d00b92194897a1fe248770c0a7f5ce80e695aac7146524"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 58.43s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ee282a2a-912d-4c60-b194-abc7b3521ecd with nextest profile: default
+    Starting 1 test across 45 binaries (738 tests skipped)
+        PASS [   0.187s] cadetta cmd::sync::tests::skipped_locator_reads_back_and_is_recorded
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.209s] 1 test run: 1 passed, 738 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'test(skipped_locator_reads_back_and_is_recorded)'"
+size = 623
+status = "measured"
+test_count = 1
+tests_digest = "98b663e7b74260eb875849f788c4ed6473aa4fd473339c9d267f219a23b88cdd"
+at = "2026-10-17T16:25:49Z"
+actor = "lognd"
+rev = 1

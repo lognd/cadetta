@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a locator whose push status is skipped, when the document is read back, then its value is returned and recorded as synced"]
+moved = []
+at = "2026-10-17T16:25:49Z"
+actor = "lognd"
+rev = 1
