@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given the add-in is registered, when SOLIDWORKS lists it, then registration writes default 1 plus AddInsStartup; live LoadAddIn/dialog logs captured; connect not yet observed"]
+moved = []
+at = "2026-10-17T11:43:43Z"
+actor = "lognd"
+rev = 1
