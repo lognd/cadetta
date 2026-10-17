@@ -2,7 +2,8 @@
 id = "01M54RWWJSQWCSZHG0SEXF7N54"
 title = "SOLIDWORKS add-in never connects on nova: LoadAddIn returns 0 but ConnectToSW does not run"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
