@@ -2,7 +2,8 @@
 id = "01M55M6242ZNGM6F6WN1SCPZK7"
 title = "SOLIDWORKS: rerun count-link and import live check after unit fix, rebind criterion 6 evidence"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
