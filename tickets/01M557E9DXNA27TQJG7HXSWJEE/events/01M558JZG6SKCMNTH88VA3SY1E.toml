@@ -1,0 +1,16 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:44:46Z"
+digest = "dd761d16c9340a7a66c507af05d6d34620e1bd21aff4c0ad65071946ade7ccfc"
+exit_code = 0
+inline = """
+............                                                             [100%]
+12 passed in 0.17s
+"""
+passed = true
+provider = "command"
+ref = "uv run --project bindings/python pytest -q bindings/python/tests/test_adapter.py"
+size = 99
+status = "measured"
+at = "2026-10-17T15:44:46Z"
+actor = "lognd"
+rev = 1
