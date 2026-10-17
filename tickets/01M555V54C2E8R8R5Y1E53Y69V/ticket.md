@@ -20,5 +20,5 @@ bound = true
 
 [[acceptance]]
 text = "The adapters.md target matrix gains an Ansys row"
-bound = false
+bound = true
 +++
