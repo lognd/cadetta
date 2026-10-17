@@ -2,7 +2,8 @@
 id = "01M558W4HKS0B37W2JGDWB23RN"
 title = "import: OpenDoc6 fails on relative paths"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
