@@ -1,0 +1,11 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "addin",
+  "id": "6f1d8c52-3b7e-4c11-9a4e-0c5a7f3d2b10",
+  "author": "cadetta",
+  "description": {"": "Serves Fusion user parameters to the cadetta fusion adapter over JSON-RPC"},
+  "version": "0.0.0",
+  "runOnStartup": true,
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

@@ -1,0 +1,53 @@
+name: fusion
+
+# Runs the Fusion adapter's fake-session transcript tests. Fusion's Python
+# only exists inside Fusion, so CI never needs it: the tests drive the real
+# adapter against a recording fake (adapters/fusion/tests/unit).
+
+on:
+  pull_request:
+    paths:
+      - adapters/fusion/**
+      - bindings/python/**
+      - .github/workflows/fusion.yml
+  push:
+    branches: [main]
+    paths:
+      - adapters/fusion/**
+      - bindings/python/**
+      - .github/workflows/fusion.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  fake-session:
+    name: fake session (ruff, pytest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: adapters/fusion
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      # The adapter depends on the cadetta package, built from bindings/python.
+      - name: Install Rust 1.98
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal
+          rustup default 1.98.0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: uv sync
+        run: uv sync
+      - name: ruff check
+        run: uv run ruff check
+      - name: ruff format --check
+        run: uv run ruff format --check
+      - name: pytest
+        run: uv run pytest

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cadetta-fusion"
+version = "0.0.0"
+description = "Fusion adapter for cadetta: read and drive user parameters over JSON-RPC on stdio."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["blake3>=1", "cadetta", "pydantic>=2", "typani>=0.2.3"]
+
+[project.scripts]
+cadetta-fusion = "cadetta_fusion.__main__:main"
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.uv.sources]
+# The adapter is built on the cadetta package (logging, and later the
+# adapter base class, docs/spec/bindings.md 3.4); develop against the tree.
+cadetta = { path = "../../bindings/python", editable = true }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+cadetta_fusion = ["py.typed"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]

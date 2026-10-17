@@ -627,7 +627,7 @@ built-in `sw-equations` row.
 | FreeCAD | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | Spreadsheet aliases; headless `freecadcmd` for CI |
 | SOLIDWORKS | external, C# | - | 0.1.0 | 0.1.0 | COM API from .NET: global variables, dimensions and their tolerances, custom properties, coordinate systems, component transforms, rebuild (push covers emit); plus an add-in for linking by selection (solidworks.md); Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
-| Fusion | external, Python | - | later | later | user parameters API |
+| Fusion | external, Python | - | 0.1.0 | 0.1.0 | user parameters through an in-Fusion add-in over local JSON-RPC (fusion.md); live run pending |
 | Inventor | external | - | later | later | parameters API |
 | OpenSCAD / CadQuery | built-in | later | - | - | `-D` defines / Python constants |
 | KiCad | - | out | out | out | electrical CAD is out of 0.1.0 |
@@ -645,7 +645,9 @@ equations-file emitter remains the zero-install path.
 
 FreeCAD is the reference external adapter for CI: it is the only target
 that exercises `read` and `drive` without a license or Windows, so the
-protocol's conformance tests run against it.
+protocol's conformance tests run against it. Fusion (fusion.md) is
+the second Python adapter; CI runs its fake-session transcript tests
+without Fusion, and a live run on a Fusion host is a manual step.
 
 ### 6.1 FreeCAD emit
 
