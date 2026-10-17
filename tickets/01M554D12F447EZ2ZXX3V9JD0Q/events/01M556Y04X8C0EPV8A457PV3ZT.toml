@@ -1,0 +1,35 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:13:19Z"
+digest = "3236627997eff4fcd75b069761d8fa14cc90e4652350124c339d35e664aada98"
+exit_code = 0
+inline = '''
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 30s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID baeb28a7-da14-4791-9dcf-0693ea0b0392 with nextest profile: default
+    Starting 1 test across 76 binaries (1845 tests skipped)
+        PASS [   0.005s] cadetta cmd::sync::tests::rel_glob_path_normalises_backslashes
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 1845 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "rel_glob_path_normalises_backslashes"
+size = 1389
+status = "measured"
+test_count = 1
+tests_digest = "33a4d4cc6081ec1583c20e34a8450b82143573014cea0d1750c15f594fa7fca3"
+at = "2026-10-17T15:13:19Z"
+actor = "lognd"
+rev = 1
