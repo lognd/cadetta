@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["docs/spec/fusion.md states the Fusion adapter: user-parameters mapping, units, read and drive, atomic push, transport (Fusion Python runs only inside Fusion, so an in-Fusion add-in speaks JSON-RPC to the cadetta process)", "adapters/fusion implements initialize, read and push on the cadetta.adapter base, with fake-session transcript tests that run on CI without Fusion", 'A live run on nova (Fusion is installed under %LOCALAPPDATA%\Fusion360) pushes and reads back a user parameter; open documents are tracked and closed', "The target matrix row for Fusion is updated and a workflow runs the fake-session tests"]
+moved = []
+at = "2026-10-17T14:56:49Z"
+actor = "lognd"
+rev = 1
