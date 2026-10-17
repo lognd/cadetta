@@ -103,6 +103,12 @@ namespace Cadetta.SolidWorks.Read
         /// <summary>The document path as given to read.</summary>
         public string Path { get; set; } = "";
 
+        /// <summary>The active configuration; null when the document has none.</summary>
+        public string? ActiveConfig { get; set; }
+
+        /// <summary>Every configuration name, active one included.</summary>
+        public List<string> Configurations { get; } = new List<string>();
+
         /// <summary>Equation-manager globals.</summary>
         public List<NativeGlobal> Globals { get; } = new List<NativeGlobal>();
 
