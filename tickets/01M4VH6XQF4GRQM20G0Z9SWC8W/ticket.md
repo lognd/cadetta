@@ -8,13 +8,13 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T21:03:04Z"
-updated = "2026-10-17T05:14:17Z"
+updated = "2026-10-17T06:06:13Z"
 persona = "cadetta developer"
 capability = "build and run the C# adapter against a real SOLIDWORKS"
 outcome_text = "the C# tickets are built on confirmed APIs, not assumptions"
 idempotency_key = "d15:sw-win-bootstrap"
 labels = ["creates:adapters/solidworks/API-SURFACE.md", "creates:adapters/solidworks/DEVELOPING.md"]
-scope = ["adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md"]
+scope = ["adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/**"]
 
 [[acceptance]]
 text = "Given the Windows machine, when bootstrapped, then the .NET SDK, SOLIDWORKS_API_DIR and a Windows cadetta build are in place and adapters/solidworks/DEVELOPING.md records the steps and versions"

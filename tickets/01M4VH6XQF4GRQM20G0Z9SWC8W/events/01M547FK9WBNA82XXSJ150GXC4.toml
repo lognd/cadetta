@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md"]
+new = ["adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/**"]
+at = "2026-10-17T06:06:13Z"
+actor = "lognd"
+rev = 1
