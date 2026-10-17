@@ -3,12 +3,15 @@
 //   w5mb build <part.SLDPRT> <log>    create the part, save it, close it (no doc left open)
 //   w5mb edit  <part.SLDPRT> <log> <dim> <mm>   open, set one dimension, save, close
 //   w5mb types <part.SLDPRT> <log>   list every dimension with its swDimensionType_e and system value
+//   w5mb link  <part.SLDPRT> <log> <dim> <global>   open, LinkCommands.Link the dimension to a global (Core + Com), report value/expression, save, close
 //   w5mb docs  <log>                  list the open documents
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Cadetta.SolidWorks.Commands;
+using Cadetta.SolidWorks.Com.Push;
 using Cadetta.SolidWorks.Com.Session;
 using Cadetta.SolidWorks.Logging;
 using SolidWorks.Interop.sldworks;
@@ -39,6 +42,7 @@ static class Program
         {
             if (a[0] == "build") Build(a[1]);
             else if (a[0] == "types") Types(a[1]);
+            else if (a[0] == "link") Link(a[1], a[3], a[4]);
             else if (a[0] == "edit") Edit(a[1], a[3], double.Parse(a[4]));
         }
         finally { Docs("after"); }
@@ -129,6 +133,27 @@ static class Program
                     dd = (IDisplayDimension)f.GetNextDisplayDimension(dd);
                 }
             }
+        }
+        finally { sw.CloseDoc(doc.GetTitle()); }
+    }
+
+    /// <summary>Links one dimension to a global through the production LinkCommands path and logs the created global.</summary>
+    static void Link(string path, string dim, string global)
+    {
+        int e = 0, w = 0;
+        var doc = sw.OpenDoc6(path, (int)swDocumentTypes_e.swDocPART, (int)swOpenDocOptions_e.swOpenDocOptions_Silent, "", ref e, ref w);
+        try
+        {
+            var log = new Log(o, LogLevel.Info);
+            var pd = new SwComPushDocument(doc, path, log);
+            var info = pd.GetDimension(dim);
+            L("dim " + dim + " kind=" + (info == null ? "none" : info.Kind.ToString()) + " value=" + (info == null ? "n/a" : info.Value.ToString("R")));
+            var r = LinkCommands.Link(pd, dim, global, log);
+            L("link outcome: " + r.Message);
+            L("global " + global + " = " + pd.GetGlobal(global) + " expr=" + pd.GetGlobalExpression(global));
+            L("dim after link: " + pd.GetDimension(dim)?.LinkedGlobal);
+            int e1 = 0, w1 = 0;
+            L("saved=" + doc.Extension.SaveAs3(path, 0, 1, null, null, ref e1, ref w1));
         }
         finally { sw.CloseDoc(doc.GetTitle()); }
     }

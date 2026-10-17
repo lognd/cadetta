@@ -1,0 +1,174 @@
+== docs before 
+== w5mb docs
+docs[before] count=0 : 
+docs[after] count=0 : 
+== build part (120 x 80 mm plate, linear pattern count 4) 
+== w5mb build
+docs[before] count=0 : 
+rect seg type=0
+
+rect seg type=0
+rect seg type=0
+dim length = True
+dim width = True
+plate=Boss-Extrude1
+dim diameter = True
+boss=Boss-Extrude2
+direction edge selected=True
+pattern=LPattern1 type=LPattern
+pattern dim: D3@LPattern1@Part5.Part = 0.015
+pattern dim: D1@LPattern1@Part5.Part = 4
+dim D1@Sketch2@Part5.Part = 0.12
+dim D2@Sketch2@Part5.Part = 0.08
+dim D1@Boss-Extrude1@Part5.Part = 0.00635
+dim D1@Sketch2@Part5.Part = 0.12
+dim D2@Sketch2@Part5.Part = 0.08
+dim D1@Sketch3@Part5.Part = 0.012
+dim D1@Boss-Extrude2@Part5.Part = 0.01
+dim D1@Sketch3@Part5.Part = 0.012
+dim D3@LPattern1@Part5.Part = 0.015
+dim D1@LPattern1@Part5.Part = 4
+saved=True err=0
+docs[after] count=0 : 
+== link pattern count D1@LPattern1 to global bolt_count (LinkCommands, fixed build) 
+== w5mb link
+docs[before] count=0 : 
+dim D1@LPattern1 kind=Count value=4
+2026-10-17T19:21:49.183985Z  INFO cadetta_solidworks: linked D1@LPattern1 to bolt_count (global created)
+link outcome: linked D1@LPattern1 to bolt_count
+global bolt_count = 4 expr=
+dim after link: bolt_count
+saved=True
+docs[after] count=0 : 
+== link D1@Sketch3 to global pilot_bore 
+== w5mb link
+docs[before] count=0 : 
+dim D1@Sketch3 kind=Length value=12.000000000000005
+2026-10-17T19:21:51.142927Z  INFO cadetta_solidworks: linked D1@Sketch3 to pilot_bore (global created)
+link outcome: linked D1@Sketch3 to pilot_bore
+global pilot_bore = 12 expr=
+dim after link: pilot_bore
+saved=True
+docs[after] count=0 : 
+== names --observe 
+solidworks (bindings/solidworks.toml)
+  acme.gearbox::Bolt.head_dia  param  unbound  emit=10mm  name=Bolt__head_dia
+  acme.gearbox::Bolt.head_height  param  unbound  emit=6mm  name=Bolt__head_height
+  acme.gearbox::Bolt.length  param  unbound  emit=19.05mm  name=Bolt__length
+  acme.gearbox::Bolt.shank_dia  param  unbound  emit=6mm  name=Bolt__shank_dia
+  acme.gearbox::Bolt.thread_depth  param  unbound  emit=11.2mm  name=Bolt__thread_depth
+  acme.gearbox::CoverPlate.bolt_pitch_x  param  unbound  emit=100mm  name=CoverPlate__bolt_pitch_x
+  acme.gearbox::CoverPlate.bolt_pitch_y  param  unbound  emit=60mm  name=CoverPlate__bolt_pitch_y
+  acme.gearbox::CoverPlate.cbore_depth  param  unbound  emit=3.175mm  name=CoverPlate__cbore_depth
+  acme.gearbox::CoverPlate.cbore_dia  param  unbound  emit=11mm  name=CoverPlate__cbore_dia
+  acme.gearbox::CoverPlate.corner_radius  param  unbound  emit=5mm  name=CoverPlate__corner_radius
+  acme.gearbox::CoverPlate.hole_dia  param  unbound  emit=6.6mm  name=CoverPlate__hole_dia
+  acme.gearbox::CoverPlate.length  param  explicit  emit=120mm  name=CoverPlate__length
+  acme.gearbox::CoverPlate.pilot_bore  param  explicit  emit=12.009mm  name=CoverPlate__pilot_bore
+  acme.gearbox::CoverPlate.thickness  param  explicit  emit=6.35mm  name=CoverPlate__thickness
+  acme.gearbox::CoverPlate.width  param  explicit  emit=80mm  name=CoverPlate__width
+  acme.gearbox::Gasket.bolt_pitch_x  param  unbound  emit=100mm  name=Gasket__bolt_pitch_x
+  acme.gearbox::Gasket.bolt_pitch_y  param  unbound  emit=60mm  name=Gasket__bolt_pitch_y
+  acme.gearbox::Gasket.corner_radius  param  unbound  emit=5mm  name=Gasket__corner_radius
+  acme.gearbox::Gasket.hole_dia  param  unbound  emit=6.6mm  name=Gasket__hole_dia
+  acme.gearbox::Gasket.length  param  unbound  emit=120mm  name=Gasket__length
+  acme.gearbox::Gasket.pilot_bore  param  unbound  emit=12.009mm  name=Gasket__pilot_bore
+  acme.gearbox::Gasket.thickness  param  unbound  emit=1.5mm  name=Gasket__thickness
+  acme.gearbox::Gasket.width  param  unbound  emit=80mm  name=Gasket__width
+  acme.gearbox::GearboxCover.bolt_count  param  explicit  emit=4  name=GearboxCover__bolt_count
+  acme.gearbox::GearboxCover/bolt[0].head_dia  param  unbound  emit=10mm  name=GearboxCover__bolt_0__head_dia
+  acme.gearbox::GearboxCover/bolt[0].head_height  param  unbound  emit=6mm  name=GearboxCover__bolt_0__head_height
+  acme.gearbox::GearboxCover/bolt[0].length  param  unbound  emit=19.05mm  name=GearboxCover__bolt_0__length
+  acme.gearbox::GearboxCover/bolt[0].shank_dia  param  unbound  emit=6mm  name=GearboxCover__bolt_0__shank_dia
+  acme.gearbox::GearboxCover/bolt[0].thread_depth  param  unbound  emit=11.2mm  name=GearboxCover__bolt_0__thread_depth
+  acme.gearbox::GearboxCover/bolt[1].head_dia  param  unbound  emit=10mm  name=GearboxCover__bolt_1__head_dia
+  acme.gearbox::GearboxCover/bolt[1].head_height  param  unbound  emit=6mm  name=GearboxCover__bolt_1__head_height
+  acme.gearbox::GearboxCover/bolt[1].length  param  unbound  emit=19.05mm  name=GearboxCover__bolt_1__length
+  acme.gearbox::GearboxCover/bolt[1].shank_dia  param  unbound  emit=6mm  name=GearboxCover__bolt_1__shank_dia
+  acme.gearbox::GearboxCover/bolt[1].thread_depth  param  unbound  emit=11.2mm  name=GearboxCover__bolt_1__thread_depth
+  acme.gearbox::GearboxCover/bolt[2].head_dia  param  unbound  emit=10mm  name=GearboxCover__bolt_2__head_dia
+  acme.gearbox::GearboxCover/bolt[2].head_height  param  unbound  emit=6mm  name=GearboxCover__bolt_2__head_height
+  acme.gearbox::GearboxCover/bolt[2].length  param  unbound  emit=19.05mm  name=GearboxCover__bolt_2__length
+  acme.gearbox::GearboxCover/bolt[2].shank_dia  param  unbound  emit=6mm  name=GearboxCover__bolt_2__shank_dia
+  acme.gearbox::GearboxCover/bolt[2].thread_depth  param  unbound  emit=11.2mm  name=GearboxCover__bolt_2__thread_depth
+  acme.gearbox::GearboxCover/bolt[3].head_dia  param  unbound  emit=10mm  name=GearboxCover__bolt_3__head_dia
+  acme.gearbox::GearboxCover/bolt[3].head_height  param  unbound  emit=6mm  name=GearboxCover__bolt_3__head_height
+  acme.gearbox::GearboxCover/bolt[3].length  param  unbound  emit=19.05mm  name=GearboxCover__bolt_3__length
+  acme.gearbox::GearboxCover/bolt[3].shank_dia  param  unbound  emit=6mm  name=GearboxCover__bolt_3__shank_dia
+  acme.gearbox::GearboxCover/bolt[3].thread_depth  param  unbound  emit=11.2mm  name=GearboxCover__bolt_3__thread_depth
+exit=0 
+== sync (baseline) 
+2026-10-17T19:22:02.967364Z  WARN cadetta::cmd::sync: sync diagnostic code="R006" D1@Sketch3 replaces native expression `"pilot_bore"`
+converged  acme.gearbox::CoverPlate.length  D1@Sketch2  120mm -> 120mm
+converged  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+push  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12mm -> 12.009mm [12mm, 12.018mm]
+converged  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+converged  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+R006: D1@Sketch3 replaces native expression `"pilot_bore"`
+1 pushed, 0 skipped, 0 drift, 4 converged, 0 failed
+regen  parts/CoverPlate.SLDPRT  ok
+exit=0 
+== sync again (no-op) 
+skip  acme.gearbox::CoverPlate.length  D1@Sketch2  120mm -> 120mm
+skip  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+skip  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12.009mm [12mm, 12.018mm] -> 12.009mm [12mm, 12.018mm]
+skip  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+skip  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+0 pushed, 5 skipped, 0 drift, 0 converged, 0 failed
+exit=0 
+== edit D1@Sketch2 to 130 in CAD 
+== w5mb edit
+docs[before] count=0 : 
+before D1@Sketch2 = 0.12
+set rc=0
+after D1@Sketch2 = 0.13
+saved=True
+docs[after] count=0 : 
+== sync (expect R001 drift) 
+2026-10-17T19:22:10.792367Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T19:22:10.792684Z  WARN cadetta_adapter::classify: sync disagreement code="R001" class=CadMoved
+2026-10-17T19:22:10.792723Z  WARN cadetta::cmd::sync: sync diagnostic code="R001" cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+drift  acme.gearbox::CoverPlate.length  D1@Sketch2  120mm -> 120mm
+skip  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+skip  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12.009mm [12mm, 12.018mm] -> 12.009mm [12mm, 12.018mm]
+skip  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+skip  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+R001: cad moved: acme.gearbox::CoverPlate.length base=Some("120mm") ours=120mm theirs=130mm
+0 pushed, 4 skipped, 1 drift, 0 converged, 0 failed
+exit=1 
+== import solidworks --update (dry) 
+acme.gearbox::CoverPlate.length (src\lib.cdt)
+- 120mm
++ 130mm
+acme.gearbox::CoverPlate.pilot_bore: skipped, has a tolerance or fit; CAD value 12.009mm, edit by hand
+note: nothing written; pass --write to apply
+exit=0 
+== import solidworks --update --write 
+wrote src\lib.cdt
+wrote cadetta.lock
+acme.gearbox::CoverPlate.length (src\lib.cdt)
+- 120mm
++ 130mm
+acme.gearbox::CoverPlate.pilot_bore: skipped, has a tolerance or fit; CAD value 12.009mm, edit by hand
+exit=0 
+== sync (no-op) 
+skip  acme.gearbox::CoverPlate.length  D1@Sketch2  130mm -> 130mm
+skip  acme.gearbox::CoverPlate.width  D2@Sketch2  80mm -> 80mm
+skip  acme.gearbox::CoverPlate.pilot_bore  D1@Sketch3  12.009mm [12mm, 12.018mm] -> 12.009mm [12mm, 12.018mm]
+skip  acme.gearbox::CoverPlate.thickness  D1@Boss-Extrude1  6.35mm -> 6.35mm
+skip  acme.gearbox::GearboxCover.bolt_count  D1@LPattern1  4 -> 4
+0 pushed, 5 skipped, 0 drift, 0 converged, 0 failed
+exit=0 
+== lib.cdt length and bolt_count 
+6:  length        = 130mm
+30:  length        = CoverPlate.length
+47:  /// 0.75in is not a standard M6 length (16, 20 mm); kept from the legacy design, review.
+48:  length       = 0.75in
+52:  /// Thread depth: length less plate and gasket (counterbore not credited).
+53:  thread_depth = length - stack
+57:  bolt_count: Count = 4
+61:  part bolt[bolt_count]: Bolt
+== docs after 
+== w5mb docs
+docs[before] count=0 : 
+docs[after] count=0 : 

@@ -126,5 +126,5 @@ thickness to a global, set it too large, save, and regen (see the
 PowerShell on nova cannot cast the SOLIDWORKS COM object to the interop
 `ISldWorks`. Write live drivers as net48 exes that call
 `InteropResolver.Install`, build them on nova and run them through the
-session-1 scheduled task. See `tools/pf7x/` and `tools/w5mb/` (build, edit a dimension, list/close docs). A loaded managed dll stays
+session-1 scheduled task. See `tools/pf7x/` and `tools/w5mb/` (build, edit a dimension, link a dimension to a global, list/close docs). A loaded managed dll stays
 locked, so restart SOLIDWORKS when swapping the add-in build.
