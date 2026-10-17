@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-17T15:29:18Z"
+digest = "499a3a0ea5e88ec7ee966628931b4d07864ac1a83710b97900d01373baf5cc14"
+provider = "file"
+ref = "docs/spec/ansys.md"
+size = 8623
+status = "measured"
+at = "2026-10-17T15:29:18Z"
+actor = "lognd"
+rev = 1
