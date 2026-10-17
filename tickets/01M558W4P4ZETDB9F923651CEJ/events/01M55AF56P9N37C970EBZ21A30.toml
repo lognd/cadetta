@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given CAD has a tolerance the design lacks, when read-back is matched, then the locator matches"]
+moved = []
+at = "2026-10-17T16:17:39Z"
+actor = "lognd"
+rev = 1
