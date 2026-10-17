@@ -1,0 +1,10 @@
+kind = "create"
+title = "read_current returns None for Skipped statuses"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/**"]
+body = "Found while working ~NEHY9X7 (nova live smoke). Re-sync can then report a spurious mismatch."
+at = "2026-10-17T15:49:47Z"
+actor = "lognd"
+rev = 1
