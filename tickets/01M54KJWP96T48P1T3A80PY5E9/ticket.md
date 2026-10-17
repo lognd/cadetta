@@ -2,7 +2,8 @@
 id = "01M54KJWP96T48P1T3A80PY5E9"
 title = "Document SOLIDWORKS regeneration in the adapter spec"
 type = "docs"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
