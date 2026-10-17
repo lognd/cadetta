@@ -1,0 +1,9 @@
+kind = "create"
+title = "Confirm SOLIDWORKS coordinate system update, Euler convention and measured_from on a licensed machine"
+type = "task"
+category = "todo"
+priority = "medium"
+body = "found while working VTE7XA4: CS update is delete+recreate, Euler R=Rz*Ry*Rx assumed, sketch measured_from reported as unknown; C# build not run (no dotnet on any reachable goway host)."
+at = "2026-10-17T06:23:50Z"
+actor = "lognd"
+rev = 1
