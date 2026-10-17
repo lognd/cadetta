@@ -2,7 +2,8 @@
 id = "01M5496CWTHTRP1RQ57THH1WF6"
 title = "Wire protocol: add locator kind to ChangedParam so new custom properties need no property: prefix"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
