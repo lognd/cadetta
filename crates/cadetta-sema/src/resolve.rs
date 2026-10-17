@@ -132,7 +132,9 @@ impl fmt::Display for ResolveError {
 impl std::error::Error for ResolveError {}
 
 fn err<T>(code: &'static str, span: Span, message: String) -> Result<T, ResolveError> {
-    warn!(code, %message, "resolution error");
+    // Debug, not warn: the error is returned and reported (or deliberately probed and
+    // discarded, as in lazy std evaluation), so a warn would leak to stderr by default.
+    debug!(code, %message, "resolution error");
     Err(ResolveError {
         module: None,
         code,
@@ -1583,6 +1585,16 @@ fn block_heads(b: &Block, bound: &mut Vec<String>, out: &mut Vec<String>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::warnprobe::warn_count;
+
+    // frob:tests crates/cadetta-sema/src/resolve.rs::err
+    #[test]
+    fn resolution_error_does_not_log_at_warn() {
+        let warns = warn_count(|| {
+            let _: Result<(), _> = err("E002", Span::new(0, 1), "probe".to_owned());
+        });
+        assert_eq!(warns, 0, "returned errors must not warn");
+    }
     use cadetta_syntax::parser::parse;
 
     fn ctx(pkg: &str, module: &[&str], comp: Option<&str>) -> Ctx {

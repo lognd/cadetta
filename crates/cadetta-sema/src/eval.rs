@@ -260,7 +260,9 @@ type R<T> = Result<T, Fail>;
 
 fn diag(code: &'static str, span: Span, message: impl Into<String>) -> Fail {
     let message = message.into();
-    warn!(code, %message, "evaluation error");
+    // Debug, not warn: the diagnostic is returned and reported by the caller, or probed and
+    // discarded (lazy std evaluation), so a warn would leak to stderr by default.
+    debug!(code, %message, "evaluation error");
     Fail::Diag(EvalDiagnostic {
         module: None,
         code,
@@ -2017,6 +2019,16 @@ fn index_component<'p>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::warnprobe::warn_count;
+
+    // frob:tests crates/cadetta-sema/src/eval.rs::diag
+    #[test]
+    fn evaluation_diagnostic_does_not_log_at_warn() {
+        let warns = warn_count(|| {
+            let _ = diag("EVAL", Span::new(0, 1), "probe");
+        });
+        assert_eq!(warns, 0, "returned diagnostics must not warn");
+    }
     use crate::resolve::ModuleSrc;
     use cadetta_syntax::ast::File;
     use cadetta_syntax::parser::parse;
