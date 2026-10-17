@@ -2,12 +2,12 @@
 id = "01M555TVRF47KEJ406NPQMSJDX"
 title = "Fusion adapter: spec and Python external adapter (read, drive)"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-17T14:56:39Z"
-updated = "2026-10-17T14:56:49Z"
+updated = "2026-10-17T15:18:19Z"
 scope = ["adapters/fusion/**", "docs/spec/fusion.md", "docs/spec/adapters.md"]
 
 [[acceptance]]
