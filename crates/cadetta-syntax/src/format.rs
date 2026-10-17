@@ -1114,6 +1114,7 @@ impl Printer<'_> {
                     .collect();
                 format!("{} [{}]", self.expr(x), ts.join(" "))
             }
+            ExprKind::Position(x, d) => format!("{} [position {}]", self.expr(x), self.expr(d)),
             ExprKind::IsoClass(x, c) => format!("{} {}", self.expr(x), c.name),
             ExprKind::If {
                 cond,
@@ -1339,6 +1340,17 @@ mod tests {
         // frob:tests crates/cadetta-syntax/src/format.rs::format_source kind=unit
         let src = "model M {\n  a = if x < 1mm { let t = 2mm; t } else { 3mm }\n  b = match k { A => 1mm, _ => 2mm }\n  c = f?(1mm, n = 2mm)[0].g ^ 2\n  d = not (p and q) or r\n  e = [1mm, 2mm] as Foo\n  f = a <= b <= c\n  g = x in 1..2\n  h = -x\n}\n";
         let out = fmt(src);
+        assert_eq!(fmt(&out), out);
+    }
+
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    #[test]
+    fn position_postfix_round_trips() {
+        // frob:tests crates/cadetta-syntax/src/format.rs::format_source kind=unit
+        let out =
+            fmt("model M {\n  p = Point2(1mm, 2mm)   [position   0.1mm]\n  q = h[position]\n}\n");
+        assert!(out.contains("Point2(1mm, 2mm) [position 0.1mm]"), "{out}");
+        assert!(out.contains("h[position]"), "{out}");
         assert_eq!(fmt(&out), out);
     }
 

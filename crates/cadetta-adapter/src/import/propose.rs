@@ -11,10 +11,12 @@ use std::fmt;
 use std::fs;
 use std::path::{Path as FsPath, PathBuf};
 
-use cadetta_ir::model::{LocatorKind, LocatorMode, Project, Provenance};
+use cadetta_ir::model::{Locator, LocatorKind, LocatorMode, Project, Provenance, Value};
 use serde::{Deserialize, Serialize};
 
-use super::naming::{MemberNames, component_name};
+use super::geometry::{unit_scale, write_transform};
+use super::naming::{MemberNames, component_name, member_name};
+use crate::geometry_bind::Mat34;
 
 /// Directory of the proposal files, relative to the package root.
 pub const PROPOSAL_DIR: &str = "build/import";
@@ -42,7 +44,7 @@ pub struct Item {
     pub file: String,
     /// The native locator.
     pub locator: String,
-    /// `global | dimension | property | frame`.
+    /// `global | dimension | property | frame | instance`.
     pub kind: String,
     /// The native name.
     pub native_name: String,
@@ -62,6 +64,12 @@ pub struct Item {
     /// The proposed component type.
     #[serde(rename = "type")]
     pub component: String,
+    /// The part type of an `instance` item (the component the instance places).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub part: Option<String>,
+    /// The type of a `property` item: `Text`, `Count` or `Quantity` (7.3).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub property_type: Option<String>,
     /// Review status.
     pub status: Status,
     /// Why the item is skipped.
@@ -109,6 +117,30 @@ fn kind_name(k: LocatorKind) -> &'static str {
     }
 }
 
+/// Why an accepted item carries a reason: its native expression is converted, not copied.
+const EXPRESSION_REASON: &str = "native expression converted; review the formula";
+
+/// Converts a native expression to `.cdt` syntax (adapters.md 7.2).
+///
+/// Each quoted native name (`"B"`) becomes the proposed member path found in `names`
+/// (native name to path). Returns `None` when a reference cannot be resolved or quoting is
+/// unbalanced, so the caller falls back to the literal value.
+pub fn convert_expression(expr: &str, names: &BTreeMap<&str, &str>) -> Option<String> {
+    let mut out = String::new();
+    let mut rest = expr;
+    while let Some(start) = rest.find('"') {
+        out.push_str(&rest[..start]);
+        let after = &rest[start + 1..];
+        let end = after.find('"')?;
+        let path = names.get(&after[..end])?;
+        out.push_str(path);
+        rest = &after[end + 1..];
+    }
+    out.push_str(rest);
+    tracing::debug!(%expr, converted = %out, "import: expression converted");
+    Some(out.trim().to_owned()).filter(|s| !s.is_empty())
+}
+
 /// Builds a proposal from observed IR, one project per native file (adapters.md 7.1).
 pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
     let mut items = Vec::new();
@@ -135,7 +167,12 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                     tracing::warn!(native = %native_name, name = %allocated.name, "import: member name collided; suffixed");
                 }
                 for loc in &binding.locators {
-                    let (status, reason) = if loc.mode == LocatorMode::Ref {
+                    let property_type = (loc.kind == LocatorKind::Property).then(|| {
+                        classify_property(native_name, &value.authored, unit_of(value, loc))
+                    });
+                    let (status, reason) = if let Some(kind) = m.attrs.get("linked") {
+                        (Status::Skip, Some(linked_reason(kind)))
+                    } else if loc.mode == LocatorMode::Ref {
                         (
                             Status::Skip,
                             Some("driven (reference) dimension".to_string()),
@@ -145,14 +182,17 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                             Status::Accept,
                             Some("name collided with an earlier member; suffixed".to_string()),
                         )
+                    } else if property_type == Some(PropertyType::Quantity)
+                        && unit_of(value, loc).is_none()
+                    {
+                        (Status::Rename, Some(NEEDS_UNIT_REASON.to_string()))
+                    } else if m.expr.is_some() {
+                        (Status::Accept, Some(EXPRESSION_REASON.to_string()))
                     } else {
                         (Status::Accept, None)
                     };
                     let unit_assumed = value.unit_assumed.is_some();
-                    let unit = value
-                        .unit_assumed
-                        .clone()
-                        .or_else(|| Some(loc.native_unit.clone()).filter(|u| !u.is_empty()));
+                    let unit = unit_of(value, loc);
                     items.push(Item {
                         file: file.clone(),
                         locator: loc.locator.clone(),
@@ -164,12 +204,15 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
                         unit_assumed,
                         path: allocated.name.clone(),
                         component: component_name(file),
+                        part: None,
+                        property_type: property_type.map(|t| t.name().to_owned()),
                         status,
                         reason,
                     });
                 }
             }
         }
+        propose_geometry(project, &mut names, &mut items);
     }
     items.sort_by(|a, b| (&a.file, &a.locator).cmp(&(&b.file, &b.locator)));
     tracing::info!(adapter, items = items.len(), "import: proposal built");
@@ -177,6 +220,215 @@ pub fn propose(adapter: &str, observed: &[Project]) -> Proposal {
         adapter: adapter.to_string(),
         items,
     }
+}
+
+/// Why a unitless quantity property needs a human edit (7.3).
+const NEEDS_UNIT_REASON: &str =
+    "quantity needs an explicit native_unit; set `unit` in proposal.toml";
+
+/// The type of a property member (7.3): text, a unitless count, or a dimensioned quantity.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PropertyType {
+    /// Non-numeric authored text.
+    Text,
+    /// A unitless integer whose name reads as a count.
+    Count,
+    /// Any other number; it needs a unit.
+    Quantity,
+}
+
+impl PropertyType {
+    /// The proposal.toml spelling.
+    fn name(self) -> &'static str {
+        match self {
+            Self::Text => "Text",
+            Self::Count => "Count",
+            Self::Quantity => "Quantity",
+        }
+    }
+}
+
+/// Name tokens that read as a count when the value is a unitless integer.
+const COUNT_TOKENS: &[&str] = &["qty", "quantity", "count", "num", "number", "pcs"];
+
+/// Classifies a property by its authored text, unit and native name (7.3).
+fn classify_property(native_name: &str, authored: &str, unit: Option<String>) -> PropertyType {
+    let numeric = authored.trim().parse::<f64>().is_ok();
+    let is_int = authored.trim().parse::<i64>().is_ok();
+    let count_named = native_name
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .flat_map(split_camel)
+        .any(|t| COUNT_TOKENS.contains(&t.as_str()));
+    let kind = if !numeric {
+        PropertyType::Text
+    } else if unit.is_none() && is_int && count_named {
+        PropertyType::Count
+    } else {
+        PropertyType::Quantity
+    };
+    tracing::debug!(native_name, ?kind, "import: property classified");
+    kind
+}
+
+/// Splits `PartCount` into lowercase `part`, `count`.
+fn split_camel(word: &str) -> Vec<String> {
+    let mut out: Vec<String> = Vec::new();
+    let mut prev_lower = false;
+    for c in word.chars() {
+        if c.is_ascii_uppercase() && prev_lower || out.is_empty() {
+            out.push(String::new());
+        }
+        prev_lower = c.is_ascii_lowercase();
+        if let Some(last) = out.last_mut() {
+            last.push(c.to_ascii_lowercase());
+        }
+    }
+    out
+}
+
+/// The unit recorded for a value: an assumed unit, else the locator's native unit.
+fn unit_of(value: &Value, loc: &Locator) -> Option<String> {
+    value
+        .unit_assumed
+        .clone()
+        .or_else(|| Some(loc.native_unit.clone()).filter(|u| !u.is_empty()))
+}
+
+/// The skip reason of a linked property (`prp` or `equation`; 7.3).
+fn linked_reason(kind: &str) -> String {
+    match kind {
+        "prp" => "$PRP-linked property: its value is derived from a native property".to_owned(),
+        _ => "equation-linked property: its value is derived from a native equation".to_owned(),
+    }
+}
+
+/// The native unit of a project: the first one its bindings name, else millimetres.
+fn native_unit(project: &Project) -> String {
+    project
+        .bindings
+        .iter()
+        .flat_map(|b| &b.locators)
+        .map(|l| l.native_unit.as_str())
+        .find(|u| !u.is_empty())
+        .unwrap_or("mm")
+        .to_owned()
+}
+
+/// The native unit and its SI length; an unknown unit falls back to millimetres with a warning.
+fn unit_and_scale(project: &Project) -> (String, f64) {
+    let unit = native_unit(project);
+    match unit_scale(&unit) {
+        Some(s) => (unit, s),
+        None => {
+            tracing::warn!(%unit, "import: unknown native unit; reading transforms as mm");
+            ("mm".to_owned(), 0.001)
+        }
+    }
+}
+
+fn read_transform(
+    rows: &[Vec<Value>],
+    scale: f64,
+    unit: &str,
+) -> Result<super::geometry::Written, String> {
+    let m = Mat34::from_observed(rows, scale).map_err(|e| e.to_string())?;
+    write_transform(&m, unit).map_err(|e| e.to_string())
+}
+
+/// Proposes a datum per observed frame and a flagged place per observed instance (7.2).
+// frob:ticket 01M4VB64CJDA2CZ4WM4MNV70G6
+fn propose_geometry(
+    project: &Project,
+    names: &mut BTreeMap<String, MemberNames>,
+    items: &mut Vec<Item>,
+) {
+    let (unit, scale) = unit_and_scale(project);
+    for f in &project.frames {
+        let component = component_name(&f.document);
+        let allocated = names
+            .entry(component.clone())
+            .or_default()
+            .allocate(&f.name);
+        let (value, status, reason) = match read_transform(&f.transform, scale, &unit) {
+            _ if allocated.name == "origin" => (
+                String::new(),
+                Status::Skip,
+                Some("the origin datum is implicit".to_owned()),
+            ),
+            Ok(w) => (
+                w.expr,
+                Status::Accept,
+                w.inexact
+                    .then(|| "rotation is not a multiple of 90deg; written as read".to_owned()),
+            ),
+            Err(e) => (String::new(), Status::Skip, Some(e)),
+        };
+        tracing::debug!(frame = %f.name, datum = %allocated.name, ?status, "import: frame proposed");
+        items.push(Item {
+            file: f.document.clone(),
+            locator: f.name.clone(),
+            kind: "frame".to_owned(),
+            native_name: f.name.clone(),
+            expression: None,
+            value,
+            unit: Some(unit.clone()),
+            unit_assumed: false,
+            path: allocated.name,
+            component,
+            part: None,
+            property_type: None,
+            status,
+            reason,
+        });
+    }
+    for i in &project.instances {
+        let assembly = component_name(&i.document);
+        let stem = instance_stem(&i.component);
+        let allocated = names
+            .entry(format!("asm:{assembly}"))
+            .or_default()
+            .allocate(&stem);
+        let part = component_name(i.reference.as_deref().unwrap_or(&stem));
+        let (value, status, reason) = match read_transform(&i.transform, scale, &unit) {
+            Ok(w) => (
+                w.expr,
+                Status::Accept,
+                Some(if w.inexact {
+                    "placed at the origin with the read transform (rotation as read); re-anchor on a datum of the host"
+                } else {
+                    "placed at the origin with the read transform; re-anchor on a datum of the host"
+                }
+                .to_owned()),
+            ),
+            Err(e) => (String::new(), Status::Skip, Some(e)),
+        };
+        tracing::debug!(instance = %i.component, part = %allocated.name, ?status, "import: instance proposed");
+        items.push(Item {
+            file: i.document.clone(),
+            locator: i.component.clone(),
+            kind: "instance".to_owned(),
+            native_name: i.component.clone(),
+            expression: None,
+            value,
+            unit: Some(unit.clone()),
+            unit_assumed: false,
+            path: allocated.name,
+            component: assembly,
+            part: Some(part),
+            property_type: None,
+            status,
+            reason,
+        });
+    }
+}
+
+/// An instance name without its occurrence suffix (`bracket<2>` -> `bracket`).
+fn instance_stem(name: &str) -> String {
+    let base = name.split('<').next().unwrap_or(name);
+    let base = base.trim_end_matches(|c: char| c.is_ascii_digit());
+    let base = base.trim_end_matches(['-', ':', '_']);
+    let base = if base.is_empty() { name } else { base };
+    member_name(base)
 }
 
 /// Renders the `.cdt` scaffold: one `model` per file with its accepted items.
@@ -200,19 +452,74 @@ pub fn render_cdt(p: &Proposal) -> String {
     out
 }
 
-/// Renders one `model <component> { ... }` block for the given items.
+/// Renders the items of one native file: a `model` for members and frames, then an `assembly`
+/// with a `part` and a `place` per instance (7.2).
 pub fn render_model(component: &str, items: &[&Item]) -> String {
-    let mut out = format!("model {component} {{\n");
-    for i in items {
-        let unit = i.unit.as_deref().unwrap_or("");
-        let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
-            i.value.clone()
-        } else {
-            format!("{}{unit}", i.value)
-        };
-        out.push_str(&format!("  {} = {lit}\n", i.path));
+    let (instances, members): (Vec<&Item>, Vec<&Item>) =
+        items.iter().partition(|i| i.kind == "instance");
+    let names: BTreeMap<&str, &str> = members
+        .iter()
+        .filter(|i| i.kind != "frame")
+        .map(|i| (i.native_name.as_str(), i.path.as_str()))
+        .collect();
+    let mut out = String::new();
+    if !members.is_empty() || instances.is_empty() {
+        out.push_str(&format!("model {component} {{\n"));
+        for i in members {
+            if i.kind == "frame" {
+                out.push_str(&format!("  datum {} = {}\n", i.path, i.value));
+                continue;
+            }
+            let converted = i
+                .expression
+                .as_deref()
+                .and_then(|e| convert_expression(e, &names));
+            if let Some(expr) = converted {
+                out.push_str(&format!("  {} = {expr}\n", i.path));
+                continue;
+            }
+            match i.property_type.as_deref() {
+                Some("Text") => {
+                    out.push_str(&format!("  {} = {:?}\n", i.path, i.value));
+                    continue;
+                }
+                Some("Count") => {
+                    out.push_str(&format!("  {} = {}\n", i.path, i.value));
+                    continue;
+                }
+                Some("Quantity") if i.unit.is_none() => {
+                    out.push_str(&format!(
+                        "  // {} = {} (set `unit` in proposal.toml)\n",
+                        i.path, i.value
+                    ));
+                    continue;
+                }
+                _ => {}
+            }
+            let unit = i.unit.as_deref().unwrap_or("");
+            let lit = if unit.is_empty() || i.value.ends_with(|c: char| c.is_ascii_alphabetic()) {
+                i.value.clone()
+            } else {
+                format!("{}{unit}", i.value)
+            };
+            out.push_str(&format!("  {} = {lit}\n", i.path));
+        }
+        out.push_str("}\n");
     }
-    out.push_str("}\n");
+    if !instances.is_empty() {
+        if !out.is_empty() {
+            out.push('\n');
+        }
+        out.push_str(&format!("assembly {component} {{\n"));
+        for i in &instances {
+            let part = i.part.as_deref().unwrap_or(&i.component);
+            out.push_str(&format!("  part {}: {part}\n", i.path));
+        }
+        for i in &instances {
+            out.push_str(&format!("  place {}.origin at {}\n", i.path, i.value));
+        }
+        out.push_str("}\n");
+    }
     out
 }
 
@@ -237,7 +544,9 @@ pub fn write_proposal(root: &FsPath, p: &Proposal) -> Result<Vec<PathBuf>, Propo
 #[cfg(test)]
 mod tests {
     use super::*;
-    use cadetta_ir::model::{Exact, Locator, Nominal, PackageId};
+    use cadetta_ir::model::{
+        Exact, Locator, Nominal, ObservedFrame, ObservedInstance, PackageId, Value,
+    };
     use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
     use cadetta_units::{Dim, Magnitude, Rational};
 
@@ -281,6 +590,85 @@ mod tests {
         b.build()
     }
 
+    // frob:tests convert_expression
+    // frob:tests render_model
+    #[test]
+    fn expression_becomes_member_references() {
+        let p = propose("solidworks", &[observed(None)]);
+        let a = p.items.iter().find(|i| i.locator == "A").unwrap();
+        assert_eq!(a.reason.as_deref(), Some(EXPRESSION_REASON));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("a = b * 2"), "{cdt}");
+        let names = BTreeMap::from([("B", "b")]);
+        assert_eq!(
+            convert_expression("\"B\" * 2", &names).as_deref(),
+            Some("b * 2")
+        );
+        assert_eq!(convert_expression("\"Q\" * 2", &names), None);
+        assert_eq!(convert_expression("\"B * 2", &names), None);
+    }
+
+    fn property(name: &str, text: &str, unit: &str) -> ObservedParam {
+        let mut p = param(name, text.parse().unwrap_or(0), None, LocatorMode::Value);
+        p.locator.kind = LocatorKind::Property;
+        p.locator.native_unit = unit.into();
+        p.text = text.into();
+        p.expr = None;
+        p
+    }
+
+    fn property_project(params: Vec<ObservedParam>, linked: &[&str]) -> Project {
+        let pkg = PackageId {
+            name: "acme.rover".into(),
+            version: "0.0.0".into(),
+        };
+        let mut b = ObservedBuilder::new(pkg, "solidworks", "cover.SLDPRT").unwrap();
+        for p in params {
+            b.push(p).unwrap();
+        }
+        let mut project = b.build();
+        for m in project.components.iter_mut().flat_map(|c| &mut c.members) {
+            if let Provenance::Imported { native_name, .. } = &m.provenance
+                && linked.contains(&native_name.as_str())
+            {
+                m.attrs.insert("linked".into(), "prp".into());
+            }
+        }
+        project
+    }
+
+    // frob:tests classify_property
+    // frob:tests linked_reason
+    // frob:tests render_model
+    #[test]
+    fn property_types_status_and_linked_skip() {
+        let project = property_project(
+            vec![
+                property("Material", "Steel", ""),
+                property("Qty", "4", ""),
+                property("Mass", "2", ""),
+                property("Mass2", "2", "kg"),
+                property("Title", "Cover", ""),
+            ],
+            &["Title"],
+        );
+        let p = propose("solidworks", &[project]);
+        let by = |n: &str| p.items.iter().find(|i| i.locator == n).unwrap();
+        assert_eq!(by("Material").property_type.as_deref(), Some("Text"));
+        assert_eq!(by("Qty").property_type.as_deref(), Some("Count"));
+        assert_eq!(by("Mass").property_type.as_deref(), Some("Quantity"));
+        assert_eq!(by("Mass").status, Status::Rename);
+        assert_eq!(by("Mass2").status, Status::Accept);
+        assert_eq!(by("Title").status, Status::Skip);
+        assert!(by("Title").reason.is_some());
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("material = \"Steel\""), "{cdt}");
+        assert!(cdt.contains("qty = 4\n"), "{cdt}");
+        assert!(cdt.contains("// mass = 2"), "{cdt}");
+        assert!(cdt.contains("mass2 = 2kg"), "{cdt}");
+        assert!(!cdt.contains("title"), "{cdt}");
+    }
+
     // frob:tests proposal_written_alone
     #[test]
     fn proposal_written_alone() {
@@ -319,5 +707,119 @@ mod tests {
         assert!(text.contains("unit_assumed = true"));
         let q = propose("solidworks", &[observed(None)]);
         assert!(q.items.iter().all(|i| !i.unit_assumed));
+    }
+
+    fn num_value(n: i64, den: i64) -> Value {
+        Value::new(
+            Nominal::Exact(Exact(Magnitude::new(Rational::new(n, den).unwrap(), 0))),
+            Dim::default(),
+            n.to_string(),
+        )
+    }
+
+    /// A 3x4 transform: integer rotation entries and a translation in millimetres (as metres).
+    fn rows(rot: [[i64; 3]; 3], t_mm: [i64; 3]) -> Vec<Vec<Value>> {
+        (0..3)
+            .map(|r| {
+                let mut row: Vec<Value> = rot[r].iter().map(|n| num_value(*n, 1)).collect();
+                row.push(num_value(t_mm[r], 1000));
+                row
+            })
+            .collect()
+    }
+
+    const IDENT: [[i64; 3]; 3] = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+    const RZ90: [[i64; 3]; 3] = [[0, -1, 0], [1, 0, 0], [0, 0, 1]];
+
+    fn geometry_project() -> Project {
+        let pkg = PackageId {
+            name: "acme.rover".into(),
+            version: "0.0.0".into(),
+        };
+        let mut b = ObservedBuilder::new(pkg, "solidworks", "drive.SLDASM").unwrap();
+        b.push(param("B", 5, None, LocatorMode::Value)).unwrap();
+        for (name, rot, t) in [
+            ("Mount", RZ90, [14, 0, 0]),
+            ("Rail__site", IDENT, [0, -3, 2]),
+            ("Origin", IDENT, [0, 0, 0]),
+        ] {
+            b.push_frame(ObservedFrame {
+                name: name.into(),
+                document: "rail.SLDPRT".into(),
+                transform: rows(rot, t),
+            })
+            .unwrap();
+        }
+        b.push_instance(ObservedInstance {
+            component: "bracket<1>".into(),
+            document: "drive.SLDASM".into(),
+            reference: Some("bracket".into()),
+            transform: rows(RZ90, [10, 20, 0]),
+        })
+        .unwrap();
+        b.push_instance(ObservedInstance {
+            component: "bracket<2>".into(),
+            document: "drive.SLDASM".into(),
+            reference: Some("bracket".into()),
+            transform: rows(IDENT, [0, 0, 5]),
+        })
+        .unwrap();
+        b.build()
+    }
+
+    // frob:ticket 01M4VB64CJDA2CZ4WM4MNV70G6
+    // frob:tests frames_become_datums
+    #[test]
+    fn frames_become_datums() {
+        let p = propose("solidworks", &[geometry_project()]);
+        let frame = |loc: &str| {
+            p.items
+                .iter()
+                .find(|i| i.kind == "frame" && i.locator == loc)
+        };
+        let mount = frame("Mount").unwrap();
+        assert_eq!(mount.component, "Rail");
+        assert_eq!(mount.path, "mount");
+        assert_eq!(mount.value, "origin.offset(x = 14mm).rotate(z = 90deg)");
+        assert_eq!(mount.status, Status::Accept);
+        assert_eq!(mount.reason, None);
+        let rail = frame("Rail__site").unwrap();
+        assert_eq!(rail.path, "rail_site");
+        assert_eq!(rail.value, "origin.offset(y = -3mm, z = 2mm)");
+        let origin = frame("Origin").unwrap();
+        assert_eq!(origin.status, Status::Skip);
+        assert!(origin.reason.as_deref().unwrap().contains("implicit"));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("model Rail {"));
+        assert!(cdt.contains("  datum mount = origin.offset(x = 14mm).rotate(z = 90deg)\n"));
+        assert!(!cdt.contains("datum origin"));
+    }
+
+    // frob:tests instances_become_flagged_places
+    #[test]
+    fn instances_become_flagged_places() {
+        let p = propose("solidworks", &[geometry_project()]);
+        let inst: Vec<&Item> = p.items.iter().filter(|i| i.kind == "instance").collect();
+        assert_eq!(inst.len(), 2);
+        assert_eq!(inst[0].locator, "bracket<1>");
+        assert_eq!(inst[0].component, "Drive");
+        assert_eq!(inst[0].path, "bracket");
+        assert_eq!(inst[1].path, "bracket_2");
+        assert_eq!(inst[0].part.as_deref(), Some("Bracket"));
+        assert_eq!(
+            inst[0].value,
+            "origin.offset(x = 10mm, y = 20mm).rotate(z = 90deg)"
+        );
+        assert_eq!(inst[0].status, Status::Accept);
+        assert!(inst[0].reason.as_deref().unwrap().contains("re-anchor"));
+        let cdt = render_cdt(&p);
+        assert!(cdt.contains("assembly Drive {"));
+        assert!(cdt.contains("  part bracket: Bracket\n"));
+        assert!(cdt.contains(
+            "  place bracket.origin at origin.offset(x = 10mm, y = 20mm).rotate(z = 90deg)\n"
+        ));
+        let text = toml::to_string(&p).unwrap();
+        let back: Proposal = toml::from_str(&text).unwrap();
+        assert_eq!(back, p);
     }
 }

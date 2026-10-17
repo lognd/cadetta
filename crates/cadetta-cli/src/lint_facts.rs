@@ -8,17 +8,24 @@
 //! Specification: `docs/spec/lints.md` (I, U, 2.2, 2.3).
 
 // frob:ticket 01M4TA3CABXHEZFA7BXA8J3XJW
+// frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
 
+use std::collections::BTreeSet;
+
+use cadetta_ir::canon::{CanonPath, MemberSeg};
 use cadetta_ir::entities::{Interface, InterfaceBound, InterfaceMember};
-use cadetta_ir::model::{Bound, BoundOp, Component, Exact, Project, SpanRef};
+use cadetta_ir::model::{Bound, BoundOp, Exact, Project, SpanRef};
 use cadetta_ir::variant_name::ComponentPath;
 use cadetta_lint::engine::Allow;
 use cadetta_lint::rules::u002::{ItemFacts, ItemKind as FactKind, Visibility};
+use cadetta_sema::resolve::{Ctx, Resolved, Resolver};
 use cadetta_syntax::ast::{
-    Attr, AttrArg, BoundKind, Expr, ExprKind, File, InterfaceMemberKind, Item, ItemKind,
-    MemberKind, UnOp, Vis,
+    self, Arg, Attr, AttrArg, Block, BoundKind, Check, ComponentClass, Ctor, Expr, ExprKind, File,
+    Fit, FitSpec, InterfaceMemberKind, Item, ItemKind, MemberKind, ParamDecl, ProcessMemberKind,
+    Solver, SolverMemberKind, Span, Type, TypeKind, UnOp, Vis,
 };
 use cadetta_units::{Magnitude, Rational, UnitTable};
+use tracing::{debug, trace};
 
 /// One parsed module: its path inside the package, its AST and its source text.
 pub struct ModuleView<'a> {
@@ -162,18 +169,6 @@ fn lower_bound(kind: &BoundKind) -> Option<InterfaceBound> {
     })
 }
 
-/// True when `name` occurs in `text` as a whole identifier, counted `n` times.
-fn mentions(text: &str, name: &str) -> usize {
-    let is_id = |c: char| c.is_ascii_alphanumeric() || c == '_';
-    text.match_indices(name)
-        .filter(|(i, _)| {
-            let before = text[..*i].chars().next_back();
-            let after = text[i + name.len()..].chars().next();
-            !before.is_some_and(is_id) && !after.is_some_and(is_id)
-        })
-        .count()
-}
-
 /// The declared name and fact kind of an item U002 tracks.
 fn tracked(item: &Item) -> Option<(&str, FactKind)> {
     match &item.kind {
@@ -185,19 +180,478 @@ fn tracked(item: &Item) -> Option<(&str, FactKind)> {
     }
 }
 
-/// U002 fact rows for the items of the checked package `package`.
+/// What the checked package's own source refers to, found by name resolution (~G2DFAFQ).
+#[derive(Default)]
+struct Refs {
+    /// Items named somewhere other than their own declaration.
+    items: BTreeSet<CanonPath>,
+    /// `(component, member)` pairs read somewhere.
+    members: BTreeSet<(CanonPath, String)>,
+    /// Components another component's `part` instantiates.
+    instantiated: BTreeSet<CanonPath>,
+}
+
+/// Walks one item's syntax, resolving every reference through sema (locals shadow items).
+struct Walker<'w, 'a> {
+    resolver: &'w Resolver<'a>,
+    refs: &'w mut Refs,
+    ctx: Ctx,
+    /// The item being walked; references to it from inside it are not "use".
+    owner: CanonPath,
+}
+
+impl Walker<'_, '_> {
+    /// Record what a resolved reference touches.
+    fn record(&mut self, res: Option<Resolved>) {
+        match res {
+            Some(Resolved::Item { path, .. }) => self.mark_item(&path),
+            Some(Resolved::Member { path, .. })
+            | Some(Resolved::Arg { path, .. })
+            | Some(Resolved::Part { path }) => self.mark_chain(&path),
+            _ => {}
+        }
+    }
+
+    /// Mark the item `p` names as used, unless it is the item being walked.
+    fn mark_item(&mut self, p: &CanonPath) {
+        let item = p.item_only();
+        if item != self.owner {
+            trace!(item = %item, from = %self.owner, "lint_facts: item referenced");
+            self.refs.items.insert(item);
+        }
+    }
+
+    /// Mark the item, every part component along the chain and the final member as used.
+    fn mark_chain(&mut self, p: &CanonPath) {
+        self.mark_item(p);
+        let mut cur = p.item_only();
+        for seg in &p.parts {
+            let Some(comp) = self.resolver.component(&cur) else {
+                return;
+            };
+            let slot = comp.members.iter().find_map(|m| match &m.kind {
+                MemberKind::Part(pt) if pt.name.name == seg.name => Some(pt),
+                _ => None,
+            });
+            let Some(slot) = slot else { return };
+            trace!(owner = %cur, part = %seg.name, "lint_facts: part referenced");
+            self.refs.members.insert((cur.clone(), seg.name.clone()));
+            let Some((next, _)) = self
+                .resolver
+                .slot_component(&cur.package, &cur.modules, slot)
+            else {
+                return;
+            };
+            self.mark_item(&next);
+            cur = next;
+        }
+        if let Some(MemberSeg::Name(n)) = p.members.first() {
+            trace!(owner = %cur, member = %n, "lint_facts: member referenced");
+            self.refs.members.insert((cur, n.clone()));
+        }
+    }
+
+    /// Resolve a source path and record it.
+    fn path(&mut self, p: &ast::Path) {
+        match self.resolver.resolve_path(&self.ctx, p, None) {
+            Ok(r) => self.record(Some(r)),
+            Err(_) => self.own_datum(p),
+        }
+    }
+
+    /// Record a read of the walked component's own datum, which sema does not resolve by bare name.
+    // frob:ticket 01M4ZKRTB105N3QFA1RQ8C7WFF
+    fn own_datum(&mut self, p: &ast::Path) {
+        let (Some(first), Some(cname)) = (p.segments.first(), &self.ctx.component) else {
+            return;
+        };
+        if self.ctx.locals.contains(&first.name) {
+            return;
+        }
+        let cid = CanonPath::item(&self.ctx.package, &self.ctx.module, cname);
+        let is_datum = self.resolver.component(&cid).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, MemberKind::Datum(d) if d.name.name == first.name))
+        });
+        if is_datum {
+            trace!(owner = %cid, datum = %first.name, "lint_facts: datum referenced");
+            self.refs.members.insert((cid, first.name.clone()));
+        }
+    }
+
+    /// Record the component a `part` or constructor instantiates.
+    fn instantiate(&mut self, p: CanonPath) {
+        if p != self.owner {
+            trace!(component = %p, by = %self.owner, "lint_facts: component instantiated");
+            self.refs.instantiated.insert(p);
+        }
+    }
+
+    fn ty(&mut self, t: &Type) {
+        match &t.kind {
+            TypeKind::Path(p) => self.path(p),
+            TypeKind::OnDatum { base, datum } => {
+                self.path(base);
+                self.path(datum);
+            }
+            TypeKind::Array { elem, len } => {
+                self.ty(elem);
+                self.expr(len);
+            }
+            TypeKind::Table(inner) => self.ty(inner),
+            TypeKind::KindExpr(k) => k.terms.iter().for_each(|term| self.path(&term.name)),
+        }
+    }
+
+    fn args(&mut self, args: &[Arg]) {
+        for a in args {
+            self.expr(&a.value);
+        }
+    }
+
+    fn ctor(&mut self, c: &Ctor) {
+        self.path(&c.path);
+        if let Some((p, _)) = self
+            .resolver
+            .ctor_component(&self.ctx.package, &self.ctx.module, c)
+        {
+            self.instantiate(p);
+        }
+        if let Some(a) = &c.args {
+            self.args(a);
+        }
+    }
+
+    /// Walk the index expressions inside an already-resolved `a.b[i].c` chain.
+    fn indices(&mut self, e: &Expr) {
+        match &e.kind {
+            ExprKind::Field(x, _) => self.indices(x),
+            ExprKind::Index(x, i) => {
+                self.indices(x);
+                self.expr(i);
+            }
+            _ => {}
+        }
+    }
+
+    fn expr(&mut self, e: &Expr) {
+        match &e.kind {
+            ExprKind::Number(_) | ExprKind::Quantity(_) | ExprKind::Str(_) | ExprKind::Bool(_) => {}
+            ExprKind::Path(p) => self.path(p),
+            ExprKind::Field(x, _) | ExprKind::Index(x, _) => {
+                match self.resolver.resolve_ref(&self.ctx, e, None).ok() {
+                    Some(r) => {
+                        self.record(Some(r));
+                        self.indices(e);
+                    }
+                    None => {
+                        self.expr(x);
+                        if let ExprKind::Index(_, i) = &e.kind {
+                            self.expr(i);
+                        }
+                    }
+                }
+            }
+            ExprKind::Paren(x) | ExprKind::Unary(_, x) | ExprKind::IsoClass(x, _) => self.expr(x),
+            ExprKind::As(x, t) => {
+                self.expr(x);
+                self.ty(t);
+            }
+            ExprKind::Array(xs) => xs.iter().for_each(|x| self.expr(x)),
+            ExprKind::Binary(_, a, b) | ExprKind::Satisfies(a, b) => {
+                self.expr(a);
+                self.expr(b);
+            }
+            ExprKind::Compare { first, rest } => {
+                self.expr(first);
+                rest.iter().for_each(|(_, x)| self.expr(x));
+            }
+            ExprKind::Call { callee, args, .. } => {
+                match &callee.kind {
+                    ExprKind::Path(p) => self.path(p),
+                    _ => self.expr(callee),
+                }
+                self.args(args);
+            }
+            ExprKind::Tolerance(x, terms) => {
+                self.expr(x);
+                terms.iter().for_each(|t| self.expr(&t.value));
+            }
+            ExprKind::Position(x, d) => {
+                self.expr(x);
+                self.expr(d);
+            }
+            ExprKind::If {
+                cond,
+                then,
+                otherwise,
+            } => {
+                self.expr(cond);
+                self.block(then);
+                if let Some(o) = otherwise {
+                    self.expr(o);
+                }
+            }
+            ExprKind::Match { scrutinee, arms } => {
+                self.expr(scrutinee);
+                arms.iter().for_each(|a| self.expr(&a.body));
+            }
+            ExprKind::Block(b) => self.block(b),
+        }
+    }
+
+    /// Walk a block; its `let`s shadow items for the rest of the block.
+    fn block(&mut self, b: &Block) {
+        let mark = self.ctx.locals.len();
+        for l in &b.lets {
+            if let Some(t) = &l.ty {
+                self.ty(t);
+            }
+            self.expr(&l.value);
+            self.ctx.locals.push(l.name.name.clone());
+        }
+        self.expr(&b.tail);
+        self.ctx.locals.truncate(mark);
+    }
+
+    fn param_decls(&mut self, params: &[ParamDecl]) {
+        for p in params {
+            self.ty(&p.ty);
+            if let Some(d) = &p.default {
+                self.expr(d);
+            }
+        }
+    }
+
+    fn bound(&mut self, b: &BoundKind) {
+        match b {
+            BoundKind::Le { value, .. } | BoundKind::Ge { value, .. } => self.expr(value),
+            BoundKind::In { lo, hi, .. } => {
+                self.expr(lo);
+                self.expr(hi);
+            }
+            BoundKind::Eq { lhs, rhs } => {
+                self.path(lhs);
+                self.path(rhs);
+            }
+        }
+    }
+
+    fn check(&mut self, c: &Check) {
+        let mark = self.ctx.locals.len();
+        if let Some((var, over)) = &c.each {
+            self.expr(over);
+            self.ctx.locals.push(var.name.clone());
+        }
+        self.expr(&c.cond);
+        self.ctx.locals.truncate(mark);
+    }
+
+    fn fit(&mut self, f: &Fit) {
+        match &f.spec {
+            FitSpec::Paths(a, b) => {
+                self.path(a);
+                self.path(b);
+            }
+            FitSpec::Class(_) | FitSpec::Pair(..) => {}
+        }
+        self.path(&f.on);
+        if let Some((lo, hi)) = &f.range {
+            self.expr(lo);
+            self.expr(hi);
+        }
+    }
+
+    fn solver(&mut self, s: &Solver) {
+        for m in &s.members {
+            match &m.kind {
+                SolverMemberKind::In(binds) => binds.iter().for_each(|b| self.expr(&b.value)),
+                SolverMemberKind::Out { ty, .. } => {
+                    if let Some(t) = ty {
+                        self.ty(t);
+                    }
+                }
+                SolverMemberKind::Check(c) => self.check(c),
+                SolverMemberKind::Deps(_) | SolverMemberKind::Error => {}
+            }
+        }
+    }
+
+    fn member(&mut self, kind: &MemberKind) {
+        match kind {
+            MemberKind::Param(p) => {
+                if let Some(t) = &p.ty {
+                    self.ty(t);
+                }
+                self.expr(&p.value);
+            }
+            MemberKind::Let(l) => {
+                if let Some(t) = &l.ty {
+                    self.ty(t);
+                }
+                self.expr(&l.value);
+            }
+            MemberKind::Bound(b) => self.bound(&b.kind),
+            MemberKind::Part(p) => {
+                if let Some(c) = &p.count {
+                    self.expr(c);
+                }
+                self.ty(&p.ty);
+                if let Some((cp, _)) =
+                    self.resolver
+                        .part_type(&self.ctx.package, &self.ctx.module, &p.ty)
+                {
+                    self.instantiate(cp);
+                }
+                if let Some(a) = &p.args {
+                    self.args(a);
+                }
+                for c in p.primary.iter().chain(&p.alts) {
+                    self.ctor(c);
+                }
+            }
+            MemberKind::Fit(f) => self.fit(f),
+            MemberKind::Check(c) => self.check(c),
+            MemberKind::Require(r) => self.expr(&r.cond),
+            MemberKind::Solver(s) => self.solver(s),
+            MemberKind::Datum(d) => {
+                if let Some(v) = &d.value {
+                    self.expr(v);
+                }
+            }
+            MemberKind::Place(p) => {
+                self.expr(&p.target);
+                self.expr(&p.at);
+            }
+            MemberKind::Error => {}
+        }
+    }
+
+    fn item(&mut self, item: &Item) {
+        match &item.kind {
+            ItemKind::Component(c) => {
+                c.implements.iter().for_each(|p| self.path(p));
+                self.param_decls(&c.params);
+                c.members.iter().for_each(|m| self.member(&m.kind));
+            }
+            ItemKind::Fn(f) => {
+                self.param_decls(&f.params);
+                self.ty(&f.ret);
+                let mark = self.ctx.locals.len();
+                self.ctx
+                    .locals
+                    .extend(f.params.iter().map(|p| p.name.name.clone()));
+                self.block(&f.body);
+                self.ctx.locals.truncate(mark);
+            }
+            ItemKind::Interface(i) => {
+                i.extends.iter().for_each(|p| self.path(p));
+                for m in &i.members {
+                    match &m.kind {
+                        InterfaceMemberKind::Field { ty, .. } => self.ty(ty),
+                        InterfaceMemberKind::Bound(b) => self.bound(&b.kind),
+                        InterfaceMemberKind::Datum(_) | InterfaceMemberKind::Error => {}
+                    }
+                }
+            }
+            ItemKind::Table(t) => {
+                self.param_decls(t.key.as_slice());
+                self.param_decls(&t.cols);
+                for r in &t.rows {
+                    self.expr(&r.key);
+                    r.values.iter().flatten().for_each(|v| self.expr(v));
+                }
+            }
+            ItemKind::Process(p) => {
+                for m in &p.members {
+                    match &m.kind {
+                        ProcessMemberKind::Param(pm) => {
+                            if let Some(t) = &pm.ty {
+                                self.ty(t);
+                            }
+                            self.expr(&pm.value);
+                        }
+                        ProcessMemberKind::Rule(r) => {
+                            self.param_decls(std::slice::from_ref(&r.param));
+                            self.ty(&r.ret);
+                            self.ctx.locals.push(r.param.name.name.clone());
+                            self.expr(&r.body);
+                            self.ctx.locals.pop();
+                        }
+                        ProcessMemberKind::Error => {}
+                    }
+                }
+            }
+            ItemKind::Solver(s) => self.solver(s),
+            ItemKind::Fit(f) => self.fit(f),
+            ItemKind::Require(r) => self.expr(&r.cond),
+            ItemKind::Check(c) => self.check(c),
+            ItemKind::Cite(_)
+            | ItemKind::Enum(_)
+            | ItemKind::Waive(_)
+            | ItemKind::Unit(_)
+            | ItemKind::Kind(_)
+            | ItemKind::Error => {}
+        }
+    }
+}
+
+/// Resolve every reference in the checked package's modules (~G2DFAFQ).
+fn collect_refs(package: &str, modules: &[ModuleView<'_>], resolver: &Resolver<'_>) -> Refs {
+    let mut refs = Refs::default();
+    for m in modules {
+        for item in m.file.items() {
+            let name = tracked(item).map_or("", |(n, _)| n);
+            let mut w = Walker {
+                resolver,
+                refs: &mut refs,
+                ctx: Ctx {
+                    package: package.to_owned(),
+                    module: m.path.to_vec(),
+                    component: match &item.kind {
+                        ItemKind::Component(c) => Some(c.name.name.clone()),
+                        _ => None,
+                    },
+                    locals: Vec::new(),
+                },
+                owner: CanonPath::item(package, m.path, name),
+            };
+            w.item(item);
+        }
+    }
+    debug!(
+        package,
+        items = refs.items.len(),
+        members = refs.members.len(),
+        instantiated = refs.instantiated.len(),
+        "lint_facts: references resolved"
+    );
+    refs
+}
+
+/// U002 and I004 fact rows for the items and `priv` members of the checked package `package`.
 ///
-/// An item is `used` when its name occurs as a whole identifier anywhere in the
-/// package beyond its own declaration; this is lexical and so errs towards
-/// "used". `instances` counts `part`s of the IR that instantiate a component.
-pub fn item_facts(package: &str, modules: &[ModuleView<'_>], ir: &Project) -> Vec<ItemFacts> {
+/// `used` comes from name resolution (`collect_refs`), so a local or parameter that merely
+/// shadows an item's name is not a use. `priv` parameter, `let`, `part` and `datum` members of a
+/// component get `Member` rows. A component is `parameterized` when a model or assembly has a
+/// parameter with no default, and a `is_root` when no other component's `part` instantiates
+/// it. `instances` counts `part`s of the IR that instantiate a component.
+// frob:ticket 01M4YEA3SADYRF5MJ4AG2DFAFQ
+pub fn item_facts(
+    package: &str,
+    modules: &[ModuleView<'_>],
+    ir: &Project,
+    resolver: &Resolver<'_>,
+) -> Vec<ItemFacts> {
+    let refs = collect_refs(package, modules, resolver);
     let mut out = Vec::new();
     for m in modules {
         for item in m.file.items() {
             let Some((name, kind)) = tracked(item) else {
                 continue;
             };
-            let total: usize = modules.iter().map(|o| mentions(o.text, name)).sum();
+            let canon = CanonPath::item(package, m.path, name);
             let mut path = package.to_owned();
             for seg in m.path {
                 path.push_str("::");
@@ -211,37 +665,60 @@ pub fn item_facts(package: &str, modules: &[ModuleView<'_>], ir: &Project) -> Ve
                 .flat_map(|c| &c.parts)
                 .filter(|p| p.primary.ends_with(&format!("::{name}")) || p.type_name == name)
                 .count();
-            tracing::trace!(%path, mentions = total, instances, "lint_facts: item fact");
+            let comp = match &item.kind {
+                ItemKind::Component(c) => Some(c),
+                _ => None,
+            };
+            let parameterized = comp.is_some_and(|c| {
+                matches!(c.class, ComponentClass::Model | ComponentClass::Assembly)
+                    && c.params.iter().any(|p| p.default.is_none() && !p.optional)
+            });
+            let is_root = comp.is_some() && !refs.instantiated.contains(&canon);
+            let used = refs.items.contains(&canon);
+            tracing::trace!(%path, used, parameterized, is_root, instances, "lint_facts: item fact");
+            let span_of = |s: Span| SpanRef {
+                file: m.display.to_owned(),
+                start: s.start as u32,
+                end: s.end as u32,
+            };
             out.push(ItemFacts {
-                span: Some(SpanRef {
-                    file: m.display.to_owned(),
-                    start: item.span.start as u32,
-                    end: item.span.end as u32,
-                }),
-                path,
+                span: Some(span_of(item.span)),
+                path: path.clone(),
                 kind,
                 visibility: visibility(item.vis),
                 in_checked_package: true,
-                used: total > 1,
-                parameterized: false,
-                is_root: false,
+                used,
+                entry_point: matches!(comp, Some(c) if c.class == ComponentClass::Assembly),
+                parameterized,
+                is_root,
                 instances,
             });
+            for mem in comp.iter().flat_map(|c| &c.members).filter(|x| x.private) {
+                let member = match &mem.kind {
+                    MemberKind::Param(p) => &p.name.name,
+                    MemberKind::Let(l) => &l.name.name,
+                    MemberKind::Part(pt) => &pt.name.name,
+                    MemberKind::Datum(d) => &d.name.name,
+                    _ => continue,
+                };
+                let used = refs.members.contains(&(canon.clone(), member.clone()));
+                tracing::trace!(%path, %member, used, "lint_facts: private member fact");
+                out.push(ItemFacts {
+                    path: format!("{path}.{member}"),
+                    kind: FactKind::Member,
+                    visibility: Visibility::Private,
+                    in_checked_package: true,
+                    used,
+                    entry_point: false,
+                    parameterized: false,
+                    is_root: false,
+                    instances: 0,
+                    span: Some(span_of(mem.span)),
+                });
+            }
         }
     }
     out
-}
-
-/// True when the component at `c` was declared private in `modules`.
-pub fn is_private(c: &Component, modules: &[ModuleView<'_>]) -> bool {
-    modules
-        .iter()
-        .filter(|m| m.path == c.path.modules.as_slice())
-        .flat_map(|m| m.file.items())
-        .any(|i| {
-            matches!(&i.kind, ItemKind::Component(k) if k.name.name == c.path.item)
-                && i.vis == Vis::Private
-        })
 }
 
 /// `#[allow(CODE, "because")]` attributes of the lowered members (lints.md 2.2).

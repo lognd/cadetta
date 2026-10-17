@@ -14,7 +14,7 @@
   },
   "must_not_fire": {
     "diagnostics": [],
-    "result": "Ok",
+    "result": "value",
     "exit": 0
   }
 }

@@ -13,6 +13,7 @@ use std::fmt;
 use tracing::{debug, trace, warn};
 
 use crate::datum::{DatumDef, GeometryError, ORIGIN};
+use crate::float::FloatMode;
 use crate::placement::{
     Assembly, Eval, FrameOp, datum_frames, datum_ops, fold, invert, length_dim,
 };
@@ -146,7 +147,18 @@ impl FrameTable {
     /// The table for an assembly: `origin` and `part.datum` for every placed part, composing
     /// the placements on the path (subassembly datums are `sub/part.datum`).
     pub fn for_assembly(a: &Assembly, eval: Eval<'_>) -> Result<Self, ReexpressError> {
-        let df = datum_frames(a, eval)?;
+        Self::for_assembly_reading(a, eval, FloatMode::With)
+    }
+
+    /// [`FrameTable::for_assembly`] under a float read mode: a joint's own `aligned` check reads
+    /// its edge with [`FloatMode::Without`] (geometry.md 5.2).
+    // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+    pub fn for_assembly_reading(
+        a: &Assembly,
+        eval: Eval<'_>,
+        mode: FloatMode<'_>,
+    ) -> Result<Self, ReexpressError> {
+        let df = datum_frames(a, eval, mode)?;
         debug!(assembly = %a.name, placed = df.placed.len(), "assembly frame table");
         Ok(Self {
             scope: Scope::Assembly,
@@ -311,6 +323,37 @@ mod tests {
             .reexpress(&pt("bracket.base", &[1, 0, 0]), &DatumId::new("rail.site"))
             .unwrap();
         assert_eq!(val(&coords(&r)[0]), m(1));
+    }
+
+    // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.for_assembly_reading kind=unit
+    #[test]
+    fn reading_without_a_joint_drops_only_its_edge_float() {
+        use crate::float::{EdgeFloat, JointFloat};
+        use cadetta_units::VarId;
+        let mut a = mount();
+        a.floats = vec![EdgeFloat {
+            node: "bracket".into(),
+            joints: vec![JointFloat {
+                path: "j".into(),
+                float: mm(1),
+                locating: false,
+                onto: vec![[mm(0), mm(0)], [mm(10), mm(0)]],
+                vars: [VarId(1), VarId(2), VarId(3)],
+            }],
+        }];
+        let read = |mode| {
+            let t = FrameTable::for_assembly_reading(&a, &eval, mode).unwrap();
+            let r = t
+                .reexpress(
+                    &pt("bracket.base", &[0, 0, 0]),
+                    &DatumId::new("rail.origin"),
+                )
+                .unwrap();
+            coords(&r)[0].clone()
+        };
+        assert!(matches!(read(FloatMode::With), Coord::Approx(_)), "floats");
+        assert_eq!(val(&read(FloatMode::Without("j"))), m(40), "own joint");
+        assert!(matches!(read(FloatMode::Without("k")), Coord::Approx(_)));
     }
 
     // frob:tests crates/cadetta-geometry/src/reexpress.rs::FrameTable.reexpress kind=unit

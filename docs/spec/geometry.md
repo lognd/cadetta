@@ -214,7 +214,9 @@ pin: Point2 on base = Point2(10mm, 5mm) [position 0.1mm]
   independently; the generator's members are the drawing's basic
   dimensions. Tolerancing a generator member as well is E006 (a pattern
   is toleranced one way), as is combining `position` with a coordinate
-  tolerance on one value.
+  tolerance on one value (detected as any non-exact coordinate, so a
+  second `position` is E006 too). `Vec2` values accept `position` as
+  they share the point representation.
 - `position` applies to `Point2` values and arrays only. On a `Point3`
   it is E006 in 0.1.0: a cylindrical zone needs an axis direction, which
   a point does not carry.
@@ -233,6 +235,20 @@ pin: Point2 on base = Point2(10mm, 5mm) [position 0.1mm]
   offset is 0.05mm + 0.05mm = 0.1mm, against 0.1414mm for the
   coordinate box `[+-0.05mm]`. The result is conservative only when the
   chain has an inexact rotation or other nonlinear terms.
+- Decided in implementation (`cadetta-geometry` `zone`): `distance` and
+  `aligned` bound a difference of point coordinates by its per-disc Gram
+  matrix. The result is exact (rational square-root bounds, outward at
+  2^-32) when every disc is isotropic, no box term is present and the
+  discs lie in the measured plane: the extreme squared distance is
+  `|c|^2` plus `(max(0, m - R))^2` to `(m + R)^2`, with `R` the sum of
+  radii. Tilted, elliptic or box-mixed discs, and forms with a pi factor,
+  fall back to a conservative enclosure: `|c|` plus or minus the sum of
+  spectral radii and the box norm. An axial offset outside the disc plane
+  adds to `|c|^2` unchanged. Under an inexact rotation `Transform::apply`
+  bounds each disc's contribution by its Euclidean reach
+  `sqrt(U^2 + V^2)` instead of `|U| + |V|`; the disc identity is then
+  dropped, so later `aligned` and `distance` over that value are
+  conservative. Exact quarter turns keep the identity.
 - A position zone is not a dimension. It is not emitted or bound; the
   nominal coordinates and the generator members are.
 
@@ -359,6 +375,12 @@ is the angle of the carried z direction, `atan2(lateral, axial)`, in
 along or across the axis (0, pi/2 or pi), otherwise inexact, marked
 `atan2` (Q006), with outward-padded bounds from the tolerance box.
 
+A geometry check written in a parameterized model reads the datum
+members of the instance it is checked under (the instance's arguments
+are bound), never the unbound model: `Shaft(bearing = b)` evaluates
+`seat_a.offset.z` in the instance, so `coaxial(seat_b, seat_a, ..)` in
+`Shaft` decides.
+
 ### 5.2 Bolt float
 
 A bolted part in clearance holes is not located exactly: it can sit up to
@@ -386,10 +408,12 @@ float enters the placement.
   most `theta`. `asin` is inexact, so coordinates carried through the
   rotation are conservative intervals (section 2).
 - `s` is measured on `onto` (for a through bolt with `nut = true`
-  too). A one-point pattern, or one whose points all coincide (`s =
-  0`), does not fix rotation: `theta` is 180deg, any check whose value
-  depends on that rotation is undecided, and the joint is G008
-  (warning). Fix it with a second fastener, a locating feature and
+  too). A pattern that does not fix rotation has `theta` = 180deg, any
+  check whose value depends on that rotation is undecided, and the
+  joint is G008 (warning). That is the case for a one-point pattern,
+  for one whose points all coincide (`s = 0`), and for one whose
+  `float` is at or above its spread (`float >= s`), where the bolts may
+  turn a half turn. Fix it with a second fastener, a locating feature and
   `locating = true`, or accept it with a waiver.
 - If several non-locating joints hold one edge, each alone bounds the
   motion, so the edge takes one joint's whole bound (translation,
@@ -408,6 +432,15 @@ float enters the placement.
   G005 (warning). Fix it with `locating = true` and a `fit` or dowel
   that really does locate the part, or loosen the check. Dowel pins are
   not in `std` 0.1.0; the escape hatch is the same.
+- Implementation note. Sema lowers each joint while it builds the frame
+  tables (`boltfloat.rs`): the joint's `at` and `onto` datums resolve to
+  their owning parts, and when those are placement parent and child the
+  joint is recorded on the child's edge with the pattern points read
+  from the nominal placement. Each joint owns three source variables
+  (x, y, theta), memoised per canonical path, so every table built for
+  the same joint shares them. Joints inside a sub-assembly component
+  are lowered onto that sub-assembly's own placement edges, read through
+  the root frame table with the datum ids prefixed by the node path.
 
 ## 6. In the IR and in CAD
 
@@ -467,7 +500,7 @@ float enters the placement.
 | G005 | bolted-float-unlocated | warning | A check tighter than a joint's float reads through a placement carrying that float (section 5.2). |
 | G006 | double-placement | error, fixed | A part or instance is placed more than once. |
 | G007 | unplaced-instance | warning | A part array placed instance by instance leaves an instance without a placement. |
-| G008 | rotation-unconstrained | warning | A non-locating joint with a one-point pattern carries float onto a placement edge, so the part may turn freely about the screw (section 5.2). |
+| G008 | rotation-unconstrained | warning | A non-locating joint whose pattern does not fix rotation (one point, coincident points, or float at or above the spread) carries float onto a placement edge, so the part may turn freely about the screw (section 5.2). |
 | R007 | binding-datum-mismatch | warning | A bound coordinate's native sketch is not on its datum's plane, or its dimension is not measured from the sketch origin (adapters that can see it). |
 
 lints.md is the catalog; this table must agree with it.
@@ -486,26 +519,32 @@ the edge takes the whole bound of the selected joint (translation,
 `theta`, centroid together; `theta` rounded up to `1e-9 pi`), and a
 joint's own `aligned` check places the tree with `FloatMode::Without`.
 The caller lowers the `onto` points into the frame of the placement
-datum and supplies the source variables. G005 and G008 are not emitted
-yet: G008 is `float::unconstrained_rotation`, and the lint rules and
-the sema lowering of `EdgeFloat` follow.
+datum and supplies the source variables. G005 is emitted by sema when
+an undecided check comparison reads a form that depends on a joint's
+float source variables (so `locating = true` or a looser check keeps it
+quiet). G008 (`float::unconstrained_rotation`) is emitted by sema once per
+non-locating joint when a check re-expresses through the floated edge.
 
 ## 8. Conformance decisions
 
 Rules the fixtures under `tests/conformance/geometry/` pin where the
-sections above were silent (decided 2026-10-13, pending owner review):
+sections above were silent (decided 2026-10-13, settled on owner review
+2026-10-16):
 
 - `flip(z)` is an error (E006): `flip` takes `x` or `y` only, because
   flipping the normal is `flip(x)` or `flip(y)` and the third axis
-  would be a no-op on the frame.
+  would be a no-op on the frame. Rationale: one spelling per effect, and
+  a rejected form is cheaper than a silently ignored one.
 - A datum whose definition names a datum declared later, or one that
   does not exist, is E002 (not a reference); datums are built from
-  earlier datums only.
+  earlier datums only. Rationale: keeps the placement tree acyclic by
+  construction with no cycle search.
 - A pattern generator with a zero point count is E006.
 - A datum name that the placed part does not declare (`bracket.nope`)
   is E002, the same as any unknown member.
 - `circle_pattern` numbers its points counter-clockwise starting at
-  `+x` of its datum: point 0 is at `(r, 0)`.
+  `+x` of its datum: point 0 is at `(r, 0)`. Rationale: the right-handed
+  convention of the z axis, matching `rotate(z = +angle)`.
 - `aligned`, `coaxial`, `parallel` and `angle_between` are boolean
   or angle functions usable directly as a check condition, in addition
   to comparisons and `x satisfies P` (language.md 6).

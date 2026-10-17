@@ -4,13 +4,14 @@
 
 // frob:ticket 01M4TRBJ7D2JTGX6XX94BJ1ZGM
 
+use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use cadetta_syntax::ast::{self, Expr, ExprKind, Ident};
 use cadetta_syntax::span::Span;
-use tracing::{debug, trace};
+use tracing::{debug, trace, warn};
 
-use super::{Evaluator, Fail, R, Scope, Val, diag, strip};
+use super::{Evaluator, Fail, R, Scope, TableCells, Val, diag, strip};
 use crate::resolve::{CanonPath, Ctx, ModuleKey, Resolved};
 use crate::tables::{Key, LookupError, TableData};
 
@@ -26,11 +27,50 @@ pub(super) struct TableVals {
     keys: Vec<Val>,
 }
 
+impl TableVals {
+    /// The keys and cells as plain values, for lowering.
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    fn cells(&self) -> TableCells {
+        TableCells {
+            keys: self.keys.clone(),
+            rows: self.data.rows.iter().map(|r| r.cells.clone()).collect(),
+        }
+    }
+}
+
 fn lookup_diag(e: &LookupError, span: Span) -> Fail {
     diag(e.code(), span, e.to_string())
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// Builds every table (used or not) and returns the cells of those that built; a failure is reported once.
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    pub(super) fn evaluate_tables(&mut self) -> BTreeMap<CanonPath, TableCells> {
+        let paths: Vec<CanonPath> = self.tables.keys().cloned().collect();
+        let mut out = BTreeMap::new();
+        for path in paths {
+            let Some(span) = self.tables.get(&path).map(|t| t.name.span) else {
+                continue;
+            };
+            match self.table_vals(&path, span) {
+                Ok(t) => {
+                    out.insert(path, t.cells());
+                }
+                Err(Fail::Diag(d)) => {
+                    let d = d.in_module(ModuleKey::of_path(&path));
+                    if self.diagnostics.contains(&d) {
+                        trace!(%path, "evaluator: table failure already reported");
+                    } else {
+                        warn!(%path, code = d.code, "evaluator: table does not build");
+                        self.diagnostics.push(d);
+                    }
+                }
+                Err(Fail::Silent) => trace!(%path, "evaluator: table failed silently"),
+            }
+        }
+        out
+    }
+
     /// The table at `path`, built and cached on first use.
     pub(super) fn table_vals(&mut self, path: &CanonPath, span: Span) -> R<Rc<TableVals>> {
         if let Some(t) = self.table_cache.get(path) {

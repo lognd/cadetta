@@ -1,0 +1,8 @@
+model M {
+  datum base = origin
+  pin: Point3 on base = Point3(10mm, 5mm, 0mm) [position 0.1mm]
+}
+
+assembly A {
+  part m: M
+}

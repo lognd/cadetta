@@ -19,3 +19,8 @@ ones (R009), push only changed locators, report rebuild failures as R004
 and restore the snapshot, and save only after a good rebuild. FreeCAD is reached
 through the `FreeCadBackend` seam (`backend.py`) so the protocol is
 testable without FreeCAD. `cadetta-freecad --version` prints the version.
+
+`tests/conformance/session_driver.py` drives the real adapter's `open` and `close`
+over a fake tool for the attach and close-only-opened conformance fixtures
+(`tests/conformance/adapters/session-*`), which the Rust corpus runner invokes
+through `uv run`.

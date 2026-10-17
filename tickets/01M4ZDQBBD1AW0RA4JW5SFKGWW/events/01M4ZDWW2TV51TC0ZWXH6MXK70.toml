@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["SessionBackend implements Document over DriveSession so sync push goes through push_atomic and restores on R004", "Backend::document is required and Backend::push is removed"]
+moved = []
+at = "2026-10-15T09:22:07Z"
+actor = "lognd"
+rev = 1

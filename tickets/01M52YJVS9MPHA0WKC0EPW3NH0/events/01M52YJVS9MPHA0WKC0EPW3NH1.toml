@@ -1,0 +1,9 @@
+kind = "create"
+title = "cadetta sync report omits diagnostic severity (O004 info)"
+type = "bug"
+category = "todo"
+priority = "medium"
+body = "found while working ~BC7S5KT: sync JSON diagnostics (O004) carry no severity field; conformance o004.rs fills info."
+at = "2026-10-16T18:11:28Z"
+actor = "lognd"
+rev = 1

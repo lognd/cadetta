@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decisions: WireInsertInch keyed by InchThread cites ASME B18.29.1; HeatSet keyed by MetricThread M2-M8 is vendor data cited as a catalog (no standard exists), nominal/untoleranced; metric wire inserts (B18.29.2M) out of scope. Values from recall with PROVENANCE WARNING like siblings. lib.cdt exports the two cites; fixture inserts-wire-heatset added."
+at = "2026-10-16T09:39:57Z"
+actor = "lognd"
+rev = 1

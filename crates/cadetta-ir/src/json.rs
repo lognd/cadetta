@@ -321,6 +321,7 @@ impl Serialize for Member {
         m.serialize_entry("analysis", &self.analysis)?;
         m.serialize_entry("priv", &self.private)?;
         opt(&mut m, "value", &self.value)?;
+        opt(&mut m, "text", &self.text)?;
         opt(&mut m, "bound", &self.bound)?;
         opt(&mut m, "expr", &self.expr)?;
         m.serialize_entry("deps", &self.deps)?;
@@ -417,6 +418,7 @@ impl Serialize for Solver {
         let mut m = s.serialize_map(None)?;
         m.serialize_entry("path", &self.path)?;
         m.serialize_entry("script", &self.script)?;
+        opt(&mut m, "citation", &self.citation)?;
         m.serialize_entry("inputs", &self.inputs)?;
         m.serialize_entry("outputs", &self.outputs)?;
         m.serialize_entry("deps", &self.deps)?;
@@ -522,6 +524,10 @@ impl Serialize for Project {
         }
         if !self.tables.is_empty() {
             m.serialize_entry("tables", &self.tables)?;
+        }
+        // frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+        if !self.requires.is_empty() {
+            m.serialize_entry("requires", &self.requires)?;
         }
         if !self.waivers.is_empty() {
             m.serialize_entry("waivers", &self.waivers)?;

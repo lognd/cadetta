@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["Sema resolves solver member outputs (solver.out) so check and ir evaluate them without E002"]
+new = ["Sema resolves solver member outputs (solver.out) so check and ir evaluate them without E002", "A recorded solver output literal is evaluated exactly and appears in the IR as an analysis member"]
+moved = [1]
+at = "2026-10-15T18:39:54Z"
+actor = "lognd"
+rev = 1

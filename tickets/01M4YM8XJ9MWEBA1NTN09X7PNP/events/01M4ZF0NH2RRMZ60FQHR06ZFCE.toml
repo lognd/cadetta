@@ -1,0 +1,44 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T09:41:25Z"
+digest = "5b82e5740612fba26a816714ab4d6c546acf63eccee50c34979bd1d9a8756307"
+exit_code = 0
+inline = '''
+   Compiling tracing-core v0.1.36
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling serde_json v1.0.154
+   Compiling serde_derive_internals v0.30.0
+   Compiling serde_derive v1.0.229
+   Compiling thiserror-impl v2.0.21
+   Compiling ref-cast-impl v1.0.27
+   Compiling schemars_derive v1.2.3
+   Compiling tracing-attributes v0.1.31
+   Compiling ref-cast v1.0.27
+   Compiling thiserror v2.0.21
+   Compiling tracing v0.1.44
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling serde v1.0.229
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.47s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1f4fa02b-2e34-4b4a-aad1-1c0600d90f9d with nextest profile: default
+    Starting 1 test across 1 binary (142 tests skipped)
+        PASS [   0.004s] cadetta-lint rules::o004_w005::tests::day_number_spans_month_and_leap_boundaries
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 142 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-lint day_number_spans"
+size = 1410
+status = "measured"
+test_count = 1
+tests_digest = "b9589abe87233ec55d98ad2194b2d6196abd5d2bf8e5bfe9aae52e736bedd42d"
+at = "2026-10-15T09:41:25Z"
+actor = "lognd"
+rev = 1

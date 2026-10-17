@@ -4,13 +4,32 @@
 use std::fs;
 use std::path::Path;
 
-use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options, PushItem, ReadBack};
+use cadetta_adapter::atomic::Document;
+use cadetta_adapter::sync::{self, Backend, Entry, Lock, Options};
 use cadetta_units::{Magnitude, Rational, UnitTable};
 use serde_json::{Value, json};
 
 use crate::binding;
 use crate::compare::Produced;
 use crate::expect::{Block, Expect};
+#[path = "import.rs"]
+mod import_exec; // nested like `protocol`, for the same reason
+#[path = "lockfix.rs"]
+pub mod lockfix; // nested like `protocol`, for the same reason
+#[path = "o004.rs"]
+pub mod o004; // nested like `protocol`, for the same reason
+#[path = "protocol.rs"]
+mod protocol; // nested so every conformance target gets it without a new `mod` line
+#[path = "push_plan.rs"]
+mod push_plan; // nested like `protocol`, for the same reason
+#[path = "read.rs"]
+mod read; // nested like `protocol`, for the same reason
+#[path = "session.rs"]
+mod session; // nested like `protocol`, for the same reason
+#[path = "sync.rs"]
+mod sync_exec;
+#[path = "two_input.rs"]
+mod two_input; // nested like `protocol`, for the same reason // nested like `protocol`, for the same reason
 use crate::run::{Facts, Scratch, parse_json, run_cli, stage};
 
 /// What an executor is asked to run.
@@ -40,11 +59,22 @@ const EXECUTORS: &[(&str, &str, Exec)] = &[
     ("source", "cite", cli),
     ("source", "eval", eval),
     ("source", "init", init),
+    ("source", "update", lockfix::update),
+    ("source", "obligations", lockfix::obligations),
+    ("binding", "check", binding::display),
     ("binding", "classify", classify),
     ("binding", "emit", binding::emit_scope),
+    ("binding", "import", import_exec::run),
+    ("binding", "protocol", protocol::run),
+    ("binding", "push-plan", push_plan::run),
+    ("binding", "read", read::read),
+    ("binding", "sync", sync_exec::run),
+    ("binding", "emit-read", read::emit_read),
     ("binding", "emit-twice", binding::emit_twice),
     ("binding", "emit-compare", binding::emit_compare),
     ("binding", "impact-swap", binding::impact_swap),
+    ("compare", "digest", two_input::digest),
+    ("compare", "classify", two_input::classify_schema),
 ];
 
 /// Run the fixture with the executor registered for the expectation's kind and entry.
@@ -91,7 +121,185 @@ fn cli(job: &Job) -> Result<Facts, String> {
     let scratch = stage(job.fixture)?;
     let mut args = cli_args(job);
     resolve_adapter_token(&scratch.0, &mut args);
-    run_cli(&scratch.0, &args)
+    let mut facts = run_cli(&scratch.0, &args)?;
+    observe_extras(job, &scratch, &mut facts)?;
+    Ok(facts)
+}
+
+/// Add the observations a block asks for by key: `runs` and `unbound_params_not_written`.
+fn observe_extras(job: &Job, scratch: &Scratch, facts: &mut Facts) -> Result<(), String> {
+    let wants = |k: &str| job.block.extra.contains_key(k);
+    if wants("runs") {
+        let runs = solver_runs(&facts.after);
+        tracing::debug!(runs, "observed solver runs");
+        facts.observed.insert("runs".into(), json!(runs));
+    }
+    if wants("stale_output") {
+        let out = stale_output(facts);
+        tracing::debug!(?out, "observed stale output");
+        facts
+            .observed
+            .insert("stale_output".into(), out.map_or(Value::Null, Value::from));
+    }
+    if wants("names_path_or_key") {
+        let names = names_path_or_key(facts);
+        tracing::debug!(names, "observed config error names path or key");
+        facts
+            .observed
+            .insert("names_path_or_key".into(), json!(names));
+    }
+    if wants("unbound_params_not_written") {
+        let clean = unbound_params_not_written(scratch, facts)?;
+        tracing::debug!(clean, "observed unbound params not written");
+        facts
+            .observed
+            .insert("unbound_params_not_written".into(), json!(clean));
+    }
+    if wants("active_alternate") {
+        let active = sole_active_alternate(facts)?;
+        tracing::debug!(active, "observed active alternate");
+        facts
+            .observed
+            .insert("active_alternate".into(), json!(active));
+    }
+    Ok(())
+}
+
+/// The single active alternate named by the emit report (the fixture has exactly one slot).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+fn sole_active_alternate(facts: &Facts) -> Result<String, String> {
+    let report = parse_json(&facts.stdout).ok_or("stdout is not a JSON report")?;
+    let map = report["active_alternates"]
+        .as_object()
+        .ok_or("report has no active_alternates")?;
+    match map.values().collect::<Vec<_>>().as_slice() {
+        [one] => one
+            .as_str()
+            .map(str::to_owned)
+            .ok_or_else(|| "active alternate is not a string".to_owned()),
+        other => Err(format!("expected exactly one slot, found {}", other.len())),
+    }
+}
+
+/// The keys of one `locators` entry of a bindings file (adapters.md 3 field table).
+const LOCATOR_KEYS: &[&str] = &[
+    "locator",
+    "kind",
+    "mode",
+    "native_unit",
+    "ref_to",
+    "for",
+    "config",
+    "sign",
+    "component",
+    "tolerance",
+];
+
+/// True when the run is a configuration error (exit 2) whose message names a bound design path
+/// or a locator key of the offending binding.
+///
+/// A key is named as a whole word; `for` is also an English word, so it counts only in backticks.
+// frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+fn names_path_or_key(facts: &Facts) -> bool {
+    if facts.exit != 2 {
+        return false;
+    }
+    let message = facts.messages.join("\n");
+    let paths = bound_paths(&facts.after);
+    let words: Vec<&str> = message
+        .split(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+        .collect();
+    paths.iter().any(|p| message.contains(p.as_str()))
+        || LOCATOR_KEYS.iter().any(|k| {
+            if *k == "for" {
+                message.contains("`for`")
+            } else {
+                words.contains(k)
+            }
+        })
+}
+
+/// The recorded output of a stale (S003) solver that checks still evaluated.
+///
+/// Evidence of "still evaluated": a check verdict (C001/C002) was produced besides the S003.
+// frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+fn stale_output(facts: &Facts) -> Option<String> {
+    let evaluated = facts
+        .produced
+        .iter()
+        .any(|d| d.code == "C001" || d.code == "C002");
+    let stale: Vec<&str> = facts
+        .produced
+        .iter()
+        .filter(|d| d.code == "S003")
+        .filter_map(|d| d.path.as_deref())
+        .collect();
+    if !evaluated || stale.is_empty() {
+        return None;
+    }
+    facts
+        .after
+        .iter()
+        .filter(|(p, _)| p.ends_with(".out.json"))
+        .filter_map(|(_, text)| serde_json::from_str::<Value>(text).ok())
+        .flat_map(|doc| doc["results"].as_array().cloned().unwrap_or_default())
+        .filter(|r| r["solver"].as_str().is_some_and(|s| stale.contains(&s)))
+        .find_map(|r| r["outputs"].as_object()?.keys().next().cloned())
+}
+
+/// Solver script runs: the lines of the `marker` file each script invocation appends to.
+fn solver_runs(after: &std::collections::BTreeMap<String, String>) -> usize {
+    after
+        .iter()
+        .filter(|(p, _)| p.rsplit('/').next() == Some("marker"))
+        .map(|(_, text)| text.lines().count())
+        .sum()
+}
+
+/// Canonical keys (top-level table names) of every `bindings/*.toml` in the staged package.
+fn bound_paths(after: &std::collections::BTreeMap<String, String>) -> Vec<String> {
+    after
+        .iter()
+        .filter(|(p, _)| p.starts_with("bindings/") && p.ends_with(".toml"))
+        .filter_map(|(_, text)| text.parse::<toml::Table>().ok())
+        .flat_map(|t| t.into_iter().map(|(k, _)| k))
+        .collect()
+}
+
+/// True when no file the run wrote names a member that no bindings file binds.
+///
+/// Members come from `cadetta ir`; a member is named by its last path segment.
+fn unbound_params_not_written(scratch: &Scratch, facts: &Facts) -> Result<bool, String> {
+    let ir = run_cli(&scratch.0, &["ir".to_owned()])?;
+    let doc = parse_json(&ir.stdout).ok_or("unbound_params_not_written: `ir` printed no JSON")?;
+    let bound = bound_paths(&facts.after);
+    let written: Vec<&String> = facts
+        .after
+        .iter()
+        .filter(|(p, text)| facts.before.get(*p) != Some(*text))
+        .map(|(_, text)| text)
+        .collect();
+    let mut unbound = 0;
+    for comp in doc["components"].as_array().into_iter().flatten() {
+        for member in comp["members"].as_array().into_iter().flatten() {
+            let Some(path) = member["path"].as_str() else {
+                continue;
+            };
+            if bound.iter().any(|b| b == path) {
+                continue;
+            }
+            unbound += 1;
+            let leaf = path.rsplit(['.', ':']).next().unwrap_or(path);
+            if written.iter().any(|t| t.contains(leaf)) {
+                tracing::debug!(path, "unbound member found in a written file");
+                return Ok(false);
+            }
+        }
+    }
+    if unbound == 0 {
+        return Err("unbound_params_not_written: the fixture has no unbound member".into());
+    }
+    Ok(true)
 }
 
 /// `emit TOKEN` names an adapter; the CLI wants its id, so map name to id via `cadetta.toml`.
@@ -188,6 +396,12 @@ fn eval(job: &Job) -> Result<Facts, String> {
     };
     for comp in ir["components"].as_array().into_iter().flatten() {
         for member in comp["members"].as_array().into_iter().flatten() {
+            // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+            // A Text member compares as its quoted string (the fixtures' `"..."` form).
+            if let (Some(path), Some(t)) = (member["path"].as_str(), member["text"].as_str()) {
+                facts.members.insert(path.to_owned(), format!("\"{t}\""));
+                continue;
+            }
             let (Some(path), Some(r)) = (
                 member["path"].as_str(),
                 member["value"]["nominal"]["r"].as_str(),
@@ -234,13 +448,7 @@ fn init(job: &Job) -> Result<Facts, String> {
 struct NoBackend;
 
 impl Backend for NoBackend {
-    fn push(
-        &mut self,
-        _adapter: &str,
-        _file: &str,
-        _items: &[PushItem],
-        _regen: bool,
-    ) -> Vec<ReadBack> {
+    fn document<'a>(&'a mut self, _adapter: &str, _file: &str) -> Box<dyn Document + 'a> {
         unreachable!("classify fixtures run as a dry run")
     }
 }
@@ -274,7 +482,15 @@ fn classify(job: &Job) -> Result<Facts, String> {
         exit: i32::from(report.has_r001()),
         ..Facts::default()
     };
+    let refused = report.has_r001();
+    let mut overridden = false;
     for d in &report.diagnostics {
+        if d.code == cadetta_adapter::classify::R001 && !refused {
+            // `--force-design` pushed over the conflict: R001 is noted but no longer an error.
+            overridden = true;
+            tracing::debug!("R001 overridden by force-design");
+            continue;
+        }
         let severity = if d.code == sync::R006 {
             "warning"
         } else {
@@ -293,11 +509,17 @@ fn classify(job: &Job) -> Result<Facts, String> {
     facts
         .observed
         .insert("action".into(), json!(action_label(record.verb)));
+    // R001 is suppressed only when `--force-design` overrode a conflict that would be refused.
+    let suppressed = opts.force_design && overridden && !refused;
+    tracing::debug!(suppressed, "observed r001_suppressed_by_force");
+    facts
+        .observed
+        .insert("r001_suppressed_by_force".into(), json!(suppressed));
     Ok(facts)
 }
 
 /// The corpus spelling of a sync class (adapters.md 2 table).
-fn class_label(class: cadetta_adapter::classify::Class) -> &'static str {
+pub(super) fn class_label(class: cadetta_adapter::classify::Class) -> &'static str {
     use cadetta_adapter::classify::Class;
     match class {
         Class::NoOp => "no-op",
@@ -318,5 +540,75 @@ fn action_label(verb: sync::Verb) -> &'static str {
         Verb::Skip | Verb::Drift => "none",
         Verb::Converged => "record only",
         Verb::Fail => "push failed",
+    }
+}
+
+#[cfg(test)]
+mod stale_output_tests {
+    use super::*;
+
+    fn facts(codes: &[&str], result: &str) -> Facts {
+        let mut f = Facts::default();
+        for c in codes {
+            f.produced.push(Produced {
+                code: (*c).to_owned(),
+                severity: "warning".into(),
+                path: Some("p::M.s".into()),
+            });
+        }
+        f.after.insert("a/s.out.json".into(), result.to_owned());
+        f
+    }
+
+    const RESULT: &str = r#"{"results":[{"solver":"p::M.s","outputs":{"w":"1m"}}]}"#;
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::stale_output
+    #[test]
+    fn stale_solver_with_an_evaluated_check_observes_its_output() {
+        assert_eq!(
+            stale_output(&facts(&["S003", "C001"], RESULT)).as_deref(),
+            Some("w")
+        );
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::stale_output
+    #[test]
+    fn no_s003_or_no_check_verdict_observes_nothing() {
+        assert_eq!(stale_output(&facts(&["C001"], RESULT)), None);
+        assert_eq!(stale_output(&facts(&["S003"], RESULT)), None);
+    }
+
+    fn failed(exit: i32, message: &str) -> Facts {
+        let mut f = Facts {
+            exit,
+            messages: vec![message.to_owned()],
+            ..Facts::default()
+        };
+        f.after.insert(
+            "bindings/a.toml".into(),
+            "[\"acme::P.w\"]\nlocators = []\n".into(),
+        );
+        f
+    }
+
+    // frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::names_path_or_key
+    #[test]
+    fn config_error_naming_a_key_or_path_is_observed() {
+        assert!(names_path_or_key(&failed(2, "`sign` does not apply")));
+        assert!(names_path_or_key(&failed(2, "locator text is empty")));
+        assert!(names_path_or_key(&failed(2, "bad table acme::P.w here")));
+        assert!(names_path_or_key(&failed(2, "`for` is present but empty")));
+    }
+
+    // frob:ticket 01M4YR9ZAJFNG41PMJECE627BF
+    // frob:tests crates/cadetta-cli/tests/conformance/exec.rs::names_path_or_key
+    #[test]
+    fn unspecific_or_non_config_error_is_not_observed() {
+        assert!(!names_path_or_key(&failed(2, "invalid bindings")));
+        assert!(!names_path_or_key(&failed(2, "not found for this")));
+        assert!(!names_path_or_key(&failed(1, "`sign` does not apply")));
     }
 }

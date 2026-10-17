@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T10:04:16Z"
+digest = "e299bb1c2ac74ed7a0c5b3b04e09a34d7439187fb4cc43e0edadcd6c6183832d"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID b32919f0-f6b6-458c-92ee-47147d192ed4 with nextest profile: default
+    Starting 1 test across 41 binaries (488 tests skipped)
+        PASS [   0.579s] cadetta cmd::obligations::tests::git_dependency_trusted_role_discharges_dependent_obligation
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.580s] 1 test run: 1 passed, 488 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta git_dependency_trusted_role_discharges_dependent_obligation"
+size = 586
+status = "measured"
+test_count = 1
+tests_digest = "74adcc656bb42b37692b61f41f22b764a08bce646c243a45c916ca8ac9920434"
+at = "2026-10-15T10:04:16Z"
+actor = "lognd"
+rev = 1

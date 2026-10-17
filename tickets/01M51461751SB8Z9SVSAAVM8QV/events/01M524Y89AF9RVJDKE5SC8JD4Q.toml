@@ -1,0 +1,17 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T10:36:43Z"
+digest = "4c6737b6545c3726e8d77422beda806c64a99e47ea40a02c076ef2f746af554d"
+exit_code = 100
+failed_tests = ["root_parses_clean_and_only_reexports", "adapters_and_sw_equations_corpus_is_not_empty", "adapters_and_sw_equations_fixtures_match_the_spec"]
+passed = false
+provider = "nextest"
+ref = "package(cadetta-syntax) and test(inserts_tables_are_cited_with_expected_shape)"
+size = 50977
+status = "measured"
+test_count = 455
+tests_digest = "add10f72409c96f7d8132b6287eefcdeeea5dd9fb82755c1ebac1b79b0ef2e3d"
+uri = "dir:.git/frob/artifacts/4c6737b6545c3726e8d77422beda806c64a99e47ea40a02c076ef2f746af554d"
+at = "2026-10-16T10:36:43Z"
+actor = "lognd"
+rev = 1

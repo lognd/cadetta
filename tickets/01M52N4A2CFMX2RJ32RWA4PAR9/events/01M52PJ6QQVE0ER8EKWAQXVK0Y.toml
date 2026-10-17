@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T15:48:03Z"
+digest = "3ec153d3d65d089fa613923b1080f95d3b59cb581c96368d3d6dbc1fbc096771"
+exit_code = 101
+inline = """
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+error[E0063]: missing field `text` in initializer of `cadetta_ir::model::Member`
+   --> crates/cadetta-lint/src/rules/m.rs:272:9
+    |
+272 |         Member {
+    |         ^^^^^^ missing `text`
+
+For more information about this error, try `rustc --explain E0063`.
+error: could not compile `cadetta-lint` (lib test) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: command `~/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/cargo '--color=never' test --no-run --message-format json-render-diagnostics` exited with code 101
+"""
+passed = false
+provider = "nextest"
+ref = "cadetta::conformance_lints lints_fixtures_match_the_spec"
+size = 749
+status = "measured"
+at = "2026-10-16T15:48:03Z"
+actor = "lognd"
+rev = 1

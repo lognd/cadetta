@@ -1,0 +1,36 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T19:08:49Z"
+digest = "fab892cf1b7bd71cf0d4e04bf88defbcd0f1e3da56fa57ca5b00cd2669133ae1"
+exit_code = 0
+inline = '''
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 34s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 6630fded-68ed-417a-8ae9-3763573933fd with nextest profile: default
+    Starting 1 test across 76 binaries (1832 tests skipped)
+        PASS [   0.010s] cadetta cmd::emit::tests::locator_activity_follows_the_slot_primary
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 1832 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "cadetta cmd::emit::tests::locator_activity_follows_the_slot_primary"
+size = 1394
+status = "measured"
+test_count = 1
+tests_digest = "2ec4bc848046144e739fbd8061fa1c6a811ee855825d9e32ffccfb2349596670"
+at = "2026-10-16T19:08:49Z"
+actor = "lognd"
+rev = 1

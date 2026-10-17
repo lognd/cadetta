@@ -1,0 +1,10 @@
+{
+  "spec": "1.4",
+  "doc": "ir",
+  "section": "ir.md 5",
+  "rule": "schema-classify-property-change",
+  "kind": "compare",
+  "entry": "classify",
+  "must_fire": { "classify": "major" },
+  "must_not_fire": { "classify": "minor" }
+}

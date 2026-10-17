@@ -5,7 +5,8 @@ ordinary `.cdt`: every table is a `table`, every part family a
 parameterized `ots`, every helper a `fn` or a parameterized `assembly`.
 Nothing in `std` needs a language feature user code cannot use; if it
 did, that feature would be missing from the language. Every value in
-`std` is cited to its standard or handbook (S001 applies to `std` too).
+`std` is cited to its standard or handbook (S001 applies to `std` too). The `std_s001` test target (`crates/cadetta-cli/gates/std_s001.rs`) analyses a
+copy of `std/` renamed `stdgate` (`std` is reserved) as a project and fails on any S001, so a new uncited value cannot land.
 `std` exports one `cite` per standard at its root (`std::iso273`,
 `std::iso286`, `std::din472`, ...), each a typed `standard` or `book`
 citation (language.md 3.9) with `organization`, `number`, `title` and
@@ -88,6 +89,30 @@ Engagement and tap class are shop policy, not published constants.
 is the nominal s (its deviation is written on the `ots`, golden 02);
 `edge_margin` is the minimum n and untoleranced. Figures were entered
 from recall and must be verified by the std citation audit.
+
+`std` is version 0.2.0 (`std/cadetta.toml`). `std::fasteners::inch`
+(`std/src/fasteners/inch.cdt`) adds the unified inch threads: the
+`InchThread` enum (UNC and UNF, #4 to 1/2 in; `No10Unc24` is #10-24,
+`F1x4Unf28` is 1/4-28) and the tables `InchThreadData` (`major pitch
+minor_ext minor_int`, ASME B1.1), `InchTapDrill` (`cut_75`),
+`InchClearance` (`close free`), `InchSocketHead` (`head_dia head_height
+socket`, ASME B18.3) and `InchLen`, all in inches and each cited
+(`asme_b1_1`, `asme_b18_3`, `inch_tapdrill`, `inch_clearance`). Minor
+diameters use the ISO 724 profile constants. Figures were entered from
+recall and the citation audit must verify them.
+
+`std::inserts` (`std/src/inserts.cdt`) decisions: `WireInsertInch` is
+keyed by `InchThread` and cites ASME B18.29.1 (`asme_b18_29_1`); columns
+`drill_dia` (pre-tap drill for the insert's tapped hole) and the free
+length series `len_1d len_1_5d len_2d len_3d` (nominal multiples of the
+major diameter, in). `HeatSet` is keyed by `MetricThread` (M2 to M8 only)
+and is vendor data, cited as a `catalog` (`heatset_catalog`) because no
+standard exists; columns `hole_dia hole_depth outer_dia length`, all
+nominal and untoleranced (`hole_depth` is the insert length plus a 1 mm
+sump). A design needing one vendor's exact figures models that insert as
+an `ots` with its own cite. Metric wire inserts (ASME B18.29.2M) are not
+included. Figures were entered from recall and the citation audit must
+verify them (least certain: UNF drills, 3 D lengths, heat-set `hole_dia`).
 
 `std::fasteners` tables (`std/src/fasteners/tables.cdt`) decisions:
 `MetricThread` is declared there with the 12 coarse sizes; `Thread`
@@ -359,11 +384,22 @@ Fixed while writing `tests/conformance/stdlib/` (ticket ~GDYVJ8R):
 - Under `tap = Vendor`, reading `tap_drill` or `drill_depth` is E002 (the
   members are absent). The Vendor `callout` is
   `fmt("{} - 6H, {} DP", thread, thread_depth)`.
-- The `engaged` check guards an invariant: `screw_length` is derived with
-  `at_least`, so no source can make it fire. It has a must-not-fire
-  fixture only.
-- A roll-up (`max`, `sum`) over a misspelled member contributes nothing and
-  fails with the internal code EVAL.
+- The `engaged` check is a defense-in-depth guard, kept on purpose.
+  `screw_length` is derived with `at_least`, so for every joint the
+  stdlib can build the check holds, and a table with no long-enough
+  length fails the lookup itself (a table error), not `engaged`. The
+  check therefore cannot fire from any source today and has a
+  must-not-fire fixture only; a must-fire fixture is not required. It
+  exists so a future `length` override argument, or a hand-edited length
+  table policy, is caught without a new check. Adding such an override
+  MUST add a must-fire fixture in the same change.
+- Owner review (2026-10-16, ~MEM04J7): the four rules above (count with
+  pattern E006, Vendor without `depth_available` E006, absent Vendor
+  members E002, the Vendor `callout` text) are confirmed as the spec.
+- A roll-up (`max`, `sum`) over a misspelled member is E002 (unknown
+  member), reported at the roll-up expression, like any other member
+  read. It must never contribute nothing silently, and the internal code
+  EVAL must not reach users. Implementation conforms in a follow-up.
 
 ## Open questions
 

@@ -1,0 +1,36 @@
+kind = "evidence"
+captured_at = "2026-10-16T07:13:57Z"
+digest = "3fdea58281a3e89045613cdc8ac8add1cfc14e533ca59714d2c938fe462836fd"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 535363e7-67fc-496b-b50f-3acc038d8d95 with nextest profile: default
+    Starting 1 test across 45 binaries (634 tests skipped)
+        PASS [   0.013s] cadetta cmd::display::tests::exact_fraction_numerator
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.018s] 1 test run: 1 passed, 634 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta exact_fraction_numerator"
+size = 1438
+status = "measured"
+test_count = 1
+tests_digest = "a8cd1f93178335188066ba41d3d583c5bf97c50a891d108d2970fd493979974e"
+at = "2026-10-16T07:13:57Z"
+actor = "lognd"
+rev = 1

@@ -12,4 +12,4 @@ id = "main"
 name = "sw-equations"
 id = "other"
 out = "build/other.txt"
-modules = ["acme.demo.gear"]
+modules = ["acme.demo::gear"]

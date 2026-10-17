@@ -1,0 +1,78 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T23:39:40Z"
+digest = "e8575472495afd9d5f0c162d64b7a16423d961d84ccc8e835465b2ecf4a89bcd"
+exit_code = 0
+inline = '''
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling once_cell v1.21.4
+   Compiling find-msvc-tools v0.1.14
+   Compiling shlex v2.0.1
+   Compiling zmij v1.0.23
+   Compiling thiserror v2.0.21
+   Compiling pin-project-lite v0.2.17
+   Compiling serde v1.0.229
+   Compiling tracing-core v0.1.36
+   Compiling serde_json v1.0.154
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling num-traits v0.2.19
+   Compiling cc v1.8.0
+   Compiling cpufeatures v0.3.1
+   Compiling arrayvec v0.7.8
+   Compiling constant_time_eq v0.4.2
+   Compiling cfg-if v1.0.5
+   Compiling ref-cast v1.0.27
+   Compiling winnow v1.0.4
+   Compiling dyn-clone v1.0.20
+   Compiling toml_writer v1.1.3+spec-1.1.0
+   Compiling blake3 v1.8.7
+   Compiling toml_parser v1.1.5+spec-1.1.0
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.5.1
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling serde_derive_internals v0.30.0
+   Compiling thiserror-impl v2.0.21
+   Compiling serde_derive v1.0.229
+   Compiling ref-cast-impl v1.0.27
+   Compiling schemars_derive v1.2.3
+   Compiling tracing-attributes v0.1.31
+   Compiling tracing v0.1.44
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling toml_datetime v1.1.2+spec-1.1.0
+   Compiling serde_spanned v1.1.2
+   Compiling toml v1.1.8+spec-1.1.0
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling schemars v1.2.3
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 56.06s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 40e16b62-ac95-456c-ac64-e903c9d0fe07 with nextest profile: default
+    Starting 1 test across 5 binaries (245 tests skipped)
+        PASS [   0.008s] cadetta-sema lower::tests::parameterized_part_array_lowers_per_instance_values
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 245 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema parameterized_part_array_lowers_per_instance_values"
+size = 2726
+status = "measured"
+test_count = 1
+tests_digest = "c047b86c50ab94081f9a63259eff15cd4d0d2ef7d5f19a9d89fe00909c531947"
+at = "2026-10-15T23:39:40Z"
+actor = "lognd"
+rev = 1

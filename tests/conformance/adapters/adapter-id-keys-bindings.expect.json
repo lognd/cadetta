@@ -4,11 +4,11 @@
   "section": "adapters.md 3.2",
   "rule": "adapter-id",
   "kind": "source",
-  "entry": "emit sw-equations",
+  "entry": "emit",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,
-    "outputs": {
+    "output": {
       "build/eq.txt": {
         "contains": [
           "\"MAIN\""

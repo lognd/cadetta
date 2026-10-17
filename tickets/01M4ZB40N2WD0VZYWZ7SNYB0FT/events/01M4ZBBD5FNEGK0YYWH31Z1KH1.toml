@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T08:37:38Z"
+digest = "a9772a7d1cf3aa371d1c32d3664e1f57469fda1ce5b4817031da2b75e4d789ff"
+provider = "file"
+ref = "tests/conformance/emitters/sw-equations/naming-component-field.expect.json"
+size = 799
+status = "measured"
+at = "2026-10-15T08:37:38Z"
+actor = "lognd"
+rev = 1

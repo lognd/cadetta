@@ -1,0 +1,6 @@
+use std::inserts::{HeatSet, WireInsertInch}
+use std::fasteners::{MetricThread, InchThread}
+model P {
+  hole = HeatSet[MetricThread::M4].hole_dia
+  coil = WireInsertInch[InchThread::F1x4Unc20].len_2d
+}

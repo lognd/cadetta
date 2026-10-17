@@ -34,12 +34,6 @@ use crate::resolve::{
 };
 use crate::visibility::VisibilityChecker;
 
-/// Members every part contributes to a `name(self)` roll-up (language.md 3.5).
-const ROLLUP_NAMES: &[&str] = &["unit_cost", "lead_time", "moq", "supplier", "mass"];
-
-/// Roll-up functions that take `(self, member)`.
-const ROLLUP_FNS: &[&str] = &["sum", "max", "min"];
-
 /// How serious a dependency diagnostic is.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Severity {
@@ -388,6 +382,7 @@ impl DepGraph {
             comps,
             vis: VisibilityChecker::new(resolver, packages),
             graph: DepGraph::default(),
+            rollup_targets: BTreeSet::new(),
         };
         let ids = b.comps.keys().cloned().collect::<Vec<_>>();
         for id in &ids {
@@ -398,6 +393,14 @@ impl DepGraph {
             b.add_instance(id, &inst, None, &mut Vec::new());
         }
         let mut graph = b.graph;
+        // frob:ticket 01M4W8SZ3HZZ2G8V1QVC7DZBZH
+        // A roll-up names `member` of every part; a part whose component does not declare it
+        // (an optional Sourced member) has no node, and the roll-up lists it as missing.
+        let known: BTreeSet<CanonPath> = graph.nodes.keys().cloned().collect();
+        for node in graph.nodes.values_mut() {
+            node.edges
+                .retain(|e| known.contains(e) || !b.rollup_targets.contains(e));
+        }
         graph.diagnostics.extend(case_diags);
         graph.diagnostics.extend(graph.find_cycles());
         graph.diagnostics.sort_by_key(|d| (d.span, d.code));
@@ -538,6 +541,8 @@ struct Builder<'r, 'a> {
     comps: BTreeMap<CanonPath, &'a Component>,
     vis: VisibilityChecker<'r>,
     graph: DepGraph,
+    /// Roll-up targets: a part that lacks the rolled member contributes no node (stdlib.md 4).
+    rollup_targets: BTreeSet<CanonPath>,
 }
 
 impl<'a> Builder<'_, 'a> {
@@ -658,6 +663,17 @@ impl<'a> Builder<'_, 'a> {
                 self.add_part(p, own, stack);
                 return;
             }
+            // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+            MemberKind::Solver(sv) => {
+                for member in &sv.members {
+                    if let cadetta_syntax::ast::SolverMemberKind::In(binds) = &member.kind {
+                        for b in binds {
+                            self.reads(&b.value, &[], own, comp, &mut edges);
+                        }
+                    }
+                }
+                &sv.name.name
+            }
             _ => return,
         };
         self.graph.insert(inst.key(name), m.span, edges);
@@ -769,6 +785,10 @@ impl<'a> Builder<'_, 'a> {
                 go!(x);
                 terms.iter().for_each(|t| go!(&t.value));
             }
+            ExprKind::Position(x, d) => {
+                go!(x);
+                go!(d);
+            }
             ExprKind::If {
                 cond,
                 then,
@@ -818,7 +838,9 @@ impl<'a> Builder<'_, 'a> {
                 out.insert(site.inst.key(&p.name.name));
                 let mut parts = site.inst.parts.clone();
                 parts.push(p.name.name.clone());
-                out.insert(node_key(&site.inst.root, &parts, member));
+                let target = node_key(&site.inst.root, &parts, member);
+                self.rollup_targets.insert(target.clone());
+                out.insert(target);
             }
         }
     }
@@ -936,19 +958,7 @@ impl DepGraph {
 
 /// The member a call rolls up over parts: `sum(self, m)` or `m(self)`.
 fn rollup_member(callee: &Expr, args: &[Arg]) -> Option<String> {
-    let ExprKind::Path(cp) = &callee.kind else {
-        return None;
-    };
-    let name = cp.segments.last()?.name.as_str();
-    let is_self = |a: &Arg| matches!(&a.value.kind, ExprKind::Path(p) if p.text() == "self");
-    match args {
-        [a] if ROLLUP_NAMES.contains(&name) && is_self(a) => Some(name.to_owned()),
-        [a, b] if ROLLUP_FNS.contains(&name) && is_self(a) => match &b.value.kind {
-            ExprKind::Path(p) if p.segments.len() == 1 => Some(p.text()),
-            _ => None,
-        },
-        _ => None,
-    }
+    crate::rollup::shape(callee, args).map(|(_, member)| member)
 }
 
 #[cfg(test)]
@@ -966,6 +976,7 @@ mod tests {
 
     fn analyse(files: &[(&[&str], &File)]) -> DepGraph {
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: files
@@ -1039,6 +1050,29 @@ mod tests {
              model Top {\n  n = bolts.d\n  part bolts[n]: Bolt\n}\n",
         );
         assert_eq!(codes(&analyse(&[(&[], &f)])), vec!["D003"]);
+    }
+
+    // frob:tests crates/cadetta-sema/src/deps.rs::DepGraph.build
+    #[test]
+    fn rollup_skips_part_lacking_the_member() {
+        let f = file(
+            "model Bolt { d = 4mm }\n\
+             model Top {\n  part bolts[2]: Bolt\n  cost = sum?(self, unit_cost)\n}\n",
+        );
+        let g = analyse(&[(&[], &f)]);
+        let top = g
+            .nodes()
+            .iter()
+            .find(|(k, _)| k.to_string().ends_with("Top.cost"))
+            .map(|(_, n)| n)
+            .expect("Top.cost node");
+        assert_eq!(
+            top.edges.len(),
+            1,
+            "only the slot, not Bolt.unit_cost: {:?}",
+            top.edges
+        );
+        assert!(top.edges.iter().all(|e| g.nodes().contains_key(e)));
     }
 
     // frob:tests rollup_over_parts_is_not_a_self_read
@@ -1143,6 +1177,7 @@ mod tests {
         let moved = file("pub model Bracket {\n  t = 2mm was q::old::Bracket.thickness\n}\n");
         let user = file("model U {\n  v = q::old::Bracket.thickness\n}\n");
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "q".to_owned(),
             deps: Vec::new(),
             modules: vec![
@@ -1193,6 +1228,7 @@ mod tests {
             ));
             let pkgs = vec![
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "lib".to_owned(),
                     deps: Vec::new(),
                     modules: vec![ModuleSrc {
@@ -1202,6 +1238,7 @@ mod tests {
                     }],
                 },
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
                     modules: vec![ModuleSrc {
@@ -1231,6 +1268,7 @@ mod tests {
             ));
             let pkgs = vec![
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "lib".to_owned(),
                     deps: Vec::new(),
                     modules: vec![ModuleSrc {
@@ -1240,6 +1278,7 @@ mod tests {
                     }],
                 },
                 PackageSrc {
+                    defaults: Default::default(),
                     name: "app".to_owned(),
                     deps: vec!["lib".to_owned()],
                     modules: vec![ModuleSrc {

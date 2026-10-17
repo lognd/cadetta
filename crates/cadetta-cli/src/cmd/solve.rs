@@ -201,6 +201,7 @@ fn package_sources<'a>(
         .map(|((pkg, name), parsed)| PackageSrc {
             name: name.clone(),
             deps: pkg.config.dependencies.keys().cloned().collect(),
+            defaults: pkg.config.defaults.clone(),
             modules: parsed
                 .iter()
                 .map(|m| ModuleSrc {
@@ -333,7 +334,7 @@ fn si_unit(dim: &cadetta_units::Dim) -> String {
 }
 
 /// Lower an evaluated quantity to a request input (solvers.md 3).
-fn input_value(table: &UnitTable, q: &Quant) -> InputValue {
+pub(crate) fn input_value(table: &UnitTable, q: &Quant) -> InputValue {
     let si = q.nominal.to_f64();
     let unit = si_unit(q.dim());
     let lit = format_value(table, &q.nominal, q.dim(), &DisplaySpec::Unit(unit.clone()))
@@ -368,6 +369,29 @@ fn config_map(project: &Project) -> BTreeMap<String, SolverConfig> {
             )
         })
         .collect()
+}
+
+/// The digests a stored result is compared against: inputs, script and every dep file.
+///
+/// The error is the S005 message naming the unreadable script or dep.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+pub(crate) fn current_digests(
+    request: &Request,
+    package_dir: &Path,
+    decl: &SolverDecl,
+) -> Result<CurrentDigests, String> {
+    let script = package_dir.join(&decl.script);
+    let mut digests = CurrentDigests {
+        input_digest: input_digest(request),
+        script_digest: read_digest(&script)
+            .map_err(|e| format!("script {}: {e}", script.display()))?,
+        dep_digests: BTreeMap::new(),
+    };
+    for dep in &decl.deps {
+        let d = read_digest(&package_dir.join(dep)).map_err(|e| format!("dep {dep}: {e}"))?;
+        digests.dep_digests.insert(dep.clone(), d);
+    }
+    Ok(digests)
 }
 
 fn read_digest(path: &Path) -> Result<String, std::io::Error> {
@@ -502,19 +526,21 @@ pub fn solve_project(
     }
 }
 
-/// Evaluate every `in` binding of `t` with `evaluator`; the error is a (code, message) pair.
-fn eval_inputs(
-    t: &Target<'_>,
+/// Evaluate every `in` binding of `ast` in `ctx`; the error is a (code, message) pair.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+pub(crate) fn eval_inputs(
+    ast: &Solver,
+    ctx: &Ctx,
     evaluator: &mut Evaluator<'_, '_>,
     table: &UnitTable,
 ) -> Result<BTreeMap<String, InputValue>, (String, String)> {
     let mut inputs = BTreeMap::new();
-    for member in &t.ast.members {
+    for member in &ast.members {
         let SolverMemberKind::In(binds) = &member.kind else {
             continue;
         };
         for Bind { name, value, .. } in binds {
-            match evaluator.eval_input(t.ctx.clone(), value) {
+            match evaluator.eval_input(ctx.clone(), value) {
                 Ok(q) => {
                     inputs.insert(name.name.clone(), input_value(table, &q));
                 }
@@ -578,37 +604,17 @@ fn solve_one(
             return Outcome::Failed { code, message };
         }
     };
-    let inputs = match eval_inputs(t, evaluator, table) {
+    let inputs = match eval_inputs(t.ast, &t.ctx, evaluator, table) {
         Ok(inputs) => inputs,
         Err((code, message)) => return fail(err, &t.path, &code, &message),
     };
     let request = Request::new(t.path.clone(), inputs);
     let script = t.package_dir.join(&decl.script);
     let results_path = out_path(&script);
-    let mut digests = CurrentDigests {
-        input_digest: input_digest(&request),
-        script_digest: String::new(),
-        dep_digests: BTreeMap::new(),
+    let digests = match current_digests(&request, t.package_dir, &decl) {
+        Ok(d) => d,
+        Err(message) => return fail(err, &t.path, "S005", &message),
     };
-    match read_digest(&script) {
-        Ok(d) => digests.script_digest = d,
-        Err(e) => {
-            return fail(
-                err,
-                &t.path,
-                "S005",
-                &format!("script {}: {e}", script.display()),
-            );
-        }
-    }
-    for dep in &decl.deps {
-        match read_digest(&t.package_dir.join(dep)) {
-            Ok(d) => {
-                digests.dep_digests.insert(dep.clone(), d);
-            }
-            Err(e) => return fail(err, &t.path, "S005", &format!("dep {dep}: {e}")),
-        }
-    }
     let mut file = match ResultFile::load(&results_path) {
         Ok(f) => f,
         Err(e) => return fail(err, &t.path, "S005", &e.to_string()),
@@ -801,7 +807,7 @@ fn variant_requests(t: &Target<'_>, run: &RunEnv<'_>) -> Vec<VariantRequest> {
     for sel in selections(run) {
         let mut evaluator =
             Evaluator::new(run.resolver, run.units, run.sources).with_selection(sel.clone());
-        match eval_inputs(t, &mut evaluator, run.units) {
+        match eval_inputs(t.ast, &t.ctx, &mut evaluator, run.units) {
             Ok(inputs) => requests.push(VariantRequest {
                 variant: sel.key(),
                 request: Request::new(t.path.clone(), inputs),

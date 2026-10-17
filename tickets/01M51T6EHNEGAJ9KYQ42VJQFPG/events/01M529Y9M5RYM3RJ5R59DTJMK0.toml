@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["language/e001-waive-date must-not-fire passes; gap entry removed"]
+new = ["language/e001-waive-date must-not-fire passes; gap entry removed", "conformance runner ignores waived diagnostics; language/e001-waive-date passes and is removed from known-gaps.toml"]
+moved = [1]
+at = "2026-10-16T12:10:43Z"
+actor = "lognd"
+rev = 1

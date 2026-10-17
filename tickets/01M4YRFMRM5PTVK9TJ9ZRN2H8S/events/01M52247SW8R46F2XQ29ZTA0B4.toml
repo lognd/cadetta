@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: packages.md 1 and lints.md E005 already define both cases as E005. Code side: config validation raises ConfigError::Unloadable (reserved std name, registry-only dependency), the project loader maps it to the E005 project diagnostic; bare-string dependency values now parse as version-only entries."
+at = "2026-10-16T09:54:09Z"
+actor = "lognd"
+rev = 1

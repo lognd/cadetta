@@ -1,4 +1,4 @@
 {
   "file": "build/eq.txt",
-  "text": "\"A\" = IIF(\"B\" > 1, 2, 3)\n\"B\" = 5mm\n"
+  "text": "\"A\" = FROB(\"B\" > 1, 2, 3)\n\"B\" = 5mm\n"
 }

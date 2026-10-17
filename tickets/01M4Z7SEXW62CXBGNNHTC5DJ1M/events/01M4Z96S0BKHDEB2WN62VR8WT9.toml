@@ -1,0 +1,35 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T07:59:47Z"
+digest = "238ff6ad885c1d96dae75143fcac6888bb43ca2797c970336f5411cf26a69106"
+exit_code = 0
+inline = '''
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.48s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID c39d171d-aaae-452e-8189-dd6a3133f179 with nextest profile: default
+    Starting 1 test across 4 binaries (203 tests skipped)
+        PASS [   0.013s] cadetta-sema lower::tests::fit_on_component_argument_operand_is_not_a_dependency
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.014s] 1 test run: 1 passed, 203 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema fit_on_component_argument_operand"
+size = 1340
+status = "measured"
+test_count = 1
+tests_digest = "00e294bdba9194cd95831f3e46d29529c12efdee3205b715934c47fdbe87114a"
+at = "2026-10-15T07:59:47Z"
+actor = "lognd"
+rev = 1

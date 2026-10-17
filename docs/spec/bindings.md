@@ -24,8 +24,7 @@ and every capability is reachable the first way.
    its tests replay the conformance corpus to show it.
 
 A C ABI (`cadetta-capi`, a stable `extern "C"` surface over the same
-crates) is the planned base for C, C++, MATLAB (MEX) and Julia. It is
-built when the first of those is needed, not before.
+crates, section 4) is the base for C, C++, MATLAB (MEX) and Julia.
 
 ## 2. Repository layout
 
@@ -38,7 +37,7 @@ to its language's registry at the workspace version (lockstep).
 | Binding | Directory | Registry | Status |
 |---|---|---|---|
 | Python | `bindings/python` | PyPI `cadetta` | 0.1.0 |
-| C ABI | `bindings/c` | release archives | later |
+| C ABI | `bindings/c` | release archives | 0.1.0 (run/version/free) |
 
 ## 3. Python
 
@@ -71,7 +70,19 @@ d.mid.to_float("in")       # a float only when asked for
 m.kind, m.citation         # "param" (the IR member kind), its CiteRef (ir.md 3)
 design.citation(m.citation.cite).unwrap().fields["rev"]   # Result[Citation, PathNotFound]
 d.kind                     # "Length" (the quantity kind)
-m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
+```
+
+A variant read, on the fixture package
+`bindings/python/tests/fixtures/alt-wheel` (`part wheel: Caster =
+Vendor4471B alt [Colson2Series]` and `bore: Length = wheel.hub_bore` in
+`Rover`, language.md 3.2):
+
+```python
+bore = design.get("acme.rover::Rover.bore").unwrap()
+bore.value.nominal.to_exact("mm")   # Fraction(12, 1): the primary, Vendor4471B
+alt = bore.variant("acme.rover::Rover/wheel", "acme.rover::Colson2Series")
+alt.value.nominal.to_exact("mm")    # Fraction(15, 1): bore under the alternate
+bore.variant("acme.rover::Rover/wheel", "acme.rover::Other")   # None: not an alternate
 ```
 
 - `design.get(path) -> Result[Member, PathNotFound]`; `design[path]` is
@@ -98,7 +109,10 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
 - `member.variant(slot, alternate) -> Member | None` reads the value
   under a variant (language.md 3.2); `slot` is the canonical
   `Type/part` path and `alternate` the qualified component name, the
-  same strings as `impact --swap SLOT ALT`.
+  same strings as `impact --swap SLOT ALT`. It reads the IR member's
+  `variants` entry keyed `<slot>=<alternate>` (ir.md 2), so a member that
+  does not depend on the slot, or whose value is unchanged, has no
+  entry and returns `None`.
 - Arithmetic follows the language's kind rules and carries tolerance
   (affine forms, quantities.md 5.4), so Python results agree with
   checks. A violation raises `QuantityError`, whose `.code` is the
@@ -113,7 +127,16 @@ m.variant("acme.rover::Rover/wheel", "acme.shop::Colson2Series")
   classes are not accepted by `Quantity` in 0.1. Only integer scalars
   mix with a Quantity in operators; floats never enter a stored value.
 - `cadetta.quantity("12mm [+-0.1mm]")` parses the source syntax and
-  returns a `Result`.
+  returns `Result[Quantity, QuantityError]`. A parse failure, including
+  a split literal such as `"12 mm"` (Q007), is `Err(QuantityError)`
+  with `.code` set; it is never `Ok` with a diagnostic, and the CLI
+  exit-code mapping is `Err` = 2.
+- Error types of operators. `QuantityError.code` is a Q-code for
+  dimension and kind violations and parse failures, and may also carry
+  an E-code where the compiler reports the same condition under a lint
+  code (`.mmc`/`.lmc` without a role: E010). A non-integer operand
+  (`q * 1.5`) is not a quantity error: `Quantity` returns
+  `NotImplemented` and Python raises `TypeError`, with no Q-code.
 - Interop: `.to_pint(registry)` with the optional `cadetta[pint]`
   extra (implemented as `cadetta.pint_interop.to_pint(q, registry)`,
   returning a `Result`; SI coherent units, nominal only, tolerance
@@ -226,6 +249,21 @@ Python does not define parameters that feed back into the design
 outside the solver protocol: `.cdt` source stays the single source of
 truth. Programs may generate `.cdt` text and format it with
 `cadetta.format_source`, but evaluated values flow only from source.
+
+## 4. C ABI
+
+`bindings/c` builds `libcadetta_capi` and `include/cadetta.h`. The
+surface is `cadetta_version`, `cadetta_run(argc, argv, &out, &err)` and
+`cadetta_free`. `cadetta_run` runs the CLI entry point in-process and
+returns its exit code with captured stdout and stderr, so with
+`--format json` it returns the CLI's document by construction. Decision
+(2026-10-16): one entry point rather than a function per query, because
+the JSON documents and their schemas are already the stable contract
+(tier 1); a typed per-query C API would duplicate them and drift. Exit
+0 and 1 carry a document; 2 is usage or I/O; negative returns are ABI
+failures (bad argv, core panic), never an abort. Its CI job replays the
+conformance `check`/`config`/`eval` fixtures through a C program and the
+CLI and compares exit code and stdout.
 
 ## Open questions
 

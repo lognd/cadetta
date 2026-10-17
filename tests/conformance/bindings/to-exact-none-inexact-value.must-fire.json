@@ -1,7 +1,10 @@
 {
   "api": "Quantity.to_exact",
   "args": [
-    "sqrt(2)*1mm",
+    "2mm^2",
     "mm"
+  ],
+  "pre": [
+    "sqrt"
   ]
 }

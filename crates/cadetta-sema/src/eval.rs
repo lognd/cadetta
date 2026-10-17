@@ -45,6 +45,8 @@ use crate::resolve::{
 
 #[path = "array.rs"]
 pub mod array;
+#[path = "boltfloat.rs"]
+mod boltfloat;
 #[path = "checks.rs"]
 pub mod checks;
 #[path = "enums.rs"]
@@ -54,11 +56,14 @@ pub mod func;
 #[path = "geom.rs"]
 pub mod geom;
 #[path = "instances.rs"]
-mod instances;
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+pub(crate) mod instances;
 #[path = "point.rs"]
 pub mod point;
 #[path = "posshape.rs"]
 mod posshape;
+#[path = "rolleval.rs"]
+mod rolleval;
 #[path = "tablevals.rs"]
 mod tablevals;
 
@@ -129,6 +134,9 @@ pub struct Evaluated {
     pub span: Span,
     /// The hole/shaft role (quantities.md 5.6): explicit, from a class letter, or inherited.
     pub role: Option<RoleInfo>,
+    /// True when the value is a `[position d]` point whose disc variables this member owns.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    pub owns_discs: bool,
 }
 
 /// A finding made while evaluating.
@@ -189,6 +197,32 @@ pub struct Evaluation {
     /// Instance members that are `priv` in their component (lowering marks them private).
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     pub instance_private: BTreeSet<CanonPath>,
+    /// Datum and placement members evaluated per parameterized instance (`Box/j.mount.offset.x`).
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    pub instance_geometry: BTreeMap<CanonPath, GeometryKind>,
+    /// The evaluated keys and cells of every table that built, by table path.
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    pub tables: BTreeMap<CanonPath, TableCells>,
+}
+
+/// The evaluated keys and cells of one table, in row order (language.md 3.3).
+// frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct TableCells {
+    /// Each row's key as a value.
+    pub keys: Vec<Val>,
+    /// Each row's cells in column order; `None` for a row without `=>`.
+    pub rows: Vec<Option<Vec<Val>>>,
+}
+
+/// Which geometry declaration an instance geometry member belongs to.
+// frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum GeometryKind {
+    /// An operation argument of a `datum`.
+    Datum,
+    /// An operation argument of a `place`.
+    Place,
 }
 
 impl Evaluation {
@@ -463,10 +497,14 @@ pub struct Evaluator<'r, 'p> {
     renames: crate::deps::Renames,
     units: &'r UnitTable,
     defs: BTreeMap<CanonPath, Def<'p>>,
-    /// Components whose datums and placements are evaluated (those without parameters).
+    /// Components whose own datums and placements are evaluated (those without parameters;
+    /// parameterized ones are evaluated per instance, see `instance_geometry`).
     geom_components: Vec<CanonPath>,
     /// Instance counts of evaluated `part name[N]` slots, by part path.
     part_counts: BTreeMap<CanonPath, u64>,
+    /// Geometry members evaluated per instance, by instance path.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    instance_geometry: BTreeMap<CanonPath, GeometryKind>,
     /// Part nodes of the current component whose placement raised G004 (not expanded).
     g004_nodes: BTreeSet<String>,
     done: BTreeMap<CanonPath, Option<Evaluated>>,
@@ -474,6 +512,14 @@ pub struct Evaluator<'r, 'p> {
     selection: Option<Selection>,
     in_progress: BTreeSet<CanonPath>,
     next_var: u32,
+    /// The x, y and rotation source variables of each bolt-float joint (geometry.md 5.2).
+    float_vars: BTreeMap<CanonPath, [VarId; 3]>,
+    /// Count of datum re-expressions that read through a floated placement edge (G005).
+    float_reads: u32,
+    /// Count of reads of a solver output no result records (makes a check undecided, not absent).
+    unsolved_reads: u32,
+    /// Joints already reported G008, so each warns once.
+    g008_seen: BTreeSet<String>,
     diagnostics: Vec<EvalDiagnostic>,
     index: checks::CheckIndex<'p>,
     /// Functions on a call-graph cycle (language.md 3.8: recursion is rejected).
@@ -490,6 +536,37 @@ pub struct Evaluator<'r, 'p> {
     absent: BTreeSet<CanonPath>,
     /// Roles implied by `fit` members, for members with no explicit or class role.
     fit_roles: BTreeMap<CanonPath, Role>,
+    /// Every `fit` member of a component without parameters, by path.
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fit_defs: BTreeMap<CanonPath, FitDef<'p>>,
+    /// Fit clearances computed so far (`None` when the fit could not be analysed).
+    fit_done: BTreeMap<CanonPath, Option<FitQuants>>,
+    /// Compiled processes, so a check can read `x.drawn` (language.md 3.8).
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    processes: Option<Rc<crate::process::Processes>>,
+    /// Every `solver` member of a component without parameters, by path (`Comp.solver`).
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    solver_keys: BTreeSet<CanonPath>,
+}
+
+/// A `fit` member with the scope its operands resolve in.
+// frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+#[derive(Clone)]
+struct FitDef<'p> {
+    fit: &'p ast::Fit,
+    ctx: Ctx,
+    /// The instance the fit belongs to, when it is a member of a parameterized callee.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    inst: Option<Rc<instances::InstInfo>>,
+}
+
+/// The evaluated `hole`, `shaft` and `clearance` of one fit.
+// frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+#[derive(Clone)]
+struct FitQuants {
+    hole: Quant,
+    shaft: Quant,
+    clearance: Quant,
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
@@ -500,6 +577,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         packages: &[PackageSrc<'p>],
     ) -> Self {
         let mut defs = BTreeMap::new();
+        let mut fit_defs = BTreeMap::new();
+        let mut solver_keys = BTreeSet::new();
         let mut geom_components = Vec::new();
         let mut index = checks::CheckIndex::default();
         let mut fns: BTreeMap<CanonPath, &'p FnDecl> = BTreeMap::new();
@@ -516,6 +595,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 }
                 for c in m.file.components() {
                     index_component(&mut defs, &p.name, &m.path, c);
+                    index_fits(&mut fit_defs, &p.name, &m.path, c);
+                    index_solvers(&mut solver_keys, &p.name, &m.path, c);
                     if c.params.is_empty() {
                         geom_components.push(CanonPath::item(&p.name, &m.path, &c.name.name));
                     }
@@ -537,18 +618,23 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             });
             recursive.insert(path);
         }
-        Self {
+        let mut ev = Self {
             resolver,
             renames: crate::deps::Renames::collect(resolver, packages),
             units,
             defs,
             geom_components,
             part_counts: BTreeMap::new(),
+            instance_geometry: BTreeMap::new(),
             g004_nodes: BTreeSet::new(),
             done: BTreeMap::new(),
             selection: None,
             in_progress: BTreeSet::new(),
             next_var: 0,
+            float_vars: BTreeMap::new(),
+            float_reads: 0,
+            unsolved_reads: 0,
+            g008_seen: BTreeSet::new(),
             diagnostics,
             index,
             recursive,
@@ -558,7 +644,66 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             cur_inst: None,
             absent: BTreeSet::new(),
             fit_roles: crate::fitderive::implied_roles(resolver, packages),
+            fit_defs,
+            fit_done: BTreeMap::new(),
+            processes: None,
+            solver_keys,
+        };
+        ev.expand_arrays(packages);
+        ev
+    }
+
+    /// Gives the solver members their recorded output literals (solvers.md 3), keyed by solver path.
+    ///
+    /// Each literal is evaluated exactly (decimal text is an exact rational) and stored as the
+    /// value of `Comp.solver.output`, so checks read it and the IR records it.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    #[must_use]
+    pub fn with_solver_outputs(
+        mut self,
+        outputs: BTreeMap<CanonPath, BTreeMap<String, String>>,
+    ) -> Self {
+        for (solver, outs) in outputs {
+            if !self.solver_keys.contains(&solver) {
+                warn!(%solver, "evaluator: recorded outputs for an unknown solver ignored");
+                continue;
+            }
+            let ctx = Ctx {
+                package: solver.package.clone(),
+                module: solver.modules.clone(),
+                component: Some(solver.item.clone()),
+                locals: Vec::new(),
+            };
+            for (name, literal) in outs {
+                let Some(expr) = parse_output_literal(&literal) else {
+                    warn!(%solver, output = %name, %literal, "evaluator: output literal does not parse");
+                    continue;
+                };
+                match self.eval_input(ctx.clone(), &expr) {
+                    Ok(q) => {
+                        let mut key = solver.clone();
+                        key.members.push(MemberSeg::Name(name.clone()));
+                        debug!(%key, %literal, "evaluator: solver output recorded");
+                        self.done.insert(
+                            key,
+                            Some(Evaluated {
+                                value: Val::Quantity(q),
+                                analysis: true,
+                                var: None,
+                                alias_of: None,
+                                span: Span::new(0, 0),
+                                role: None,
+                                owns_discs: false,
+                            }),
+                        );
+                    }
+                    Err(d) => {
+                        warn!(%solver, output = %name, message = %d.message, "evaluator: output literal does not evaluate");
+                    }
+                }
+            }
         }
+        self
     }
 
     /// This evaluator under `selection`: reads through the swapped slot reach the alternate.
@@ -598,10 +743,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             self.value_of(k);
         }
         self.check_requires();
+        let tables = self.evaluate_tables();
         self.evaluate_geometry();
         let checks = self.run_checks();
         self.drop_shadowed_evals();
         let instance_private = self.instances.private.clone();
+        let instance_geometry = std::mem::take(&mut self.instance_geometry);
         let values = self
             .done
             .into_iter()
@@ -618,6 +765,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             var_count: self.next_var,
             part_counts: self.part_counts,
             instance_private,
+            instance_geometry,
+            tables,
         }
     }
 
@@ -701,6 +850,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 alias_of: None,
                 span: def.span,
                 role: None,
+                owns_discs: false,
             })
         } else if def.is_let {
             self.eval_let(scope, def)
@@ -728,6 +878,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
     fn eval_let(&mut self, sc: &mut Scope, def: &Def<'p>) -> R<Evaluated> {
         let value = self.eval(sc, def.expr)?;
         trace!("evaluator: let evaluated, analysis form kept");
+        let owns_discs = matches!(strip(def.expr).kind, ExprKind::Position(..));
         Ok(Evaluated {
             value,
             analysis: true,
@@ -735,6 +886,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             alias_of: None,
             span: def.span,
             role: None,
+            owns_discs,
         })
     }
 
@@ -762,12 +914,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 alias_of: Some(ev.alias_of.unwrap_or(rk)),
                 span,
                 role: resolve_role(None, ev.role),
+                owns_discs: false,
             });
         }
         match &e.kind {
             ExprKind::Tolerance(inner, terms) => {
                 let (v, var) = self.tolerance_val(sc, inner, terms, e.span)?;
                 Ok(owned(v, var, span))
+            }
+            // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+            ExprKind::Position(inner, d) => {
+                let v = self.position_val(sc, inner, d, e.span)?;
+                let mut ev = owned(v, None, span);
+                ev.owns_discs = true;
+                Ok(ev)
             }
             ExprKind::Binary(BinOp::Range, l, r) => {
                 let var = self.fresh_var();
@@ -783,6 +943,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(ev)
             }
             _ => match self.eval(sc, e)? {
+                // A pure member, fit-side or table-cell read keeps its tolerance (quantities.md 5.6, stdlib.md 2).
+                Val::Quantity(q) if is_member_read(e) => {
+                    trace!("evaluator: parameter keeps the fit side tolerance");
+                    Ok(owned(Val::Quantity(q), None, span))
+                }
                 Val::Quantity(q) => {
                     trace!("evaluator: parameter stores the nominal only");
                     let c = Quant::constant(q.dim().clone(), q.nominal);
@@ -831,8 +996,11 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         ));
                     }
                     path
-                } else if self.defs.contains_key(&first_member(&path)) {
+                } else if self.defs.contains_key(&first_member(&path))
+                    || self.is_fit(&first_member(&path))
+                {
                     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
+                    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
                     path
                 } else {
                     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
@@ -844,6 +1012,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Resolved::Part { path } if self.instances.is_instance(&path) => {
                 Ok(RefKind::Component(path))
             }
+            // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+            Resolved::Part { path } => match geom::definition_path(self.resolver, &path) {
+                Some(def) => {
+                    trace!(%path, %def, "evaluator: part reference reads its type");
+                    Ok(RefKind::Component(def))
+                }
+                None => Err(diag("EVAL", e.span, "the type of this part is unknown")),
+            },
             Resolved::Item {
                 path,
                 class: ItemClass::Component,
@@ -862,6 +1038,50 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Rejects `w.member` when `w` is a part array with no instance (language.md 3.5: an
+    /// unindexed read is instance 0, which an empty array lacks).
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    fn empty_part_read(&mut self, sc: &Scope, e: &Expr) -> R<()> {
+        let ExprKind::Field(base, member) = &e.kind else {
+            return Ok(());
+        };
+        if !matches!(base.kind, ExprKind::Path(_) | ExprKind::Field(..)) {
+            return Ok(());
+        }
+        if self
+            .part_array_values(sc, base)
+            .is_some_and(|items| items.is_empty())
+        {
+            return Err(diag(
+                "EVAL",
+                e.span,
+                format!(
+                    "`{}` is read without an index but the part array is empty",
+                    member.name
+                ),
+            ));
+        }
+        Ok(())
+    }
+
+    /// Reads `.member` off a value held by a local (`b.bore` for `for b in bearing`).
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    fn local_field(&mut self, sc: &mut Scope, e: &Expr) -> R<Option<Val>> {
+        let ExprKind::Field(base, member) = &e.kind else {
+            return Ok(None);
+        };
+        if !matches!(
+            self.resolver.resolve_ref(&sc.ctx, base, None),
+            Ok(Resolved::Local(_))
+        ) {
+            return Ok(None);
+        }
+        let v = self.eval(sc, base)?;
+        trace!(member = %member.name, "evaluator: field of a local value");
+        self.apply_chain(v, None, std::slice::from_ref(&member.name), e.span)
+            .map(Some)
+    }
+
     fn eval_ref(&mut self, sc: &Scope, e: &Expr) -> R<Val> {
         match self.classify(sc, e)? {
             RefKind::Local(n) => sc
@@ -874,12 +1094,191 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             RefKind::Variant { enum_path, variant } => Ok(Val::Variant { enum_path, variant }),
             RefKind::Table(path) => Ok(Val::Table(path)),
             RefKind::Component(path) => Ok(Val::Component(path)),
+            RefKind::Member { key, chain } if self.is_fit(&key) => {
+                self.fit_member(&key, &chain, e.span)
+            }
+            RefKind::Member { key, chain } if self.solver_keys.contains(&key) => {
+                self.solver_member(&key, &chain, e.span)
+            }
             RefKind::Member { key, chain } => {
                 let role = self.value_of(&key).and_then(|ev| ev.role).map(|r| r.role);
                 let v = self.member_value(&key, e.span)?;
+                if let [first, rest @ ..] = chain.as_slice()
+                    && first == "drawn"
+                {
+                    let v = self.drawn_member(&key, v, e.span)?;
+                    return self.apply_chain(v, role, rest, e.span);
+                }
                 self.apply_chain(v, role, &chain, e.span)
             }
         }
+    }
+
+    /// Reads `SOLVER.output`: the recorded value; unsolved is left to the solver lints.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn solver_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
+        let [name] = chain else {
+            return Err(diag(
+                "EVAL",
+                span,
+                "a solver output is read as `solver.output`",
+            ));
+        };
+        let mut out = key.clone();
+        out.members.push(MemberSeg::Name(name.clone()));
+        match self.done.get(&out) {
+            Some(Some(ev)) => Ok(ev.value.clone()),
+            _ => {
+                trace!(%out, "evaluator: solver output has no recorded value");
+                self.unsolved_reads += 1;
+                Err(Fail::Silent)
+            }
+        }
+    }
+
+    /// Reads `NAME.drawn` of a compensated member: the process rule applied to its nominal (language.md 3.8).
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    fn drawn_member(&mut self, key: &CanonPath, designed: Val, span: Span) -> R<Val> {
+        let drawn = match (&designed, &self.processes) {
+            (Val::Quantity(q), Some(procs)) => procs.drawn_of(key, q),
+            _ => None,
+        };
+        match drawn {
+            Some(Ok(q)) => {
+                debug!(%key, "evaluator: drawn value read");
+                Ok(Val::Quantity(q))
+            }
+            Some(Err(_)) => {
+                trace!(%key, "evaluator: drawn rule failed, reported by Processes::apply");
+                Err(Fail::Silent)
+            }
+            None => Err(diag("EVAL", span, "`.drawn` is not readable on this value")),
+        }
+    }
+
+    /// Hands the evaluator the compiled processes so checks can read `.drawn`.
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    pub fn set_processes(&mut self, processes: crate::process::Processes) {
+        self.processes = Some(Rc::new(processes));
+    }
+
+    /// Reads `NAME.hole`, `NAME.shaft` or `NAME.clearance` (plus trailing `.min`/`.max`) of a `fit` member (language.md 3.7).
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:ticket 01M51H3Z5W0MDKYPX4M1Y7TJNH
+    fn fit_member(&mut self, key: &CanonPath, chain: &[String], span: Span) -> R<Val> {
+        let (side, accessors) = match chain {
+            [name, rest @ ..] if matches!(name.as_str(), "hole" | "shaft" | "clearance") => {
+                (name.as_str(), rest)
+            }
+            _ => {
+                return Err(diag(
+                    "EVAL",
+                    span,
+                    "only `.hole`, `.shaft` and `.clearance` are readable on a fit here",
+                ));
+            }
+        };
+        if !self.fit_done.contains_key(key) {
+            if !self.in_progress.insert(key.clone()) {
+                trace!(%key, "evaluator: fit cycle, left to D003");
+                return Err(Fail::Silent);
+            }
+            let out = self.fit_quants(key);
+            self.in_progress.remove(key);
+            debug!(%key, ok = out.is_some(), "evaluator: fit evaluated");
+            self.fit_done.insert(key.clone(), out);
+        }
+        let done = self.fit_done.get(key).cloned().flatten();
+        let q = done.map(|f| match side {
+            "hole" => f.hole,
+            "shaft" => f.shaft,
+            _ => f.clearance,
+        });
+        let v = q.map(Val::Quantity).ok_or(Fail::Silent)?;
+        trace!(%key, side, ?accessors, "evaluator: fit side read");
+        self.apply_chain(v, None, accessors, span)
+    }
+
+    /// The fit definition at `key`: a fit of a plain component, or of a parameterized instance.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn fit_def_of(&self, key: &CanonPath) -> Option<FitDef<'p>> {
+        if let Some(d) = self.fit_defs.get(key) {
+            return Some(d.clone());
+        }
+        let [MemberSeg::Name(name)] = key.members.as_slice() else {
+            return None;
+        };
+        let mut prefix = key.clone();
+        prefix.members.clear();
+        let (info, component, ctx) = self.instances.lookup(&prefix)?;
+        component.members.iter().find_map(|m| match &m.kind {
+            MemberKind::Fit(f) if f.name.name == *name => Some(FitDef {
+                fit: f,
+                ctx: ctx.clone(),
+                inst: Some(info.clone()),
+            }),
+            _ => None,
+        })
+    }
+
+    /// True when `key` names a fit member, of a plain component or of an instance.
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn is_fit(&self, key: &CanonPath) -> bool {
+        self.fit_def_of(key).is_some()
+    }
+
+    /// The tolerance of a fit operand as read in the fit's own scope (instance `inst` when given).
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    fn fit_operand(
+        &mut self,
+        ctx: &Ctx,
+        inst: Option<&Rc<instances::InstInfo>>,
+        p: &ast::Path,
+    ) -> Option<Toleranced> {
+        let (Ok(Resolved::Member { path, .. }) | Ok(Resolved::Arg { path, .. })) =
+            self.resolver.resolve_path(ctx, p, None)
+        else {
+            return None;
+        };
+        let saved = std::mem::replace(&mut self.cur_inst, inst.cloned());
+        let path = self.instance_path(&path).unwrap_or(path);
+        self.cur_inst = saved;
+        let Ok(RefKind::Member { key, chain }) = member_ref(path, p.span) else {
+            return None;
+        };
+        let v = self.value_of(&key)?;
+        let q = match self.apply_chain(v.value, v.role.map(|r| r.role), &chain, p.span) {
+            Ok(Val::Quantity(q)) => q,
+            _ => return None,
+        };
+        crate::fitderive::toleranced(&q).ok()
+    }
+
+    /// The hole, shaft and clearance of fit `key`, or `None` when an operand or the analysis failed (F001/F002 are the lint's).
+    // frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+    fn fit_quants(&mut self, key: &CanonPath) -> Option<FitQuants> {
+        let FitDef { fit, ctx, inst } = self.fit_def_of(key)?;
+        let (first, second) = match &fit.spec {
+            ast::FitSpec::Paths(a, b) => (
+                self.fit_operand(&ctx, inst.as_ref(), a)?,
+                Some(self.fit_operand(&ctx, inst.as_ref(), b)?),
+            ),
+            _ => (self.fit_operand(&ctx, inst.as_ref(), &fit.on)?, None),
+        };
+        let result = crate::fits::analyze(&fit.spec, &first, second.as_ref(), None).ok()?;
+        let mut quant = |t: &Toleranced| -> Option<Quant> {
+            let var = self.fresh_var();
+            Some(Quant {
+                form: t.to_affine(var).ok()?,
+                nominal: t.nominal().clone(),
+            })
+        };
+        Some(FitQuants {
+            hole: quant(&result.hole.value)?,
+            shaft: quant(&result.shaft.value)?,
+            clearance: quant(&result.clearance)?,
+        })
     }
 
     /// The value of member `key`; a missing instance member is E002 (absent), a failed one is silent.
@@ -999,6 +1398,10 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         {
             return match self.eval(sc, base)? {
                 Val::Row { table, row } => self.row_field(&table, row, member, span),
+                // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+                c @ Val::Component(_) => {
+                    self.apply_chain(c, None, std::slice::from_ref(&member.name), span)
+                }
                 _ => Err(diag(
                     "EVAL",
                     span,
@@ -1021,7 +1424,13 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Bool(b) => Ok(Val::Bool(*b)),
             ExprKind::Paren(inner) => self.eval(sc, inner),
             ExprKind::As(inner, _) => self.eval(sc, inner),
-            ExprKind::Path(_) | ExprKind::Field(..) => self.eval_ref(sc, e),
+            ExprKind::Path(_) | ExprKind::Field(..) => {
+                self.empty_part_read(sc, e)?;
+                match self.local_field(sc, e)? {
+                    Some(v) => Ok(v),
+                    None => self.eval_ref(sc, e),
+                }
+            }
             ExprKind::Unary(UnOp::Neg, x) => match self.eval(sc, x)? {
                 Val::Quantity(q) => Ok(Val::Quantity(q.neg())),
                 Val::Inexact(i) => Ok(Val::Inexact(func::inex_neg(&i))),
@@ -1040,11 +1449,31 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ExprKind::Index(base, idx) => self.index(sc, base, idx, span),
             ExprKind::Binary(op, l, r) => self.binary(sc, *op, l, r, span),
             ExprKind::Tolerance(inner, terms) => Ok(self.tolerance_val(sc, inner, terms, span)?.0),
+            // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+            ExprKind::Position(inner, d) => self.position_val(sc, inner, d, span),
             ExprKind::IsoClass(inner, class) => {
                 let var = self.fresh_var();
                 Ok(Val::Quantity(
                     self.iso_class(sc, inner, class, var, span)?.0,
                 ))
+            }
+            // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } if crate::rollup::shape(callee, args).is_some() => {
+                let (op, param) = crate::rollup::shape(callee, args).expect("checked above");
+                self.roll_up_call(sc, op, &param, *optional, span)
+            }
+            // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+            ExprKind::Call {
+                callee,
+                optional,
+                args,
+            } if self.slot_rollup(sc, callee, args).is_some() => {
+                let (op, path) = self.slot_rollup(sc, callee, args).expect("checked above");
+                self.roll_up_slot(sc, op, &path, *optional, span)
             }
             ExprKind::Call {
                 callee,
@@ -1362,6 +1791,21 @@ fn round_diag(e: &InexactError, span: Span) -> Fail {
     diag(e.code().unwrap_or("EVAL"), span, e.to_string())
 }
 
+/// True when `e` is a pure read of a member, fit side or table cell (`a.b`, `FIT.hole`, `T[k].col`), not an accessor.
+// frob:ticket 01M52D19FF0HZRMFWH8GZSVB0J
+fn is_member_read(e: &Expr) -> bool {
+    match &e.kind {
+        ExprKind::Path(p) => {
+            p.segments.len() >= 2
+                && p.segments
+                    .last()
+                    .is_some_and(|l| !ACCESSORS.contains(&l.name.as_str()))
+        }
+        ExprKind::Field(_, name) => !ACCESSORS.contains(&name.name.as_str()),
+        _ => false,
+    }
+}
+
 fn owned(value: Val, var: Option<VarId>, span: Span) -> Evaluated {
     Evaluated {
         value,
@@ -1370,6 +1814,7 @@ fn owned(value: Val, var: Option<VarId>, span: Span) -> Evaluated {
         alias_of: None,
         span,
         role: None,
+        owns_discs: false,
     }
 }
 
@@ -1462,6 +1907,71 @@ fn member_ref(path: CanonPath, span: Span) -> R<RefKind> {
     })
 }
 
+/// Indexes the `fit` members of a component without parameters.
+// frob:ticket 01M4Z33NKSMBJSGKAMVDGYN4CP
+fn index_fits<'p>(
+    out: &mut BTreeMap<CanonPath, FitDef<'p>>,
+    package: &str,
+    module: &[String],
+    c: &'p Component,
+) {
+    if !c.params.is_empty() {
+        return;
+    }
+    let ctx = Ctx {
+        package: package.to_owned(),
+        module: module.to_vec(),
+        component: Some(c.name.name.clone()),
+        locals: Vec::new(),
+    };
+    for m in &c.members {
+        if let MemberKind::Fit(f) = &m.kind {
+            let mut key = CanonPath::item(package, module, &c.name.name);
+            key.members.push(MemberSeg::Name(f.name.name.clone()));
+            trace!(%key, "evaluator: fit indexed");
+            out.insert(
+                key,
+                FitDef {
+                    fit: f,
+                    ctx: ctx.clone(),
+                    inst: None,
+                },
+            );
+        }
+    }
+}
+
+/// Indexes the `solver` members of a component without parameters.
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn index_solvers(out: &mut BTreeSet<CanonPath>, package: &str, module: &[String], c: &Component) {
+    if !c.params.is_empty() {
+        return;
+    }
+    for m in &c.members {
+        if let MemberKind::Solver(s) = &m.kind {
+            let mut key = CanonPath::item(package, module, &c.name.name);
+            key.members.push(MemberSeg::Name(s.name.name.clone()));
+            trace!(%key, "evaluator: solver indexed");
+            out.insert(key);
+        }
+    }
+}
+
+/// Parses a stored output literal such as `0.1mm` into an expression.
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn parse_output_literal(literal: &str) -> Option<Expr> {
+    let parsed = cadetta_syntax::parser::parse(&format!("model Out {{ v = {literal} }}"));
+    if !parsed.diags.is_empty() {
+        return None;
+    }
+    parsed.file.components().find_map(|c| {
+        c.members.iter().find_map(|m| match &m.kind {
+            MemberKind::Param(p) => Some(p.value.clone()),
+            _ => None,
+        })
+    })
+}
+
 fn index_component<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
     package: &str,
@@ -1520,6 +2030,7 @@ mod tests {
 
     pub(super) fn run(f: &File) -> Evaluation {
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -2001,6 +2512,28 @@ mod tests {
         assert_eq!(quant(&ev, "P", "lm").nominal, m(99, 10_000));
     }
 
+    // frob:tests fit_side_and_table_cell_parameters_keep_tolerance
+    // frob:ticket 01M52D19FF0HZRMFWH8GZSVB0J
+    #[test]
+    fn fit_side_and_table_cell_parameters_keep_tolerance() {
+        let ev = run(&file(
+            "table W { key d: Length\n cols w: Length\n 22mm => 1.1mm H13 }\n\
+             model P {\n  bore = 22mm H7\n  pin = 22mm g6\n  fit seat = bore / pin\n  \
+             hole = seat.hole\n  shaft = seat.shaft\n  cell = W[22mm].w\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let hi = |n: &str| {
+            quant(&ev, "P", n)
+                .accessor("max", None, Span::new(0, 0))
+                .ok()
+                .expect("max reads")
+        };
+        assert_eq!(hi("hole").nominal, m(22_021, 1_000_000));
+        assert_eq!(hi("shaft").nominal, m(21_993, 1_000_000));
+        // H13 on 1.1mm is +0.14mm: the table cell keeps its tolerance class.
+        assert_eq!(hi("cell").nominal, m(1_240, 1_000_000));
+    }
+
     // frob:tests fit_side_role_yields_to_explicit_role
     #[test]
     fn fit_side_role_yields_to_explicit_role() {
@@ -2029,5 +2562,150 @@ mod tests {
         let r = ev.get(&at("P", "r")).expect("r").role.expect("inherited");
         assert_eq!(r.source, RoleSource::Inherited);
         assert_eq!(quant(&ev, "P", "rm").nominal, m(99, 10_000));
+    }
+
+    // frob:ticket 01M51H3Z5W0MDKYPX4M1Y7TJNH
+    // frob:tests fit_member
+    #[test]
+    fn fit_clearance_min_max_apply_directly() {
+        let ev = run(&file(
+            "model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n  hi = seat.clearance.max\n  \
+             lo = seat.clearance.min\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
+        assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
+    }
+
+    // frob:tests fit_clearance_member_is_readable
+    #[test]
+    fn fit_clearance_member_is_readable() {
+        let ev = run(&file(
+            "model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n  let c = seat.clearance\n  \
+             hi = c.max\n  lo = c.min\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        // H7 spans 0..+21um and p6 +22..+35um: clearance is -35um .. -1um.
+        assert_eq!(quant(&ev, "P", "hi").nominal, m(-1, 1_000_000));
+        assert_eq!(quant(&ev, "P", "lo").nominal, m(-35, 1_000_000));
+    }
+
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:tests fit_quants
+    #[test]
+    fn fit_hole_shaft_clearance_evaluate_in_a_parameterized_instance() {
+        let ev = run(&file(
+            "interface Brg {\n  outer_dia: Length\n}\n\
+             ots B1: Brg {\n  outer_dia = 22mm\n}\n\
+             model Housing(bearing: Brg) {\n  fit bore_fit = H7 on bearing.outer_dia\n  \
+             bore_dia = bore_fit.hole\n}\n\
+             assembly Unit {\n  part b: Brg = B1\n  part housing: Housing(bearing = b)\n  \
+             h = housing.bore_fit.hole\n  s = housing.bore_fit.shaft\n  \
+             c = housing.bore_fit.clearance\n  d = housing.bore_dia\n}\n",
+        ));
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        // The 22mm bearing bore is the nominal of both sides of the fit.
+        let h = quant(&ev, "Unit", "h");
+        assert_eq!(h.nominal, m(22, 1_000));
+        assert_eq!(quant(&ev, "Unit", "d").nominal, h.nominal);
+        assert_eq!(quant(&ev, "Unit", "s").nominal, m(22, 1_000));
+        assert!(ev.get(&at("Unit", "c")).is_some());
+    }
+
+    // frob:tests drawn_member_reads_rule_applied_to_nominal
+    #[test]
+    fn drawn_member_reads_rule_applied_to_nominal() {
+        let f = file(
+            "process Fdm {\n  hole_comp = 0.2mm\n  rule hole(d: Length) -> Length = d + hole_comp\n}\n\
+             model Case {\n  #![process(Fdm)]\n  insert_hole = 3.4mm  #[hole]\n  \
+             let d = insert_hole.drawn\n  let m = insert_hole\n  let bad = m.drawn\n}\n",
+        );
+        let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &f,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty());
+        let units = UnitTable::builtin();
+        let mut e = Evaluator::new(&resolver, &units, &pkgs);
+        let procs = crate::process::Processes::compile(&mut e, &pkgs);
+        e.set_processes(procs);
+        let ev = e.evaluate();
+        // The drawn value is 3.4mm + 0.2mm = 3.6mm; the plain read stays the designed 3.4mm.
+        assert_eq!(quant(&ev, "Case", "d").nominal, m(36, 10_000));
+        assert_eq!(quant(&ev, "Case", "m").nominal, m(34, 10_000));
+        // `.drawn` on a member with no role is still not readable.
+        assert!(
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("`.drawn` is not readable")),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
+    const SOLVER_SRC: &str = "model Frame {\n  ref = 0.1mm\n  wall = round_to(wall_sizing.min_wall, 0.5mm)\n  \
+        solver wall_sizing {\n    script \"a.sh\"\n    out min_wall: Length\n  }\n}\n";
+
+    fn run_with_outputs(src: &str, outs: &[(&str, &str)]) -> Evaluation {
+        let f = file(src);
+        let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &f,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty(), "{errs:?}");
+        let units = UnitTable::builtin();
+        let outputs = BTreeMap::from([(
+            at("Frame", "wall_sizing"),
+            outs.iter()
+                .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                .collect(),
+        )]);
+        Evaluator::new(&resolver, &units, &pkgs)
+            .with_solver_outputs(outputs)
+            .evaluate()
+    }
+
+    // frob:tests solver_output_is_recorded_exactly
+    #[test]
+    fn solver_output_is_recorded_exactly() {
+        let ev = run_with_outputs(SOLVER_SRC, &[("min_wall", "0.1mm")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let mut out = at("Frame", "wall_sizing");
+        out.members.push(MemberSeg::Name("min_wall".to_owned()));
+        let got = match &ev.get(&out).expect("output value").value {
+            Val::Quantity(q) => q.clone(),
+            other => panic!("not a quantity: {other:?}"),
+        };
+        assert_eq!(got, quant(&ev, "Frame", "ref"));
+    }
+
+    // frob:tests driving_solver_output_sets_the_value
+    #[test]
+    fn driving_solver_output_sets_the_value() {
+        let ev = run_with_outputs(SOLVER_SRC, &[("min_wall", "3.3mm")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        let want = run(&file("model Frame { wall = 3.5mm }"));
+        assert_eq!(quant(&ev, "Frame", "wall"), quant(&want, "Frame", "wall"));
+    }
+
+    // frob:tests unrecorded_solver_output_has_no_value
+    #[test]
+    fn unrecorded_solver_output_has_no_value() {
+        let ev = run_with_outputs(SOLVER_SRC, &[]);
+        assert!(ev.get(&at("Frame", "wall")).is_none());
     }
 }

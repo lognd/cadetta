@@ -15,12 +15,15 @@
 //! - A member is `Derived` when its definition reads other members, else `Authored`.
 //! - Variant evaluations are supplied by the caller keyed `"<slot>=<alternate>"`; a member
 //!   stores only the values that differ from the primary.
-//! - Not lowered (the IR `Project` has no field for them yet): waivers, interfaces, tables,
-//!   `require` obligations, solvers and bindings; parameterized components lower with
+//! - Solvers and waivers lower in `lower_solver.rs`; the recorded-result state of a solver comes
+//!   from the caller (`LowerInput::solver_states`).
+//! - Tables lower in `lower_table.rs`.
+//! - Not lowered yet: interfaces and bindings; parameterized components lower with
 //!   valueless members. Datums, points and placements lower in `lower_geom.rs`.
 
 use std::collections::{BTreeMap, BTreeSet};
 
+use cadetta_ir::entities::Require;
 use cadetta_ir::model::{
     self as ir, AffineTerm, Check, Component, ComponentClass, Exact, Fit, Flavour, Inexact, Member,
     MemberKind, Nominal, PackageId, Part, Project, Provenance, SpanRef, Value, VerdictState,
@@ -30,7 +33,7 @@ use cadetta_ir::path::{Path, PathContext, Seg};
 use cadetta_syntax::ast;
 use cadetta_syntax::lexer::Span;
 use cadetta_units::compare::{Note, Verdict};
-use cadetta_units::{Magnitude, Toleranced, VarId};
+use cadetta_units::{Magnitude, Role, Toleranced, VarId};
 use tracing::{debug, trace, warn};
 
 use crate::cite::{CiteIndex, effective};
@@ -38,7 +41,7 @@ use crate::deps::DepGraph;
 use crate::eval::{Evaluated, Evaluation, Quant, Val};
 use crate::fits::FitResult;
 use crate::process::ProcessOutcome;
-use crate::resolve::{CanonPath, MemberSeg, PackageSrc};
+use crate::resolve::{CanonPath, MemberSeg, PackageSrc, PartSeg};
 
 /// The text and name of one source file, for spans and expression text.
 #[derive(Clone, Copy, Debug)]
@@ -86,6 +89,9 @@ pub struct LowerInput<'a> {
     pub variants: BTreeMap<String, &'a Evaluation>,
     /// Analysed fits.
     pub fits: &'a [FitInput],
+    /// Recorded primary result state per solver (`PKG::Comp.solver`); absent means unsolved.
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    pub solver_states: BTreeMap<CanonPath, SolverState>,
 }
 
 /// Converts a canonical path to an IR path; `None` (logged) when it is not well formed.
@@ -136,8 +142,41 @@ fn var_owners(ev: &Evaluation) -> BTreeMap<u32, CanonPath> {
         if let (Some(v), None) = (e.var, &e.alias_of) {
             owners.entry(v.0).or_insert_with(|| path.clone());
         }
+        if e.owns_discs && e.alias_of.is_none() {
+            disc_owners(path, &e.value, &mut owners);
+        }
     }
     owners
+}
+
+/// Records the `<point>.position` stem that owns each disc variable of a `[position d]` value.
+// frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+fn disc_owners(path: &CanonPath, value: &Val, owners: &mut BTreeMap<u32, CanonPath>) {
+    let mut stem_of = |point: CanonPath, cs: &[Val]| {
+        let mut stem = point;
+        stem.members.push(MemberSeg::Name("position".to_owned()));
+        for c in cs {
+            if let Val::Quantity(q) = c {
+                for v in q.form.disc_vars() {
+                    owners.entry(v.0).or_insert_with(|| stem.clone());
+                }
+            }
+        }
+    };
+    match value {
+        Val::Point(cs) => stem_of(path.clone(), cs),
+        Val::Array(items) => {
+            for (i, item) in (0u64..).zip(items) {
+                if let Val::Point(cs) = item {
+                    let mut p = path.clone();
+                    p.members
+                        .push(MemberSeg::Index(cadetta_ir::canon::Index::At(i)));
+                    stem_of(p, cs);
+                }
+            }
+        }
+        _ => {}
+    }
 }
 
 /// Builds the IR [`Value`] of a quantity (ir.md 3 `Value`).
@@ -197,10 +236,53 @@ fn quant_value(
             hi: Exact(hi),
         });
     }
+    disc_terms(&mut terms, owners, member, q);
     if !terms.is_empty() {
         v.tol = Some(ir::Affine { terms });
     }
     v
+}
+
+/// Appends the paired `.u`/`.v` terms of every disc variable of `q` (ir.md 3, geometry.md 3.1).
+///
+/// Both terms of a pair carry the same symmetric bounds `+-(|a| + |b|)`, which contain the disc
+/// radius `sqrt(a^2 + b^2)`; the pair names the shared disc, so the two coordinates of one point
+/// correlate through the common stem.
+// frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+fn disc_terms(
+    terms: &mut Vec<AffineTerm>,
+    owners: &BTreeMap<u32, CanonPath>,
+    member: &CanonPath,
+    q: &Quant,
+) {
+    for id in q.form.disc_vars() {
+        let Some((a, b)) = q.form.disc_coefficients(id) else {
+            continue;
+        };
+        let abs = |m: &Magnitude| if is_negative(m) { m.neg() } else { m.clone() };
+        let cadetta_units::Sum::Exact(r) = abs(a).add(&abs(b)) else {
+            warn!(path = %member, "lower: disc radius mixes pi exponents; disc dropped");
+            continue;
+        };
+        let stem = match owners.get(&id.0) {
+            Some(o) => ir_path(o),
+            None => ir_path(member).map(|mut p| {
+                p.members.push(Seg::Name(format!("position{}", id.0)));
+                p
+            }),
+        };
+        let Some(stem) = stem else { continue };
+        for axis in ["u", "v"] {
+            let mut var = stem.clone();
+            var.members.push(Seg::Name(axis.to_owned()));
+            trace!(path = %member, var = %var, "lower: disc term");
+            terms.push(AffineTerm {
+                var,
+                lo: Exact(r.neg()),
+                hi: Exact(r.clone()),
+            });
+        }
+    }
 }
 
 /// The IR value of an evaluated member, if it is numeric.
@@ -239,8 +321,15 @@ fn evaluated_value(
     }
 }
 
+#[path = "lower_array.rs"]
+mod lower_array;
 #[path = "lower_geom.rs"]
 mod lower_geom;
+#[path = "lower_solver.rs"]
+mod lower_solver;
+#[path = "lower_table.rs"]
+mod lower_table;
+pub use lower_solver::{SolverState, lower_waiver};
 
 /// Per-lowering shared state.
 struct Cx<'a> {
@@ -251,16 +340,126 @@ struct Cx<'a> {
 }
 
 impl Cx<'_> {
+    /// A dependency on a solver node, widened to the solver's recorded output members; any other node as is.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn solver_output_nodes(&self, d: &CanonPath) -> Vec<CanonPath> {
+        let outputs: Vec<CanonPath> = self
+            .input
+            .evaluation
+            .values
+            .keys()
+            .filter(|k| {
+                k.parts.is_empty()
+                    && d.parts.is_empty()
+                    && k.item_only() == d.item_only()
+                    && k.members.len() == 2
+                    && d.members.len() == 1
+                    && k.members[0] == d.members[0]
+            })
+            .cloned()
+            .collect();
+        if outputs.is_empty() {
+            vec![d.clone()]
+        } else {
+            trace!(solver = %d, outputs = outputs.len(), "lower: solver dependency widened to its outputs");
+            outputs
+        }
+    }
+
     /// A dependency path with part-slot instances mapped to the part type's own member.
+    // frob:ticket 01M4Z7SF16P01AQQ1XXE2NDJ5J
     fn dep_node(&self, p: CanonPath) -> Option<CanonPath> {
         if p.parts.is_empty() {
-            return Some(p);
+            if self.is_underived_fit(&p) {
+                debug!(path = %p, "lower: dependency on a fit with component-argument operands dropped");
+                return None;
+            }
+            if let Some(inst) = self.instance_fit(&p) {
+                debug!(path = %p, fit = %inst, "lower: dependency on a definition fit is its per-instance fit node");
+                return Some(inst);
+            }
+            return Some(self.slot_node(p));
         }
         let d = crate::eval::geom::definition_path(&self.resolver, &p);
-        if d.is_none() {
-            debug!(path = %p, "lower: dependency through an unresolved part slot dropped");
+        match d {
+            None => {
+                debug!(path = %p, "lower: dependency through an unresolved part slot dropped");
+                None
+            }
+            // A dependency package's component is not lowered, so its member is no node:
+            // the read depends on the slot (and so on the arguments) that instantiates it.
+            Some(d) if d.package != self.input.name => {
+                let mut slot = p.item_only();
+                slot.parts.push(PartSeg {
+                    name: p.parts[0].name.clone(),
+                    index: None,
+                });
+                debug!(path = %p, slot = %slot, "lower: dependency on a foreign part member is the slot");
+                Some(slot)
+            }
+            d => d,
         }
-        d
+    }
+
+    /// The per-instance fit node (`Unit/housing.bore_fit`) standing in for definition fit `p`, when it is derived only per instance.
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    fn instance_fit(&self, p: &CanonPath) -> Option<CanonPath> {
+        if self.input.fits.iter().any(|f| f.path == *p) {
+            return None;
+        }
+        self.input
+            .fits
+            .iter()
+            .find(|f| {
+                !f.path.parts.is_empty()
+                    && crate::eval::geom::definition_path(&self.resolver, &f.path).as_ref()
+                        == Some(p)
+            })
+            .map(|f| f.path.clone())
+    }
+
+    /// True when `p` names a `fit` member that was not derived (its operands read component arguments).
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    fn is_underived_fit(&self, p: &CanonPath) -> bool {
+        let [MemberSeg::Name(name)] = p.members.as_slice() else {
+            return false;
+        };
+        let is_fit = self.resolver.component(&p.item_only()).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, ast::MemberKind::Fit(f) if f.name.name == *name))
+        });
+        // A fit derived inside a parameterized instance carries a per-instance path
+        // (`Unit/housing.bore_fit`); it is derived when it maps back to this definition path.
+        is_fit
+            && !self.input.fits.iter().any(|f| {
+                f.path == *p
+                    || (!f.path.parts.is_empty()
+                        && crate::eval::geom::definition_path(&self.resolver, &f.path).as_ref()
+                            == Some(p))
+            })
+    }
+
+    /// A read of a bare part slot (`Unit.bearing`) is the slot's own `Unit/bearing` node.
+    fn slot_node(&self, p: CanonPath) -> CanonPath {
+        let [MemberSeg::Name(name)] = p.members.as_slice() else {
+            return p;
+        };
+        let is_slot = self.resolver.component(&p.item_only()).is_some_and(|c| {
+            c.members
+                .iter()
+                .any(|m| matches!(&m.kind, ast::MemberKind::Part(x) if x.name.name == *name))
+        });
+        if !is_slot {
+            return p;
+        }
+        let mut slot = p.item_only();
+        slot.parts.push(PartSeg {
+            name: name.clone(),
+            index: None,
+        });
+        trace!(slot = %slot, "lower: dependency on a part slot");
+        slot
     }
 
     fn lower_member(
@@ -330,7 +529,8 @@ impl Cx<'_> {
             .input
             .deps
             .deps_of(&canon)
-            .filter_map(|d| self.dep_node(d.clone()))
+            .flat_map(|d| self.solver_output_nodes(d))
+            .filter_map(|d| self.dep_node(d))
             .filter_map(|d| ir_path(&d))
             .collect();
         out.provenance = if deps.is_empty() {
@@ -343,6 +543,16 @@ impl Cx<'_> {
         let ev = self.input.evaluation;
         if let Some(e) = ev.get(&canon) {
             out.analysis = e.analysis || kind == MemberKind::Let;
+            // frob:ticket 01M4YTTRS6JMNTHS4QXB08JM3F
+            // An explicit role attribute wins; otherwise the evaluated role (ISO class letter
+            // case, fit side, inherited) so emit(mmc) works on `12mm H7` (quantities.md 5.6).
+            if out.role.is_none() {
+                out.role = e.role.map(|r| match r.role {
+                    Role::Hole => "hole".to_owned(),
+                    Role::Shaft => "shaft".to_owned(),
+                });
+                trace!(path = %canon, role = ?out.role, "lower: role from evaluation");
+            }
             let comp_out = self
                 .input
                 .compensation
@@ -365,17 +575,56 @@ impl Cx<'_> {
         Some(out)
     }
 
-    /// The numeric members of the parameterized instances declared in `comp` (`Box/j.depth`).
+    /// The numeric and Text members of the parameterized instances declared in `comp` (`Box/j.depth`,
+    /// `Box/arm[1].depth` for one element of a part array).
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
     fn lower_instance_members(&self, comp: &CanonPath) -> Vec<Member> {
         let ev = self.input.evaluation;
         let mut out = Vec::new();
         for (k, e) in &ev.values {
-            let is_instance_member = k.item_only() == *comp
-                && k.parts.len() == 1
-                && k.parts[0].index.is_none()
-                && k.members.len() == 1;
+            let is_instance_member =
+                k.item_only() == *comp && k.parts.len() == 1 && k.members.len() == 1;
             if !is_instance_member {
+                continue;
+            }
+            let Some(path) = ir_path(k) else { continue };
+            let mut m = Member::new(path, MemberKind::Param);
+            // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+            if let Val::Text(t) = &e.value {
+                m.text = Some(t.clone());
+            } else if let Some(value) = evaluated_value(ev, &self.owners, k, e, "") {
+                m.value = Some(value);
+            } else {
+                continue;
+            }
+            m.private = ev.instance_private.contains(k);
+            m.analysis = e.analysis;
+            m.provenance = Provenance::Derived;
+            out.push(m);
+        }
+        trace!(component = %comp, members = out.len(), "lower: instance members");
+        out
+    }
+
+    /// The recorded outputs of the solver members of `c` as derived analysis members.
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    fn lower_solver_outputs(&self, comp: &CanonPath, c: &ast::Component) -> Vec<Member> {
+        let ev = self.input.evaluation;
+        let solvers: BTreeSet<&str> = c
+            .members
+            .iter()
+            .filter_map(|m| match &m.kind {
+                ast::MemberKind::Solver(s) => Some(s.name.name.as_str()),
+                _ => None,
+            })
+            .collect();
+        let mut out = Vec::new();
+        for (k, e) in &ev.values {
+            let is_output = k.item_only() == *comp
+                && k.parts.is_empty()
+                && matches!(k.members.as_slice(),
+                    [MemberSeg::Name(s), MemberSeg::Name(_)] if solvers.contains(s.as_str()));
+            if !is_output {
                 continue;
             }
             let Some(path) = ir_path(k) else { continue };
@@ -383,13 +632,12 @@ impl Cx<'_> {
                 continue;
             };
             let mut m = Member::new(path, MemberKind::Param);
-            m.private = ev.instance_private.contains(k);
-            m.analysis = e.analysis;
+            m.analysis = true;
             m.value = Some(value);
             m.provenance = Provenance::Derived;
             out.push(m);
         }
-        trace!(component = %comp, members = out.len(), "lower: instance members");
+        trace!(component = %comp, members = out.len(), "lower: solver outputs");
         out
     }
 
@@ -421,8 +669,13 @@ impl Cx<'_> {
         src: Option<&SourceText<'_>>,
         p: &ast::Part,
     ) -> Option<Part> {
-        let mut path = comp.clone();
-        path.members.push(MemberSeg::Name(p.name.name.clone()));
+        // A slot is a `/part` segment (`pkg::Assembly/wheel`), not a `.member`.
+        let mut path = comp.item_only();
+        path.parts.push(PartSeg {
+            name: p.name.name.clone(),
+            index: None,
+        });
+        debug!(slot = %path, "lower: part slot path");
         let ctor_text = |c: &ast::Ctor| {
             c.path
                 .segments
@@ -452,16 +705,16 @@ impl Cx<'_> {
         })
     }
 
-    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
-        let t: &Toleranced = &f.result.clearance;
-        let nominal = t.nominal().clone();
+    /// The value of one accessor of a fit (`<fit>.hole`, `.shaft`, `.clearance`): nominal plus a one-term affine over its own path.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn fit_side_value(f: &FitInput, side: &str, t: &Toleranced) -> Option<Value> {
         let mut v = Value::new(
-            Nominal::Exact(Exact(nominal)),
+            Nominal::Exact(Exact(t.nominal().clone())),
             t.dim().clone(),
             String::new(),
         );
         let mut var = ir_path(&f.path)?;
-        var.members.push(Seg::Name("clearance".to_owned()));
+        var.members.push(Seg::Name(side.to_owned()));
         v.tol = Some(ir::Affine {
             terms: vec![AffineTerm {
                 var,
@@ -469,14 +722,45 @@ impl Cx<'_> {
                 hi: Exact(t.upper().clone()),
             }],
         });
+        Some(v)
+    }
+
+    fn lower_fit(&self, f: &FitInput) -> Option<Fit> {
         Some(Fit {
             path: ir_path(&f.path)?,
             hole: ir_path(&f.hole)?,
             shaft: ir_path(&f.shaft)?,
-            clearance: v,
+            clearance: Self::fit_side_value(f, "clearance", &f.result.clearance)?,
             fit_type: f.result.fit_type.name().to_owned(),
             required: f.required.clone(),
         })
+    }
+
+    /// The derived members `<fit>.hole`, `.shaft` and `.clearance` of an analysed fit, so checks and goldens can address them.
+    // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+    fn lower_fit_members(&self, f: &FitInput) -> Vec<Member> {
+        let Some(fit_path) = ir_path(&f.path) else {
+            return Vec::new();
+        };
+        let sides = [
+            ("hole", &f.result.hole.value),
+            ("shaft", &f.result.shaft.value),
+            ("clearance", &f.result.clearance),
+        ];
+        sides
+            .into_iter()
+            .map(|(side, t)| {
+                let mut path = fit_path.clone();
+                path.members.push(Seg::Name(side.to_owned()));
+                let mut m = Member::new(path, MemberKind::Let);
+                m.analysis = true;
+                m.provenance = Provenance::Derived;
+                m.deps = vec![fit_path.clone()];
+                m.value = Self::fit_side_value(f, side, t);
+                debug!(path = %m.path, "lower: fit accessor member");
+                m
+            })
+            .collect()
     }
 }
 
@@ -518,12 +802,48 @@ fn fold_verdicts(results: &[&crate::eval::checks::CheckResult]) -> VerdictState 
     state
 }
 
-fn group_checks(ev: &Evaluation) -> BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> {
+/// Groups the instance results of the checks (`obligation == false`) or the requires (`true`) by path.
+fn group_checks(
+    ev: &Evaluation,
+    obligation: bool,
+) -> BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> {
     let mut m: BTreeMap<CanonPath, Vec<&crate::eval::checks::CheckResult>> = BTreeMap::new();
-    for r in ev.checks.iter().filter(|r| !r.obligation) {
+    for r in ev.checks.iter().filter(|r| r.obligation == obligation) {
         m.entry(r.path.clone()).or_default().push(r);
     }
     m
+}
+
+/// Gives every pure reference the `emit` attribute of its referent unless it sets its own (quantities.md 5.6).
+// frob:ticket 01M51NR9617ZM61WBT4AQ8KSJA
+fn inherit_emit_points(ev: &Evaluation, project: &mut Project) {
+    let emits: BTreeMap<String, String> = project
+        .components
+        .iter()
+        .flat_map(|c| &c.members)
+        .filter_map(|m| Some((m.path.to_string(), m.attrs.get("emit")?.clone())))
+        .collect();
+    for (path, e) in &ev.values {
+        let Some(root) = &e.alias_of else { continue };
+        let (Some(me), Some(target)) = (ir_path(path), ir_path(root)) else {
+            continue;
+        };
+        let Some(point) = emits.get(&target.to_string()) else {
+            continue;
+        };
+        let me = me.to_string();
+        let member = project
+            .components
+            .iter_mut()
+            .flat_map(|c| c.members.iter_mut())
+            .find(|m| m.path.to_string() == me);
+        if let Some(m) = member
+            && !m.attrs.contains_key("emit")
+        {
+            debug!(member = %me, referent = %target, point = %point, "lower: pure reference inherits emit point");
+            m.attrs.insert("emit".to_owned(), point.clone());
+        }
+    }
 }
 
 /// Lowers the evaluated program of one package into a design-flavour IR project.
@@ -604,49 +924,121 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
                 }
                 // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
                 comp.members.extend(cx.lower_instance_members(&canon));
+                // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+                comp.members.extend(cx.lower_instance_geometry(&canon));
+                // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+                comp.members
+                    .extend(cx.lower_array_members(&canon, &pkg.name, &module.path, c));
+                // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+                comp.members.extend(cx.lower_solver_outputs(&canon, c));
                 cx.lower_geometry(&canon, src, c, &mut comp);
-                comp.fits = input
+                // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+                let solvers = cx.lower_solvers(&canon, src, &idx, (&pkg.name, &module.path), c);
+                cited.extend(
+                    solvers
+                        .iter()
+                        .filter_map(|s| s.citation.as_ref()?.cite.clone()),
+                );
+                project.solvers.extend(solvers);
+                let own_fits: Vec<&FitInput> = input
                     .fits
                     .iter()
                     .filter(|f| f.path.item_only() == canon)
-                    .filter_map(|f| cx.lower_fit(f))
                     .collect();
+                comp.fits = own_fits.iter().filter_map(|f| cx.lower_fit(f)).collect();
+                // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+                comp.members
+                    .extend(own_fits.iter().flat_map(|f| cx.lower_fit_members(f)));
                 cited.extend(comp.citation.iter().filter_map(|r| r.cite.clone()));
                 debug!(component = %canon, members = comp.members.len(), "lower: component");
                 project.components.push(comp);
             }
-        }
-    }
-    let primary = group_checks(input.evaluation);
-    let variant_checks: BTreeMap<&String, _> = input
-        .variants
-        .iter()
-        .map(|(k, e)| (k, group_checks(e)))
-        .collect();
-    for (path, results) in &primary {
-        let Some(p) = ir_path(path) else { continue };
-        let src = input.sources.get(&path.modules);
-        let mut verdicts = Verdicts {
-            primary: Some(fold_verdicts(results)),
-            ..Verdicts::default()
-        };
-        for (k, vc) in &variant_checks {
-            if let Some(r) = vc.get(path) {
-                verdicts
-                    .per_alternate
-                    .insert((*k).clone(), fold_verdicts(r));
+            // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+            for item in module.file.items() {
+                if let ast::ItemKind::Table(t) = &item.kind {
+                    let canon = CanonPath::item(&pkg.name, &module.path, &t.name.name);
+                    let table = cx.lower_table(&canon, src, &idx, (&pkg.name, &module.path), t);
+                    if let Some(table) = table {
+                        cited.extend(table.citation.iter().filter_map(|r| r.cite.clone()));
+                        project.tables.push(table);
+                    }
+                }
+            }
+            // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+            for item in module.file.items() {
+                if let ast::ItemKind::Waive(w) = &item.kind {
+                    match lower_waiver(w) {
+                        Ok(w) => project.waivers.push(w),
+                        Err(e) => lower_solver::skip_waiver(w, &e),
+                    }
+                }
             }
         }
-        let conservative = results
+    }
+    inherit_emit_points(input.evaluation, &mut project);
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    let folded = |obligation: bool| {
+        let primary = group_checks(input.evaluation, obligation);
+        let variants: BTreeMap<&String, _> = input
+            .variants
             .iter()
-            .any(|r| r.notes.contains(&Note::Conservative));
+            .map(|(k, e)| (k, group_checks(e, obligation)))
+            .collect();
+        let mut out = Vec::new();
+        for (path, results) in &primary {
+            let Some(p) = ir_path(path) else { continue };
+            let mut verdicts = Verdicts {
+                primary: Some(fold_verdicts(results)),
+                ..Verdicts::default()
+            };
+            for (k, vc) in &variants {
+                if let Some(r) = vc.get(path) {
+                    verdicts
+                        .per_alternate
+                        .insert((*k).clone(), fold_verdicts(r));
+                }
+            }
+            let conservative = results
+                .iter()
+                .any(|r| r.notes.contains(&Note::Conservative));
+            let src = input.sources.get(&path.modules);
+            out.push((
+                p,
+                path.clone(),
+                text_of(src, results[0].span),
+                verdicts,
+                conservative,
+                results[0],
+            ));
+        }
+        out
+    };
+    for (path, _, expr, verdicts, conservative, _) in folded(false) {
         project.checks.push(Check {
-            path: p,
-            expr: text_of(src, results[0].span),
+            path,
+            expr,
             verdicts,
             conservative,
             waived_for: Vec::new(),
         });
+    }
+    // A require is never suppressed, so it keeps no waiver list but its message and citation.
+    for (path, canon, expr, verdicts, conservative, first) in folded(true) {
+        let mut req = Require::new(path, expr);
+        req.message = first.message.clone();
+        req.citation = first.citation.as_ref().and_then(|cc| {
+            match idx.lower_ref(&canon.package, &canon.modules, cc) {
+                Ok(r) => Some(r),
+                Err(e) => {
+                    debug!(path = %canon, error = %e.message, "lower: require citation unresolved");
+                    None
+                }
+            }
+        });
+        cited.extend(req.citation.iter().filter_map(|r| r.cite.clone()));
+        req.verdicts = verdicts;
+        req.conservative = conservative;
+        project.requires.push(req);
     }
     project.set_modules(modules.into_iter().collect());
     project.citations = cited
@@ -656,6 +1048,7 @@ pub fn lower(input: &LowerInput<'_>) -> Project {
     debug!(
         components = project.components.len(),
         checks = project.checks.len(),
+        requires = project.requires.len(),
         "lower: project built"
     );
     project
@@ -691,6 +1084,7 @@ mod tests {
     use crate::process::Processes;
     use crate::resolve::{ModuleSrc, Resolver};
     use cadetta_ir::geometry::Op;
+    use cadetta_ir::model::Digest;
     use cadetta_syntax::ast::{FitSpec, Ident};
     use cadetta_syntax::parser::parse;
     use cadetta_units::{Rational, UnitTable};
@@ -699,6 +1093,28 @@ mod tests {
         hole_comp = 0.2mm [+-0.05mm]\n  \
         rule hole(d: Length) -> Length = d + hole_comp\n}\n\
         model Case {\n  #![process(Fdm)]\n  insert_hole = 3.4mm [+-0.1mm] #[hole]\n}\n";
+
+    /// A pure reference inherits its referent's emit point unless it sets its own.
+    // frob:ticket 01M51NR9617ZM61WBT4AQ8KSJA
+    // frob:tests crates/cadetta-sema/src/lower.rs::inherit_emit_points kind=unit
+    #[test]
+    fn pure_reference_inherits_emit_point() {
+        let b = build(
+            "model M {\n  a = 12mm [+0.018mm -0] #[emit(mid)]\n  b = a\n  c = a #[emit(mmc)]\n  d = a + 1mm\n}\n",
+            &[],
+            &[],
+        );
+        let attr = |n: &str| {
+            b.project.components[0]
+                .members
+                .iter()
+                .find(|m| m.path.to_string().ends_with(n))
+                .and_then(|m| m.attrs.get("emit").cloned())
+        };
+        assert_eq!(attr(".b").as_deref(), Some("mid"));
+        assert_eq!(attr(".c").as_deref(), Some("mmc"));
+        assert_eq!(attr(".d"), None);
+    }
 
     const SRC: &str = "model Axle {\n  /// the seat\n  seat = 20mm [+0.021mm -0]\n  \
         wall = 2.5mm [+-0.1mm]\n  od = seat + 2 * wall\n  let slack = od - seat\n  let stack = seat + 2 * wall\n  \
@@ -713,6 +1129,7 @@ mod tests {
         let p = parse(src);
         assert!(p.diags.is_empty(), "{:?}", p.diags);
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -726,6 +1143,7 @@ mod tests {
         let units = UnitTable::builtin();
         let mut ev = Evaluator::new(&resolver, &units, &pkgs);
         let procs = Processes::compile(&mut ev, &pkgs);
+        ev.set_processes(procs.clone());
         let evaluation = ev.evaluate();
         let outcome = procs.apply(&evaluation);
         let renames = Renames::collect(&resolver, &pkgs);
@@ -734,6 +1152,15 @@ mod tests {
     }
 
     fn build(src: &str, variants: &[(&str, &str)], fits: &[FitInput]) -> Built {
+        build_with(src, variants, fits, BTreeMap::new())
+    }
+
+    fn build_with(
+        src: &str,
+        variants: &[(&str, &str)],
+        fits: &[FitInput],
+        solver_states: BTreeMap<CanonPath, SolverState>,
+    ) -> Built {
         let (evaluation, outcome, graph) = evaluate(src);
         let vevals: Vec<(String, Evaluation)> = variants
             .iter()
@@ -741,6 +1168,7 @@ mod tests {
             .collect();
         let p = parse(src);
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {
@@ -768,6 +1196,7 @@ mod tests {
             deps: &graph,
             variants: vevals.iter().map(|(k, e)| (k.clone(), e)).collect(),
             fits,
+            solver_states,
         };
         let project = lower(&input);
         Built {
@@ -787,6 +1216,266 @@ mod tests {
             .iter()
             .find(|m| m.path.members == vec![Seg::Name(name.to_owned())])
             .expect("member")
+    }
+
+    const SOLVER_SRC: &str = "model Frame { span = 2m\n  \
+        solver beam {\n    script \"beam.sh\"\n    in len = span\n    out defl: Length\n  }\n}\n\
+        waive W001 on Frame.* { because \"known\" expires 2030-01-01 }\n\
+        waive W002 on Frame.span for alt p::Frame/s=p::Alt { because \"alt\" }\n\
+        waive W003 on Frame.span for alt a=b { because \"bad alt\" }\n";
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_lowers_with_script_inputs_outputs_and_deps() {
+        let b = build(SOLVER_SRC, &[], &[]);
+        assert_eq!(b.project.solvers.len(), 1);
+        let s = &b.project.solvers[0];
+        assert_eq!(s.path.to_string(), "p::Frame.beam");
+        assert_eq!(s.script, "beam.sh");
+        assert_eq!(s.inputs.get("len").map(String::as_str), Some("span"));
+        assert_eq!(
+            s.outputs.get("defl").map(String::as_str),
+            Some("p::Frame.beam.defl")
+        );
+        assert_eq!(
+            s.deps.iter().map(|d| d.to_string()).collect::<Vec<_>>(),
+            ["p::Frame.span"]
+        );
+        assert!(s.result_digest.is_none() && !s.stale);
+    }
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_takes_its_recorded_result_state_from_the_caller() {
+        let key = member_path(&CanonPath::item("p", &[], "Frame"), "beam");
+        let state = SolverState {
+            result_digest: Some(Digest("ab".to_owned())),
+            stale: true,
+        };
+        let b = build_with(SOLVER_SRC, &[], &[], BTreeMap::from([(key, state)]));
+        let s = &b.project.solvers[0];
+        assert_eq!(s.result_digest, Some(Digest("ab".to_owned())));
+        assert!(s.stale);
+    }
+
+    // frob:ticket 01M4VNC6QGY8T20VW77QCK9BKX
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_solvers kind=unit
+    #[test]
+    fn a_solver_citation_lowers_to_a_cite_ref_and_is_not_an_input() {
+        let src = "cite fea: web { title = \"FEA\" }\n\
+            model Frame { span = 2m\n  \
+            solver beam @fea:\"p.4\" {\n    script \"beam.sh\"\n    in len = span\n    out defl: Length\n  }\n}\n";
+        let b = build(src, &[], &[]);
+        let s = &b.project.solvers[0];
+        let c = s.citation.as_ref().expect("solver citation");
+        assert_eq!(c.cite.as_deref(), Some("p::fea"));
+        assert_eq!(c.locator.as_deref(), Some("p.4"));
+        assert_eq!(s.inputs.len(), 1, "the citation is not an input");
+        assert!(s.deps.iter().all(|d| d.to_string() != "p::fea"));
+        assert!(b.project.citations.iter().any(|c| c.path == "p::fea"));
+        let plain = build(SOLVER_SRC, &[], &[]);
+        assert!(plain.project.solvers[0].citation.is_none());
+    }
+
+    const TABLE_SRC: &str = "cite iso: web { title = \"ISO\" }\n\
+        enum Th { A, B }\n\
+        table T @iso:\"t.1\" { key t: Th\n cols major: Length, fine: Ratio\n \
+        Th::A => 5mm, 0.5\n Th::B => 6mm, 0.25 }\n\
+        table D { key d: Length\n 3mm\n 4mm }\n";
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_table_lowers_with_its_columns_rows_and_cell_values() {
+        let b = build(TABLE_SRC, &[], &[]);
+        assert_eq!(b.project.tables.len(), 2);
+        let t = &b.project.tables[0];
+        assert_eq!(t.path.to_string(), "p::T");
+        assert_eq!((t.key.name.as_str(), t.key.type_name.as_str()), ("t", "Th"));
+        let cols: Vec<_> = t
+            .cols
+            .iter()
+            .map(|c| (c.name.as_str(), c.type_name.as_str()))
+            .collect();
+        assert_eq!(cols, [("major", "Length"), ("fine", "Ratio")]);
+        assert_eq!(t.rows.len(), 2);
+        assert_eq!(
+            t.rows[1].key,
+            cadetta_ir::entities::Cell::Variant("B".to_owned())
+        );
+        let cadetta_ir::entities::Cell::Value(v) = &t.rows[1].cells[0] else {
+            panic!("a quantity cell");
+        };
+        assert_eq!(v.authored, "6mm");
+        assert_eq!(
+            v.nominal,
+            Nominal::Exact(Exact(Magnitude::new(Rational::new(6, 1000).unwrap(), 0)))
+        );
+    }
+
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn a_require_lowers_to_requires_not_checks() {
+        let src = "model R {\n  w = 2mm\n  check ok: w > 1mm\n  require budget: w < 1mm \"too wide\"\n}\n";
+        let b = build(src, &[], &[]);
+        assert_eq!(b.project.checks.len(), 1, "a require is not a check");
+        let r = &b.project.requires[0];
+        assert!(r.path.to_string().ends_with("R.budget"), "{}", r.path);
+        assert_eq!(r.message.as_deref(), Some("too wide"));
+        assert_eq!(r.verdicts.primary, Some(VerdictState::Fail));
+        assert!(r.citation.is_none());
+    }
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_key_only_table_has_quantity_keys_and_no_cells() {
+        let b = build(TABLE_SRC, &[], &[]);
+        let d = &b.project.tables[1];
+        assert!(d.cols.is_empty() && d.citation.is_none());
+        assert_eq!(d.rows.len(), 2);
+        assert!(d.rows.iter().all(|r| r.cells.is_empty()));
+        assert!(matches!(
+            d.rows[0].key,
+            cadetta_ir::entities::Cell::Value(_)
+        ));
+    }
+
+    // frob:ticket 01M5187T6Y9B3SMBS9DMPG9VFX
+    // frob:tests crates/cadetta-sema/src/lower_table.rs::lower_table kind=unit
+    #[test]
+    fn a_table_citation_lowers_to_a_cite_ref() {
+        let b = build(TABLE_SRC, &[], &[]);
+        let c = b.project.tables[0]
+            .citation
+            .as_ref()
+            .expect("table citation");
+        assert_eq!(c.cite.as_deref(), Some("p::iso"));
+        assert_eq!(c.locator.as_deref(), Some("t.1"));
+        assert!(b.project.citations.iter().any(|c| c.path == "p::iso"));
+    }
+
+    // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+    // frob:tests crates/cadetta-sema/src/lower_solver.rs::lower_waiver kind=unit
+    #[test]
+    fn waivers_lower_with_expiry_and_alternate() {
+        let b = build(SOLVER_SRC, &[], &[]);
+        let w = &b.project.waivers;
+        assert_eq!(w.len(), 2, "the waiver with a bad `for alt` is skipped");
+        assert_eq!(
+            (w[0].code.as_str(), w[0].glob.as_str()),
+            ("W001", "Frame.*")
+        );
+        assert_eq!(w[0].because, "known");
+        assert_eq!(w[0].expires.as_deref(), Some("2030-01-01"));
+        assert!(w[0].for_alt.is_none());
+        assert_eq!(
+            w[1].for_alt.as_ref().map(|v| v.to_string()),
+            Some("p::Frame/s=p::Alt".to_owned())
+        );
+    }
+
+    // frob:ticket 01M4W47VTBXFMC70Q2R137W4EE
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn part_slot_lowers_with_a_slash_segment() {
+        let src = "pub interface Caster {\n  diameter: Length\n}\n\
+            pub ots Good: Caster {\n  diameter = 5in\n}\n\
+            pub ots Bad: Caster {\n  diameter = 5in\n}\n\
+            pub assembly Rover {\n  part wheel[4]: Caster = Good alt [Bad]\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let paths: Vec<String> = rover.parts.iter().map(|p| p.path.to_string()).collect();
+        assert_eq!(paths, ["p::Rover/wheel"]);
+    }
+
+    // frob:ticket 01M4Z7SF16P01AQQ1XXE2NDJ5J
+    // frob:tests crates/cadetta-sema/src/lower.rs::slot_node kind=unit
+    #[test]
+    fn a_read_of_a_part_slot_depends_on_the_slot_node() {
+        let src = "pub interface Caster {\n  diameter: Length\n}\n\
+            pub ots Good: Caster {\n  diameter = 5in\n}\n\
+            pub assembly Rover {\n  part wheel: Caster = Good\n  \
+            reach = wheel.diameter\n}\n";
+        let b = build(src, &[], &[]);
+        let reach = member(&b, "Rover", "reach");
+        let deps: Vec<String> = reach.deps.iter().map(|d| d.to_string()).collect();
+        assert!(deps.iter().all(|d| !d.ends_with(".wheel")), "{deps:?}");
+    }
+
+    // frob:ticket 01M4Z7SEXW62CXBGNNHTC5DJ1M
+    // frob:tests crates/cadetta-sema/src/lower.rs::is_underived_fit kind=unit
+    #[test]
+    fn fit_on_component_argument_operand_is_not_a_dependency() {
+        let src = "pub interface Motor {\n  pilot_dia: Length\n}\n\
+            pub ots M1: Motor {\n  pilot_dia = 12mm [-0.006mm -0.017mm]\n}\n\
+            pub model Plate(motor: Motor) {\n  fit pilot = H7 on motor.pilot_dia\n  \
+            pilot_bore = pilot.hole\n}\n";
+        let b = build(src, &[], &[]);
+        let plate = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Plate")
+            .expect("Plate");
+        for m in &plate.members {
+            assert!(
+                m.deps.iter().all(|d| !d.to_string().ends_with(".pilot")),
+                "{:?}",
+                m.deps
+            );
+        }
+    }
+
+    // frob:ticket 01M50XZ0F7YNSYEDEJRVWWVNS4
+    // frob:tests crates/cadetta-sema/src/lower.rs::is_underived_fit kind=unit
+    #[test]
+    fn fit_derived_in_an_instance_is_a_dependency_of_the_definition() {
+        let src = "pub interface Motor {\n  pilot_dia: Length\n}\n\
+            pub ots M1: Motor {\n  pilot_dia = 12mm [-0.006mm -0.017mm]\n}\n\
+            pub model Plate(motor: Motor) {\n  fit pilot = H7 on motor.pilot_dia\n  \
+            pilot_bore = pilot.hole\n}\n\
+            pub assembly Rig {\n  part m: Motor = M1\n  part plate: Plate(motor = m)\n}\n";
+        let mut path = CanonPath::item("p", &[], "Rig");
+        path.parts.push(PartSeg {
+            name: "plate".to_owned(),
+            index: None,
+        });
+        path.members.push(MemberSeg::Name("pilot".to_owned()));
+        let spec = FitSpec::Class(Ident {
+            name: "H7".into(),
+            span: Span::default(),
+        });
+        let dim =
+            cadetta_units::Dim::new(cadetta_units::Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        let nominal = Toleranced::symmetric(
+            dim.clone(),
+            Magnitude::new(Rational::new(12, 1000).unwrap(), 0),
+            (dim, Magnitude::new(Rational::from_int(0), 0)),
+        )
+        .unwrap();
+        let fit = FitInput {
+            path: path.clone(),
+            hole: path.clone(),
+            shaft: path,
+            result: analyze(&spec, &nominal, None, None).expect("fit"),
+            required: None,
+        };
+        let b = build(src, &[], &[fit]);
+        let bore = member(&b, "Plate", "pilot_bore");
+        assert!(
+            bore.deps.iter().any(|d| d.to_string().ends_with(".pilot")),
+            "{:?}",
+            bore.deps
+        );
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
@@ -845,6 +1534,17 @@ mod tests {
         assert_eq!(comp.class, ComponentClass::Model);
         assert_eq!(comp.fits.len(), 1);
         assert_eq!(comp.fits[0].fit_type, "interference");
+        // frob:ticket 01M510QYB5KCDF6BBB893GZBM2
+        for side in ["hole", "shaft", "clearance"] {
+            let want = vec![Seg::Name("seat_fit".to_owned()), Seg::Name(side.to_owned())];
+            let m = comp
+                .members
+                .iter()
+                .find(|m| m.path.members == want)
+                .unwrap_or_else(|| panic!("fit accessor member {side}"));
+            assert_eq!(m.provenance, Provenance::Derived, "{side}");
+            assert!(m.value.as_ref().is_some_and(|v| v.tol.is_some()), "{side}");
+        }
         assert_eq!(b.project.checks.len(), 1);
         assert_eq!(
             b.project.checks[0].verdicts.primary,
@@ -852,6 +1552,40 @@ mod tests {
         );
         assert!(b.project.checks[0].expr.contains("od > 24mm"));
         assert_eq!(b.project.flavour, Flavour::Design);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    // frob:ticket 01M4Y772CY1967MXZ9T5T8FKPM
+    #[test]
+    fn file_scope_fit_lowers_into_its_owner_component() {
+        let src = "model Bore { d = 22mm [+0.021mm -0] }\n\
+                   model Pin { d = 22mm [+0.0mm -0.009mm] }\n\
+                   fit press = Bore.d / Pin.d\n";
+        let p = parse(src);
+        assert!(p.diags.is_empty(), "{:?}", p.diags);
+        let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
+            name: "p".to_owned(),
+            deps: Vec::new(),
+            modules: vec![ModuleSrc {
+                path: Vec::new(),
+                file: &p.file,
+                enums: &[],
+            }],
+        }];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty());
+        let units = UnitTable::builtin();
+        let mut ev = Evaluator::new(&resolver, &units, &pkgs);
+        let ranges = crate::fitderive::eval_ranges(&mut ev, &pkgs);
+        let evaluation = ev.evaluate();
+        let fits = crate::fitderive::derive_fits(&resolver, &evaluation, &ranges, &pkgs);
+        let b = build(src, &[], &fits);
+        let bore = b.project.components.iter().find(|c| c.path.item == "Bore");
+        let pin = b.project.components.iter().find(|c| c.path.item == "Pin");
+        assert_eq!(bore.expect("Bore").fits.len(), 1);
+        assert_eq!(bore.expect("Bore").fits[0].path.members.len(), 1);
+        assert!(pin.expect("Pin").fits.is_empty());
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
@@ -897,6 +1631,19 @@ mod tests {
         );
         assert_eq!(role_from_attrs(&mk("role", "other")), None);
         assert_eq!(role_from_attrs(&BTreeMap::new()), None);
+    }
+
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn iso_class_letter_case_sets_the_ir_role() {
+        let b = build(
+            "model P {\n  h = 12mm H7\n  s = 12mm g6\n  n = 12mm\n}\n",
+            &[],
+            &[],
+        );
+        assert_eq!(member(&b, "P", "h").role.as_deref(), Some("hole"));
+        assert_eq!(member(&b, "P", "s").role.as_deref(), Some("shaft"));
+        assert_eq!(member(&b, "P", "n").role, None);
     }
 
     // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
@@ -995,6 +1742,61 @@ mod tests {
         assembly Mount {\n  part rail: Rail\n  part bracket: Bracket\n  \
         place rail.origin at origin\n  place bracket.origin at origin.offset(x = 10mm)\n  \
         hx = (bracket.holes[1] in origin).x\n}\n";
+
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_geometry kind=unit
+    #[test]
+    fn position_point2_lowers_to_paired_uv_terms() {
+        let src = "model Plate {\n  holes: [Point2 on origin; 2] = \
+            [Point2(-25mm, 0mm), Point2(25mm, 0mm)] [position 0.2mm]\n  \
+            lone: Point2 on origin = Point2(1mm, 2mm)\n}\n";
+        let b = build(src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let plate = &b.project.components[0];
+        let mm = |n: i64, d: i64| Magnitude::new(Rational::new(n, d).unwrap(), 0);
+        // Every toleranced point has its own zone diameter and its own `.u/.v` stem.
+        let mut stems = Vec::new();
+        for pt in plate
+            .points
+            .iter()
+            .filter(|p| p.path.to_string().contains("holes"))
+        {
+            assert_eq!(pt.position, Some(Exact(mm(2, 10_000))), "{}", pt.path);
+            let tol_of = |c: usize| {
+                pt.coords[c]
+                    .tol
+                    .as_ref()
+                    .expect("coordinate tol")
+                    .terms
+                    .clone()
+            };
+            let (xt, yt) = (tol_of(0), tol_of(1));
+            let names: Vec<String> = xt.iter().map(|t| t.var.to_string()).collect();
+            assert_eq!(names.len(), 2, "{names:?}");
+            assert!(names[0].ends_with(".position.u"), "{names:?}");
+            assert!(names[1].ends_with(".position.v"), "{names:?}");
+            // The x and y coordinates share the disc, and the pair has equal symmetric bounds.
+            assert_eq!(
+                xt.iter().map(|t| t.var.to_string()).collect::<Vec<_>>(),
+                yt.iter().map(|t| t.var.to_string()).collect::<Vec<_>>()
+            );
+            assert_eq!(xt[0].lo, xt[1].lo);
+            assert_eq!(xt[0].hi, xt[1].hi);
+            assert_eq!(xt[0].hi, Exact(mm(1, 10_000)));
+            assert_eq!(xt[0].lo, Exact(mm(-1, 10_000)));
+            stems.push(names[0].clone());
+        }
+        assert_eq!(stems.len(), 2);
+        assert_ne!(stems[0], stems[1], "one disc per point");
+        let lone = plate
+            .points
+            .iter()
+            .find(|p| p.path.to_string().ends_with("lone"))
+            .expect("lone");
+        assert_eq!(lone.position, None);
+        assert!(lone.coords.iter().all(|c| c.tol.is_none()));
+    }
 
     // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
     // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_geometry kind=unit
@@ -1101,6 +1903,31 @@ mod tests {
         assert_eq!(exact_text(&b, "Frame", "reach"), "7/10");
     }
 
+    // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
+    // frob:tests crates/cadetta-sema/src/geom.rs::through_parts kind=unit
+    #[test]
+    fn an_unindexed_read_of_a_counted_part_is_instance_zero() {
+        let src = LEGS_SRC.replace("reach = leg[2].length", "reach = leg.length");
+        let b = build(&src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        assert_eq!(exact_text(&b, "Frame", "reach"), "7/10");
+    }
+
+    // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
+    // frob:tests crates/cadetta-sema/src/geom.rs::through_parts kind=unit
+    #[test]
+    fn an_index_on_a_non_array_part_is_an_error() {
+        let src = "model Leg {\n  length = 700mm\n  datum top = origin.offset(z = length)\n}\nassembly Frame {\n  part leg: Leg\n  reach = (leg[0].top in origin).y\n}\n";
+        let (ev, _, _) = evaluate(src);
+        assert!(
+            ev.diagnostics
+                .iter()
+                .any(|d| d.message.contains("and only a part array")),
+            "{:?}",
+            ev.diagnostics
+        );
+    }
+
     // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
     // frob:tests crates/cadetta-sema/src/geom.rs::reexpress kind=unit
     #[test]
@@ -1123,5 +1950,167 @@ mod tests {
             "{:?}",
             ev.diagnostics
         );
+    }
+
+    // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+    // frob:tests crates/cadetta-sema/src/lower_array.rs::lower_array_members kind=unit
+    #[test]
+    fn part_array_instance_members_lower_per_index() {
+        let src = "model Axle {\n  len = 10mm\n}\n\
+            model Rover {\n  part axle[2]: Axle\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let mut paths: Vec<String> = rover.members.iter().map(|m| m.path.to_string()).collect();
+        paths.sort();
+        assert_eq!(paths, ["p::Rover/axle[0].len", "p::Rover/axle[1].len"]);
+        assert!(rover.members.iter().all(|m| m.value.is_some()));
+    }
+
+    // frob:ticket 01M51ZFFQP22HJSYHXXGQGAT9X
+    // frob:tests crates/cadetta-sema/src/lower_array.rs::lower_array_members kind=unit
+    #[test]
+    fn singular_ots_part_members_lower_per_instance_but_models_do_not() {
+        let src = "pub ots Ring {\n  bore = 22mm\n}\n\
+            model Plain {\n  len = 1mm\n}\n\
+            model Unit {\n  part ring: Ring\n  part plain: Plain\n}\n";
+        let b = build(src, &[], &[]);
+        let unit = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Unit")
+            .expect("Unit");
+        let paths: Vec<String> = unit
+            .members
+            .iter()
+            .filter(|m| m.path.to_string().contains('.'))
+            .map(|m| m.path.to_string())
+            .collect();
+        assert_eq!(paths, ["p::Unit/ring.bore"]);
+    }
+
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower_instance_members kind=unit
+    #[test]
+    fn a_text_instance_member_lowers_as_text_without_a_value() {
+        let src = "model Tag(n: Count) {\n  label = fmt(\"n={}\", n)\n}\n\
+            model Box {\n  part t: Tag(n = 3)\n}\n";
+        let b = build(src, &[], &[]);
+        let bx = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Box")
+            .expect("Box");
+        let label = bx
+            .members
+            .iter()
+            .find(|m| m.path.to_string() == "p::Box/t.label")
+            .expect("label");
+        assert_eq!(label.text.as_deref(), Some("n=3"));
+        assert!(label.value.is_none());
+    }
+
+    // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V
+    // frob:tests crates/cadetta-sema/src/instances.rs::expand_arrays kind=unit
+    #[test]
+    fn parameterized_part_array_lowers_per_instance_values() {
+        let src = "model Arm(len: Length, gap: Length = 1mm) {\n  reach = len + gap\n}\n\
+            model Rover {\n  part arm[2]: Arm(len = 10mm)\n}\n";
+        let b = build(src, &[], &[]);
+        let rover = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rover")
+            .expect("Rover");
+        let reach: Vec<_> = rover
+            .members
+            .iter()
+            .filter(|m| m.path.to_string().ends_with(".reach"))
+            .collect();
+        let mut paths: Vec<String> = reach.iter().map(|m| m.path.to_string()).collect();
+        paths.sort();
+        assert_eq!(paths, ["p::Rover/arm[0].reach", "p::Rover/arm[1].reach"]);
+        for m in reach {
+            let v = m.value.as_ref().expect("a value");
+            assert!(format!("{v:?}").contains("Rational(11/1000)"), "{v:?}");
+        }
+    }
+
+    const INST_GEOM_SRC: &str = "model Leg {\n  len = 10mm\n}\n\
+        model Box(depth: Length, lift: Length = 3mm) {\n  \
+        datum mount = origin.offset(z = depth + lift)\n}\n\
+        assembly Frame(w: Length) {\n  part leg: Leg\n  \
+        place leg.origin at origin.offset(x = w)\n}\n\
+        assembly Top {\n  part j: Box(depth = 7mm)\n  part f: Frame(w = 4mm)\n}\n";
+
+    fn top_member<'a>(b: &'a Built, path: &str) -> Option<&'a Member> {
+        let top = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Top")
+            .expect("Top");
+        top.members.iter().find(|m| m.path.to_string() == path)
+    }
+
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_instance_geometry kind=unit
+    #[test]
+    fn instance_datums_are_valued_from_args_and_defaults() {
+        let b = build(INST_GEOM_SRC, &[], &[]);
+        let m = top_member(&b, "p::Top/j.mount.offset.z").expect("datum member");
+        assert_eq!(m.kind, MemberKind::Datum);
+        let v = m.value.as_ref().expect("a value");
+        assert!(
+            format!("{v:?}").contains("Rational(1/100)"),
+            "7mm + 3mm default: {v:?}"
+        );
+    }
+
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    // frob:tests crates/cadetta-sema/src/lower_geom.rs::lower_instance_geometry kind=unit
+    #[test]
+    fn instance_placements_are_valued_from_args() {
+        let b = build(INST_GEOM_SRC, &[], &[]);
+        let m = top_member(&b, "p::Top/f/leg.place.offset.x").expect("placement member");
+        assert_eq!(m.kind, MemberKind::Place);
+        let v = m.value.as_ref().expect("a value");
+        assert!(
+            format!("{v:?}").contains("Rational(1/250)"),
+            "w = 4mm: {v:?}"
+        );
+    }
+
+    // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+    // frob:tests crates/cadetta-sema/src/lower.rs::lower kind=unit
+    #[test]
+    fn indexed_part_array_argument_evaluates_the_instance_members() {
+        let src = "pub interface Brg {\n  outer_dia: Length\n}\n\
+            pub ots B1: Brg {\n  outer_dia = 22mm\n}\n\
+            pub model Housing(bearing: Brg) {\n  twice = bearing.outer_dia * 2\n}\n\
+            pub assembly Rig {\n  part b[2]: Brg = B1\n  \
+            part housing: Housing(bearing = b[0])\n}\n";
+        let b = build(src, &[], &[]);
+        assert!(b.ev.diagnostics.is_empty(), "{:?}", b.ev.diagnostics);
+        let rig = b
+            .project
+            .components
+            .iter()
+            .find(|c| c.path.item == "Rig")
+            .expect("Rig");
+        let m = rig
+            .members
+            .iter()
+            .find(|m| m.path.to_string() == "p::Rig/housing.twice")
+            .expect("per-instance member");
+        let v = format!("{:?}", m.value);
+        assert!(v.contains("Rational(11/250)"), "2 * 22mm: {v}");
     }
 }

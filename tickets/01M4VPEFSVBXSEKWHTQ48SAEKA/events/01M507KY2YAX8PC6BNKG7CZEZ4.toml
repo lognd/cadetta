@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T16:51:36Z"
+digest = "d3c6f2c56c56388275b14660eabef19ec3dbc7f97bbc7c2557d11508350a8c71"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9312b6ae-7851-4616-85e3-3926f3e935f5 with nextest profile: default
+    Starting 1 test across 42 binaries (507 tests skipped)
+        PASS [   0.152s] cadetta cmd::names::tests::reading_adapter_makes_unbound_and_discovered_implicit
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.153s] 1 test run: 1 passed, 507 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta reading_adapter_makes_unbound_and_discovered_implicit"
+size = 574
+status = "measured"
+test_count = 1
+tests_digest = "7f199057e278d2739d38e2fe156aee43e499c026f82bf00a6bead438feb4a5cb"
+at = "2026-10-15T16:51:36Z"
+actor = "lognd"
+rev = 1

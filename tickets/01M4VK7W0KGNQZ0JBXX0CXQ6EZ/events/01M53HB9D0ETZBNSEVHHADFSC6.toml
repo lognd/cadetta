@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/cmd/lsp.rs"]
+new = ["crates/cadetta-cli/src/cmd/lsp.rs", "crates/cadetta-cli/src/cmd/lsp_query.rs"]
+at = "2026-10-16T23:39:22Z"
+actor = "lognd"
+rev = 1

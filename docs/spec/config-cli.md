@@ -138,7 +138,9 @@ Key notes:
   text until sema reads them. `transport` defaults to `stdio`, `save`
   to `after-sync`, a role's `covers` must be non-empty, and a repeated
   adapter `name` needs distinct `id`s.
-- `[defaults]` applies per package. `[package]`, `[dependencies]` and
+- `[defaults]` applies per package: each package's table is read by the
+  evaluator as the project layer, and a value may name a component of a
+  dependency (`acme.shop::AcmeShop`). `[package]`, `[dependencies]` and
   `[workspace]` are defined in packages.md 1; I004 applies only to the
   roots of the package being checked (packages.md 3).
 
@@ -171,14 +173,15 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `names [ADAPTER-ID] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with a `read` adapter, reads CAD | R013 | `names.json` |
 | `bind PATH --adapter ID --locator L --kind K [--mode M] [--native-unit U] [--for ALT] [--config C] [--sign -1] [--component C] [--tolerance drive\|ignore]` / `bind --remove PATH --adapter ID --locator L` | Add or remove one explicit locator in `bindings/<id>.toml`, validated and written in canonical order. | writes the bindings file | never (errors exit 2) | `bind.json` |
 | `ir [--observed ADAPTER] [--assume-unit U]` | Print design or observed IR as `cadetta.ir/1`. | reads | never | `ir.json` |
-| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs | Q004, R013, R014, R015 | `emit.json` |
+| `emit [ADAPTER...] [--module PATH] [GLOB...]` | Run `emit` for configured adapters. | writes adapter outputs; `emit.json` also lists `active_alternates` (slot path to its primary, adapters.md 3.3) when the package has interface-typed slots | Q004, R013, R014, R015 | `emit.json` |
 | `import ADAPTER FILE... [--assume-unit U]` | Propose bindings and scaffold (adapters.md 7). | writes `build/import/` | never | `import.json` |
 | `import --accept` | Write bindings and `.cdt` scaffold from the proposal. | writes `bindings/`, `cad/imported/`, lock | never | `import.json` |
 | `import ADAPTER FILE... --update [--write]` | Diff of `.cdt` literal edits from observed values; `--write` applies. | writes sources with `--write` | never | `import.json` |
 | `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2), then geometry verification (R001) and, under `datums = "create"`, datum frame creation (adapters.md 3.4). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
-| `lsp` | Language server over stdio: diagnostics and formatting (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
+| `display VALUE SPEC` | Print one quantity literal through the display formatter (quantities.md 6). | - | never (errors exit 2) | `display.json` |
+| `lsp` | Language server over stdio: diagnostics, formatting, hover, code lens, definition (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
 
 `check`, `emit`, `sync` and `solve` accept `--module PATH` (a module
 path prefix, e.g. `--module drive`) and canonical-path globs to scope a
@@ -228,7 +231,8 @@ A scope matching no node is not an error for these commands.
 Text: one line per locator,
 `push|skip|drift|converged|fail  path  locator  old -> new`, then a
 summary and a per-file regen status. JSON (`sync.json`): the same
-records plus diagnostics. "Changed" means the emit value differs from
+records plus diagnostics, each carrying `code`, `severity` (`info` for O004,
+`error` for the blocking codes, else `warning`) and `message`. "Changed" means the emit value differs from
 the lock base. `--dry-run` prints every push, including each native
 expression it would replace (R006), and writes nothing. `--only GLOB`
 limits to matching canonical paths; `--no-regen` pushes without
@@ -256,7 +260,7 @@ Implementation notes (`cadetta sync`, schema `docs/schemas/sync.json`):
 - Exit 1: R001, R004, R009, R010, Q004, R013-R016 or any `fail`; exit 2:
   usage, IO, config, unknown adapter id, unavailable adapter (R008).
 
-### 3.3 `ir`, `explain`, `units`
+### 3.3 `ir`, `explain`, `units`, `display`
 
 Decided (0.1.0): `explain CODE` takes the code case-insensitively and
 prints the lints.md 3 catalog row (code, name, default severity, fixed or
@@ -269,6 +273,10 @@ as pretty `cadetta.ir/1` JSON (`cadetta.ir.1.json`) and exits 2 when the
 run scopes to several workspace members; `--observed ADAPTER` names a
 configured `[[adapter]]` (by `name` or `id`, else exit 2) and prints the
 `observed` flavour; `--assume-unit U` must parse as a unit.
+`display VALUE SPEC` takes a quantity literal and a display spec
+(`in/32`, `ft_in`, `mm`, `%`), prints the formatted text and a newline, or
+`display.json` (`cadetta.display/1`: `value`, `spec`, `text`) with
+`--format json`; a malformed literal, spec or dimension mismatch exits 2.
 
 ### 3.2 `init`
 
@@ -326,9 +334,13 @@ adapter, or R008), so the output never guesses. `bind` refuses a locator that fa
 validation of adapters.md 3 and is idempotent: binding an identical
 locator again changes nothing.
 
-Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y: `names` never
-launches CAD, so a path without a locator is `unknown`, not `unbound`,
-until a read adapter feeds it (follow-up ticket). A locator is
+Decided (0.1.0), frob:ticket 01M4VB644Y6YPK6YTBP4T5YM3Y and
+01M4VPEFSVBXSEKWHTQ48SAEKA: `names` asks an adapter that can read (a
+`command`, the `read` capability and literal `files`) for its CAD, so a
+path without a locator is `unbound` and native-link discoveries
+(adapters.md 3.5) show as implicit `global`, `link`, `frame` or
+`reference`. An adapter that cannot read, or whose spawn or read fails,
+keeps every such path `unknown`. A locator is
 identified by kind, locator text, `--for`, `--config` and `--component`;
 `bind` of an existing identity with other fields is a conflict (exit 2:
 remove it first), and `bind --remove` of an absent locator is a no-op.
@@ -401,7 +413,7 @@ negation is applied by `emit` to the written text of value and global lines (the
 leaves it to the caller); a `ref`-mode dimension line carries no value, so `sign` does not apply
 to it. Q004, R013, R014 and R015 withhold that adapter's file and give exit 1, each reported in the
 `--format json` `diagnostics` list as a `cadetta.diag/1` record (`schema`, `severity` `error`, `code`, `message`, `path`); an unknown adapter id, a bad
-flag or a halted analysis give exit 2. `json` and `csv` write one row per bound `global` value locator in dependency order (emitters/json.md, emitters/csv.md) and leave an unchanged file alone, comparing modulo the header. Not yet run by `emit`: external adapters (those with a `command`); they are skipped with a log line.
+flag or a halted analysis give exit 2. `json` and `csv` write one row per bound `global` value locator in dependency order (emitters/json.md, emitters/csv.md) and leave an unchanged file alone, comparing modulo the header. External adapters (those with a `command`) are spawned and sent `emit` (adapters.md 5); their files are listed in the report and an adapter failure gives exit 2.
 
 `import ADAPTER FILE...` runs the external adapter's `read` (a `command` containing `/` is
 relative to the package directory; no PATH search), builds one observed project per native file
@@ -463,11 +475,21 @@ editor shows exactly what `check` reports.
   stdio. stdout carries protocol only; logs go to stderr through
   `cadetta-log`, filtered by `CADETTA_LOG`, and `window/logMessage` is
   never used for diagnostics.
-- Capabilities in 0.1.0: `textDocumentSync` (open, change with full
-  text, save without text, close), `documentFormattingProvider`, and
-  `positionEncoding`. Nothing else is advertised; hover (`why`), code
-  lens (`impact`), go to definition and completion are later (a
+- Capabilities: `textDocumentSync` (open, change with full
+  text, save without text, close), `documentFormattingProvider`,
+  `hoverProvider`, `codeLensProvider` (no resolve),
+  `definitionProvider` and `positionEncoding`. Completion is later (a
   ticket).
+- Queries (answered from the package as last checked on disk, so they
+  are empty until the first check finishes and lag unsaved edits;
+  only members carry a source span, so checks and solvers get none):
+  hover over a member declaration shows its `why` chain as Markdown;
+  one code lens per member declaration, at its start, titled `impact:
+  N dependents` (or `no dependents`) with the client command
+  `cadetta.impact` and the canonical path as its only argument; go to
+  definition on a full canonical path, or on a name the enclosing
+  member reads (matched by last path segment among its dependencies),
+  answers the declaration's location, else `null`.
 - Projects: each open `.cdt` belongs to the package found by the
   config-cli.md 1.6 walk from its directory; a document outside any
   package gets only syntax diagnostics. Several packages may be open at

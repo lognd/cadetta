@@ -71,6 +71,14 @@ solver and output name. A stale result (section 4) still evaluates in
 either role, carrying the S003 fact that names what changed (`inputs`,
 `script`, or a dep path). An output with no recorded value is unsolved.
 
+Solver outputs are evaluated from the recorded `.out.json` result file:
+`check` and the IR read each output's recorded value (parsed as an exact
+quantity) rather than re-running the script. `check` also recomputes the
+input, script and dep digests of each solver's primary result and reports
+S003 (naming what changed) when they differ; the outputs still evaluate. A
+solver with no recorded result is unsolved, not stale. S006 and the
+evaluation of variant results are still to come (follow-up ticket).
+
 ## 3. Protocol
 
 No library is needed in any language: inputs and outputs are JSON, and
@@ -181,7 +189,8 @@ under that variant, with S006 (`solver-unsolved-variant`), and
 To find the changed inputs, `solve --variants` re-evaluates the solver's `in`
 expressions once per approved alternate of every part slot in the project,
 with that alternate standing in for the slot's primary wherever an `in`
-expression reads through the slot (`wheel.load_rating`); every other slot
+expression reads through the slot (`wheel.load_rating`; on a counted slot an
+unindexed read is `wheel[0].load_rating`, language.md 3.1); every other slot
 stays on its primary. The variant key is the full form `SLOT=ALT`
 (`acme.rover::Rover/wheel=acme.rover::Colson2Series`). An alternate whose
 inputs fail to evaluate is skipped with a logged warning, not an error.
@@ -200,8 +209,15 @@ difference makes it stale (S003) and its outputs still evaluate. A result is
 identified by (solver path, variant); storing replaces the entry with the
 same key, and the file is rewritten sorted.
 
-S003 names what changed (`inputs`, `script` or a dep path) in notes and
-carries the variant as `alt`. S005 is raised for a failed run whose code is S005
+`cadetta check` applies the same reading: each approved alternate is evaluated
+with the solver outputs recorded for its inputs (the primary's when the inputs
+are unchanged, its own entry otherwise), and a changed-input variant with no
+entry raises S006 at the solver, carrying the variant as `alt`.
+
+S003 names what changed (`inputs`, `script` or a dep path) in its message and
+notes and carries the variant as `alt`. A check declared inside a solver reads
+the solver's recorded outputs bare and yields C001 when it fails; a check that
+reads an output with no recorded value is undecided (C002), never S003. S005 is raised for a failed run whose code is S005
 (a protocol failure with another code, such as Q001, keeps that code) and says
 whether a previous result stays in use. S006 fires only for a variant whose own
 result is missing; a missing primary result is an unsolved output, not S006.

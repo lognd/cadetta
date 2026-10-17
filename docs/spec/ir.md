@@ -112,6 +112,20 @@ reordering; they change only by rename or move, which `was` records.
   binding emits once, at the emit point of instance 0. Because the
   instances share arguments, no source makes another instance's
   emitted value differ; R012 is reserved for that case (adapters.md 3).
+- Text members: a member whose evaluated value is Text (a `fmt` result such
+  as the std `ScrewJoint.callout`) lowers with `text` set to the string and
+  no `value` (a Text carries no dimension or tolerance). It is a `param`
+  Member like its numeric siblings, `analysis` and `priv` follow the
+  member, and `text` is part of the member's own digest only when present.
+- Part-array instance members: a counted part `part axle[2]: Axle` whose
+  callee has no parameters lowers one member per instance and per
+  parameter or `let` of the callee (`Rover/axle[0].len`,
+  `Rover/axle[1].len`; indexes are 0-based). Each carries the callee
+  definition's value and depends on the definition member
+  (`Axle.len`), with derived provenance. An array of a parameterized
+  callee (`part arm[2]: Arm(len = 10mm)`) expands to one instance per
+  index, each with its own arguments: its members lower as
+  `Rover/arm[0].reach`, `Rover/arm[1].reach` with the instance's value.
 - Instance vs definition level: an obligation targets a definition path
   when its closure reads no component parameter or interface-typed slot,
   and an instance path otherwise; instances with identical argument
@@ -126,7 +140,7 @@ Project    { schema, flavour, package, modules[], dependencies[], components[],
 Component  { path, class: ots|model|assembly|process, params_sig?, implements[],
              citation?: CiteRef, attrs, members[], parts[], fits[], datums[], points[],
              placements[], span?, digest }
-Member     { path, kind, analysis: bool, priv: bool, value?: Value, bound?: Bound, expr?,
+Member     { path, kind, analysis: bool, priv: bool, value?: Value, text?: string, bound?: Bound, expr?,
              deps[], role?, citation?: CiteRef, was[], attrs, provenance, doc?, span?,
              variants?: { "<slot>=<alternate>": Value }, digest, closure }
 Value      { nominal: Exact | Inexact, dim: Dim, angle: int, tol?: Affine,
@@ -139,11 +153,17 @@ Affine     { terms: [ { var: path, lo: Exact, hi: Exact } ] }   // a disc: paire
 Bound      { op: "<=" | ">=" | "in", lo?: Exact, hi?: Exact }
 Interface  { path, members[], bounds[], datums[] }
 Table      { path, key, cols[], rows[], citation?: CiteRef }
+Require    { path, expr, message?, citation?: CiteRef, verdicts: { primary, per_alternate{"<slot>=<alt>"} },
+             conservative }
+             // a Check without waived_for: a require is never suppressed (obligations.md 4)
 Waiver     { code, glob, because, expires?, for_alt?: "<slot>=<alternate>",
              targets_closure }
 Process    { path, params[], rules: [ { role, expr } ] }
 Part       { path, type, count?, primary, alternates[], args }
+             // slot Part.path is "PKG::Type/part" (the `/part` step, no
+             // ".member"), per cadetta-sema lower.rs (~137W4EE)
 Fit        { path, hole, shaft, clearance: Value, type, required?: Bound }
+             // hole/shaft are the REAL operand member paths (~3YZ3NSG), see "Fit operands"
 Op         = offset{x,y,z: member ref} | rotate{axis, angle: member ref}
              | flip{axis}                                // shared by Datum and Placement
 Datum      { path, parent: path, ops: [Op], variants?, digest, closure }  // geometry.md 2
@@ -166,6 +186,12 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
 - A disc source variable (geometry.md 3.1, quantities.md 5.4) appears
   as two `Affine` terms whose `var` paths share a stem and end in `.u`
   and `.v`; the pair ranges over the disc `u^2 + v^2 <= 1`, not the box.
+  A `[position d]` point lowers one such pair, stem `<point>.position`
+  (`Type.holes[i].position.u`), on both its x and y coordinate values.
+  Both terms carry the symmetric bounds `+-(|a| + |b|)` of the disc
+  coefficients `a`, `b` (for position, `d/2`), a sound outer bound of
+  the true radius; each coordinate lists the full pair, so a single
+  coordinate's range is looser than its true `[-d/2, d/2]`.
 - Observed flavour only: `Project.frames[]` holds `{ name, document,
   transform }` and `Project.instances[]` holds `{ component, document,
   reference?, transform }` (section 1); a transform is a 3x4 array of
@@ -247,7 +273,8 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
 - `analysis` marks a `let` (quantities.md 5.3): never emitted or bound.
 - `variants` holds, per part slot and alternate, only the values that
   differ from the primary evaluation (variant evaluation, language.md
-  3.2). Keys are `"Rover/wheel=Colson2Series"`.
+  3.2). Keys are the full qualified form
+  `"acme.rover::Rover/wheel=acme.rover::Colson2Series"`.
 - Lowering (`cadetta-sema` `lower.rs`, `lower::lower`): the lowerer lives
   in sema, not `cadetta-ir`, because sema depends on ir (ir <- sema).
   Rules it fixes:
@@ -272,11 +299,30 @@ Locator    { locator, kind: global|dimension|property|frame|instance, mode: valu
     per instance (`Asm/node[i]`, integer indexes) and skipped, with a
     warning, when its count is unknown. A Point is `Type.p` or
     `Type.holes[i]`; its coordinates are Members `...x|y|z` (kind `let`,
-    analysis form, derived from the declaring member) and `position` stays
-    absent.
-  - Not lowered yet: waivers, interfaces, tables, `require` obligations,
-    solvers and bindings; parameterized components lower with valueless
-    members.
+    analysis form, derived from the declaring member) and `position` is the
+    zone diameter (`Exact`) when the point is `[position d]`-toleranced,
+    otherwise absent.
+  - Solvers and waivers lower into `solvers` and `waivers`: a solver keeps
+    its script, one input per `in` binding (the expression text), one output
+    per `out` (the path of the recorded output member) and the members its
+    inputs read as `deps`; its `@cite` lowers to `citation`, documentation
+    only and never an input to the solver's digest or closure;
+    `result_digest` and `stale` come from the recorded result file. A waiver keeps its glob as written.
+  - A `table` lowers to a `Table` (`PKG::Name`) with its key and value
+    columns (name and written type), one row per source row (key and one
+    cell per column, a quantity `Value` keeping its authored text or an
+    enum variant name) and its `@cite` as `citation`; a table that does
+    not evaluate, or holds another kind of cell, is skipped.
+  - A `require` lowers to a `Require` in `requires[]` (never into `checks[]`; ~X50QNG4): same
+    path and folded verdicts (primary and per alternate) as a check, plus its `message` and its
+    `@cite` as `citation`. The CLI obligation universe reads `requires[]` as `require` obligations
+    (a check-shaped graph node, offered for sign-off only while it holds).
+  - Not lowered yet: interfaces
+    and bindings; parameterized components lower with valueless
+    members. The datum and placement arguments of a parameterized
+    instance lower as `datum` / `place` Members of the instantiating
+    component (`Box/j.mount.offset.z`), derived, with the per-instance
+    value.
 
 ## 4. Digests
 
@@ -320,6 +366,43 @@ closure digests in dep path order; an instance closure hashes the member
 closure, the instance path text and, for an interface-typed slot, the slot
 part's own digest. Part arguments are nodes keyed `<slot>.<arg>`.
 
+Digest graph additions (`digest.rs`): a component's formal arguments are
+nodes keyed `<component>.<param>` so a member reading one resolves; each
+fit contributes a fit node plus its `hole` and `shaft` nodes. A commercial
+roll-up (`deps.rs`) depends only on parts whose component declares the
+rolled member; an optional member such as `unit_cost` is skipped on a part
+lacking it instead of becoming a dangling dependency. A read of a bare part
+slot depends on the slot's `Type/slot` node; a read of a member of a
+dependency-package part depends on that slot too (the foreign component is
+not lowered). A dependency on a `fit` whose operands read component arguments
+is dropped, since that fit is not derived at the generic level. Such a fit
+is instead derived once per instance of the parameterized component
+(`fitderive.rs`): `Top/h.seat` for `part h: Housing(bearing = b)`, its
+operands read through the instance's argument values; a fit whose argument
+is not evaluated for an instance is skipped for that instance.
+
+Fit operands (decision, ~3YZ3NSG): `Fit.hole` and `Fit.shaft` are the
+canonical paths of the members the fit constrains, as resolved from the
+source and, for a per-instance fit, re-rooted at the instance (`Top/h.seat`
+reads `Top/h.bearing.outer_dia`). Rationale: lints (M003, D, unused) and the
+obligation graph need the operand, and the field names say "the hole
+member"; the alternative (keep synthetic `<fit>.hole` paths and add
+`hole_operand`/`shaft_operand`) would leave two meanings per name and make
+every consumer choose. The accessor reads `<fit>.hole`, `<fit>.shaft` and
+`<fit>.clearance` stay addressable value paths; the digest keys the first
+two as nodes under the fit (never under the operand, which has its own
+node). A side no member names (the class of a class fit `H7 on d`, both
+sides of a class pair) has no operand and keeps the synthetic
+`<fit>.hole`/`<fit>.shaft` path. The schema is unchanged (same fields, same
+types), only their content.
+
+Fit accessor members: a read of `<fit>.hole`, `<fit>.shaft` or
+`<fit>.clearance` is also emitted as a derived `Let` member of the owning
+component (provenance `derived`, analysis, `deps` = the fit path), so the
+read is an ordinary member with a node. No schema change. The digest keys
+`.clearance` on that member node; `.hole` and `.shaft` keep their fit-side
+nodes until the `add_fit` follow-up lands.
+
 ## 5. Stability
 
 `cadetta.ir/1` is versioned. Adding optional fields is minor; anything
@@ -331,8 +414,12 @@ the schema is one definition table (`schema_value`) beside them rather
 than a derive; `cadetta.ir.1.json` has `Project` at the root and every
 entity of section 3 under `$defs` (including `Dim` and the item entities
 `Interface`, `Table`, `Waiver`, `Process`). `Project` carries optional
-`interfaces[]`, `tables[]` and `waivers[]` (minor change; absent means
-empty; the model fields are omitted from JSON when empty); `requires[]` has no entity shape yet. Objects are closed
+`interfaces[]`, `tables[]`, `requires[]` and `waivers[]` (minor change; absent means
+empty; the model fields are omitted from JSON when empty). `Require` (~JAVMC41) is a `Check`
+shape minus `waived_for` plus the source `message?` and `citation?`: a require is never
+suppressed (obligations.md 4), so it carries no waiver state, and it reuses `Verdicts` so
+per-alternate outcomes read the same as a check's. Its own digest covers path, expression,
+message and citation (not verdicts) and enters the project digest like a check's. Objects are closed
 (`additionalProperties: false`). A test regenerates the schema and
 compares it to the committed file, and validates a fully populated
 `Project` and each item entity against it, so a serializer change

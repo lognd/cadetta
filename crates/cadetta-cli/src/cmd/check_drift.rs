@@ -3,6 +3,7 @@
 //! files, compare with the design IR and run the R lints (lints.md 3 R, adapters.md 2, 3, 7).
 //! Nothing is written: the lock is only read for `synced` bases.
 
+use cadetta_adapter::read_facts::SKETCH_ORIGIN;
 use cadetta_adapter::rpc::client::ProcessClient;
 use cadetta_adapter::rpc::{CapabilityName, Client};
 use cadetta_ir::digest::digest_project;
@@ -11,7 +12,10 @@ use cadetta_lint::diag::{Diagnostic, Severity};
 use cadetta_lint::rules::r::{
     BindingFact, DriftFact, NativeRef, check_r001, check_r002, check_r003, check_r005,
 };
-use cadetta_lint::rules::r_adapter::{AdapterReport, pass_through};
+use cadetta_lint::rules::r_adapter::{
+    AdapterReport, CoordFact, SlotFact, StarBinding, check_r007, check_r011, check_r012,
+    pass_through,
+};
 use std::io::{BufRead, Write};
 use std::time::Duration;
 
@@ -106,7 +110,7 @@ fn bindings_file(site: &DriftSite<'_>) -> String {
     site.adapter.bindings_path()
 }
 
-/// The R lints over one probe: R001, R002, R003, R005 and the adapter's own diagnostics.
+/// The R lints over one probe: R001, R002, R003, R005, R007, R011, R012 and the adapter's own diagnostics.
 fn lint_probe(
     adapter: &str,
     bindings_file: &str,
@@ -162,6 +166,8 @@ fn lint_probe(
         .collect();
     out.extend(check_r005(&bindings, &ir_paths, &was_paths));
 
+    out.extend(observed_fact_lints(&native, probe));
+
     // Diagnostics build_entries raised itself; R003 came structured above.
     out.extend(
         probe
@@ -181,6 +187,73 @@ fn lint_probe(
         .collect();
     out.extend(pass_through(&reports));
     tracing::debug!(%adapter, diagnostics = out.len(), "check: drift lints done");
+    out
+}
+
+/// R007, R011 and R012 from the sketch, component and per-instance facts a read carried.
+///
+/// A fact whose locator has no binding is skipped (R002 already names it). An adapter that
+/// reports none of these fact lists yields no diagnostics (adapters.md 5).
+// frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+fn observed_fact_lints(native: &dyn Fn(&str, &str) -> NativeRef, probe: &Probe) -> Vec<Diagnostic> {
+    let path_of = |locator: &str| {
+        probe
+            .locator_paths
+            .iter()
+            .find(|(_, l)| l == locator)
+            .map(|(p, _)| p.clone())
+    };
+    let coords: Vec<CoordFact> = probe
+        .sketches
+        .iter()
+        .filter_map(|s| {
+            Some(CoordFact {
+                path: path_of(&s.locator)?,
+                native: native(&s.file, &s.locator),
+                on_datum_plane: s.on_datum_plane,
+                from_origin: s.measured_from == SKETCH_ORIGIN,
+            })
+        })
+        .collect();
+    let slots: Vec<SlotFact> = probe
+        .components
+        .iter()
+        .filter_map(|c| {
+            let slot = path_of(&c.locator)?;
+            let prefix = format!("{slot}.");
+            let primary_file = probe
+                .member_files
+                .iter()
+                .find(|(p, _)| *p == slot || p.starts_with(&prefix))
+                .map(|(_, f)| f.clone())?;
+            Some(SlotFact {
+                slot,
+                primary_file,
+                held_file: c.component_file.clone(),
+                native: native(&c.file, &c.locator),
+            })
+        })
+        .collect();
+    let stars: Vec<StarBinding> = probe
+        .instance_values
+        .iter()
+        .filter_map(|i| {
+            Some(StarBinding {
+                path: path_of(&i.locator)?,
+                native: native(&i.file, &i.locator),
+                values: i.values.clone(),
+            })
+        })
+        .collect();
+    tracing::debug!(
+        coords = coords.len(),
+        slots = slots.len(),
+        stars = stars.len(),
+        "check: observed facts"
+    );
+    let mut out = check_r007(&coords);
+    out.extend(check_r011(&slots));
+    out.extend(check_r012(&stars));
     out
 }
 
@@ -472,5 +545,70 @@ for line in sys.stdin:
         assert_eq!(r008.1, "info", "{diags:?}");
         assert_eq!(code, 0);
         assert!(took < Duration::from_secs(15), "took {took:?}");
+    }
+
+    /// Add `extra` top-level keys to the scenario's read result.
+    fn with_facts(mut obs: Value, extra: Value) -> Value {
+        for (k, v) in extra.as_object().unwrap() {
+            obs[k] = v.clone();
+        }
+        obs
+    }
+
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    // frob:tests crates/cadetta-cli/src/cmd/check_drift.rs::observed_fact_lints
+    #[test]
+    fn check_reports_r007_for_a_sketch_off_its_datum_plane() {
+        let obs = with_facts(
+            observed(&[(PATH, "Plate_Thk", "6mm")]),
+            json!({"sketches": [{"file": "part.FCStd", "locator": "Plate_Thk",
+                                 "on_datum_plane": false, "measured_from": "sketch origin"}]}),
+        );
+        let dir = project(&obs, Some("6mm"), BINDINGS, None);
+        let (_, diags) = check(&dir);
+        assert!(has(&diags, "R007"), "{diags:?}");
+    }
+
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    // frob:tests crates/cadetta-cli/src/cmd/check_drift.rs::observed_fact_lints
+    #[test]
+    fn check_is_quiet_for_a_sketch_on_its_plane_from_the_origin() {
+        let obs = with_facts(
+            observed(&[(PATH, "Plate_Thk", "6mm")]),
+            json!({"sketches": [{"file": "part.FCStd", "locator": "Plate_Thk",
+                                 "on_datum_plane": true, "measured_from": "sketch origin"}]}),
+        );
+        let dir = project(&obs, Some("6mm"), BINDINGS, None);
+        let (_, diags) = check(&dir);
+        assert!(!has(&diags, "R007"), "{diags:?}");
+    }
+
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    // frob:tests crates/cadetta-cli/src/cmd/check_drift.rs::observed_fact_lints
+    #[test]
+    fn check_reports_r011_on_a_swapped_component_file() {
+        let obs = with_facts(
+            observed(&[(PATH, "Plate_Thk", "6mm")]),
+            json!({"components": [{"file": "asm.FCStd", "locator": "Plate_Thk",
+                                   "component_file": "other.FCStd"}]}),
+        );
+        let dir = project(&obs, Some("6mm"), BINDINGS, None);
+        let (_, diags) = check(&dir);
+        assert!(has(&diags, "R011"), "{diags:?}");
+    }
+
+    // frob:ticket 01M4YB06FSER6VHW3RBC0B2X17
+    // frob:tests crates/cadetta-cli/src/cmd/check_drift.rs::observed_fact_lints
+    #[test]
+    fn check_reports_r012_for_differing_instance_values() {
+        let obs = with_facts(
+            observed(&[(PATH, "Plate_Thk", "6mm")]),
+            json!({"instance_values": [{"file": "part.FCStd", "locator": "Plate_Thk",
+                                        "values": ["6mm", "7mm"]}]}),
+        );
+        let dir = project(&obs, Some("6mm"), BINDINGS, None);
+        let (code, diags) = check(&dir);
+        assert!(has(&diags, "R012"), "{diags:?}");
+        assert_eq!(code, 1);
     }
 }

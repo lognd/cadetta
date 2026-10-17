@@ -7,7 +7,9 @@ Every grammar is generated from one source, `grammar/cadetta.toml`, by
     uv run editors/generate.py          # rewrite outputs
     uv run editors/generate.py --check  # CI: fail if outputs are stale
 
-A Rust test (`crates/cadetta-cli/tests/editors_keywords.rs`) keeps the
+The tree-sitter `grammar.js` and `queries/highlights.scm` are generated too;
+`tree-sitter generate`, `tree-sitter test` and `check_golden.py` (see
+[tree-sitter](tree-sitter/README.md)) verify them. A Rust test (`crates/cadetta-cli/tests/editors_keywords.rs`) keeps the
 keyword list equal to the lexer's.
 
 | Editor | Directory |
@@ -17,6 +19,7 @@ keyword list equal to the lexer's.
 | Vim / Neovim | [vim](vim/README.md) |
 | Emacs | [emacs](emacs/README.md) |
 | JetBrains | [jetbrains](jetbrains/README.md) |
+| Helix, Zed, Neovim treesitter | [tree-sitter](tree-sitter/README.md) |
 
 ## Language server (primary)
 
@@ -69,8 +72,8 @@ Neovim needs the `cadetta` filetype; add `editors/vim` to the runtimepath
     language-servers = ["cadetta"]
     auto-format = true
 
-Helix has no TextMate support; highlighting there needs a tree-sitter grammar
-(not yet written).
+Helix has no TextMate support; its highlighting comes from the tree-sitter
+grammar in [tree-sitter](tree-sitter/README.md).
 
 ### Emacs: eglot
 
@@ -177,8 +180,8 @@ with `~/.config/efm-langserver/config.yaml`:
           - "%f:%l:%c: %trror[%*[^]]]: %m"
           - "%f:%l:%c: %tarning[%*[^]]]: %m"
 
-Helix has no TextMate support; highlighting there needs a tree-sitter grammar
-(not yet written).
+Helix has no TextMate support; its highlighting comes from the tree-sitter
+grammar in [tree-sitter](tree-sitter/README.md).
 
 ### Vim: ALE
 

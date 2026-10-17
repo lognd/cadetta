@@ -292,6 +292,76 @@ fn dot(row: &[Coord; 3], v: &[Coord; 3]) -> Result<Coord, TransformError> {
     Ok(acc)
 }
 
+/// The largest absolute value a coordinate can take.
+fn abs_max(c: &Coord) -> Result<f64, TransformError> {
+    let a = c.to_approx()?;
+    Ok(a.lo.abs().max(a.hi.abs()))
+}
+
+/// One row of `R * p` where `p` holds disc terms and the row has binary64 entries.
+///
+/// The disc-free part goes through ordinary interval arithmetic. Each disc contributes
+/// `+- sqrt(U^2 + V^2)`, where `U`, `V` are the row's combined reach over the disc's two
+/// coefficients: the Euclidean norm, not the sum, so `cos t * (d/2) u + sin t * (d/2) v` stays
+/// within `d/2` (geometry.md 3.1). The result is an outer bound and the disc identity is gone.
+// frob:ticket 01M50C0NCKDC43EDJP1BS8CTVB
+fn dot_discs(row: &[Coord; 3], v: &[Coord; 3]) -> Result<Option<Coord>, TransformError> {
+    let forms: Vec<&Affine> = v
+        .iter()
+        .filter_map(|c| match c {
+            Coord::Exact(a) => Some(a),
+            Coord::Approx(_) => None,
+        })
+        .collect();
+    let vars: std::collections::BTreeSet<_> = forms.iter().flat_map(|a| a.disc_vars()).collect();
+    if forms.len() != 3 || vars.is_empty() || row.iter().all(Coord::is_exact) {
+        return Ok(None);
+    }
+    let dim = v[0].dim().clone();
+    let mut rest: Option<Coord> = None;
+    for (r, f) in row.iter().zip(&forms) {
+        let (c, b) = (f.center().to_f64(), f.box_radius()?.to_f64());
+        let (lo, hi) = pad(c - b, c + b);
+        let part = Coord::Approx(Approx {
+            lo,
+            hi,
+            root: None,
+            conservative: b != 0.0,
+            dim: f.dim().clone(),
+        });
+        let term = r.mul(&part)?;
+        rest = Some(match rest {
+            None => term,
+            Some(acc) => acc.add(&term)?,
+        });
+    }
+    let mut reach = 0.0_f64;
+    for var in &vars {
+        let (mut u, mut w) = (0.0_f64, 0.0_f64);
+        for (r, f) in row.iter().zip(&forms) {
+            if let Some((a, b)) = f.disc_coefficients(*var) {
+                let m = abs_max(r)?;
+                u += m * a.to_f64().abs();
+                w += m * b.to_f64().abs();
+            }
+        }
+        reach += (u * u + w * w).sqrt();
+    }
+    let (lo, hi) = pad(-reach, reach);
+    let discs = Coord::Approx(Approx {
+        lo,
+        hi,
+        root: None,
+        conservative: true,
+        dim,
+    });
+    trace!(
+        reach,
+        "transform: inexact rotation of disc terms (Euclidean reach)"
+    );
+    Ok(Some(rest.expect("three terms").add(&discs)?))
+}
+
 /// A datum's composed 3x4 transform: `p_parent = R * p_local + t`.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Transform {
@@ -381,11 +451,15 @@ impl Transform {
         self.rotate(axis, &Affine::constant(Dim::new(Default::default(), 1), pi))
     }
 
-    /// Carries a local point through the transform: `R * p + t`.
+    /// Carries a local point through the transform: `R * p + t` (disc terms bounded by norm).
     pub fn apply(&self, p: &[Coord; 3]) -> Result<[Coord; 3], TransformError> {
         let mut out = self.trans.clone();
         for (i, o) in out.iter_mut().enumerate() {
-            *o = o.add(&dot(&self.rot[i], p)?)?;
+            let term = match dot_discs(&self.rot[i], p)? {
+                Some(t) => t,
+                None => dot(&self.rot[i], p)?,
+            };
+            *o = o.add(&term)?;
         }
         Ok(out)
     }
@@ -543,5 +617,46 @@ mod tests {
             x2.coefficient(VarId(3)).unwrap(),
             &off.coefficient(VarId(3)).unwrap().mul(&mag(2, 1))
         );
+    }
+
+    /// A `[position 0.2mm]` point at the origin (radius 0.1mm) on disc variable 0.
+    fn disc_point() -> [Coord; 3] {
+        let r = mag(1, 10_000);
+        let z = mag(0, 1);
+        let x = Affine::disc(len(), z.clone(), VarId(0), r.clone(), z.clone());
+        let y = Affine::disc(len(), z.clone(), VarId(0), z.clone(), r);
+        [Coord::Exact(x), Coord::Exact(y), Coord::constant(len(), 0)]
+    }
+
+    // frob:tests crates/cadetta-geometry/src/transform.rs::Transform.apply kind=unit
+    #[test]
+    fn inexact_rotation_bounds_a_disc_projection_by_the_euclidean_norm() {
+        // Rotating by 45deg: x' = cos*x + sin*y, each a 0.1mm disc coordinate. The L1 reach is
+        // 0.1*(cos+sin) = 0.1414mm; the true and Euclidean reach is 0.1mm.
+        let t = Transform::identity(len())
+            .rotate(Axis::Z, &deg(45, 1))
+            .unwrap();
+        let out = t.apply(&disc_point()).unwrap();
+        for c in &out[..2] {
+            let Coord::Approx(a) = c else {
+                panic!("inexact rotation")
+            };
+            assert!(a.conservative);
+            assert!(a.hi >= 1.0e-4 && a.hi < 1.0001e-4, "{}", a.hi);
+            assert!(a.lo <= -1.0e-4 && a.lo > -1.0001e-4, "{}", a.lo);
+        }
+    }
+
+    // frob:tests crates/cadetta-geometry/src/transform.rs::Transform.apply kind=unit
+    #[test]
+    fn exact_quarter_turns_keep_the_disc_identity() {
+        let t = Transform::identity(len())
+            .rotate(Axis::Z, &deg(90, 1))
+            .unwrap();
+        let out = t.apply(&disc_point()).unwrap();
+        let Coord::Exact(x) = &out[0] else {
+            panic!("exact")
+        };
+        assert_eq!(x.disc_vars(), vec![VarId(0)]);
     }
 }

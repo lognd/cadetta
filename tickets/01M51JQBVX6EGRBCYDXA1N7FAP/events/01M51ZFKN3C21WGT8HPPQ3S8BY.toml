@@ -1,0 +1,8 @@
+kind = "field"
+field = "acceptance"
+old = ["An indexed part-array argument (bearing = b[0]) evaluates the callee's per-instance members and fits"]
+new = ["An indexed part-array argument (bearing = b[0]) evaluates the callee's per-instance members and fits", "A definition-level dependency on a fit derived only per instance resolves to the instance fit node (digest builds)"]
+moved = [1]
+at = "2026-10-16T09:07:56Z"
+actor = "lognd"
+rev = 1

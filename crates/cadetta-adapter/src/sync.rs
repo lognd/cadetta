@@ -9,6 +9,7 @@
 use std::collections::BTreeMap;
 use std::fmt;
 
+use crate::atomic::{AtomicOutcome, Document, matched_locators, push_atomic};
 use crate::classify::{Action, Class, R001, classify};
 use crate::rpc::DimTolerance;
 use crate::scope::Scope;
@@ -206,11 +207,18 @@ pub struct ReadBack {
     pub tolerance: Option<DimTolerance>,
 }
 
-/// The adapter side of a push: write, optionally rebuild, and read back.
+/// The adapter side of a push: the native [`Document`] of each file.
+///
+/// Every push is atomic: the host snapshots the document, writes, optionally rebuilds, and
+/// restores the snapshot on R004 (adapters.md 2.3).
+// frob:ticket 01M4Y3S1M0V9W3JCDBTHPED6RY
+// frob:ticket 01M4ZDQBBD1AW0RA4JW5SFKGWW
 pub trait Backend {
-    /// Pushes `items` into `file`; returns the read-back per locator.
-    fn push(&mut self, adapter: &str, file: &str, items: &[PushItem], regen: bool)
-    -> Vec<ReadBack>;
+    /// The native document of `file` under `adapter`.
+    fn document<'a>(&'a mut self, adapter: &str, file: &str) -> Box<dyn Document + 'a>;
+
+    /// Called once per pushed file with what the push did (R004, restore, read-back).
+    fn pushed(&mut self, _file: &str, _regen: bool, _outcome: &AtomicOutcome) {}
 }
 
 /// Everything a run produced.
@@ -329,18 +337,22 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
                 }
             })
             .collect();
-        let back = backend.push(&adapter, &file, &items, !opts.no_regen);
+        let regen = !opts.no_regen;
+        let outcome = {
+            let mut doc = backend.document(&adapter, &file);
+            push_atomic(doc.as_mut(), &file, &items, regen)
+        };
+        backend.pushed(&file, regen, &outcome);
+        tracing::info!(
+            %file,
+            restored = outcome.restored,
+            diagnostics = outcome.diagnostics.len(),
+            "sync: atomic push done"
+        );
+        let matched = matched_locators(&items, &outcome.read_back);
         for &i in &idx {
             let rec = &mut report.records[i];
-            let got = back
-                .iter()
-                .find(|b| b.locator == rec.entry.locator)
-                .and_then(|b| {
-                    b.value
-                        .as_deref()
-                        .map(|v| record_literal(v, b.tolerance.as_ref()))
-                });
-            if got.as_deref() == Some(rec.entry.ours_record().as_str()) {
+            if matched.contains(&rec.entry.locator) {
                 updates.push((lock_key(&rec.entry), rec.entry.ours_record()));
             } else {
                 tracing::warn!(locator = %rec.entry.locator, "read-back mismatch");
@@ -375,24 +387,62 @@ mod tests {
         regen: Vec<bool>,
         fail: bool,
         drop_tol: bool,
+        fail_rebuild: bool,
+        rebuilds: usize,
+        outcomes: Vec<AtomicOutcome>,
+        native: BTreeMap<String, (String, Option<DimTolerance>)>,
+    }
+
+    /// The mock's document over `Mock::native`; reads back garbage when `fail` is set.
+    struct MockDoc<'a>(&'a mut Mock);
+
+    impl Document for MockDoc<'_> {
+        fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
+            items
+                .iter()
+                .map(|i| {
+                    let cur = self.0.native.get(&i.locator);
+                    ReadBack {
+                        locator: i.locator.clone(),
+                        value: cur.map(|c| c.0.clone()),
+                        tolerance: cur.and_then(|c| c.1.clone()),
+                    }
+                })
+                .collect()
+        }
+        fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
+            for i in items {
+                let got = if self.0.fail {
+                    "garbled".to_owned()
+                } else {
+                    i.value.clone()
+                };
+                let tol = if self.0.drop_tol {
+                    None
+                } else {
+                    i.tolerance.clone()
+                };
+                self.0.native.insert(i.locator.clone(), (got, tol));
+            }
+            Ok(())
+        }
+        fn rebuild(&mut self) -> Result<(), String> {
+            if self.0.fail_rebuild && self.0.rebuilds == 0 {
+                self.0.rebuilds += 1;
+                return Err("bad feature".into());
+            }
+            Ok(())
+        }
     }
 
     impl Backend for Mock {
-        fn push(&mut self, _a: &str, _f: &str, items: &[PushItem], regen: bool) -> Vec<ReadBack> {
+        fn document<'a>(&'a mut self, _a: &str, _f: &str) -> Box<dyn Document + 'a> {
             self.calls += 1;
+            Box::new(MockDoc(self))
+        }
+        fn pushed(&mut self, _f: &str, regen: bool, outcome: &AtomicOutcome) {
             self.regen.push(regen);
-            items
-                .iter()
-                .map(|i| ReadBack {
-                    locator: i.locator.clone(),
-                    value: (!self.fail).then(|| i.value.clone()),
-                    tolerance: if self.drop_tol {
-                        None
-                    } else {
-                        i.tolerance.clone()
-                    },
-                })
-                .collect()
+            self.outcomes.push(outcome.clone());
         }
     }
 
@@ -538,6 +588,69 @@ mod tests {
         let r = run(&es, &Options::default(), &mut mock, &mut lock);
         assert_eq!(r.records[0].verb, Verb::Fail);
         assert!(lock.is_empty());
+    }
+
+    // frob:tests execute
+    #[test]
+    fn regen_failure_restores_snapshot_and_skips_lock() {
+        let es = vec![entry("p.x", Some("1"), "2", "1")];
+        let mut lock = Lock::new();
+        let mut mock = Mock {
+            fail_rebuild: true,
+            ..Default::default()
+        };
+        mock.native.insert("L_p.x".into(), ("1".into(), None));
+        let r = run(&es, &Options::default(), &mut mock, &mut lock);
+        let out = &mock.outcomes[0];
+        assert!(out.restored, "snapshot restored through push_atomic");
+        assert_eq!(out.diagnostics[0].code, "R004");
+        assert_eq!(mock.native["L_p.x"].0, "1", "old value written back");
+        assert_eq!(r.records[0].verb, Verb::Fail);
+        assert!(lock.is_empty());
+    }
+
+    // frob:tests execute
+    #[test]
+    fn only_matched_locators_are_recorded() {
+        let es = vec![
+            entry("p.x", Some("1"), "2", "1"),
+            entry("p.y", Some("1"), "3", "1"),
+        ];
+        let mut lock = Lock::new();
+        let mut mock = Mock::default();
+        mock.native.insert("L_p.x".into(), ("1".into(), None));
+        mock.native.insert("L_p.y".into(), ("1".into(), None));
+        // the CAD rounds p.y on write, so its read-back differs from the push
+        struct Rounding(Mock);
+        impl Backend for Rounding {
+            fn document<'a>(&'a mut self, a: &str, f: &str) -> Box<dyn Document + 'a> {
+                struct D<'a>(Box<dyn Document + 'a>);
+                impl Document for D<'_> {
+                    fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
+                        let mut back = self.0.read_current(items);
+                        for b in back.iter_mut().filter(|b| b.locator == "L_p.y") {
+                            if b.value.as_deref() == Some("3") {
+                                b.value = Some("4".into());
+                            }
+                        }
+                        back
+                    }
+                    fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
+                        self.0.write(items)
+                    }
+                    fn rebuild(&mut self) -> Result<(), String> {
+                        self.0.rebuild()
+                    }
+                }
+                Box::new(D(self.0.document(a, f)))
+            }
+        }
+        let mut rounding = Rounding(mock);
+        let r = run(&es, &Options::default(), &mut rounding, &mut lock);
+        assert_eq!(r.records[0].verb, Verb::Push);
+        assert_eq!(r.records[1].verb, Verb::Fail);
+        assert_eq!(lock.len(), 1);
+        assert!(lock.keys().all(|k| k.2 == "L_p.x"));
     }
 
     #[test]

@@ -17,14 +17,14 @@ use cadetta_geometry::placement::{Anchor, Cover, Placement as GeoPlacement};
 use cadetta_geometry::point::point_type;
 use cadetta_ir::canon::{Index, PartSeg};
 use cadetta_ir::geometry::{Axis as IrAxis, Datum, OffsetArgs, Op, Placement, Point};
-use cadetta_ir::model::{Component, Member, MemberKind, Provenance, Value};
+use cadetta_ir::model::{Component, Exact, Member, MemberKind, Provenance, Value};
 use cadetta_ir::path::Path;
 use cadetta_syntax::ast;
 use tracing::{debug, trace, warn};
 
 use super::{Cx, SourceText, evaluated_value, text_of};
-use crate::eval::Val;
 use crate::eval::geom::{component_geometry, component_id, find_part, unwrap_array};
+use crate::eval::{GeometryKind, Val};
 use crate::resolve::{CanonPath, MemberSeg};
 
 fn axis(a: cadetta_geometry::datum::Axis) -> IrAxis {
@@ -103,6 +103,33 @@ fn dotted_datum_path(ty: &CanonPath, text: &str) -> CanonPath {
 }
 
 impl Cx<'_> {
+    /// The datum and placement argument members of the parameterized instances declared in
+    /// `comp` (`Box/j.mount.offset.x`), valued from the per-instance evaluation.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    pub(super) fn lower_instance_geometry(&self, comp: &CanonPath) -> Vec<Member> {
+        let ev = self.input.evaluation;
+        let mut out = Vec::new();
+        for (k, kind) in &ev.instance_geometry {
+            if k.item_only() != *comp {
+                continue;
+            }
+            let (Some(e), Some(path)) = (ev.get(k), path_of(k)) else {
+                continue;
+            };
+            let kind = match kind {
+                GeometryKind::Datum => MemberKind::Datum,
+                GeometryKind::Place => MemberKind::Place,
+            };
+            let mut m = Member::new(path, kind);
+            m.provenance = Provenance::Derived;
+            self.fill_geometry_value(&mut m, k);
+            m.analysis = m.analysis || e.analysis;
+            out.push(m);
+        }
+        trace!(component = %comp, members = out.len(), "lower: instance geometry members");
+        out
+    }
+
     /// Fills a geometry member's value and variants from the evaluation of `canon`.
     fn fill_geometry_value(&self, out: &mut Member, canon: &CanonPath) {
         let ev = self.input.evaluation;
@@ -361,12 +388,39 @@ impl Cx<'_> {
             coords.push(coord_value.0);
             comp.members.push(m);
         }
-        debug!(point = %path, coords = coords.len(), "lower: point");
+        let position = self.position_diameter(decl, i);
+        debug!(point = %path, coords = coords.len(), toleranced = position.is_some(), "lower: point");
         comp.points.push(Point {
             path,
             datum: datum.clone(),
             coords,
+            position,
         });
+    }
+
+    /// The `[position d]` zone diameter of a point (twice its disc radius), when it has a disc.
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    fn position_diameter(&self, decl: &CanonPath, i: Option<u64>) -> Option<Exact> {
+        let e = self.input.evaluation.get(decl)?;
+        let cs = match (&e.value, i) {
+            (Val::Point(cs), None) => cs,
+            (Val::Array(vs), Some(i)) => match vs.get(usize::try_from(i).ok()?)? {
+                Val::Point(cs) => cs,
+                _ => return None,
+            },
+            _ => return None,
+        };
+        let Val::Quantity(q) = cs.first()? else {
+            return None;
+        };
+        let var = *q.form.disc_vars().first()?;
+        let (a, b) = q.form.disc_coefficients(var)?;
+        let abs = |m: &cadetta_units::Magnitude| if m.to_f64() < 0.0 { m.neg() } else { m.clone() };
+        let cadetta_units::Sum::Exact(r) = abs(a).add(&abs(b)) else {
+            return None;
+        };
+        let two = cadetta_units::Magnitude::new(cadetta_units::Rational::from_int(2), 0);
+        Some(Exact(r.mul(&two)))
     }
 
     /// The value (and differing variant values) of one coordinate of a point member.

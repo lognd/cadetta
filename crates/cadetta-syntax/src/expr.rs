@@ -114,6 +114,25 @@ mod tests {
         ));
     }
 
+    // frob:ticket 01M50C0NEZM1R9KYFTRJCJY1Z8
+    // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
+    #[test]
+    fn position_postfix_parses_but_position_index_stays_index() {
+        assert!(matches!(
+            value("Point2(1mm, 2mm) [position 0.1mm]").kind,
+            ExprKind::Position(..)
+        ));
+        assert!(matches!(
+            value("p [position d]").kind,
+            ExprKind::Position(..)
+        ));
+        assert!(matches!(value("holes[position]").kind, ExprKind::Index(..)));
+        assert!(matches!(
+            value("holes[position + 1]").kind,
+            ExprKind::Index(..)
+        ));
+    }
+
     // frob:tests crates/cadetta-syntax/src/parser.rs::parse kind=unit
     #[test]
     fn chained_comparison_and_satisfies() {

@@ -219,6 +219,7 @@ class Solver(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    citation: CiteRef | None = None
     deps: list[Path]
     inputs: dict[str, str]
     outputs: dict[str, str]
@@ -426,6 +427,18 @@ class Placement(BaseModel):
     variants: dict[str, list[Op]] | None = None
 
 
+class Require(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    citation: CiteRef | None = None
+    conservative: bool
+    expr: str
+    message: str | None = None
+    path: Path
+    verdicts: Verdicts
+
+
 class Affine(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -517,6 +530,7 @@ class Member(BaseModel):
     provenance: Provenance
     role: str | None = None
     span: SpanRef | None = None
+    text: str | None = None
     value: Value | None = None
     variants: dict[str, Value] | None = None
     was: list[str]
@@ -552,6 +566,7 @@ class Point(BaseModel):
     coords: list[Value]
     datum: Path
     path: Path
+    position: Exact | None = None
 
 
 class Process(BaseModel):
@@ -618,6 +633,7 @@ class Project(BaseModel):
     interfaces: list[Interface] | None = None
     modules: list[str]
     package: PackageId
+    requires: list[Require] | None = None
     schema_: Annotated[
         Literal["cadetta.ir/1"],
         Field(alias="schema", description="Always `cadetta.ir/1`."),

@@ -366,7 +366,8 @@ mod tests {
         let value: toml::Value = toml::from_str(&text).unwrap();
         let package = value.get("package").and_then(|p| p.as_table()).unwrap();
         assert_eq!(package["name"].as_str(), Some(STD_NAME));
-        assert_eq!(package["version"].as_str(), Some("0.1.0"));
+        // 0.2.0 added the inch fasteners (~HP6PTJH); the test name keeps its bound evidence ref.
+        assert_eq!(package["version"].as_str(), Some("0.2.0"));
         let src = package["src"].as_str().unwrap();
         assert!(root.join(src).join("lib.cdt").is_file());
         assert!(value.get("dependencies").is_none());

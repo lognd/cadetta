@@ -28,6 +28,16 @@ pub fn quote(s: &str) -> String {
     toml::Value::String(s.to_owned()).to_string()
 }
 
+/// The canonical path an item binds under: a datum or member `pkg::Comp.name`, a place
+/// `pkg::Asm/part.place` (adapters.md 7.2).
+pub fn canonical_path(package: &str, item: &Item) -> String {
+    if item.kind == "instance" {
+        format!("{package}::{}/{}.place", item.component, item.path)
+    } else {
+        format!("{package}::{}.{}", item.component, item.path)
+    }
+}
+
 /// Renders one binding table for a canonical path and its proposal item.
 pub fn binding_table(canonical: &str, item: &Item) -> String {
     let mut loc = format!(
@@ -51,7 +61,7 @@ pub fn plan(
 ) -> AcceptPlan {
     let mut out = AcceptPlan::default();
     for item in proposal.items.iter().filter(|i| i.status != Status::Skip) {
-        let canonical = format!("{package}::{}.{}", item.component, item.path);
+        let canonical = canonical_path(package, item);
         if bound_paths.contains(&canonical) || bound_locators.contains(&item.locator) {
             tracing::debug!(path = %canonical, "accept: already bound");
             out.unchanged.push(canonical);
@@ -107,6 +117,8 @@ mod tests {
             unit_assumed: false,
             path: path.into(),
             component: "Cover".into(),
+            part: None,
+            property_type: None,
             status,
             reason: None,
         }
@@ -159,5 +171,31 @@ mod tests {
         assert!(adopted_r006(&adopted, &[entry(None, "6", "5")]).is_empty());
         assert!(adopted_r006(&adopted, &[entry(Some("=1"), "5", "5")]).is_empty());
         assert!(adopted_r006(&BTreeSet::new(), &[entry(Some("=1"), "6", "5")]).is_empty());
+    }
+
+    // frob:ticket 01M4VB64CJDA2CZ4WM4MNV70G6
+    // frob:tests accept_writes_frame_and_instance_locators
+    #[test]
+    fn accept_writes_frame_and_instance_locators() {
+        let mut frame = item("mount", "Mount", Status::Accept);
+        frame.kind = "frame".into();
+        frame.component = "Rail".into();
+        let mut inst = item("bracket", "bracket<1>", Status::Accept);
+        inst.kind = "instance".into();
+        inst.component = "Drive".into();
+        inst.part = Some("Bracket".into());
+        let p = Proposal {
+            adapter: "sw".into(),
+            items: vec![frame, inst],
+        };
+        let out = plan(&p, "p", &mut BTreeSet::new(), &mut BTreeSet::new());
+        assert_eq!(out.added, ["p::Rail.mount", "p::Drive/bracket.place"]);
+        assert!(out.appended.contains(
+            "locators = [ { locator = \"Mount\", kind = \"frame\", mode = \"value\", native_unit = \"mm\" } ]"
+        ));
+        assert!(out.appended.contains("[\"p::Drive/bracket.place\"]"));
+        assert!(out.appended.contains(
+            "{ locator = \"bracket<1>\", kind = \"instance\", mode = \"value\", native_unit = \"mm\" }"
+        ));
     }
 }

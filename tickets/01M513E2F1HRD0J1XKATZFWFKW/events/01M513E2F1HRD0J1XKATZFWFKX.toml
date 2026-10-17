@@ -1,0 +1,10 @@
+kind = "create"
+title = "ir.md variants key example is short-form but the IR emits qualified keys"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/ir.md"]
+body = "found while working ~QQY7ZED: cadetta ir emits 'acme.rover::Rover/wheel=acme.rover::Colson2Series' (see bindings/python/tests/fixtures/alt-wheel); ir.md line ~259 documents 'Rover/wheel=Colson2Series'. Reconcile doc or emitter."
+at = "2026-10-16T00:57:45Z"
+actor = "lognd"
+rev = 1

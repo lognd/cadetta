@@ -3,6 +3,6 @@
   "args": [],
   "files": {
     "cadetta.toml": "[package]\nname = \"acme.demo\"\nversion = \"0.1.0\"\n",
-    "src/lib.cdt": "part Rover { param w: Length = 10mm; check w <= 5mm; }\n"
+    "src/lib.cdt": "model Rover {\n  w: Length = 10mm\n  check small: w <= 5mm\n}\n"
   }
 }

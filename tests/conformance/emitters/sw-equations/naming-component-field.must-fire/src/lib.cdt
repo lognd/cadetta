@@ -1,5 +1,5 @@
 model Rover {
-  wheel: Wheel[2]
+  part wheel[4]: Wheel
 }
 model Wheel {
   hub_bore = 10mm

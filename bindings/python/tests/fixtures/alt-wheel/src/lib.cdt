@@ -1,0 +1,18 @@
+cite src: web {
+  title = "Caster catalogue"
+  url = "https://x.example/casters.pdf"
+  accessed = "2026-10-13"
+}
+pub interface Caster {
+  hub_bore: Length
+}
+pub ots Vendor4471B: Caster @src {
+  hub_bore = 12mm
+}
+pub ots Colson2Series: Caster @src {
+  hub_bore = 15mm
+}
+pub assembly Rover {
+  part wheel: Caster = Vendor4471B alt [Colson2Series]
+  bore: Length = wheel.hub_bore
+}

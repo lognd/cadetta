@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/SNYB0FT; scope: crates/cadetta-cli/src/cmd/emit.rs, tests/conformance/emitters/sw-equations/naming-component-field.*/**, tests/conformance/known-gaps.toml; ttl 7200s"
+at = "2026-10-15T08:33:41Z"
+actor = "lognd"
+rev = 1

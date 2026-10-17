@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T15:51:55Z"
+digest = "7f9e26997c4f537bac756195103154b92a48dd95f2c46ad325a52da0da422880"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f7db36d6-7f26-46a7-a79f-82d818c83024 with nextest profile: default
+    Starting 1 test across 1 binary (15 tests skipped)
+        PASS [   0.012s] cadetta::conformance_lints run::tests::waived_diagnostics_are_not_produced
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.013s] 1 test run: 1 passed, 15 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --test conformance_lints -E 'test(waived_diagnostics_are_not_produced)'"
+size = 563
+status = "measured"
+test_count = 1
+tests_digest = "b04b9dbeb221a1017fbf4efcafbd88edc2d1597157f5a363ffc01c6f96bfc3d7"
+at = "2026-10-16T15:51:55Z"
+actor = "lognd"
+rev = 1

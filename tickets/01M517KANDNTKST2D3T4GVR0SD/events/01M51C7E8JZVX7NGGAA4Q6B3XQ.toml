@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-16T03:31:25Z"
+digest = "2be71213eb6c1d5542b851c0b4b7357d5f4a24361a80b652407e8d58d8158405"
+provider = "file"
+ref = "tests/conformance/language/eval-part-count-dimensioned.expect.json"
+size = 319
+status = "measured"
+at = "2026-10-16T03:31:25Z"
+actor = "lognd"
+rev = 1

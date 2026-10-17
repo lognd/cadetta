@@ -227,8 +227,14 @@ change, 2 and 4.1-4.3.
   comparison or a range is Q001 at the bare operand.
 - In `*` and `/` an integer bare number acts as a Count, so it never
   turns a Count into a Ratio; other bare numbers are anonymous scalars.
+  So `2 * 0.5` is a Count times an anonymous scalar and is therefore a
+  Ratio (4.1 rule 6 wins over the anonymous-kind default of rule 3),
+  while `2 * 3` is a Count.
 - `x ^ n` with a dimensioned base needs an integer literal `n`; any
   other exponent is Q002.
+- A block `let` whose type is unknown shadows a same-named component
+  member: reads of that name inside the block are untyped, never the
+  member's dimension.
 - `sin cos tan` take an Angle: a bare argument is Q001, any other
   dimension Q002, a wrong angle exponent Q008. They return Ratio.
 - A tolerance deviation of a dimensioned nominal must have its
@@ -316,7 +322,13 @@ centre, so `cb = head_dia + 1mm` stores the sum of nominals even when
 `head_dia` is asymmetric; `.max` and the other accessors read bounds
 and the tracked nominal. A parameter is an alias only when it is a pure
 reference to a non-`let` quantity; a parameter reading a `let` stores
-that `let`'s nominal untoleranced. A bracket with a single `+v` term has
+that `let`'s nominal untoleranced. A parameter that is a pure member
+read through a path or field (a fit side `bore_fit.hole`, a table cell
+`Din472[..].groove_dia`, a component member `ring.groove_width`) is a
+stored copy of the toleranced value it read, not a nominal-only
+constant, so `.min`/`.max` of it keep the tolerance. A bound such as
+`in 2um..13um` has no IR member path; a check reads its `.min`/`.max`
+instead. A bracket with a single `+v` term has
 0 on the lower side and a single `-v` term has 0 on the upper side; with
 more terms the lower and upper deviations are the least and greatest
 signed deviation. A tolerance written inside a larger expression or a
@@ -324,6 +336,29 @@ signed deviation. A tolerance written inside a larger expression or a
 spec code (division by a divisor containing zero, mixed `pi` exponents,
 a construct evaluated by a later stage) carry the internal code `EVAL`.
 Parameterized components are evaluated only as instances.
+
+Decided (spec ambiguities found writing the conformance fixtures; every
+case below is an error `EVAL` at the failing member's path, since none
+has a user-facing code):
+
+- Division by zero, or by a divisor whose interval contains zero, is
+  `EVAL` (section 1: an error value, never a panic).
+- A reversed range `x in 6mm..4mm` (`lo > hi`, 5.7) is `EVAL` at the
+  member holding the range.
+- Reading a limit a bound does not have (`P.min` of `x <= v`, `P.max`
+  of `x >= v`, 5.7) is `EVAL` at the reading member.
+- Mixed `pi` exponents in an affine (toleranced) sum are `EVAL`
+  (5.4); the same sum of untoleranced values is inexact with a Q006
+  root (section 1). The two are consistent: only a form must stay
+  exact.
+- `x satisfies <= 8.5mm` is not valid: the right side of `satisfies`
+  must name a bound (`P` or `Item.P`, language.md 6). A bare bound
+  literal there is a parse error E001. Write the comparison
+  `x <= 8.5mm`, or declare a bound `P <= 8.5mm` in the component and use
+  `x satisfies P`.
+- E009 is raised for a `match` over an enum, which is declared at the
+  top level of a module (`enum M { A, B }`), never inside a component.
+  The diagnostic path is the member holding the `match`.
 
 Standard functions (language.md 3.8) follow these rules. An inexact value
 (`sqrt` of a non-square, `cbrt` of a non-cube, `sin`, `cos`, `tan`, `atan2` off the special
@@ -340,7 +375,9 @@ under a fresh variable. `floor`, `ceil`, `round` take dimensionless
 values; `round` is half away from zero. `count` returns the length of
 an array. `fmt` substitutes `{}` positionally (`{{` and `}}` escape);
 a placeholder/argument mismatch is E006. A quantity renders in its
-authored unit when one is syntactically visible, else in SI base units;
+authored unit when one is syntactically visible, else a Length in
+mm (decided 2026-10-16), else in SI base units; a variant name shows an
+underscore between digits as a decimal point (`M2_5` is `M2.5`);
 attribute-driven display is applied by the output stages. Recursion,
 direct or mutual, is rejected with `EVAL` at the function's name. A
 non-exhaustive `match` is E009 naming each missing variant.
@@ -376,6 +413,28 @@ and adds `sqrt(a^2 + b^2)` for the coefficients `a` of `u` and `b` of
 `v`, instead of `|a| + |b|`; the square root is exact when either coefficient is
 zero and otherwise outward-widened and conservative. Treating the pair
 as two independent terms is never unsound, only looser.
+
+Decided in implementation (`cadetta-units` `Affine`): disc variables
+live in their own map of `VarId -> (a, b)` beside the box terms, rather
+than as a tagged term enum, so every existing box-only accessor and
+caller is unchanged and the form's radius is `slack + sum |c_i| +
+sum sqrt(a^2 + b^2)`. `Affine::disc` builds `center + a*u + b*v`;
+`disc_coefficients` reads a pair. Sum and difference combine pairs
+componentwise (a pair cancels when both coefficients reach zero), negation
+and exact scaling act on both coefficients, and the nonlinear fallbacks
+(product, quotient) read the bounds and drop the pair into the hull as
+before. The disc radius is exact when a coefficient is zero or
+`a^2 + b^2` is a rational square; otherwise it is the smallest multiple of
+`1 / (den * 2^32)` not below the root, and `is_conservative` reports it.
+A `VarId` is a box or a disc variable, never both. The IR needs no change:
+the two coefficients serialise as the `.u` and `.v` terms (ir.md).
+
+Decided in implementation: `Affine::disc_vars` lists a form's disc
+variables and `Affine::box_radius` returns the radius of the box part
+alone (`radius` is now `box_radius` plus the disc radii). Geometry uses
+them to build the per-disc Gram bound for `aligned` and `distance`
+(geometry.md 3.1): exact for coplanar isotropic discs without a box
+part, conservative otherwise.
 
 Decided in implementation: "the same affine form" means structurally
 equal forms (same centre, terms and slack). `x * -x` and `x * (x + 0)`
@@ -421,7 +480,11 @@ the side a parameter plays in a `fit`, or from `#[role(hole)]`; pure
 references keep it. The point written to a CAD tool is chosen by policy:
 `nominal` (default), `mid`, `mmc`, `lmc`, set by `[emit] point` and
 overridden per parameter with `#[emit(mid)]` or for a scope with
-`#![emit(mid)]`. `mmc`/`lmc` without a role is E010. A pure
+`#![emit(mid)]`. `mmc`/`lmc` without a role is E010. The role is recorded on the IR member
+(`role`, ir.md 3) whatever its source, so an emitter reads `12mm H7
+#[emit(mmc)]` as a hole (smallest size) and `12mm g6 #[emit(mmc)]` as a
+shaft (largest) with no `#[role]` written; the uppercase/lowercase rule
+is the only inference from a class. A pure
 reference inherits its referent's emit point unless it sets its own, so
 an alias of a `#[emit(mid)]` fit side is emitted at mid too.
 
@@ -500,10 +563,17 @@ Display rules (decided 2026-10-13, cadetta-units `display`):
   KWD, for example) and `%` prints one decimal, both half away from
   zero (obligations.md 5.1). Fractional specs need a length unit.
 
-Conformance surface: the display rules are exercised by `kind =
-"binding"` fixtures under `tests/conformance/quantities/`, a
-`{ "call": "display", "value", "spec" }` JSON whose expected `result` is
-the printed text, until a CLI or binding verb exposes the formatter.
+Conformance surface (decided 2026-10-16): `cadetta display VALUE SPEC`
+prints one quantity through the formatter (config-cli.md 3.3). `VALUE` is
+a quantity literal (`45.9375in`, `0.25m`; a bare number is dimensionless)
+and `SPEC` is the text inside `#[display(...)]`. The `kind = "binding"`
+fixtures under `tests/conformance/quantities/` are
+`{ "call": "display", "value", "spec" }` JSON; the runner invokes the verb
+and compares its printed text with the expected `result`. A separate verb
+(not `units display`) was chosen because `units` lists tables keyed by
+KIND while `display` is a pure computation on a value and spec: the
+arguments map one to one onto the fixture call and the future
+`cadetta.display(value, spec)` binding, and it needs no project.
 
 ## 7. Diagnostics owned by this document
 

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Triage: IMPL bug - pure member/fit-side/table-cell parameter reads dropped tolerance (eval_param_expr stored nominal-only): fixes groove_width, groove_side/axial_play max, bore_dia.max, seat_dia.min, axial_play_ok undecided (also fixes motor_mount/plate pilot_bore, hub bore in other goldens). HAND errors: groove_dia is DIN 472 d2=23.5 H11 (23 was a slip); radial_clearance.min is not an IR path (bounds have none), value removed; seats_coaxial is exact over the tolerance box, not conservative; C002 paths use item.check form; two bearings give two C002 each so expectations repeated; S008 correct (cite lacked edition and accessed), source cite fixed. HARNESS bug: golden diagnostic matcher reused one actual diagnostic for several expectations; now each actual matches once."
+at = "2026-10-16T13:24:02Z"
+actor = "lognd"
+rev = 1

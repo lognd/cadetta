@@ -12,7 +12,7 @@ use cadetta_adapter::builtin::sw_equations;
 use serde_json::{Value, json};
 
 use crate::exec::Job;
-use crate::run::{Facts, Scratch, parse_json, run_cli, snapshot};
+use crate::run::{Facts, Scratch, parse_json, run_cli, snapshot, writing};
 
 /// The emitted file every scenario writes (set by `out` in the generated `cadetta.toml`).
 const OUT: &str = "build/eq.txt";
@@ -24,6 +24,7 @@ fn read_spec(job: &Job) -> Result<Value, String> {
 }
 
 fn put(root: &Path, rel: &str, text: &str) -> Result<(), String> {
+    let _writing = writing();
     let path = root.join(rel);
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
@@ -294,7 +295,7 @@ pub fn impact_swap(job: &Job) -> Result<Facts, String> {
     let args = [
         "impact".to_owned(),
         "--swap".into(),
-        format!("{package}::Rover.wheel"),
+        format!("{package}::Rover/wheel"),
         alternate.clone(),
     ];
     let mut facts = run_cli(root, &args)?;
@@ -309,5 +310,30 @@ pub fn impact_swap(job: &Job) -> Result<Facts, String> {
     facts
         .observed
         .insert("actions".into(), Value::Array(actions));
+    Ok(facts)
+}
+
+/// `{ "call": "display", "value", "spec" }`: run `cadetta display` and observe the printed `result`.
+pub fn display(job: &Job) -> Result<Facts, String> {
+    let spec = read_spec(job)?;
+    let call = spec["call"].as_str().unwrap_or_default();
+    if call != "display" {
+        return Err(format!("binding call `{call}` has no executor"));
+    }
+    let field = |key: &str| {
+        spec[key]
+            .as_str()
+            .map(str::to_owned)
+            .ok_or_else(|| format!("display call lacks string `{key}`"))
+    };
+    let args = vec!["display".to_owned(), field("value")?, field("spec")?];
+    let scratch = Scratch::new()?;
+    let mut facts = run_cli(&scratch.0, &args)?;
+    if let Some(text) =
+        parse_json(&facts.stdout).and_then(|v| v["text"].as_str().map(str::to_owned))
+    {
+        facts.observed.insert("result".into(), json!(text));
+    }
+    tracing::debug!(?args, exit = facts.exit, "conformance: binding display");
     Ok(facts)
 }

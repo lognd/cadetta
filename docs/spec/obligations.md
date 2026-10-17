@@ -96,14 +96,23 @@ errors (exit 2).
 | solver result is current | `cadetta solve` | input, script or dep digest changed | S003 |
 | CAD file reflects design | `cadetta sync` | a bound param's emitted value changed | O004 |
 | value matches its citation | `cadetta ack ots:PATH --role source` | the citation's digest changed: a field (a new `rev`, `date` or `url`) or its `file`'s content | S004 |
-| review / sign-off | `cadetta ack SELECTOR --role NAME` | any node in the attested set changed digest | O001 (stale), O002 (open) |
+| review / sign-off | (`cadetta obligations` ids) | Besides `check:`, `fit:`, `require:`, `ots:` and `cite:`, the list carries `solver:PATH` (judged against the solver's closure), `sync:FILE` (stale when a bound input changed) and `waiver:GLOB` (open until reviewed, stale when the covered closure digest changed). Check closures include the tables and part arguments a check reads, so editing them stales the attestation. |
+| `cadetta ack SELECTOR --role NAME` | any node in the attested set changed digest | O001 (stale), O002 (open) |
 
 Diagnostic rules:
 
 - Citation staleness is S004 only; O001 is not raised for the same
   node. O001 and O002 cover role attestations alone.
 - Solver staleness is S003; sync staleness is O004 (info by default,
-  because CI cannot read CAD).
+  because CI cannot read CAD). A synced file whose adapters are all
+  built-in without `drive` (`json`, `csv`, `sw-equations`) is an open
+  `sync` obligation, also O004, with the reason "unverifiable without
+  drive" (adapters.md 2); an external `drive` adapter that synced the
+  same file discharges it, and so does an `attest` record on
+  `sync:FILE`, which `cadetta ack sync:FILE --role R --reason "..."`
+  records (offered for every file in a `synced file=` lock record;
+  the role's `covers` must include `sync:FILE`). `cadetta sync` reports the open obligation itself (no
+  separate `check` run needed).
 - `[obligations.kinds.<kind>] required_for = "check" | "release"`
   makes `sync` and `solver` obligations gating, as for roles (4).
   Severity precedence is in lints.md 1.
@@ -347,7 +356,7 @@ W003.
 | `cadetta compare IFACE` | Every implementer of an interface side by side: interface members, bounds, commercial members, lifecycle, and which checks hold for each in this design. |
 | `cadetta obligations [--stale] [--role R] [--release] [--as-of DATE]` | The open and stale obligation list: the design's to-do list. Exit 1 if any obligation required for the chosen gate is stale or open. |
 | `cadetta ack SELECTOR --role R --reason "..." [--release] [--baseline] [--dry-run] [--as EMAIL]` | Discharge attestation obligations at current digests. |
-| `cadetta ack waiver:GLOB --role R` | Record (or re-review) the closure digests of waivers in the lock (lints.md 2). |
+| `cadetta ack waiver:GLOB --role R` | Record (or re-review) the closure digest of each matching waiver in the lock (lints.md 2); no `--reason` is needed. Every `waive` whose glob matches at least one node is offered, so it is reviewable as listed by `obligations`. `sync:FILE` has no ack: it is discharged by `cadetta sync`. |
 | `cadetta lock verify` / `tidy` / `merge` | Lock maintenance (3). |
 | `cadetta cite pin NAME` | Vendor a URL citation as a local file (2.3). |
 

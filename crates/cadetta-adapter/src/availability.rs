@@ -46,12 +46,15 @@ pub struct Unavailable {
 
 /// Maps a failure to reach the adapter to R008, or `None` when it is another failure.
 ///
-/// Spawn failures and version mismatches are R008; `sync` makes it an error with exit 2,
+/// Spawn failures, version or platform mismatches and nonconforming results are R008; `sync` makes it an error with exit 2,
 /// `check` an info that falls back to the lock base.
 // frob:ticket 01M4SWMCARH2B2RDJV076RVDH2
 pub fn unavailable(adapter: &str, err: &RpcError, verb: Verb) -> Option<Unavailable> {
     let detail = match err {
-        RpcError::Spawn(_) | RpcError::VersionMismatch { .. } => err.to_string(),
+        RpcError::Spawn(_)
+        | RpcError::VersionMismatch { .. }
+        | RpcError::PlatformMismatch { .. }
+        | RpcError::Nonconforming(_) => err.to_string(),
         _ => return None,
     };
     let (severity, exit, use_lock_base) = match verb {

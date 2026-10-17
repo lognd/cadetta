@@ -58,7 +58,7 @@ tests/conformance/<doc>/
 | `doc` | string | Spec document stem; equals the directory name. |
 | `section` | string | Normative section the rule comes from. |
 | `rule` | string | Rule or diagnostic code the pair tests. |
-| `kind` | `"source"`, `"ir"`, `"binding"`, `"compare"` | Fixture form: `.cdt`, IR JSON, binding-call JSON, or an input pair (see "Two-input comparisons"). |
+| `kind` | `"source"`, `"ir"`, `"binding"`, `"compare"` | Fixture form: `.cdt`, IR JSON, binding-call JSON (see "Binding fixtures"), or an input pair (see "Two-input comparisons"). |
 | `entry` | string, optional | Command to run: `check` (default), `eval`, `lint`, `emit <target>`. |
 | `must_fire` | object | Expectations for the must-fire fixture. |
 | `must_not_fire` | object | Expectations for the must-not-fire fixture. |
@@ -86,6 +86,29 @@ Matching rules:
 - A rule that is not a diagnostic (a pure evaluation rule) uses `rule`
   as a name and lists `values` instead: `{ "path", "nominal" }` with
   quantity source literals, compared as exact quantities.
+
+## Binding fixtures (`kind: "binding"`)
+
+Copied from `bindings/README.md` ("Entry and fixture form"). Binding
+pairs are `kind = "binding"`, `entry = "python"` and describe Python-API
+behaviour; the runner skips them except `classify` (see "Runner
+contract"). They are replayed by the Python binding suite,
+`bindings/python/tests/test_binding_fixtures.py` (ticket ~CDRJTN9).
+
+A fixture is one API call:
+
+| key | meaning |
+|---|---|
+| `api` | dotted callable under `cadetta` (`Project.open`, `Quantity.__add__`, `cadetta.quantity`) |
+| `args` | positional arguments; quantity arguments are source literals parsed with `cadetta.quantity` |
+| `files` | optional package tree (relative path to contents) staged as the project directory |
+| other keys | call context (`role`, `edit`, `inputs`, `outputs`, `returns`, ...) |
+
+Expectation blocks use `result` (`Ok`, `Err`, `raises`, `value`,
+`protocol-error`) and descriptive keys (`QuantityError` = expected
+`.code`, `error`, `value`, `nominal`, `package`, `modules`, ...).
+`exit` is the CLI exit code the call maps to (0 clean, 1 error
+diagnostics, 2 I/O, configuration or usage).
 
 ## Two-input comparisons (`kind: "compare"`)
 
@@ -148,9 +171,69 @@ tests/conformance/ir/
   and differ only in `b`, by the smallest edit that flips the rule.
 - `diagnostics` is not used by `compare`; an input that fails to compile
   is a failure of the fixture, reported as such.
-- Until the executor for `(compare, digest)` and `(compare, classify)`
-  exists in `exec.rs`, such fixtures are failures ("no executor") and
-  must be listed in `known-gaps.toml` against the ticket adding it.
+- The executor lives in `crates/cadetta-cli/tests/conformance/two_input.rs`:
+  `digest` stages both sides, reads `cadetta ir` for each and reports the
+  observed `relation` per row; `classify` calls `cadetta_ir::schema::classify`
+  (`Breaking` is spelled `major`). A fixture for a rule the implementation does
+  not yet honour fails like any other and is listed in `known-gaps.toml`.
+
+## Lock and obligations fixtures (entries `update`, `obligations`)
+
+Decided (~XXKBNB8): packages.md 1 (`cadetta update`) and 6 (trust,
+attested upstream) are tested through two more entries of `kind: "source"`
+package fixtures (a `NAME.must-fire/` directory holding the whole project,
+including any `cadetta.lock` to start from, and dependency packages as
+sibling `path` directories inside it). Rationale: the lock and the
+obligation rows are the observable output of those rules, and a package
+directory is already the fixture form for multi-package rules; no new
+`kind` is needed.
+
+- `"entry": "update"` runs `cadetta update` in the fixture; `args` carries
+  `NAME` when the fixture tests the one-record form. Observed keys:
+  - `exit`: 0, 1 (E012 or E013, lock not written) or 2 (`NAME` not in the
+    closure).
+  - `lock`: `{ "packages": [ { "name", "version"?, "source"? } ], "absent":
+    [ NAME ] }`. After the run the `cadetta.lock` must hold a record for
+    every listed package (listed fields compared exactly; `source` uses
+    the lock form `path:RELATIVE` or `git:URL#KIND=REF`) and none for the
+    `absent` names (records dropped for packages that left the closure).
+  - `lock_written`: boolean; false means the lock file is byte-identical
+    to the one the fixture started with.
+  - `digest_changed`: list of package names whose lock `digest` differs
+    from the starting lock (digests are never compared by value, only by
+    equality with the starting record, so the BLAKE3 framing stays free to
+    change within packages.md 1).
+  - `diagnostics` as usual (E012, E013, E005).
+  Git sources are not exercised (they need network); fixtures use `path`
+  sources only.
+- `"entry": "obligations"` runs `cadetta obligations` (json). Observed
+  keys: `rows`: `{ "id", "role"?, "listed": bool, "upstream"?: { "package",
+  "role", "by", "date" } }` per obligation of interest (`listed: false`
+  means a trusted upstream attestation discharged it, packages.md 6), and
+  the usual `output` `contains`/`excludes` over the text form. The
+  fixture's dependency carries its own `cadetta.lock` with the
+  attestations.
+
+Executors: `crates/cadetta-cli/tests/conformance/lockfix.rs`. `update`
+turns the `error: E0NN` lines `cadetta update` prints on stderr into
+diagnostics (it has no diagnostics report) and observes `lock`,
+`lock_written` and `digest_changed` from the fixture's `cadetta.lock`
+before and after; `obligations` observes `rows` from the JSON report, each
+upstream string split into `package`, `role`, `by` and `date`. Fixtures:
+`packages/update-*` and `packages/trust-*`.
+
+## Observing the emitted point
+
+The point a parameter is written at (quantities.md 5.6: `nominal`, `mid`,
+`mmc`, `lmc`, from `[emit] point`, `#[emit(..)]` and `#![emit(..)]`,
+inherited through pure references) is observed through a package fixture
+(`NAME.must-fire/` with a `json` adapter, `bindings/json.toml` and
+`"entry": "emit json"`), not through `eval`, which reports designed
+values. The `output` expectation names `build/params.json` and lists the
+written `"value": "..."` text under `contains`/`excludes`; the json
+adapter writes the value in the locator's `native_unit`. The `quantities`
+`emit-point-*` fixtures follow this form; the emitters' own `note-*`
+fixtures observe the same point through the note text.
 
 ## Runner contract
 
@@ -167,8 +250,46 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 - Every `(kind, entry verb)` pair is dispatched through one table in
   `crates/cadetta-cli/tests/conformance/exec.rs`. Executors today:
   `source` with `check`, `config` (runs `check`), `ack`, `emit`, `solve`,
-  `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; and
-  `binding` with `classify` (sync dry-run). A pair with no executor is a
+  `fmt`, `names`, `bind`, `cite`, `eval` (in-process IR values) and `init`; `compare` with
+  `digest` and `classify` (two inputs, `two_input.rs`); and
+  `binding` with `classify` (sync dry-run) and `protocol` (the adapter host
+  JSON-RPC over a scripted in-memory adapter; `protocol.rs` records `sent`,
+  `refused`, `request`, `protocol_error` and the like), `read` and `emit-read`
+  (`read.rs`: the adapter host's read side in process, namely native-link
+  discovery, R003, name qualification, unit resolution, the csv, json and
+  sw-equations readers and the round-trip contract; the `observed` block is
+  subset-compared and `excludes` lists tokens that must be absent) and
+  `push-plan` (`push_plan.rs`: the tolerance planner, one printed line per
+  written tolerance, checked by a flat `output` `contains`/`excludes` against
+  that plan text; geometry push-plan fixtures remain gaps) and `sync`
+  (`sync.rs`: the adapter host's sync loop against a simulated native
+  document, observing `class`, `writes`, `regen`, `lock_updated`,
+  `lock_synced_updated`, `push_status` and the next run's class). The
+  simulated tool session also models host faults (`regen_fail`,
+  `restore_fail`), R004 restore reporting, R008 availability (exit 2),
+  R009 partition refusal (`locked` counts as read-only), R010 rejected
+  locators, save and adopted-clear observations. `push_status` values are a
+  bare string for `rejected` and `skipped` and an object
+  `{status, old, new}` for `pushed`. Sync fixtures with `running_instance`, `opened_by_adapter` or `preopened`
+  (attach to a running tool, close only what was opened; adapters.md 2.2)
+  are adapter decisions, so `session.rs` runs the real FreeCAD adapter over
+  a fake tool (`adapters/freecad/tests/conformance/session_driver.py`, via
+  `uv run`; `uv` must be on PATH) and observes `attached`, `started`,
+  `hidden`, `closes_tool`, `closed` and `left_open`. O004 fixtures (the `adapters` emitter
+  shape, `attested`, `drive_covers`, or an expected `obligation` from an
+  adapter without `drive`) run in `o004.rs` against the real CLI: a scratch
+  package with the named built-in adapters, `cadetta sync`, and for
+  `attested` a `cadetta ack sync:FILE` plus a second sync; `drive_covers`
+  stages a drive adapter stub with a `synced` lock record for that file.
+  Observed: `obligation`, `state` (`open` when O004 was reported, else
+  `current`) and `reason`; the report carries no severity, so O004 is
+  taken as `info`. For drive adapters the host model observes `state`
+  `open`/`reason` `unsaved` while a save is pending. Fixtures needing R006
+  dry-run or degrade are gaps) and `import` (`import.rs`: propose mode
+  only; observed items are decoded as the CLI does and run through
+  `propose`, observing `members`, `components`, `flagged`, `item_order`,
+  `status` and `reason_present`; accept, update and richer item features
+  are gaps and fail loudly). A pair with no executor is a
   failure ("no executor for kind K entry V"), never a silent skip; the
   fixture must then be listed in `known-gaps.toml` against the ticket that
   adds the executor.
@@ -178,7 +299,14 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
 - Beyond `diagnostics`, `exit` and `values`, the runner observes `output`
   and `outputs` (`contains`/`excludes` per file), `writes`,
   `file_written`, `order`, `stdout_contains`, `stderr_contains`,
-  `message_contains`, `message_excludes` and `config_error` (exit 2).
+  `message_contains`, `message_excludes`, `config_error` (exit 2),
+  `json_diag_schema` (every report record carries the schema tag),
+  `results_order` (solver ids appear in this order in the written files),
+  `runs` (lines in the `marker` file each solver script appends to),
+  `unbound_params_not_written` (no written file names a member that no
+  `bindings/*.toml` binds) and, for `classify`, `r001_suppressed_by_force`
+  (`force_design` overrode an R001 that would have refused; the override
+  note is then not counted as a diagnostic).
   `note`, `why` and `args` are descriptive and ignored. Any other key is
   a failure ("this entry does not observe K") so an expectation is never
   dropped silently.
@@ -188,3 +316,7 @@ The runner is `crates/cadetta-cli/tests/conformance.rs` (run with
   (`fixture`, `ticket`, `reason`). A listed fixture may fail; a listed
   fixture that passes is a failure (stale entry).
 - Every spec rule must have a pair; a rule without one is a corpus gap.
+- The runner's test threads share one process: fixture files are written
+  under `run::writing()` and the CLI (which may spawn adapters) runs under
+  `run::spawning()`, so a spawn never inherits an open script handle
+  (ETXTBSY, flaky under load).

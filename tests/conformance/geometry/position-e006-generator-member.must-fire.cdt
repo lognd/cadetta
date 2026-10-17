@@ -1,0 +1,7 @@
+model M {
+  holes: [Point2 on origin; 2] = rect_pattern(2, 1, 40mm [+-0.1mm], 0mm) [position 0.2mm]
+}
+
+assembly A {
+  part m: M
+}

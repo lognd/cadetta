@@ -1,0 +1,38 @@
+[package]
+name = "cadetta-capi"
+description = "C ABI for cadetta: a stable extern \"C\" surface over the CLI entry point."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+readme = "README.md"
+keywords = ["cad", "parameters", "tolerance", "units", "c-api"]
+categories = ["science", "development-tools", "external-ffi-bindings"]
+# Shipped as release archives (libcadetta_capi + cadetta.h), not crates.io.
+publish = false
+
+[lib]
+name = "cadetta_capi"
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+cadetta.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+# An FFI crate needs `unsafe`; the workspace forbids it, so this crate
+# states its lints explicitly (unsafe is allowed only here).
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+print_stdout = "deny"
+print_stderr = "deny"

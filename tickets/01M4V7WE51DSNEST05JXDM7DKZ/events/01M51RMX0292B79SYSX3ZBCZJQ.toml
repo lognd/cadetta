@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: error. sw-equations emits only global and dimension locators; property/frame/instance locators that must be emitted raise R015 (same as json/csv), file withheld, exit 1. Rationale: an equations file has no syntax for them; silent skip is forbidden; reusing R015 avoids a new code. Documented in emitters/sw-equations.md 1, adapters.md failure table, lints.md R015."
+at = "2026-10-16T07:08:29Z"
+actor = "lognd"
+rev = 1

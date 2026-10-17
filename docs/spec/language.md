@@ -317,9 +317,13 @@ E006 when `cond` holds and `arg` was not given. The callee's `check`s and
 instance path (`Box/j.engaged`); a check carrying `#[when(cond)]` exists
 only while `cond` holds, and an absent check yields no verdict. The IR
 lowers each as an ordinary `Check` whose path is the instance path.
+The callee's datums and placements are evaluated per instance too, in the
+same scope (`Box/j.mount.offset.z`, `Box/f/leg.place.offset.x`), and
+lower as `datum` / `place` Members of the instantiating component.
 Instances inside
-parameterized components, `Part`-typed arguments and part arrays inside
-an instance are not evaluated yet (ticketed).
+parameterized components, `Part`-typed arguments, part arrays inside
+an instance (their array placements) and the callee's points are not
+evaluated yet (ticketed).
 
 ### 3.4 Bounds
 
@@ -345,6 +349,13 @@ iterates in checks. Every instance of an array has the same arguments,
 so `name.member` (no index) reads a member as `name[0].member` does, for
 use as an argument or in a `let`; checks over instances use `for`.
 `sum(name.member)` sums a member over the instances of one part array.
+`count(name)` and `sum|max|min(name.member)` also apply to an array nested
+in another part (`count(j.screw)`, `sum(j.screw.unit_cost)`), and a
+`Part`-typed argument (`host = base`) is an ordinary part reference whose
+members (`host.material`) the callee reads.
+A whole array may be passed as one `Part` argument by its indexed instance
+(`bearing = b[0]`; any in-range index names the same arguments), and the
+callee's members and fits are evaluated per instance of the caller.
 `sum(self, mass)` (shorthand `mass(self)`) rolls a parameter up over all
 parts, recursively; `max(self, lead_time)` and `min(self, p)` do the
 same with maximum and minimum. Roll-ups count every instance: an array
@@ -356,6 +367,17 @@ ordinary I001 or Q003. Any part lacking the parameter is an
 error unless `?` is used (`sum?(self, mass)`, `mass?(self)`, `max?(self,
 lead_time)`), in which case the missing parts are listed in the result's
 note.
+
+A part that has the parameter contributes it and the walk stops there; a
+part without it is searched through its own parts, and a part with
+neither contributes a lack. A part of a parameterized component
+contributes the argument its `part` site passes for the parameter; a
+nested part of a parameterized callee is an instance of its own (one per
+slot index), so its other members (a screw's `mass`) and its defaulted
+parameters are read as well, and a member that cannot be evaluated
+because an argument it forwards is absent counts as a lack. So
+`sum(self, unit_cost)` over a `ScrewJoint` counts its `screw_cost` once
+per screw and is an error when `screw_cost` is not given.
 
 The errors in this section and in 3.8 (a non-whole, dimensioned or
 negative count, an unindexed read of an empty array, an index out of
@@ -400,6 +422,11 @@ ships, and their column names, are in stdlib.md.
 
 `fit NAME = SPEC on PATH` inside a component, or at file scope.
 
+A file-scope fit has no enclosing component, so its paths name components
+(`Bore.d / Pin.d`). It is derived once and lowered into the component that
+owns its first operand (the hole path of `a / b`, else the `on` path), under
+the path `Owner.NAME`.
+
 - `H7/p6 on x`: both sides from ISO 286 on x's nominal.
 - `p6 on x` / `H7 on x`: one-sided; the class's letter case picks the
   side it plays (lowercase shaft, uppercase hole), and x is the other
@@ -425,7 +452,12 @@ IT1..IT4 are tabulated to 0.1 um.
 A fit defines `NAME.hole`, `NAME.shaft`, `NAME.clearance` (toleranced)
 and a computed `NAME.type` (clearance, transition, interference), and
 gives each side its role. F003 when a side's own tolerance disagrees
-with the class it is declared to play. Against a required range, a
+with the class it is declared to play. A check or `let` can read
+`NAME.clearance` (an interval quantity, so `.min`/`.max` apply); the
+evaluator computes it on demand from the fit's operands. The same holds
+for `.hole` and `.shaft`, including a fit inside a parameterized component:
+its operands read the instance's arguments, so each instance evaluates its
+own fit (`Unit/housing.bore_fit.hole`). Against a required range, a
 clearance entirely outside it is F004 (violates); one that overlaps it
 only in part is C002 on the fit (undecided), like any check.
 
@@ -440,6 +472,10 @@ b` the first path is the hole and the second the shaft. For `H7/p6 on
 x` the fitted parameter x may be untoleranced or carry exactly one of
 the two classes' deviations; any other tolerance on it is F003. A
 nominal that is not a whole number of nanometres has no table row (F002).
+The granularity is deliberately 1 nm, not 1 pm: the tables are exact to
+0.1 um, so finer resolution adds no information. `20000001nm` is whole;
+`20.0000000005mm` (0.5 nm) is not. Conformance fixture
+`language/f002-sub-nanometre` pins both sides of this boundary.
 
 Pipeline (cadetta-sema `fitderive`): `cadetta check` evaluates each
 component fit's operands and required range after the member values are
@@ -525,12 +561,16 @@ Arrays and points (decisions, cadetta-sema `array.rs`, `point.rs`): an
 array literal holds elements of one kind (one dimension, one point
 arity, one enum) or it is an error; a declared `[T; N]` checks the
 length against N (a whole number) and a `Point2`/`Point3` element type
-checks the arity. Until datum typing lands (geometry epic) points and
+checks the arity. Before a point is typed (no `Point2 on D`
+annotation reaches it; geometry epic) points and
 vectors share one value: `Point2(x, y)`, `Vec2(x, y)` and the 3D forms
 take Length components, `p + q`, `p - q` and `p * s` (or `p / s`, `s *
 p`; `s` dimensionless) each give a point, `.x .y .z` read a component,
-and an array combined with a point (either order, `+ -`) applies the
-point to every element. Array with array is an error. Pattern points
+and an array combined with an untyped point (either order, `+ -`)
+applies the point to every element. Once either side is a typed point
+(`Point2 on D`) that combination is G001 (3.8): the typed form must
+say which vector is meant, so write `holes + Vec2(..)`. Array with
+array is an error. Pattern points
 are exact when the angle is a special one (`circle_pattern(4, 10mm,
 0deg)`) and carry an inexact interval otherwise (Q006); `distance` is
 exact when the sum of squares is a perfect square. A component that
@@ -811,6 +851,17 @@ Precedence, high to low: postfix (`.member`, `[index]`, call, tolerance
 Comparisons chain: `4mm <= x <= 6mm`. `if`/`else` and
 `match` are expressions; `{ let a = ...; expr }` is a block expression.
 
+Conformance labels (`tests/conformance/language/*.expect.json`): the
+`rule` field is a free label, either a bare code (`T001`) or a code with
+a suffix naming the case (`E008-column`, `EVAL-index-range`,
+`F002-nanometre`); the suffix after the first `-` never changes the
+asserted `code`. Where one rule fires at two severities (L001 warning
+before its date, error after) the fixtures are split per severity and the
+`severity` in `must_fire` is the contract. Labels with no code prefix
+(`precedence`, `fmt-canonical`, `if-else`) name a language or formatter
+rule that raises no diagnostic code; their fixtures assert only
+accept/reject or formatted output.
+
 ## 5a. Parser decisions
 
 Rules the grammar left open, fixed by the reference parser:
@@ -828,9 +879,10 @@ Rules the grammar left open, fixed by the reference parser:
   is constructed directly, as `part axle[2]: Axle(wheel = ...)`).
 - A postfix `[` followed by `+` or `-` opens a tolerance bracket
   (`12mm [+0.018mm -0]`, `[+-0.1mm]`); a postfix `[` followed by the
-  identifier `position` and then a token other than `]` opens a position
+  identifier `position` and then a token that starts an operand (a number,
+  quantity, name, or `self`/`origin`/`package`/`super`) opens a position
   tolerance (`[position 0.2mm]`, geometry.md 3.1), so `holes[position]`
-  stays an index; any other `[` is an index. Each
+  and `holes[position + 1]` stay indexes; any other `[` is an index. Each
   tolerance term is a sign (`+`, `-`, or `+-` with no space) and a
   product-level expression.
 - An ISO class (`H8`, `p6`, `js6`: one or two letters then one or two

@@ -54,6 +54,13 @@ fn entries(src: &str, a: &Attr) -> Vec<(String, String)> {
                 None => Vec::new(),
             }
         }
+        "native" => match a.args.as_slice() {
+            [adapter, locator] => {
+                let (adapter, locator) = (arg_text(src, adapter), arg_text(src, locator));
+                vec![(format!("native:{adapter}:{locator}"), locator)]
+            }
+            _ => Vec::new(),
+        },
         _ => {
             let v: Vec<String> = a.args.iter().map(|g| arg_text(src, g)).collect();
             vec![(name.to_owned(), v.join(", "))]

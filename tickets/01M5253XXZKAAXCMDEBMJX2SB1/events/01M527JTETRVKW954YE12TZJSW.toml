@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: map only ProjectError::Diag with code E012/E013 to EXIT_DIAGNOSTICS in a small open_exit_code helper; E005 and other open errors stay exit 2 per spec."
+at = "2026-10-16T11:29:30Z"
+actor = "lognd"
+rev = 1

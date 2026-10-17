@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["A commercial roll-up skips parts lacking the member, and a member reading a component argument digests"]
+moved = []
+at = "2026-10-15T07:35:32Z"
+actor = "lognd"
+rev = 1

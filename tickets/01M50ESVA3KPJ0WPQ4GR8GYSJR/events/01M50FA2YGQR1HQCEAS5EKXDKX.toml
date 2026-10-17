@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T19:06:03Z"
+digest = "9ea5a5bc8000d919cecad3686e9e27dd4d3ef623a1012c03fe49b72c659e6368"
+provider = "file"
+ref = "docs/spec/solvers.md"
+size = 11947
+status = "measured"
+at = "2026-10-15T19:06:03Z"
+actor = "lognd"
+rev = 1

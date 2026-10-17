@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: keep spec 3.8 (rule must keep argument kind); implementation lags (only tracing warn). Fixture language/process-rule-kind gapped, follow-up ~EQX7ZDY."
+at = "2026-10-16T06:11:54Z"
+actor = "lognd"
+rev = 1

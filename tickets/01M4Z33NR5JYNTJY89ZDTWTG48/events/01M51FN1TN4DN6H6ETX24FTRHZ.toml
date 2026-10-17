@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: keep spec 3.7 (whole nm; tables are exact to 0.1 um so pm resolution adds nothing). Fixture was already corrected in bfb4f903 (must-fire 20.0000000005mm = 0.5 nm, must-not-fire 20000001nm); no known-gaps entry remains. Added explicit granularity rationale to language.md 3.7."
+at = "2026-10-16T04:31:17Z"
+actor = "lognd"
+rev = 1

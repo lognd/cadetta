@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T14:53:30Z"
+digest = "93431aacf6441757ed59987806e5bc191c7bc7ce549f1e635a29a2e02cb5a286"
+exit_code = 0
+inline = '''
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.55s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1fc71f3c-9a4f-40e5-a510-21b4b373c619 with nextest profile: default
+    Starting 1 test across 5 binaries (275 tests skipped)
+        PASS [   0.004s] cadetta-sema eval::func::tests::a_digit_underscore_digit_variant_displays_with_a_decimal_point
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.005s] 1 test run: 1 passed, 275 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema a_digit_underscore_digit_variant_displays_with_a_decimal_point"
+size = 653
+status = "measured"
+test_count = 1
+tests_digest = "3d91df00ad7b300ad9d4aac4be5c2f769d2d354a9d30449653008cf485e21f14"
+at = "2026-10-16T14:53:30Z"
+actor = "lognd"
+rev = 1

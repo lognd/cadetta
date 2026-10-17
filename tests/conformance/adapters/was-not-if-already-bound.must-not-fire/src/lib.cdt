@@ -1,4 +1,3 @@
 model Part {
-  #[was(width)]
-  breadth = 10mm
+  breadth = 10mm  was Part.width
 }

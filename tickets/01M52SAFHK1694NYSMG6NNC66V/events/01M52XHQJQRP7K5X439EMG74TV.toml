@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Fixtures adapters/session-attach-running and adapters/session-close-only-opened pass through an adapter-side harness and are no longer gapped"]
+moved = []
+at = "2026-10-16T17:53:23Z"
+actor = "lognd"
+rev = 1

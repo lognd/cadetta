@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: ref-mode dimensions sync by link check, not value. The target global already syncs as a value; pushing a number to the dimension would replace the link (R006). Missing or unlinked ref dimension reports R003 (spec: native link gone). Documented in docs/spec/adapters.md 3."
+at = "2026-10-16T07:42:14Z"
+actor = "lognd"
+rev = 1

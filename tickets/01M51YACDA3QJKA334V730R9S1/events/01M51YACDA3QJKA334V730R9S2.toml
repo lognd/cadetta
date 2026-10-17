@@ -1,0 +1,13 @@
+kind = "create"
+title = "universe test fit_obligation_is_listed_signed_off_and_stales_on_edit fails on main"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+idempotency_key = "universe-fit-obligation-test"
+scope = ["crates/cadetta-cli/src/universe.rs"]
+acceptance = ["The named test passes on main"]
+body = "Found by ~X50QNG4: universe::tests::fit_obligation_is_listed_signed_off_and_stales_on_edit fails on main independent of that change. Diagnose and fix."
+at = "2026-10-16T08:47:36Z"
+actor = "lognd"
+rev = 1

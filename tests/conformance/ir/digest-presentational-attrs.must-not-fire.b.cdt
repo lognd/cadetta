@@ -1,0 +1,4 @@
+model Part {
+  width = 10mm #[emit(mid)]
+  height = width + 2mm
+}

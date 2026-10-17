@@ -1,0 +1,7 @@
+kind = "field"
+field = "title"
+old = "emit: #[role(..)] attribute and reference inheritance do not reach the emit point policy (mmc/lmc E010)"
+new = "emit: a pure reference does not inherit its referent's emit point (quantities.md 5.6)"
+at = "2026-10-16T06:23:39Z"
+actor = "lognd"
+rev = 1

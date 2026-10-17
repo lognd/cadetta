@@ -11,7 +11,22 @@ Python-API behaviour that the Rust conformance runner cannot execute.
 All pairs are `kind = "binding"`, `entry = "python"`, and are skipped
 by the runner today (it runs only `kind = "source"`, `entry = "check"`,
 runner ticket ~6BCVN48). They are executable specifications for the
-Python binding test suite (ticket ~6ZMPC6J), which replays them.
+Python binding test suite, which replays them:
+`bindings/python/tests/test_binding_fixtures.py` (ticket ~CDRJTN9) runs
+every pair, both sides, and requires each `expect.json` key except
+`diagnostics`, `why` and `note` to match what the binding observed.
+
+Replay conventions:
+
+- A few `must_fire` blocks (`cli-only-verbs`, `query-parity-with-cli`,
+  `solver-decimal-strings`) describe the violation of a rule. The suite
+  asserts the correct binding does NOT show that outcome.
+- Quantity-valued keys (`nominal`, `min`, `max`, `mmc`) compare by
+  dimension and SI value, not by text.
+- Fixtures the binding does not yet satisfy are strict xfails listed in
+  `KNOWN_DIVERGENCES` of the test file, each naming a follow-up ticket.
+  The Rust runner keeps `known-gaps.toml` entries for all of them until
+  it skips `entry = "python"` explicitly (ticket ~KNWJCVG).
 
 A fixture is one API call:
 

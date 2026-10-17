@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-16T03:31:25Z"
+digest = "119fa1c93da9e4ab50881dccf2763068006def675d260a51497f81e36384263b"
+provider = "file"
+ref = "tests/conformance/language/q009-part-count-fractional.expect.json"
+size = 307
+status = "measured"
+at = "2026-10-16T03:31:25Z"
+actor = "lognd"
+rev = 1

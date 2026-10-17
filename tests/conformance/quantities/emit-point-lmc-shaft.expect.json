@@ -1,0 +1,37 @@
+{
+  "spec": "1.4",
+  "doc": "quantities",
+  "section": "quantities.md 5.6",
+  "rule": "emit-point-lmc-shaft",
+  "kind": "source",
+  "entry": "emit json",
+  "note": "a shaft at lmc writes its lower limit, at mmc its upper limit",
+  "must_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"11.971\""
+        ],
+        "excludes": [
+          "11.989"
+        ]
+      }
+    }
+  },
+  "must_not_fire": {
+    "diagnostics": [],
+    "exit": 0,
+    "output": {
+      "build/params.json": {
+        "contains": [
+          "\"value\": \"11.989\""
+        ],
+        "excludes": [
+          "11.971"
+        ]
+      }
+    }
+  }
+}

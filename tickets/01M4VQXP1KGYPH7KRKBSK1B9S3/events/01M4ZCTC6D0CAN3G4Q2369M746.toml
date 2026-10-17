@@ -1,0 +1,8 @@
+kind = "field"
+field = "title"
+old = "Conformance runner observes active_alternate, json_diag_schema, results_order, r001_suppressed_by_force, unbound_params_not_written"
+new = "Conformance runner observes json_diag_schema, results_order, r001_suppressed_by_force, unbound_params_not_written, runs"
+reason = "active_alternate split to ~6K6E7M4"
+at = "2026-10-15T09:03:17Z"
+actor = "lognd"
+rev = 1

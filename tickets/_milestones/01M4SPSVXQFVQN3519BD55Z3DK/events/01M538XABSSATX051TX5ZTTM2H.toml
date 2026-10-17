@@ -1,0 +1,71 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T21:11:13Z"
+digest = "57da9af5a1f0404cee9550c49ff729239367345b9d542cab9d265a9f51ee05a8"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d2c45675-b4df-467b-b853-52d4a9566421 with nextest profile: default
+    Starting 48 tests across 3 binaries (42 binaries skipped)
+        PASS [   0.009s] cadetta::conformance_adapters compare::tests::closed_list_and_duplicates
+        PASS [   0.009s] cadetta::conformance_adapters exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.008s] cadetta::conformance_adapters exec::stale_output_tests::no_s003_or_no_check_verdict_observes_nothing
+        PASS [   0.009s] cadetta::conformance_adapters compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.008s] cadetta::conformance_adapters exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.009s] cadetta::conformance_adapters exec::lockfix::tests::package_lines_become_records
+        PASS [   0.009s] cadetta::conformance_adapters exec::stale_output_tests::unspecific_or_non_config_error_is_not_observed
+        PASS [   0.009s] cadetta::conformance_adapters exec::import_exec::tests::lock_value_reads_the_synced_record_for_a_locator
+        PASS [   0.009s] cadetta::conformance_adapters exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.010s] cadetta::conformance_adapters exec::lockfix::tests::upstream_text_is_split
+        PASS [   0.009s] cadetta::conformance_adapters exec::two_input::tests::node_field_finds_nested_path
+        PASS [   0.009s] cadetta::conformance_adapters exec::two_input::tests::label_spells_breaking_as_major
+        PASS [   0.009s] cadetta::conformance_emitters_csv compare::tests::closed_list_and_duplicates
+        PASS [   0.010s] cadetta::conformance_adapters run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.010s] cadetta::conformance_adapters exec::two_input::tests::relation_distinguishes_same_from_differs
+        PASS [   0.011s] cadetta::conformance_emitters_csv compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.011s] cadetta::conformance_emitters_csv exec::import_exec::tests::lock_value_reads_the_synced_record_for_a_locator
+        PASS [   0.011s] cadetta::conformance_emitters_csv exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.007s] cadetta::conformance_emitters_csv exec::stale_output_tests::no_s003_or_no_check_verdict_observes_nothing
+        PASS [   0.007s] cadetta::conformance_emitters_csv exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.008s] cadetta::conformance_emitters_csv exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.010s] cadetta::conformance_emitters_csv exec::lockfix::tests::upstream_text_is_split
+        PASS [   0.010s] cadetta::conformance_emitters_csv exec::lockfix::tests::package_lines_become_records
+        PASS [   0.007s] cadetta::conformance_emitters_csv exec::two_input::tests::node_field_finds_nested_path
+        PASS [   0.008s] cadetta::conformance_emitters_csv exec::two_input::tests::label_spells_breaking_as_major
+        PASS [   0.012s] cadetta::conformance_emitters_csv exec::stale_output_tests::unspecific_or_non_config_error_is_not_observed
+        PASS [   0.007s] cadetta::conformance_emitters_json compare::tests::closed_list_and_duplicates
+        PASS [   0.008s] cadetta::conformance_emitters_csv run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.009s] cadetta::conformance_emitters_json compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.008s] cadetta::conformance_emitters_json exec::import_exec::tests::lock_value_reads_the_synced_record_for_a_locator
+        PASS [   0.011s] cadetta::conformance_emitters_csv exec::two_input::tests::relation_distinguishes_same_from_differs
+        PASS [   0.009s] cadetta::conformance_emitters_json exec::lockfix::tests::package_lines_become_records
+        PASS [   0.008s] cadetta::conformance_emitters_json exec::lockfix::tests::upstream_text_is_split
+        PASS [   0.007s] cadetta::conformance_emitters_json exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.007s] cadetta::conformance_emitters_json exec::stale_output_tests::no_s003_or_no_check_verdict_observes_nothing
+        PASS [   0.007s] cadetta::conformance_emitters_json exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.013s] cadetta::conformance_emitters_json exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.007s] cadetta::conformance_emitters_json exec::two_input::tests::label_spells_breaking_as_major
+        PASS [   0.007s] cadetta::conformance_emitters_json exec::stale_output_tests::unspecific_or_non_config_error_is_not_observed
+        PASS [   0.008s] cadetta::conformance_emitters_json exec::two_input::tests::node_field_finds_nested_path
+        PASS [   0.007s] cadetta::conformance_emitters_json run::tests::waived_diagnostics_are_not_produced
+        PASS [   0.008s] cadetta::conformance_emitters_json exec::two_input::tests::relation_distinguishes_same_from_differs
+        PASS [  11.833s] cadetta::conformance_emitters_json emitters_json_corpus_is_not_empty
+        PASS [  12.046s] cadetta::conformance_emitters_csv emitters_csv_corpus_is_not_empty
+        PASS [  14.384s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        PASS [  15.318s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        PASS [  43.615s] cadetta::conformance_adapters adapters_and_sw_equations_corpus_is_not_empty
+        PASS [  43.615s] cadetta::conformance_adapters adapters_and_sw_equations_fixtures_match_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [  43.616s] 48 tests run: 48 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'binary(conformance_emitters_json) | binary(conformance_emitters_csv) | binary(conformance_adapters)'"
+size = 6017
+status = "measured"
+test_count = 20
+tests_digest = "fd3ad4432bf762c13a48dd05432ec378de5a2db271b4260f635ee7a3fa4abeb7"
+at = "2026-10-16T21:11:13Z"
+actor = "lognd"
+rev = 1

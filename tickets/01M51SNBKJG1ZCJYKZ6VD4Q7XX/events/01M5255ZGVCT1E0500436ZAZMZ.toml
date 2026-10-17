@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Decision: spec (config-cli.md, UpdateError::exit_code) says E012/E013 exit 1; implementation exits 2 because Project::open fails first. Kept fixtures per spec, gapped them in known-gaps.toml, filed ~MJX2SB1 for the code fix."
+at = "2026-10-16T10:47:32Z"
+actor = "lognd"
+rev = 1

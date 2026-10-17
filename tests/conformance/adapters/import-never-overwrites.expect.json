@@ -17,6 +17,7 @@
     "exit": 0,
     "overwrote": [],
     "writes": [
+      "bindings/solidworks.toml",
       "cad/imported/CoverPlate.cdt"
     ]
   }

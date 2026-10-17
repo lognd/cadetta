@@ -11,8 +11,8 @@
     "output": {
       "analysis/sizing.out.json": {
         "contains": [
-          "\"variant\": \"wheel=Heavy\"",
-          "\"variant\": \"wheel=Heavy2\""
+          "\"variant\": \"acme.demo::Rover/wheel=acme.demo::Heavy\"",
+          "\"variant\": \"acme.demo::Rover/wheel=acme.demo::Heavy2\""
         ]
       }
     },
@@ -27,7 +27,7 @@
     "output": {
       "analysis/sizing.out.json": {
         "contains": [
-          "\"variant\": \"wheel=Heavy\""
+          "\"variant\": \"acme.demo::Rover/wheel=acme.demo::Heavy\""
         ]
       }
     },

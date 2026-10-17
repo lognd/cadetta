@@ -20,7 +20,7 @@
     "values": [
       {
         "path": "acme.demo::Frame.wall_sizing.min_wall",
-        "nominal": "1/10mm"
+        "nominal": "3/10mm"
       }
     ]
   }

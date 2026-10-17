@@ -5,17 +5,16 @@
   "rule": "value-unit",
   "kind": "source",
   "entry": "emit sw-equations",
+  "note": "6.35mm is repeated in the trailing comment because the authored text differs from the written 0.25in (sw-equations.md 1, Comments)",
   "must_fire": {
     "diagnostics": [],
     "exit": 0,
     "output": {
       "build/eq.txt": {
         "contains": [
-          "\"T\" = 0.25in"
+          "\"T\" = 0.25in  ' 6.35mm"
         ],
-        "excludes": [
-          "6.35mm"
-        ]
+        "excludes": []
       }
     }
   },
@@ -28,7 +27,7 @@
           "\"T\" = 6.35mm"
         ],
         "excludes": [
-          "in"
+          "0.25in"
         ]
       }
     }

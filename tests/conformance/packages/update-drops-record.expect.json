@@ -1,0 +1,45 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 1",
+  "rule": "update",
+  "kind": "source",
+  "entry": "update",
+  "must_fire": {
+    "exit": 0,
+    "diagnostics": [],
+    "lock_written": true,
+    "lock": {
+      "packages": [
+        {
+          "name": "acme.shop",
+          "version": "1.2.3",
+          "source": "path:shop"
+        }
+      ],
+      "absent": [
+        "acme.gone"
+      ]
+    }
+  },
+  "must_not_fire": {
+    "exit": 0,
+    "diagnostics": [],
+    "args": [
+      "acme.shop"
+    ],
+    "lock": {
+      "packages": [
+        {
+          "name": "acme.gone"
+        },
+        {
+          "name": "acme.shop",
+          "version": "1.2.3",
+          "source": "path:shop"
+        }
+      ],
+      "absent": []
+    }
+  }
+}

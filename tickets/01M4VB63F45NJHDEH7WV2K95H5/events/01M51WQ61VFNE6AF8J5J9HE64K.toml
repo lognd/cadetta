@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-16T08:19:38Z"
+digest = "81cd11a9762b31e47e43d99c654adfc6bd4424128509f288f7246c74b0f27fba"
+provider = "file"
+ref = "tests/conformance/quantities/position-projection.expect.json"
+size = 630
+status = "measured"
+at = "2026-10-16T08:19:38Z"
+actor = "lognd"
+rev = 1

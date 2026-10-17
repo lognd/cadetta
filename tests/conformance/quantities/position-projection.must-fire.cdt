@@ -1,0 +1,4 @@
+model P {
+  p = Point2(10mm, 5mm) [position 0.2mm]
+  r = p.x.max
+}

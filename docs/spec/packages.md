@@ -24,10 +24,13 @@ src = "src"                  # module root (default "src")
 ```
 
 - A dependency names a package and a source: `path`, or `git` with
-  `tag`, `rev` or `branch`. A registry source is OQ-19. `version` is a
+  `tag`, `rev` or `branch`. A registry source is OQ-19 and is E005 in
+  0.1.0 (see Loading rules). `version` is a
   semver requirement the resolved package must meet (E012 otherwise).
 - `std` is an implicit dependency at the compiler's own version, and no
-  package may be named `std`.
+  package may be named `std`: a `[package]` or workspace member named
+  `std`, or a dependency key `std`, is E005 (the name is reserved, so it
+  can never shadow the standard library).
 - Resolution yields exactly one version of each package for the whole
   project (E013 on a conflict). There is no side-by-side duplication: a
   part has one definition, so two versions of one library would be two
@@ -58,7 +61,7 @@ src = "src"                  # module root (default "src")
   shared shop package is one workspace.
 - Loading rules (0.1.0): a dependency with neither `path` nor `git`
   (a bare version string or `{ version = ".." }`) is rejected as an
-  unsupported registry source (OQ-19). A workspace member without a
+  unsupported registry source (OQ-19) with E005. A workspace member without a
   `cadetta.toml` is E005, and a member must be a package, not another
   workspace. The workspace lock is `<root>/cadetta.lock` and the build
   directory `<root>/build`. The implicit `std` dependency is versioned
@@ -68,7 +71,9 @@ src = "src"                  # module root (default "src")
   selects its source and version. A first requirement the selection
   fails is E012. A later requirement it fails is E013, and no second
   copy is loaded. A later, different source for a selected package is
-  ignored with a warning. A dependency without a `cadetta.toml`, a
+  ignored with a warning: an uncoded resolver notice (like the
+  missing-checkout warning below), not a diagnostic, so it cannot be
+  waived or promoted and has no fixture. A dependency without a `cadetta.toml`, a
   failed git checkout, or a workspace in place of a package is E005. A
   package that declares no `version` meets no `version` requirement.
   `version` accepts comma-joined `^`, `~`, `=`, `<`, `<=`, `>`, `>=`
@@ -78,7 +83,9 @@ src = "src"                  # module root (default "src")
   and E013 surface as diagnostics, each dependency's items are in scope
   for `use`, and E014 is reported when a dependency's content differs
   from its pinned lock digest (an unpinned dependency is not checked).
-  Git dependencies are not fetched by `check`.
+  Git dependencies are never fetched by `check`: it loads the checkout
+  `cadetta update` left under `build/deps`, and a git dependency with no
+  checkout is skipped with a warning.
 
 ## 2. Modules
 
@@ -143,11 +150,18 @@ The module tree is the file tree under `src`:
   through `part` slots by their declared type and checks each step; it
   stops at the first non-part member, whose value type resolution does
   not carry. A private item that is `pub use`d is not re-exported, so it
-  never needs the E016 check across packages.
+  never needs the E016 check across packages. Decided (~4DKBZVW): a
+  dependent that names it gets E002 (unresolved), not E016. Rationale: the
+  name is not in the module's public surface, so there is nothing to
+  judge visible or not, and E016 would also leak that a private item of
+  that name exists. The `pub use` itself raises nothing in the declaring
+  package.
 - A private item that nothing uses is U002 (warning), the analogue of
   Rust's dead-code lint. A private parameterized component with no
   instances is U002, not I004. I004 applies only to roots of the
-  package being checked.
+  package being checked. "Used" is decided by name resolution, so a
+  shadowing local is not a use; unused private param/let members of a
+  component are U002 too.
 
 ## 4. Use
 
@@ -182,7 +196,9 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   name is ever used.
 
   Decided: a glob imports only `pub` items and `pub use` re-exports of
-  the module (a plain `use` is private and not re-exported); an explicit
+  the module (a plain `use` is private and not re-exported, so a name that only a
+  plain `use` brought into the module is E002 for a glob importer, the
+  same unresolved code as a `pub use` of a private item); an explicit
   `use` name beats a glob name; the prelude holds the built-in types,
   `origin`, `self` and the units, kinds and built-in functions, and
   nothing from `std`.
@@ -234,17 +250,26 @@ PKG     = IDENT { "." IDENT }                  // a dependency's dotted name, or
   dependent's matching obligations on the dependency's nodes. Without
   `trust`, they are information only.
 - Implementation: `cadetta obligations` reads the `cadetta.lock` of each
-  path dependency (git dependencies are not read yet). A row carries
+  dependency: a path dependency in place, a git dependency from its
+  `build/deps` checkout (materialised on demand through the resolver and
+  reused as-is; `cadetta update` refreshes it). The dependency's nodes join
+  the analysis universe, so upstream matching is by obligation id. A row carries
   `[attested upstream: PACKAGE ROLE by WHO on DATE]` (JSON `upstream`).
   A trusted role discharges the dependent's obligation, which is then not
   listed, only when that role also covers the obligation in the
   dependent's `[obligations.roles]` and the upstream attestation's
   closure digest equals the current one.
 
+- Conformance (~XXKBNB8): `cadetta update` and the `obligations` output of
+  this section are tested by the `update` and `obligations` entries
+  described in `tests/conformance/README.md` (lock contents, dropped
+  records, exit codes, trust discharge and the attested-upstream row).
+
 ## 7. Diagnostics
 
 | Code | Name | Default | Meaning |
 |---|---|---|---|
+| E005 | missing-package | error, fixed | Also: a registry-only dependency (no `path` or `git`), or a package, member or dependency named `std` (section 1). Defined in lints.md. |
 | E012 | version-unsatisfied | error, fixed | A resolved dependency does not meet the `version` requirement. |
 | E013 | version-conflict | error, fixed | Two requirements on one package cannot be met by a single version. |
 | E014 | dependency-changed | error, fixed | A dependency's content differs from the digest pinned in the lock; run `cadetta update`. |

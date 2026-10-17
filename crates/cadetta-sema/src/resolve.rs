@@ -18,7 +18,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt;
 
 use cadetta_syntax::ast::{
-    Arg, Block, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface,
+    Arg, Block, BoundKind, Component, Ctor, Expr, ExprKind, File, FnDecl, Ident, Interface,
     InterfaceMemberKind, Item, ItemKind, Member, MemberKind, Part, Path, PathSep, Type, TypeKind,
     Use, UseKind, UsePath, UseRoot, UseTree, UseTreeKind, Vis,
 };
@@ -64,6 +64,9 @@ pub struct PackageSrc<'a> {
     pub deps: Vec<String>,
     /// Its modules.
     pub modules: Vec<ModuleSrc<'a>>,
+    /// The package's `[defaults]` table: interface name to the qualified implementation path.
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    pub defaults: std::collections::BTreeMap<String, String>,
 }
 
 /// The module a diagnostic's span lies in: its package and module path.
@@ -841,10 +844,21 @@ impl<'a> Resolver<'a> {
         })
     }
 
+    /// True when interface `i` (or one it extends) declares `member` as a field or bound.
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
     fn interface_has(&self, id: &CanonPath, i: &Interface, member: &str, depth: usize) -> bool {
-        if i.members.iter().any(
-            |m| matches!(&m.kind, InterfaceMemberKind::Field { name, .. } if name.name == member),
-        ) {
+        // A bound (`load_rating >= 400N`) names a member every implementer carries (language.md 3.2).
+        let declares = |m: &cadetta_syntax::ast::InterfaceMember| match &m.kind {
+            InterfaceMemberKind::Field { name, .. } => name.name == member,
+            InterfaceMemberKind::Bound(b) => match &b.kind {
+                BoundKind::Le { name, .. }
+                | BoundKind::Ge { name, .. }
+                | BoundKind::In { name, .. } => name.name == member,
+                BoundKind::Eq { .. } => false,
+            },
+            _ => false,
+        };
+        if i.members.iter().any(declares) {
             return true;
         }
         if depth >= MAX_USE_DEPTH {
@@ -1457,6 +1471,8 @@ fn member_name(m: &Member) -> Option<&str> {
         MemberKind::Fit(f) => &f.name.name,
         MemberKind::Check(c) => &c.name.name,
         MemberKind::Require(r) => &r.name.name,
+        // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+        MemberKind::Solver(s) => &s.name.name,
         _ => return None,
     })
 }
@@ -1531,6 +1547,10 @@ fn expr_heads(e: &Expr, bound: &mut Vec<String>, out: &mut Vec<String>) {
             go(x, bound, out);
             terms.iter().for_each(|t| go(&t.value, bound, out));
         }
+        ExprKind::Position(x, d) => {
+            go(x, bound, out);
+            go(d, bound, out);
+        }
         ExprKind::If {
             cond,
             then,
@@ -1581,6 +1601,7 @@ mod tests {
         enums: &'a [EnumDecl],
     ) -> PackageSrc<'a> {
         PackageSrc {
+            defaults: Default::default(),
             name: name.to_owned(),
             deps: deps.iter().map(|s| (*s).to_owned()).collect(),
             modules: mods
@@ -1633,6 +1654,27 @@ mod tests {
         assert!(matches!(arg, Resolved::Arg { ref name, .. } if name == "n"));
         let e = r.resolve_ref(&c, &expr_of("nothing"), None).unwrap_err();
         assert_eq!(e.code, "E002");
+    }
+
+    // frob:tests crates/cadetta-sema/src/resolve.rs::interface_has
+    #[test]
+    fn interface_bound_names_a_member() {
+        let f = file(
+            "interface Caster {\n  diameter: Length\n  load_rating >= 400N\n}\nmodel M { v = 1mm }\n",
+        );
+        let (r, errs) = Resolver::new(vec![pkg("p", &[], vec![(&[], &f)], &[])]);
+        assert!(errs.is_empty());
+        let iface = f
+            .items()
+            .find_map(|i| match &i.kind {
+                ItemKind::Interface(i) => Some(i),
+                _ => None,
+            })
+            .unwrap();
+        let id = CanonPath::item("p", &[], "Caster");
+        assert!(r.interface_has(&id, iface, "diameter", 0));
+        assert!(r.interface_has(&id, iface, "load_rating", 0));
+        assert!(!r.interface_has(&id, iface, "nothing", 0));
     }
 
     // frob:tests declaration_order_is_irrelevant

@@ -1,0 +1,5 @@
+pub model Part {
+  width: Length = 10mm
+  limit: Length = 11mm
+  check fits_limit: width <= limit "width within limit"
+}

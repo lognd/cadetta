@@ -1,5 +1,5 @@
 model Part {
-  width = 10mm
+  width = 25.4mm
   height = 5mm
   let scratch = 2mm
 }

@@ -1,0 +1,49 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T06:05:34Z"
+digest = "89bdac4cbbd41d2c15560055cad1155c879ca7ade74ffc8697d3243997802ece"
+exit_code = 100
+failed_tests = ["unknown_datum_of_placed_part_is_e002"]
+inline = '''
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.27s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 0971cc7d-a063-412c-82d1-add46c444595 with nextest profile: default
+    Starting 1 test across 68 binaries (1433 tests skipped)
+        FAIL [   0.108s] cadetta::geom_unknown_datum unknown_datum_of_placed_part_is_e002
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+
+    thread 'unknown_datum_of_placed_part_is_e002' (1298200) panicked at crates/cadetta-cli/tests/geom_unknown_datum.rs:40:5:
+    assertion `left == right` failed
+      left: ["EVAL"]
+     right: ["E002"]
+    note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+    test unknown_datum_of_placed_part_is_e002 ... FAILED
+
+    failures:
+
+    failures:
+        unknown_datum_of_placed_part_is_e002
+
+    test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+
+  Cancelling due to test failure: 
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.110s] 1 test run: 0 passed, 1 failed, 1433 skipped
+        FAIL [   0.108s] cadetta::geom_unknown_datum unknown_datum_of_placed_part_is_e002
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "unknown_datum_of_placed_part_is_e002"
+size = 1400
+status = "measured"
+test_count = 1
+tests_digest = "c8e4e77fc8b9b9a1cc5eda3515679ec50b80e61d20f8bf5488fe04fa2df57375"
+at = "2026-10-15T06:05:34Z"
+actor = "lognd"
+rev = 1

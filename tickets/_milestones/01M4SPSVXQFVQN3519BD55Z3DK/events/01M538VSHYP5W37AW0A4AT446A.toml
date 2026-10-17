@@ -1,0 +1,48 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T21:07:44Z"
+digest = "2dce57aab9c5e3762ad700092a033eaaf8ded486cfa793be4999cc2e87f7fd61"
+exit_code = 0
+inline = '''
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 11s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 9a97fd27-af9d-4ab4-8eca-de74b9a8629f with nextest profile: default
+    Starting 16 tests across 1 binary (44 binaries skipped)
+        PASS [   0.009s] cadetta::conformance_lints exec::two_input::tests::label_spells_breaking_as_major
+        PASS [   0.008s] cadetta::conformance_lints compare::tests::closed_list_and_duplicates
+        PASS [   0.009s] cadetta::conformance_lints exec::stale_output_tests::unspecific_or_non_config_error_is_not_observed
+        PASS [   0.009s] cadetta::conformance_lints exec::stale_output_tests::config_error_naming_a_key_or_path_is_observed
+        PASS [   0.009s] cadetta::conformance_lints exec::lockfix::tests::error_lines_yield_codes
+        PASS [   0.009s] cadetta::conformance_lints exec::stale_output_tests::stale_solver_with_an_evaluated_check_observes_its_output
+        PASS [   0.009s] cadetta::conformance_lints exec::stale_output_tests::no_s003_or_no_check_verdict_observes_nothing
+        PASS [   0.010s] cadetta::conformance_lints exec::import_exec::tests::lock_value_reads_the_synced_record_for_a_locator
+        PASS [   0.010s] cadetta::conformance_lints exec::lockfix::tests::upstream_text_is_split
+        PASS [   0.011s] cadetta::conformance_lints exec::lockfix::tests::package_lines_become_records
+        PASS [   0.011s] cadetta::conformance_lints exec::two_input::tests::node_field_finds_nested_path
+        PASS [   0.013s] cadetta::conformance_lints compare::tests::path_must_match_when_given_and_exit_defaults
+        PASS [   0.007s] cadetta::conformance_lints exec::two_input::tests::relation_distinguishes_same_from_differs
+        PASS [   0.007s] cadetta::conformance_lints run::tests::waived_diagnostics_are_not_produced
+        PASS [   9.974s] cadetta::conformance_lints lints_fixtures_match_the_spec
+        PASS [   9.974s] cadetta::conformance_lints lints_corpus_is_not_empty
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   9.984s] 16 tests run: 16 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta -E 'binary(conformance_lints)'"
+size = 2822
+status = "measured"
+test_count = 16
+tests_digest = "69fbcc0774a565f50e3018194ec4b988c419138ffe339c039314560701e21112"
+at = "2026-10-16T21:07:44Z"
+actor = "lognd"
+rev = 1

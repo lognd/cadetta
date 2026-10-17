@@ -8,6 +8,7 @@ schema, the solver protocol and the adapter protocol.
 | Directory | Package | Registry |
 |---|---|---|
 | `python/` | `cadetta` (`import cadetta`, plus the `cadetta` command) | PyPI |
+| `c/` | `cadetta-capi` (`libcadetta_capi`, `cadetta.h`) | release archives |
 
 Adding a binding:
 

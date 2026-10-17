@@ -159,7 +159,7 @@ SYNC_PAYLOAD = {
             "new": "5mm",
         }
     ],
-    "diagnostics": [{"code": "R004", "message": "stale"}],
+    "diagnostics": [{"code": "R004", "severity": "error", "message": "stale"}],
     "regen": [{"file": "rover.FCStd", "status": "ok"}],
     "emitted": [],
     "manual": [],

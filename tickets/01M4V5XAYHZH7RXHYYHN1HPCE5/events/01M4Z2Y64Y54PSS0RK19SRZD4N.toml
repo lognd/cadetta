@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["tests/conformance/README.md documents the binding fixture keys (api/args/files/context) and result/exit vocabulary, linked from the kind=binding row"]
+moved = []
+at = "2026-10-15T06:10:36Z"
+actor = "lognd"
+rev = 1

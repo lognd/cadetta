@@ -1,0 +1,28 @@
+kind = "evidence"
+captured_at = "2026-10-16T14:23:45Z"
+digest = "1102c7d99a12540557a7627a7943b95dbfd361b89f7ba628c82aa3af1dfb435f"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.89s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 137fa7fb-d94c-431c-9096-8df817e424a0 with nextest profile: default
+    Starting 1 test across 1 binary (364 tests skipped)
+        PASS [   0.006s] cadetta cmd::import::tests::inactive_configurations_lists_all_but_the_active
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.008s] 1 test run: 1 passed, 364 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib inactive_configurations"
+size = 900
+status = "measured"
+test_count = 1
+tests_digest = "16e5abd7e35b5e32f3b7dffe80c0f94aff9e74d57497879910792ca47b355008"
+at = "2026-10-16T14:23:45Z"
+actor = "lognd"
+rev = 1

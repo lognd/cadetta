@@ -143,7 +143,9 @@ waive D001 on acme.parts::Bearing608.* for alt wheel=Colson2Series {
 Grammar: `waive CODE on GLOB [for alt SLOT=ALT] { because STRING
 [expires DATE] }` (production in language.md 3). GLOB is the path glob
 of obligations.md 2.2, shared with obligation selectors. A waiver
-suppresses one code on the paths matched. `for alt SLOT=ALT` scopes it
+suppresses one code on the paths matched, and on every path beneath a
+matched item path: `waive C001 on acme.demo::A` also covers
+`acme.demo::A.load_rating` (the package part is never an ancestor). `for alt SLOT=ALT` scopes it
 to one alternate's variant in one slot (language.md 3.2).
 
 Digests: when reviewed (`cadetta ack waiver:GLOB`), the closure digests
@@ -154,7 +156,11 @@ recorded, if a target's digest differs, the waiver is stale: W002 fires
 and the suppressed diagnostic reappears until re-reviewed. `cadetta check`
 compares the recorded digest with the combined closure digest of the
 waiver's current targets, and reports W005 for waivers expiring within
-`expiry_warn_days` of `--as-of` (`eol` dates are not yet carried by the IR).
+`expiry_warn_days` of `--as-of`, and for `#[lifecycle(eol, "date")]` components
+whose date (a month-only date counts as the month's last day) falls in the same
+window. A waiver glob whose literal prefix names a path moved by a `was`
+clause is rewritten to the current path (packages.md 5), so a waiver written
+before a rename keeps suppressing.
 
 | Code | Condition |
 |---|---|
@@ -192,7 +198,7 @@ cannot be resolved or evaluated.
 | E002 | unresolved-name | error | yes | A name, path or `use` target resolves to nothing. |
 | E003 | duplicate-definition | error | yes | Two definitions have one canonical path; both spans are given. |
 | E004 | ambiguous-import | error | yes | Two globs or uses bring the same name, where the name is used. |
-| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml` (packages.md 1). |
+| E005 | missing-package | error | yes | A package's `src` is missing or holds no `.cdt` file, or a workspace member or path dependency has no `cadetta.toml`, or a dependency has no `path`/`git` source (registry, OQ-19), or a package is named `std` (packages.md 1). |
 | E006 | argument-mismatch | error | yes | Arguments to a component, `part`, function or fit do not match the parameters (unknown, missing, wrong kind); also a `cite` with an unknown type or field, a malformed date or URL, or a value of the wrong shape (language.md 3.9), and a `position` tolerance where it is not allowed (geometry.md 3.1). |
 | E007 | lookup-miss | error | yes | A table lookup key matched no row. |
 | E008 | table-shape-mismatch | error | yes | A table row or column does not match the table's `key` and `cols`. |
@@ -206,7 +212,7 @@ cannot be resolved or evaluated.
 | E016 | private-item | error | yes | An item is used outside its visibility, or a `priv` member is read from another package (packages.md 3). |
 | E017 | private-in-public | error | yes | A `pub` item's signature names a less visible item, or a member implementing an interface member is `priv`. |
 
-E003 and E004 attach the second definition or import span as a note on the diagnostic. Every E code is a fixed error: configuration cannot change its severity.
+E003 and E004 attach the second definition or import span as a note on the diagnostic. The CLI lifts resolver errors through the E-family lift, so the notes and fixed severity apply, but the message text stays the resolver's own: it names the exact offender, which the catalog template would only generalise. Every E code is a fixed error: configuration cannot change its severity.
 
 ### Q: quantities
 
@@ -238,7 +244,8 @@ E003 and E004 attach the second definition or import span as a note on the diagn
 N002 matches the component name in `snake_case` or flattened lowercase
 followed by `_` (`Axle.axle_length`, `FrontAxle.front_axle_x`). N003 fires
 when the last `_` token of a member name is a unit symbol (`mm`, `in`,
-`kg`, `deg`, `rpm`, `mpa`, and similar). A name containing `__` raises
+`kg`, `deg`, `rpm`, `mpa`, and similar) and the member's value is not
+dimensionless (`tap_lead_in = 3` is a count, not inches). A name containing `__` raises
 N005 only, never also N001. N004 findings come from the resolver, since
 only it sees the `was` text; the lint turns them into diagnostics.
 A stale uppercase item name in a `was` path or a read (`Old.thk`) is
@@ -260,7 +267,7 @@ from the dependency graph.
 Implementation rules (decided with the D rules): a D001 group takes the largest
 significant-digit count among its members to choose between the configured severity and info; a
 group needs at least one literal in a non-`ots` component, so derived values and `ots`-only groups
-never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members and the fit
+never fire; D002 compares against `nominal`, `min`, `max` and `mid` of fit members (the operand paths of `Fit.hole` and `Fit.shaft`, so M003 and D002 see path/path fits) and the fit
 clearance, solver output members, and table cells the caller passes in (the IR carries no cells);
 D003 is computed on the member dependency graph, so a loop between components with no member-level
 loop is clean.
@@ -284,8 +291,11 @@ reported once per fit-side member without a tolerance.
 
 `cadetta check` threads `[lint] precision`, `d001_min_digits` and `common_values` into M001, D001
 and D002. An empty `precision` keeps the built-in defaults (Length 2, Angle 1); a `precision` key
-that is not a built-in quantity kind, or a `common_values` entry that is not a quantity, is
-rejected when the configuration loads. D002 also sees the quantity cells of every `table` in the
+names a built-in quantity kind or a `kind` declared by the package or its dependencies (`Money`
+sets USD, EUR, GBP, CNY and JPY); the configuration loads before those declarations are known, so
+an unrecognised key is ignored during analysis rather than rejected, and reported as an M001
+warning naming the key (so a typo such as `Lenth` is not silent). A `common_values`
+entry that is not a quantity is rejected when the configuration loads. D002 also sees the quantity cells of every `table` in the
 package and its dependencies, named `Table[key].column`. A D001 below `d001_min_digits` stays at
 info even though the engine otherwise resets severities, unless `[lint] severity` sets `D001`.
 
@@ -312,20 +322,30 @@ info even though the engine otherwise resets severities, unless `[lint] severity
 | P001 | missing-process-role | warning | | Under a process, a feature-like parameter has no rule role. |
 
 I rule implementation notes (0.1.0): I001 checks every non-optional
-interface member and every interface datum by member-root name. I002
+interface member and every interface datum by member-root name; a
+member present under a different kind (a datum where a value is
+required, or the reverse) is also I001. I002
 and I003 read the per-alternate check verdicts only (fits, bounds and
 requires reach them through checks); I002 is raised per check and
-alternate, and only when the primary does not itself fail that check
-(then it is C001). I003 requires the alternate to fail no check. I004
+alternate, located at the alternate's variant key
+(`PKG::Owner/slot=PKG::Alt`) with the check named in the message, and
+only when the primary does not itself fail that check (then it is C001). I003 requires the alternate to fail no check. I004
 skips private components (U002) and components some part names as its
-type, primary or alternate.
+type, primary or alternate. U002 skips assemblies: an assembly is an entry point,
+not dead code, even when private and unnamed.
 
 Engine entry points (0.1.0): `cadetta check` runs I001 (`check_members`,
 interfaces lowered from the AST with `extends` flattened; bounds are not
-yet lowered), I004 (`check_roots`) and U002 (`u002::check`). U002 decides
-"used" lexically: an item is used when its identifier is mentioned more
-than once across the package's modules (its own declaration counts
-once). `require` protection is wired by collecting the path of every
+yet lowered), I004 and U002, both from `lint_facts::item_facts`. U002
+decides "used" by name resolution, not lexically: an item is used when a
+path or reference in some component, fn, interface, table, process,
+solver, fit, check or require resolves to it, so a local or parameter
+that shadows an item's name is not a use and a self-reference is not a
+use. Private `priv` param, let, part and datum members of a component get
+their own U002 rows (`pkg::mod::Comp.member`); a part is used when any
+path crosses it and a datum when any path reads it. I004 treats a model or assembly as parameterized when a param
+has no default and is not optional, and as a root when no other
+component instantiates it through a part. `require` protection is wired by collecting the path of every
 obligation check into the suppression table, and `#[allow(CODE, reason)]`
 member attributes are collected from the IR into `allows`; those on `check`
 and `require` statements, which the IR does not keep, are read from the AST
@@ -345,7 +365,8 @@ Q007 comes from the lexer: it is lifted as a fixable error carrying the join
 fix, while E001 stays a halting syntax error. P001 comes from the process
 pass (one fact per feature-like parameter with no role). F001/F002 (fit
 class or size out of the ISO 286 tables) and F003 (side tolerance disagrees
-with the class) come from fit derivation. T001 compares each literal of a
+with the class) come from fit derivation and reach `cadetta check` as the catalog
+diagnostics; a sub-nanometre nominal is F002 (`20000001nm` is whole, `20.0000000005mm` is not). T001 compares each literal of a
 non-parameterized `ots` component (the member citation, else the component
 citation, when it names a `cite` path) with every key and cell of the
 tables carrying the same citation path; it fires only when a table holds
@@ -364,7 +385,7 @@ through `lift_resolution`.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
-| S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. |
+| S001 | ots-without-citation | warning | | `ots` value with no citation on it or its component. Reported once at the component path when nothing in the component is cited, else per uncited value. |
 | S002 | citation-unreachable | info | | A citation's `file` does not exist. URLs are never fetched by `check` (`cadetta cite pin` makes a URL checkable). |
 | S003 | solver-stale | warning | | A solver result was computed against inputs that have changed. |
 | S004 | citation-changed | warning | | A citation's digest (its fields and, with `file`, the file's digest) differs from the acknowledged one. The only diagnostic for citation staleness; O001 is not raised for the same node. Only a `file` is drift-detected on disk; `cadetta cite pin` vendors a URL. |
@@ -440,8 +461,11 @@ that advertises `read` (hook: `cadetta-cli` `check_drift::process_drift`):
 the adapter is spawned, its files are read, and R001, R002, R003, R005 and
 the adapter's own R004/R009/R010 are reported; an adapter that cannot
 start is R008 at info. Nothing is pushed or written. R007, R011 and R012
-need observed facts (sketch planes, assembly slots, instance values) that
-`read` does not yet carry, so they are not run by `check`.
+run on the optional `sketches`, `components` and `instance_values` lists of
+the `read` result (adapters.md 5); an adapter that reports none of them
+raises none of these codes. A fact whose locator has no binding is skipped
+(R002 names it). For R011 the slot's primary file is the native file of the
+first observed member under the slot path.
 
 | Code | Name | Default | Fixed | Meaning |
 |---|---|---|---|---|
@@ -459,7 +483,7 @@ need observed facts (sketch planes, assembly slots, instance values) that
 | R012 | binding-divergent | error | | Reserved; unreachable from source today. A `[*]` binding over instances whose emitted values differ; instances of a part array share arguments (language.md 3.5), so none differ until the language gives instances differing arguments or index-dependent members. |
 | R013 | name-collision | error | yes | Two in-scope paths would create the same native name, bind one explicitly (adapters.md 3.1); or two component instances name the same part in their reference property (adapters.md 3.5). |
 | R014 | text-not-expressible | error | yes | An emission is required for a bound `Text` parameter and the adapter's format cannot express `Text` (`sw-equations`, emitters/sw-equations.md 1). A `Text` parameter that is not emitted (unbound, filtered out, or a `let`) is never reported. |
-| R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
+| R015 | locator-unsupported | error | yes | An emission is required for a `dimension`, `property` or `frame` locator, or a `mode = "ref"` binding, on an adapter whose format has only `global` value rows (`json`, `csv`; emitters/json.md 1, emitters/csv.md 1). Also a `property`, `frame` or `instance` locator on `sw-equations`, whose format has only global and dimension lines (emitters/sw-equations.md 1). A locator that is not emitted (filtered out, narrowed away, or on a `let`) is never reported. |
 | R016 | unbound-row | error | yes | A `read` of a `csv` file meets a row whose `name` matches no binding of that adapter (emitters/csv.md 3). The file is user-supplied and carries no path, so an unbound row is an error rather than the native-discovery warning R002; no observed IR is produced for the file. (`json` entries carry their own `path`.) |
 
 ### U, W

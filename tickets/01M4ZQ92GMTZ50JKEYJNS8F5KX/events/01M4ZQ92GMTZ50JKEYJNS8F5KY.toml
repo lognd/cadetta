@@ -1,0 +1,10 @@
+kind = "create"
+title = "docs: document emit for external non-drive adapters in adapters.md"
+type = "docs"
+category = "todo"
+priority = "medium"
+scope = ["docs/spec/adapters.md"]
+body = "Found while working ~5HP91AE: add to docs/spec/adapters.md (~line 59) that an external adapter declaring emit but not drive is sent emit (design IR, bindings, emit policy) by cadetta sync and its reported files listed as emitted. File was leased by ~6N3JQAV."
+at = "2026-10-15T12:06:04Z"
+actor = "lognd"
+rev = 1

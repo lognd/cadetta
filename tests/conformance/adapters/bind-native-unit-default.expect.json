@@ -21,7 +21,7 @@
     "output": {
       "build/eq.txt": {
         "contains": [
-          "\"W\" = 0.393701in"
+          "\"W\" = 1in"
         ],
         "excludes": []
       }

@@ -24,7 +24,7 @@ use cadetta_adapter::rpc::types::{ReadParams, ReadResult, ReadSource};
 use cadetta_adapter::sync::Entry;
 use cadetta_ir::dim::DimWire;
 use cadetta_ir::model::{
-    Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Sign,
+    Exact, Implicit, Locator, LocatorKind, LocatorMode, Nominal, Project as Ir, Provenance, Sign,
 };
 use cadetta_ir::observed::{ObservedBuilder, ObservedParam};
 use cadetta_obligations::lock::{Adopted, Lock, Record, SyncedValue};
@@ -33,7 +33,7 @@ use serde::Serialize;
 use serde_json::Value;
 
 use crate::cmd::ir::package_id;
-use crate::cmd::sync::normalize;
+use crate::cmd::sync::{normalize, observed_geometry};
 use crate::config::Adapter;
 use crate::output::Format;
 use crate::project::{PackageDir, Project};
@@ -172,6 +172,31 @@ fn locator_from(v: &Value) -> Result<Locator, String> {
     })
 }
 
+/// The configurations the adapter reports besides the active one; import reads only the
+/// active configuration (adapters.md 7.3), so these are named in an info note instead.
+pub fn inactive_configurations(observed: &Value) -> Vec<String> {
+    let projects: Vec<&Value> = match observed {
+        Value::Array(a) => a.iter().collect(),
+        v => vec![v],
+    };
+    let mut out: Vec<String> = Vec::new();
+    for project in projects {
+        let active = project.get("active_config").and_then(Value::as_str);
+        let listed = project
+            .get("configurations")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str);
+        for name in listed.filter(|n| Some(*n) != active) {
+            if !out.iter().any(|o| o == name) {
+                out.push(name.to_owned());
+            }
+        }
+    }
+    out
+}
+
 /// Decode an adapter's `observed` JSON (one project, or an array of them) into one observed
 /// project per native file, applying `assume_unit` to unitless values.
 pub fn decode_observed(
@@ -185,6 +210,7 @@ pub fn decode_observed(
         v => vec![v],
     };
     let mut by_file: BTreeMap<String, ObservedBuilder> = BTreeMap::new();
+    let mut linked: BTreeMap<(String, String), &'static str> = BTreeMap::new();
     for project in projects {
         let empty = Vec::new();
         let bindings = project
@@ -235,14 +261,11 @@ pub fn decode_observed(
                 .get("unit_assumed")
                 .and_then(Value::as_str)
                 .map(|u| assume_unit.unwrap_or(u).to_owned());
-            let builder = match by_file.get_mut(file) {
-                Some(b) => b,
-                None => {
-                    let b = ObservedBuilder::new(package.clone(), adapter, file)
-                        .map_err(|e| e.to_string())?;
-                    by_file.entry(file.to_owned()).or_insert(b)
-                }
-            };
+            if let Some(kind) = linked_kind(member, value) {
+                tracing::debug!(file, native_name, kind, "import: linked property observed");
+                linked.insert((file.to_owned(), native_name.to_owned()), kind);
+            }
+            let builder = builder_for(&mut by_file, &package, adapter, file)?;
             for loc in locators {
                 let param = ObservedParam {
                     native_name: native_name.to_owned(),
@@ -275,7 +298,73 @@ pub fn decode_observed(
             }
         }
     }
-    Ok(by_file.into_values().map(ObservedBuilder::build).collect())
+    // frob:ticket 01M4ZCHT2YJ2Z7F2E9TR77QY6K
+    let (frames, instances) = observed_geometry(observed);
+    tracing::debug!(
+        frames = frames.len(),
+        instances = instances.len(),
+        "import: observed geometry decoded"
+    );
+    for f in frames {
+        let doc = f.document.clone();
+        builder_for(&mut by_file, &package, adapter, &doc)?
+            .push_frame(f)
+            .map_err(|e| e.to_string())?;
+    }
+    for i in instances {
+        let doc = i.document.clone();
+        builder_for(&mut by_file, &package, adapter, &doc)?
+            .push_instance(i)
+            .map_err(|e| e.to_string())?;
+    }
+    let mut built: Vec<Ir> = by_file.into_values().map(ObservedBuilder::build).collect();
+    mark_linked(&mut built, &linked);
+    Ok(built)
+}
+
+/// How a property's value is linked rather than authored: `prp` (`$PRP:"..."` text) or
+/// `equation` (the adapter's `equation_linked` flag); adapters.md 7.3.
+fn linked_kind(member: &Value, value: &Value) -> Option<&'static str> {
+    if member.get("equation_linked").and_then(Value::as_bool) == Some(true) {
+        return Some("equation");
+    }
+    value
+        .get("authored")
+        .and_then(Value::as_str)
+        .filter(|t| t.starts_with("$PRP:"))
+        .map(|_| "prp")
+}
+
+/// Record each linked member's kind in its `linked` attribute, where `propose` reads it.
+fn mark_linked(projects: &mut [Ir], linked: &BTreeMap<(String, String), &'static str>) {
+    for member in projects
+        .iter_mut()
+        .flat_map(|p| &mut p.components)
+        .flat_map(|c| &mut c.members)
+    {
+        if let Provenance::Imported {
+            file, native_name, ..
+        } = &member.provenance
+            && let Some(kind) = linked.get(&(file.clone(), native_name.clone()))
+        {
+            member.attrs.insert("linked".to_owned(), (*kind).to_owned());
+        }
+    }
+}
+
+/// The per-file observed builder for `file`, created on first use.
+// frob:ticket 01M4ZCHT2YJ2Z7F2E9TR77QY6K
+fn builder_for<'a>(
+    by_file: &'a mut BTreeMap<String, ObservedBuilder>,
+    package: &cadetta_ir::model::PackageId,
+    adapter: &str,
+    file: &str,
+) -> Result<&'a mut ObservedBuilder, String> {
+    if !by_file.contains_key(file) {
+        let b = ObservedBuilder::new(package.clone(), adapter, file).map_err(|e| e.to_string())?;
+        by_file.insert(file.to_owned(), b);
+    }
+    Ok(by_file.get_mut(file).expect("inserted above"))
 }
 
 fn fail(err: &mut dyn Write, message: &str) -> u8 {
@@ -470,6 +559,14 @@ fn propose_mode(
     for d in &read.diagnostics {
         report.notes.push(d.0.to_string());
     }
+    let others = inactive_configurations(&read.observed);
+    if !others.is_empty() {
+        tracing::info!(configurations = ?others, "import: only the active configuration is read");
+        report.notes.push(format!(
+            "info: only the active configuration was imported; not imported: {}",
+            others.join(", ")
+        ));
+    }
     Ok(report)
 }
 
@@ -583,9 +680,9 @@ fn resolve_sources(
                                 start: p.value.span.start,
                                 end: p.value.span.end,
                             },
-                            ExprKind::Tolerance(..) | ExprKind::IsoClass(..) => {
-                                Definition::Toleranced
-                            }
+                            ExprKind::Tolerance(..)
+                            | ExprKind::Position(..)
+                            | ExprKind::IsoClass(..) => Definition::Toleranced,
                             _ => Definition::Derived,
                         };
                         let literal = p.value.span.slice(text).to_owned();
@@ -843,6 +940,17 @@ mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
 
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::inactive_configurations
+    #[test]
+    fn inactive_configurations_lists_all_but_the_active() {
+        let obs =
+            serde_json::json!({"configurations": ["Default", "Heavy"], "active_config": "Default"});
+        assert_eq!(inactive_configurations(&obs), vec!["Heavy".to_owned()]);
+        let one = serde_json::json!({"configurations": ["Default"], "active_config": "Default"});
+        assert!(inactive_configurations(&one).is_empty());
+        assert!(inactive_configurations(&serde_json::json!({})).is_empty());
+    }
+
     /// A self-removing scratch directory (no extra dev-dependency).
     struct Dir(PathBuf);
     impl Dir {
@@ -1016,6 +1124,24 @@ for line in sys.stdin:
                 .iter()
                 .all(|i| i.unit.as_deref() == Some("in"))
         );
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::decode_observed
+    #[test]
+    fn decodes_frames_and_instances_into_the_builder() {
+        let id = cadetta_ir::model::PackageId {
+            name: "acme.plate".into(),
+            version: "0.1.0".into(),
+        };
+        let mut obs = observed();
+        let t = serde_json::json!([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]]);
+        obs["frames"] =
+            serde_json::json!([{"name": "F", "document": "cover_plate.FCStd", "transform": t}]);
+        obs["instances"] = serde_json::json!([{"component": "c", "document": "cover_plate.FCStd", "transform": t}]);
+        let projects = decode_observed(&obs, "fake", id, None).unwrap();
+        assert_eq!(projects.len(), 1);
+        assert_eq!(projects[0].frames.len(), 1);
+        assert_eq!(projects[0].instances.len(), 1);
     }
 
     const BORE: &str = "acme.plate::CoverPlate.bore";

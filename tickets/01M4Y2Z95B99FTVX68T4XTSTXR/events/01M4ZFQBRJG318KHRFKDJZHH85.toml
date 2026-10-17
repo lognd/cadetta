@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-15T09:53:58Z"
+digest = "ad134ce38887d5721d42bad2fdad6c3b9461b85fc330fc20059398d5154c70c2"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.16s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1eee8b3c-d0c3-4ce0-857c-9a9103b00697 with nextest profile: default
+    Starting 1 test across 5 binaries (214 tests skipped)
+        PASS [   0.010s] cadetta-sema::bolt_float own_aligned_check_reads_the_nominal_placement
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 1 test run: 1 passed, 214 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema own_aligned_check_reads_the_nominal_placement"
+size = 617
+status = "measured"
+test_count = 1
+tests_digest = "ffd72625b1dca1bbde1112815f2eda7e90143bb37208a79955e6397b9f9f0795"
+at = "2026-10-15T09:53:58Z"
+actor = "lognd"
+rev = 1

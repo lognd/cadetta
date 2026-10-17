@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Audit on current main: every fixture named here passes in tests/conformance_language (16/16; no known-gaps entries reference this ticket). Remaining pieces landed via split children (I001-I003, F002/fit-clearance/process-drawn, U002) and earlier work. No code change needed."
+at = "2026-10-16T20:09:56Z"
+actor = "lognd"
+rev = 1

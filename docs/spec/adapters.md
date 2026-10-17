@@ -48,7 +48,9 @@ cadetta sync = compile -> lint -> read -> classify -> push -> regen
 | no base | theirs != ours | first push | push `ours` (R006 if it replaces an expression) |
 
 R001 states which side moved and shows base, ours and theirs.
-`sync --force-design` pushes `ours` over any R001 class.
+`sync --force-design` pushes `ours` over any R001 class. Under the flag R001
+is an audit record of what was overridden, not a refusal: it does not fail the
+run (conformance treats it as not fired).
 
 `sync` is idempotent: when every locator classifies as no-op or
 converged it writes nothing, triggers no regen and does not touch any
@@ -57,8 +59,10 @@ header line of an emitted file (which carries the IR digest and changes
 on any unrelated edit) is excluded.
 
 Without `drive`, `sync` degrades to `emit` plus instructions for the
-user's one manual step (relinking or reloading); there is no `theirs`,
-so no classification happens. `read` on a later run detects drift only
+user's one manual step (relinking or reloading). An external adapter that
+declares `emit` but not `drive` is sent the `emit` call (design IR, its
+bindings, the emit policy) and the files it reports are listed as emitted.
+There is no `theirs`, so no classification happens. `read` on a later run detects drift only
 if the adapter can read the live model.
 
 **CAD file reflects design.** Only a `drive` adapter (or a `read` of the
@@ -95,11 +99,14 @@ after `--accept` the structure lives in the source.
 ### 2.3 Failure handling and atomicity
 
 The host side of R008-R010 lives in `cadetta_adapter::availability`: an
-unreachable or version-mismatched adapter is R008 (error with exit 2
+unreachable, version-mismatched or wrong-platform adapter (its `initialize`
+`platforms` list, when non-empty, must name the host's `linux`, `macos` or `windows`)
+is R008 (error with exit 2
 under `sync`; info under `check`, which reports the R lints of the adapter's
 `read` and, when the adapter cannot start, only the info R008);
 each dirty or read-only document is an R009 of its own and is never
-touched; rejected locators are grouped into one R010 per file while the
+touched (when every document is refused the host still sends `close` and
+`shutdown`); rejected locators are grouped into one R010 per file while the
 other locators proceed.
 
 | Failure | Code | Behaviour |
@@ -111,7 +118,7 @@ other locators proceed.
 | value not representable at declared precision | Q004 | value withheld, path not written, exit 1 |
 | two emitted paths create one native name | R013 | hard failure before any write |
 | a bound `Text` parameter must be emitted to a format that cannot express `Text` | R014 | that adapter's file withheld, exit 1 |
-| a dimension, property or frame locator, or a `ref` binding, must be emitted to a `json` or `csv` file | R015 | that adapter's file withheld, exit 1 |
+| a dimension, property or frame locator, or a `ref` binding, must be emitted to a `json` or `csv` file; a property, frame or instance locator must be emitted to `sw-equations` | R015 | that adapter's file withheld, exit 1 |
 | a `csv` file has a row whose name matches no binding | R016 | no observed IR for that file, exit 1 |
 | bound path missing natively | R003 | locator skipped |
 
@@ -125,6 +132,9 @@ read-back matched, so a partial sync reconverges on the next run.
 The host implements this in `cadetta_adapter::atomic`: `push_atomic`
 snapshots, writes, rebuilds and restores on R004 over a `Document`, and
 `matched_locators` selects the locators eligible for a `synced` record.
+`sync` pushes every file through `push_atomic`, since every backend exposes
+the file as a `Document` (`Backend::document`), and records a `synced` entry
+only for the locators `matched_locators` returns.
 
 ### 2.4 Resolving drift
 
@@ -223,6 +233,12 @@ variable `"Axle_end_diameter"` or to the dimension
   global is a `value` global whose unit is the dimension locator's
   `native_unit`, or the adapter's declared native unit when the locator
   has none; it is written before the path's dimension lines.
+- Sync of a `ref` locator: its value is carried by the target global, which
+  syncs as a value, so the dimension itself is never pushed or compared (a
+  push would replace the link, R006). `sync` instead checks the link: a `ref`
+  dimension absent from the CAD files, or whose native expression no longer
+  names its target global, is R003 (a named target must appear in the
+  expression; an alias or created global only needs an expression present).
 - File defaults (`cadetta-adapter` `bindings.rs`): `mode` defaults to
   `ref` for a `dimension` locator and `value` otherwise; an omitted
   `native_unit` means the adapter's declared native unit. A
@@ -306,7 +322,13 @@ A binding for a path under an interface-typed slot carries
 `for = "<alternate>"` (a qualified component name, e.g.
 `for = "acme.shop::Colson2Series"`). Only locators whose `for`
 matches the slot's primary (or locators with no `for`) are active; a
-swap changes which locator set is active. `read` of an assembly records
+swap changes which locator set is active. The slot's active alternate is
+its primary: swapping is one edit of the primary (language.md 3.2), so
+the primary is the alternate in force. A `for` may be written qualified or
+bare and is active when it names the primary of any slot of the package.
+`emit` reports each slot's active alternate in `active_alternates`
+(slot path to qualified primary; config-cli.md 3), and `sync` and the
+staleness universe apply the same rule. `read` of an assembly records
 the file each component instance uses; R011 (warning) fires when the
 file instantiated is not the file bound to the slot's primary.
 `impact --swap` lists the replace-component action (obligations.md 5.1).
@@ -337,6 +359,18 @@ coordinates, and positions are verified by transform (geometry.md 6):
   rotation entries as plain numbers; an inexact design entry uses its
   nominal. A mismatch is R001 on the datum or placement path, showing
   both transforms.
+- Composition. A datum's frame is its parent's frame followed by its
+  ops left to right, each op applied in the running local frame:
+  `offset` translates, `rotate` uses the angle Member, `flip` is a half
+  turn. `<Type>.origin` is the identity. Translations are divided by the
+  adapter's native unit. A placement's anchor frame is the frame of its
+  `at` datum followed by the placement ops. When `at` is a datum of
+  another part, that part is the unique placement in the same component
+  whose placed datum has that type (matching the array index for an
+  indexed placement); its node frame is its anchor frame times the
+  inverse of its placed datum's frame. An ambiguous or missing node is
+  skipped with a warning, never guessed. Variants compose with the base
+  ops.
 - A placement is verify-only: it is never pushed, so any mismatch is
   R001 whatever the base (move the part in CAD, or change the design).
 - A datum is verify-only under `[[adapter]] datums = "verify"` (the
@@ -358,6 +392,11 @@ coordinates, and positions are verified by transform (geometry.md 6):
 - Coordinates derived from a generator are analysis-only unless the user
   lists them in the bindings by hand. R007 covers a dimension not
   measured from the sketch origin.
+- The table above is executable: `cadetta_adapter::geometry_plan` maps a
+  source form to its native binding, whether `sync` may write it, and
+  what `read` reports on drift (R001 for a placement, a drift note for
+  `flip` and exact 90deg `rotate`). `sign = -1` negates the written
+  value and restores it on read.
 
 ### 3.5 Native links
 
@@ -516,7 +555,13 @@ adapter how to write a dimension (`ref`: create or keep the link to
 system named by the locator when missing, to `create_frames` adapters
 only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
-unavailable (R008, exit 2). Adapters are located by `command` in
+unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
+`push` answers with a summary instead of a status per locator. The precision in force is
+`[[adapter]] precision` when set, else the one `initialize` reported (`cadetta sync` applies
+this through `Client::effective_precision`; views that never spawn an adapter, such as
+`names` and the no-spawn emitted-values view, use the emitter default). Built-in adapters
+(`csv`, `json`, `sw-equations`) declare `emit` and `read`; a `drive` request to one is a
+configuration error (exit 2). Adapters are located by `command` in
 `cadetta.toml`; there is no PATH search (a bare name such as `sh` names a file in the
 package directory, never a system program). `check`, `sync` and `import` kill an adapter that leaves a call
 unanswered for `[[adapter]] timeout` seconds (default 60); `check` reports R008 and
@@ -542,6 +587,16 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
   fractional decimal digits of the native number format.
 - `read` takes `{source: {files: [...]}}` or `{source: {session:
   handle}}`. `regen` per-target status is `ok` or `failed`.
+- `read` may also return three optional fact lists (each omitted when
+  empty), which `cadetta check` turns into lints: `sketches` (`file`,
+  `locator`, `on_datum_plane`, `measured_from`; `measured_from` is
+  `sketch origin` when clean) for R007; `components` (`file`, `locator` of
+  the slot's `instance` binding, `component_file` the instance uses) for
+  R011, compared with the file of the slot primary's observed members; and
+  `instance_values` (`file`, `locator`, `values` per matched instance) for
+  R012. Rationale: the adapter alone sees the native model, the host alone
+  knows bindings, so facts are keyed by locator and the host maps them to
+  IR paths.
 - The host refuses `open`, `save`, `close`, `push` and `regen` unless
   `drive` was declared, and `emit` unless `emit` was.
 - A drive sync runs `open`, `push` per file, `save` (per `[[adapter]]
@@ -676,7 +731,10 @@ by `file` then `locator`, with keys `file`, `locator`, `kind`
 (`global | dimension | property | frame`), `native_name`, `expression`
 (the native expression, when there is one), `value` (a source literal),
 `path` (the proposed canonical path), `type` (the proposed component),
-`status` (`accept | rename | skip`) and `reason` (for `skip`). The user edits
+`property_type` (`property` items only; `Text | Count | Quantity`, 7.3),
+`status` (`accept | rename | skip`) and `reason` (for `skip`, and for an
+accepted item whose native expression was converted, which asks the user
+to review the formula). The user edits
 `proposal.toml`. `--accept` writes `bindings/<id>.toml` and
 `cad/imported/<File>.cdt` from it. A re-run adds only locators not yet
 bound and reports the others as unchanged; existing files are never
@@ -694,7 +752,9 @@ overwritten.
   `a = b * 2`; the references are to the proposed members.
 - Assemblies: a `.SLDASM` becomes an `assembly` with one `part`
   declaration per distinct component file; instance bindings carry
-  `component` (3).
+  `component` (3). The part type is the UpperCamel stem of the instance's
+  component file (`cad/wheel.SLDPRT` -> `Wheel`), so `wheel<1>` and
+  `wheel<2>` share the part `Wheel`; instances keep observation order.
 - Values are imported as nominal scalars. Native tolerances are not
   recovered in 0.1.0. Driven (reference) dimensions are skipped with a
   reason.
@@ -717,9 +777,29 @@ overwritten.
 - Configurations: only the active configuration is imported and
   recorded as `config` on each locator; an info diagnostic lists other
   configurations when they exist.
+
+  Decision (~50Z5G8J): the adapter reports `configurations` and
+  `active_config` beside `observed`; `config` is set on each locator by
+  the adapter. Propose adds one `info:` note naming every configuration
+  other than the active one; it is a note, not a coded diagnostic, so it
+  never changes the exit code.
 - Custom properties bind as `Text`, `Count` or `Quantity`; a quantity
   needs an explicit `native_unit` in the proposal. Properties that are
   `$PRP`-linked or equation-linked are skipped with a reason.
+
+  Type rule (decision, ~CJ33CAF): a property whose authored value is not
+  a number is `Text`; a unitless integer whose name has a count token
+  (`qty`, `quantity`, `count`, `num`, `number`, `pcs`, split on
+  separators and camelCase) is `Count`; any other number is a
+  `Quantity`. A `Quantity` with no unit gets status `rename` and a
+  `reason` asking for `unit` in `proposal.toml`; with a unit (native or
+  assumed) it is `accept`. `Text` renders as a string literal, `Count`
+  as a bare number, and a unit-less `Quantity` as a commented line until
+  it is edited.
+  Linked rule: a property is linked when its value is `$PRP:"..."` text
+  or the adapter marks the member `equation_linked`; decode records it
+  as the member attribute `linked` (`prp | equation`) and the proposal
+  skips it with a reason naming the link kind.
 
 ### 7.4 Adoption marker and updating from CAD
 

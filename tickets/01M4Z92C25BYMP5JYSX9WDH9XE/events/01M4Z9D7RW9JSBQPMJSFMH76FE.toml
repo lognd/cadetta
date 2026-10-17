@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Part-array instance members lower to Parent/part[i].member IR members"]
+moved = []
+at = "2026-10-15T08:03:40Z"
+actor = "lognd"
+rev = 1

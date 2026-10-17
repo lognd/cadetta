@@ -1,0 +1,7 @@
+kind = "triage"
+action = "snooze"
+until = "2027-01-15T00:00:00Z"
+reason = "post-0.1.0: marketplace needs publisher credentials; OQ docs are non-blocking for the 0.1.0 criteria"
+at = "2026-10-16T23:38:20Z"
+actor = "lognd"
+rev = 1

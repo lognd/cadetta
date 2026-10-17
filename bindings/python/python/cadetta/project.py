@@ -366,7 +366,12 @@ class Project:
         return self._model(bind_model.BindReport, verb)
 
     def evaluate(self) -> Result[Design, ProjectError]:
-        """Run `ir` and wrap the design IR as generated pydantic models."""
+        """Run `ir` and wrap the design IR; Err at a workspace root (bindings 3.2)."""
+        if self.package is None:
+            _log.error("evaluate at workspace root %s: usage error", self.root)
+            return Err(
+                ProjectError(message="evaluate needs a package, not a workspace root")
+            )
         model = self._model(ir.Project, ["ir"])
         if isinstance(model, Err):
             return model

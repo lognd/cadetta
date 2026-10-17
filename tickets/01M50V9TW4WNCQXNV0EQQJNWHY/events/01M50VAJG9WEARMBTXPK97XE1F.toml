@@ -1,0 +1,8 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-adapter/src/geometry_plan.rs", "crates/cadetta-cli/tests/conformance/verify.rs"]
+new = ["crates/cadetta-adapter/src/geometry_plan.rs"]
+reason = "verify.rs is leased by MGXDNYP; split diagnostics_exclude to its own ticket"
+at = "2026-10-15T22:36:02Z"
+actor = "lognd"
+rev = 1

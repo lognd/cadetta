@@ -1,0 +1,12 @@
+kind = "create"
+title = "Fix red conformance: read-never-raises-q001 diagnostics_exclude unobserved"
+type = "bug"
+category = "todo"
+priority = "high"
+points = 1
+scope = ["crates/cadetta-cli/tests/conformance/verify.rs"]
+acceptance = ["the conformance verifier observes diagnostics_exclude: none of the listed codes may be produced"]
+body = "Split from ~QQJNWHY; blocked on the MGXDNYP lease over crates/cadetta-cli/tests/**."
+at = "2026-10-15T22:36:02Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at b0169f74bc9d (rust (fmt, clippy, test) (failure) https://github.com/lognd/cadetta/actions/runs/38920829100/job/117047754139; binding (python) (failure) https://github.com/lognd/cadetta/actions/runs/38920829100/job/117047754054): known red base; user authorized"
+at = "2026-10-16T15:37:36Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,20 @@
+{
+  "spec": "1.5",
+  "doc": "geometry",
+  "section": "geometry.md 3.1",
+  "rule": "aligned",
+  "kind": "source",
+  "entry": "check",
+  "must_fire": {
+    "diagnostics": [
+      {
+        "code": "C002",
+        "severity": "warning"
+      }
+    ]
+  },
+  "must_not_fire": {
+    "diagnostics": []
+  },
+  "note": "[position 0.1mm] on both patterns: worst offset is 0.05mm + 0.05mm = 0.1mm exactly, so 0.1mm holds and 0.09mm is undecided (C002)"
+}

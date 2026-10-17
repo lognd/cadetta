@@ -1,0 +1,25 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T07:07:22Z"
+digest = "4d5c67acdbb05bdb5ac27d0de939dc1479e4da013e5e82c5df3b4bf5f8a48b59"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 21s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2d9fe12c-d53e-45ec-8500-f0d5af970179 with nextest profile: default
+    Starting 1 test across 45 binaries (634 tests skipped)
+        PASS [   1.789s] cadetta::conformance emit_point_fixtures_observe_the_emitted_value
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   1.792s] 1 test run: 1 passed, 634 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta emit_point_fixtures_observe_the_emitted_value"
+size = 621
+status = "measured"
+test_count = 1
+tests_digest = "3dd18a82c72e1ca2f739f63c96f88c6cdb872ddfe275e33d9efc1272d69c51ca"
+at = "2026-10-16T07:07:22Z"
+actor = "lognd"
+rev = 1

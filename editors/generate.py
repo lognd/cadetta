@@ -53,6 +53,21 @@ ROLES: dict[str, tuple[str, str, str]] = {
 }
 
 
+# role -> tree-sitter highlight capture (Helix, Neovim and Zed all resolve these)
+TS_CAPTURES: dict[str, str] = {
+    "declaration": "keyword",
+    "control": "keyword.control",
+    "operator": "keyword.operator",
+    "constant": "constant.builtin",
+    "special": "variable.builtin",
+    "type": "type.builtin",
+    "kind": "type",
+    "function": "function.builtin",
+}
+TS_PUNCT_BRACKET = ["(", ")", "[", "]", "{", "}"]
+TS_PUNCT_DELIM = ["::", "..", ".", ",", ";", ":"]
+
+
 class Meta(BaseModel):
     """Language identity shared by every editor."""
 
@@ -95,6 +110,7 @@ class Contextual(BaseModel):
     word_regex: bool = False
     follow: str = ""
     role: str
+    ts_query: str = ""
 
 
 class Token(BaseModel):
@@ -104,6 +120,7 @@ class Token(BaseModel):
     pcre: str
     vim: str = ""
     emacs: str = ""
+    ts: str = ""
 
 
 class Grammar(BaseModel):
@@ -421,6 +438,114 @@ def emacs(g: Grammar) -> str:
     return text
 
 
+def js_regex(pattern: str) -> str:
+    """A JavaScript regex literal for a pattern, escaping bare slashes."""
+    return "/" + re.sub(r"(?<!\\)/", r"\\/", pattern) + "/"
+
+
+def ts_token(t: Token) -> str:
+    """The tree-sitter (Rust regex dialect) pattern of a token."""
+    return t.ts or t.pcre
+
+
+def js_str(text: str) -> str:
+    """A single-quoted JavaScript string literal."""
+    return "'" + text.replace("\\", "\\\\").replace("'", "\\'") + "'"
+
+
+def ts_keywords(g: Grammar) -> list[str]:
+    """Every reserved word once, in a fixed order."""
+    seen: dict[str, None] = {}
+    for _, words in keyword_groups(g):
+        seen.update(dict.fromkeys(words))
+    return list(seen)
+
+
+def tree_sitter_grammar(g: Grammar) -> str:
+    """The tree-sitter grammar.js: a flat token stream, so it never yields ERROR nodes."""
+    t = g.tokens
+    pseudo = alternation(g.names.pseudo_citations)
+    locator = t["string"].pcre
+    literals = TS_PUNCT_BRACKET + TS_PUNCT_DELIM + ts_keywords(g)
+    lit = ",\n      ".join(js_str(x) for x in literals)
+    return f"""// {BANNER}
+// A lexical grammar: Cadetta source is a stream of tokens, highlighted by
+// queries/highlights.scm. Every character lexes, so no input has ERROR nodes.
+module.exports = grammar({{
+  name: '{g.meta.language}',
+
+  word: $ => $.identifier,
+
+  extras: _ => [/\s+/],
+
+  rules: {{
+    source_file: $ => repeat($._item),
+
+    _item: $ => choice(
+      $.doc_comment,
+      $.comment,
+      $.string,
+      $.attribute,
+      $.pseudo_citation,
+      $.citation,
+      $.quantity,
+      $.number,
+      $.operator,
+      $.identifier,
+      $.unknown,
+      {lit},
+    ),
+
+    doc_comment: _ => token(prec(1, /\/\/\/.*/)),
+    comment: _ => token(/\/\/.*/),
+    string: _ => token({js_regex(t["string"].pcre)}),
+    attribute: _ => token({js_regex(ts_token(t["attribute"]))}),
+    pseudo_citation: _ => token(prec(1, {js_regex(f"@(?:{pseudo})(?::{locator})?")})),
+    citation: _ => token({js_regex(ts_token(t["citation"]))}),
+    quantity: _ => token({js_regex(ts_token(t["quantity"]))}),
+    number: _ => token({js_regex(ts_token(t["number"]))}),
+    operator: _ => token(/[-+*\/=<>!^%&|~?]+/),
+    identifier: _ => /[A-Za-z_][A-Za-z0-9_]*/,
+    unknown: _ => token(prec(-1, /[^\s]/)),
+  }},
+}});
+"""
+
+
+def tree_sitter_highlights(g: Grammar) -> str:
+    """The tree-sitter queries/highlights.scm text."""
+    quote = lambda ws: " ".join(f'"{w}"' for w in ws)  # noqa: E731
+    out = [
+        f"; {BANNER}",
+        "(doc_comment) @comment.documentation",
+        "(comment) @comment",
+        "(string) @string",
+        "(attribute) @attribute",
+        "(pseudo_citation) @string.special",
+        "(citation) @label",
+        "(quantity) @number @constant.numeric",
+        "(number) @number @constant.numeric",
+        "(operator) @operator",
+        f"[{quote(TS_PUNCT_BRACKET)}] @punctuation.bracket",
+        f"[{quote(TS_PUNCT_DELIM)}] @punctuation.delimiter",
+        "",
+    ]
+    for role, words in keyword_groups(g):
+        out.append(f"[{quote(words)}] @{TS_CAPTURES[role]}")
+    out.append("")
+    for role, words in name_groups(g):
+        cap = TS_CAPTURES[role]
+        out.append(f"((identifier) @{cap} (#any-of? @{cap} {quote(words)}))")
+    out += ["", "; contextual words and ISO 286 classes"]
+    for c in g.contextual:
+        if c.ts_query:
+            out.append(c.ts_query.replace("{words}", quote(c.words)))
+    out.append(
+        '((quantity) . (identifier) @constant (#match? @constant "^[A-Za-z]{1,2}[0-9]{1,2}$"))'
+    )
+    return "\n".join(out) + "\n"
+
+
 def outputs(g: Grammar) -> dict[Path, str]:
     """Every generated file path mapped to its content."""
     return {
@@ -428,6 +553,8 @@ def outputs(g: Grammar) -> dict[Path, str]:
         EDITORS / "sublime" / "Cadetta.sublime-syntax": sublime(g),
         EDITORS / "vim" / "syntax" / "cadetta.vim": vim(g),
         EDITORS / "emacs" / "cadetta-mode.el": emacs(g),
+        EDITORS / "tree-sitter" / "grammar.js": tree_sitter_grammar(g),
+        EDITORS / "tree-sitter" / "queries" / "highlights.scm": tree_sitter_highlights(g),
     }
 
 

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-sema/**", "tests/conformance/stdlib/joint-callout.*", "tests/conformance/stdlib/joint-vendor-callout.*"]
+new = ["crates/cadetta-sema/**", "tests/conformance/stdlib/joint-callout.*", "tests/conformance/stdlib/joint-vendor-callout.*", "crates/cadetta-ir/src/**", "crates/cadetta-cli/tests/conformance/exec.rs", "docs/spec/ir.md", "docs/schemas/cadetta.ir.1.json", "bindings/python/python/cadetta/models/ir.py", "tests/conformance/known-gaps.toml"]
+at = "2026-10-16T14:19:28Z"
+actor = "lognd"
+rev = 1

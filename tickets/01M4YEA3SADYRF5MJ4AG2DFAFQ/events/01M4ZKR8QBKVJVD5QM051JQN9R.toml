@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T11:04:25Z"
+digest = "9e5c30586488605f8d500c3ff2ec917e50f07e1a97f8c7db43249c913ce2e0da"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.40s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID f057fe31-3326-43a1-90cb-6d1ac06090af with nextest profile: default
+    Starting 1 test across 42 binaries (494 tests skipped)
+        PASS [   0.106s] cadetta::lint_entry_points u002_reports_an_unused_private_member_and_not_a_read_one
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.107s] 1 test run: 1 passed, 494 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta u002_reports_an_unused_private_member"
+size = 577
+status = "measured"
+test_count = 1
+tests_digest = "616beb1cb472770517a31af5cf85fe452e6524be7204288bea0c40da8860ffc5"
+at = "2026-10-15T11:04:25Z"
+actor = "lognd"
+rev = 1

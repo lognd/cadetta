@@ -18,7 +18,7 @@ use std::collections::BTreeMap;
 use cadetta_units::{Dim, Magnitude};
 use tracing::debug;
 
-use crate::entities::{Interface, Table, Waiver};
+use crate::entities::{Interface, Require, Table, Waiver};
 use crate::path::Path;
 
 /// Which producer built an IR (ir.md 1); the schema is the same for both.
@@ -411,6 +411,9 @@ pub struct Member {
     pub private: bool,
     /// The evaluated value.
     pub value: Option<Value>,
+    /// The evaluated string, for a Text member (such as a `fmt` callout); absent otherwise.
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    pub text: Option<String>,
     /// The bound, for bound members.
     pub bound: Option<Bound>,
     /// The normalized expression text.
@@ -448,6 +451,7 @@ impl Member {
             kind,
             private: false,
             value: None,
+            text: None,
             bound: None,
             expr: None,
             deps: Vec::new(),
@@ -574,6 +578,8 @@ pub struct Solver {
     pub path: Path,
     /// The script reference.
     pub script: String,
+    /// The citation of the method; documentation only, never an input to the solver closure.
+    pub citation: Option<CiteRef>,
     /// Input name to member path text.
     pub inputs: BTreeMap<String, String>,
     /// Output name to member path text.
@@ -761,6 +767,9 @@ pub struct Project {
     pub interfaces: Vec<Interface>,
     /// Lookup tables (ir.md 3; omitted from JSON when empty).
     pub tables: Vec<Table>,
+    /// Requires (ir.md 3; omitted from JSON when empty).
+    // frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+    pub requires: Vec<Require>,
     /// Waivers (ir.md 3; omitted from JSON when empty).
     pub waivers: Vec<Waiver>,
     /// Observed frames (observed flavour only).
@@ -792,6 +801,7 @@ impl Project {
             citations: Vec::new(),
             interfaces: Vec::new(),
             tables: Vec::new(),
+            requires: Vec::new(),
             waivers: Vec::new(),
             frames: Vec::new(),
             instances: Vec::new(),
@@ -890,6 +900,7 @@ mod tests {
         let s = Solver {
             path: p("acme.rover::Axle.sol"),
             script: "s.py".into(),
+            citation: None,
             inputs: BTreeMap::new(),
             outputs: BTreeMap::new(),
             deps: vec![],

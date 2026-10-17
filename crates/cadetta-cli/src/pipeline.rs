@@ -5,20 +5,21 @@
 //! [`analyze`] is the one entry point; `check` renders its diagnostics, and later verbs
 //! (`why`, `impact`, `ir`, `ack`, `obligations`) reuse the lowered packages it returns.
 //! Resolver, evaluator and dependency diagnostics carry the module their span lives in
-//! (`ModuleKey`), so [`SourceIndex::file_for`] maps them to the exact file; only a
-//! diagnostic without a module falls back to the span heuristic ([`SourceIndex::attribute`]).
+//! (`ModuleKey`), so [`SourceIndex::file_for`] maps them to the exact file; a diagnostic
+//! without a module is dropped with a warning (no span guessing).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
+use crate::cmd::solve::{current_digests, eval_inputs};
 use cadetta_ir::entities::Waiver;
 use cadetta_ir::model::{
     Citation, CiteBuiltin, ComponentClass, MemberKind as IrMemberKind, Project as IrProject,
 };
-use cadetta_ir::variant_name::VariantName;
 use cadetta_lint::diag::{Diagnostic, Location, Position, Severity};
 use cadetta_lint::engine::{LintConfig, Suppressions};
 use cadetta_lint::rules::d::{Key, NamedValue};
+use cadetta_lint::rules::e::{self as e_rules, EFinding};
 use cadetta_lint::rules::lifecycle::{self, LifecycleFinding, MissingRole, TableMiss};
 use cadetta_lint::rules::s::{self, CitationFacts, CitationKind, OtsValueFacts};
 use cadetta_lint::rules::{c, d, f, interface, m, n, q, u002, unused};
@@ -30,10 +31,17 @@ use cadetta_sema::kindcheck::{self, EvalEnv, KindChecker};
 use cadetta_sema::lower::{LowerInput, SourceText, lower};
 use cadetta_sema::modules::module_path_of;
 use cadetta_sema::process::Processes;
+use cadetta_sema::renames::Moves;
 use cadetta_sema::resolve::{
-    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc, Resolver,
+    CanonPath, Ctx, EnumDecl as SemaEnum, MemberSeg, ModuleKey, ModuleSrc, PackageSrc,
+    ResolveError, Resolver,
 };
 use cadetta_sema::visibility::VisibilityChecker;
+use cadetta_solve::decl::lower_solver;
+use cadetta_solve::lints as solver_lints;
+use cadetta_solve::protocol::Request;
+use cadetta_solve::results::{CurrentDigests, Lookup, ResultFile, input_digest, out_path};
+use cadetta_solve::variants::{VariantReading, read_variant};
 use cadetta_syntax::ast::{File, ItemKind, MemberKind};
 use cadetta_syntax::lexer::Span;
 use cadetta_syntax::parser::parse;
@@ -129,18 +137,9 @@ impl SourceIndex {
         }
     }
 
-    /// The file a diagnostic belongs to: the file of its `module` when it has one
-    /// (None for std, whose findings are not the project's), else the span heuristic.
-    // frob:ticket 01M4TA3BTW256J8FKMS6KASY82
-    fn file_for<'a>(
-        &'a self,
-        module: Option<&ModuleKey>,
-        span: Span,
-        covering: &dyn Fn(&IndexedFile) -> bool,
-    ) -> Option<&'a IndexedFile> {
-        let Some(key) = module else {
-            return self.attribute(span, covering);
-        };
+    /// The project file of a diagnostic's `module` (None for std or an unknown module).
+    // frob:ticket 01M4Y66FVYYDJH0FJ16F1T08H3
+    fn file_for(&self, key: &ModuleKey) -> Option<&IndexedFile> {
         let file = self.module(&key.package, &key.module).filter(|f| !f.is_std);
         if file.is_none() {
             tracing::debug!(
@@ -150,34 +149,6 @@ impl SourceIndex {
             );
         }
         file
-    }
-
-    /// Pick the project file a module-less span belongs to.
-    ///
-    /// Only used for diagnostics that carry no `ModuleKey`. The rule: among non-std files
-    /// whose text covers the span, the one whose AST has a member covering it
-    /// (`members`), else the first covering file.
-    fn attribute<'a>(
-        &'a self,
-        span: Span,
-        covering: &dyn Fn(&IndexedFile) -> bool,
-    ) -> Option<&'a IndexedFile> {
-        let fits: Vec<&IndexedFile> = self
-            .files
-            .iter()
-            .filter(|f| !f.is_std && f.source.text().len() >= span.end)
-            .collect();
-        if fits.len() > 1 {
-            tracing::trace!(
-                candidates = fits.len(),
-                start = span.start,
-                "pipeline: ambiguous span attribution"
-            );
-        }
-        fits.iter()
-            .copied()
-            .find(|f| covering(f))
-            .or_else(|| fits.first().copied())
     }
 }
 
@@ -208,6 +179,31 @@ pub struct Analysis {
     pub halted: bool,
     /// The `waive` declarations of the in-scope packages, for the lint engine.
     pub suppressions: Suppressions,
+    /// `(entity path, date)` of every in-scope `#[lifecycle(eol, ..)]`, for W005.
+    pub eols: Vec<(String, String)>,
+}
+
+/// The `eol` lifecycle dates of the `ots` components of one package, keyed by canonical path.
+// frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+fn eol_dates(package: &str, modules: &[Parsed]) -> Vec<(String, String)> {
+    use cadetta_variants::lifecycle as vl;
+    let mut out = Vec::new();
+    for m in modules {
+        for item in m.file.items() {
+            let ItemKind::Component(c) = &item.kind else {
+                continue;
+            };
+            let Some(lc) = vl::find(&item.attrs).and_then(Result::ok) else {
+                continue;
+            };
+            if lc.status == vl::Status::Eol {
+                let path = CanonPath::item(package, &m.path, &c.name.name).to_string();
+                tracing::debug!(%path, date = %lc.date, "pipeline: eol date collected");
+                out.push((path, lc.date.to_string()));
+            }
+        }
+    }
+    out
 }
 
 /// The lint-facing view of every module of `p`.
@@ -224,31 +220,62 @@ fn module_views(p: &ParsedPackage) -> Vec<ModuleView<'_>> {
 }
 
 /// Lower the `waive` items of one parsed module to engine waivers (lints.md 2.1).
-fn module_waivers(file: &File, out: &mut Vec<Waiver>) {
+///
+/// A glob whose literal prefix names a path moved by a `was` clause is rewritten to the current
+/// path through `moves`, so a waiver written before a rename still matches.
+// frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+fn module_waivers(file: &File, moves: &Moves, out: &mut Vec<Waiver>) {
     for item in file.items() {
         let ItemKind::Waive(w) = &item.kind else {
             continue;
         };
-        let for_alt = match &w.for_alt {
-            None => None,
-            Some(a) => match VariantName::parse(&format!("{}={}", a.slot.text, a.alt.text)) {
-                Ok(v) => Some(v),
-                Err(error) => {
-                    tracing::warn!(code = %w.code.name, %error, "pipeline: waiver with a bad `for alt`; skipped");
-                    continue;
-                }
-            },
-        };
-        tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
-        out.push(Waiver {
-            code: w.code.name.clone(),
-            glob: w.glob.text.clone(),
-            because: w.because.clone(),
-            expires: w.expires.as_ref().map(|e| e.text.clone()),
-            for_alt,
-            targets_closure: BTreeMap::new(),
-        });
+        // frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+        match cadetta_sema::lower::lower_waiver(w) {
+            Ok(mut waiver) => {
+                tracing::debug!(code = %w.code.name, glob = %w.glob.text, "pipeline: waiver collected");
+                waiver.glob = moves.carry_glob(&w.glob.text);
+                out.push(waiver);
+            }
+            Err(error) => {
+                tracing::warn!(code = %w.code.name, %error, "pipeline: waiver with a bad `for alt`; skipped");
+            }
+        }
     }
+}
+
+/// Recorded primary-result state of every solver site, for `ir.solvers` (solvers.md 4).
+///
+/// A fresh or stale result carries a digest of its recorded outputs; a missing one carries none.
+// frob:ticket 01M4ZJAYRJMG47610S0R0ANADA
+fn solver_states(
+    sites: &[SolverSite<'_>],
+) -> BTreeMap<CanonPath, cadetta_sema::lower::SolverState> {
+    sites
+        .iter()
+        .map(|s| {
+            let (result, stale) = match s.results.lookup(&s.key, None, &s.current) {
+                Lookup::Fresh(r) => (Some(r), false),
+                Lookup::Stale(r) => (Some(r), true),
+                Lookup::Missing => (None, false),
+            };
+            let result_digest = result.map(|r| {
+                let text: String = r
+                    .outputs
+                    .iter()
+                    .map(|(k, v)| format!("{k}={v}\n"))
+                    .collect();
+                cadetta_ir::digest::digest_bytes(text.as_bytes())
+            });
+            tracing::debug!(solver = %s.path, stale, recorded = result_digest.is_some(), "pipeline: solver state");
+            (
+                s.path.clone(),
+                cadetta_sema::lower::SolverState {
+                    result_digest,
+                    stale,
+                },
+            )
+        })
+        .collect()
 }
 
 /// S001/S002/S008 inputs of one lowered package: `ots` values, and the package's own `cite`
@@ -294,6 +321,8 @@ pub(crate) fn s_facts(
                 let applied = m.citation.as_ref().or(c.citation.as_ref());
                 values.push(OtsValueFacts {
                     path: m.path.to_string(),
+                    component: c.path.to_string(),
+                    component_span: c.span.clone(),
                     cited: m.citation.is_some(),
                     component_cited: c.citation.is_some(),
                     note_only: applied.is_some_and(|r| r.builtin == Some(CiteBuiltin::Note)),
@@ -320,6 +349,8 @@ struct RawPackage {
     name: String,
     version: String,
     deps: Vec<String>,
+    /// The package's `[defaults]` table (empty for `std`).
+    defaults: BTreeMap<String, String>,
     dir: PathBuf,
     modules: Vec<Module>,
 }
@@ -335,6 +366,7 @@ impl RawPackage {
                 .and_then(|p| p.version.clone())
                 .unwrap_or_else(|| "0.0.0".to_owned()),
             deps: pkg.config.dependencies.keys().cloned().collect(),
+            defaults: pkg.config.defaults.clone(),
             dir: pkg.dir.clone(),
             modules: pkg.modules.clone(),
         }
@@ -375,6 +407,7 @@ fn load_std(dir: &Path) -> std::io::Result<RawPackage> {
         name: "std".to_owned(),
         version: "0.1.0".to_owned(),
         deps: Vec::new(),
+        defaults: BTreeMap::new(),
         dir: dir.to_owned(),
         modules,
     })
@@ -384,6 +417,7 @@ struct ParsedPackage {
     name: String,
     version: String,
     deps: Vec<String>,
+    defaults: BTreeMap<String, String>,
     dir: PathBuf,
     is_std: bool,
     modules: Vec<Parsed>,
@@ -425,6 +459,7 @@ fn embedded_std() -> RawPackage {
         name: "std".to_owned(),
         version: "0.1.0".to_owned(),
         deps: Vec::new(),
+        defaults: BTreeMap::new(),
         dir,
         modules,
     }
@@ -445,6 +480,47 @@ fn display_name(root: &Path, file: &Path) -> String {
         .replace('\\', "/")
 }
 
+/// Lifts a located resolver error through `e::lift_resolution` (E002-E011), keeping the
+/// resolver's own message text and adding the related spans (E003, E004) as notes.
+// frob:ticket 01M4YMYMB1NKFEWKHDYGGJ41H3
+fn lift_resolve_error(
+    err: &ResolveError,
+    base: Option<Diagnostic>,
+    index: &SourceIndex,
+) -> Option<Diagnostic> {
+    let base = base?;
+    let base_path = base.path.clone();
+    let mut finding = EFinding::new(
+        err.code,
+        base.path.as_deref().unwrap_or_default(),
+        &err.message,
+        base.location.clone(),
+    );
+    if let Some(file) = err.module.as_deref().and_then(|k| index.file_for(k)) {
+        for span in &err.related {
+            finding = finding.with_related(SourceIndex::location(file, *span));
+        }
+    }
+    let lifted = e_rules::lift_resolution(&[finding], &LintConfig::new()).pop();
+    Some(match lifted {
+        Some(mut d) => {
+            // The resolver names the exact offender; the catalog template would only generalise it.
+            d.message = err.message.clone();
+            // frob:ticket 01M51NC9FMMRMKC3NVMJKF14FE
+            // Keep the base path (None stays None) so the twin dedup still matches.
+            d.path = base_path;
+            d
+        }
+        None => {
+            tracing::debug!(
+                code = err.code,
+                "pipeline: not an E001-E011 code; kept as located"
+            );
+            base
+        }
+    })
+}
+
 fn diag_at(
     code: &str,
     severity: Severity,
@@ -456,6 +532,20 @@ fn diag_at(
     d.path = path;
     d.location = location;
     d
+}
+
+/// M001 diagnostic for a `[lint] precision` key that names no built-in or package kind.
+// frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+fn unknown_precision_diag(package: &str, kind: &str) -> Diagnostic {
+    diag_at(
+        "M001",
+        Severity::Warning,
+        format!(
+            "`[lint] precision` names unknown quantity kind `{kind}`; it is ignored (package `{package}`)"
+        ),
+        Some("cadetta.toml".to_owned()),
+        None,
+    )
 }
 
 fn sema_severity(s: SemaSeverity) -> Severity {
@@ -606,6 +696,7 @@ fn parse_package(
         name,
         version,
         deps: pkg.deps.clone(),
+        defaults: pkg.defaults.clone(),
         dir: pkg.dir.clone(),
         is_std,
         modules,
@@ -755,7 +846,9 @@ struct VariantEnv<'a, 'p> {
     resolver: &'a Resolver<'p>,
     units: &'a UnitTable,
     sources: &'a [PackageSrc<'a>],
-    cache: std::cell::RefCell<BTreeMap<String, bool>>,
+    solvers: &'a [SolverSite<'a>],
+    cache: std::cell::RefCell<BTreeMap<String, std::rc::Rc<cadetta_sema::eval::Evaluation>>>,
+    unsolved: std::cell::RefCell<Vec<UnsolvedVariant>>,
 }
 
 impl<'a, 'p> VariantEnv<'a, 'p> {
@@ -764,13 +857,114 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         resolver: &'a Resolver<'p>,
         units: &'a UnitTable,
         sources: &'a [PackageSrc<'a>],
+        solvers: &'a [SolverSite<'a>],
     ) -> Self {
         Self {
             resolver,
             units,
             sources,
+            solvers,
             cache: std::cell::RefCell::new(BTreeMap::new()),
+            unsolved: std::cell::RefCell::new(Vec::new()),
         }
+    }
+
+    /// The recorded outputs each solver reads under `selection` (solvers.md 4.1).
+    ///
+    /// A variant whose inputs equal the primary's reads the primary's result; one with changed
+    /// inputs reads its own, and with none its outputs stay unknown and S006 is recorded for
+    /// in-scope solvers. Solvers whose inputs do not evaluate under the swap are skipped.
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    fn variant_outputs(
+        &self,
+        selection: &Selection,
+    ) -> BTreeMap<CanonPath, BTreeMap<String, String>> {
+        let variant = selection.key();
+        let mut out = BTreeMap::new();
+        for site in self.solvers {
+            let mut probe = Evaluator::new(self.resolver, self.units, self.sources)
+                .with_selection(selection.clone());
+            let Ok(inputs) = eval_inputs(site.ast, &site.ctx, &mut probe, self.units) else {
+                tracing::debug!(solver = %site.key, %variant, "pipeline: variant inputs unevaluable; skipped");
+                continue;
+            };
+            let digest = input_digest(&Request::new(site.key.clone(), inputs));
+            match read_variant(&site.results, &site.key, &variant, &site.current, &digest) {
+                VariantReading::Outputs(r) => {
+                    tracing::debug!(solver = %site.key, %variant, "pipeline: variant outputs recorded");
+                    out.insert(site.path.clone(), r.outputs.clone());
+                }
+                VariantReading::Unknown => {
+                    // solvers.md 4.1: with no primary result at all the outputs are simply
+                    // unsolved (C002 on the reads), not a stale variant.
+                    let primary_missing = matches!(
+                        site.results.lookup(&site.key, None, &site.current),
+                        Lookup::Missing
+                    );
+                    if primary_missing {
+                        tracing::debug!(solver = %site.key, %variant, "pipeline: no primary result; S006 not raised");
+                    } else if site.in_scope {
+                        self.unsolved.borrow_mut().push(UnsolvedVariant {
+                            key: site.module.clone(),
+                            span: site.ast.name.span,
+                            diag: solver_lints::unsolved_variant(&site.key, &variant),
+                        });
+                    }
+                }
+            }
+        }
+        out
+    }
+
+    /// The design evaluated with `alt` swapped into `owner`'s `slot`, cached per swap.
+    ///
+    /// Returns the swap key with the evaluation, or `None` when the alternate does not resolve.
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+    fn evaluation_for(
+        &self,
+        owner: &CanonPath,
+        slot: &str,
+        package: &str,
+        module: &[String],
+        alt: &cadetta_syntax::ast::Ctor,
+    ) -> Option<(String, std::rc::Rc<cadetta_sema::eval::Evaluation>)> {
+        let Some((alt_path, _)) = self.resolver.ctor_component(package, module, alt) else {
+            tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
+            return None;
+        };
+        let selection = Selection {
+            owner: owner.clone(),
+            slot: slot.to_owned(),
+            alt: alt_path,
+        };
+        let key = selection.key();
+        if let Some(cached) = self.cache.borrow().get(&key) {
+            return Some((key, cached.clone()));
+        }
+        let outputs = self.variant_outputs(&selection);
+        let evaluator = Evaluator::new(self.resolver, self.units, self.sources)
+            .with_selection(selection)
+            .with_solver_outputs(outputs);
+        let evaluation = std::rc::Rc::new(evaluator.evaluate());
+        let violated: Vec<String> = evaluation
+            .checks
+            .iter()
+            .filter(|r| r.verdict == Verdict::Violates)
+            .map(|r| r.path.to_string())
+            .collect();
+        tracing::info!(variant = %key, viable = violated.is_empty(), ?violated, "pipeline: alternate viability evaluated");
+        self.cache
+            .borrow_mut()
+            .insert(key.clone(), evaluation.clone());
+        Some((key, evaluation))
+    }
+
+    /// The S006 findings gathered while evaluating swaps, deduplicated and drained.
+    fn take_unsolved(&self) -> Vec<UnsolvedVariant> {
+        let mut found = std::mem::take(&mut *self.unsolved.borrow_mut());
+        found.sort_by(|a, b| (&a.diag.path, &a.diag.alt).cmp(&(&b.diag.path, &b.diag.alt)));
+        found.dedup_by(|a, b| a.diag.path == b.diag.path && a.diag.alt == b.diag.alt);
+        found
     }
 
     /// True when no check or require violates with `alt` swapped into `owner`'s `slot`.
@@ -782,33 +976,51 @@ impl<'a, 'p> VariantEnv<'a, 'p> {
         module: &[String],
         alt: &cadetta_syntax::ast::Ctor,
     ) -> bool {
-        let Some((alt_path, _)) = self.resolver.ctor_component(package, module, alt) else {
-            tracing::debug!(slot, "pipeline: alternate does not resolve; not evaluated");
-            return true;
-        };
-        let selection = Selection {
-            owner: owner.clone(),
-            slot: slot.to_owned(),
-            alt: alt_path,
-        };
-        let key = selection.key();
-        if let Some(held) = self.cache.borrow().get(&key) {
-            return *held;
-        }
-        let evaluator =
-            Evaluator::new(self.resolver, self.units, self.sources).with_selection(selection);
-        let evaluation = evaluator.evaluate();
-        let violated: Vec<String> = evaluation
-            .checks
-            .iter()
-            .filter(|r| r.verdict == Verdict::Violates)
-            .map(|r| r.path.to_string())
-            .collect();
-        let held = violated.is_empty();
-        tracing::info!(variant = %key, viable = held, ?violated, "pipeline: alternate viability evaluated");
-        self.cache.borrow_mut().insert(key, held);
-        held
+        self.evaluation_for(owner, slot, package, module, alt)
+            .is_none_or(|(_, e)| e.checks.iter().all(|r| r.verdict != Verdict::Violates))
     }
+}
+
+/// Evaluations of every one-alternate-at-a-time swap in the in-scope packages, by variant key.
+///
+/// Feeds `Check.verdicts.per_alternate` so I002/I003 see each alternate (language.md 3.2).
+// frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+fn alternate_evaluations(
+    parsed: &[ParsedPackage],
+    scope: &BTreeSet<String>,
+    env: &VariantEnv<'_, '_>,
+) -> BTreeMap<String, std::rc::Rc<cadetta_sema::eval::Evaluation>> {
+    let mut out = BTreeMap::new();
+    for p in parsed
+        .iter()
+        .filter(|p| !p.is_std && scope.contains(&p.name))
+    {
+        for m in &p.modules {
+            for item in m.file.items() {
+                let ItemKind::Component(c) = &item.kind else {
+                    continue;
+                };
+                let owner = CanonPath::item(&p.name, &m.path, &c.name.name);
+                for mem in &c.members {
+                    let MemberKind::Part(part) = &mem.kind else {
+                        continue;
+                    };
+                    for alt in &part.alts {
+                        if let Some((key, e)) =
+                            env.evaluation_for(&owner, &part.name.name, &p.name, &m.path, alt)
+                        {
+                            out.insert(key, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    tracing::debug!(
+        variants = out.len(),
+        "pipeline: alternate evaluations collected"
+    );
+    out
 }
 
 /// L001/L002: lifecycle facts for the primary of every part slot in scope.
@@ -1050,6 +1262,155 @@ fn table_misses(
     out
 }
 
+/// The committed `.out.json` outputs of every solver member, by solver path (solvers.md 3, 4).
+// frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+fn recorded_solver_outputs(
+    parsed: &[ParsedPackage],
+) -> BTreeMap<CanonPath, BTreeMap<String, String>> {
+    let mut out = BTreeMap::new();
+    for pkg in parsed {
+        for m in &pkg.modules {
+            for c in m.file.components() {
+                for member in &c.members {
+                    let MemberKind::Solver(sv) = &member.kind else {
+                        continue;
+                    };
+                    let mut path = CanonPath::item(&pkg.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(sv.name.name.clone()));
+                    let file = out_path(&pkg.dir.join(&sv.script));
+                    let results = match ResultFile::load(&file) {
+                        Ok(r) => r,
+                        Err(error) => {
+                            tracing::warn!(solver = %path, %error, "pipeline: solver result file unreadable");
+                            continue;
+                        }
+                    };
+                    let key = path.to_string();
+                    let Some(r) = results
+                        .results
+                        .iter()
+                        .find(|r| r.solver == key && r.variant.is_none())
+                    else {
+                        tracing::debug!(solver = %path, "pipeline: no recorded result for solver");
+                        continue;
+                    };
+                    tracing::debug!(solver = %path, outputs = r.outputs.len(), "pipeline: solver outputs loaded");
+                    out.insert(path, r.outputs.clone());
+                }
+            }
+        }
+    }
+    out
+}
+
+/// A solver member with its recorded results and current primary digests, for staleness and
+/// variant readings (solvers.md 4, 4.1).
+struct SolverSite<'a> {
+    path: CanonPath,
+    key: String,
+    ast: &'a cadetta_syntax::ast::Solver,
+    ctx: Ctx,
+    module: ModuleKey,
+    in_scope: bool,
+    results: ResultFile,
+    current: CurrentDigests,
+}
+
+/// The solver members whose result file, declaration, inputs, script and deps all load.
+///
+/// A solver whose inputs, script or declaration cannot be evaluated is reported by the stages
+/// that own those faults and is left out here.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+// frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+fn solver_sites<'a>(
+    parsed: &'a [ParsedPackage],
+    scope: &BTreeSet<String>,
+    evaluator: &mut Evaluator<'_, '_>,
+    units: &UnitTable,
+) -> Vec<SolverSite<'a>> {
+    let mut out = Vec::new();
+    for pkg in parsed.iter().filter(|p| !p.is_std) {
+        for m in &pkg.modules {
+            for c in m.file.components() {
+                for member in &c.members {
+                    let MemberKind::Solver(sv) = &member.kind else {
+                        continue;
+                    };
+                    let mut path = CanonPath::item(&pkg.name, &m.path, &c.name.name);
+                    path.members.push(MemberSeg::Name(sv.name.name.clone()));
+                    let key = path.to_string();
+                    let Ok(results) = ResultFile::load(&out_path(&pkg.dir.join(&sv.script))) else {
+                        continue;
+                    };
+                    let Ok(decl) = lower_solver(sv, &key) else {
+                        continue;
+                    };
+                    let ctx = Ctx {
+                        package: pkg.name.clone(),
+                        module: m.path.clone(),
+                        component: Some(c.name.name.clone()),
+                        locals: Vec::new(),
+                    };
+                    let Ok(inputs) = eval_inputs(sv, &ctx, evaluator, units) else {
+                        tracing::debug!(solver = %key, "pipeline: solver inputs unevaluable; staleness unjudged");
+                        continue;
+                    };
+                    let request = Request::new(key.clone(), inputs);
+                    let Ok(current) = current_digests(&request, &pkg.dir, &decl) else {
+                        tracing::debug!(solver = %key, "pipeline: solver script or dep unreadable; staleness unjudged");
+                        continue;
+                    };
+                    out.push(SolverSite {
+                        path,
+                        key,
+                        ast: sv,
+                        ctx,
+                        module: ModuleKey::new(&pkg.name, &m.path),
+                        in_scope: scope.contains(&pkg.name),
+                        results,
+                        current,
+                    });
+                }
+            }
+        }
+    }
+    out
+}
+
+/// A solver whose recorded primary result is stale (S003), before it is located in a file.
+struct StaleSolver {
+    key: ModuleKey,
+    span: Span,
+    diag: Diagnostic,
+}
+
+/// S003: every in-scope solver member whose recorded primary result no longer matches the
+/// current input, script or dep digests (solvers.md 4); its outputs still evaluate.
+///
+/// A solver with no recorded result is unsolved, not stale.
+// frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+fn stale_solvers(sites: &[SolverSite<'_>]) -> Vec<StaleSolver> {
+    sites
+        .iter()
+        .filter(|s| s.in_scope)
+        .filter_map(|s| {
+            let lookup = s.results.lookup(&s.key, None, &s.current);
+            solver_lints::lint_lookup(&s.key, None, &lookup, &s.current).map(|diag| StaleSolver {
+                key: s.module.clone(),
+                span: s.ast.name.span,
+                diag,
+            })
+        })
+        .collect()
+}
+
+/// An in-scope solver with no result of its own under a variant that changes its inputs (S006).
+struct UnsolvedVariant {
+    key: ModuleKey,
+    span: Span,
+    diag: Diagnostic,
+}
+
 fn evaluate_stages(
     parsed: &[ParsedPackage],
     scope: &BTreeSet<String>,
@@ -1062,6 +1423,7 @@ fn evaluate_stages(
         .map(|p| PackageSrc {
             name: p.name.clone(),
             deps: p.deps.clone(),
+            defaults: p.defaults.clone(),
             modules: p
                 .modules
                 .iter()
@@ -1083,16 +1445,22 @@ fn evaluate_stages(
             .flat_map(|p| p.modules.iter().map(|m| &m.file)),
     );
     let (resolver, resolve_errors) = Resolver::new(sources.clone());
-    let mut evaluator = Evaluator::new(&resolver, &units, &sources);
+    // frob:ticket 01M4YRH3G6F8EGQ5X5CK4JKH27
+    let mut evaluator = Evaluator::new(&resolver, &units, &sources)
+        .with_solver_outputs(recorded_solver_outputs(parsed));
     let procs = Processes::compile(&mut evaluator, &sources);
+    evaluator.set_processes(procs.clone());
     let fit_ranges = fitderive::eval_ranges(&mut evaluator, &sources);
     let cells = table_cells(&mut evaluator, parsed);
     let misses = table_misses(&mut evaluator, parsed, scope, &analysis.sources);
+    let sites = solver_sites(parsed, scope, &mut evaluator, &units);
+    let stale = stale_solvers(&sites);
     let evaluation = evaluator.evaluate();
     let (derived_fits, fit_findings) =
         fitderive::derive_fits_with_findings(&resolver, &evaluation, &fit_ranges, &sources);
     let outcome = procs.apply(&evaluation);
     let renames = Renames::collect(&resolver, &sources);
+    let moves = Moves::new(&renames);
     let graph = DepGraph::build(&resolver, &renames, &sources);
     tracing::info!(
         packages = parsed.len(),
@@ -1108,13 +1476,21 @@ fn evaluate_stages(
         .collect();
     let located =
         |code: &str, sev: Severity, message: String, span: Span, module: Option<&ModuleKey>| {
+            let Some(key) = module else {
+                tracing::warn!(
+                    code,
+                    start = span.start,
+                    "pipeline: diagnostic has no module; dropped"
+                );
+                return None;
+            };
             let member_in = |f: &IndexedFile| {
                 in_scope.iter().find(|p| p.name == f.package).and_then(|p| {
                     let m = p.modules.iter().find(|m| m.path == f.module)?;
                     member_path_at(&p.name, &m.path, &m.file, span)
                 })
             };
-            let file = index.file_for(module, span, &|f| member_in(f).is_some());
+            let file = index.file_for(key);
             let path = file.and_then(member_in);
             if file.is_none() {
                 tracing::debug!(
@@ -1153,7 +1529,7 @@ fn evaluate_stages(
         &lift_cfg,
     ));
     out.extend(lifecycle::lift_not_in_table(&misses, &lift_cfg));
-    let variant_env = VariantEnv::new(&resolver, &units, &sources);
+    let variant_env = VariantEnv::new(&resolver, &units, &sources, &sites);
     out.extend(lifecycle::lift_lifecycle(
         &lifecycle_findings(parsed, scope, as_of, &analysis.sources, &variant_env),
         &lift_cfg,
@@ -1227,26 +1603,28 @@ fn evaluate_stages(
     }
     // frob:ticket 01M4V13RVF8WWS2VMYE8WN9V3R
     // Eager E002 use targets, beside the lazy resolver errors.
-    out.extend(resolve_errors.iter().flat_map(|e| {
-        located(
+    out.extend(resolve_errors.iter().filter_map(|e| {
+        let base = located(
             e.code,
             Severity::Error,
             e.message.clone(),
             e.span,
             e.module.as_deref(),
-        )
+        );
+        lift_resolve_error(e, base, index)
     }));
     let eager_diags: Vec<Diagnostic> = resolver
         .check_use_targets()
         .iter()
-        .flat_map(|e| {
-            located(
+        .filter_map(|e| {
+            let base = located(
                 e.code,
                 Severity::Error,
                 e.message.clone(),
                 e.span,
                 e.module.as_deref(),
-            )
+            );
+            lift_resolve_error(e, base, index)
         })
         .collect();
     // frob:ticket 01M4YR00X3TTZGSBAKQZDNTT6T
@@ -1315,6 +1693,25 @@ fn evaluate_stages(
             }
         }
     }
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    for s in stale {
+        let StaleSolver { key, span, diag } = s;
+        // The message itself names what changed (solvers.md 4), not only the notes.
+        let message = match diag
+            .notes
+            .iter()
+            .map(|n| n.message.as_str())
+            .collect::<Vec<_>>()
+        {
+            n if n.is_empty() => diag.message,
+            n => format!("{} ({})", diag.message, n.join("; ")),
+        };
+        if let Some(mut d) = located("S003", Severity::Warning, message, span, Some(&key)) {
+            d.notes = diag.notes;
+            d.path = diag.path.or(d.path);
+            out.push(d);
+        }
+    }
     for d in &evaluation.diagnostics {
         // C001/C002 are reported once, from the structured check results below.
         // Datum-bound findings (~S5DC5W0) have no structured check result and pass through.
@@ -1342,6 +1739,17 @@ fn evaluate_stages(
         ));
     }
     for d in graph.diagnostics() {
+        out.extend(located(
+            d.code,
+            sema_severity(d.severity),
+            d.message.clone(),
+            d.span,
+            d.module.as_ref(),
+        ));
+    }
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    for d in &outcome.diagnostics {
+        tracing::debug!(code = d.code, "pipeline: process rule problem surfaced");
         out.extend(located(
             d.code,
             sema_severity(d.severity),
@@ -1384,6 +1792,19 @@ fn evaluate_stages(
         ));
     }
 
+    // frob:ticket 01M4Z3FGQHHAPQ3N8VCDEY1G2X
+    let alternates = alternate_evaluations(parsed, scope, &variant_env);
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    for u in variant_env.take_unsolved() {
+        let UnsolvedVariant { key, span, diag } = u;
+        if let Some(mut d) = located("S006", Severity::Warning, diag.message, span, Some(&key)) {
+            d.alt = diag.alt;
+            d.path = diag.path.or(d.path);
+            out.push(d);
+        }
+    }
+    let variant_refs: BTreeMap<String, &cadetta_sema::eval::Evaluation> =
+        alternates.iter().map(|(k, e)| (k.clone(), &**e)).collect();
     // Lower each in-scope package and run the IR lints over it.
     let lower_one = |p: &ParsedPackage| {
         let texts: BTreeMap<Vec<String>, SourceText> = p
@@ -1408,8 +1829,9 @@ fn evaluate_stages(
             evaluation: &evaluation,
             compensation: Some(&outcome),
             deps: &graph,
-            variants: BTreeMap::new(),
+            variants: variant_refs.clone(),
             fits: &derived_fits,
+            solver_states: solver_states(&sites),
         })
     };
     // frob:ticket 01M4YTGQ9BHMKS38GTGX2PFH03
@@ -1445,15 +1867,10 @@ fn evaluate_stages(
             &all_interfaces,
             locate,
         ));
-        out.extend(interface::check_roots(
-            &ir,
-            |c| lint_facts::is_private(c, &own_views),
-            locate,
-        ));
-        out.extend(u002::check(
-            &lint_facts::item_facts(&p.name, &own_views, &ir),
-            locate,
-        ));
+        // ~G2DFAFQ: U002 and I004 read one fact table built from name resolution.
+        let facts = lint_facts::item_facts(&p.name, &own_views, &ir, &resolver);
+        out.extend(u002::check(&facts, locate));
+        out.extend(u002::check_i004(&facts, locate));
         analysis.suppressions.allows.extend(lint_facts::allows(&ir));
         analysis
             .suppressions
@@ -1471,9 +1888,13 @@ fn evaluate_stages(
                     .collect(),
             )
             .expect("[lint] settings were validated at load");
-        let mcfg = lint
-            .m_config()
-            .expect("[lint] settings were validated at load");
+        // Package-declared kinds are known only now, so `precision` resolves here.
+        let mcfg = lint.m_config_lenient(&kinds);
+        // A key naming no kind is a typo the lenient resolution would hide: report each one.
+        for kind in lint.unknown_precision_kinds(&kinds) {
+            tracing::warn!(package = %p.name, %kind, "pipeline: unknown [lint] precision kind");
+            out.push(unknown_precision_diag(&p.name, &kind));
+        }
         // C001-C003 come from the structured check results; C004 reads the lowered IR.
         out.extend(c::check_derived(&ir, locate));
         out.extend(c::check_fit_ranges(&ir, locate));
@@ -1490,8 +1911,9 @@ fn evaluate_stages(
         out.extend(s::check_s002(&cites, locate));
         out.extend(s::check_s008(&own_cites, &ots_values, locate));
         for m in &p.modules {
-            module_waivers(&m.file, &mut analysis.suppressions.waivers);
+            module_waivers(&m.file, &moves, &mut analysis.suppressions.waivers);
         }
+        analysis.eols.extend(eol_dates(&p.name, &p.modules));
         let text_params = evaluation
             .values
             .iter()
@@ -1557,40 +1979,300 @@ mod tests {
     #[test]
     fn file_for_picks_the_diagnostics_own_module() {
         let ix = index();
-        let span = Span::new(0, 5);
-        let all = |_: &IndexedFile| true;
-        // The span fits every file; the module key, not the span, decides.
+        // The module key alone decides the file.
         let frame = ModuleKey::new("p", &["frame".to_owned()]);
         assert_eq!(
-            ix.file_for(Some(&frame), span, &all)
-                .map(|f| f.name.as_str()),
+            ix.file_for(&frame).map(|f| f.name.as_str()),
             Some("src/frame.cdt")
         );
         let alpha = ModuleKey::new("p", &["alpha".to_owned()]);
         assert_eq!(
-            ix.file_for(Some(&alpha), span, &all)
-                .map(|f| f.name.as_str()),
+            ix.file_for(&alpha).map(|f| f.name.as_str()),
             Some("src/alpha.cdt")
         );
+    }
+
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::lift_resolve_error
+    #[test]
+    fn lift_resolve_error_keeps_resolver_text_and_adds_related_notes() {
+        let ix = index();
+        let key = ModuleKey::new("p", &["alpha".to_owned()]);
+        let err = ResolveError {
+            code: "E003",
+            message: "`Part` is defined twice".to_owned(),
+            span: Span { start: 0, end: 5 },
+            related: vec![Span { start: 6, end: 9 }],
+            module: Some(Box::new(key)),
+        };
+        let base = Some(diag_at("E003", Severity::Error, "x", None, None));
+        let d = lift_resolve_error(&err, base, &ix).expect("lifted");
+        assert_eq!(d.message, "`Part` is defined twice");
+        assert_eq!(d.code, "E003");
+        assert_eq!(d.notes.len(), 1);
+        assert_eq!(d.path, None, "a path-less base stays path-less");
+        assert!(lift_resolve_error(&err, None, &ix).is_none());
     }
 
     // frob:tests file_for_drops_std_and_unknown_modules
     #[test]
     fn file_for_drops_std_and_unknown_modules() {
         let ix = index();
-        let span = Span::new(0, 5);
-        let all = |_: &IndexedFile| true;
         let std = ModuleKey::new("std", &["s".to_owned()]);
-        assert!(ix.file_for(Some(&std), span, &all).is_none());
+        assert!(ix.file_for(&std).is_none());
         let none = ModuleKey::new("p", &["missing".to_owned()]);
-        assert!(ix.file_for(Some(&none), span, &all).is_none());
+        assert!(ix.file_for(&none).is_none());
     }
 
-    // frob:tests file_for_without_a_module_uses_the_heuristic
+    /// A one-package project whose solver has a recorded result with the given digest.
+    fn solver_project(tag: &str, with_result: bool) -> Project {
+        solver_project_with(tag, with_result, "", "")
+    }
+
+    /// `solver_project` with extra lines inside the solver block and inside the model.
+    fn solver_project_with(
+        tag: &str,
+        with_result: bool,
+        in_solver: &str,
+        in_model: &str,
+    ) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-stale-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            format!("model Box {{\n  m: Mass = 2kg\n  solver size {{\n    script \"size.sh\"\n    in m = m\n    out w: Length\n{in_solver}  }}\n{in_model}}}\n"),
+        )
+        .unwrap();
+        std::fs::write(dir.join("size.sh"), "true\n").unwrap();
+        if with_result {
+            let zero = format!("blake3:{}", "0".repeat(64));
+            std::fs::write(
+                dir.join("size.out.json"),
+                format!(
+                    "{{\"schema\":\"cadetta.solve-result/1\",\"results\":[{{\"solver\":\"acme.t::Box.size\",\"input_digest\":\"{zero}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"2m\"}},\"diagnostics\":[]}}]}}"
+                ),
+            )
+            .unwrap();
+        }
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::unknown_precision_diag
     #[test]
-    fn file_for_without_a_module_uses_the_heuristic() {
-        let ix = index();
-        let got = ix.file_for(None, Span::new(0, 5), &|_: &IndexedFile| true);
-        assert!(got.is_some_and(|f| !f.is_std));
+    fn unknown_lint_precision_kind_is_reported() {
+        let project = solver_project("precision", false);
+        let toml = project.root.join("cadetta.toml");
+        let mut text = std::fs::read_to_string(&toml).unwrap();
+        text.push_str("[lint]\nprecision = { Lenth = 2, Length = 3 }\n");
+        std::fs::write(&toml, text).unwrap();
+        let project = Project::load(&toml).unwrap();
+        let analysis = analyze(&project, &[0]);
+        let hits: Vec<&Diagnostic> = analysis
+            .diagnostics
+            .iter()
+            .filter(|d| d.message.contains("unknown quantity kind"))
+            .collect();
+        assert_eq!(hits.len(), 1, "{hits:?}");
+        assert!(hits[0].message.contains("`Lenth`"), "{}", hits[0].message);
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::stale_solvers
+    #[test]
+    fn stale_recorded_result_reports_s003_naming_what_changed() {
+        let project = solver_project("stale", true);
+        let analysis = analyze(&project, &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "S003")
+            .expect("S003 for a result with other digests");
+        assert!(d.location.is_some());
+        assert!(d.notes.iter().any(|n| n.message == "changed: inputs"));
+        assert!(d.notes.iter().any(|n| n.message == "changed: script"));
+        // The message itself names what changed, not only the notes.
+        assert!(d.message.contains("changed: inputs"), "{}", d.message);
+        assert!(d.message.contains("changed: script"), "{}", d.message);
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-sema/src/checks.rs::add_solver_checks
+    #[test]
+    fn solver_own_check_on_a_recorded_output_is_evaluated() {
+        // Recorded `w` is 2m, so `w < 1m` fails: C001 from the solver's own check.
+        let project = solver_project_with("own", true, "    check small: w < 1m\n", "");
+        let analysis = analyze(&project, &[0]);
+        assert!(
+            analysis.diagnostics.iter().any(|d| d.code == "C001"),
+            "{:?}",
+            analysis
+                .diagnostics
+                .iter()
+                .map(|d| &d.code)
+                .collect::<Vec<_>>()
+        );
+    }
+
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    // frob:tests crates/cadetta-sema/src/checks.rs::run_checks
+    #[test]
+    fn check_reading_an_unsolved_output_is_c002_not_s003() {
+        let project = solver_project_with("unsolved", false, "", "  check ok: size.w < 1m\n");
+        let analysis = analyze(&project, &[0]);
+        let codes: Vec<&str> = analysis
+            .diagnostics
+            .iter()
+            .map(|d| d.code.as_str())
+            .collect();
+        assert!(codes.contains(&"C002"), "{codes:?}");
+        assert!(!codes.contains(&"S003"), "{codes:?}");
+    }
+
+    // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::stale_solvers
+    #[test]
+    fn solver_without_a_recorded_result_is_unsolved_not_stale() {
+        let project = solver_project("missing", false);
+        let analysis = analyze(&project, &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S003"));
+    }
+
+    /// A package whose wheel slot has `alt` as its alternate and whose solver reads the wheel.
+    fn variant_project(tag: &str, alt: &str, with_variant_result: bool) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-s006-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            format!(
+                "cite src: web {{ url = \"https://x.example/a.pdf\" }}\n\
+                 pub interface Caster {{\n  load_rating: Force\n}}\n\
+                 pub ots Good: Caster @src {{\n  load_rating = 500N\n}}\n\
+                 pub ots Heavy: Caster @src {{\n  load_rating = 450N\n}}\n\
+                 pub ots Same: Caster @src {{\n  load_rating = 500N\n}}\n\
+                 pub assembly Rover {{\n  part wheel: Caster = Good alt [{alt}]\n  solver sizing {{\n    script \"size.sh\"\n    in load = wheel.load_rating\n    out w: Length\n  }}\n  check ok: 1mm >= sizing.w \"wall\"\n}}\n"
+            ),
+        )
+        .unwrap();
+        std::fs::write(dir.join("size.sh"), "true\n").unwrap();
+        let zero = format!("blake3:{}", "0".repeat(64));
+        let one = format!("blake3:{}", "1".repeat(64));
+        let variant = if with_variant_result {
+            format!(
+                ",{{\"solver\":\"acme.t::Rover.sizing\",\"variant\":\"acme.t::Rover/wheel=acme.t::{alt}\",\"input_digest\":\"{one}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"2m\"}},\"diagnostics\":[]}}"
+            )
+        } else {
+            String::new()
+        };
+        std::fs::write(
+            dir.join("size.out.json"),
+            format!(
+                "{{\"schema\":\"cadetta.solve-result/1\",\"results\":[{{\"solver\":\"acme.t::Rover.sizing\",\"input_digest\":\"{zero}\",\"script_digest\":\"{zero}\",\"dep_digests\":{{}},\"inputs\":{{}},\"outputs\":{{\"w\":\"1mm\"}},\"diagnostics\":[]}}{variant}]}}"
+            ),
+        )
+        .unwrap();
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_changed_inputs_and_no_result_is_s006() {
+        let analysis = analyze(&variant_project("unsolved", "Heavy", false), &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "S006")
+            .expect("S006 for an unsolved variant");
+        assert!(d.location.is_some());
+        assert!(d.message.contains("Heavy"), "{}", d.message);
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_unchanged_inputs_reads_the_primary_without_s006() {
+        let analysis = analyze(&variant_project("same", "Same", false), &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_its_own_recorded_result_is_not_s006() {
+        let analysis = analyze(&variant_project("solved", "Heavy", true), &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    // frob:ticket 01M50M66PAWQ2N9P3HRB645GTM
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::variant_outputs
+    #[test]
+    fn variant_with_no_primary_result_is_unsolved_not_s006() {
+        let project = variant_project("noprimary", "Heavy", false);
+        let out = std::env::temp_dir().join(format!(
+            "cadetta-s006-{}-noprimary/size.out.json",
+            std::process::id()
+        ));
+        std::fs::remove_file(out).unwrap();
+        let analysis = analyze(&project, &[0]);
+        assert!(analysis.diagnostics.iter().all(|d| d.code != "S006"));
+    }
+
+    /// A one-package project holding a process whose `hole` rule is `rule`, applied to a member.
+    fn process_rule_project(tag: &str, rule: &str) -> Project {
+        let dir = std::env::temp_dir().join(format!("cadetta-prule-{}-{tag}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("cadetta.toml"),
+            "[package]\nname = \"acme.t\"\nversion = \"0.1.0\"\nas_of = \"2026-10-13\"\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("src/lib.cdt"),
+            format!(
+                "process Fdm {{\n  rule hole(d: Length) -> Length = {rule}\n}}\n\
+                 model Case {{\n  #![process(Fdm)]\n  insert_hole = 3.4mm #[hole]\n  \
+                 check drawn_ok: insert_hole.drawn > 3mm\n}}\n"
+            ),
+        )
+        .unwrap();
+        Project::load(&dir.join("cadetta.toml")).unwrap()
+    }
+
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze
+    #[test]
+    fn process_rule_changing_the_kind_is_an_eval_error() {
+        let analysis = analyze(&process_rule_project("kind", "d * 2mm"), &[0]);
+        let d = analysis
+            .diagnostics
+            .iter()
+            .find(|d| d.code == "EVAL")
+            .expect("EVAL for a rule that changes the argument kind");
+        assert!(d.message.contains("changes the kind"), "{}", d.message);
+    }
+
+    // frob:ticket 01M51ND0V1FXBW8EAHVEQX7ZDY
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::analyze
+    #[test]
+    fn process_rule_keeping_the_kind_has_no_eval_error() {
+        let analysis = analyze(&process_rule_project("keep", "d + 0.2mm"), &[0]);
+        assert!(
+            analysis.diagnostics.iter().all(|d| d.code != "EVAL"),
+            "{:?}",
+            analysis.diagnostics
+        );
     }
 }

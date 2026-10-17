@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**", "docs/spec/solvers.md"]
+new = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**", "docs/spec/solvers.md", "tests/conformance/obligations/s003-solver-stale.expect.json"]
+at = "2026-10-15T22:26:29Z"
+actor = "lognd"
+rev = 1

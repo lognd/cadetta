@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: IR Member gains optional text (string); a Text member is a param member with text set and no value; text is hashed into the member digest only when present so existing digests are unchanged (additive schema change). The runner compares the quoted string. fmt: variant names show a digit_digit underscore as a decimal point; a Length with no authored unit renders in mm (quantities.md fmt note)."
+at = "2026-10-16T14:55:07Z"
+actor = "lognd"
+rev = 1

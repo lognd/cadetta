@@ -1,5 +1,4 @@
-model Part {
-  width = 10mm
-  height = 5mm
-  let scratch = 2mm
-}
+pub interface Wheel { width: Length }
+pub ots Colson2Series: Wheel { width = 10mm }
+pub ots Other: Wheel { width = 12mm }
+pub assembly Rover { part wheel[2]: Wheel = Colson2Series alt [Other] }

@@ -155,6 +155,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cadetta-capi"
+version = "0.0.0"
+dependencies = [
+ "cadetta",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
 name = "cadetta-fits"
 version = "0.0.0"
 dependencies = [

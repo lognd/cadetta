@@ -16,6 +16,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use tracing::{debug, trace};
 
+use crate::entities::Require;
 use crate::model::{
     Affine, Binding, Bound, Check, CitationType, CiteField, CiteRef, Component, Digest, Exact, Fit,
     Locator, Member, Nominal, Part, Project, Provenance, Solver, Value,
@@ -250,6 +251,10 @@ pub fn member_digest(m: &Member) -> Digest {
             value(e, v);
         }
     });
+    // Appended only when present so digests of non-Text members are unchanged.
+    if let Some(t) = &m.text {
+        e.str("text").str(t);
+    }
     let d = e.finish();
     trace!(path = %m.path, digest = %d.0, "digest: member own");
     d
@@ -366,6 +371,38 @@ pub fn fit_digest(f: &Fit) -> Digest {
     e.finish()
 }
 
+/// Own digest of a lookup table: its path, columns, rows and citation reference.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+pub fn table_digest(t: &crate::entities::Table) -> Digest {
+    use crate::entities::Cell;
+    let cell = |e: &mut Enc, c: &Cell| match c {
+        Cell::Value(v) => {
+            e.str("value");
+            value(e, v);
+        }
+        Cell::Variant(s) => {
+            e.str("variant").str(s);
+        }
+    };
+    let mut e = Enc::new("table");
+    e.str(&t.path.to_string());
+    e.str(&t.key.name).str(&t.key.type_name);
+    e.num(t.cols.len() as u64);
+    for c in &t.cols {
+        e.str(&c.name).str(&c.type_name);
+    }
+    e.num(t.rows.len() as u64);
+    for r in &t.rows {
+        cell(&mut e, &r.key);
+        e.num(r.cells.len() as u64);
+        for c in &r.cells {
+            cell(&mut e, c);
+        }
+    }
+    e.opt(&t.citation, cite_ref);
+    e.finish()
+}
+
 /// Own digest of a solver, including its recorded result digest (ir.md 4).
 pub fn solver_digest(s: &Solver) -> Digest {
     let mut e = Enc::new("solver");
@@ -390,6 +427,18 @@ pub fn check_digest(c: &Check) -> Digest {
         .str(&c.path.to_string())
         .str(&c.expr)
         .finish()
+}
+
+/// Own digest of a require: its path, expression, message and citation; verdicts are results.
+// frob:ticket 01M4YKTX2YMSXVE4CK0JAVMC41
+pub fn require_digest(r: &Require) -> Digest {
+    let mut e = Enc::new("require");
+    e.str(&r.path.to_string()).str(&r.expr);
+    e.opt(&r.message, |e, s| {
+        e.str(s);
+    });
+    e.opt(&r.citation, cite_ref);
+    e.finish()
 }
 
 fn locator(e: &mut Enc, l: &Locator) {
@@ -487,6 +536,11 @@ pub fn project_digest(p: &Project) -> Digest {
             .map(|c| (c.path.to_string(), check_digest(c))),
     );
     kids.extend(
+        p.requires
+            .iter()
+            .map(|r| (r.path.to_string(), require_digest(r))),
+    );
+    kids.extend(
         p.solvers
             .iter()
             .map(|s| (s.path.to_string(), solver_digest(s))),
@@ -539,6 +593,36 @@ impl DigestGraph {
     pub fn add_member(&mut self, m: &Member) {
         let deps = m.deps.iter().map(ToString::to_string).collect();
         self.add_node(m.path.to_string(), member_digest(m), deps);
+    }
+
+    /// Add one input node `<component>.<param>` per name in `params_sig` (members read them).
+    pub fn add_params(&mut self, c: &Component) {
+        let Some(sig) = &c.params_sig else { return };
+        for name in sig.split(',').map(str::trim).filter(|n| !n.is_empty()) {
+            let key = format!("{}.{name}", c.path);
+            let mut e = Enc::new("param");
+            e.str(&key);
+            self.add_node(key, e.finish(), Vec::new());
+        }
+    }
+
+    /// Add a fit keyed by its path plus its `<fit>.hole` and `<fit>.shaft` accessor nodes, which
+    /// derive from it; an accessor already present as a member node is kept. The accessors are keyed under the fit, never under the operand members
+    /// (`Fit.hole`/`Fit.shaft`), which are real members with their own nodes.
+    pub fn add_fit(&mut self, f: &Fit) {
+        let own = fit_digest(f);
+        let key = f.path.to_string();
+        self.add_node(key.clone(), own.clone(), Vec::new());
+        for side in ["hole", "shaft"] {
+            let node = format!("{key}.{side}");
+            if self.nodes.contains_key(&node) {
+                debug!(%node, "digest: fit accessor already emitted as a member; kept");
+                continue;
+            }
+            let mut e = Enc::new("fit-side");
+            e.str(&node).digest(&own);
+            self.add_node(node, e.finish(), vec![key.clone()]);
+        }
     }
 
     /// Add a solver keyed by its path, reading `solver.deps`.
@@ -719,11 +803,17 @@ fn op_paths(chain: &[crate::geometry::Op]) -> Vec<String> {
 pub fn digest_project(project: &mut Project) -> Result<(), DigestError> {
     let mut g = DigestGraph::new();
     for c in &project.components {
+        // frob:ticket 01M4W8SZ3HZZ2G8V1QVC7DZBZH
+        // A component argument is an input node: members that read it depend on it.
+        g.add_params(c);
         for m in &c.members {
             g.add_member(m);
         }
         for p in &c.parts {
             g.add_part(&p.path.to_string(), p);
+        }
+        for f in &c.fits {
+            g.add_fit(f);
         }
         // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
         for d in &c.datums {
@@ -772,6 +862,12 @@ mod tests {
 
     fn p(s: &str) -> Path {
         Path::parse(s, PathContext::General).unwrap()
+    }
+
+    fn item(s: &str) -> Path {
+        let mut path = p(&format!("{s}.x"));
+        path.members.clear();
+        path
     }
 
     fn ex(n: i64) -> Exact {
@@ -871,6 +967,7 @@ mod tests {
         let mut s = Solver {
             path: p("a.b::X.sol"),
             script: "s.py".into(),
+            citation: None,
             inputs: BTreeMap::new(),
             outputs: BTreeMap::new(),
             deps: vec![],
@@ -887,6 +984,12 @@ mod tests {
         let c = close(&s);
         s.result_digest = Some(Digest("22".into()));
         assert_ne!(c, close(&s));
+        // the method citation is documentation, never an input to the solver closure (solvers.md 1)
+        s.citation = Some(CiteRef::item("a.b::refs::method", None));
+        let c2 = close(&s);
+        s.citation = None;
+        s.result_digest = Some(Digest("22".into()));
+        assert_eq!(c2, close(&s));
     }
 
     // frob:tests digest_graph_errors
@@ -992,6 +1095,36 @@ mod tests {
         assert_eq!(a.closure("a.b::Rover.other"), b.closure("a.b::Rover.other"));
     }
 
+    // frob:tests DigestGraph.add_params
+    #[test]
+    fn member_reading_a_component_argument_digests() {
+        let mut pr = Project::new(
+            Flavour::Design,
+            PackageId {
+                name: "a.b".into(),
+                version: "1".into(),
+            },
+        );
+        pr.components.push(Component {
+            path: item("a.b::X"),
+            class: ComponentClass::Model,
+            params_sig: Some("motor, w".into()),
+            implements: vec![],
+            citation: None,
+            attrs: BTreeMap::new(),
+            members: vec![mem("a.b::X.a", 1, &["a.b::X.motor"])],
+            parts: vec![],
+            fits: vec![],
+            datums: vec![],
+            points: vec![],
+            placements: vec![],
+            span: None,
+            digest: None,
+        });
+        digest_project(&mut pr).unwrap();
+        assert!(pr.components[0].members[0].closure.is_some());
+    }
+
     // frob:tests digest_project_fills_all
     #[test]
     fn digest_project_fills_all() {
@@ -1082,5 +1215,32 @@ mod tests {
         );
         assert_eq!(own, member_digest(&m));
         assert_eq!(closure, g.closure("a.b::X.f").unwrap());
+    }
+
+    // frob:ticket 01M51JQBKKD2235F86KGW0CN0T
+    // frob:tests crates/cadetta-ir/src/digest.rs::add_fit kind=unit
+    #[test]
+    fn add_fit_keeps_accessor_nodes_already_emitted_as_members() {
+        let member_hole = mem("a.b::X.f.hole", 7, &[]);
+        let fit = Fit {
+            path: p("a.b::X.f"),
+            hole: p("a.b::X.h"),
+            shaft: p("a.b::X.s"),
+            clearance: member_hole.value.clone().unwrap(),
+            fit_type: "clearance".into(),
+            required: None,
+        };
+        let mut g = DigestGraph::new();
+        g.add_member(&member_hole);
+        g.add_fit(&fit);
+        assert_eq!(
+            g.own("a.b::X.f.hole").unwrap(),
+            &member_digest(&member_hole),
+            "the member node survives add_fit"
+        );
+        assert!(
+            g.own("a.b::X.f.shaft").is_ok(),
+            "the missing accessor is added"
+        );
     }
 }

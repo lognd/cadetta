@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: read result gains optional sketches/components/instance_values fact lists keyed by locator; host maps locator->IR path via bindings. R011 primary file = native file of first observed member under the slot path. Facts without a binding are skipped (R002 covers them). Documented in adapters.md 5 and lints.md R."
+at = "2026-10-16T08:11:24Z"
+actor = "lognd"
+rev = 1

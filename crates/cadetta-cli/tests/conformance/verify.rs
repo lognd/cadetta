@@ -7,7 +7,7 @@
 
 use serde_json::Value;
 
-use crate::compare::compare;
+use crate::compare::{Produced, compare};
 use crate::exec::expected_members;
 use crate::expect::Block;
 use crate::run::{Facts, parse_json};
@@ -30,10 +30,18 @@ pub fn verify(block: &Block, facts: &Facts) -> Vec<String> {
             "order" => check_order(want, facts),
             "stdout_contains" => check_contains(want, &facts.stdout, "stdout"),
             "stderr_contains" => check_contains(want, &facts.stderr, "stderr"),
+            "source_contains" => check_contains(want, &observed_text(facts, "source"), "source"),
+            "source_excludes" => check_excludes(want, &observed_text(facts, "source"), "source"),
             "message_contains" => check_contains(want, &facts.messages.join("\n"), "messages"),
             "message_excludes" => check_excludes(want, &facts.messages.join("\n"), "messages"),
+            "diagnostics_exclude" => check_diagnostics_exclude(want, &facts.produced),
+            "results_order" => check_results_order(want, facts),
             "json_diag_schema" => check_diag_schema(want, facts),
             "config_error" => check_flag(want, facts.exit == 2, key),
+            "lock" => crate::exec::lockfix::check_lock(want, facts),
+            "rows" => crate::exec::lockfix::check_rows(want, facts),
+            "observed" => check_observed_subset(want, facts),
+            "excludes" => check_observed_excludes(want, facts),
             _ => check_observed(key, want, facts),
         };
         if let Err(m) = result {
@@ -79,6 +87,16 @@ fn strings(want: &Value) -> Vec<String> {
     }
 }
 
+/// The string observation `key` (empty when the executor did not observe it).
+fn observed_text(facts: &Facts, key: &str) -> String {
+    facts
+        .observed
+        .get(key)
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_owned()
+}
+
 fn check_flag(want: &Value, got: bool, key: &str) -> Result<(), String> {
     match want.as_bool() {
         Some(w) if w == got => Ok(()),
@@ -108,6 +126,21 @@ fn check_excludes(want: &Value, haystack: &str, what: &str) -> Result<(), String
         Ok(())
     } else {
         Err(format!("{what} contain {present:?}"))
+    }
+}
+
+/// `diagnostics_exclude`: none of the listed codes may appear among the produced diagnostics.
+// frob:ticket 01M50VAJJFQ8W7QWGFZEGCSBD5
+fn check_diagnostics_exclude(want: &Value, produced: &[Produced]) -> Result<(), String> {
+    let present: Vec<String> = strings(want)
+        .into_iter()
+        .filter(|c| produced.iter().any(|p| &p.code == c))
+        .collect();
+    tracing::debug!(?present, "diagnostics_exclude");
+    if present.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("diagnostics_exclude: produced {present:?}"))
     }
 }
 
@@ -164,6 +197,22 @@ fn check_output(want: &Value, facts: &Facts) -> Result<(), String> {
         return Err("output: expectation is not an object".into());
     };
     let mut problems = Vec::new();
+    // A flat `contains`/`excludes` checks the entry's printed plan (`stdout`), not a file.
+    if want.get("contains").is_some_and(Value::is_array)
+        || want.get("excludes").is_some_and(Value::is_array)
+    {
+        if let Err(m) = check_contains(&want["contains"], &facts.stdout, "stdout") {
+            problems.push(m);
+        }
+        if let Err(m) = check_excludes(&want["excludes"], &facts.stdout, "stdout") {
+            problems.push(m);
+        }
+        return if problems.is_empty() {
+            Ok(())
+        } else {
+            Err(format!("output: {}", problems.join("; ")))
+        };
+    }
     for (path, spec) in files {
         let text = facts.after.get(path);
         let wants_exists = spec["exists"].as_bool();
@@ -213,6 +262,64 @@ fn check_observed(key: &str, want: &Value, facts: &Facts) -> Result<(), String> 
     }
 }
 
+/// `observed`: the expectation is a partial object; every wanted key must match recursively
+/// and a wanted `{}` needs an empty actual object (reads, `binding` entry).
+// frob:ticket 01M4VQXM0V12H5JBPHWW796HD7
+fn check_observed_subset(want: &Value, facts: &Facts) -> Result<(), String> {
+    let Some(got) = facts.observed.get("observed") else {
+        return Err("this entry does not observe `observed`".into());
+    };
+    if subset(want, got) {
+        Ok(())
+    } else {
+        Err(format!("observed: got {got}, expected (subset) {want}"))
+    }
+}
+
+/// True when `want` is contained in `got`: objects by key, scalars and arrays by equality.
+fn subset(want: &Value, got: &Value) -> bool {
+    match (want, got) {
+        (Value::Object(w), Value::Object(g)) => {
+            (!w.is_empty() || g.is_empty())
+                && w.iter()
+                    .all(|(k, v)| g.get(k).is_some_and(|x| subset(v, x)))
+        }
+        _ => want == got,
+    }
+}
+
+/// `excludes`: none of the strings may be a key or a string value anywhere in `observed`.
+// frob:ticket 01M4VQXM0V12H5JBPHWW796HD7
+fn check_observed_excludes(want: &Value, facts: &Facts) -> Result<(), String> {
+    let got = facts.observed.get("observed").unwrap_or(&Value::Null);
+    let mut tokens = Vec::new();
+    collect_tokens(got, &mut tokens);
+    let present: Vec<String> = strings(want)
+        .into_iter()
+        .filter(|s| tokens.contains(s))
+        .collect();
+    if present.is_empty() {
+        Ok(())
+    } else {
+        Err(format!("observed contains excluded {present:?}"))
+    }
+}
+
+/// Every key and string leaf of `v`.
+fn collect_tokens(v: &Value, out: &mut Vec<String>) {
+    match v {
+        Value::Object(m) => {
+            for (k, x) in m {
+                out.push(k.clone());
+                collect_tokens(x, out);
+            }
+        }
+        Value::Array(a) => a.iter().for_each(|x| collect_tokens(x, out)),
+        Value::String(s) => out.push(s.clone()),
+        _ => {}
+    }
+}
+
 /// Every record of the report's `diagnostics` list carries the wanted `schema` tag.
 fn check_diag_schema(want: &Value, facts: &Facts) -> Result<(), String> {
     let report = parse_json(&facts.stdout).ok_or("json_diag_schema: stdout is not JSON")?;
@@ -222,5 +329,18 @@ fn check_diag_schema(want: &Value, facts: &Facts) -> Result<(), String> {
     match list.iter().find(|d| &d["schema"] != want) {
         Some(d) => Err(format!("json_diag_schema: record {d} lacks schema {want}")),
         None => Ok(()),
+    }
+}
+
+/// `results_order`: the solver ids appear in this order in the files the run wrote.
+fn check_results_order(want: &Value, facts: &Facts) -> Result<(), String> {
+    let ids = strings(want);
+    if ids.is_empty() {
+        return Err("results_order: expectation lists no solver ids".into());
+    }
+    if in_order(&written_text(facts), &ids) {
+        Ok(())
+    } else {
+        Err(format!("results_order: {ids:?} not found in this order"))
     }
 }

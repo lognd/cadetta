@@ -26,7 +26,7 @@
     "output": {
       "analysis/sizing.out.json": {
         "contains": [
-          "\"variant\": \"wheel=Heavy\""
+          "\"variant\": \"acme.demo::Rover/wheel=acme.demo::Heavy\""
         ]
       }
     },

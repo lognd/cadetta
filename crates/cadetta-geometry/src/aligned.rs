@@ -2,8 +2,8 @@
 //!
 //! Both reduce to one question about a difference vector: is its length within an allowance for
 //! every value in tolerance? The bound is computed over the vector's coordinate forms by
-//! [`sum_of_squares`], so a later disc term (geometry.md 3.1, position zones) only has to extend
-//! the vector. Squares are square-aware (quantities.md 5.4): a coordinate straddling zero never
+//! [`sum_of_squares`]; disc terms (geometry.md 3.1, position zones) are bounded together by
+//! `zone::disc_bound`, so the correlation between a disc's x and y is kept. Squares are square-aware (quantities.md 5.4): a coordinate straddling zero never
 //! gives a negative lower bound. The verdict compares the squared length against the squared
 //! allowance, which keeps exact inputs in exact arithmetic; the reported distance interval is the
 //! square root, which is inexact and conservative.
@@ -13,12 +13,18 @@ use std::fmt;
 
 use cadetta_units::compare::{CompareDiagnostic, Comparison, Verdict};
 use cadetta_units::square::square;
-use cadetta_units::{Affine, CmpOp, InexactInterval, Operand, ToleranceError, compare};
+use cadetta_units::{
+    Affine, CmpOp, InexactInterval, Magnitude, Operand, ToleranceError, Toleranced, VarId, compare,
+};
 use tracing::{debug, info, warn};
 
 use crate::point::{DatumId, Pos, PositionError, point_sub};
 use crate::reexpress::{FrameTable, Located, ReexpressError, Reexpressed};
 use crate::transform::{Coord, TransformError};
+use crate::zone::{DiscBound, disc_bound};
+
+/// The placeholder variable carrying an exact disc-norm range as a one-use operand.
+const DISC_RANGE_VAR: VarId = VarId(u32::MAX);
 
 /// The diagnostic code for mismatched element counts (geometry.md 7).
 pub const G004: &str = "G004";
@@ -159,7 +165,9 @@ pub(crate) fn coord_bounds(c: &Coord) -> Result<(f64, f64), AlignedError> {
 /// The squared length of a difference vector, square-aware per coordinate (quantities.md 5.4).
 ///
 /// All-exact coordinates stay exact [`Affine`] forms; any binary64 coordinate switches to an
-/// outward-padded interval. Disc terms for position zones (geometry.md 3.1) extend `diff`.
+/// outward-padded interval. Disc terms for position zones (geometry.md 3.1) are bounded as a
+/// whole by [`disc_bound`], not per coordinate: coplanar discs stay exact, tilted ones are
+/// conservative.
 pub fn sum_of_squares(diff: &[Coord]) -> Result<SquaredNorm, AlignedError> {
     let Some(first) = diff.first() else {
         return Err(AlignedError::Invalid {
@@ -167,6 +175,9 @@ pub fn sum_of_squares(diff: &[Coord]) -> Result<SquaredNorm, AlignedError> {
         });
     };
     let sq_dim = first.dim().mul(first.dim());
+    if let Some(norm) = disc_sum_of_squares(diff, &sq_dim)? {
+        return Ok(norm);
+    }
     if diff.iter().all(Coord::is_exact) {
         let mut total: Option<Affine> = None;
         for c in diff {
@@ -185,6 +196,23 @@ pub fn sum_of_squares(diff: &[Coord]) -> Result<SquaredNorm, AlignedError> {
             conservative,
         });
     }
+    let (lo, hi) = coordwise_interval(diff)?;
+    debug!(lo, hi, "aligned: inexact sum of squares (conservative)");
+    Ok(SquaredNorm {
+        operand: Operand::Interval(
+            sq_dim,
+            InexactInterval {
+                lo,
+                hi,
+                conservative: true,
+            },
+        ),
+        conservative: true,
+    })
+}
+
+/// Outward interval of the squared length from each coordinate's own bounds (ignores discs).
+fn coordwise_interval(diff: &[Coord]) -> Result<(f64, f64), AlignedError> {
     let (mut lo, mut hi) = (0.0_f64, 0.0_f64);
     for c in diff {
         let (a, b) = coord_bounds(c)?;
@@ -197,17 +225,56 @@ pub fn sum_of_squares(diff: &[Coord]) -> Result<SquaredNorm, AlignedError> {
         lo += pad_down(slo).max(0.0);
         hi += pad_up(shi);
     }
-    debug!(lo, hi, "aligned: inexact sum of squares (conservative)");
-    Ok(SquaredNorm {
-        operand: Operand::Interval(
-            sq_dim,
-            InexactInterval {
-                lo: pad_down(lo).max(0.0),
-                hi: pad_up(hi),
+    Ok((pad_down(lo).max(0.0), pad_up(hi)))
+}
+
+/// The disc-aware squared length of all-exact coordinates holding disc terms, if any.
+///
+/// Coplanar isotropic discs give an exact range ([`DiscBound::Exact`]); tilted, elliptic or
+/// box-mixed ones a conservative enclosure, tightened by the per-coordinate bounds.
+// frob:ticket 01M50C0NCKDC43EDJP1BS8CTVB
+fn disc_sum_of_squares(
+    diff: &[Coord],
+    sq_dim: &cadetta_units::Dim,
+) -> Result<Option<SquaredNorm>, AlignedError> {
+    let forms: Vec<&Affine> = diff
+        .iter()
+        .filter_map(|c| match c {
+            Coord::Exact(a) => Some(a),
+            Coord::Approx(_) => None,
+        })
+        .collect();
+    if forms.len() != diff.len() {
+        return Ok(None);
+    }
+    Ok(match disc_bound(&forms)? {
+        None => None,
+        Some(DiscBound::Exact { lo, hi, exact }) => {
+            let m = |r| Magnitude::new(r, 0);
+            let operand = Toleranced::from_interval(sq_dim.clone(), m(lo), m(hi))?
+                .to_affine(DISC_RANGE_VAR)?;
+            debug!(exact, "aligned: disc-aware exact sum of squares");
+            Some(SquaredNorm {
+                operand: Operand::Form(operand),
+                conservative: !exact,
+            })
+        }
+        Some(DiscBound::Outer { lo, hi }) => {
+            let (clo, chi) = coordwise_interval(diff)?;
+            let (lo, hi) = (lo.max(clo), hi.min(chi));
+            debug!(lo, hi, "aligned: disc-aware conservative sum of squares");
+            Some(SquaredNorm {
+                operand: Operand::Interval(
+                    sq_dim.clone(),
+                    InexactInterval {
+                        lo,
+                        hi,
+                        conservative: true,
+                    },
+                ),
                 conservative: true,
-            },
-        ),
-        conservative: true,
+            })
+        }
     })
 }
 
@@ -588,5 +655,98 @@ mod tests {
         assert_eq!(e.code(), Some("G004"));
         assert!(e.to_string().starts_with("G004"), "{e}");
         assert!(aligned(&t, &two, &two, &exact(250)).is_ok());
+    }
+
+    /// A `[position d]` point, `d` in tenths of a millimetre, on disc variable `v`.
+    fn zone(v: u32, x_um: i64, y_um: i64, d_tenth_mm: i64) -> Point {
+        let d = Affine::constant(length_dim(), um(d_tenth_mm * 100));
+        crate::zone::position_point(
+            DatumId::new("origin"),
+            &[exact(x_um), exact(y_um)],
+            &d,
+            VarId(v),
+        )
+        .unwrap()
+    }
+
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::distance kind=unit
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::sum_of_squares kind=unit
+    #[test]
+    fn two_position_zones_are_at_worst_one_diameter_apart() {
+        // Two [position 0.1mm] points: worst offset 0.05 + 0.05 = 0.1mm, not 0.1414mm.
+        let (p, q) = (zone(0, 0, 0, 1), zone(1, 0, 0, 1));
+        let holds = distance(&p, &q, &exact(100)).unwrap();
+        assert_eq!(holds.comparison.verdict, Verdict::Holds);
+        let tight = distance(&p, &q, &exact(99)).unwrap();
+        assert_eq!(tight.comparison.verdict, Verdict::Undecided);
+        let n = sum_of_squares(&[
+            Coord::Exact(p.coords[0].sub(&q.coords[0]).unwrap()),
+            Coord::Exact(p.coords[1].sub(&q.coords[1]).unwrap()),
+        ])
+        .unwrap();
+        assert!(!n.conservative);
+        // The per-coordinate box would be 2 * 0.1^2 = 0.02mm2; the disc is 0.01mm2.
+        let (_, hi) = operand_bounds(&n.operand).unwrap();
+        assert!((hi - 1.0e-8).abs() < 1e-20, "{hi}");
+    }
+
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::distance kind=unit
+    #[test]
+    fn a_zone_beyond_its_reach_violates() {
+        // Nominals 0.3mm apart, zones reach 0.1mm together: at least 0.2mm, over 0.15mm.
+        let (p, q) = (zone(0, 300, 0, 1), zone(1, 0, 0, 1));
+        let m = distance(&p, &q, &exact(150)).unwrap();
+        assert_eq!(m.comparison.verdict, Verdict::Violates);
+        let ok = distance(&p, &q, &exact(400)).unwrap();
+        assert_eq!(ok.comparison.verdict, Verdict::Holds);
+    }
+
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::distance kind=unit
+    #[test]
+    fn distance_keeps_the_axial_offset_outside_the_zone() {
+        let z = zone(0, 0, 0, 2);
+        let p = pt(
+            "origin",
+            &[z.coords[0].clone(), z.coords[1].clone(), exact(300)],
+        );
+        let q = pt("origin", &[exact(0), exact(0), exact(0)]);
+        // sqrt(0.1^2 + 0.3^2) = 0.316mm at worst.
+        let ok = distance(&p, &q, &exact(320)).unwrap();
+        assert_eq!(ok.comparison.verdict, Verdict::Holds);
+        let bad = distance(&p, &q, &exact(250)).unwrap();
+        assert_eq!(bad.comparison.verdict, Verdict::Violates);
+    }
+
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::sum_of_squares kind=unit
+    #[test]
+    fn a_zone_with_a_tolerance_is_conservative_but_sound() {
+        // x = disc(0.1mm radius) + 0.1mm box: reach 0.2mm in x, 0.1mm in y.
+        let z = zone(0, 0, 0, 2);
+        let x = z.coords[0].add(&var(9, 0, 100)).unwrap();
+        let n = sum_of_squares(&[Coord::Exact(x), Coord::Exact(z.coords[1].clone())]).unwrap();
+        assert!(n.conservative);
+        let (lo, hi) = operand_bounds(&n.operand).unwrap();
+        assert_eq!(lo, 0.0);
+        // Never below the true worst case 0.2mm (squared 4e-8), never above the box 5e-8.
+        assert!((4.0e-8..=5.0000001e-8).contains(&hi), "{hi}");
+    }
+
+    // frob:tests crates/cadetta-geometry/src/aligned.rs::aligned kind=unit
+    #[test]
+    fn aligned_over_zones_uses_the_disc_bound() {
+        let t = rail_table();
+        let a = Pos::Array(vec![
+            Pos::Point(zone(0, 0, 0, 1)),
+            Pos::Point(zone(2, 25_000, 0, 1)),
+        ]);
+        let b = Pos::Array(vec![
+            Pos::Point(zone(1, 0, 0, 1)),
+            Pos::Point(zone(3, 25_000, 0, 1)),
+        ]);
+        let r = aligned(&t, &a, &b, &exact(100)).unwrap();
+        assert_eq!(r.verdict, Verdict::Holds);
+        assert_eq!(r.pairs.len(), 2);
+        let below = aligned(&t, &a, &b, &exact(50)).unwrap();
+        assert_eq!(below.verdict, Verdict::Undecided);
     }
 }

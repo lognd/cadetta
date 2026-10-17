@@ -13,7 +13,7 @@ const SRC: &str = include_str!("../../../std/src/lib.cdt");
 fn root_parses_clean_and_only_reexports() {
     let parsed = parse(SRC);
     assert!(parsed.diags.is_empty(), "{:?}", parsed.diags);
-    assert_eq!(parsed.file.uses().count(), 8);
+    assert_eq!(parsed.file.uses().count(), 14);
     assert_eq!(
         parsed
             .file

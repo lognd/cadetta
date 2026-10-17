@@ -1,0 +1,10 @@
+kind = "create"
+title = "emit rejects a tolerance locator without a dimension kind (config error, exit 2)"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["crates/**"]
+body = "adapters/tol-locator-needs-dimension expects exit 2 naming the path or key; runner key names_path_or_key is also unobserved. Implementation does not validate yet. Split from ~SK1B9S3."
+at = "2026-10-15T08:57:02Z"
+actor = "lognd"
+rev = 1

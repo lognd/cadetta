@@ -19,12 +19,14 @@
 // frob:ticket 01M4VQXPDA4TEKE455FNYB5TXC
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::rc::Rc;
 
 use cadetta_geometry::aligned::{AlignedError, AlignedReport, aligned};
 use cadetta_geometry::axes;
 use cadetta_geometry::datum::{
     ComponentId, DatumDef, GeometryError, Member as GeoMember, ORIGIN, lower_component_datums,
 };
+use cadetta_geometry::float::{EdgeFloat, FloatMode, unconstrained_rotation};
 use cadetta_geometry::instances::{
     Operand, check_elementwise, check_unplaced, expand_instances, operands,
 };
@@ -44,6 +46,8 @@ use cadetta_units::{Affine, Dim, RootOp};
 use cadetta_variants::interface::{C001, I001, ResolvedInterface, resolve as resolve_interface};
 use tracing::{debug, trace, warn};
 
+use super::GeometryKind;
+use super::instances::InstInfo;
 use super::{
     EvalDiagnostic, Evaluated, Evaluator, Fail, Quant, R, Scope, Val, diag, func::Inex, owned,
     strip,
@@ -146,7 +150,7 @@ pub fn component_geometry<'a>(
 }
 
 /// A reference written in an `in` expression, resolved syntactically through part slots.
-enum Ref {
+pub(super) enum Ref {
     /// A datum: the part slots crossed and the datum name.
     Datum { parts: Vec<String>, name: String },
     /// A declared point value: the part slots crossed and the datum its type is on.
@@ -154,7 +158,7 @@ enum Ref {
 }
 
 /// Joins a part chain and a datum name into the frame table's id (`sub/bracket.base`).
-fn datum_id(parts: &[String], name: &str) -> String {
+pub(super) fn datum_id(parts: &[String], name: &str) -> String {
     if parts.is_empty() {
         return name.to_owned();
     }
@@ -196,7 +200,7 @@ pub fn find_part<'c>(comp: &'c Component, name: &str) -> Option<&'c Part> {
     })
 }
 
-fn nominal_form(q: &Quant) -> Affine {
+pub(super) fn nominal_form(q: &Quant) -> Affine {
     Quant::constant(q.dim().clone(), q.nominal.clone()).form
 }
 
@@ -235,7 +239,8 @@ pub fn definition_path(resolver: &Resolver<'_>, path: &CanonPath) -> Option<Cano
 }
 
 impl<'r, 'p> Evaluator<'r, 'p> {
-    /// Resolves a read through part slots to the part type's own member (`bracket.holes`).
+    /// Resolves a read through part slots to the part type's own member (`bracket.holes`); an
+    /// unindexed counted slot reads instance 0.
     pub(super) fn through_parts(&self, path: &CanonPath, span: Span) -> R<CanonPath> {
         let mut cur = path.item_only();
         for seg in &path.parts {
@@ -243,13 +248,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 step_part(self.resolver, self.selection.as_ref(), &cur, &seg.name)
                     .map_err(|m| diag("EVAL", span, m))?;
             // frob:ticket 01M4VYZRQKXYE9WEFMDM3797GP
+            // frob:ticket 01M4YXK7C0HSXAXCVS80N5FY1T
             match (counted, seg.index.is_some()) {
+                // Every instance of an array has the same arguments, so an unindexed read is
+                // `name[0].member` (language.md 3.1); a solver `in` reads `wheel.load_rating`.
                 (true, false) => {
-                    return Err(diag(
-                        "EVAL",
-                        span,
-                        format!("`{}` is a part array; read one instance of it", seg.name),
-                    ));
+                    trace!(slot = %seg.name, "unindexed read of a part array is instance 0")
                 }
                 (false, true) => {
                     return Err(diag(
@@ -267,6 +271,68 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         Ok(cur)
     }
 
+    /// True when `base` names a counted `part` slot (`bearing` of `part bearing[2]: Skf608`).
+    // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+    fn is_part_array(&self, sc: &Scope, base: &Expr) -> bool {
+        let Ok((crate::resolve::Resolved::Part { path }, _)) =
+            self.renames.resolve_ref(self.resolver, &sc.ctx, base, None)
+        else {
+            return false;
+        };
+        let Some((last, outer)) = path.parts.split_last() else {
+            return false;
+        };
+        let mut owner = path.item_only();
+        for seg in outer {
+            match step_part(self.resolver, self.selection.as_ref(), &owner, &seg.name) {
+                Ok((next, _)) => owner = next,
+                Err(_) => return false,
+            }
+        }
+        self.resolver
+            .component(&owner)
+            .and_then(|c| find_part(c, &last.name))
+            .is_some_and(|p| p.count.is_some())
+    }
+
+    /// The per-instance values of a counted `part` slot named by `source`: one component value per
+    /// instance (every element shares the slot's component); `None` when `source` is not a part array
+    /// or its count does not evaluate.
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    pub(super) fn part_array_values(&mut self, sc: &Scope, source: &Expr) -> Option<Vec<Val>> {
+        let (crate::resolve::Resolved::Part { path }, _) = self
+            .renames
+            .resolve_ref(self.resolver, &sc.ctx, source, None)
+            .ok()?
+        else {
+            return None;
+        };
+        let (last, outer) = path.parts.split_last()?;
+        let mut owner = path.item_only();
+        for seg in outer {
+            owner = step_part(self.resolver, self.selection.as_ref(), &owner, &seg.name)
+                .ok()?
+                .0;
+        }
+        let count_expr = find_part(self.resolver.component(&owner)?, &last.name)?
+            .count
+            .as_ref()?;
+        let mut owner_sc = Scope {
+            ctx: Ctx {
+                package: owner.package.clone(),
+                module: owner.modules.clone(),
+                component: Some(owner.item.clone()),
+                locals: Vec::new(),
+            },
+            locals: Vec::new(),
+        };
+        let q = self.quant(&mut owner_sc, count_expr).ok()?;
+        let n = parts::array_count(&q).ok()?;
+        let def = definition_path(self.resolver, &path)?;
+        debug!(slot = %path, n, "evaluator: quantifier ranges over a part array");
+        Some((0..n).map(|_| Val::Component(def.clone())).collect())
+    }
+
     /// `base[i]`: the i-th element of an evaluated array.
     pub(super) fn index(&mut self, sc: &mut Scope, base: &Expr, idx: &Expr, span: Span) -> R<Val> {
         let items = match self.eval(sc, base)? {
@@ -275,6 +341,27 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             Val::Table(table) => {
                 let key = self.eval(sc, idx)?;
                 return self.table_index(&table, key, span);
+            }
+            // frob:ticket 01M51JQBVX6EGRBCYDXA1N7FAP
+            Val::Component(path) if self.is_part_array(sc, base) => {
+                // Every element of a part array has the same arguments, so `wheel[i]` is the
+                // array's component (language.md 3.1); the index is still checked to be a count.
+                let q = self.quant(sc, idx)?;
+                let i = parts::array_count(&q).map_err(|_| {
+                    diag("EVAL", idx.span, "an index is a non-negative whole number")
+                })?;
+                // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+                if let Some(n) = self.part_array_values(sc, base).map(|v| v.len())
+                    && i as usize >= n
+                {
+                    return Err(diag(
+                        "EVAL",
+                        span,
+                        format!("index {i} is out of range for a part array of {n}"),
+                    ));
+                }
+                trace!(slot = %path, index = i, "indexed part array reads its component");
+                return Ok(Val::Component(path));
             }
             _ => {
                 return Err(diag(
@@ -296,14 +383,45 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         })
     }
 
+    /// Evaluates a member read by a frame table: inside an instance of the member's own
+    /// component it is the instance's member (keyed under the prefix), else the model's.
+    // frob:ticket 01M522E34AS5NZTG9PFFCZKA30
+    fn frame_member(&mut self, m: &GeoMember) -> Option<Evaluated> {
+        let inst = self
+            .cur_inst
+            .clone()
+            .filter(|i| i.callee.item == m.path.item && i.callee.modules == m.path.modules);
+        let Some(info) = inst else {
+            return self.geom_member(m);
+        };
+        let mut key = info.prefix.clone();
+        key.parts.extend(m.path.parts.iter().cloned());
+        key.members = m.path.members.clone();
+        trace!(%key, "geometry: frame member read in its instance");
+        self.geom_member_at(m, key, Some(info))
+    }
+
     /// Evaluates one datum or placement member, memoised under its canonical path.
     pub(super) fn geom_member(&mut self, m: &GeoMember) -> Option<Evaluated> {
-        if let Some(v) = self.done.get(&m.path) {
+        self.geom_member_at(m, m.path.clone(), None)
+    }
+
+    /// Evaluates the member `m` of a component under `key`; `inst` binds a parameterized
+    /// instance whose arguments the expression reads.
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    fn geom_member_at(
+        &mut self,
+        m: &GeoMember,
+        key: CanonPath,
+        inst: Option<Rc<InstInfo>>,
+    ) -> Option<Evaluated> {
+        if let Some(v) = self.done.get(&key) {
             return v.clone();
         }
-        if !self.in_progress.insert(m.path.clone()) {
+        if !self.in_progress.insert(key.clone()) {
             return None;
         }
+        let saved = std::mem::replace(&mut self.cur_inst, inst);
         let mut sc = Scope {
             ctx: Ctx {
                 package: m.path.package.clone(),
@@ -316,7 +434,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let result = self
             .eval_param_expr(&mut sc, &m.value, m.value.span)
             .and_then(|ev| self.select_coordinate(m, ev));
-        self.in_progress.remove(&m.path);
+        self.cur_inst = saved;
+        self.in_progress.remove(&key);
         let out = match result {
             Ok(v) => Some(v),
             Err(Fail::Silent) => None,
@@ -326,7 +445,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 None
             }
         };
-        self.done.insert(m.path.clone(), out.clone());
+        self.done.insert(key, out.clone());
         out
     }
 
@@ -394,7 +513,52 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if let Some(a) = &g.assembly {
                 self.evaluate_placements(&id, comp, a);
             }
+            self.record_part_counts(&id, comp);
             self.stamp_since(start, &ModuleKey::of_path(&item));
+        }
+        self.evaluate_instance_geometry();
+    }
+
+    /// Evaluates the datum and placement members of every parameterized instance, in the
+    /// instance's scope and keyed under its path (`Box/j.mount.offset.x`).
+    // frob:ticket 01M4VYZS8VGT1RASS407Y8K809
+    fn evaluate_instance_geometry(&mut self) {
+        let instances: Vec<_> = self.instances.members().map(|(i, c, ..)| (i, c)).collect();
+        for (info, comp) in instances {
+            let id = component_id(&info.callee);
+            let g = component_geometry(self.resolver, &id, comp);
+            debug!(instance = %info.prefix, datums = g.datums.len(), "geometry: instance");
+            for d in &g.datums {
+                for m in d.members() {
+                    self.instance_member(&info, m, GeometryKind::Datum);
+                }
+            }
+            let Some(a) = &g.assembly else { continue };
+            for p in &a.placements {
+                let counted = find_part(comp, &p.node).is_some_and(|x| x.count.is_some());
+                if counted && p.cover == Cover::Whole {
+                    debug!(instance = %info.prefix, node = %p.node, "geometry: part arrays in an instance are not evaluated");
+                    continue;
+                }
+                for m in p.members() {
+                    self.instance_member(&info, m, GeometryKind::Place);
+                }
+            }
+        }
+    }
+
+    /// Evaluates the callee member `m` for `info` and records its kind when it evaluated.
+    fn instance_member(&mut self, info: &Rc<InstInfo>, m: &GeoMember, kind: GeometryKind) {
+        let mut key = info.prefix.clone();
+        key.parts.extend(m.path.parts.iter().cloned());
+        key.members = m.path.members.clone();
+        if self
+            .geom_member_at(m, key.clone(), Some(info.clone()))
+            .is_some()
+        {
+            self.instance_geometry.insert(key, kind);
+        } else {
+            trace!(%key, "geometry: instance member has no value");
         }
     }
 
@@ -531,6 +695,32 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
+    /// Records the evaluated count of every counted part not already recorded by a placement.
+    // frob:ticket 01M4Z92C25BYMP5JYSX9WDH9XE
+    fn record_part_counts(&mut self, id: &ComponentId, comp: &'p Component) {
+        for m in &comp.members {
+            let MemberKind::Part(part) = &m.kind else {
+                continue;
+            };
+            let mut pp = item_path(id);
+            pp.members.push(MemberSeg::Name(part.name.name.clone()));
+            if self.part_counts.contains_key(&pp) {
+                continue;
+            }
+            match self.part_count_checked(id, part) {
+                Some(Ok(n)) => {
+                    debug!(part = %part.name.name, n, "geometry: recorded part count");
+                    self.part_counts.insert(pp, n);
+                }
+                Some(Err(Fail::Diag(d))) => {
+                    debug!(part = %part.name.name, "geometry: part count is invalid");
+                    self.diagnostics.push(d);
+                }
+                Some(Err(Fail::Silent)) | None => {}
+            }
+        }
+    }
+
     /// Emits G004 for array placements whose anchor operands do not match the part array.
     // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
     fn report_elementwise(&mut self, id: &ComponentId, comp: &'p Component, a: &Assembly) {
@@ -608,6 +798,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
 
     /// The instance count of a `part name[N]` slot, when it has one and `N` evaluates.
     pub(super) fn part_count(&mut self, id: &ComponentId, part: &Part) -> Option<u64> {
+        self.part_count_checked(id, part)?.ok()
+    }
+
+    /// The instance count of a `part name[N]` slot with the reason it is not a count.
+    ///
+    /// `None` when the slot has no `[N]`; `Err` carries Q009 for a fractional dimensionless `N`
+    /// and EVAL for a dimensioned, negative or non-evaluating one.
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    pub(super) fn part_count_checked(&mut self, id: &ComponentId, part: &Part) -> Option<R<u64>> {
         let e = part.count.as_ref()?;
         let mut sc = Scope {
             ctx: Ctx {
@@ -618,13 +817,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             },
             locals: Vec::new(),
         };
-        let q = self.quant(&mut sc, e).ok()?;
-        parts::array_count(&q).ok().map(u64::from)
+        let q = match self.quant(&mut sc, e) {
+            Ok(q) => q,
+            Err(f) => return Some(Err(f)),
+        };
+        Some(match parts::array_count(&q) {
+            Ok(n) => Ok(u64::from(n)),
+            Err(err) => {
+                let fractional = matches!(err, parts::PartsError::NotACount(_))
+                    && q.dim() == &Dim::default()
+                    && q.form.is_exact();
+                let code = if fractional { "Q009" } else { "EVAL" };
+                Err(diag(code, e.span, format!("part count: {err}")))
+            }
+        })
     }
 
     /// Walks a reference chain from `comp`, crossing part slots; `Ok(None)` when it is not a
     /// declared datum or point (the caller reports).
-    fn walk_ref(
+    pub(super) fn walk_ref(
         &self,
         comp: &'p Component,
         ctx: &Ctx,
@@ -784,8 +995,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         let [(name, None)] = chain.as_slice() else {
             return None;
         };
-        let mut key = inst.prefix.clone();
-        key.members = vec![MemberSeg::Name(name.clone())];
+        self.given_arg(&inst.prefix, name)
+    }
+
+    /// The expression the caller wrote for argument `name` of the instance at `prefix`.
+    // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+    pub(super) fn given_arg(&self, prefix: &CanonPath, name: &str) -> Option<(&'p Expr, Ctx)> {
+        let mut key = prefix.clone();
+        key.members = vec![MemberSeg::Name(name.to_owned())];
         let def = self.defs.get(&key)?;
         if def.inst.is_some() {
             return None;
@@ -933,7 +1150,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             if let Some(Evaluated {
                 value: Val::Quantity(q),
                 ..
-            }) = self.geom_member(m)
+            }) = self.frame_member(m)
             {
                 nominals.insert(m.path.clone(), nominal_form(&q));
                 forms.insert(m.path.clone(), q.form);
@@ -949,18 +1166,77 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
         };
         let (form_eval, nominal_eval) = (lookup(&forms), lookup(&nominals));
-        let build = |eval: &dyn Fn(&GeoMember) -> Result<Affine, GeometryError>| match (
-            &asm,
-            scope_assembly,
-        ) {
-            (Some(a), true) => FrameTable::for_assembly(a, eval),
+        let build = |asm: &Option<Assembly>,
+                     eval: &dyn Fn(&GeoMember) -> Result<Affine, GeometryError>,
+                     mode: FloatMode<'_>| match (asm, scope_assembly) {
+            (Some(a), true) => FrameTable::for_assembly_reading(a, eval, mode),
             _ => FrameTable::for_part(&g.datums, eval),
         };
-        let (ft_form, ft_nominal) = match (build(&form_eval), build(&nominal_eval)) {
-            (Ok(f), Ok(n)) => (f, n),
-            (Err(e), _) | (_, Err(e)) => return Err(reexpress_diag(&e, span)),
+        let tables = |asm: &Option<Assembly>, mode: FloatMode<'_>| match (
+            build(asm, &form_eval, mode),
+            build(asm, &nominal_eval, mode),
+        ) {
+            (Ok(f), Ok(n)) => Ok((f, n)),
+            (Err(e), _) | (_, Err(e)) => Err(reexpress_diag(&e, span)),
         };
-        Ok((ft_form, ft_nominal))
+        let (ft_form, ft_nominal) = tables(&asm, FloatMode::With)?;
+        // frob:ticket 01M4Y2Z95B99FTVX68T4XTSTXR
+        let floats = match (asm.as_mut(), scope_assembly) {
+            (Some(a), true) => self.bolt_floats(here, comp, a, &ft_nominal),
+            _ => Vec::new(),
+        };
+        let nested = asm
+            .as_ref()
+            .is_some_and(|a| !super::boltfloat::all_floats(a).is_empty());
+        let Some(a) = asm.as_mut().filter(|_| nested || !floats.is_empty()) else {
+            return Ok((ft_form, ft_nominal));
+        };
+        a.floats = floats;
+        let own = self
+            .cur_inst
+            .as_ref()
+            .filter(|i| super::boltfloat::is_joint(i))
+            .map(|i| i.prefix.to_string());
+        let mode = match &own {
+            Some(p) => FloatMode::Without(p),
+            None => FloatMode::With,
+        };
+        debug!(edges = a.floats.len(), own = ?own, "geometry: bolt floats in the frame tables");
+        // frob:ticket 01M4SWG70T71SNTZ2TWXZD1Y50
+        let every = super::boltfloat::all_floats(a);
+        if own.is_none() && every.iter().any(|e| e.joints.iter().all(|j| !j.locating)) {
+            self.float_reads += 1;
+        }
+        self.report_unconstrained_rotation(&every, span);
+        tables(&asm, mode)
+    }
+
+    /// Emits G008 once per non-locating joint whose float leaves rotation unconstrained.
+    // frob:ticket 01M4Y2Z99SXRHPTNQS11392B89
+    fn report_unconstrained_rotation(&mut self, floats: &[EdgeFloat], span: Span) {
+        for j in floats
+            .iter()
+            .flat_map(|e| &e.joints)
+            .filter(|j| !j.locating)
+        {
+            if !matches!(unconstrained_rotation(j), Ok(true))
+                || !self.g008_seen.insert(j.path.clone())
+            {
+                continue;
+            }
+            warn!(joint = %j.path, "geometry: G008 rotation about the screw is unconstrained");
+            self.diagnostics.push(EvalDiagnostic {
+                module: None,
+                code: "G008",
+                severity: Severity::Warning,
+                message: format!(
+                    "G008: joint `{}` leaves the part free to turn about the screw; add a second \
+                     point, or locate the part with a dowel or fit",
+                    j.path
+                ),
+                span,
+            });
+        }
     }
 
     /// `p in D` (geometry.md 3): re-expresses a point, or an array of points, in datum `D`.
@@ -981,6 +1257,18 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     r.span,
                     format!(
                         "G003: `{name}` is a part-local datum met in an assembly; name it as `part.{name}` (geometry.md 3)"
+                    ),
+                ));
+            }
+            // frob:ticket 01M4Z0WGJPRDATAN7V7N8B2SV9
+            if let Some(chain) = steps(r) {
+                let name = chain.last().map(|(n, _)| n.clone()).unwrap_or_default();
+                warn!(datum = %name, "geometry: `in` names an unknown datum");
+                return Err(diag(
+                    "E002",
+                    r.span,
+                    format!(
+                        "E002: `{name}` is not a datum of the part it is read from (geometry.md 3)"
                     ),
                 ));
             }
@@ -1176,7 +1464,7 @@ fn reexpress_diag(e: &ReexpressError, span: Span) -> Fail {
     diag(code, span, e.to_string())
 }
 
-fn to_pos(v: &Val, datum: &DatumId, nominal: bool, span: Span) -> R<Pos> {
+pub(super) fn to_pos(v: &Val, datum: &DatumId, nominal: bool, span: Span) -> R<Pos> {
     match v {
         Val::Point(cs) => {
             let mut coords = Vec::with_capacity(cs.len());

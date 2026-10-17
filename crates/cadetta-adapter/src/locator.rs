@@ -188,7 +188,7 @@ pub fn plan_tolerance(
     out
 }
 
-/// R012 for a `[*]` binding: `values` are the emitted values of instances 0, 1, ...
+/// R012 (reserved, dormant; unreachable from source) for a `[*]` binding: `values` are the emitted values of instances 0, 1, ...
 ///
 /// Returns an error diagnostic naming the first instance that differs from instance 0.
 pub fn check_star_divergence<T: PartialEq + fmt::Display>(
@@ -423,12 +423,17 @@ mod tests {
     }
 
     // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
+    // frob:ticket 01M4ZCEYCDVX99NY3JXE5M0X1Q
     // frob:tests tolerance_on_non_dimension_rejected
     #[test]
     fn tolerance_on_non_dimension_rejected() {
         let bad = "[\"a.b::C.d\"]\nlocators = [{ locator = \"x\", kind = \"global\", tolerance = \"drive\" }]";
         let e = BindingSet::load_str("sw", bad).expect_err("global");
         assert!(e.to_string().contains("tolerance"), "{e}");
+        assert!(
+            e.to_string().contains("a.b::C.d"),
+            "names the bound path: {e}"
+        );
         let ok = "[\"a.b::C.d\"]\nlocators = [{ locator = \"x\", kind = \"dimension\", tolerance = \"ignore\" }]";
         assert_eq!(
             set(ok).entries()[0].locators[0].tolerance,

@@ -7,6 +7,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
 use serde_json::Value;
 
@@ -16,6 +17,24 @@ use crate::compare::Produced;
 const SINGLE_FILE_PACKAGE: &str = "acme.demo";
 
 static COUNTER: AtomicU32 = AtomicU32::new(0);
+
+/// Orders file writes against process spawns across the test threads of one binary.
+///
+/// A child forked while another thread still holds a script open for writing inherits that
+/// handle, and `exec` of the script then fails with ETXTBSY (flaky under load). Writers hold
+/// the write side while they create files; every run that may spawn an adapter holds the read side.
+static WRITE_VS_SPAWN: RwLock<()> = RwLock::new(());
+
+/// Hold this while creating or copying fixture files, so no spawn overlaps an open write handle.
+pub fn writing() -> RwLockWriteGuard<'static, ()> {
+    tracing::trace!("fixture write section");
+    WRITE_VS_SPAWN.write().unwrap_or_else(|e| e.into_inner())
+}
+
+/// Hold this while running the CLI, which may spawn adapter processes.
+pub fn spawning() -> RwLockReadGuard<'static, ()> {
+    WRITE_VS_SPAWN.read().unwrap_or_else(|e| e.into_inner())
+}
 
 /// Everything one run of an executor observed.
 #[derive(Default)]
@@ -75,6 +94,7 @@ fn copy_dir(from: &Path, to: &Path) -> Result<(), String> {
 
 /// Stage a `.cdt` file as the single-file package, or copy a package directory.
 pub fn stage(fixture: &Path) -> Result<Scratch, String> {
+    let _writing = writing();
     let scratch = Scratch::new()?;
     let root = &scratch.0;
     if fixture.is_dir() {
@@ -119,12 +139,18 @@ pub fn parse_json(stdout: &str) -> Option<Value> {
     })
 }
 
-/// Diagnostics (`code`, `severity`, `path`) and messages from a `diagnostics` list.
+/// Diagnostics (`code`, `severity`, `path`) and messages from a `diagnostics` list; waived ones are suppressed.
+// frob:ticket 01M51T6EHNEGAJ9KYQ42VJQFPG
 fn diagnostics_of(report: &Value) -> (Vec<Produced>, Vec<String>) {
     let field = |d: &Value, k: &str| d[k].as_str().map(str::to_owned);
-    let list = report["diagnostics"]
+    let list: Vec<Value> = report["diagnostics"]
         .as_array()
-        .cloned()
+        .map(|a| {
+            a.iter()
+                .filter(|d| d["waived"].is_null())
+                .cloned()
+                .collect()
+        })
         .unwrap_or_default();
     let produced = list
         .iter()
@@ -149,7 +175,10 @@ pub fn run_cli(root: &Path, args: &[String]) -> Result<Facts, String> {
     argv.extend(args.iter().cloned());
     let before = snapshot(root);
     let (mut out, mut err) = (Vec::new(), Vec::new());
-    let exit = i32::from(cadetta::run_with_env(&argv, None, &mut out, &mut err));
+    let exit = {
+        let _spawning = spawning();
+        i32::from(cadetta::run_with_env(&argv, None, &mut out, &mut err))
+    };
     tracing::debug!(?args, exit, "fixture ran");
     let mut facts = Facts {
         exit,
@@ -166,4 +195,25 @@ pub fn run_cli(root: &Path, args: &[String]) -> Result<Facts, String> {
         facts.messages.push(facts.stderr.trim().to_owned());
     }
     Ok(facts)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A waived diagnostic is not counted as produced; an unwaived one is.
+    // frob:ticket 01M51T6EHNEGAJ9KYQ42VJQFPG
+    // frob:tests crates/cadetta-cli/tests/conformance/run.rs::diagnostics_of kind=unit
+    #[test]
+    fn waived_diagnostics_are_not_produced() {
+        let report = serde_json::json!({"diagnostics": [
+            {"code": "C001", "severity": "warning", "message": "m", "waived": {"by": "w"}},
+            {"code": "C002", "severity": "warning", "message": "n", "waived": null},
+            {"code": "C003", "severity": "warning", "message": "o"}
+        ]});
+        let (produced, messages) = diagnostics_of(&report);
+        let codes: Vec<&str> = produced.iter().map(|p| p.code.as_str()).collect();
+        assert_eq!(codes, ["C002", "C003"]);
+        assert_eq!(messages.len(), 2);
+    }
 }

@@ -32,11 +32,20 @@ class Record(BaseModel):
     new: Annotated[str, Field(description="The design value.")]
 
 
+class Severity(Enum):
+    info = "info"
+    warning = "warning"
+    error = "error"
+
+
 class Diagnostic(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
     code: Annotated[str, Field(description="Rule code, e.g. R001 or R004.")]
+    severity: Annotated[
+        Severity, Field(description="info (O004), error (a blocking code) or warning.")
+    ]
     message: str
 
 

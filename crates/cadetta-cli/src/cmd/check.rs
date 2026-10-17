@@ -354,10 +354,10 @@ pub fn run_check_with(
     // W001-W004 describe the waivers themselves, so they follow the engine run.
     let waiver_diags = w::check(&outcome, &sup, &cfg);
     outcome.diagnostics.extend(waiver_diags);
-    // W005: expiring waivers. No IR entity carries `eol` yet, so only waivers are reported.
+    // W005: expiring waivers and approaching `eol` dates (collected from `#[lifecycle(eol, ..)]`).
     outcome.diagnostics.extend(check_w005(
         &sup.waivers,
-        &[],
+        &analysis.eols,
         sup.as_of.as_deref(),
         project.config.lint.expiry_warn_days,
         &cfg,
@@ -612,8 +612,12 @@ mod tests {
     // frob:tests crates/cadetta-cli/src/pipeline.rs::s_facts
     #[test]
     fn ots_datum_offset_without_citation_is_s001() {
-        let dir = project("ots Plate {\n  datum top = origin.offset(z = 5mm)\n}\n", "");
+        let dir = project(
+            "ots Plate {\n  thick = 3mm @\"catalog\"\n  datum top = origin.offset(z = 5mm)\n}\n",
+            "",
+        );
         let (_, json, _) = run(&dir, &[]);
+        // A partly cited component reports per uncited value, not once at the component.
         let s = diag_for(&json, "S001").expect("S001 on the uncited ots datum offset");
         assert_eq!(s["path"], "acme.axle::Plate.top.offset.z");
     }
@@ -836,6 +840,30 @@ waive C001 on acme.axle::Axle.wide { because \"x\" expires 2026-10-20 }\n";
         let c = codes(&json);
         assert!(c.contains(&"W003".to_owned()), "{json}");
         assert!(c.contains(&"W005".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::module_waivers
+    #[test]
+    fn waiver_on_a_renamed_member_still_suppresses_through_was() {
+        let src = "model Axle {\n  dia: Length = 20.1234mm was acme.axle::Axle.od\n}\n\
+waive M001 on acme.axle::Axle.od { because \"measured to the micron\" }\n";
+        let (_, json, _) = run(&project(src, ""), &[]);
+        let m = diag_for(&json, "M001").expect("M001 on the renamed member");
+        assert!(m["waived"].is_object(), "{json}");
+        assert!(!codes(&json).contains(&"W001".to_owned()), "{json}");
+    }
+
+    // frob:ticket 01M4YM8XJ9MWEBA1NTN09X7PNP
+    // frob:tests crates/cadetta-cli/src/pipeline.rs::eol_dates
+    #[test]
+    fn approaching_eol_date_is_w005_on_the_component() {
+        let src = "#[lifecycle(eol, \"2026-10\")]\nots Bolt {\n  d = 5mm\n}\n";
+        let (_, json, _) = run(&project(src, ""), &["--as-of", "2026-10-14"]);
+        let w = diag_for(&json, "W005").expect("W005 for the eol date");
+        assert!(w["path"].as_str().unwrap().ends_with("Bolt"), "{json}");
+        let (_, json, _) = run(&project(src, ""), &["--as-of", "2026-06-01"]);
+        assert!(!codes(&json).contains(&"W005".to_owned()), "{json}");
     }
 
     // frob:ticket 01M4V1HYQACFV6PNTBESN4G7QS

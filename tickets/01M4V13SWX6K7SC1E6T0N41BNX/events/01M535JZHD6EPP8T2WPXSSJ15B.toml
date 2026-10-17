@@ -1,0 +1,8 @@
+kind = "transition"
+from = "in-progress"
+to = "done"
+outcome = "done"
+reason = "already resolved on main by split children; audit shows language corpus passes, no code change"
+at = "2026-10-16T20:13:52Z"
+actor = "lognd"
+rev = 1

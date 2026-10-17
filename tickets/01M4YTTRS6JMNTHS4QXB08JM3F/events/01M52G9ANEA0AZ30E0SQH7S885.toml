@@ -1,0 +1,40 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T13:56:34Z"
+digest = "76cf8c89ebdce8f6629dba7fc7dda5631ea53fa740596dd67d5f619a18eaa573"
+exit_code = 100
+failed_tests = ["emitters_csv_fixtures_match_the_spec"]
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.38s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1d6c8eeb-94de-4065-8b91-8d4198d33c2a with nextest profile: default
+    Starting 1 test across 76 binaries (1817 tests skipped)
+        SLOW [> 60.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        SLOW [>180.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        SLOW [>240.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+ TERMINATING [>300.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+     TIMEOUT [ 300.008s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+  output \u{2500}\u{2500}\u{2500}
+
+    running 1 test
+    hello
+    test emitters_csv_fixtures_match_the_spec has been running for over 60 seconds
+
+    (test timed out)
+
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 300.018s] 1 test run: 0 passed, 1 timed out, 1817 skipped
+     TIMEOUT [ 300.008s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+error: test run failed
+'''
+passed = false
+provider = "nextest"
+ref = "cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec"
+size = 1348
+status = "measured"
+test_count = 1
+tests_digest = "8b41c6b67866218626e68cecbde3c9de6676824217132694cb82e2d96a0ada87"
+at = "2026-10-16T13:56:34Z"
+actor = "lognd"
+rev = 1

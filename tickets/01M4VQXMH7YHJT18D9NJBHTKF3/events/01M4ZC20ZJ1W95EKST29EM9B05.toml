@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "propose-mode executor landed (8 of 31 fixtures); remaining 23 split to ~KKVE13B"
+at = "2026-10-15T08:49:59Z"
+actor = "lognd"
+rev = 1

@@ -6,8 +6,9 @@ use std::path::{Path, PathBuf};
 
 use cadetta_syntax::lexer::Span;
 
+use crate::cmd::update::checkout_dir;
 use crate::config::{Config, ConfigError};
-use crate::pkg::manifest::{self, Manifest, PackageManifest, Source};
+use crate::pkg::manifest::{self, GitRef, Manifest, PackageManifest, Source};
 use crate::pkg::resolve::{self, ResolveError, ResolvedPackage};
 
 /// The configuration file name.
@@ -145,10 +146,7 @@ pub fn find_config(start: &Path) -> Result<PathBuf, ProjectError> {
                 tracing::debug!(path = %candidate.display(), "skipping cadetta.toml without a project table");
             }
             Err(source) => {
-                return Err(ProjectError::Config {
-                    path: candidate,
-                    source,
-                });
+                return Err(config_error(candidate, source));
             }
         }
     }
@@ -187,6 +185,15 @@ impl Project {
 
     /// Load the project whose `cadetta.toml` is `config_path`.
     pub fn load(config_path: &Path) -> Result<Self, ProjectError> {
+        let root = config_path.parent().unwrap_or(Path::new("."));
+        let cache = root.join("build").join("deps");
+        Self::load_with(config_path, &|url, r| cached_checkout(&cache, url, r))
+    }
+
+    /// Load the project with `fetch` supplying git dependency checkouts (injectable, so
+    /// tests need no network).
+    // frob:ticket 01M4YRTECA4XNC784V88ZC83KP
+    pub fn load_with(config_path: &Path, fetch: &GitFetch<'_>) -> Result<Self, ProjectError> {
         let root = config_path.parent().unwrap_or(Path::new(".")).to_owned();
         let config = load_config(config_path)?;
         let mut packages = Vec::new();
@@ -215,7 +222,7 @@ impl Project {
                 }
             }
         }
-        let dependencies = load_dependencies(&packages)?;
+        let dependencies = load_dependencies(&packages, fetch)?;
         Ok(Self {
             root,
             config,
@@ -250,22 +257,44 @@ fn dep_diag(code: &'static str, path: &Path, message: String) -> ProjectError {
     })
 }
 
+/// Materialises a git dependency checkout for a url and reference.
+pub type GitFetch<'a> = dyn Fn(&str, &GitRef) -> Result<PathBuf, String> + 'a;
+
+/// The already-fetched checkout of `url` at `reference` under `cache` (the `cadetta update`
+/// cache); `check` does no network access, so a missing checkout is an error.
+// frob:ticket 01M4YRTECA4XNC784V88ZC83KP
+fn cached_checkout(cache: &Path, url: &str, reference: &GitRef) -> Result<PathBuf, String> {
+    let dir = checkout_dir(cache, url, reference);
+    if dir.join(CONFIG_FILE).is_file() {
+        tracing::debug!(%url, dir = %dir.display(), "using cached git checkout");
+        Ok(dir)
+    } else {
+        Err(format!("no checkout of {url} in {}", cache.display()))
+    }
+}
+
 /// Resolve and load the dependency closure of `packages` (packages.md 1).
 ///
-/// Only path sources are resolved here: `check` does no network or git access, so a git
-/// dependency is skipped with a warning and stays unresolved. E012 and E013 are returned as
+/// Path sources resolve in place; git sources resolve through `fetch`. A git dependency whose
+/// checkout is unavailable is skipped with a warning and stays unresolved. E012 and E013 are returned as
 /// project diagnostics; a dependency that cannot be found is E005.
-fn load_dependencies(packages: &[PackageDir]) -> Result<Vec<Dependency>, ProjectError> {
+fn load_dependencies(
+    packages: &[PackageDir],
+    fetch: &GitFetch<'_>,
+) -> Result<Vec<Dependency>, ProjectError> {
     let mut roots: Vec<(PathBuf, PackageManifest)> = Vec::with_capacity(packages.len());
     for pkg in packages {
         match manifest::load(&pkg.dir) {
             Ok(Manifest::Package(mut m)) => {
-                m.dependencies.retain(|d| {
-                    let local = matches!(d.source, Source::Path(_));
-                    if !local {
-                        tracing::warn!(name = %d.name, "git dependency is not resolved by check; run `cadetta update`");
-                    }
-                    local
+                m.dependencies.retain(|d| match &d.source {
+                    Source::Path(_) => true,
+                    Source::Git { url, reference } => match fetch(url, reference) {
+                        Ok(_) => true,
+                        Err(reason) => {
+                            tracing::warn!(name = %d.name, %reason, "git dependency is not available; run `cadetta update`");
+                            false
+                        }
+                    },
                 });
                 roots.push((pkg.dir.clone(), m));
             }
@@ -279,13 +308,7 @@ fn load_dependencies(packages: &[PackageDir]) -> Result<Vec<Dependency>, Project
         return Ok(Vec::new());
     }
     let read = |p: &Path| std::fs::read_to_string(p).ok();
-    let fetch = |_: &str, _: &manifest::GitRef| -> Result<PathBuf, String> {
-        Err("git dependencies are not fetched by check".to_owned())
-    };
-    let io = resolve::Io {
-        read: &read,
-        fetch: &fetch,
-    };
+    let io = resolve::Io { read: &read, fetch };
     let resolution = match resolve::resolve(&roots, &io) {
         Ok(r) => r,
         Err(e) => {
@@ -308,10 +331,17 @@ fn load_dependencies(packages: &[PackageDir]) -> Result<Vec<Dependency>, Project
 
 /// Load a `cadetta.toml`, mapping the error with its path.
 fn load_config(path: &Path) -> Result<Config, ProjectError> {
-    Config::load(path).map_err(|source| ProjectError::Config {
-        path: path.to_owned(),
-        source,
-    })
+    Config::load(path).map_err(|source| config_error(path.to_owned(), source))
+}
+
+/// Map a config failure to a project error: an unloadable package or dependency is E005
+/// (packages.md 1), any other config problem is a usage error.
+// frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+fn config_error(path: PathBuf, source: ConfigError) -> ProjectError {
+    match source {
+        ConfigError::Unloadable { .. } => e005(&path, source.to_string()),
+        source => ProjectError::Config { path, source },
+    }
 }
 
 impl PackageDir {
@@ -427,6 +457,21 @@ mod tests {
         let pkg = PackageDir::load(&root).unwrap();
         let rels: Vec<_> = pkg.modules.iter().map(|m| m.rel_path.as_str()).collect();
         assert_eq!(rels, ["a.cdt", "drive/motor.cdt", "z.cdt"]);
+    }
+
+    // frob:tests crates/cadetta-cli/src/project.rs::config_error
+    #[test]
+    fn reserved_name_and_registry_dependency_are_e005() {
+        let root = scratch();
+        put(&root, "cadetta.toml", "[package]\nname = \"std\"\n");
+        put(&root, "src/a.cdt", "");
+        assert_eq!(code(PackageDir::load(&root).unwrap_err()), "E005");
+        put(
+            &root,
+            "cadetta.toml",
+            "[package]\nname = \"a.b\"\n[dependencies]\n\"x.y\" = \"1\"\n",
+        );
+        assert_eq!(code(PackageDir::load(&root).unwrap_err()), "E005");
     }
 
     // frob:tests crates/cadetta-cli/src/project.rs::PackageDir
@@ -545,6 +590,68 @@ mod tests {
         assert_eq!(project.dependencies.len(), 1);
         assert_eq!(project.dependencies[0].resolved.name, "acme.shop");
         assert_eq!(project.dependencies[0].package.modules.len(), 1);
+    }
+
+    /// A project depending on a git package `acme.shop`.
+    fn with_git_shop() -> PathBuf {
+        let root = scratch();
+        put(
+            &root,
+            "cadetta.toml",
+            "[package]\nname = \"acme.a\"\n[dependencies]\n\"acme.shop\" = { git = \"https://x/shop.git\", tag = \"v1\" }\n",
+        );
+        put(&root, "src/lib.cdt", "");
+        root
+    }
+
+    /// Write the shop package into `dir`.
+    fn put_shop(dir: &Path) {
+        put(
+            dir,
+            "cadetta.toml",
+            "[package]\nname = \"acme.shop\"\nversion = \"1.0.0\"\n",
+        );
+        put(dir, "src/lib.cdt", "pub model Thing { }\n");
+    }
+
+    // frob:ticket 01M4YRTECA4XNC784V88ZC83KP
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn git_dependency_loads_through_the_injected_fetch() {
+        let root = with_git_shop();
+        let shop = scratch();
+        put_shop(&shop);
+        let project = Project::load_with(&root.join("cadetta.toml"), &|url, _| {
+            assert_eq!(url, "https://x/shop.git");
+            Ok(shop.clone())
+        })
+        .unwrap();
+        assert_eq!(project.dependencies.len(), 1);
+        assert_eq!(project.dependencies[0].resolved.name, "acme.shop");
+        assert_eq!(project.dependencies[0].package.modules.len(), 1);
+    }
+
+    // frob:ticket 01M4YRTECA4XNC784V88ZC83KP
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn check_loads_a_git_dependency_from_the_update_cache() {
+        let root = with_git_shop();
+        let reference = GitRef::Tag("v1".to_owned());
+        let cache = root.join("build").join("deps");
+        let dir = checkout_dir(&cache, "https://x/shop.git", &reference);
+        put_shop(&dir);
+        let project = Project::load(&root.join("cadetta.toml")).unwrap();
+        assert_eq!(project.dependencies.len(), 1);
+        assert_eq!(project.dependencies[0].resolved.dir, dir);
+    }
+
+    // frob:ticket 01M4YRTECA4XNC784V88ZC83KP
+    // frob:tests crates/cadetta-cli/src/project.rs::Project
+    #[test]
+    fn git_dependency_without_a_checkout_is_skipped() {
+        let root = with_git_shop();
+        let project = Project::load(&root.join("cadetta.toml")).unwrap();
+        assert!(project.dependencies.is_empty());
     }
 
     // frob:ticket 01M4V6BZ0MPYS6XXSC1992PZ41

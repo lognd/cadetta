@@ -1,0 +1,28 @@
+{
+  "spec": "1.4",
+  "doc": "packages",
+  "section": "packages.md 6",
+  "rule": "trust",
+  "kind": "source",
+  "entry": "obligations",
+  "must_fire": {
+    "exit": 1,
+    "diagnostics": [],
+    "rows": [
+      {
+        "id": "check:acme.shop::Part.fits_limit",
+        "listed": true
+      }
+    ]
+  },
+  "must_not_fire": {
+    "exit": 0,
+    "diagnostics": [],
+    "rows": [
+      {
+        "id": "check:acme.shop::Part.fits_limit",
+        "listed": false
+      }
+    ]
+  }
+}

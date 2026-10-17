@@ -1,0 +1,8 @@
+table Bearings {
+  key od: Length
+  cols bore: Length
+  22mm => 7.75mm
+}
+model Axle {
+  hole: Length = 7.5mm
+}

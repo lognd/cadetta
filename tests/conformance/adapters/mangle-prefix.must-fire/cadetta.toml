@@ -6,3 +6,4 @@ as_of = "2026-10-13"
 [[adapter]]
 name = "sw-equations"
 out = "build/eq.txt"
+prefix = "cdt_"

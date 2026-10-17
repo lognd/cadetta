@@ -66,6 +66,14 @@ fn d002_quiet_for_a_literal_unlike_any_fit_accessor() {
     assert!(hits("d002-quiet", src, "D002").is_empty());
 }
 
+// frob:ticket 01M51NC9FMMRMKC3NVMJKF14FE
+// frob:tests crates/cadetta-lint/src/rules/d.rs::check_d002 kind=integration
+#[test]
+fn d002_quiet_for_the_authored_source_of_a_fit_side() {
+    let src = "pub model P {\n  bore = 20mm\n  fit seat = H7/p6 on bore\n}\n";
+    assert!(hits("d002-source", src, "D002").is_empty());
+}
+
 /// The source of a conformance geometry fixture.
 fn fixture(name: &str) -> String {
     let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))

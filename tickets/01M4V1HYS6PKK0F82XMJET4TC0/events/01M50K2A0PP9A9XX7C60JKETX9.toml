@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["check reports S003 naming what changed for a solver whose recorded primary result digests differ, outputs still evaluating; a solver with no result is not S003"]
+moved = []
+at = "2026-10-15T20:11:42Z"
+actor = "lognd"
+rev = 1

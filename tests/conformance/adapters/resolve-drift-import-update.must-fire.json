@@ -1,25 +1,29 @@
 {
-  "entry": "import",
+  "adapter": {
+    "id": "solidworks",
+    "native_unit": "mm"
+  },
   "args": [
     "solidworks",
     "cad/plate.SLDPRT",
     "--update",
     "--write"
   ],
-  "design": {
-    "acme.demo::Part.width": "10mm"
+  "items": [
+    {
+      "file": "cad/plate.SLDPRT",
+      "locator": "width",
+      "kind": "global",
+      "number": 11,
+      "unit": "mm"
+    }
+  ],
+  "existing": {},
+  "lock_base": {
+    "width": "10mm"
   },
-  "native": {
-    "Plate_Thk": "11mm"
-  },
-  "lock": {
-    "synced": [
-      {
-        "path": "acme.demo::Part.width",
-        "locator": "Plate_Thk",
-        "value": "10mm"
-      }
-    ]
+  "source": {
+    "width": "10mm"
   },
   "then_sync": true
 }

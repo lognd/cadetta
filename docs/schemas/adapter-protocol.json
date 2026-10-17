@@ -487,6 +487,86 @@
         "status"
       ]
     },
+    "ObservedComponent": {
+      "description": "The file an assembly actually holds for one component instance, read for R011 (adapters.md 3.3).",
+      "type": "object",
+      "properties": {
+        "component_file": {
+          "description": "The component file the instance uses.",
+          "type": "string"
+        },
+        "file": {
+          "description": "The assembly document.",
+          "type": "string"
+        },
+        "locator": {
+          "description": "The `instance` locator of the slot's binding.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "locator",
+        "component_file"
+      ]
+    },
+    "ObservedInstanceValues": {
+      "description": "The value each instance matched by one `[*]` binding holds, read for R012 (adapters.md 3).",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "The document holding the instances.",
+          "type": "string"
+        },
+        "locator": {
+          "description": "The locator the `[*]` binding names.",
+          "type": "string"
+        },
+        "values": {
+          "description": "One value text per instance, in instance order.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "locator",
+        "values"
+      ]
+    },
+    "ObservedSketch": {
+      "description": "Where one bound sketch dimension sits, read for R007 (adapters.md 3.4).",
+      "type": "object",
+      "properties": {
+        "file": {
+          "description": "The document holding the sketch.",
+          "type": "string"
+        },
+        "locator": {
+          "description": "The dimension locator.",
+          "type": "string"
+        },
+        "measured_from": {
+          "description": "What the dimension is measured from; `sketch origin` is the only clean answer.",
+          "type": "string"
+        },
+        "on_datum_plane": {
+          "description": "True when the sketch lies on its datum's plane.",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "locator",
+        "on_datum_plane",
+        "measured_from"
+      ]
+    },
     "ObservedTolerance": {
       "description": "The tolerance read back from one dimension locator (adapters.md 3.6).",
       "type": "object",
@@ -666,6 +746,13 @@
       "description": "Result of `read`.",
       "type": "object",
       "properties": {
+        "components": {
+          "description": "Component files held by assembly slots, for R011.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ObservedComponent"
+          }
+        },
         "diagnostics": {
           "description": "Diagnostics.",
           "type": "array",
@@ -673,8 +760,22 @@
             "$ref": "#/$defs/DiagRecord"
           }
         },
+        "instance_values": {
+          "description": "Per-instance values of `[*]` bindings, for R012.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ObservedInstanceValues"
+          }
+        },
         "observed": {
           "description": "The observed IR."
+        },
+        "sketches": {
+          "description": "Sketch-plane and origin facts for R007, only from adapters that can see them.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ObservedSketch"
+          }
         },
         "tolerances": {
           "description": "Dimension tolerances, only from adapters reporting `tolerances`.",

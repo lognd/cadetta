@@ -36,6 +36,16 @@ pub enum ConfigError {
     /// Both a `[package]` and a `[workspace]` table are present.
     #[error("cadetta.toml has both a [package] and a [workspace] table; use one")]
     BothProjectKinds,
+    /// A package or dependency the loader must refuse: the reserved name `std`, or a
+    /// registry-only dependency (packages.md 1); reported as E005 (missing-package).
+    // frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+    #[error("E005 missing-package: `{key}`: {reason}")]
+    Unloadable {
+        /// The dotted key path of the offending value.
+        key: String,
+        /// Why the loader refuses it.
+        reason: String,
+    },
     /// A key parsed but its value is not acceptable.
     #[error("invalid value for `{key}`: {reason}")]
     Invalid {
@@ -51,6 +61,13 @@ fn invalid<T>(key: impl Into<String>, reason: impl Into<String>) -> Result<T, Co
     let (key, reason) = (key.into(), reason.into());
     tracing::warn!(%key, %reason, "rejecting configuration value");
     Err(ConfigError::Invalid { key, reason })
+}
+
+/// Build a [`ConfigError::Unloadable`] result (E005 once it reaches the project loader).
+fn unloadable<T>(key: impl Into<String>, reason: impl Into<String>) -> Result<T, ConfigError> {
+    let (key, reason) = (key.into(), reason.into());
+    tracing::warn!(%key, %reason, "refusing unloadable package or dependency");
+    Err(ConfigError::Unloadable { key, reason })
 }
 
 /// `[lint] fail_on`: the lowest severity that makes a command exit 1.
@@ -189,6 +206,48 @@ pub struct Dependency {
     pub trust: Vec<String>,
 }
 
+/// A `[dependencies]` value: a table, or a bare version string (a registry source, E005).
+// frob:ticket 01M4YRFMRM5PTVK9TJ9ZRN2H8S
+struct DependencyEntry(Dependency);
+
+impl<'de> Deserialize<'de> for DependencyEntry {
+    /// Accept a table or a bare version string; unknown table keys are still named.
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        struct Visitor;
+        impl<'de> serde::de::Visitor<'de> for Visitor {
+            type Value = DependencyEntry;
+
+            fn expecting(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                f.write_str("a dependency table or a version string")
+            }
+
+            fn visit_str<E: serde::de::Error>(self, version: &str) -> Result<Self::Value, E> {
+                Ok(DependencyEntry(Dependency {
+                    version: Some(version.to_owned()),
+                    ..Dependency::default()
+                }))
+            }
+
+            fn visit_map<A: serde::de::MapAccess<'de>>(
+                self,
+                map: A,
+            ) -> Result<Self::Value, A::Error> {
+                Dependency::deserialize(serde::de::value::MapAccessDeserializer::new(map))
+                    .map(DependencyEntry)
+            }
+        }
+        deserializer.deserialize_any(Visitor)
+    }
+}
+
+/// Deserialize `[dependencies]`, letting a bare version string stand for a registry source.
+fn deserialize_dependencies<'de, D: serde::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<BTreeMap<String, Dependency>, D::Error> {
+    let raw = BTreeMap::<String, DependencyEntry>::deserialize(deserializer)?;
+    Ok(raw.into_iter().map(|(k, v)| (k, v.0)).collect())
+}
+
 /// `[workspace]` (packages.md 1).
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -262,22 +321,68 @@ impl Default for Lint {
     }
 }
 
+/// The currencies named by quantities.md 3 (`Money`); each is its own base dimension.
+const MONEY_CODES: [&str; 5] = ["USD", "EUR", "GBP", "CNY", "JPY"];
+
+/// The dimension of every documented currency, for a `Money` precision entry.
+fn money_dims() -> Vec<Dim> {
+    let units = UnitTable::builtin();
+    MONEY_CODES
+        .iter()
+        .filter_map(|code| units.lookup(code))
+        .map(|u| u.dim)
+        .collect()
+}
+
 impl Lint {
-    /// The M001 settings: `precision` by kind name; empty keeps the documented defaults.
-    pub fn m_config(&self) -> Result<MConfig, ConfigError> {
+    /// The M001 settings: `precision` by kind name, resolved against `kinds` (built-ins plus
+    /// the package's own `kind` declarations); empty keeps the documented defaults.
+    pub fn m_config(&self, kinds: &KindTable) -> Result<MConfig, ConfigError> {
+        self.resolve_precision(kinds, true)
+    }
+
+    /// Resolve `precision`; an unknown kind is an error when `strict`, else logged and skipped.
+    fn resolve_precision(&self, kinds: &KindTable, strict: bool) -> Result<MConfig, ConfigError> {
         if self.precision.is_empty() {
             return Ok(MConfig::default());
         }
-        let kinds = KindTable::builtin();
         let mut precision = Vec::with_capacity(self.precision.len());
         for (kind, decimals) in &self.precision {
+            if kind == "Money" {
+                // Money has no single dimension: each currency is its own base dimension.
+                for dim in money_dims() {
+                    precision.push((dim, u32::from(*decimals)));
+                }
+                continue;
+            }
             let Some(dim) = kinds.dim_of(kind) else {
-                return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
+                if strict {
+                    return invalid(format!("lint.precision.{kind}"), "unknown quantity kind");
+                }
+                tracing::warn!(kind = %kind, "lint: precision names an unknown quantity kind; ignored");
+                continue;
             };
             precision.push((dim.clone(), u32::from(*decimals)));
         }
         tracing::debug!(kinds = precision.len(), "lint: M001 precision from config");
         Ok(MConfig { precision })
+    }
+
+    /// The M001 settings for analysis: like `m_config` but an unknown kind is skipped, since the
+    /// configuration loads before the package's kinds are known.
+    pub fn m_config_lenient(&self, kinds: &KindTable) -> MConfig {
+        self.resolve_precision(kinds, false)
+            .unwrap_or_else(|_| MConfig::default())
+    }
+
+    /// The `precision` keys that name neither `Money` nor a kind in `kinds`, in key order.
+    // frob:ticket 01M5137DWGRARW5K0EMRB93QEK
+    pub fn unknown_precision_kinds(&self, kinds: &KindTable) -> Vec<String> {
+        self.precision
+            .keys()
+            .filter(|k| k.as_str() != "Money" && kinds.dim_of(k).is_none())
+            .cloned()
+            .collect()
     }
 
     /// The D001/D002 settings: `d001_min_digits`, parsed `common_values` and the caller's
@@ -469,7 +574,7 @@ pub struct Config {
     #[serde(default)]
     pub workspace: Option<Workspace>,
     /// `[dependencies]` by package name.
-    #[serde(default)]
+    #[serde(default, deserialize_with = "deserialize_dependencies")]
     pub dependencies: BTreeMap<String, Dependency>,
     /// `[defaults]`: qualified path to value, lowest precedence.
     #[serde(default)]
@@ -559,7 +664,7 @@ impl Config {
         if self.lint.d001_min_digits == 0 {
             return invalid("lint.d001_min_digits", "must be at least 1");
         }
-        self.lint.m_config()?;
+        // Package-declared kinds are unknown at load; `pipeline` resolves `precision` later.
         self.lint.d_config(Vec::new())?;
         for (name, role) in &self.obligations.roles {
             if role.covers.is_empty() {
@@ -601,8 +706,17 @@ impl Config {
     }
 }
 
+/// The package name reserved for the standard library (packages.md 1).
+const RESERVED_NAME: &str = "std";
+
 /// Validate a `[package]` table.
 fn validate_package(package: &Package) -> Result<(), ConfigError> {
+    if package.name.as_deref() == Some(RESERVED_NAME) {
+        return unloadable(
+            "package.name",
+            "the name `std` is reserved for the standard library",
+        );
+    }
     if let Some(name) = &package.name
         && !is_valid_package_name(name)
     {
@@ -636,11 +750,22 @@ fn validate_package(package: &Package) -> Result<(), ConfigError> {
 /// Validate one `[dependencies]` entry.
 fn validate_dependency(name: &str, dep: &Dependency) -> Result<(), ConfigError> {
     let key = format!("dependencies.{name}");
+    if name == RESERVED_NAME {
+        return unloadable(
+            &key,
+            "the dependency name `std` is reserved for the standard library",
+        );
+    }
     if !is_valid_package_name(name) {
         return invalid(&key, "the key is not a valid package name or is reserved");
     }
     match (&dep.path, &dep.git) {
-        (None, None) => return invalid(&key, "needs a `path` or a `git` source"),
+        (None, None) => {
+            return unloadable(
+                &key,
+                "needs a `path` or a `git` source; a registry source is unsupported (OQ-19)",
+            );
+        }
         (Some(_), Some(_)) => return invalid(&key, "`path` and `git` are exclusive"),
         _ => {}
     }
@@ -659,7 +784,7 @@ fn validate_dependency(name: &str, dep: &Dependency) -> Result<(), ConfigError> 
 
 /// Whether `name` is `lower.dotted` (segments of `[a-z][a-z0-9_]*`) and not `std`.
 pub fn is_valid_package_name(name: &str) -> bool {
-    name != "std"
+    name != RESERVED_NAME
         && !name.is_empty()
         && name.split('.').all(|seg| {
             let mut chars = seg.chars();
@@ -829,14 +954,48 @@ native_unit = "mm"
     // frob:tests crates/cadetta-cli/src/config.rs::Lint
     #[test]
     fn lint_precision_kinds_and_common_values_are_checked() {
-        assert!(err_text(&pkg("[lint]\nprecision = { Lenth = 2 }\n")).contains("Lenth"));
+        let typo = Config::parse(&pkg("[lint]\nprecision = { Lenth = 2 }\n")).unwrap();
+        let err = typo.lint.m_config(&KindTable::builtin()).unwrap_err();
+        assert!(err.to_string().contains("Lenth"));
         assert!(err_text(&pkg("[lint]\ncommon_values = [\"fast\"]\n")).contains("fast"));
         let c = Config::parse(&pkg(
             "[lint]\nprecision = { Length = 4 }\ncommon_values = [\"0.5in\"]\n",
         ))
         .unwrap();
-        assert_eq!(c.lint.m_config().unwrap().precision.len(), 1);
+        assert_eq!(
+            c.lint
+                .m_config(&KindTable::builtin())
+                .unwrap()
+                .precision
+                .len(),
+            1
+        );
         assert_eq!(c.lint.d_config(Vec::new()).unwrap().common_values.len(), 1);
+    }
+
+    // frob:ticket 01M4Z7SF3KHPF3NA2YB3P4PXDX
+    // frob:ticket 01M4YM3CKT4FBV4VXJD76GMV4N
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_accepts_custom_kinds_from_table() {
+        let c = Config::parse(&pkg("[lint]\nprecision = { Widget = 3 }\n")).unwrap();
+        assert!(c.lint.m_config(&KindTable::builtin()).is_err());
+        let mut kinds = KindTable::builtin();
+        kinds.register("Widget", "Length").unwrap();
+        let m = c.lint.m_config(&kinds).unwrap();
+        assert_eq!(
+            m.precision,
+            vec![(kinds.dim_of("Length").unwrap().clone(), 3)]
+        );
+    }
+
+    // frob:tests crates/cadetta-cli/src/config.rs::Lint
+    #[test]
+    fn lint_precision_accepts_money_for_every_currency() {
+        let c = Config::parse(&pkg("[lint]\nprecision = { Money = 2 }\n")).unwrap();
+        let m = c.lint.m_config(&KindTable::builtin()).unwrap();
+        assert_eq!(m.precision.len(), 5);
+        assert!(m.precision.iter().all(|(_, n)| *n == 2));
     }
 
     // frob:tests crates/cadetta-cli/src/config.rs::Lint
@@ -974,6 +1133,22 @@ native_unit = "mm"
             assert!(
                 Config::parse(&format!("[package]\n[dependencies]\n{bad}\n")).is_err(),
                 "{bad}"
+            );
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/config.rs::validate_dependency
+    // frob:tests crates/cadetta-cli/src/config.rs::validate_package
+    #[test]
+    fn reserved_and_registry_sources_are_unloadable() {
+        for text in [
+            "[package]\nname = \"std\"\n",
+            "[package]\n[dependencies]\nstd = { path = \"a\" }\n",
+            "[package]\n[dependencies]\n\"x.y\" = \"1\"\n",
+        ] {
+            assert!(
+                matches!(Config::parse(text), Err(ConfigError::Unloadable { .. })),
+                "{text}"
             );
         }
     }

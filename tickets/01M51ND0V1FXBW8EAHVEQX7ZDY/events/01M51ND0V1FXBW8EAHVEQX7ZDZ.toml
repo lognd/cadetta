@@ -1,0 +1,12 @@
+kind = "create"
+title = "process rule that changes the argument kind is only logged, never an EVAL diagnostic"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+scope = ["crates/cadetta-sema/src/process.rs"]
+acceptance = ["A rule changing the argument kind yields an EVAL error at check time; language/process-rule-kind gap removed"]
+body = "found while working ~EB0V9X7: spec 3.8 says a process rule must keep the argument's kind; sema only tracing-warns 'changes the kind' and emits no diagnostic. Fixture language/process-rule-kind is gapped until fixed."
+at = "2026-10-16T06:11:45Z"
+actor = "lognd"
+rev = 1

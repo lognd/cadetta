@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-16T05:32:38Z"
+digest = "438f2b27da0e5ba039ec8c805bf81361258e40b7e0abac40f89fc5c5decb2fdd"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.25s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 2e3d6b62-3949-4c02-8978-b788399b440b with nextest profile: default
+    Starting 1 test across 45 binaries (633 tests skipped)
+        PASS [   2.314s] cadetta::conformance bind_invalid_fixtures_observe_the_named_path_or_key
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   2.315s] 1 test run: 1 passed, 633 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta bind_invalid_fixtures_observe"
+size = 566
+status = "measured"
+test_count = 1
+tests_digest = "bdfda9906d49643cd76fb49fae28f8c7b8b879950326a7f08908a33d5e46ff56"
+at = "2026-10-16T05:32:38Z"
+actor = "lognd"
+rev = 1

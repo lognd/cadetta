@@ -16,14 +16,16 @@ use cadetta_ir::model::{
 };
 use cadetta_obligations::citation::citation_id;
 use cadetta_obligations::graph::{ObligationId, ObligationKind, ObligationState, Verdict};
-use cadetta_obligations::lock::{Attest, Lock, Record};
+use cadetta_obligations::lock::{AltBinding, Attest, Lock, Record};
 use cadetta_obligations::staleness::Judgement;
 use cadetta_obligations::why_stale::{WhyStale, why_stale};
 
+use cadetta_adapter::geometry_plan::negate_text;
+
 use crate::cmd::ack::{Candidate as AckCandidate, Subject};
 use crate::cmd::emit::{
-    attr_point, config_point, kind_of, load_bindings, locators_for, native_unit, negate_text,
-    written_for,
+    active_alternates, attr_point, config_point, kind_of, load_bindings, locator_active,
+    locators_for, native_unit, written_for,
 };
 use crate::cmd::obligations::Candidate;
 use crate::cmd::sync::normalize;
@@ -88,7 +90,7 @@ pub struct Universe {
     graph: DigestGraph,
     /// Direct dependencies of every graph key (for the `why --stale` walk).
     edges: std::collections::BTreeMap<String, Vec<String>>,
-    /// One entry per IR check (`check` or `require`) in IR order, then one per fit.
+    /// One entry per IR check (`check` or `require`) in IR order, then one per fit and solver.
     pub checks: Vec<CheckEntry>,
     /// One entry per `ots` component (ack only).
     pub ots: Vec<OtsEntry>,
@@ -113,8 +115,51 @@ impl Universe {
     /// the canonical paths of the IR checks that are `require`s (the IR does not mark them).
     // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
     pub fn of_with(ir: &IrProject, requires: &BTreeSet<String>) -> Result<Self, DigestError> {
+        Self::of_with_deps(ir, &[], requires)
+    }
+
+    /// [`Self::of_with`] over `ir` plus the nodes of the loaded dependency packages `deps`.
+    ///
+    /// A check of a dependency is judged against the same graph it has in its own package
+    /// (its members, tables and solvers), so its closure digest is independent of the
+    /// dependent that reaches it; only `ir`'s own checks, fits and `ots` components become
+    /// obligations.
+    // frob:ticket 01M4ZG85CVMQ8CQ6NXHSTGZ0R5
+    pub fn of_with_deps<'a>(
+        ir: &'a IrProject,
+        deps: &[&'a IrProject],
+        requires: &BTreeSet<String>,
+    ) -> Result<Self, DigestError> {
         let mut nodes: Vec<(String, Digest, Vec<String>)> = Vec::new();
-        let members: Vec<_> = ir.components.iter().flat_map(|c| &c.members).collect();
+        // The own package's nodes win over a dependency's of the same path.
+        let mut seen_components: BTreeSet<String> =
+            ir.components.iter().map(|c| c.path.to_string()).collect();
+        let mut components: Vec<&cadetta_ir::model::Component> = ir.components.iter().collect();
+        let mut solvers: Vec<_> = ir.solvers.iter().collect();
+        let mut tables: Vec<_> = ir.tables.iter().collect();
+        for d in deps {
+            for c in &d.components {
+                if seen_components.insert(c.path.to_string()) {
+                    components.push(c);
+                }
+            }
+            for sv in &d.solvers {
+                if !solvers.iter().any(|o| o.path == sv.path) {
+                    solvers.push(sv);
+                }
+            }
+            for t in &d.tables {
+                if !tables.iter().any(|o| o.path == t.path) {
+                    tables.push(t);
+                }
+            }
+        }
+        tracing::debug!(
+            components = components.len(),
+            deps = deps.len(),
+            "universe: graph scope"
+        );
+        let members: Vec<_> = components.iter().flat_map(|c| &c.members).collect();
         for m in &members {
             let deps = m.deps.iter().map(ToString::to_string).collect();
             nodes.push((
@@ -126,11 +171,7 @@ impl Universe {
         // An `ots` component is a node over its members, so a citation locator edit (a member or
         // component edit) changes its closure digest (obligations.md 2.3, O001).
         // frob:ticket 01M4VB63M63PQVRKN0HDXQP567
-        for c in ir
-            .components
-            .iter()
-            .filter(|c| c.class == ComponentClass::Ots)
-        {
+        for c in components.iter().filter(|c| c.class == ComponentClass::Ots) {
             let deps = c.members.iter().map(|m| m.path.to_string()).collect();
             nodes.push((
                 c.path.to_string(),
@@ -138,7 +179,7 @@ impl Universe {
                 deps,
             ));
         }
-        for s in &ir.solvers {
+        for s in &solvers {
             let deps = s.deps.iter().map(ToString::to_string).collect();
             nodes.push((
                 s.path.to_string(),
@@ -147,27 +188,75 @@ impl Universe {
             ));
         }
         // A fit is a node over its hole and shaft members (obligations.md 1, `evaluates`).
-        for f in ir.components.iter().flat_map(|c| &c.fits) {
-            let deps = vec![f.hole.to_string(), f.shaft.to_string()];
+        for f in components.iter().flat_map(|c| &c.fits) {
+            let fit_key = f.path.to_string();
+            // The fit's own accessor members (`<fit>.hole`, `.shaft`, `.clearance`) read the fit,
+            // so a synthetic hole/shaft that is such a member is no dependency: the edge would
+            // close a cycle and drop every obligation of the package.
+            let deps: Vec<String> = [&f.hole, &f.shaft]
+                .into_iter()
+                .filter(|side| {
+                    let derived = members
+                        .iter()
+                        .any(|m| m.path == **side && m.deps.contains(&f.path));
+                    if derived {
+                        tracing::debug!(fit = %fit_key, side = %side, "universe: fit accessor is not a dependency");
+                    }
+                    !derived
+                })
+                .map(ToString::to_string)
+                .collect();
             nodes.push((f.path.to_string(), cadetta_ir::digest::fit_digest(f), deps));
         }
+        // A table is a node a check can read (ir.md 4); editing a row stales its readers.
+        for t in &tables {
+            nodes.push((
+                t.path.to_string(),
+                cadetta_ir::digest::table_digest(t),
+                Vec::new(),
+            ));
+        }
         let mut g = DigestGraph::new();
-        for c in &ir.components {
+        for c in &components {
             for p in &c.parts {
                 g.add_part(&p.path.to_string(), p);
             }
         }
-        for c in &ir.checks {
-            let reads = members
+        // Part arguments (`<slot>.<arg>`) and tables are read by path, like members.
+        let read_targets: Vec<String> = members
+            .iter()
+            .map(|m| m.path.to_string())
+            .chain(tables.iter().map(|t| t.path.to_string()))
+            .chain(components.iter().flat_map(|c| {
+                c.parts.iter().flat_map(|p| {
+                    let slot = p.path.to_string();
+                    p.args.keys().map(move |k| format!("{slot}.{k}"))
+                })
+            }))
+            .collect();
+        // A dependency's check lowered into `ir` carries no expression; its own package's
+        // lowering is the authority, so the digest matches the one its own lock attests.
+        let authored = |c: &'a Check| {
+            deps.iter()
+                .flat_map(|d| &d.checks)
+                .find(|dc| dc.path == c.path)
+                .unwrap_or(c)
+        };
+        // A require is a check-shaped node that is never suppressed (ir.md 3); IR `requires[]`
+        // are the authority, `requires` (lint paths) only marks checks the IR lacks.
+        // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+        let req_checks: Vec<Check> = ir.requires.iter().map(|r| r.as_check()).collect();
+        for c in ir.checks.iter().map(authored).chain(req_checks.iter()) {
+            let reads = read_targets
                 .iter()
-                .map(|m| m.path.to_string())
                 .filter(|m| check_reads(&c.path.to_string(), &c.expr, m))
+                .cloned()
                 .collect();
             nodes.push((c.path.to_string(), check_digest(c), reads));
         }
         // Keep only edges to known nodes: a read of a table or a dependency has no node.
         let mut known: BTreeSet<String> = nodes.iter().map(|(k, ..)| k.clone()).collect();
-        known.extend(ir.components.iter().flat_map(|c| {
+        known.extend(components.iter().flat_map(|c| {
             c.parts.iter().flat_map(|p| {
                 let slot = p.path.to_string();
                 let args: Vec<String> = p.args.keys().map(|k| format!("{slot}.{k}")).collect();
@@ -181,11 +270,11 @@ impl Universe {
             g.add_node(key, own, deps);
         }
         let mut checks = Vec::new();
-        for c in &ir.checks {
+        for (i, c) in ir.checks.iter().chain(req_checks.iter()).enumerate() {
             let key = c.path.to_string();
             let covered = g.closure(&key)?;
             let deps = g.dep_owns(&key)?;
-            let kind = if requires.contains(&key) {
+            let kind = if requires.contains(&key) || i >= ir.checks.len() {
                 ObligationKind::Require
             } else {
                 ObligationKind::Check
@@ -206,6 +295,18 @@ impl Universe {
             tracing::debug!(%key, "universe: fit obligation");
             checks.push(CheckEntry {
                 id: ObligationId::new(ObligationKind::Fit, key.clone()),
+                covered: g.closure(&key)?,
+                deps: g.dep_owns(&key)?,
+                key,
+                verdict: Verdict::Holds,
+            });
+        }
+        // A solver result is current while its inputs are (obligations.md 2.3); `solve` discharges it.
+        for s in &ir.solvers {
+            let key = s.path.to_string();
+            tracing::debug!(%key, "universe: solver obligation");
+            checks.push(CheckEntry {
+                id: ObligationId::new(ObligationKind::Solver, key.clone()),
                 covered: g.closure(&key)?,
                 deps: g.dep_owns(&key)?,
                 key,
@@ -297,18 +398,19 @@ fn judgement(e: &CheckEntry) -> Judgement {
 
 /// Every package's universe, logging and skipping a package whose graph is cyclic.
 pub fn universes(analysis: &Analysis) -> Vec<Universe> {
+    let deps: Vec<&IrProject> = analysis.dependencies.iter().map(|d| &d.ir).collect();
     analysis
         .packages
         .iter()
-        .filter_map(
-            |p| match Universe::of_with(&p.ir, &analysis.suppressions.require_paths) {
+        .filter_map(|p| {
+            match Universe::of_with_deps(&p.ir, &deps, &analysis.suppressions.require_paths) {
                 Ok(u) => Some(u),
                 Err(error) => {
                     tracing::warn!(package = %p.name, %error, "universe: digest graph unavailable");
                     None
                 }
-            },
-        )
+            }
+        })
         .collect()
 }
 
@@ -367,6 +469,37 @@ pub fn candidates(universes: &[Universe]) -> Vec<Candidate> {
     out
 }
 
+/// The `ack` candidates for `sync:FILE`: one attestable obligation per native file any adapter
+/// last saved (a `synced file=` lock record), carrying that saved digest. Attesting one
+/// discharges its open O004 in [`sync_states`] (obligations.md 2.3, 3).
+// frob:ticket 01M52TH35NQBTKBHMBH6WF08GT
+pub fn sync_candidates(lock: &Lock) -> Vec<AckCandidate> {
+    let mut by_file = std::collections::BTreeMap::new();
+    for r in lock.records() {
+        if let Record::SyncedFile(f) = r {
+            by_file
+                .entry(f.file.clone())
+                .or_insert_with(|| f.digest.clone());
+        }
+    }
+    tracing::debug!(count = by_file.len(), "universe: sync ack candidates");
+    by_file
+        .into_iter()
+        .map(|(file, digest)| AckCandidate {
+            id: ObligationId::new(ObligationKind::Sync, file),
+            subject: Subject::Attest {
+                covered: Digest(digest.as_str().to_owned()),
+                deps: Vec::new(),
+                judgement: Judgement {
+                    verdict: Verdict::Holds,
+                    margin: NO_MARGIN.to_owned(),
+                },
+                citations: Vec::new(),
+            },
+        })
+        .collect()
+}
+
 /// The `ack` candidates: one sign-off per IR check.
 pub fn ack_candidates(universes: &[Universe]) -> Vec<AckCandidate> {
     universes
@@ -420,6 +553,7 @@ fn emitted_values(
     let table = UnitTable::builtin();
     let precision = adapter.precision.map_or(DEFAULT_PRECISION, u32::from);
     let cfg_point = config_point(pkg.config.emit.point);
+    let active = active_alternates(ir);
     for member in ir.components.iter().flat_map(|c| &c.members) {
         let canonical = member.path.to_string();
         let Some(value) = &member.value else { continue };
@@ -433,7 +567,7 @@ fn emitted_values(
         let point = resolve_point(&[attr_point(member)], cfg_point);
         for loc in locators
             .iter()
-            .filter(|l| l.for_alternate.is_none() && l.mode != LocatorMode::Ref)
+            .filter(|l| locator_active(l, &active) && l.mode != LocatorMode::Ref)
         {
             let unit = native_unit(adapter, loc);
             let Ok(Some(written)) =
@@ -460,17 +594,23 @@ fn emitted_values(
     out
 }
 
-/// The stale `sync` obligations (obligations.md 2.3, O004): for every native file an adapter
-/// last saved (`synced file=` record), the obligation `sync:FILE` is stale when a parameter the
-/// adapter binds now emits a value that differs from its `synced` lock value. The lock keeps
-/// values per adapter, so every saved file of a drifted adapter is reported.
+/// The O004 `sync` obligations (obligations.md 2.3): for every native file an adapter last
+/// saved (`synced file=` record), `sync:FILE` is stale when a parameter the adapter binds now
+/// emits a value that differs from its `synced` lock value (the lock keeps values per adapter,
+/// so every saved file of a drifted adapter is reported). A file synced only by built-in
+/// adapters, which lack `drive` (`json`, `csv`, `sw-equations`), is otherwise open,
+/// "unverifiable without drive" (adapters.md 2); an external adapter that synced the same
+/// file discharges it, and so does a role attestation of `sync:FILE` in the lock.
 // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
+// frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
 pub fn sync_states(
     project: &Project,
     analysis: &Analysis,
     lock: &Lock,
 ) -> Vec<(ObligationId, ObligationState)> {
-    let mut out = Vec::new();
+    let mut out: Vec<(ObligationId, ObligationState)> = Vec::new();
+    let mut open: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
+    let mut driven: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
     for package in &analysis.packages {
         let Some(pkg) = project.packages.iter().find(|p| {
             p.config.package.as_ref().and_then(|c| c.name.as_deref()) == Some(package.name.as_str())
@@ -478,6 +618,18 @@ pub fn sync_states(
             continue;
         };
         for adapter in &pkg.config.adapters {
+            let files: Vec<&str> = lock
+                .records()
+                .filter_map(|r| match r {
+                    Record::SyncedFile(f) if f.adapter == adapter.id() => Some(f.file.as_str()),
+                    _ => None,
+                })
+                .collect();
+            if adapter.command.is_some() {
+                driven.extend(files.iter().map(|f| (*f).to_owned()));
+            } else {
+                open.extend(files.iter().map(|f| (*f).to_owned()));
+            }
             let synced: Vec<_> = lock
                 .records()
                 .filter_map(|r| match r {
@@ -497,17 +649,120 @@ pub fn sync_states(
             if !drifted {
                 continue;
             }
-            for r in lock.records() {
-                if let Record::SyncedFile(f) = r
-                    && f.adapter == adapter.id()
-                {
-                    out.push((
-                        ObligationId::new(ObligationKind::Sync, f.file.clone()),
-                        ObligationState::Stale,
-                    ));
-                }
+            for file in files {
+                out.push((
+                    ObligationId::new(ObligationKind::Sync, file.to_owned()),
+                    ObligationState::Stale,
+                ));
             }
         }
+    }
+    for file in open {
+        let id = ObligationId::new(ObligationKind::Sync, file.clone());
+        let attested = lock
+            .records()
+            .any(|r| matches!(r, Record::Attest(a) if a.id == id));
+        if driven.contains(&file) || attested || out.iter().any(|(i, _)| *i == id) {
+            continue;
+        }
+        tracing::debug!(%file, "universe: sync open, unverifiable without drive");
+        out.push((id, ObligationState::Open));
+    }
+    out
+}
+
+/// Each waiver whose glob matches at least one node, with the combined closure digest of its
+/// targets (the digest a review of it records).
+// frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+fn reviewed_waivers<'a>(
+    analysis: &'a Analysis,
+    universes: &[Universe],
+) -> Vec<(&'a cadetta_ir::entities::Waiver, Digest)> {
+    use cadetta_obligations::staleness::covered_digest;
+    let mut closures = std::collections::BTreeMap::new();
+    for u in universes {
+        if let Ok(c) = u.closures() {
+            closures.extend(c);
+        }
+    }
+    let mut out = Vec::new();
+    for w in &analysis.suppressions.waivers {
+        let Ok(glob) = cadetta_obligations::selector::Glob::new(&w.glob) else {
+            tracing::warn!(glob = %w.glob, "universe: waiver glob invalid");
+            continue;
+        };
+        let targets: Vec<Digest> = closures
+            .iter()
+            .filter(|(p, _)| glob.matches(p))
+            .map(|(_, d)| d.clone())
+            .collect();
+        if targets.is_empty() {
+            continue;
+        }
+        out.push((w, covered_digest(&targets)));
+    }
+    out
+}
+
+/// The `ack` candidates for waivers: one reviewable `waiver:GLOB` per waiver with targets,
+/// carrying the digest a review records (obligations.md 3).
+// frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+pub fn waiver_candidates(analysis: &Analysis, universes: &[Universe]) -> Vec<AckCandidate> {
+    reviewed_waivers(analysis, universes)
+        .into_iter()
+        .map(|(w, digest)| AckCandidate {
+            id: ObligationId::new(ObligationKind::Waiver, w.glob.clone()),
+            subject: Subject::Waiver {
+                code: w.code.clone(),
+                alt: w.for_alt.as_ref().and_then(|a| {
+                    a.short()
+                        .split_once('=')
+                        .map(|(slot, alternate)| AltBinding {
+                            slot: slot.to_owned(),
+                            alternate: alternate.to_owned(),
+                        })
+                }),
+                digest,
+            },
+        })
+        .collect()
+}
+
+/// The unreviewed or changed `waiver` obligations (obligations.md 2.3): `waiver:GLOB` is open
+/// until acked, and stale when the combined closure digest of its targets differs from the lock
+/// record. A waiver with no matching target or an unchanged review is not listed.
+// frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+pub fn waiver_states(
+    analysis: &Analysis,
+    universes: &[Universe],
+    lock: &Lock,
+) -> Vec<(ObligationId, ObligationState)> {
+    let mut out = Vec::new();
+    for (w, current) in reviewed_waivers(analysis, universes) {
+        let alt = w.for_alt.as_ref().map(|a| a.short());
+        let recorded = lock.records().find_map(|r| match r {
+            Record::Waiver(l)
+                if l.code == w.code
+                    && l.glob == w.glob
+                    && l.alt
+                        .as_ref()
+                        .map(|a| format!("{}={}", a.slot, a.alternate))
+                        == alt =>
+            {
+                Some(l.digest.as_str().to_owned())
+            }
+            _ => None,
+        });
+        let state = match recorded {
+            None => ObligationState::Open,
+            Some(d) if d == current.0 => continue,
+            Some(_) => ObligationState::Stale,
+        };
+        tracing::debug!(glob = %w.glob, code = %w.code, ?state, "universe: waiver obligation");
+        out.push((
+            ObligationId::new(ObligationKind::Waiver, w.glob.clone()),
+            state,
+        ));
     }
     out
 }
@@ -530,6 +785,10 @@ mod tests {
 
     impl Dir {
         fn new() -> Self {
+            Self::with_src(AXLE)
+        }
+
+        fn with_src(src: &str) -> Self {
             static N: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
             let n = N.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
             let p = std::env::temp_dir().join(format!("cadetta-uni-{}-{n}", std::process::id()));
@@ -539,7 +798,7 @@ mod tests {
                 format!("[package]\nname = \"acme.axle\"\nversion = \"0.1.0\"\n{ROLES}"),
             )
             .unwrap();
-            std::fs::write(p.join("src/lib.cdt"), AXLE).unwrap();
+            std::fs::write(p.join("src/lib.cdt"), src).unwrap();
             Self(p)
         }
     }
@@ -612,6 +871,126 @@ mod tests {
                 .any(|r| r["id"] == CHECK && r["state"] == "open"),
             "{v}"
         );
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::waiver_states
+    #[test]
+    fn obligations_lists_an_unreviewed_waiver() {
+        let src = format!("{AXLE}waive C001 on acme.axle::Axle.bore {{ because \"x\" }}\n");
+        let v = run(obligations::run_obligations, &Dir::with_src(&src), &[]);
+        let rows = v["obligations"].as_array().unwrap();
+        assert!(
+            rows.iter()
+                .any(|r| r["id"] == "waiver:acme.axle::Axle.bore" && r["state"] == "open"),
+            "{v}"
+        );
+    }
+
+    // frob:ticket 01M4ZJAYVZYZTP7ASF0NJ1S30Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::waiver_candidates
+    #[test]
+    fn ack_reviews_a_waiver_and_it_leaves_the_obligation_list() {
+        let src = format!("{AXLE}waive C001 on acme.axle::Axle.bore {{ because \"x\" }}\n");
+        let dir = Dir::with_src(&src);
+        let toml = std::fs::read_to_string(dir.0.join("cadetta.toml")).unwrap();
+        std::fs::write(
+            dir.0.join("cadetta.toml"),
+            toml.replace(
+                "check:acme.axle::**\"",
+                "check:acme.axle::**\", \"waiver:acme.axle::**\"",
+            ),
+        )
+        .unwrap();
+        run(
+            ack::run_ack,
+            &dir,
+            &[
+                "waiver:acme.axle::Axle.bore",
+                "--role",
+                "review",
+                "--as",
+                "ana@x",
+            ],
+        );
+        let lock = std::fs::read_to_string(dir.0.join("cadetta.lock")).unwrap();
+        assert!(
+            lock.contains("waiver C001 acme.axle::Axle.bore digest="),
+            "{lock}"
+        );
+        let v = run(obligations::run_obligations, &dir, &[]);
+        assert!(
+            !v["obligations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["id"] == "waiver:acme.axle::Axle.bore"),
+            "{v}"
+        );
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn obligations_lists_a_solver_with_its_closure() {
+        use cadetta_ir::model::{Flavour, PackageId, Solver};
+        use cadetta_ir::path::{Path, PathContext};
+        let mut ir = IrProject::new(
+            Flavour::Design,
+            PackageId {
+                name: "a".into(),
+                version: "0.1.0".into(),
+            },
+        );
+        ir.solvers.push(Solver {
+            path: Path::parse("a::M.sz", PathContext::General).unwrap(),
+            script: "sz.py".into(),
+            citation: None,
+            inputs: Default::default(),
+            outputs: Default::default(),
+            deps: Vec::new(),
+            result_digest: None,
+            stale: false,
+        });
+        let u = super::Universe::of(&ir).unwrap();
+        let ids: Vec<String> = super::candidates(&[u])
+            .iter()
+            .map(|c| c.id.to_string())
+            .collect();
+        assert!(ids.iter().any(|i| i.starts_with("solver:")), "{ids:?}");
+    }
+
+    // frob:ticket 01M4Y9Z3KDPFRNGQR1KTNGHA7Q
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn editing_a_table_a_check_reads_changes_the_check_closure() {
+        use cadetta_ir::entities::{Cell, Table, TableCol, TableRow};
+        use cadetta_ir::variant_name::ComponentPath;
+        let covered = |row: &str| {
+            let mut ir = ir_with_requires();
+            ir.checks.truncate(1);
+            ir.checks[0].expr = "lookup(a::T, x)".into();
+            ir.tables.push(Table {
+                path: ComponentPath {
+                    package: "a".into(),
+                    modules: Vec::new(),
+                    item: "T".into(),
+                },
+                key: TableCol {
+                    name: "k".into(),
+                    type_name: "Key".into(),
+                },
+                cols: Vec::new(),
+                rows: vec![TableRow {
+                    key: Cell::Variant(row.into()),
+                    cells: Vec::new(),
+                }],
+                citation: None,
+            });
+            super::Universe::of(&ir).unwrap().checks[0].covered.clone()
+        };
+        assert_ne!(covered("r1"), covered("r2"));
+        assert_eq!(covered("r1"), covered("r1"));
     }
 
     // frob:tests crates/cadetta-cli/src/cmd/ack.rs::run_ack
@@ -807,8 +1186,66 @@ mod tests {
     // frob:ticket 01M4V1HYS6PKK0F82XMJET4TC0
     // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
     #[test]
-    fn unchanged_emitted_value_raises_no_o004() {
+    fn unchanged_emitted_value_is_not_stale() {
         let (_, v) = check_json(&synced_project("6mm", ""), &[]);
+        let d = o004(&v).unwrap_or_else(|| panic!("{v}"));
+        assert!(!d["message"].as_str().unwrap().contains("stale"), "{v}");
+    }
+
+    // frob:ticket 01M4ZSTX34B5RTHS2Y5TND4WKS
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn nondrive_adapter_leaves_o004_open_unverifiable_without_drive() {
+        let (code, v) = check_json(&synced_project("6mm", ""), &[]);
+        let d = o004(&v).unwrap_or_else(|| panic!("{v}"));
+        assert_eq!(d["path"], "part.FCStd", "{v}");
+        assert_eq!(d["severity"], "info", "{v}");
+        assert!(
+            d["message"]
+                .as_str()
+                .unwrap()
+                .contains("unverifiable without drive"),
+            "{v}"
+        );
+        assert_eq!(code, 0, "{v}");
+    }
+
+    // sync_candidates offers each saved native file with its saved digest.
+    // frob:ticket 01M52TH35NQBTKBHMBH6WF08GT
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_candidates
+    #[test]
+    fn sync_candidates_offer_each_synced_file() {
+        use cadetta_obligations::lock::Lock;
+        let dir = synced_project("6mm", "");
+        let lock = Lock::load(&dir.0.join("cadetta.lock")).unwrap();
+        let c = super::sync_candidates(&lock);
+        assert_eq!(c.len(), 1);
+        assert_eq!(c[0].id.to_string(), "sync:part.FCStd");
+    }
+
+    // an attest record on sync:FILE discharges the open O004.
+    // frob:ticket 01M4YW6FFKS9DAYE3DAFEZDG87
+    // frob:tests crates/cadetta-cli/src/universe.rs::sync_states
+    #[test]
+    fn attest_record_on_sync_file_discharges_o004() {
+        use cadetta_obligations::graph::{ObligationId, Verdict};
+        use cadetta_obligations::lock::{Attest, Date, Hex, Lock, Record};
+        let dir = synced_project("6mm", "");
+        let path = dir.0.join("cadetta.lock");
+        let mut lock = Lock::load(&path).unwrap();
+        lock.insert(Record::Attest(Attest {
+            id: ObligationId::parse("sync:part.FCStd").unwrap(),
+            role: "cad_review".into(),
+            by: "ana@acme.example".into(),
+            at: Date::new("2026-10-16").unwrap(),
+            digest: Hex::new("ab12").unwrap(),
+            verdict: Verdict::Holds,
+            margin: String::new(),
+            deps: vec![],
+            reason: "opened in CAD".into(),
+        }));
+        lock.save(&path).unwrap();
+        let (_, v) = check_json(&dir, &[]);
         assert!(o004(&v).is_none(), "{v}");
     }
 
@@ -831,6 +1268,7 @@ mod tests {
     // frob:ticket 01M4V1HYN215BC5W2R6Y0NVZAF
     // frob:tests crates/cadetta-cli/src/universe.rs::candidates
     // frob:tests crates/cadetta-cli/src/universe.rs::ack_candidates
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.explain
     #[test]
     fn fit_obligation_is_listed_signed_off_and_stales_on_edit() {
         let dir = Dir::new();
@@ -897,5 +1335,19 @@ mod tests {
         assert_eq!(ids, vec!["require:a::M.ok"]);
         let plain = super::Universe::of(&ir).unwrap();
         assert_eq!(plain.checks[0].id.to_string(), "check:a::M.ok");
+    }
+
+    // frob:ticket 01M4YR871RH1TPH8854X50QNG4
+    // frob:tests crates/cadetta-cli/src/universe.rs::Universe.of_with
+    #[test]
+    fn ir_requires_become_require_obligations() {
+        let mut ir = ir_with_requires();
+        let moved = ir.checks.remove(0);
+        let mut r = cadetta_ir::entities::Require::new(moved.path.clone(), "x");
+        r.verdicts = moved.verdicts.clone();
+        ir.requires.push(r);
+        let u = super::Universe::of(&ir).unwrap();
+        let ids: Vec<String> = u.checks.iter().map(|c| c.id.to_string()).collect();
+        assert_eq!(ids, vec!["check:a::M.bad", "require:a::M.ok"]);
     }
 }

@@ -1,0 +1,28 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T01:12:58Z"
+digest = "d6e7894f8e044df6b391ca157beed8655e7ea4a7b3d4520b9596543274fe3030"
+exit_code = 0
+inline = '''
+    Blocking waiting for file lock on build directory
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 03s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7423fba8-59ef-4793-87bf-6b3fb4757e33 with nextest profile: default
+    Starting 3 tests across 1 binary (14 binaries skipped)
+        PASS [   0.018s] cadetta-syntax::std_fasteners_inch every_thread_has_a_row_in_each_table
+        PASS [   0.021s] cadetta-syntax::std_fasteners_inch std_version_is_0_2_0
+        PASS [   0.023s] cadetta-syntax::std_fasteners_inch inch_module_parses_and_tables_are_cited
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.026s] 3 tests run: 3 passed, 0 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-syntax -E 'binary(std_fasteners_inch)'"
+size = 870
+status = "measured"
+test_count = 3
+tests_digest = "723b9dda24ef657dcf74758f03c4caa7c5538d870b28341e38d972dd7533ba81"
+at = "2026-10-16T01:12:58Z"
+actor = "lognd"
+rev = 1

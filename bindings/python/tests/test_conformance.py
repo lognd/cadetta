@@ -203,7 +203,8 @@ def _binding_call(case: Case, project: Project, tokens: list[str]) -> Any:
         return project.emit(names)
     if head == "solve":
         module = _flag(args, "--module")
-        if module is not None:
+        if module is not None or "--format" in args:
+            # Option values (e.g. `--format text`) are not solver names; pass raw.
             return project._run(["solve", *args], global_format=False)
         names = [a for a in args if not a.startswith("--")]
         return project.solve(names or None, variants="--variants" in args)
@@ -275,7 +276,10 @@ def _replay(case: Case, scratch: Path) -> Replay:
         k: v.replace(str(c_root), "<ROOT>") for k, v in _snapshot(c_root).items()
     }
     if rep.binding[0] == "ok" and head == "check":
-        rep.diagnostics = rep.binding[1].get("diagnostics", [])
+        # A waived diagnostic is not produced (as in the Rust runner).
+        rep.diagnostics = [
+            d for d in rep.binding[1].get("diagnostics", []) if not d.get("waived")
+        ]
     return rep
 
 
@@ -318,10 +322,21 @@ def _compare(
 
 
 @pytest.fixture(scope="module")
-def replays(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Case], Replay]:
-    """Replay every case once, in parallel, and look results up by case."""
+def replays(
+    tmp_path_factory: pytest.TempPathFactory, request: pytest.FixtureRequest
+) -> Callable[[Case], Replay]:
+    """Replay only the cases selected this session, once, in parallel.
+
+    Replaying the whole corpus eagerly made a single `-k` selection cost minutes.
+    """
     scratch = tmp_path_factory.mktemp("conformance")
-    _log.info("replaying %d corpus cases", len(CASES))
+    selected = {
+        item.callspec.params["case"].id
+        for item in request.session.items
+        if hasattr(item, "callspec") and "case" in item.callspec.params
+    }
+    todo = [c for c in CASES if c.id in selected]
+    _log.info("replaying %d of %d corpus cases", len(todo), len(CASES))
 
     def one(case: Case) -> Replay | BaseException:
         try:
@@ -331,7 +346,7 @@ def replays(tmp_path_factory: pytest.TempPathFactory) -> Callable[[Case], Replay
             return exc
 
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:
-        done = dict(zip((c.id for c in CASES), pool.map(one, CASES), strict=True))
+        done = dict(zip((c.id for c in todo), pool.map(one, todo), strict=True))
 
     def lookup(case: Case) -> Replay:
         got = done[case.id]

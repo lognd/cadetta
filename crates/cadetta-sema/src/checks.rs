@@ -72,6 +72,9 @@ struct CheckDef<'p> {
     inst: Option<Rc<InstInfo>>,
     /// The `#[when(cond)]` gate: the check exists only while it holds.
     when: Option<&'p Expr>,
+    /// For a check declared inside a `solver`: the solver's path and its `out` names, which the
+    /// condition reads bare (solvers.md 5).
+    solver: Option<(CanonPath, Vec<String>)>,
 }
 
 /// A bound member, indexed by its component and name.
@@ -121,6 +124,7 @@ impl<'p> CheckIndex<'p> {
                     span: m.span,
                     inst: None,
                     when: None,
+                    solver: None,
                 }),
                 MemberKind::Require(r) => self.checks.push(CheckDef {
                     path: at(&r.name.name),
@@ -133,7 +137,10 @@ impl<'p> CheckIndex<'p> {
                     span: m.span,
                     inst: None,
                     when: None,
+                    solver: None,
                 }),
+                MemberKind::Solver(_) if parameterized => {}
+                MemberKind::Solver(sv) => self.add_solver_checks(&ctx, &at(&sv.name.name), sv),
                 MemberKind::Bound(b) => {
                     let name = match &b.kind {
                         BoundKind::Le { name, .. }
@@ -151,6 +158,45 @@ impl<'p> CheckIndex<'p> {
                 }
                 _ => {}
             }
+        }
+    }
+}
+
+impl<'p> CheckIndex<'p> {
+    /// Indexes the checks a solver declares on its own outputs (solvers.md 5).
+    ///
+    /// Each is a plain check at `Comp.solver.name` whose condition reads the solver's `out`
+    /// names bare.
+    // frob:ticket 01M50RKKNFVN2SJJGRAMGXDNYP
+    fn add_solver_checks(&mut self, ctx: &Ctx, solver: &CanonPath, sv: &'p ast::Solver) {
+        let outs: Vec<String> = sv
+            .members
+            .iter()
+            .filter_map(|m| match &m.kind {
+                ast::SolverMemberKind::Out { name, .. } => Some(name.name.clone()),
+                _ => None,
+            })
+            .collect();
+        for m in &sv.members {
+            let ast::SolverMemberKind::Check(k) = &m.kind else {
+                continue;
+            };
+            let mut path = solver.clone();
+            path.members.push(MemberSeg::Name(k.name.name.clone()));
+            trace!(check = %path, "checks: solver output check indexed");
+            self.checks.push(CheckDef {
+                path,
+                each: k.each.as_ref(),
+                cond: &k.cond,
+                message: k.message.clone(),
+                citation: None,
+                obligation: false,
+                ctx: ctx.clone(),
+                span: m.span,
+                inst: None,
+                when: None,
+                solver: Some((solver.clone(), outs.clone())),
+            });
         }
     }
 }
@@ -209,6 +255,49 @@ fn is_named(callee: &Expr, name: &str) -> bool {
     matches!(&strip(callee).kind, ExprKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == name)
 }
 
+/// One side of a check comparison: a numeric operand or an enum variant.
+enum CmpOperand {
+    /// A quantity or outer-bound interval.
+    Num(Operand),
+    /// An enum variant (enum path, variant name).
+    Variant((CanonPath, String)),
+}
+
+/// Decides `==`/`!=` between two enum variants; ordering enums is an error.
+// frob:ticket 01M4YSGF7GVFRKQPFPQ34KDRPA
+fn variant_pair(
+    op: AstCmp,
+    a: &(CanonPath, String),
+    b: &(CanonPath, String),
+    span: Span,
+) -> R<Outcome> {
+    if a.0 != b.0 {
+        return Err(diag(
+            "EVAL",
+            span,
+            "variants of different enums are not comparable",
+        ));
+    }
+    let same = a.1 == b.1;
+    let holds = match op {
+        AstCmp::Eq => same,
+        AstCmp::Ne => !same,
+        _ => {
+            return Err(diag(
+                "EVAL",
+                span,
+                "enum variants compare with `==` or `!=` only",
+            ));
+        }
+    };
+    debug!(variant = %a.1, other = %b.1, holds, "check: enum variant comparison");
+    Ok(Outcome::of(if holds {
+        Verdict::Holds
+    } else {
+        Verdict::Violates
+    }))
+}
+
 fn units_op(op: AstCmp) -> CmpOp {
     match op {
         AstCmp::Eq => CmpOp::Eq,
@@ -253,6 +342,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         span: m.span,
                         inst: Some(info.clone()),
                         when,
+                        solver: None,
                     },
                     MemberKind::Require(r) => CheckDef {
                         path: at(&r.name.name),
@@ -265,6 +355,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                         span: m.span,
                         inst: Some(info.clone()),
                         when,
+                        solver: None,
                     },
                     _ => continue,
                 };
@@ -287,8 +378,20 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             };
             let start = self.diagnostics.len();
             let saved = std::mem::replace(&mut self.cur_inst, def.inst.clone());
+            let unsolved_before = self.unsolved_reads;
             let outcome = match self.gate(&mut sc, def) {
-                Ok(true) => self.run_check(&mut sc, def),
+                Ok(true) => match self.bind_solver_outputs(&mut sc, def) {
+                    Ok(true) => self.run_check(&mut sc, def),
+                    Ok(false) => {
+                        debug!(check = %def.path, "checks: solver output unrecorded, check undecided");
+                        Ok(vec![self.record(
+                            def,
+                            None,
+                            Outcome::of(Verdict::Undecided),
+                        )])
+                    }
+                    Err(f) => Err(f),
+                },
                 Ok(false) => {
                     debug!(check = %def.path, "checks: `when` is false, check absent");
                     Ok(Vec::new())
@@ -300,6 +403,12 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             self.stamp_since(start, &ModuleKey::of_ctx(&def.ctx));
             match outcome {
                 Ok(rs) => out.extend(rs),
+                Err(Fail::Silent) if self.unsolved_reads > unsolved_before => {
+                    // The condition read an output no result records: undecided, not absent.
+                    debug!(check = %def.path, "checks: reads an unsolved solver output, undecided");
+                    let r = self.record(def, None, Outcome::of(Verdict::Undecided));
+                    out.push(r);
+                }
                 Err(Fail::Silent) => {}
                 Err(Fail::Diag(mut d)) => {
                     if let Some(i) = &def.inst {
@@ -315,6 +424,25 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         debug!(checks = out.len(), "checks: evaluation finished");
         out
+    }
+
+    /// Binds a solver check's `out` names as locals; false when any has no recorded value.
+    fn bind_solver_outputs(&mut self, sc: &mut Scope, def: &CheckDef<'p>) -> R<bool> {
+        let Some((solver, outs)) = &def.solver else {
+            return Ok(true);
+        };
+        for name in outs {
+            let mut key = solver.clone();
+            key.members.push(MemberSeg::Name(name.clone()));
+            match self.done.get(&key) {
+                Some(Some(ev)) => sc.push(name, ev.value.clone()),
+                _ => {
+                    trace!(%key, "checks: solver output has no recorded value");
+                    return Ok(false);
+                }
+            }
+        }
+        Ok(true)
     }
 
     /// True when the check's `#[when]` gate (if any) holds.
@@ -354,13 +482,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match &strip(source).kind {
             ExprKind::Array(items) => items.iter().map(|e| self.eval(sc, e)).collect(),
             ExprKind::Path(_) | ExprKind::Field(..) => {
-                if let Ok(Resolved::Part { .. }) = self.resolver.resolve_ref(&sc.ctx, source, None)
-                {
-                    return Err(diag(
-                        "EVAL",
-                        source.span,
-                        "ranging over part instances is evaluated by the parts ticket",
-                    ));
+                if let Some(values) = self.part_array_values(sc, source) {
+                    return Ok(values);
                 }
                 Err(diag(
                     "EVAL",
@@ -444,18 +567,36 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 Ok(join(a, b, if *op == BinOp::And { and } else { or }))
             }
             ExprKind::Compare { first, rest } => {
-                let mut left = self.operand(sc, first)?;
+                let before = self.float_reads;
+                let mut left = self.cmp_operand(sc, first)?;
                 let mut acc: Option<Outcome> = None;
                 for (op, rhs) in rest {
-                    let right = self.operand(sc, rhs)?;
-                    let o = self.compare_pair(units_op(*op), &left, &right, e.span)?;
+                    let right = self.cmp_operand(sc, rhs)?;
+                    let o = match (&left, &right) {
+                        (CmpOperand::Num(a), CmpOperand::Num(b)) => {
+                            self.compare_pair(units_op(*op), a, b, e.span)?
+                        }
+                        (CmpOperand::Variant(a), CmpOperand::Variant(b)) => {
+                            variant_pair(*op, a, b, e.span)?
+                        }
+                        _ => {
+                            return Err(diag(
+                                "EVAL",
+                                e.span,
+                                "both sides of a comparison must be quantities or variants of one enum",
+                            ));
+                        }
+                    };
                     acc = Some(match acc {
                         None => o,
                         Some(prev) => join(prev, o, and),
                     });
                     left = right;
                 }
-                acc.ok_or_else(|| diag("EVAL", e.span, "a comparison needs an operator"))
+                let out =
+                    acc.ok_or_else(|| diag("EVAL", e.span, "a comparison needs an operator"))?;
+                self.note_float_read(before, out.verdict, e.span);
+                Ok(out)
             }
             ExprKind::Satisfies(x, p) => self.satisfies(sc, x, p, e.span),
             // frob:ticket 01M4VS6WG57MAD0T8GK956NGG9
@@ -483,11 +624,22 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
     }
 
-    /// Evaluates a comparison operand; an inexact value becomes an outer-bound interval so the
-    /// comparison is undecided near the boundary (quantities.md 5.8).
+    /// Evaluates a comparison operand that may be a quantity or an enum variant.
+    // frob:ticket 01M4YSGF7GVFRKQPFPQ34KDRPA
+    fn cmp_operand(&mut self, sc: &mut Scope, e: &Expr) -> R<CmpOperand> {
+        let v = self.eval(sc, e)?;
+        if let Val::Variant { enum_path, variant } = v {
+            trace!(%variant, "check: enum variant comparison operand");
+            return Ok(CmpOperand::Variant((enum_path, variant)));
+        }
+        self.val_operand(v, e.span).map(CmpOperand::Num)
+    }
+
+    /// Converts an evaluated value to a comparison operand; an inexact value becomes an
+    /// outer-bound interval so the comparison is undecided near the boundary (quantities.md 5.8).
     // frob:ticket 01M4V1HEA425D4RGFBSG5NT80Z
-    fn operand(&mut self, sc: &mut Scope, e: &Expr) -> R<Operand> {
-        match self.eval(sc, e)? {
+    fn val_operand(&mut self, v: Val, span: Span) -> R<Operand> {
+        match v {
             Val::Quantity(q) => Ok(Operand::Form(q.form)),
             Val::Inexact(i) => {
                 debug!(lo = i.lo, hi = i.hi, "check: inexact comparison operand");
@@ -500,7 +652,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                     },
                 ))
             }
-            _ => Err(diag("EVAL", e.span, "a quantity is required here")),
+            _ => Err(diag("EVAL", span, "a quantity is required here")),
         }
     }
 
@@ -527,6 +679,28 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         })
     }
 
+    /// Emits G005 when an undecided comparison read through a floated placement edge since
+    /// `before` (geometry.md 5.2).
+    // frob:ticket 01M4SWG70T71SNTZ2TWXZD1Y50
+    fn note_float_read(&mut self, before: u32, verdict: Verdict, span: Span) {
+        if verdict != Verdict::Undecided || self.float_reads == before {
+            return;
+        }
+        warn!(
+            ?span,
+            "check: G005 check is tighter than a bolt float it reads through"
+        );
+        self.diagnostics.push(EvalDiagnostic {
+            module: None,
+            code: "G005",
+            severity: Severity::Warning,
+            message: "G005: this check is tighter than the float of a bolted joint it reads \
+                      through; fix with `locating = true` and a fit/dowel, or loosen the check"
+                .to_owned(),
+            span,
+        });
+    }
+
     fn satisfies(&mut self, sc: &mut Scope, x: &Expr, p: &Expr, span: Span) -> R<Outcome> {
         let Some(def) = self.find_bound(sc, p, true) else {
             return Err(diag(
@@ -536,6 +710,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             ));
         };
         let bound = self.build_bound(&def, p.span)?;
+        let before = self.float_reads;
         let x = self.quant(sc, x)?;
         let mut acc = Outcome::of(Verdict::Holds);
         for (op, limit) in [(CmpOp::Ge, bound.min()), (CmpOp::Le, bound.max())] {
@@ -550,6 +725,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 acc = join(acc, o, and);
             }
         }
+        self.note_float_read(before, acc.verdict, span);
         Ok(acc)
     }
 
@@ -565,6 +741,15 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             }
             ExprKind::Field(base, id) => match self.resolver.resolve_ref(&sc.ctx, base, None) {
                 Ok(Resolved::Item { path, .. }) => (path, id.name.clone()),
+                // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+                Ok(Resolved::Part { path }) => (
+                    super::geom::definition_path(self.resolver, &path)?,
+                    id.name.clone(),
+                ),
+                Ok(Resolved::Local(n)) => match sc.locals.iter().rev().find(|(l, _)| *l == n) {
+                    Some((_, Val::Component(path))) => (path.clone(), id.name.clone()),
+                    _ => return None,
+                },
                 _ => return None,
             },
             _ => return None,
@@ -641,6 +826,26 @@ mod tests {
         (v, codes, ev)
     }
 
+    // frob:tests enum_compare_on_a_table_cell_decides_equality
+    #[test]
+    fn enum_compare_on_a_table_cell_decides_equality() {
+        let (v, codes, _) = verdicts(
+            "enum Th { A, B }\ntable T { key t: Th\n cols cls: Th\n Th::A => Th::A\n Th::B => Th::A }\n\
+             model M {\n  check hit: T[Th::B].cls == Th::A\n  check miss: T[Th::B].cls == Th::B\n  \
+             check ne: T[Th::B].cls != Th::B\n}\n",
+        );
+        assert_eq!(v, vec![Verdict::Holds, Verdict::Violates, Verdict::Holds]);
+        assert_eq!(codes, vec!["C001"]);
+    }
+
+    // frob:tests enum_ordering_is_an_eval_error
+    #[test]
+    fn enum_ordering_is_an_eval_error() {
+        let (v, codes, _) = verdicts("enum Th { A, B }\nmodel M {\n  check o: Th::A < Th::B\n}\n");
+        assert!(v.is_empty(), "{v:?}");
+        assert_eq!(codes, vec!["EVAL"]);
+    }
+
     // frob:tests check_false_everywhere_violates_c001
     #[test]
     fn check_false_everywhere_violates_c001() {
@@ -681,6 +886,43 @@ mod tests {
         );
         assert_eq!(v, vec![Verdict::Holds, Verdict::Violates, Verdict::Holds]);
         assert_eq!(codes, vec!["C001"]);
+    }
+
+    // frob:ticket 01M51ZFG091S5HEJV88NKXYVWC
+    // frob:tests crates/cadetta-sema/src/geom.rs::part_array_values kind=unit
+    #[test]
+    fn check_ranges_over_part_array_instances_and_reads_members() {
+        let (v, codes, _) = verdicts(
+            "model Wheel {\n  dia = 10mm\n}\n\
+             model Rover {\n  part w[2]: Wheel\n  \
+             check small for b in w: b.dia < 20mm\n  check big for b in w: b.dia > 20mm\n}\n",
+        );
+        assert_eq!(
+            v,
+            vec![
+                Verdict::Holds,
+                Verdict::Holds,
+                Verdict::Violates,
+                Verdict::Violates
+            ]
+        );
+        assert_eq!(codes, vec!["C001", "C001"]);
+    }
+
+    // frob:ticket 01M51C7447BXNMGJXBFBSPG4VY
+    // frob:tests crates/cadetta-sema/src/geom.rs::part_count_checked kind=unit
+    #[test]
+    fn invalid_part_counts_are_diagnosed() {
+        let codes_of = |count: &str| {
+            let src = format!(
+                "model Leaf {{\n  m = 2kg\n}}\npub assembly Top {{\n  part w[{count}]: Leaf\n}}\n"
+            );
+            verdicts(&src).1
+        };
+        assert_eq!(codes_of("3mm"), vec!["EVAL"]);
+        assert_eq!(codes_of("-1"), vec!["EVAL"]);
+        assert_eq!(codes_of("2.5"), vec!["Q009"]);
+        assert!(codes_of("2").is_empty());
     }
 
     // frob:tests require_is_a_check_with_citation_and_obligation

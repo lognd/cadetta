@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "note"
+body = "Design: the evaluator (point.rs position_val), geometry zone.rs disc arithmetic and IR lowering (.u/.v pairs, Point.position) already landed under sibling tickets; this ticket adds conformance fixtures for the five acceptance criteria (geometry/position-*, quantities/position-projection) and binds evidence to the existing unit tests. No spec change needed: geometry.md 3.1 already states the decisions (disc per point, E006 cases, exact sum of radii, Euclidean norm after off-90deg rotation)."
+at = "2026-10-16T08:03:22Z"
+actor = "lognd"
+rev = 1

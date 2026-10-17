@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**", "docs/spec/solvers.md", "tests/conformance/obligations/s003-solver-stale.expect.json", "crates/cadetta-sema/src/eval.rs"]
+new = ["crates/cadetta-cli/src/**,crates/cadetta-cli/tests/**,tests/conformance/known-gaps.toml", "crates/cadetta-sema/src/checks.rs", "crates/cadetta-cli/tests/**", "docs/spec/solvers.md", "tests/conformance/obligations/s003-solver-stale.expect.json", "crates/cadetta-sema/src/eval.rs", "crates/cadetta-cli/src/pipeline.rs"]
+at = "2026-10-15T23:21:58Z"
+actor = "lognd"
+rev = 1

@@ -1,0 +1,65 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-16T00:31:22Z"
+digest = "1a5dc1cdbae122b5b629af31fb4239befc1b0545525d29ea2fae84b31af39b6a"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID d7f82f3d-981e-4d94-b3b6-da1a546e2207 with nextest profile: default
+    Starting 34 tests across 42 binaries (557 tests skipped)
+        PASS [   0.303s] cadetta cmd::emit::tests::bind_scope_emits_every_in_scope_path_and_writes_no_bindings
+        PASS [   0.335s] cadetta cmd::emit::tests::honours_out_and_adapter_selection
+        PASS [   0.368s] cadetta cmd::emit::tests::csv_note_joins_literal_emit_point_and_citation_with_single_spaces
+        PASS [   0.464s] cadetta cmd::emit::tests::csv_writes_rows_with_quoted_notes
+        PASS [   0.518s] cadetta cmd::emit::tests::explicit_binding_resolves_name_collision
+        PASS [   0.026s] cadetta cmd::emit::tests::parses_adapters_modules_and_globs
+        PASS [   0.556s] cadetta cmd::emit::tests::bind_scope_creates_globals_for_unbound_paths
+        PASS [   0.638s] cadetta cmd::emit::tests::external_adapter_is_run_and_its_files_reported
+        PASS [   0.431s] cadetta cmd::emit::tests::json_text_parameter_is_a_string_row
+        PASS [   0.740s] cadetta cmd::emit::tests::created_global_takes_locator_native_unit_else_adapter_default
+        PASS [   0.387s] cadetta cmd::emit::tests::json_writes_default_out_with_notes
+        PASS [   0.067s] cadetta cmd::emit::tests::usage_errors_exit_two
+        PASS [   0.841s] cadetta cmd::check_watch::tests::change_emits_sorted_ndjson_records
+        PASS [   0.342s] cadetta cmd::emit::tests::unrepresentable_value_exits_one
+        PASS [   0.580s] cadetta cmd::emit::tests::native_name_collision_exits_one
+        PASS [   0.309s] cadetta cmd::emit::tests::value_row_dimension_locator_still_withholds_r015
+        PASS [   0.056s] cadetta config::tests::emit_point_and_display_units
+        PASS [   0.848s] cadetta cmd::emit::tests::json_validates_against_emit_schema
+        PASS [   0.653s] cadetta cmd::emit::tests::reads_across_a_dependency_digest_and_emit_only_own_members
+        PASS [   0.575s] cadetta cmd::emit::tests::value_row_beyond_precision_withholds_q004
+        PASS [   0.776s] cadetta cmd::emit::tests::unchanged_value_file_is_not_rewritten
+        PASS [   0.561s] cadetta cmd::emit::tests::writes_equations_for_bound_members_only
+        PASS [   0.420s] cadetta universe::tests::changed_emitted_value_is_o004_info_on_the_native_file
+        PASS [   0.404s] cadetta universe::tests::unchanged_emitted_value_is_not_stale
+        PASS [   1.519s] cadetta cmd::check_watch::tests::unchanged_run_emits_nothing_twice
+        PASS [   1.583s] cadetta cmd::emit::tests::invalid_bindings_config_error_exits_two
+        PASS [   1.664s] cadetta cmd::emit::tests::header_only_difference_is_not_rewritten
+        PASS [   0.837s] cadetta cmd::sync::tests::adapter_without_drive_emits_and_prints_manual_steps
+        PASS [   0.773s] cadetta cmd::sync::tests::external_adapter_without_drive_runs_emit_and_reports_files
+        PASS [   0.834s] cadetta::r014_text_not_expressible filtered_or_unbound_text_parameter_is_not_emitted_and_not_an_error
+        SLOW [> 60.000s] cadetta::conformance_emitters_csv emitters_csv_corpus_is_not_empty
+        SLOW [> 60.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        SLOW [> 60.000s] cadetta::conformance_emitters_json emitters_json_corpus_is_not_empty
+        SLOW [> 60.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_emitters_csv emitters_csv_corpus_is_not_empty
+        SLOW [>120.000s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+        SLOW [>120.000s] cadetta::conformance_emitters_json emitters_json_corpus_is_not_empty
+        SLOW [>120.000s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        PASS [ 149.811s] cadetta::conformance_emitters_json emitters_json_fixtures_match_the_spec
+        PASS [ 149.828s] cadetta::conformance_emitters_json emitters_json_corpus_is_not_empty
+        PASS [ 150.000s] cadetta::conformance_emitters_csv emitters_csv_corpus_is_not_empty
+        PASS [ 150.015s] cadetta::conformance_emitters_csv emitters_csv_fixtures_match_the_spec
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [ 151.219s] 34 tests run: 34 passed (4 slow), 557 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta emit"
+size = 4460
+status = "measured"
+test_count = 34
+tests_digest = "afbc85c71e3881e48eea7d6d8ff9a1a4f614f6c50c5b0be7e7ccb379502bb01d"
+at = "2026-10-16T00:31:22Z"
+actor = "lognd"
+rev = 1

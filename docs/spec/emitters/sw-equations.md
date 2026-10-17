@@ -46,13 +46,24 @@ pilot r2-05.
   path is bound by a locator of this adapter, passes the adapter's
   `modules`/`paths` filters and the run's `--module`/glob narrowing, is not
   a `let` and (for an interface-typed slot) belongs to an active alternate
-  (adapters.md 3.3). A `Text` parameter that fails any of those, or that
+  (the slot's primary, adapters.md 3.3). A `Text` parameter that fails any of those, or that
   has no binding, is not emitted and is not an error. This holds whatever
   the locator kind (`global` or `dimension`).
+- **Only `global` and `dimension` locators are emitted.** An equations
+  file has no syntax for a custom property, a coordinate system or a
+  component placement, so a `property`, `frame` or `instance` locator
+  (adapters.md 3) bound to a path this run must emit is the error R015
+  (naming the path and the locator), the file is withheld and the exit
+  status is 1; it is never skipped silently and never emitted under its
+  locator string. "Must emit" is defined as for R014 above; a locator
+  that is filtered out, narrowed away or on a `let` is not reported.
+  Those kinds belong to the COM `solidworks` adapter (solidworks.md).
+  `read` is unaffected: it reads only equations (3).
 - **Comments** use `'`. A doc comment becomes the comment lines directly
   above the path's first line, one per source line. The trailing comment
   on a global line carries, in this order and separated by spaces: the
-  authored literal with its tolerance or class when its source text
+  authored literal with its tolerance or class when the value is a
+  literal (not an expression) and its source text
   differs from the written value's text (`1/4in` written as `6.35mm`,
   `12mm H7` written as `12.009mm`; `5mm` written as `5mm` gets none),
   then `emit=POINT` when the emit point is not `nominal`, then the
@@ -64,7 +75,9 @@ pilot r2-05.
 Paths in dependency order, computed as a topological sort that always
 takes, among the paths whose dependencies are all placed, the smallest
 canonical path (byte order); dependencies count transitively through
-`let`s and unemitted paths; within one path, global lines in bindings-file order,
+`let`s and unemitted paths, and a `dimension` locator's `ref_to` global
+counts as a dependency of its path, so the referenced global is written
+first; within one path, global lines in bindings-file order,
 then dimension lines in bindings-file order. Emitted values are flat, so
 the order only makes the file read top-down; SOLIDWORKS does not need
 it.
@@ -72,7 +85,9 @@ it.
 ## 3. Read
 
 `read` parses the same grammar plus anything SOLIDWORKS itself writes
-(expressions such as `"A" = "B" * 2`, functions, `IIF`). Expressions
+(expressions such as `"A" = "B" * 2`, the equation functions `sin`, `cos`,
+`tan`, `sqr`, `abs`, `iif` and the rest of SOLIDWORKS' list). A call to any
+other function name is not parseable. Expressions
 become observed-IR expressions; values without units take the document
 unit given by `--assume-unit` or `[[adapter]] native_unit`
 (adapters.md 3). Lines it cannot parse are kept with `exact: false` and

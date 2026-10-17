@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at a98cb9fb7870 (build and test (windows-latest) (failure) https://github.com/lognd/cadetta/actions/runs/38872393602/job/116879317581; build and test (ubuntu-latest) (failure) https://github.com/lognd/cadetta/actions/runs/38872393602/job/116879317297): known red base; user authorized"
+at = "2026-10-16T08:22:07Z"
+actor = "lognd"
+rev = 1

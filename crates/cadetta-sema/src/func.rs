@@ -446,6 +446,14 @@ impl<'r, 'p> Evaluator<'r, 'p> {
             "given" => self.given(args, span),
             "count" => {
                 let xs = arity(name, args, 1, span)?;
+                // frob:ticket 01M4W5HZZQ36F4WN08B1EBM7ZH
+                if let Some(slot) = self.part_slot_ref(sc, xs[0]) {
+                    let n = self.count_slot(sc, &slot, span)?;
+                    return Ok(Val::Quantity(Quant::constant(
+                        Dim::default(),
+                        int(i64::from(n)),
+                    )));
+                }
                 match self.eval(sc, xs[0])? {
                     Val::Array(a) => {
                         let n = i64::try_from(a.len()).unwrap_or(i64::MAX);
@@ -478,7 +486,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         };
         let mut key = inst.prefix.clone();
         key.members = vec![MemberSeg::Name(only.name.clone())];
-        let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+        let present = self.defs.contains_key(&key);
         trace!(%key, present, "func: given");
         Ok(Val::Bool(present))
     }
@@ -669,7 +677,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         match v {
             Val::Text(s) => s.clone(),
             Val::Bool(b) => b.to_string(),
-            Val::Variant { variant, .. } => variant.clone(),
+            Val::Variant { variant, .. } => display_variant(variant),
             Val::Table(t) => t.item.clone(),
             Val::Component(p) => p.item.clone(),
             Val::Row { table, row } => format!("{}[{row}]", table.item),
@@ -683,6 +691,8 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 format!("({})", items.join(", "))
             }
             Val::Quantity(q) => {
+                // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+                let unit = unit.or_else(|| default_display_unit(q.dim()));
                 if let Some(u) = unit {
                     match format_value(
                         self.units,
@@ -706,9 +716,9 @@ impl<'r, 'p> Evaluator<'r, 'p> {
         }
         match &strip(e).kind {
             ExprKind::Quantity(segs) => segs.first().map(|s| s.unit.clone()),
-            ExprKind::Unary(UnOp::Neg, x) | ExprKind::Tolerance(x, _) => {
-                self.authored_unit(sc, x, depth)
-            }
+            ExprKind::Unary(UnOp::Neg, x)
+            | ExprKind::Tolerance(x, _)
+            | ExprKind::Position(x, _) => self.authored_unit(sc, x, depth),
             ExprKind::Binary(BinOp::Add | BinOp::Sub, l, r) => self
                 .authored_unit(sc, l, depth)
                 .or_else(|| self.authored_unit(sc, r, depth)),
@@ -829,6 +839,10 @@ fn collect_calls<'e>(e: &'e Expr, out: &mut Vec<&'e Path>) {
             collect_calls(x, out);
             terms.iter().for_each(|t| collect_calls(&t.value, out));
         }
+        ExprKind::Position(x, d) => {
+            collect_calls(x, out);
+            collect_calls(d, out);
+        }
         ExprKind::If {
             cond,
             then,
@@ -879,6 +893,27 @@ fn split_template(t: &str) -> Result<Vec<Option<String>>, String> {
     }
     out.push(Some(cur));
     Ok(out)
+}
+
+/// A variant name as displayed: an underscore between digits is the decimal mark (`M2_5` is `M2.5`).
+// frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+fn display_variant(name: &str) -> String {
+    let cs: Vec<char> = name.chars().collect();
+    cs.iter()
+        .enumerate()
+        .map(|(i, &c)| {
+            let between = i > 0
+                && cs[i - 1].is_ascii_digit()
+                && cs.get(i + 1).is_some_and(char::is_ascii_digit);
+            if c == '_' && between { '.' } else { c }
+        })
+        .collect()
+}
+
+/// The unit a value renders in when none was authored: millimetres for a Length, else none.
+// frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+fn default_display_unit(dim: &Dim) -> Option<&'static str> {
+    (dim.angle == 0 && dim.dimension == Dimension::from_si([1, 0, 0, 0, 0, 0, 0])).then_some("mm")
 }
 
 /// SI-base rendering used when no display unit applies.
@@ -1173,6 +1208,24 @@ mod tests {
             ]
         );
         assert!(split_template("a { b").is_err());
+    }
+
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    // frob:tests crates/cadetta-sema/src/func.rs::display_variant
+    #[test]
+    fn a_digit_underscore_digit_variant_displays_with_a_decimal_point() {
+        assert_eq!(display_variant("M2_5"), "M2.5");
+        assert_eq!(display_variant("M6"), "M6");
+        assert_eq!(display_variant("Cut_75"), "Cut_75");
+    }
+
+    // frob:ticket 01M4W5J295H3ERXMW69QA1M8TZ
+    // frob:tests crates/cadetta-sema/src/func.rs::default_display_unit
+    #[test]
+    fn a_unitless_length_defaults_to_millimetres() {
+        let len = Dim::new(Dimension::from_si([1, 0, 0, 0, 0, 0, 0]), 0);
+        assert_eq!(default_display_unit(&len), Some("mm"));
+        assert_eq!(default_display_unit(&cube_dim()), None);
     }
 
     fn cube_dim() -> Dim {

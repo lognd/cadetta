@@ -430,6 +430,14 @@ impl Processes {
         Ok(Quant::constant(n.dim, n.mag))
     }
 
+    /// The drawn value of member `path` whose designed value is `q`, or `None` when it has no role.
+    // frob:ticket 01M4Z33NNYYPECFPASHMRQXAZQ
+    pub fn drawn_of(&self, path: &CanonPath, q: &Quant) -> Option<Result<Quant, EvalDiagnostic>> {
+        let plan = self.plans.iter().find(|p| &p.path == path)?;
+        trace!(?path, role = %plan.role, "process: drawn value read");
+        Some(self.drawn_at(&plan.process, &plan.role, q))
+    }
+
     /// Applies every planned compensation to the evaluated members.
     pub fn apply(&self, evaluation: &Evaluation) -> ProcessOutcome {
         let mut out = ProcessOutcome::default();
@@ -574,6 +582,7 @@ mod tests {
         let p = parse(src);
         assert!(p.diags.is_empty(), "{:?}", p.diags);
         let pkgs = vec![PackageSrc {
+            defaults: Default::default(),
             name: "p".to_owned(),
             deps: Vec::new(),
             modules: vec![ModuleSrc {

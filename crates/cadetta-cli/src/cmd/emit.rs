@@ -3,24 +3,28 @@
 //! and write their outputs (config-cli.md 3, adapters.md 3, emitters/sw-equations.md).
 //!
 //! The `sw-equations`, `json` and `csv` built-ins are implemented here; external adapters
-//! (those with a `command`) are skipped with a logged notice. Q004 (a value not representable
+//! (those with a `command`) are spawned and sent `emit`, as `sync` does. Q004 (a value not representable
 //! at the declared precision) and R013 (two paths creating one native name) give exit 1.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::io::Write;
 use std::path::{Path as FsPath, PathBuf};
 
+use cadetta_adapter::availability::{Verb as AvailVerb, unavailable};
 use cadetta_adapter::bindings::{
-    BindingSet, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
+    BindingSet, NativePin, R013, R014, R015, RefTarget, ScopeCandidate, mangle_all,
 };
 use cadetta_adapter::builtin::sw_equations::{
     self, ADAPTER as SW_EQUATIONS, DEFAULT_PRECISION, Header, Line, PathBlock, Rhs, ValueKind,
 };
 use cadetta_adapter::builtin::{csv, json};
+use cadetta_adapter::geometry_plan::negate_text;
 use cadetta_adapter::policy::{
     Designed, EmitPoint as PolicyPoint, EmitRequest, Ratio, Role, build_request, resolve_point,
     to_decimal,
 };
+use cadetta_adapter::rpc::client::ProcessClient;
+use cadetta_adapter::rpc::{CapabilityName, EmitParams};
 use cadetta_adapter::scope::Scope as AdapterScope;
 use cadetta_ir::digest::{digest_project, project_digest};
 use cadetta_ir::model::{
@@ -30,6 +34,7 @@ use cadetta_ir::path::Path;
 use cadetta_units::{Magnitude, UnitTable};
 use serde::Serialize;
 
+use crate::cmd::import::program;
 use crate::cmd::ir::package_id;
 use crate::config::{Adapter, BindMode, EmitPoint as ConfigPoint};
 use crate::output::Format;
@@ -115,6 +120,10 @@ pub struct EmitReport {
     pub files: Vec<EmitFile>,
     /// Diagnostics, errors first by occurrence.
     pub diagnostics: Vec<EmitDiag>,
+    /// The active alternate of each interface-typed slot (its primary): slot path to the
+    /// qualified component name (adapters.md 3.3). Absent when the package has no slot.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub active_alternates: BTreeMap<String, String>,
     /// A bindings configuration error that stops the run with exit 2 (adapters.md 3); not reported.
     #[serde(skip)]
     pub config_error: Option<String>,
@@ -209,22 +218,6 @@ fn role_of(member: &Member) -> Option<Role> {
     }
 }
 
-/// Prefix `-` on a written decimal (`6.35mm` -> `-6.35mm`), keeping zero unsigned.
-pub(crate) fn negate_text(text: &str) -> String {
-    if let Some(rest) = text.strip_prefix('-') {
-        return rest.to_owned();
-    }
-    let numeric: String = text
-        .chars()
-        .take_while(|c| c.is_ascii_digit() || *c == '.')
-        .collect();
-    if numeric.chars().all(|c| c == '0' || c == '.') {
-        text.to_owned()
-    } else {
-        format!("-{text}")
-    }
-}
-
 /// Replace every `[N]` index with `[*]`, for matching a member against a wildcard binding.
 fn wildcard(path: &str) -> (String, bool) {
     let mut out = String::new();
@@ -250,6 +243,44 @@ fn wildcard(path: &str) -> (String, bool) {
     (out, all_zero)
 }
 
+/// The active alternate of every part slot: slot path to its primary's qualified component name.
+///
+/// A slot's primary is the alternate in force; swapping is one edit of the primary (language.md
+/// 3.2), so this is what a `for` locator is matched against (adapters.md 3.3).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+pub(crate) fn active_alternates(ir: &Ir) -> BTreeMap<String, String> {
+    ir.components
+        .iter()
+        .flat_map(|c| &c.parts)
+        .map(|p| {
+            let slot = p.path.to_string();
+            let qualified = if p.primary.contains("::") {
+                p.primary.clone()
+            } else {
+                let package = slot.split_once("::").map_or("", |(pkg, _)| pkg);
+                format!("{package}::{}", p.primary)
+            };
+            (slot, qualified)
+        })
+        .collect()
+}
+
+/// True when `loc` is in force: it has no `for`, or its `for` names the primary of a slot in `active`.
+///
+/// A `for` may be written bare or qualified, as `impact --swap` accepts (adapters.md 3.3).
+// frob:ticket 01M4ZCEY9XVFNZNWWXA6K6E7M4
+pub(crate) fn locator_active(loc: &Locator, active: &BTreeMap<String, String>) -> bool {
+    let Some(alt) = loc.for_alternate.as_deref() else {
+        return true;
+    };
+    let tail = |s: &str| s.rsplit("::").next().map(str::to_owned);
+    let hit = active
+        .values()
+        .any(|p| p == alt || (!alt.contains("::") && tail(p).as_deref() == Some(alt)));
+    tracing::debug!(locator = %loc.locator, alt, hit, "emit: alternate locator activity");
+    hit
+}
+
 /// The locators bound to `path`: an exact binding, or a `[*]` binding at instance 0 only.
 pub(crate) fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [Locator]> {
     if let Some(b) = set.get(path) {
@@ -263,6 +294,18 @@ pub(crate) fn locators_for<'a>(set: &'a BindingSet, path: &Path) -> Option<&'a [
         .iter()
         .find(|b| b.path.to_string() == wild)
         .map(|b| b.locators.as_slice())
+}
+
+/// The path an own global is named from: the matched `[*]` binding path, else the member path.
+// frob:ticket 01M4ZACVTPPWND6W694CNW9MJ0
+fn naming_path(set: &BindingSet, path: &Path) -> Path {
+    if set.get(path).is_some() {
+        return path.clone();
+    }
+    let (wild, _) = wildcard(&path.to_string());
+    let named = set.entries().iter().find(|b| b.path.to_string() == wild);
+    tracing::debug!(path = %path, star = named.is_some(), "emit: own-global naming path");
+    named.map_or_else(|| path.clone(), |b| b.path.clone())
 }
 
 pub(crate) fn kind_of(value: &Value) -> ValueKind {
@@ -328,12 +371,25 @@ struct Job<'a> {
     /// The package's `Text` parameters: canonical path to text.
     texts: &'a TextParams,
     bindings_digest: String,
+    /// Slot path to the primary in force (see [`active_alternates`]).
+    active: BTreeMap<String, String>,
 }
 
 /// The built output of one adapter: the text plus the diagnostics met on the way.
 struct Built {
     text: Option<String>,
     diagnostics: Vec<EmitDiag>,
+}
+
+/// The authored text to repeat in a trailing comment: only a literal, never an expression
+/// that reads other paths (sw-equations.md 1, Comments).
+fn authored_literal<'a>(member: &Member, value: &'a Value) -> Option<&'a str> {
+    if member.deps.is_empty() {
+        Some(value.authored.as_str())
+    } else {
+        tracing::debug!(path = %member.path, "emit: expression value, authored text not repeated");
+        None
+    }
 }
 
 pub(crate) fn native_unit(adapter: &Adapter, loc: &Locator) -> String {
@@ -375,7 +431,7 @@ fn is_withholding(d: &EmitDiag) -> bool {
 /// R015 for every dimension, property or frame locator, or `ref`-mode binding, this run must emit
 /// to a `json` or `csv` file (emitters/json.md 1, emitters/csv.md 1).
 ///
-/// Must-emit is as for R014: a non-alternate locator of a non-`let` member that the adapter and
+/// Must-emit is as for R014: a locator in force (adapters.md 3.3) of a non-`let` member that the adapter and
 /// run filters accept; anything else is silently not emitted.
 // frob:ticket 01M4V7WCM9TBRWY007WWS81S98
 fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
@@ -392,7 +448,7 @@ fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
         let Some(locators) = locators_for(job.set, &member.path) else {
             continue;
         };
-        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+        for loc in locators.iter().filter(|l| locator_active(l, &job.active)) {
             if loc.kind == LocatorKind::Global && loc.mode == LocatorMode::Value {
                 continue;
             }
@@ -409,7 +465,7 @@ fn value_row_diagnostics(job: &Job<'_>) -> Vec<EmitDiag> {
 
 /// R014 for every bound `Text` parameter this run must emit (emitters/sw-equations.md 1).
 ///
-/// Must-emit means: bound by a non-alternate locator of this adapter, accepted by the adapter
+/// Must-emit means: bound by a locator in force (adapters.md 3.3) of this adapter, accepted by the adapter
 /// and run filters, and not a `let`; anything else is silently not emitted.
 // frob:ticket 01M4V7WC7QPQ4RH2902T8PTE0A
 fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
@@ -423,7 +479,7 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
             continue;
         }
         let Some(loc) = locators_for(job.set, &member.path)
-            .and_then(|ls| ls.iter().find(|l| l.for_alternate.is_none()))
+            .and_then(|ls| ls.iter().find(|l| locator_active(l, &job.active)))
         else {
             continue;
         };
@@ -437,17 +493,42 @@ fn text_diagnostics(job: &Job<'_>, diagnostics: &mut Vec<EmitDiag>) {
 }
 
 /// `emitted` paths in dependency order, ties by canonical path (D003 on a cycle).
+///
+/// Besides the IR dependencies, a path whose dimension locator links (`ref_to`) to a global
+/// owned by another path depends on that path, so the global line comes first
+/// (emitters/sw-equations.md 2).
 fn dependency_order(job: &Job<'_>, emitted: &BTreeSet<String>) -> Result<Vec<String>, EmitDiag> {
-    let graph: BTreeMap<String, Vec<String>> = job
-        .ir
-        .components
-        .iter()
-        .flat_map(|c| &c.members)
+    let members = || job.ir.components.iter().flat_map(|c| &c.members);
+    let mut owner: HashMap<&str, String> = HashMap::new();
+    for m in members() {
+        for loc in locators_for(job.set, &m.path)
+            .into_iter()
+            .flatten()
+            .filter(|l| l.kind == LocatorKind::Global && locator_active(l, &job.active))
+        {
+            owner
+                .entry(loc.locator.as_str())
+                .or_insert_with(|| m.path.to_string());
+        }
+    }
+    let graph: BTreeMap<String, Vec<String>> = members()
         .map(|m| {
-            (
-                m.path.to_string(),
-                m.deps.iter().map(ToString::to_string).collect(),
-            )
+            let me = m.path.to_string();
+            let mut deps: Vec<String> = m.deps.iter().map(ToString::to_string).collect();
+            for loc in locators_for(job.set, &m.path)
+                .into_iter()
+                .flatten()
+                .filter(|l| l.kind == LocatorKind::Dimension && locator_active(l, &job.active))
+            {
+                let Some(target) = loc.ref_to.as_deref().and_then(|g| owner.get(g)) else {
+                    continue;
+                };
+                if *target != me && !deps.contains(target) {
+                    tracing::debug!(path = %me, on = %target, "emit: ref_to link orders after its global");
+                    deps.push(target.clone());
+                }
+            }
+            (me, deps)
         })
         .collect();
     sw_equations::order_paths(&graph, emitted).map_err(|e| diag("D003", e.to_string(), None))
@@ -509,7 +590,7 @@ fn build_value_rows(job: &Job<'_>) -> Built {
         };
         let citation = source_citation(member);
         let point = resolve_point(&[attr_point(member)], job.config_point);
-        for loc in locators.iter().filter(|l| l.for_alternate.is_none()) {
+        for loc in locators.iter().filter(|l| locator_active(l, &job.active)) {
             let row = match (&member.value, job.texts.get(&canonical)) {
                 (Some(value), _) => {
                     let kind = kind_of(value);
@@ -530,7 +611,7 @@ fn build_value_rows(job: &Job<'_>) -> Built {
                     };
                     let written = format!("{decimal}{unit}");
                     let note = sw_equations::trailing_comment(
-                        Some(&value.authored),
+                        authored_literal(member, value),
                         &written,
                         point,
                         citation.as_deref(),
@@ -630,6 +711,11 @@ fn build_value_rows(job: &Job<'_>) -> Built {
     }
 }
 
+/// Default package-relative output of a value-row (`json`/`csv`) adapter: `build/<id>.<name>`.
+pub(crate) fn value_row_rel(adapter: &Adapter) -> String {
+    format!("build/{}.{}", adapter.id(), adapter.name)
+}
+
 /// Build the `sw-equations` file for one adapter.
 fn build_sw_equations(job: &Job<'_>) -> Built {
     let mut diagnostics = Vec::new();
@@ -659,7 +745,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                 .get(&m.path)
                 .is_none_or(|b| !b.locators.iter().any(|l| l.kind == LocatorKind::Global))
         })
-        .map(|m| m.path.clone())
+        .map(|m| naming_path(job.set, &m.path))
         .collect();
     let mangled: HashMap<Path, String> = match mangle_all(&paths, &job.adapter.prefix) {
         Ok(pairs) => pairs.into_iter().collect(),
@@ -692,11 +778,11 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
         };
         let kind = kind_of(value);
         let point = resolve_point(&[attr_point(member)], job.config_point);
-        let citation = citation_text(member);
+        let citation = source_citation(member);
         let mut own_global_written = false;
         for loc in locators {
-            if loc.for_alternate.is_some() {
-                tracing::debug!(path = %member.path, "emit: alternate-only locator skipped");
+            if !locator_active(loc, &job.active) {
+                tracing::debug!(path = %member.path, "emit: inactive alternate locator skipped");
                 continue;
             }
             let unit = native_unit(job.adapter, loc);
@@ -710,7 +796,7 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                 }
             };
             let comment = sw_equations::trailing_comment(
-                Some(&value.authored),
+                authored_literal(member, value),
                 &written,
                 point,
                 citation.as_deref(),
@@ -727,7 +813,10 @@ fn build_sw_equations(job: &Job<'_>) -> Built {
                     comment,
                 }),
                 (_, LocatorMode::Ref) => {
-                    let own = mangled.get(&member.path).cloned().unwrap_or_default();
+                    let own = mangled
+                        .get(&naming_path(job.set, &member.path))
+                        .cloned()
+                        .unwrap_or_default();
                     let target = job.set.resolve_ref(&member.path, loc, &alias_of, &own);
                     let name = match target {
                         RefTarget::Global(g) | RefTarget::AliasOf(g) => g,
@@ -1037,7 +1126,129 @@ pub(crate) fn load_bindings(
             }
         }
     }
+    let (pins, renames) =
+        source_pins_and_renames(ir.components.iter().flat_map(|c| &c.members), adapter.id());
+    set.apply_native(&pins);
+    set.carry_forward(&renames);
     Ok((set, bindings_text))
+}
+
+/// The `#[native(adapter, "loc")]` pins for `adapter_id` and the `was` renames `(old, new)` in `ir`.
+// frob:ticket 01M4VQXNFQ1DWWR10CQ0P0KQMG
+fn source_pins_and_renames<'a>(
+    members: impl Iterator<Item = &'a Member>,
+    adapter_id: &str,
+) -> (Vec<NativePin>, Vec<(Path, Path)>) {
+    let mut pins = Vec::new();
+    let mut renames = Vec::new();
+    for m in members {
+        let prefix = format!("native:{adapter_id}:");
+        for (key, locator) in &m.attrs {
+            if key.starts_with(&prefix) {
+                pins.push(NativePin {
+                    path: m.path.clone(),
+                    adapter: adapter_id.to_owned(),
+                    locator: locator.clone(),
+                });
+            }
+        }
+        for old in &m.was {
+            // `was Item.member` names the old component and member in the same module.
+            let (item, name) = old.rsplit_once('.').unwrap_or((m.path.item.as_str(), old));
+            let mut p = m.path.clone();
+            item.clone_into(&mut p.item);
+            if let Some(last) = p.members.last_mut() {
+                *last = cadetta_ir::path::Seg::Name(name.to_owned());
+                renames.push((p, m.path.clone()));
+            }
+        }
+    }
+    tracing::debug!(
+        adapter = adapter_id,
+        pins = pins.len(),
+        renames = renames.len(),
+        "bindings: source pins and renames"
+    );
+    (pins, renames)
+}
+
+/// The `emit` params for an adapter: design IR, its bindings file text, and the emit policy.
+// frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+pub(crate) fn emit_params(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+) -> Result<EmitParams, String> {
+    let (set, _) = load_bindings(pkg, adapter, ir).map_err(|e| match e {
+        LoadError::Config(message) => message,
+        LoadError::Diag(d) => format!("{}: {}", d.code, d.message),
+    })?;
+    let design = serde_json::to_value(ir).map_err(|e| format!("cannot encode the IR: {e}"))?;
+    let point = match config_point(pkg.config.emit.point) {
+        PolicyPoint::Nominal => "nominal",
+        PolicyPoint::Mid => "mid",
+        PolicyPoint::Mmc => "mmc",
+        PolicyPoint::Lmc => "lmc",
+    };
+    Ok(EmitParams {
+        design,
+        bindings: serde_json::json!({"adapter": adapter.id(), "toml": set.to_toml()}),
+        policy: serde_json::json!({"point": point}),
+    })
+}
+
+/// Run the `emit` of an external adapter and add its files and diagnostics to `report`.
+///
+/// `Err` is an adapter failure (exit 2). An adapter without the `emit` capability emits nothing.
+// frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+fn emit_external(
+    pkg: &PackageDir,
+    adapter: &Adapter,
+    ir: &Ir,
+    report: &mut EmitReport,
+) -> Result<(), String> {
+    let command = adapter.command.as_deref().unwrap_or_default();
+    let (path, argv) = program(pkg, command)
+        .ok_or_else(|| format!("adapter `{}` has an empty command", adapter.id()))?;
+    tracing::info!(adapter = %adapter.id(), "emit: starting external adapter");
+    let mut client = ProcessClient::spawn_with_timeout(
+        &path,
+        &argv,
+        adapter.version.as_deref(),
+        Some(adapter.timeout()),
+    )
+    .map_err(|e| match unavailable(adapter.id(), &e, AvailVerb::Sync) {
+        Some(u) => format!("{}: {}", u.diagnostic.code, u.diagnostic.message),
+        None => format!("R008: could not start adapter `{}`: {e}", adapter.id()),
+    })?;
+    let mut outcome = Ok(());
+    if client.info().capabilities.contains(&CapabilityName::Emit) {
+        outcome = emit_params(pkg, adapter, ir).and_then(|params| {
+            client
+                .emit(&params)
+                .map_err(|e| format!("R008: adapter `{}` emit failed: {e}", adapter.id()))
+        })
+        .map(|result| {
+            for f in result.files {
+                tracing::info!(adapter = %adapter.id(), file = %f.path, "emit: external adapter wrote");
+                report.files.push(EmitFile {
+                    adapter: adapter.id().to_owned(),
+                    path: f.path,
+                    digest: f.digest,
+                });
+            }
+            for d in &result.diagnostics {
+                let text = |k: &str| d.0.get(k).and_then(|v| v.as_str()).unwrap_or_default();
+                report.diagnostics.push(diag(text("code"), text("message"), None));
+            }
+        });
+    } else {
+        tracing::info!(adapter = %adapter.id(), "emit: external adapter has no emit capability");
+    }
+    if let Err(e) = client.shutdown() {
+        tracing::warn!(error = %e, "emit: adapter shutdown failed");
+    }
+    outcome
 }
 
 /// Run emit for every selected adapter of one package, appending to `report`.
@@ -1054,12 +1265,16 @@ pub(crate) fn emit_package_texts(
     report: &mut EmitReport,
 ) {
     let cfg_point = config_point(pkg.config.emit.point);
+    report.active_alternates.extend(active_alternates(ir));
     for adapter in &pkg.config.adapters {
         if !parsed.adapters.is_empty() && !parsed.adapters.iter().any(|a| a == adapter.id()) {
             continue;
         }
         if adapter.command.is_some() {
-            tracing::info!(adapter = %adapter.id(), "emit: external adapters are not run by the CLI yet");
+            if let Err(message) = emit_external(pkg, adapter, ir, report) {
+                report.config_error = Some(message);
+                return;
+            }
             continue;
         }
         let value_row = adapter.name == json::ADAPTER || adapter.name == csv::ADAPTER;
@@ -1088,6 +1303,7 @@ pub(crate) fn emit_package_texts(
             run: run_scope,
             texts,
             bindings_digest: digest_text(bindings_text.as_bytes()),
+            active: active_alternates(ir),
         };
         let built = if value_row {
             build_value_rows(&job)
@@ -1100,7 +1316,7 @@ pub(crate) fn emit_package_texts(
         };
         let rel = adapter.out.clone().unwrap_or_else(|| {
             if value_row {
-                format!("build/{}.{}", adapter.id(), adapter.name)
+                value_row_rel(adapter)
             } else {
                 format!("build/solidworks/{}.txt", adapter.id())
             }
@@ -1132,6 +1348,65 @@ pub(crate) fn emit_package_texts(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A locator bound `for` the given alternate.
+    fn loc_for(alt: Option<&str>) -> Locator {
+        Locator {
+            locator: "A".into(),
+            kind: LocatorKind::Global,
+            mode: LocatorMode::Value,
+            native_unit: "mm".into(),
+            ref_to: None,
+            for_alternate: alt.map(str::to_owned),
+            config: None,
+            sign: None,
+            component: None,
+            implicit: None,
+            tolerance: None,
+        }
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::locator_active
+    #[test]
+    fn locator_activity_follows_the_slot_primary() {
+        let active: BTreeMap<String, String> = [(
+            "acme.shop::Rover/wheel".to_owned(),
+            "acme.shop::Other".to_owned(),
+        )]
+        .into();
+        assert!(locator_active(&loc_for(None), &active));
+        assert!(locator_active(&loc_for(Some("acme.shop::Other")), &active));
+        assert!(locator_active(&loc_for(Some("Other")), &active));
+        assert!(!locator_active(
+            &loc_for(Some("acme.shop::Colson2Series")),
+            &active
+        ));
+        assert!(!locator_active(&loc_for(Some("Colson2Series")), &active));
+        assert!(!locator_active(
+            &loc_for(Some("acme.shop::Other")),
+            &BTreeMap::new()
+        ));
+    }
+
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::source_pins_and_renames
+    #[test]
+    fn source_pins_and_was_renames_are_read_from_member_attrs() {
+        let path = Path::parse(
+            "acme.demo::Part.breadth",
+            cadetta_ir::path::PathContext::General,
+        )
+        .unwrap();
+        let mut m = Member::new(path.clone(), cadetta_ir::model::MemberKind::Param);
+        m.attrs.insert("native:eq:P1".into(), "P1".into());
+        m.attrs.insert("native:eq:P2".into(), "P2".into());
+        m.attrs.insert("native:other:Z".into(), "Z".into());
+        m.was = vec!["Part.width".into()];
+        let (pins, renames) = source_pins_and_renames([m].iter(), "eq");
+        assert_eq!(pins.len(), 2);
+        assert_eq!(renames.len(), 1);
+        assert_eq!(renames[0].0.to_string(), "acme.demo::Part.width");
+        assert_eq!(renames[0].1, path);
+    }
 
     /// A self-removing scratch directory (no extra dev-dependency).
     struct Dir(PathBuf);
@@ -1567,5 +1842,47 @@ mod tests {
         assert_eq!(code, EXIT_FAIL, "{out}");
         assert!(out.contains("Q004"), "{out}");
         assert!(!dir.0.join("build/json.json").exists());
+    }
+
+    // frob:ticket 01M4ZQ92JVS7DMCGDSCWZAC967
+    // frob:tests crates/cadetta-cli/src/cmd/emit.rs::emit_external
+    #[cfg(unix)]
+    #[test]
+    fn external_adapter_is_run_and_its_files_reported() {
+        use std::os::unix::fs::PermissionsExt;
+        static SPAWN_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+        let dir = Dir::new();
+        let toml = "[package]\nname = \"acme.plate\"\nversion = \"0.1.0\"\n[[adapter]]\nname = \"ext\"\ncommand = [\"./ext.sh\"]\n";
+        std::fs::write(dir.0.join("cadetta.toml"), toml).unwrap();
+        std::fs::create_dir_all(dir.0.join("src")).unwrap();
+        std::fs::write(dir.0.join("src/lib.cdt"), SOURCE).unwrap();
+        let body = r#"#!/bin/sh
+read -r _init
+echo '{"jsonrpc":"2.0","id":1,"result":{"name":"ext","version":"1.0.0","capabilities":["emit"],"native_units":"mm","precision":6,"platforms":["linux"]}}'
+while read -r req; do
+  case "$req" in
+    *'"method":"emit"'*)
+      printf '%s' "$req" > "$(dirname "$0")/emit-request.json"
+      echo '{"jsonrpc":"2.0","id":2,"result":{"files":[{"path":"build/ext/out.txt","digest":"blake3:00"}],"diagnostics":[]}}' ;;
+    *'"method":"shutdown"'*)
+      echo '{"jsonrpc":"2.0","id":3,"result":null}'
+      exit 0 ;;
+  esac
+done
+"#;
+        let script = dir.0.join("ext.sh");
+        let guard = SPAWN_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        std::fs::write(&script, body).unwrap();
+        std::fs::set_permissions(&script, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let (code, out, e) = run(&dir, &[]);
+        drop(guard);
+        assert_eq!((code, e.as_str()), (EXIT_OK, ""), "{out}");
+        assert!(out.contains("build/ext/out.txt"), "{out}");
+        let req: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(dir.0.join("emit-request.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(req["method"], "emit");
+        assert_eq!(req["params"]["policy"]["point"], "nominal");
     }
 }

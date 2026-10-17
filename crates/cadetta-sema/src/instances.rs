@@ -14,14 +14,14 @@ use std::sync::OnceLock;
 use cadetta_ir::canon::PartSeg;
 use cadetta_syntax::ast::{self, AttrArg, Component, Expr, ExprKind, MemberKind, TypeKind};
 use cadetta_syntax::span::Span;
-use tracing::{debug, trace, warn};
+use tracing::{debug, warn};
 
 use super::{Def, EvalDiagnostic, Evaluator, Fail, R, Scope, Val, diag};
 use crate::defaults::{Layers, Source, resolve_default};
 use crate::deps::Severity;
 use crate::parts::{ArgSource, bind_args_injecting};
 use crate::resolve::{
-    CanonPath, Ctx, ItemClass, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
+    CanonPath, Ctx, Index, ItemClass, MemberSeg, ModuleKey, PackageSrc, Resolved, Resolver,
 };
 
 /// The package whose components supply the default policies (stdlib.md 4).
@@ -57,8 +57,19 @@ pub(super) struct Instances<'p> {
     pub diagnostics: Vec<EvalDiagnostic>,
     /// Instance members declared `priv`.
     pub private: BTreeSet<CanonPath>,
-    /// Given arguments with no definition (a `Part` argument, evaluated by a later ticket).
-    nodef: BTreeSet<CanonPath>,
+    /// Counted parts of parameterized callees, expanded once their counts evaluate.
+    arrays: Vec<ArrayPart<'p>>,
+}
+
+/// A counted `part` of a parameterized callee awaiting its evaluated count.
+struct ArrayPart<'p> {
+    package: usize,
+    module: usize,
+    parent: &'p Component,
+    part: &'p ast::Part,
+    callee_path: CanonPath,
+    callee: &'p Component,
+    span: Span,
 }
 
 impl<'p> Instances<'p> {
@@ -74,10 +85,42 @@ impl<'p> Instances<'p> {
         self.list.iter().any(|i| i.info.prefix == *path)
     }
 
-    /// True when `key` is a supplied argument that has no definition.
-    pub fn is_nodef_arg(&self, key: &CanonPath) -> bool {
-        self.nodef.contains(key)
+    /// The instance whose prefix is `path`: its info, component and callee context.
+    // frob:ticket 01M4YSGF4CF0MBQG2K4A50KFBS
+    pub fn lookup(&self, path: &CanonPath) -> Option<(Rc<InstInfo>, &'p Component, Ctx)> {
+        self.list
+            .iter()
+            .find(|i| i.info.prefix == *path)
+            .map(|i| (i.info.clone(), i.component, i.callee_ctx.clone()))
     }
+}
+
+/// The key prefix of one parameterized instance and the component it instantiates.
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+#[derive(Clone, Debug)]
+pub(crate) struct InstanceSite {
+    /// `Parent/part`, the key prefix of every member of the instance.
+    pub prefix: CanonPath,
+    /// The instantiated (parameterized) component.
+    pub callee: CanonPath,
+}
+
+/// Every parameterized instance of the project, for passes that derive per-instance facts.
+// frob:ticket 01M4Y772AZC00VRGAKXK8V6DSY
+pub(crate) fn instance_sites<'p>(
+    resolver: &Resolver<'p>,
+    packages: &[PackageSrc<'p>],
+) -> Vec<InstanceSite> {
+    let mut scratch = BTreeMap::new();
+    let sites: Vec<InstanceSite> = materialise(resolver, packages, &mut scratch)
+        .members()
+        .map(|(info, ..)| InstanceSite {
+            prefix: info.prefix.clone(),
+            callee: info.callee.clone(),
+        })
+        .collect();
+    debug!(sites = sites.len(), "instances: sites listed");
+    sites
 }
 
 /// A placeholder expression for definitions whose value is fixed.
@@ -108,8 +151,8 @@ pub(super) fn materialise<'p>(
     defs: &mut BTreeMap<CanonPath, Def<'p>>,
 ) -> Instances<'p> {
     let mut out = Instances::default();
-    for pkg in packages {
-        for module in &pkg.modules {
+    for (pi, pkg) in packages.iter().enumerate() {
+        for (mi, module) in pkg.modules.iter().enumerate() {
             for c in module.file.components() {
                 if !c.params.is_empty() {
                     continue;
@@ -141,6 +184,16 @@ pub(super) fn materialise<'p>(
                                     callee.name.name, part.name.name
                                 ),
                             ));
+                        } else {
+                            out.arrays.push(ArrayPart {
+                                package: pi,
+                                module: mi,
+                                parent: c,
+                                part,
+                                callee_path,
+                                callee,
+                                span: m.span,
+                            });
                         }
                         continue;
                     }
@@ -158,6 +211,7 @@ pub(super) fn materialise<'p>(
                     let site = Site {
                         resolver,
                         packages,
+                        project_defaults: &pkg.defaults,
                         parent: c,
                         parent_ctx: &parent_ctx,
                         parent_file: module.file,
@@ -180,6 +234,8 @@ pub(super) fn materialise<'p>(
 struct Site<'a, 'p> {
     resolver: &'a Resolver<'p>,
     packages: &'a [PackageSrc<'p>],
+    /// The parent package's `[defaults]` table.
+    project_defaults: &'a BTreeMap<String, String>,
     parent: &'p Component,
     parent_ctx: &'a Ctx,
     parent_file: &'p ast::File,
@@ -234,14 +290,15 @@ impl<'p> Site<'_, 'p> {
         let layers = Layers {
             component: Some(&component.names),
             file: Some(&file.names),
-            project: None,
+            project: Some(self.project_defaults),
             std: std_impl.as_ref().map(|_| STD_DEFAULT),
         };
         let resolution = resolve_default(name, &layers)?;
         let value = match resolution.source {
             Source::Component => component.exprs.get(name),
             Source::File => file.exprs.get(name),
-            Source::Project | Source::Std => None,
+            Source::Project => return self.project_default(name),
+            Source::Std => None,
         };
         let Some(value) = value else {
             debug!(iface = name, source = ?resolution.source, "instances: default from non-scope layer");
@@ -260,6 +317,29 @@ impl<'p> Site<'_, 'p> {
                 None
             }
         }
+    }
+
+    /// The component the project `[defaults]` entry for `iface` names, from its qualified path.
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    fn project_default(&self, iface: &str) -> Option<CanonPath> {
+        let written = self.project_defaults.get(iface)?;
+        let mut segs: Vec<&str> = written.split("::").collect();
+        let item = segs.pop().filter(|i| !i.is_empty());
+        let package = (!segs.is_empty()).then(|| segs.remove(0));
+        let found = item.zip(package).and_then(|(item, package)| {
+            self.packages
+                .iter()
+                .filter(|p| p.name == package)
+                .flat_map(|p| p.modules.iter().map(move |m| (p, m)))
+                .filter(|(_, m)| m.path.iter().map(String::as_str).eq(segs.iter().copied()))
+                .find(|(_, m)| m.file.components().any(|c| c.name.name == item))
+                .map(|(p, m)| CanonPath::item(&p.name, &m.path, item))
+        });
+        match &found {
+            Some(path) => debug!(iface, %written, ?path, "instances: project default resolved"),
+            None => warn!(iface, %written, "instances: project default does not name a component"),
+        }
+        found
     }
 
     /// The `std` default component implementing the interface named `name`, if any.
@@ -317,11 +397,6 @@ impl<'p> Site<'_, 'p> {
             };
             match &b.source {
                 ArgSource::Given(expr, span) => {
-                    if is_part_type(&param.ty) {
-                        trace!(%key, "instances: Part argument kept without a value");
-                        out.nodef.insert(key);
-                        continue;
-                    }
                     def.expr = expr;
                     def.span = *span;
                     def.fixed = self.fixed_value(expr, param);
@@ -355,40 +430,14 @@ impl<'p> Site<'_, 'p> {
             }
             defs.insert(key, def);
         }
-        for m in &self.callee.members {
-            let (name, expr, is_let, span, ty) = match &m.kind {
-                MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span, p.ty.as_ref()),
-                MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span, l.ty.as_ref()),
-                _ => continue,
-            };
-            let when = m
-                .attrs
-                .iter()
-                .chain(m.trailing.iter())
-                .find(|a| a.name.name == "when")
-                .and_then(|a| match a.args.first() {
-                    Some(AttrArg::Expr(e)) => Some(e),
-                    _ => None,
-                });
-            let key = self.key(name);
-            if m.private {
-                out.private.insert(key.clone());
-            }
-            defs.insert(
-                key,
-                Def {
-                    expr,
-                    ty,
-                    is_let,
-                    ctx: callee_ctx.clone(),
-                    span,
-                    inst: Some(info.clone()),
-                    fixed: None,
-                    when,
-                    role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
-                },
-            );
-        }
+        index_members(
+            self.prefix,
+            self.callee,
+            &callee_ctx,
+            &info,
+            defs,
+            &mut out.private,
+        );
         out.list.push(Instance {
             info,
             component: self.callee,
@@ -399,21 +448,77 @@ impl<'p> Site<'_, 'p> {
 
     /// A given argument whose value needs the parameter's type: a bare variant or an `ots` name.
     fn fixed_value(&self, expr: &Expr, param: &ast::ParamDecl) -> Option<Val> {
-        match self.resolver.resolve_ref_in_param_type(
+        fixed_value(
+            self.resolver,
             self.parent_ctx,
-            expr,
-            &param.ty,
             self.callee_path,
-        ) {
-            Ok(Resolved::Variant { enum_path, variant }) => {
-                Some(Val::Variant { enum_path, variant })
-            }
-            Ok(Resolved::Item {
-                path,
-                class: ItemClass::Component,
-            }) => Some(Val::Component(path)),
-            _ => None,
+            expr,
+            param,
+        )
+    }
+}
+
+/// A given argument whose value needs the parameter's type: a bare variant or an `ots` name.
+fn fixed_value(
+    resolver: &Resolver<'_>,
+    parent_ctx: &Ctx,
+    callee_path: &CanonPath,
+    expr: &Expr,
+    param: &ast::ParamDecl,
+) -> Option<Val> {
+    match resolver.resolve_ref_in_param_type(parent_ctx, expr, &param.ty, callee_path) {
+        Ok(Resolved::Variant { enum_path, variant }) => Some(Val::Variant { enum_path, variant }),
+        Ok(Resolved::Item {
+            path,
+            class: ItemClass::Component,
+        }) => Some(Val::Component(path)),
+        _ => None,
+    }
+}
+
+/// Indexes the `param` and `let` members of `callee` under `prefix` as members of instance `info`.
+fn index_members<'p>(
+    prefix: &CanonPath,
+    callee: &'p Component,
+    callee_ctx: &Ctx,
+    info: &Rc<InstInfo>,
+    defs: &mut BTreeMap<CanonPath, Def<'p>>,
+    private: &mut BTreeSet<CanonPath>,
+) {
+    for m in &callee.members {
+        let (name, expr, is_let, span, ty) = match &m.kind {
+            MemberKind::Param(p) => (&p.name.name, &p.value, false, p.name.span, p.ty.as_ref()),
+            MemberKind::Let(l) => (&l.name.name, &l.value, true, l.span, l.ty.as_ref()),
+            _ => continue,
+        };
+        let when = m
+            .attrs
+            .iter()
+            .chain(m.trailing.iter())
+            .find(|a| a.name.name == "when")
+            .and_then(|a| match a.args.first() {
+                Some(AttrArg::Expr(e)) => Some(e),
+                _ => None,
+            });
+        let mut key = prefix.clone();
+        key.members = vec![MemberSeg::Name(name.clone())];
+        if m.private {
+            private.insert(key.clone());
         }
+        defs.insert(
+            key,
+            Def {
+                expr,
+                ty,
+                is_let,
+                ctx: callee_ctx.clone(),
+                span,
+                inst: Some(info.clone()),
+                fixed: None,
+                when,
+                role: crate::attrs::explicit_role(&m.attrs, &m.trailing),
+            },
+        );
     }
 }
 
@@ -434,11 +539,145 @@ fn pattern_arg(callee: &Component, args: &[ast::Arg]) -> Option<String> {
         })
 }
 
-fn is_part_type(ty: &ast::Type) -> bool {
-    matches!(&ty.kind, TypeKind::Path(p) if p.segments.len() == 1 && p.segments[0].name == "Part")
-}
-
 impl<'r, 'p> Evaluator<'r, 'p> {
+    /// Indexes one instance per element of every counted part of a parameterized callee.
+    ///
+    /// `part axle[N]: Axle(len = 3mm)` becomes `Parent/axle[0]` .. `Parent/axle[N-1]`, each with
+    /// its own arguments and members; a count that does not evaluate leaves the array unexpanded.
+    // frob:ticket 01M4ZAD0AW4C1R33F43WTVTR3V
+    pub(super) fn expand_arrays(&mut self, packages: &[PackageSrc<'p>]) {
+        let arrays = std::mem::take(&mut self.instances.arrays);
+        let before = self.instances.diagnostics.len();
+        for a in arrays {
+            let pkg = &packages[a.package];
+            let module = &pkg.modules[a.module];
+            let id = super::geom::component_id(&CanonPath::item(
+                &pkg.name,
+                &module.path,
+                &a.parent.name.name,
+            ));
+            let Some(count) = self.part_count(&id, a.part) else {
+                debug!(part = %a.part.name.name, "instances: array count does not evaluate");
+                continue;
+            };
+            let parent_ctx = Ctx {
+                package: pkg.name.clone(),
+                module: module.path.clone(),
+                component: Some(a.parent.name.name.clone()),
+                locals: Vec::new(),
+            };
+            for i in 0..count {
+                let mut prefix = CanonPath::item(&pkg.name, &module.path, &a.parent.name.name);
+                prefix.parts.push(PartSeg {
+                    name: a.part.name.name.clone(),
+                    index: Some(Index::At(i)),
+                });
+                let site = Site {
+                    resolver: self.resolver,
+                    packages,
+                    project_defaults: &pkg.defaults,
+                    parent: a.parent,
+                    parent_ctx: &parent_ctx,
+                    parent_file: module.file,
+                    callee_path: &a.callee_path,
+                    callee: a.callee,
+                    prefix: &prefix,
+                    args: a.part.args.as_deref().unwrap_or(&[]),
+                    span: a.span,
+                };
+                site.index(&mut self.defs, &mut self.instances);
+            }
+            debug!(part = %a.part.name.name, count, "instances: array expanded");
+        }
+        let fresh = self.instances.diagnostics[before..].to_vec();
+        self.diagnostics.extend(fresh);
+    }
+
+    /// The instance of a parameterized `part` nested in instance `owner`, indexed on first use.
+    ///
+    /// Arguments the nested site gives are evaluated in the owner's callee scope; defaults and
+    /// callee members in the nested callee's scope. Interface arguments left to a scope default
+    /// are not injected (a nested site names what it needs).
+    // frob:ticket 01M4ZKZTK5DT4WG568HMRXR4CV
+    pub(super) fn nested_instance(
+        &mut self,
+        owner: &Rc<InstInfo>,
+        owner_ctx: &Ctx,
+        prefix: &CanonPath,
+        part: &'p ast::Part,
+        callee_path: &CanonPath,
+        callee: &'p Component,
+    ) -> Option<(Rc<InstInfo>, &'p Component, Ctx)> {
+        if let Some(found) = self.instances.lookup(prefix) {
+            return Some(found);
+        }
+        let args = part.args.as_deref().unwrap_or(&[]);
+        let bound = match crate::parts::bind_args(&callee.name.name, &callee.params, args) {
+            Ok(b) => b,
+            Err(e) => {
+                debug!(%prefix, error = %e, "instances: nested binding failed");
+                return None;
+            }
+        };
+        let info = Rc::new(InstInfo {
+            prefix: prefix.clone(),
+            callee: callee_path.clone(),
+            span: part.name.span,
+        });
+        let callee_ctx = Ctx {
+            package: callee_path.package.clone(),
+            module: callee_path.modules.clone(),
+            component: Some(callee.name.name.clone()),
+            locals: Vec::new(),
+        };
+        for (param, b) in callee.params.iter().zip(&bound) {
+            let mut key = prefix.clone();
+            key.members = vec![MemberSeg::Name(b.name.to_owned())];
+            let mut def = Def {
+                expr: placeholder(),
+                ty: None,
+                is_let: false,
+                ctx: owner_ctx.clone(),
+                span: part.name.span,
+                inst: Some(owner.clone()),
+                fixed: None,
+                when: None,
+                role: None,
+            };
+            match &b.source {
+                ArgSource::Given(expr, span) => {
+                    def.expr = expr;
+                    def.span = *span;
+                    def.fixed = fixed_value(self.resolver, owner_ctx, callee_path, expr, param);
+                }
+                ArgSource::Default(expr) => {
+                    def.expr = expr;
+                    def.ctx = callee_ctx.clone();
+                    def.inst = Some(info.clone());
+                    def.span = param.span;
+                }
+                ArgSource::Absent | ArgSource::Injected => continue,
+            }
+            self.defs.insert(key, def);
+        }
+        index_members(
+            prefix,
+            callee,
+            &callee_ctx,
+            &info,
+            &mut self.defs,
+            &mut self.instances.private,
+        );
+        debug!(%prefix, callee = %callee_path, "instances: nested instance indexed");
+        self.instances.list.push(Instance {
+            info: info.clone(),
+            component: callee,
+            callee_ctx: callee_ctx.clone(),
+            span: part.name.span,
+        });
+        Some((info, callee, callee_ctx))
+    }
+
     /// Reports E006 for each `#![requires(arg, when = cond)]` whose condition holds with `arg` absent,
     /// and for each `#![forbids(arg, when = cond)]` whose condition holds with `arg` given.
     // frob:ticket 01M4W3YJCH948JJQ3HY646D1T7
@@ -469,7 +708,7 @@ impl<'r, 'p> Evaluator<'r, 'p> {
                 let arg_name = &p.segments[0].name;
                 let mut key = info.prefix.clone();
                 key.members = vec![MemberSeg::Name(arg_name.clone())];
-                let present = self.defs.contains_key(&key) || self.instances.is_nodef_arg(&key);
+                let present = self.defs.contains_key(&key);
                 if present != forbids {
                     continue;
                 }
@@ -661,6 +900,70 @@ mod tests {
             "{:?}",
             ev.diagnostics
         );
+    }
+
+    /// Evaluate `top` (package `p`) with `defaults` as its `[defaults]`, beside dependency `q` holding `dep`.
+    fn run_with_defaults(top: &str, dep: &str, defaults: &[(&str, &str)]) -> Evaluation {
+        use super::super::Evaluator;
+        use crate::resolve::{ModuleSrc, PackageSrc, Resolver};
+        use cadetta_units::UnitTable;
+        let (top, dep) = (file(top), file(dep));
+        let module = |f| {
+            vec![ModuleSrc {
+                path: Vec::new(),
+                file: f,
+                enums: &[],
+            }]
+        };
+        let pkgs = vec![
+            PackageSrc {
+                name: "p".to_owned(),
+                deps: vec!["q".to_owned()],
+                modules: module(&top),
+                defaults: defaults
+                    .iter()
+                    .map(|(k, v)| ((*k).to_owned(), (*v).to_owned()))
+                    .collect(),
+            },
+            PackageSrc {
+                name: "q".to_owned(),
+                deps: Vec::new(),
+                modules: module(&dep),
+                defaults: Default::default(),
+            },
+        ];
+        let (resolver, errs) = Resolver::new(pkgs.clone());
+        assert!(errs.is_empty(), "{errs:?}");
+        let units = UnitTable::builtin();
+        Evaluator::new(&resolver, &units, &pkgs).evaluate()
+    }
+
+    const DEP: &str = "pub interface Pol { gap: Length }\n\
+        pub ots Std: Pol { gap = 2mm }\n\
+        pub ots Loose: Pol { gap = 5mm }\n";
+
+    const TOP: &str = "use q::{Pol, Std, Loose}\n\
+        assembly Joint(a: Length, pol: Pol) { gapped = pol.gap + a }\n";
+
+    // frob:tests project_defaults_name_a_dependency_implementation
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    #[test]
+    fn project_defaults_name_a_dependency_implementation() {
+        let top = format!("{TOP}assembly Top {{ part j: Joint(a = 4mm) }}\n");
+        let ev = run_with_defaults(&top, DEP, &[("Pol", "q::Loose")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(mm(&ev, "gapped"), m(9, 1000));
+    }
+
+    // frob:tests file_default_beats_project_default
+    // frob:ticket 01M4W5J6FACWMX38X4FTGY21E7
+    #[test]
+    fn file_default_beats_project_default() {
+        let top =
+            format!("{TOP}#![default(Pol = Std)]\nassembly Top {{ part j: Joint(a = 4mm) }}\n");
+        let ev = run_with_defaults(&top, DEP, &[("Pol", "q::Loose")]);
+        assert!(ev.diagnostics.is_empty(), "{:?}", ev.diagnostics);
+        assert_eq!(mm(&ev, "gapped"), m(3, 500));
     }
 
     // frob:tests assembly_default_beats_file_default

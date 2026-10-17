@@ -12,11 +12,11 @@
     "output": {
       "build/eq.txt": {
         "contains": [
-          "' 1/4in emit=mmc @\"ASTM B209\""
+          "' 1/4in emit=mid @\"ASTM B209\""
         ],
         "excludes": [
           "@\"ASTM B209\" emit=",
-          "emit=mmc 1/4in"
+          "emit=mid 1/4in"
         ]
       }
     }

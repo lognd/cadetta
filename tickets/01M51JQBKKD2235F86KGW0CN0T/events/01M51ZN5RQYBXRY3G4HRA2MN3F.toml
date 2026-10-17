@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["add_fit keeps <fit>.hole/.shaft nodes already emitted as members"]
+moved = []
+at = "2026-10-16T09:10:58Z"
+actor = "lognd"
+rev = 1

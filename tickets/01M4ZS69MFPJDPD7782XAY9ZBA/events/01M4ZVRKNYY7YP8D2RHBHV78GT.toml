@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["cadetta sync uses the precision reported by initialize unless [[adapter]] precision is set"]
+moved = []
+at = "2026-10-15T13:24:27Z"
+actor = "lognd"
+rev = 1

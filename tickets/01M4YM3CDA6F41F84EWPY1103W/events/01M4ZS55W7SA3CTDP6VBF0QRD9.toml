@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "Already on main in 42d97a21: engine apply preserves rule-set downgrades, check.rs workaround removed, test rule_set_downgrade_stays_info_unless_overridden present."
+at = "2026-10-15T12:38:53Z"
+actor = "lognd"
+rev = 1

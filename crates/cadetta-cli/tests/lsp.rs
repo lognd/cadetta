@@ -105,7 +105,10 @@ fn capabilities_and_exit_codes() {
     assert_eq!(caps["documentFormattingProvider"], true);
     assert_eq!(caps["textDocumentSync"]["openClose"], true);
     assert_eq!(caps["textDocumentSync"]["change"], 1);
-    assert_eq!(caps.as_object().unwrap().len(), 3);
+    assert_eq!(caps["hoverProvider"], true);
+    assert_eq!(caps["codeLensProvider"]["resolveProvider"], false);
+    assert_eq!(caps["definitionProvider"], true);
+    assert_eq!(caps.as_object().unwrap().len(), 6);
     assert_eq!(c.finish(false), 0);
 
     let (c, init) = Client::start(json!(["utf-16"]));
@@ -202,5 +205,62 @@ fn save_publishes_package_lint_and_clears() {
     let p = c.next_publish();
     assert_eq!(p["uri"], uri);
     assert!(p["diagnostics"].as_array().unwrap().is_empty(), "{p}");
+    assert_eq!(c.finish(false), 0);
+}
+
+// frob:tests crates/cadetta-cli/tests/lsp.rs::hover_lens_and_definition_follow_the_ir
+// frob:tests crates/cadetta-cli/src/cmd/lsp_query.rs::hover
+// frob:tests crates/cadetta-cli/src/cmd/lsp_query.rs::definition
+// frob:tests crates/cadetta-cli/src/cmd/lsp_query.rs::build_index
+#[test]
+fn hover_lens_and_definition_follow_the_ir() {
+    let dir = temp("query");
+    std::fs::write(
+        dir.join("cadetta.toml"),
+        "[package]\nname = \"acme.axle\"\nversion = \"0.1.0\"\n",
+    )
+    .unwrap();
+    let src = "pub model Axle {\n  od: Length = 20mm\n  let bore: Length = 8mm\n  let wall: Length = od - bore\n}\n";
+    let file = dir.join("src/lib.cdt");
+    std::fs::write(&file, src).unwrap();
+    let uri = format!("file://{}", file.display());
+    let (mut c, _) = Client::start(json!(["utf-16"]));
+    open(&c, &uri, src);
+    c.next_publish();
+    c.next_publish();
+    let doc = json!({"uri": uri});
+
+    let h = c.request(
+        "textDocument/hover",
+        json!({"textDocument": doc, "position": {"line": 3, "character": 6}}),
+    );
+    let value = h["result"]["contents"]["value"].as_str().expect("hover");
+    assert!(value.contains("Axle.wall"), "{value}");
+    assert!(value.contains("Axle.bore"), "{value}");
+    let miss = c.request(
+        "textDocument/hover",
+        json!({"textDocument": doc, "position": {"line": 0, "character": 0}}),
+    );
+    assert!(miss["result"].is_null());
+
+    let lenses = c.request("textDocument/codeLens", json!({"textDocument": doc}));
+    let lenses = lenses["result"].as_array().expect("lenses");
+    let bore = lenses
+        .iter()
+        .find(|l| {
+            l["command"]["arguments"][0]
+                .as_str()
+                .is_some_and(|p| p.ends_with("Axle.bore"))
+        })
+        .expect("bore lens");
+    assert_eq!(bore["command"]["title"], "impact: 1 dependent");
+    assert_eq!(bore["command"]["command"], "cadetta.impact");
+
+    let d = c.request(
+        "textDocument/definition",
+        json!({"textDocument": doc, "position": {"line": 3, "character": 28}}),
+    );
+    assert_eq!(d["result"]["uri"], uri);
+    assert_eq!(d["result"]["range"]["start"]["line"], 2);
     assert_eq!(c.finish(false), 0);
 }

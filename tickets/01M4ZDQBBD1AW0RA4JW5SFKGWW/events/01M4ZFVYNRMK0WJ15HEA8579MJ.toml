@@ -1,0 +1,36 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-15T09:56:24Z"
+digest = "71f773f394b94d9d10aef8a804bca2c2e948ec20d4320f899a56ff93a48c2664"
+exit_code = 0
+inline = '''
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.40s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID ef91237e-7296-430c-bf7e-69eabe6b1657 with nextest profile: default
+    Starting 12 tests across 1 binary (144 tests skipped)
+        PASS [   0.008s] cadetta-adapter sync::tests::synced_record_includes_tolerance
+        PASS [   0.007s] cadetta-adapter sync::tests::regen_failure_restores_snapshot_and_skips_lock
+        PASS [   0.007s] cadetta-adapter sync::tests::only_and_adapter_id_scope
+        PASS [   0.007s] cadetta-adapter sync::tests::converged_recorded_in_lock
+        PASS [   0.008s] cadetta-adapter sync::tests::implicit_vanished_after_sync_is_r003
+        PASS [   0.008s] cadetta-adapter sync::tests::drift_refused_and_force_design_pushes
+        PASS [   0.008s] cadetta-adapter sync::tests::no_regen_pushes_without_lock_update
+        PASS [   0.008s] cadetta-adapter sync::tests::tolerance_edit_in_cad_is_r001
+        PASS [   0.008s] cadetta-adapter sync::tests::dry_run_writes_nothing_and_lists_r006
+        PASS [   0.009s] cadetta-adapter sync::tests::second_run_pushes_nothing_and_lock_identical
+        PASS [   0.009s] cadetta-adapter sync::tests::readback_mismatch_fails_and_skips_lock
+        PASS [   0.010s] cadetta-adapter sync::tests::only_matched_locators_are_recorded
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.011s] 12 tests run: 12 passed, 144 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-adapter sync::tests"
+size = 1621
+status = "measured"
+test_count = 12
+tests_digest = "aef852b2b60907510508c8f131ca88a6a954516aef93ae63c92b3b6251c36c3b"
+at = "2026-10-15T09:56:24Z"
+actor = "lognd"
+rev = 1

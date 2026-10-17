@@ -73,6 +73,9 @@ pub enum Outcome {
     Fail(Vec<String>),
     /// Failed, but allowlisted.
     KnownGap,
+    /// Replayed outside this runner (`kind=binding entry=python` fixtures are replayed by
+    /// `bindings/python/tests/test_binding_fixtures.py`).
+    External,
 }
 
 /// Everything a corpus run learned.
@@ -91,6 +94,20 @@ fn json_error<T>(r: Result<T, impl std::fmt::Display>, what: &str) -> Result<T, 
 }
 
 fn fixture_path(dir: &Path, name: &str, which: &str, kind: &str) -> Option<std::path::PathBuf> {
+    if kind == "compare" {
+        // Two-input fixtures keep sides `NAME.<which>.a` and `.b`; the executor resolves them
+        // from this stem, so return it when side `a` exists in any accepted form.
+        let stem = dir.join(format!("{name}.{which}"));
+        let has_a = ["cdt", "json", ""].iter().any(|ext| {
+            let side = if ext.is_empty() {
+                "a".to_owned()
+            } else {
+                format!("a.{ext}")
+            };
+            dir.join(format!("{name}.{which}.{side}")).exists()
+        });
+        return has_a.then_some(stem);
+    }
     let ext = if kind == "source" { "cdt" } else { "json" };
     [format!("{name}.{which}.{ext}"), format!("{name}.{which}")]
         .iter()
@@ -109,6 +126,13 @@ fn check_pair(dir: &Path, name: &str, doc: &str) -> Result<Outcome, String> {
             "expect.json doc `{}` != directory `{doc}`",
             expect.doc
         ));
+    }
+    let first = expect
+        .entry
+        .as_deref()
+        .and_then(|e| e.split_whitespace().next());
+    if expect.kind == "binding" && first == Some("python") {
+        return Ok(Outcome::External);
     }
     let mut problems = Vec::new();
     for (which, block) in [
@@ -197,11 +221,24 @@ fn collect_docs(dir: &Path, prefix: &str, out: &mut Vec<String>) {
 
 /// Discover and run every fixture pair under `root/<doc>/` (nested docs included); tolerates no corpus.
 pub fn run_corpus(root: &Path, allow: &KnownGaps) -> Report {
+    run_corpus_for(root, allow, &[])
+}
+
+/// True when `doc` is one of `only` or nested under one; an empty `only` selects every doc.
+fn doc_selected(doc: &str, only: &[&str]) -> bool {
+    only.is_empty()
+        || only
+            .iter()
+            .any(|o| doc == *o || doc.strip_prefix(o).is_some_and(|r| r.starts_with('/')))
+}
+
+/// Like `run_corpus` but runs only the docs in `only` (and their nested docs); an empty `only` runs all.
+pub fn run_corpus_for(root: &Path, allow: &KnownGaps, only: &[&str]) -> Report {
     let mut report = Report::default();
     let mut docs = Vec::new();
     collect_docs(root, "", &mut docs);
     docs.sort();
-    for doc in docs {
+    for doc in docs.into_iter().filter(|d| doc_selected(d, only)) {
         for name in names_in(&root.join(&doc)) {
             let key = format!("{doc}/{name}");
             let outcome = match check_pair(&root.join(&doc), &name, &doc) {
@@ -240,7 +277,7 @@ pub fn run_corpus(root: &Path, allow: &KnownGaps) -> Report {
             report.outcomes.insert(key, outcome);
         }
     }
-    for fixture in allow.0.keys() {
+    for fixture in allow.0.keys().filter(|f| doc_selected(f, only)) {
         if !report.outcomes.contains_key(fixture) {
             report
                 .notes

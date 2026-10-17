@@ -19,13 +19,7 @@
     ]
   },
   "must_not_fire": {
-    "diagnostics": [
-      {
-        "code": "C001",
-        "severity": "error",
-        "path": "acme.demo::Part.fits_limit"
-      }
-    ],
+    "diagnostics": [],
     "exit": 0
   }
 }
