@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [5]
+captured_at = "2026-10-17T18:08:21Z"
+digest = "41054ad1dd7a060480f4e6dd443fbc0816742e0b4c62eaf3a47ae44e5771a753"
+provider = "file"
+ref = "adapters/solidworks/evidence/nehy-live/sync-sequence.txt"
+size = 5313
+status = "measured"
+at = "2026-10-17T18:08:21Z"
+actor = "lognd"
+rev = 1
