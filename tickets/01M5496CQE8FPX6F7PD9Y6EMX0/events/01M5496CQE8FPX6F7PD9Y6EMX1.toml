@@ -1,0 +1,10 @@
+kind = "create"
+title = "SOLIDWORKS RpcServer push dispatch and ISwSession wiring to PushService"
+type = "task"
+category = "todo"
+priority = "medium"
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**"]
+body = "found while working ~DKCF816: PushService/SwComPushDocument exist and are live-verified, but the push RPC method is not routed to them yet."
+at = "2026-10-17T06:36:08Z"
+actor = "lognd"
+rev = 1
