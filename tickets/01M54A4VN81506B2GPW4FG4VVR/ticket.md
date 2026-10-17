@@ -7,6 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T06:52:47Z"
-updated = "2026-10-17T10:37:52Z"
+updated = "2026-10-17T11:10:38Z"
 idempotency_key = "sw-addin-live"
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/README.md"]
 +++
