@@ -30,6 +30,7 @@ __all__ = [
     "FileState",
     "InitializeParams",
     "InitializeResult",
+    "LocatorKind",
     "LocatorStatus",
     "OpenParams",
     "OpenResult",
@@ -82,6 +83,15 @@ class PushMode(StrEnum):
 
     REF = "ref"
     VALUE = "value"
+
+
+class LocatorKind(StrEnum):
+    """What a pushed locator addresses (adapters.md 3); the wire form of a binding's kind."""
+
+    GLOBAL = "global"
+    DIMENSION = "dimension"
+    PROPERTY = "property"
+    FRAME = "frame"
 
 
 class PushStatus(StrEnum):
@@ -232,6 +242,7 @@ class ChangedParam(_Msg):
     locator: str
     mode: PushMode
     ref_to: str | None = None
+    kind: LocatorKind | None = None
 
 
 class PushParams(_Msg):

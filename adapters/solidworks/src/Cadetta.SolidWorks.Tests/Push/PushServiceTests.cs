@@ -13,8 +13,8 @@ namespace Cadetta.SolidWorks.Tests.Push
     {
         private static JsonElement J(string raw) => JsonDocument.Parse(raw).RootElement.Clone();
 
-        private static ChangedParam P(string locator, string mode, string path, string value, string? refTo = null, DimTolerance? tol = null) =>
-            new ChangedParam { Locator = locator, Mode = mode, Path = path, Value = J(value), RefTo = refTo, Tolerance = tol };
+        private static ChangedParam P(string locator, string mode, string path, string value, string? refTo = null, DimTolerance? tol = null, string? kind = null) =>
+            new ChangedParam { Locator = locator, Mode = mode, Path = path, Value = J(value), RefTo = refTo, Tolerance = tol, Kind = kind };
 
         private static PushOutcome Run(FakePushDocument doc, params ChangedParam[] changes) =>
             new PushService(Log.Null()).Push(doc, changes, new PushOptions());
@@ -43,6 +43,30 @@ namespace Cadetta.SolidWorks.Tests.Push
             Assert.Equal(8, doc.Dims["D1@Sketch1"].Value);
             Assert.Equal("steel", doc.Props["Material"]);
             Assert.Equal(1, doc.Rebuilds);
+        }
+
+        // frob:ticket 01M5496CWTHTRP1RQ57THH1WF6
+        // frob:tests PushService.Push
+        [Fact]
+        public void Wire_kind_property_creates_a_new_custom_property_without_prefix()
+        {
+            var doc = new FakePushDocument();
+            var o = Run(doc, P("Supplier", "value", "pkg::p.s", "\"acme\"", kind: LocatorKind.Property));
+            Assert.Equal(PushStatus.Pushed, St(o, "Supplier").Status);
+            Assert.Equal("acme", doc.Props["Supplier"]);
+            Assert.False(doc.Globals.ContainsKey("Supplier"));
+        }
+
+        // frob:ticket 01M5496CWTHTRP1RQ57THH1WF6
+        // frob:tests PushService.Push
+        [Fact]
+        public void Wire_kind_wins_over_inference_and_a_prefix_is_still_stripped()
+        {
+            var doc = new FakePushDocument();
+            doc.Props["WIDTH"] = "1";
+            var o = Run(doc, P("global:WIDTH", "value", "pkg::p.w", "\"6\"", kind: LocatorKind.Global));
+            Assert.Equal(PushStatus.Pushed, St(o, "global:WIDTH").Status);
+            Assert.Equal(6, doc.Globals["WIDTH"]);
         }
 
         // frob:tests PushService.Push

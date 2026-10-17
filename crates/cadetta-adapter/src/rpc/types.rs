@@ -342,6 +342,21 @@ pub enum PushMode {
     Frame,
 }
 
+/// What a pushed locator addresses; the wire form of a binding's `kind` (adapters.md 3).
+// frob:ticket 01M5496CWTHTRP1RQ57THH1WF6
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "lowercase")]
+pub enum LocatorKind {
+    /// A global variable or equation.
+    Global,
+    /// A sketch or feature dimension.
+    Dimension,
+    /// A custom property.
+    Property,
+    /// A coordinate system or plane feature.
+    Frame,
+}
+
 /// One changed parameter in a `push`.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -361,6 +376,10 @@ pub struct ChangedParam {
     // frob:ticket 01M4VB648PMGRPG6R8D606HZK6
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub tolerance: Option<DimTolerance>,
+    /// What the locator addresses; absent means the adapter infers it from the name and `mode`.
+    // frob:ticket 01M5496CWTHTRP1RQ57THH1WF6
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub kind: Option<LocatorKind>,
 }
 
 /// Params of `push`.
