@@ -409,8 +409,44 @@ fn design_tolerance(
     })
 }
 
+/// The package-relative, `/`-separated form of each absolute path in `files`.
+fn relative_files(pkg: &PackageDir, files: &[String]) -> Vec<String> {
+    files
+        .iter()
+        .map(|f| {
+            FsPath::new(f)
+                .strip_prefix(&pkg.dir)
+                .map_or_else(|_| f.clone(), rel_glob_path)
+        })
+        .collect()
+}
+
+/// Map a bare observed file name to the one package-relative path in `known` that ends in it.
+///
+/// Adapters name observed files by base name; the push, regen and save steps need the path under
+/// the package. Names already in `known`, unmatched, or ambiguous are left as reported.
+fn resolve_observed_file(file: &str, known: &[String]) -> String {
+    if known.iter().any(|k| k == file) {
+        return file.to_owned();
+    }
+    let mut hits = known.iter().filter(|k| k.rsplit('/').next() == Some(file));
+    match (hits.next(), hits.next()) {
+        (Some(only), None) => {
+            tracing::debug!(%file, resolved = %only, "sync: bare observed file resolved");
+            only.clone()
+        }
+        (Some(_), Some(_)) => {
+            tracing::warn!(%file, "sync: observed file name is ambiguous in the package");
+            file.to_owned()
+        }
+        _ => file.to_owned(),
+    }
+}
+
 /// Flatten an adapter's `observed` JSON into `(file, native name, authored, expr)` rows.
-fn observe(observed: &Json) -> Vec<Observed> {
+///
+/// File names are resolved against `known`, the package-relative files the adapter was given.
+fn observe(observed: &Json, known: &[String]) -> Vec<Observed> {
     let projects: Vec<&Json> = match observed {
         Json::Array(a) => a.iter().collect(),
         v => vec![v],
@@ -437,7 +473,7 @@ fn observe(observed: &Json) -> Vec<Observed> {
             continue;
         };
         rows.push(Observed {
-            file,
+            file: resolve_observed_file(&file, known),
             native,
             text: authored,
             expr: member.get("expr").and_then(Json::as_str).map(str::to_owned),
@@ -502,6 +538,8 @@ fn diag_parts(v: &Json) -> (String, String) {
 /// The `Backend` that drives a live session: push, optional rebuild, read back.
 struct SessionBackend<R: BufRead, W: Write> {
     session: DriveSession<R, W>,
+    /// Package-relative files given to the adapter, to resolve its bare observed names.
+    known_files: Vec<String>,
     default_unit: UnitMap,
     /// Binding kinds of the pushed locators.
     kinds: KindMap,
@@ -550,7 +588,10 @@ struct SessionDoc<'a, R: BufRead, W: Write> {
 impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
     fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
         let (rows, read_tols) = match self.backend.session.read() {
-            Ok(r) => (observe(&r.observed), r.tolerances),
+            Ok(r) => (
+                observe(&r.observed, &self.backend.known_files),
+                r.tolerances,
+            ),
             Err(e) => {
                 self.backend.fail(&e);
                 return Vec::new();
@@ -1181,6 +1222,7 @@ fn drive_adapter<R: BufRead, W: Write>(
         let _ = client.shutdown();
         return Err(format!("adapter `{id}` has no `files` to read"));
     }
+    let known_files = relative_files(pkg, &files);
     let mut client = client;
     let read = client.read(&ReadParams {
         source: ReadSource::Files(files),
@@ -1192,7 +1234,7 @@ fn drive_adapter<R: BufRead, W: Write>(
             return Err(format!("adapter `{id}` read failed: {e}"));
         }
     };
-    let observed = observe(&read.observed);
+    let observed = observe(&read.observed, &known_files);
     let geometry = Geometry {
         observed: &read.observed,
         features: &client.info().features,
@@ -1275,6 +1317,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     entries.retain(|e| !refused.contains(&e.file));
     let mut backend = SessionBackend {
         session,
+        known_files,
         default_unit: units,
         kinds,
         precision,
@@ -1690,12 +1733,13 @@ pub(crate) fn probe_adapter<R: BufRead, W: Write>(
     if files.is_empty() {
         return Err(format!("adapter `{id}` has no `files` to read"));
     }
+    let known_files = relative_files(pkg, &files);
     let read = client
         .read(&ReadParams {
             source: ReadSource::Files(files),
         })
         .map_err(|e| format!("adapter `{id}` read failed: {e}"))?;
-    let observed = observe(&read.observed);
+    let observed = observe(&read.observed, &known_files);
     let geometry = Geometry {
         observed: &read.observed,
         features: &client.info().features,
@@ -2778,6 +2822,39 @@ done
         let (code, _, err) = run(&dir, Format::Text, &[]);
         assert_eq!(code, EXIT_USAGE, "{err}");
         assert!(err.contains("R008"), "{err}");
+    }
+
+    // frob:ticket 01M558W4KV1H1JZVFHBF8BPBEH
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::resolve_observed_file
+    #[test]
+    fn bare_observed_names_resolve_to_the_unique_package_path() {
+        let known = vec!["parts/a.SLDPRT".to_owned(), "parts/b.SLDPRT".to_owned()];
+        assert_eq!(resolve_observed_file("a.SLDPRT", &known), "parts/a.SLDPRT");
+        assert_eq!(
+            resolve_observed_file("parts/b.SLDPRT", &known),
+            "parts/b.SLDPRT"
+        );
+        assert_eq!(resolve_observed_file("c.SLDPRT", &known), "c.SLDPRT");
+        let dup = vec!["x/a.SLDPRT".to_owned(), "y/a.SLDPRT".to_owned()];
+        assert_eq!(resolve_observed_file("a.SLDPRT", &dup), "a.SLDPRT");
+    }
+
+    // frob:ticket 01M558W4KV1H1JZVFHBF8BPBEH
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::drive_adapter
+    #[test]
+    fn push_opens_the_package_relative_path_of_a_bare_observed_file() {
+        let dir = project("files = [\"parts/part.FCStd\"]\n");
+        let mut results = full_run("6mm");
+        results[2] = json!({"session": {"handle": "s1", "files": [{"path": "parts/part.FCStd", "dirty": false, "readonly": false}]}, "diagnostics": []});
+        let (report, out, _) = drive_in(&dir, &[], Some("5mm"), &results);
+        assert!(!report.failed(), "{report:?}");
+        let text = String::from_utf8(out).unwrap();
+        let open: Json = text
+            .lines()
+            .map(|l| serde_json::from_str::<Json>(l).unwrap())
+            .find(|r| r["method"] == "open")
+            .expect("an open request");
+        assert!(open.to_string().contains("parts/part.FCStd"), "{open}");
     }
 
     // frob:ticket 01M558W4R8Q0Y47SEXJ20S26NG
