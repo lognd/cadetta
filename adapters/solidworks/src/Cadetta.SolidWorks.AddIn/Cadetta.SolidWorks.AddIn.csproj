@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- The COM add-in: task pane, project discovery and the cadetta CLI client. References the interop assemblies. Not built in CI. Client, Pane and Logging are interop-free and are compiled into the tests (tests/Cadetta.SolidWorks.Tests/AddIn). -->
+  <!-- The COM add-in: task pane, project discovery and the cadetta CLI client. References the interop assemblies. Not built in CI. Client, Pane, Logging and Commands/CommandActions+CadettaCommands are interop-free and are compiled into the tests (tests/Cadetta.SolidWorks.Tests/AddIn). -->
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <RootNamespace>Cadetta.SolidWorks.AddIn</RootNamespace>
@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
+    <ProjectReference Include="..\Cadetta.SolidWorks.Com\Cadetta.SolidWorks.Com.csproj" />
   </ItemGroup>
 </Project>

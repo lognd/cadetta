@@ -19,6 +19,8 @@ Bootstrap verified on host `nova` (Windows ARM64, SOLIDWORKS 2025).
    - `dotnet test src\Cadetta.SolidWorks.Tests` (28 tests pass on nova)
    - `dotnet test tests\Cadetta.SolidWorks.Tests\AddIn` (add-in logic; no
      SOLIDWORKS or net48 needed; also run by CI)
+   - `dotnet test tests\Cadetta.SolidWorks.Tests\Commands` (add-in command
+     logic; also run by CI)
    - `dotnet build src\cadetta-solidworks -c Release` (builds Com + exe)
 4. The exe resolves `SolidWorks.Interop.*` from `SOLIDWORKS_API_DIR` at run
    time (`InteropResolver`), because the references are `Private=false`.

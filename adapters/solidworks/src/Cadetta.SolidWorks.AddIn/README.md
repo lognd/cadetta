@@ -45,4 +45,13 @@ else `cadetta` on `PATH`. Log level comes from `CADETTA_LOG` (for example `debug
 - `Core/Commands/FrameMatcher` assigns an array instance by the unique nearest pose, and refuses when empty, too far or tied.
 - `AddIn/Commands/CadettaCommands` drives `cadetta bind`, `bind --remove`, `sync [--dry-run] [--only GLOB]` and `why`; it never edits bindings or the .cdt itself. Create datum frames is `sync --only <datum paths>` and needs `datums = "create"`.
 
-Not exercised live: the COM wiring (menu items, selection reading) is not part of this change; the logic above is unit-tested through `tests/Cadetta.SolidWorks.Tests/Commands`. No CLI verb yet reports composed datum or instance frames, so assign array needs a `cadetta frames` surface.
+## Menu and task pane wiring
+
+`CadettaAddIn` adds a `Cadetta` menu (Link, Unlink, Sync preview, Sync, Why) for parts and assemblies, and `TaskPaneControl` shows the same five buttons above the path list. Both call one place, `AddIn/Commands/CommandActions`, which is free of COM and UI so it is unit-tested:
+
+- Link uses the selected pane row's path (from `cadetta names`, mangled by `NameMangler` into the global name) and the selected dimension's name (`SwSelection.SelectedDimensionName`, such as `D1@Sketch1`).
+- Link and Unlink first pass `DocumentGate` (R009): refused while a sync runs, the document is read-only, or SOLIDWORKS has a modal dialog or active command.
+- Sync, Sync preview and Why run `cadetta sync [--dry-run]` and `cadetta why PATH` in the project root; their output (or the refusal) is shown in the pane status line.
+- The menu is enabled only while the active document belongs to a cadetta project.
+
+Not exercised live: the menu registration (`AddMenuItem5` string form and callbacks), the pane buttons, the selected dimension name and the real `SwComPushDocument` link have only been compiled (on nova), never run inside SOLIDWORKS. Assign array is still not wired: no CLI verb yet reports composed datum or instance frames, so it needs a `cadetta frames` surface.

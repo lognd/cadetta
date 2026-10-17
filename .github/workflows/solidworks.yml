@@ -59,6 +59,8 @@ jobs:
         run: dotnet test src/Cadetta.SolidWorks.Tests -c Release
       - name: test the add-in logic (interop-free, linked sources)
         run: dotnet test tests/Cadetta.SolidWorks.Tests/AddIn -c Release
+      - name: test the add-in command logic (interop-free, linked sources)
+        run: dotnet test tests/Cadetta.SolidWorks.Tests/Commands -c Release
       - name: transcript replay
         run: dotnet test src/Cadetta.SolidWorks.Tests -c Release --no-build --filter FullyQualifiedName~TranscriptTests
       - name: executable answers initialize against the fake session

@@ -38,5 +38,18 @@ namespace Cadetta.SolidWorks.AddIn
             var angular = ((IDimension)dim).GetType() == (int)swDimensionType_e.swAngularDimension;
             return new SelectedDimension(angular ? QuantityKind.Angle : QuantityKind.Length, dim.SystemValue);
         }
+
+        /// <summary>The selected dimension's document-local name such as "D1@Sketch1" (the form equations use), or null when the selection is not a dimension.</summary>
+        public static string? SelectedDimensionName(ISldWorks sw)
+        {
+            var doc = sw.ActiveDoc as ModelDoc2;
+            var mgr = doc?.SelectionManager as ISelectionMgr;
+            if (mgr == null || mgr.GetSelectedObjectCount2(-1) < 1 || mgr.GetSelectedObjectType3(1, -1) != (int)swSelectType_e.swSelDIMENSIONS)
+            {
+                return null;
+            }
+            var dim = (mgr.GetSelectedObject6(1, -1) as DisplayDimension)?.GetDimension2(0) as Dimension;
+            return dim?.Name;
+        }
     }
 }
