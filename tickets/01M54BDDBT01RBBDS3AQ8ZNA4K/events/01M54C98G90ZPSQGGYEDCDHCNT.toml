@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = [".github/workflows/solidworks.yml", "adapters/solidworks/**"]
+new = [".github/workflows/solidworks.yml", "adapters/solidworks/**", "changelog.d/01M54BDDBT01RBBDS3AQ8ZNA4K.added.md"]
+at = "2026-10-17T07:30:08Z"
+actor = "lognd"
+rev = 1
