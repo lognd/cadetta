@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:25:10Z"
-updated = "2026-10-17T17:28:07Z"
+updated = "2026-10-17T17:28:41Z"
 scope = ["adapters/solidworks/src/**", "adapters/solidworks/tests/**", "docs/spec/solidworks.md"]
+
+[[acceptance]]
+text = "Link of a SOLIDWORKS count dimension creates a unitless global (no mm scaling); lengths keep mm, angles deg."
+bound = false
 +++
 
 found while working ~W5MBBTB: add-in Link on D1@LPattern1 logged 'global add ... = 4000mm'. Global create scales an integer dimension by the length factor; use DimensionUnits kind. Scope adapters/solidworks/src/**

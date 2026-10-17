@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Link of a SOLIDWORKS count dimension creates a unitless global (no mm scaling); lengths keep mm, angles deg."]
+moved = []
+at = "2026-10-17T17:28:41Z"
+actor = "lognd"
+rev = 1
