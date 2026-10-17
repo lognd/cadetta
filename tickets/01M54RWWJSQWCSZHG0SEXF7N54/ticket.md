@@ -4,9 +4,10 @@ title = "SOLIDWORKS add-in never connects on nova: LoadAddIn returns 0 but Conne
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-17T11:10:34Z"
-updated = "2026-10-17T11:10:34Z"
+updated = "2026-10-17T11:14:25Z"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**"]
 +++
 
