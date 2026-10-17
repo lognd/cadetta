@@ -8,7 +8,7 @@ points = 2
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:13Z"
-updated = "2026-10-17T05:18:46Z"
+updated = "2026-10-17T05:18:50Z"
 persona = "design engineer"
 capability = "make check fast"
 idempotency_key = "replan14:sw-cache"
@@ -21,5 +21,5 @@ target = "01M4SWMDM7FRKACF83CT4H5X0H"
 
 [[acceptance]]
 text = "Given an unchanged file digest, when read runs again, then the cached observed IR is returned without opening the file (adapters.md 2.2)"
-bound = false
+bound = true
 +++
