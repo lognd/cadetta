@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["FreeCAD adapter live round trip (emit, read, open, push, regen, save, close) passes under freecadcmd 1.1.4 on nova"]
+moved = []
+at = "2026-10-17T18:06:27Z"
+actor = "lognd"
+rev = 1

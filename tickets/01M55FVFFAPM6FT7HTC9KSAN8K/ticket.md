@@ -7,7 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T17:51:45Z"
-updated = "2026-10-17T17:51:57Z"
+updated = "2026-10-17T18:06:27Z"
+scope = ["adapters/freecad/**"]
+
+[[acceptance]]
+text = "FreeCAD adapter live round trip (emit, read, open, push, regen, save, close) passes under freecadcmd 1.1.4 on nova"
+bound = false
 +++
 
 FreeCAD 1.1.4 installed on nova at C:\Users\logan\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe. Run the FreeCAD adapter open/read/push/save/close round trip live there, record evidence under adapters/freecad/evidence/, bind to milestone criterion 3.
