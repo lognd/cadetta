@@ -12,7 +12,7 @@ updated = "2026-10-17T13:09:43Z"
 persona = "release manager"
 capability = "verify the real COM path before release"
 labels = ["creates:adapters/solidworks/SMOKE.md"]
-scope = ["adapters/solidworks/SMOKE.md", "adapters/solidworks/evidence/**", "adapters/solidworks/DEVELOPING.md"]
+scope = ["adapters/solidworks/SMOKE.md", "adapters/solidworks/evidence/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/src/**"]
 
 [[links]]
 kind = "blocked-by"
