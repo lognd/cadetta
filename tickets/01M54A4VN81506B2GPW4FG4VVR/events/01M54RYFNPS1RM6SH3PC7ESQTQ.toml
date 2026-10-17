@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T11:11:26Z"
+digest = "1fa87dcfaad1a3f452c5b8386373d5ce88aa090e473368a4aa4693b804afa44b"
+provider = "file"
+ref = "adapters/solidworks/evidence/4fg-live/live.log"
+size = 1161
+status = "measured"
+at = "2026-10-17T11:11:26Z"
+actor = "lognd"
+rev = 1
