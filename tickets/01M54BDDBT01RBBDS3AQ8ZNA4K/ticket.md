@@ -7,6 +7,6 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T07:14:55Z"
-updated = "2026-10-17T07:30:56Z"
+updated = "2026-10-17T07:31:16Z"
 scope = [".github/workflows/solidworks.yml", "adapters/solidworks/**", "changelog.d/01M54BDDBT01RBBDS3AQ8ZNA4K.added.md"]
 +++
