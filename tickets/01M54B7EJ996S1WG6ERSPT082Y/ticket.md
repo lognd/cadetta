@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T07:11:40Z"
-updated = "2026-10-17T07:44:37Z"
+updated = "2026-10-17T07:46:59Z"
 scope = ["crates/cadetta-cli/src/cmd/frames.rs", "crates/cadetta-cli/src/cmd/mod.rs", "crates/cadetta-cli/src/lib.rs", "docs/schemas/frames.json", "docs/spec/config-cli.md"]
 +++
 
