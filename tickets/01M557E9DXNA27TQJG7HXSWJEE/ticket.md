@@ -2,7 +2,8 @@
 id = "01M557E9DXNA27TQJG7HXSWJEE"
 title = "Extract shared unit_scale and observed-IR helpers into cadetta.adapter"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
