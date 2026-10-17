@@ -2,7 +2,8 @@
 id = "01M557E9BQSEMAMPP6XDW3NEMP"
 title = "Fusion live run on nova: exercise addin/CadettaFusion (open, read, push, save, close)"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
