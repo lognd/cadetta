@@ -2,7 +2,8 @@
 id = "01M558W4KV1H1JZVFHBF8BPBEH"
 title = "Adapter reports observed IR file names bare"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
