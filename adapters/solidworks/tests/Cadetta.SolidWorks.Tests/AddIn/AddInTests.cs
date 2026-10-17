@@ -105,7 +105,7 @@ namespace Cadetta.SolidWorks.AddIn.Tests
             Assert.True(res.IsOk);
             Assert.Equal(5, res.Value!.Names.Count);
             Assert.Equal("cadetta", r.LastExe);
-            Assert.Equal(new[] { "names", "solidworks", "--format", "json" }, r.LastArgs.ToArray());
+            Assert.Equal(new[] { "names", "solidworks", "--observe", "--format", "json" }, r.LastArgs.ToArray());
             Assert.Equal("/proj", r.LastDir);
         }
 

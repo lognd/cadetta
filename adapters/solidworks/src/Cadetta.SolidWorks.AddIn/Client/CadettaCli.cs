@@ -23,10 +23,10 @@ namespace Cadetta.SolidWorks.AddIn.Client
             _log = log;
         }
 
-        /// <summary>Runs `cadetta names ADAPTER --format json` in the project and returns that adapter's rows.</summary>
+        /// <summary>Runs `cadetta names ADAPTER --observe --format json` in the project and returns that adapter's rows.</summary>
         public CliResult<NamesAdapter> Names(ProjectInfo project, AdapterRef adapter)
         {
-            var args = new List<string> { "names", adapter.Id, "--format", "json" };
+            var args = new List<string> { "names", adapter.Id, "--observe", "--format", "json" };
             _log.Info("cadetta names " + adapter.Id + " in " + project.Root);
             var output = _runner.Run(_exe, args, project.Root, out var startError);
             if (output == null)
