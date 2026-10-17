@@ -2,7 +2,8 @@
 id = "01M4SWME4W423G9HT6E2VJJ6M5"
 title = "Read cache keyed by file digest"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
