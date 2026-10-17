@@ -2,7 +2,7 @@
 id = "01M4X91P37CRMWF43MHK53RXEG"
 title = "SOLIDWORKS transcript replay of emit, read, push, regen and contract rules"
 type = "story"
-category = "in-progress"
+category = "todo"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
