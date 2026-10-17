@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [2]
+captured_at = "2026-10-17T17:25:24Z"
+digest = "2abf9facec053c3964cb2a36bce215e5c6d651b226ebdfa1711b1c13945681c1"
+provider = "file"
+ref = "adapters/solidworks/evidence/w5mb-live/run2.log"
+size = 5965
+status = "measured"
+at = "2026-10-17T17:25:24Z"
+actor = "lognd"
+rev = 1

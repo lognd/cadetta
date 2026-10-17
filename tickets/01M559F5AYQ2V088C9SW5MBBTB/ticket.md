@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T17:25:22Z"
+updated = "2026-10-17T17:25:24Z"
 scope = ["adapters/solidworks/**"]
 
 [[acceptance]]
@@ -16,7 +16,7 @@ bound = true
 
 [[acceptance]]
 text = "Pattern count reads as a unitless 4 (DimensionUnitsTests KindOf)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Menu Link callback exercised for a tolerance and a count; real click not automatable, reason recorded (evidence/w5mb-live/addin-menu.log, SMOKE.md)"
