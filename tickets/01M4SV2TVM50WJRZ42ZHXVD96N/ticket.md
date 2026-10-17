@@ -8,11 +8,11 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-17T06:58:31Z"
+updated = "2026-10-17T06:59:01Z"
 persona = "design engineer"
 capability = "regenerate headless and see rebuild failures as diagnostics"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/cadetta-solidworks/Program.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Regen/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/cadetta-solidworks/Program.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Regen/**", "adapters/solidworks/DEVELOPING.md"]
 
 [[links]]
 kind = "blocked-by"
