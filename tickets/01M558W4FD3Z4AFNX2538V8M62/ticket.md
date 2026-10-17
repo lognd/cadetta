@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:50:12Z"
-scope = ["crates/**"]
+updated = "2026-10-17T16:50:48Z"
+scope = ["crates/**", "docs/spec/config-cli.md"]
 
 [[acceptance]]
 text = "Given a reading adapter, when cadetta names runs without --observe, then the adapter is not spawned and states stay unknown; with --observe it reads CAD."
