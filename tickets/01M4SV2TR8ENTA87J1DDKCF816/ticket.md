@@ -2,7 +2,8 @@
 id = "01M4SV2TR8ENTA87J1DDKCF816"
 title = "SOLIDWORKS emit and push: globals, dimension values and ref mode"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
