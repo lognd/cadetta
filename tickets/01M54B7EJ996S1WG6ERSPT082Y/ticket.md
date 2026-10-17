@@ -2,12 +2,12 @@
 id = "01M54B7EJ996S1WG6ERSPT082Y"
 title = "cadetta frames CLI verb reporting composed datum and instance frames"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T07:11:40Z"
-updated = "2026-10-17T07:38:09Z"
+updated = "2026-10-17T07:38:10Z"
 scope = ["crates/cadetta-cli/src/cmd/frames.rs"]
 +++
 
