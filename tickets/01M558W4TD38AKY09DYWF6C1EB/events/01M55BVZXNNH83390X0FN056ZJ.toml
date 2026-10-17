@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T16:42:08Z"
+digest = "d34edde77725cde697be85bea978ad7422bd6b0e8cab21410872c0654105922d"
+provider = "file"
+ref = "/tmp/claude-1000/-home-logan-projects-cadetta/5bbabb83-32a3-446b-9e71-532cccb3fbd0/scratchpad/wf6c1eb-evidence.log"
+size = 184
+status = "measured"
+at = "2026-10-17T16:42:08Z"
+actor = "lognd"
+rev = 1
