@@ -2,7 +2,8 @@
 id = "01M5596EN1KFSFCYTBW6GWEY93"
 title = "Fusion live run needs a signed-in Autodesk account on nova"
 type = "task"
-category = "todo"
+category = "done"
+outcome = "duplicate"
 priority = "medium"
 points = 2
 reporter = "lognd"
