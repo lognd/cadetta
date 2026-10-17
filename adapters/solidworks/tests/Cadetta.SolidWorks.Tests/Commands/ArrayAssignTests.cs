@@ -54,6 +54,7 @@ namespace Cadetta.SolidWorks.Commands.Tests
         {
             Assert.Equal("pkg::Mount/feet", ArrayAssign.ArrayPrefix("pkg::Mount/feet[2].place"));
             Assert.Equal("pkg::Mount/feet", ArrayAssign.ArrayPrefix("pkg::Mount/feet[12]"));
+            Assert.Equal("pkg::Mount/feet", ArrayAssign.ArrayPrefix("pkg::Mount/feet[1].place.offset.x"));
             Assert.Null(ArrayAssign.ArrayPrefix("pkg::Mount/hole.place"));
             Assert.Null(ArrayAssign.ArrayPrefix("pkg::Mount/feet[x].place"));
             Assert.Equal("feet[2]", ArrayAssign.ReferenceOf("pkg::Mount/feet[2].place"));

@@ -114,3 +114,9 @@ thickness to a global, set it too large, save, and regen (see the
   `regasm /codebase` with the framework64 regasm, then restart SOLIDWORKS)
   or when the Add-Ins box is ticked. `ConnectToSW` now logs at warn level so
   a connect shows in addin.log by default. Evidence: `evidence/exf-live/`.
+- Release smoke (~NEHY9X7): the add-in connects, and the drive protocol
+  (`open`, `read`, `push`, `regen`, `save`, `close`) round-trips on a
+  stand-in part; see `SMOKE.md` and `evidence/nehy-live/`. Gotchas: the ctl
+  tool's `setdim` takes metres; `D1@Shell1` does not move through the API;
+  a CAD tolerance not present in the design makes read-back differ from the
+  pushed literal, so clear it before a sync test.

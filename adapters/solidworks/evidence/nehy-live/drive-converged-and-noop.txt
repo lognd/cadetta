@@ -1,0 +1,97 @@
+### sync C (hand-edited design to 14mm to match moved CAD; wall newly bound at 1mm = CAD 1mm: expect converged)
+2026-10-17T15:46:57.311189Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\.\cadetta.toml
+2026-10-17T15:46:57.311792Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\.\cadetta.toml
+2026-10-17T15:46:57.312042Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\cadetta.toml
+2026-10-17T15:46:57.312452Z  INFO cadetta::pkg::manifest: loading manifest path=C:\src\nehy\proj\cadetta.toml
+2026-10-17T15:46:57.312766Z  INFO cadetta::project: project opened root=C:\src\nehy\proj scope=[0]
+2026-10-17T15:46:57.313050Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:46:57.313495Z  INFO cadetta_syntax::parser: parsed file entries=1 diags=0
+2026-10-17T15:46:57.313575Z  INFO cadetta_syntax::parser: parsed file entries=5 diags=0
+2026-10-17T15:46:57.314061Z  INFO cadetta_syntax::parser: parsed file entries=10 diags=0
+2026-10-17T15:46:57.314312Z  INFO cadetta_syntax::parser: parsed file entries=9 diags=0
+2026-10-17T15:46:57.314422Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:46:57.314799Z  INFO cadetta_syntax::parser: parsed file entries=8 diags=0
+2026-10-17T15:46:57.315543Z  INFO cadetta_syntax::parser: parsed file entries=16 diags=0
+2026-10-17T15:46:57.316199Z  INFO cadetta_syntax::parser: parsed file entries=5 diags=0
+2026-10-17T15:46:57.316459Z  INFO cadetta_syntax::parser: parsed file entries=6 diags=0
+2026-10-17T15:46:57.316511Z  INFO cadetta_syntax::parser: parsed file entries=14 diags=0
+2026-10-17T15:46:57.316612Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:46:57.317230Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:46:57.343109Z  INFO cadetta::pipeline: pipeline: evaluated packages=2 values=11 checks=0
+2026-10-17T15:46:57.344598Z  INFO cadetta::pipeline: pipeline: analysis complete diagnostics=3 packages=1
+2026-10-17T15:46:57.346632Z  INFO cadetta::cmd::sync: sync: starting adapter adapter=solidworks
+2026-10-17T15:46:57.346647Z  INFO cadetta_adapter::rpc::client: spawning adapter command=C:\src\nehy\adapter\cadetta-solidworks.exe timeout=Some(60s)
+2026-10-17T15:46:57.487845Z  INFO cadetta_solidworks: resolving SolidWorks.Interop assemblies from C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist
+2026-10-17T15:46:57.489845Z  INFO cadetta_solidworks: connecting to SOLIDWORKS (attach or start hidden)
+2026-10-17T15:46:57.534990Z  INFO cadetta_solidworks: attached to the running SOLIDWORKS
+2026-10-17T15:46:57.547025Z  INFO cadetta_solidworks: serving the adapter protocol on stdio (SOLIDWORKS 33.3.0)
+2026-10-17T15:46:57.798107Z  INFO cadetta_solidworks: initialize from cadetta 0.0.0
+2026-10-17T15:46:57.872087Z  INFO cadetta_adapter::rpc::client: adapter initialized name=solidworks version=0.0.0
+2026-10-17T15:46:57.888849Z  INFO cadetta_solidworks: read C:\src\nehy\proj\parts/Plate.SLDPRT
+2026-10-17T15:46:58.909276Z  INFO cadetta_solidworks: opened C:\src\nehy\proj\parts/Plate.SLDPRT (warnings=0)
+2026-10-17T15:46:59.673167Z  INFO cadetta_solidworks: configurations: active=Default, 0 not imported, 2 properties
+2026-10-17T15:46:59.996703Z  INFO cadetta_solidworks: observe C:\src\nehy\proj\parts/Plate.SLDPRT: 3 globals, 2 dimensions, 2 properties, 2 frames, 0 instances
+2026-10-17T15:47:00.029979Z  WARN cadetta_solidworks: property PROBE_PROP is not numeric: v1
+2026-10-17T15:47:00.029979Z  WARN cadetta_solidworks: observed PROBE_PROP not faithful: property value is text, not a number: v1
+2026-10-17T15:47:00.029979Z  WARN cadetta_solidworks: property PROBE_CFG is not numeric: c1
+2026-10-17T15:47:00.029979Z  WARN cadetta_solidworks: observed PROBE_CFG not faithful: property value is text, not a number: c1
+2026-10-17T15:47:00.067399Z  INFO cadetta_solidworks: observed built: 7 members
+2026-10-17T15:47:00.068398Z  INFO cadetta_solidworks: read C:\src\nehy\proj\parts/Plate.SLDPRT done
+2026-10-17T15:47:00.124925Z  INFO cadetta::cmd::sync: sync: geometry pass done adapter=solidworks datums=0
+2026-10-17T15:47:00.125043Z  INFO cadetta::cmd::sync: sync: entries built adapter=solidworks entries=2
+2026-10-17T15:47:00.125299Z  INFO cadetta_adapter::sync: dry run: nothing written records=2
+2026-10-17T15:47:00.125663Z  INFO cadetta::cmd::sync: sync: lock value recorded adapter=solidworks path=live.rig::Plate.thickness locator=D1@Boss-Extrude1
+2026-10-17T15:47:00.125333Z  INFO cadetta_solidworks: shutdown requested
+2026-10-17T15:47:00.180813Z  INFO cadetta_adapter::rpc::client: adapter exited status=exit code: 0
+converged  live.rig::Plate.thickness  D1@Boss-Extrude1  14mm +-0.2mm -> 14mm
+skip  live.rig::Plate.wall  D1@Shell1  1mm -> 1mm
+0 pushed, 1 skipped, 0 drift, 1 converged, 0 failed
+### exit 0
+### sync D (expect no-op)
+2026-10-17T15:47:00.202012Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\.\cadetta.toml
+2026-10-17T15:47:00.202570Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\.\cadetta.toml
+2026-10-17T15:47:00.202821Z  INFO cadetta::config: loading configuration path=C:\src\nehy\proj\cadetta.toml
+2026-10-17T15:47:00.203238Z  INFO cadetta::pkg::manifest: loading manifest path=C:\src\nehy\proj\cadetta.toml
+2026-10-17T15:47:00.203539Z  INFO cadetta::project: project opened root=C:\src\nehy\proj scope=[0]
+2026-10-17T15:47:00.203801Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:47:00.203863Z  INFO cadetta_syntax::parser: parsed file entries=1 diags=0
+2026-10-17T15:47:00.203905Z  INFO cadetta_syntax::parser: parsed file entries=5 diags=0
+2026-10-17T15:47:00.204351Z  INFO cadetta_syntax::parser: parsed file entries=10 diags=0
+2026-10-17T15:47:00.204578Z  INFO cadetta_syntax::parser: parsed file entries=9 diags=0
+2026-10-17T15:47:00.204672Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:47:00.205129Z  INFO cadetta_syntax::parser: parsed file entries=8 diags=0
+2026-10-17T15:47:00.205833Z  INFO cadetta_syntax::parser: parsed file entries=16 diags=0
+2026-10-17T15:47:00.206518Z  INFO cadetta_syntax::parser: parsed file entries=5 diags=0
+2026-10-17T15:47:00.206795Z  INFO cadetta_syntax::parser: parsed file entries=6 diags=0
+2026-10-17T15:47:00.206848Z  INFO cadetta_syntax::parser: parsed file entries=14 diags=0
+2026-10-17T15:47:00.206946Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:47:00.207537Z  INFO cadetta_syntax::parser: parsed file entries=4 diags=0
+2026-10-17T15:47:00.233976Z  INFO cadetta::pipeline: pipeline: evaluated packages=2 values=11 checks=0
+2026-10-17T15:47:00.235461Z  INFO cadetta::pipeline: pipeline: analysis complete diagnostics=3 packages=1
+2026-10-17T15:47:00.237636Z  INFO cadetta::cmd::sync: sync: starting adapter adapter=solidworks
+2026-10-17T15:47:00.237651Z  INFO cadetta_adapter::rpc::client: spawning adapter command=C:\src\nehy\adapter\cadetta-solidworks.exe timeout=Some(60s)
+2026-10-17T15:47:00.378610Z  INFO cadetta_solidworks: resolving SolidWorks.Interop assemblies from C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist
+2026-10-17T15:47:00.381612Z  INFO cadetta_solidworks: connecting to SOLIDWORKS (attach or start hidden)
+2026-10-17T15:47:00.424949Z  INFO cadetta_solidworks: attached to the running SOLIDWORKS
+2026-10-17T15:47:00.435956Z  INFO cadetta_solidworks: serving the adapter protocol on stdio (SOLIDWORKS 33.3.0)
+2026-10-17T15:47:00.686409Z  INFO cadetta_solidworks: initialize from cadetta 0.0.0
+2026-10-17T15:47:00.758733Z  INFO cadetta_adapter::rpc::client: adapter initialized name=solidworks version=0.0.0
+2026-10-17T15:47:00.774264Z  INFO cadetta_solidworks: read C:\src\nehy\proj\parts/Plate.SLDPRT
+2026-10-17T15:47:01.839202Z  INFO cadetta_solidworks: opened C:\src\nehy\proj\parts/Plate.SLDPRT (warnings=0)
+2026-10-17T15:47:02.723204Z  INFO cadetta_solidworks: configurations: active=Default, 0 not imported, 2 properties
+2026-10-17T15:47:03.044802Z  INFO cadetta_solidworks: observe C:\src\nehy\proj\parts/Plate.SLDPRT: 3 globals, 2 dimensions, 2 properties, 2 frames, 0 instances
+2026-10-17T15:47:03.076288Z  WARN cadetta_solidworks: property PROBE_PROP is not numeric: v1
+2026-10-17T15:47:03.076288Z  WARN cadetta_solidworks: observed PROBE_PROP not faithful: property value is text, not a number: v1
+2026-10-17T15:47:03.076288Z  WARN cadetta_solidworks: property PROBE_CFG is not numeric: c1
+2026-10-17T15:47:03.076288Z  WARN cadetta_solidworks: observed PROBE_CFG not faithful: property value is text, not a number: c1
+2026-10-17T15:47:03.115046Z  INFO cadetta_solidworks: observed built: 7 members
+2026-10-17T15:47:03.116046Z  INFO cadetta_solidworks: read C:\src\nehy\proj\parts/Plate.SLDPRT done
+2026-10-17T15:47:03.172264Z  INFO cadetta::cmd::sync: sync: geometry pass done adapter=solidworks datums=0
+2026-10-17T15:47:03.172337Z  INFO cadetta::cmd::sync: sync: entries built adapter=solidworks entries=2
+2026-10-17T15:47:03.172552Z  INFO cadetta_adapter::sync: dry run: nothing written records=2
+2026-10-17T15:47:03.172414Z  INFO cadetta_solidworks: shutdown requested
+2026-10-17T15:47:03.210250Z  INFO cadetta_adapter::rpc::client: adapter exited status=exit code: 0
+skip  live.rig::Plate.thickness  D1@Boss-Extrude1  14mm -> 14mm
+skip  live.rig::Plate.wall  D1@Shell1  1mm -> 1mm
+0 pushed, 2 skipped, 0 drift, 0 converged, 0 failed
+### exit 0

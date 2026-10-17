@@ -1,0 +1,77 @@
+## step 1: sync --dry-run
+### cadetta sync --dry-run
+2026-10-17T15:32:17.629926Z  WARN cadetta_solidworks: property PROBE_PROP is not numeric: v1
+2026-10-17T15:32:17.630926Z  WARN cadetta_solidworks: observed PROBE_PROP not faithful: property value is text, not a number: v1
+2026-10-17T15:32:17.631926Z  WARN cadetta_solidworks: property PROBE_CFG is not numeric: c1
+2026-10-17T15:32:17.631926Z  WARN cadetta_solidworks: observed PROBE_CFG not faithful: property value is text, not a number: c1
+dry run: 0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+## step 2: sync (push 8mm)
+### cadetta sync
+2026-10-17T15:32:25.345216Z  WARN cadetta_solidworks: property PROBE_PROP is not numeric: v1
+2026-10-17T15:32:25.346216Z  WARN cadetta_solidworks: observed PROBE_PROP not faithful: property value is text, not a number: v1
+2026-10-17T15:32:25.346216Z  WARN cadetta_solidworks: property PROBE_CFG is not numeric: c1
+2026-10-17T15:32:25.346216Z  WARN cadetta_solidworks: observed PROBE_CFG not faithful: property value is text, not a number: c1
+0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+## step 3: edit dimension in SOLIDWORKS to 9mm, save
+activedoc null=False
+setdim D1@Boss-Extrude1@Plate.Part -> 0.008 r=0
+saved True
+closed; doccount=0
+## step 4: sync (expect R001 cad moved)
+### cadetta sync
+2026-10-17T15:32:57.247962Z  WARN cadetta_solidworks: property PROBE_PROP is not numeric: v1
+2026-10-17T15:32:57.248969Z  WARN cadetta_solidworks: observed PROBE_PROP not faithful: property value is text, not a number: v1
+2026-10-17T15:32:57.248969Z  WARN cadetta_solidworks: property PROBE_CFG is not numeric: c1
+2026-10-17T15:32:57.248969Z  WARN cadetta_solidworks: observed PROBE_CFG not faithful: property value is text, not a number: c1
+0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+## step 5: bind Plate.thickness to global Plate__thickness
+### cadetta bind live.rig::Plate.thickness --adapter solidworks --locator global:Plate__thickness --kind global
+bound live.rig::Plate.thickness global:Plate__thickness (bindings/solidworks.toml)
+### exit 0
+### cadetta sync --dry-run
+2026-10-17T15:33:39.737843Z  WARN cadetta::cmd::sync: sync diagnostic code="R003" live.rig::Plate.thickness: native item `global:Plate__thickness` is not in the CAD files
+R003: live.rig::Plate.thickness: native item `global:Plate__thickness` is not in the CAD files
+dry run: 0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+### cadetta bind --remove live.rig::Plate.thickness --adapter solidworks --locator global:Plate__thickness
+unbound live.rig::Plate.thickness global:Plate__thickness (bindings/solidworks.toml)
+### exit 0
+### cadetta bind live.rig::Plate.thickness --adapter solidworks --locator dimension:D1@Boss-Extrude1 --kind dimension --mode value
+bound live.rig::Plate.thickness dimension:D1@Boss-Extrude1 (bindings/solidworks.toml)
+### exit 0
+### cadetta sync --dry-run
+2026-10-17T15:34:04.226718Z  WARN cadetta::cmd::sync: sync diagnostic code="R003" live.rig::Plate.thickness: native item `dimension:D1@Boss-Extrude1` is not in the CAD files
+R003: live.rig::Plate.thickness: native item `dimension:D1@Boss-Extrude1` is not in the CAD files
+dry run: 0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+### cadetta sync
+2026-10-17T15:34:11.459441Z  WARN cadetta::cmd::sync: sync diagnostic code="R003" live.rig::Plate.thickness: native item `dimension:D1@Boss-Extrude1` is not in the CAD files
+R003: live.rig::Plate.thickness: native item `dimension:D1@Boss-Extrude1` is not in the CAD files
+0 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+### cadetta bind --remove live.rig::Plate.thickness --adapter solidworks --locator dimension:D1@Boss-Extrude1
+unbound live.rig::Plate.thickness dimension:D1@Boss-Extrude1 (bindings/solidworks.toml)
+### exit 0
+### cadetta bind live.rig::Plate.thickness --adapter solidworks --locator D1@Boss-Extrude1 --kind dimension --mode value
+bound live.rig::Plate.thickness D1@Boss-Extrude1 (bindings/solidworks.toml)
+### exit 0
+### cadetta sync --dry-run
+2026-10-17T15:34:35.060277Z  WARN cadetta::cmd::sync: sync diagnostic code="R006" D1@Boss-Extrude1 replaces native expression `"Plate__thickness"`
+push  live.rig::Plate.thickness  D1@Boss-Extrude1  8mm +-0.2mm -> 8mm
+R006: D1@Boss-Extrude1 replaces native expression `"Plate__thickness"`
+dry run: 1 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 0
+### cadetta sync
+2026-10-17T15:34:42.516698Z  WARN cadetta_solidworks: method not implemented: open
+2026-10-17T15:34:42.527519Z  WARN cadetta_adapter::rpc::client: adapter returned an error method="open" code=-32601 method not implemented: open
+2026-10-17T15:34:42.527688Z  WARN cadetta_adapter::rpc::client: adapter dropped without shutdown; killing it
+2026-10-17T15:34:42.537304Z  WARN cadetta::cmd::sync: sync diagnostic code="R009" adapter error -32601: method not implemented: open
+2026-10-17T15:34:42.537455Z  WARN cadetta::cmd::sync: sync diagnostic code="R006" D1@Boss-Extrude1 replaces native expression `"Plate__thickness"`
+push  live.rig::Plate.thickness  D1@Boss-Extrude1  8mm +-0.2mm -> 8mm
+R009: adapter error -32601: method not implemented: open
+R006: D1@Boss-Extrude1 replaces native expression `"Plate__thickness"`
+1 pushed, 0 skipped, 0 drift, 0 converged, 0 failed
+### exit 1

@@ -43,6 +43,7 @@ namespace Cadetta.SolidWorks.AddIn
         {
             _log = AddInLog.OpenDefault();
             _log.Warn("add-in: connect, cookie " + cookie);
+            AddInDependencyResolver.Install(_log);
             try
             {
                 return Connect(thisSw, cookie);
@@ -78,6 +79,7 @@ namespace Cadetta.SolidWorks.AddIn
         public bool DisconnectFromSW()
         {
             _log.Info("add-in: disconnect");
+            UnhookSelection();
             if (_sw != null)
             {
                 var app = (SldWorks)_sw;
@@ -161,7 +163,21 @@ namespace Cadetta.SolidWorks.AddIn
             }
             var path = _control.SelectedPath;
             _log.Info("add-in: command " + verb + (path == null ? "" : " on " + path));
-            var outcome = Execute(verb, path);
+            CommandOutcome outcome;
+            _cliBusy = true;
+            try
+            {
+                outcome = Execute(verb, path);
+            }
+            catch (Exception e)
+            {
+                _log.Error("add-in: command " + verb + " failed: " + e);
+                outcome = CommandOutcome.Refused("failed: " + e.Message);
+            }
+            finally
+            {
+                _cliBusy = false;
+            }
             _log.Info("add-in: command " + verb + (outcome.IsOk ? " ok" : " refused" + (outcome.Code == null ? "" : " " + outcome.Code)) + ": " + outcome.Message);
             Refresh();
             _control.ShowResult((outcome.IsOk ? "" : "Refused: ") + outcome.Message);
@@ -198,14 +214,73 @@ namespace Cadetta.SolidWorks.AddIn
 
         private int OnActiveDocChange()
         {
-            Refresh();
+            RefreshLater("active-doc-change");
             return 0;
         }
 
         private int OnFileOpen(string fileName)
         {
-            Refresh();
+            RefreshLater("file-open " + fileName);
             return 0;
+        }
+
+        private bool _refreshQueued;
+        private bool _cliBusy;
+
+        /// <summary>Queues one pane refresh on the UI message loop so the slow names call never runs inside a SOLIDWORKS event callback (which crashed SOLIDWORKS on reopen).</summary>
+        private void RefreshLater(string source)
+        {
+            if (_cliBusy)
+            {
+                // The adapter opens documents in this SOLIDWORKS while the CLI runs; reacting would loop forever.
+                _log.Debug("add-in: ignoring " + source + " raised while a cadetta command is running");
+                return;
+            }
+            var control = _control;
+            if (control == null || !control.IsHandleCreated)
+            {
+                Refresh();
+                return;
+            }
+            if (_refreshQueued)
+            {
+                return;
+            }
+            _refreshQueued = true;
+            _log.Debug("add-in: pane refresh queued by " + source);
+            control.BeginInvoke((Action)(() =>
+            {
+                _refreshQueued = false;
+                RefreshIfDocumentChanged();
+            }));
+        }
+
+        private string? _loadedPath;
+
+        /// <summary>Reloads the pane only when the active document differs from the one last loaded; otherwise just re-renders the selection.</summary>
+        private void RefreshIfDocumentChanged()
+        {
+            if (_sw == null)
+            {
+                return;
+            }
+            string? path;
+            try
+            {
+                path = SwSelection.ActiveDocumentPath(_sw);
+            }
+            catch (Exception e)
+            {
+                _log.Error("add-in: active document lookup failed: " + e);
+                return;
+            }
+            if (path != null && path == _loadedPath && _model?.Project != null)
+            {
+                _log.Debug("add-in: pane already loaded for " + path);
+                Show();
+                return;
+            }
+            Refresh();
         }
 
         private void Refresh()
@@ -214,10 +289,25 @@ namespace Cadetta.SolidWorks.AddIn
             {
                 return;
             }
-            var path = SwSelection.ActiveDocumentPath(_sw);
-            _model.Load(path);
-            HookSelection();
-            Show();
+            _cliBusy = true;
+            try
+            {
+                var path = SwSelection.ActiveDocumentPath(_sw);
+                _loadedPath = path;
+                _log.Debug("add-in: pane refresh for " + (path ?? "(no document)"));
+                _model.Load(path);
+                HookSelection();
+                Show();
+            }
+            catch (Exception e)
+            {
+                // A COM event callback swallows exceptions silently, so the pane would just stay empty; log it.
+                _log.Error("add-in: pane refresh failed: " + e);
+            }
+            finally
+            {
+                _cliBusy = false;
+            }
         }
 
         private void Show()
@@ -238,15 +328,42 @@ namespace Cadetta.SolidWorks.AddIn
             {
                 return;
             }
+            UnhookSelection();
             _hooked = doc;
             if (doc is PartDoc part)
             {
                 part.UserSelectionPostNotify += OnSelection;
+                part.DestroyNotify += OnHookedDestroy;
             }
             else if (doc is AssemblyDoc asm)
             {
                 asm.UserSelectionPostNotify += OnSelection;
+                asm.DestroyNotify += OnHookedDestroy;
             }
+        }
+
+        /// <summary>Detaches the selection and destroy handlers from the previously hooked document so a closing document is never left with a live managed handler.</summary>
+        private void UnhookSelection()
+        {
+            var old = _hooked;
+            _hooked = null;
+            if (old is PartDoc part)
+            {
+                part.UserSelectionPostNotify -= OnSelection;
+                part.DestroyNotify -= OnHookedDestroy;
+            }
+            else if (old is AssemblyDoc asm)
+            {
+                asm.UserSelectionPostNotify -= OnSelection;
+                asm.DestroyNotify -= OnHookedDestroy;
+            }
+        }
+
+        private int OnHookedDestroy()
+        {
+            _log.Debug("add-in: hooked document is closing, unhooking");
+            UnhookSelection();
+            return 0;
         }
 
         private int OnSelection()

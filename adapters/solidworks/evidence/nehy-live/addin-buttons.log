@@ -1,0 +1,259 @@
+2026-10-17T15:16:35.380777Z  WARN cadetta_solidworks: add-in: connect, cookie 16
+2026-10-17T15:16:35.381784Z  INFO cadetta_solidworks: add-in: resolving dependencies from C:\src\nehy\addin8
+2026-10-17T15:16:35.454490Z DEBUG cadetta_solidworks: add-in: resolved System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51 to C:\src\nehy\addin8\System.Text.Json.dll
+2026-10-17T15:16:35.500669Z  INFO cadetta_solidworks: add-in: menu item 'Link dimension to selected path' added as 0
+2026-10-17T15:16:35.501639Z  INFO cadetta_solidworks: add-in: menu item 'Unlink dimension' added as 0
+2026-10-17T15:16:35.501639Z  INFO cadetta_solidworks: add-in: menu item 'Sync preview (dry run)' added as 0
+2026-10-17T15:16:35.501639Z  INFO cadetta_solidworks: add-in: menu item 'Sync' added as 0
+2026-10-17T15:16:35.502141Z  INFO cadetta_solidworks: add-in: menu item 'Why this path' added as 0
+2026-10-17T15:16:35.502141Z  INFO cadetta_solidworks: add-in: menu item 'Assign array to selected instances' added as 0
+2026-10-17T15:16:35.509143Z DEBUG cadetta_solidworks: add-in: pane refresh for (no document)
+2026-10-17T15:16:35.510143Z  INFO cadetta_solidworks: pane: no saved document
+2026-10-17T15:16:53.873160Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:16:55.432245Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:16:55.440246Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:16:55.443249Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:16:55.446245Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:16:58.102827Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:16:58.904677Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:16:59.183387Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:16:59.207137Z DEBUG cadetta_solidworks: add-in: resolved System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a to C:\src\nehy\addin8\System.Runtime.CompilerServices.Unsafe.dll
+2026-10-17T15:16:59.440628Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:16:59.442662Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:16:59.666556Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:16:59.708907Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:13.238026Z DEBUG cadetta_solidworks: add-in: hooked document is closing, unhooking
+2026-10-17T15:17:18.941935Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:17:19.141550Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:19.347577Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:19.387047Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:38.768408Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:17:38.969073Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:39.168656Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:17:39.208697Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:18:09.204901Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:18:09.402061Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:18:09.602726Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:18:09.640937Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:18:29.471102Z  INFO cadetta_solidworks: add-in: command Link on live.rig::Plate.thickness
+2026-10-17T15:18:29.695881Z DEBUG cadetta_solidworks: main window disabled (modal): False
+2026-10-17T15:18:29.714676Z DEBUG cadetta_solidworks: command in progress: False
+2026-10-17T15:18:29.714676Z DEBUG cadetta_solidworks: session is idle; push may proceed
+2026-10-17T15:18:29.824668Z DEBUG cadetta_solidworks: guard facts D1@Boss-Extrude1: driven=False suppressed=False readonly=False expression=- link=PROBE_T
+2026-10-17T15:18:29.824668Z  INFO cadetta_solidworks: add-in: command Link refused R010: D1@Boss-Extrude1 is linked to PROBE_T; unlink it first
+2026-10-17T15:18:29.843491Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:18:29.844466Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:18:29.844466Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:18:29.844466Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:18:31.169369Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:18:31.457109Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:18:32.602564Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:18:32.932976Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:18:32.934007Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:18:32.934007Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:19:50.197177Z  INFO cadetta_solidworks: add-in: command Unlink on live.rig::Plate.thickness
+2026-10-17T15:19:50.313414Z DEBUG cadetta_solidworks: main window disabled (modal): False
+2026-10-17T15:19:50.331868Z DEBUG cadetta_solidworks: command in progress: False
+2026-10-17T15:19:50.331868Z DEBUG cadetta_solidworks: session is idle; push may proceed
+2026-10-17T15:19:50.402516Z DEBUG cadetta_solidworks: guard facts D1@Boss-Extrude1: driven=False suppressed=False readonly=False expression=- link=PROBE_T
+2026-10-17T15:19:50.431933Z  INFO cadetta_solidworks: unlinked D1@Boss-Extrude1
+2026-10-17T15:19:50.431933Z  INFO cadetta_solidworks: add-in: command Unlink ok: unlinked D1@Boss-Extrude1
+2026-10-17T15:19:50.455354Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:19:50.455354Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:19:50.455354Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:19:50.455354Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:19:51.761436Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:19:52.049275Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:19:53.194973Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:19:53.633153Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:19:53.634152Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:19:53.634152Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:20:13.344738Z  INFO cadetta_solidworks: add-in: command Link on live.rig::Plate.thickness
+2026-10-17T15:20:13.458511Z DEBUG cadetta_solidworks: main window disabled (modal): False
+2026-10-17T15:20:13.478511Z DEBUG cadetta_solidworks: command in progress: False
+2026-10-17T15:20:13.478511Z DEBUG cadetta_solidworks: session is idle; push may proceed
+2026-10-17T15:20:13.552079Z DEBUG cadetta_solidworks: guard facts D1@Boss-Extrude1: driven=False suppressed=False readonly=False expression=- link=-
+2026-10-17T15:20:13.707136Z DEBUG cadetta_solidworks: global add "Plate__thickness" = 8mm -> 3
+2026-10-17T15:20:13.802780Z DEBUG cadetta_solidworks: dimension link "D1@Boss-Extrude1" = "Plate__thickness" -> 4
+2026-10-17T15:20:13.803209Z  INFO cadetta_solidworks: linked D1@Boss-Extrude1 to Plate__thickness (global created)
+2026-10-17T15:20:13.803209Z  INFO cadetta_solidworks: add-in: command Link ok: linked D1@Boss-Extrude1 to Plate__thickness
+2026-10-17T15:20:13.807844Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:20:13.808347Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:20:13.808347Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:20:13.808347Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:20:15.096609Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:15.395031Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:20:16.534494Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:16.920227Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:20:16.921227Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:20:16.921227Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:20:36.562151Z  INFO cadetta_solidworks: add-in: command Preview on live.rig::Plate.thickness
+2026-10-17T15:20:36.564151Z  INFO cadetta_solidworks: sync dry run started
+2026-10-17T15:20:36.566184Z  INFO cadetta_solidworks: cadetta sync solidworks --dry-run --format json in C:\src\nehy\proj
+2026-10-17T15:20:36.566184Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe sync solidworks --dry-run --format json in C:\src\nehy\proj
+2026-10-17T15:20:37.830221Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:38.115180Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:20:39.466948Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:39.916308Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:20:39.917309Z  INFO cadetta_solidworks: sync finished
+2026-10-17T15:20:39.917309Z  INFO cadetta_solidworks: add-in: command Preview ok: {
+  "records": [],
+  "diagnostics": [],
+  "regen": [],
+  "emitted": [],
+  "manual": [],
+  "lock_written": false
+}
+2026-10-17T15:20:39.936879Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:20:39.936879Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:20:39.936879Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:20:39.936879Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:20:41.189570Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:41.475363Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:20:42.655766Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:20:43.040422Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:20:43.041422Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:20:43.041422Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:21:04.483958Z  INFO cadetta_solidworks: add-in: command Why on live.rig::Plate.thickness
+2026-10-17T15:21:04.484993Z  INFO cadetta_solidworks: cadetta why live.rig::Plate.thickness --format json in C:\src\nehy\proj
+2026-10-17T15:21:04.485997Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe why live.rig::Plate.thickness --format json in C:\src\nehy\proj
+2026-10-17T15:21:04.552519Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:21:04.553681Z  INFO cadetta_solidworks: add-in: command Why ok: {"chain":{"detail":null,"expr":"8mm","kind":"member","path":"live.rig::Plate.thickness","repeated":false,"upstream":[],"value":"8mm"},"path":"live.rig::Plate.thickness","schema":"cadetta.why/1"}
+2026-10-17T15:21:04.574167Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:21:04.575168Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:21:04.575168Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:21:04.575168Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:21:05.899585Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:06.183435Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:21:07.331149Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:07.786033Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:21:07.786033Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:21:07.786033Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:21:27.505081Z  INFO cadetta_solidworks: add-in: command Sync on live.rig::Plate.thickness
+2026-10-17T15:21:27.505081Z  INFO cadetta_solidworks: sync run started
+2026-10-17T15:21:27.505081Z  INFO cadetta_solidworks: cadetta sync solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:21:27.505081Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe sync solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:21:28.768926Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:29.062416Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:21:30.414768Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:30.839824Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:21:30.839824Z  INFO cadetta_solidworks: sync finished
+2026-10-17T15:21:30.839824Z  INFO cadetta_solidworks: add-in: command Sync ok: {
+  "records": [],
+  "diagnostics": [],
+  "regen": [],
+  "emitted": [],
+  "manual": [],
+  "lock_written": false
+}
+2026-10-17T15:21:30.859925Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Plate.SLDPRT
+2026-10-17T15:21:30.860925Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:21:30.860925Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:21:30.860925Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:21:32.120802Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:32.403761Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:21:33.643165Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:21:34.096731Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:21:34.097734Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:21:34.097734Z  INFO cadetta_solidworks: pane: 2 path(s) for Plate (adapter solidworks)
+2026-10-17T15:21:55.236693Z DEBUG cadetta_solidworks: add-in: hooked document is closing, unhooking
+2026-10-17T15:22:06.634036Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:22:08.062288Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:22:08.062288Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:22:08.062288Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:22:08.062288Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:22:10.585464Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:22:11.285682Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:22:11.533462Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:22:11.534627Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:22:11.534627Z  INFO cadetta_solidworks: pane: 2 path(s) for Rig (adapter solidworks)
+2026-10-17T15:22:11.783682Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:22:11.823091Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:22:38.436341Z  INFO cadetta_solidworks: add-in: command AssignArray on live.rig::Rig/feet[1].place.offset.x
+2026-10-17T15:22:38.581986Z  WARN cadetta_solidworks: command refused: select the array's placement row (for example pkg::Mount/feet[1].place) in the pane
+2026-10-17T15:22:38.581986Z  INFO cadetta_solidworks: add-in: command AssignArray refused: select the array's placement row (for example pkg::Mount/feet[1].place) in the pane
+2026-10-17T15:22:38.592002Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:22:38.592988Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:22:38.592988Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:22:38.592988Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:22:39.825279Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:22:40.170246Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:22:41.280926Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:22:41.591606Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:22:41.592608Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:22:41.592608Z  INFO cadetta_solidworks: pane: 2 path(s) for Rig (adapter solidworks)
+2026-10-17T15:24:49.171847Z DEBUG cadetta_solidworks: add-in: hooked document is closing, unhooking
+2026-10-17T15:24:59.855474Z  INFO cadetta_solidworks: add-in: disconnect
+2026-10-17T15:25:50.493350Z  WARN cadetta_solidworks: add-in: connect, cookie 16
+2026-10-17T15:25:50.495353Z  INFO cadetta_solidworks: add-in: resolving dependencies from C:\src\nehy\addin9
+2026-10-17T15:25:50.579824Z DEBUG cadetta_solidworks: add-in: resolved System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51 to C:\src\nehy\addin9\System.Text.Json.dll
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Link dimension to selected path' added as 0
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Unlink dimension' added as 0
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Sync preview (dry run)' added as 0
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Sync' added as 0
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Why this path' added as 0
+2026-10-17T15:25:50.625004Z  INFO cadetta_solidworks: add-in: menu item 'Assign array to selected instances' added as 0
+2026-10-17T15:25:50.630980Z DEBUG cadetta_solidworks: add-in: pane refresh for (no document)
+2026-10-17T15:25:50.631979Z  INFO cadetta_solidworks: pane: no saved document
+2026-10-17T15:26:18.384045Z DEBUG cadetta_solidworks: add-in: pane refresh queued by active-doc-change
+2026-10-17T15:26:19.866919Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:26:19.873919Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:26:19.877920Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:26:19.880920Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:26:22.478579Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:26:25.909473Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:26:26.151510Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:26:26.174728Z DEBUG cadetta_solidworks: add-in: resolved System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a to C:\src\nehy\addin9\System.Runtime.CompilerServices.Unsafe.dll
+2026-10-17T15:26:26.403283Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:26:26.404308Z  INFO cadetta_solidworks: pane: 2 path(s) for Rig (adapter solidworks)
+2026-10-17T15:26:26.673236Z DEBUG cadetta_solidworks: add-in: pane refresh queued by file-open C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:26:26.712548Z DEBUG cadetta_solidworks: add-in: pane already loaded for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:26:52.583337Z  INFO cadetta_solidworks: add-in: command AssignArray on live.rig::Rig/feet[1].place.offset.x
+2026-10-17T15:26:52.756289Z DEBUG cadetta_solidworks: main window disabled (modal): False
+2026-10-17T15:26:52.764287Z DEBUG cadetta_solidworks: command in progress: False
+2026-10-17T15:26:52.765289Z DEBUG cadetta_solidworks: session is idle; push may proceed
+2026-10-17T15:26:52.766766Z  INFO cadetta_solidworks: cadetta frames in C:\src\nehy\proj
+2026-10-17T15:26:52.766766Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe frames --native-unit m --format json in C:\src\nehy\proj
+2026-10-17T15:26:52.838672Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:26:52.888457Z  INFO cadetta_solidworks: cadetta frames: 6 frame(s), precision 6
+2026-10-17T15:26:52.891493Z  INFO cadetta_solidworks: assign array live.rig::Rig/feet: 3 candidate frame(s), 3 selected
+2026-10-17T15:26:52.894492Z  WARN cadetta_solidworks: nearest frame live.rig::Rig/feet[0].place is 0.025318 away, beyond 0.001
+2026-10-17T15:26:52.895492Z  INFO cadetta_solidworks: add-in: command AssignArray refused: Plate-1: nearest frame is farther than 0.001 from the selection
+2026-10-17T15:26:52.906237Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:26:52.907237Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:26:52.907237Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:26:52.907237Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:26:54.211518Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:26:54.586096Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:26:55.780022Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:26:56.115313Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:26:56.116313Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:26:56.117313Z  INFO cadetta_solidworks: pane: 2 path(s) for Rig (adapter solidworks)
+2026-10-17T15:28:48.121575Z  INFO cadetta_solidworks: add-in: command AssignArray on live.rig::Rig/feet[1].place.offset.x
+2026-10-17T15:28:48.223807Z DEBUG cadetta_solidworks: main window disabled (modal): False
+2026-10-17T15:28:48.232979Z DEBUG cadetta_solidworks: command in progress: False
+2026-10-17T15:28:48.232979Z DEBUG cadetta_solidworks: session is idle; push may proceed
+2026-10-17T15:28:48.232979Z  INFO cadetta_solidworks: cadetta frames in C:\src\nehy\proj
+2026-10-17T15:28:48.232979Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe frames --native-unit m --format json in C:\src\nehy\proj
+2026-10-17T15:28:48.300888Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:28:48.303037Z  INFO cadetta_solidworks: cadetta frames: 6 frame(s), precision 6
+2026-10-17T15:28:48.304359Z  INFO cadetta_solidworks: assign array live.rig::Rig/feet: 3 candidate frame(s), 3 selected
+2026-10-17T15:28:48.304359Z  INFO cadetta_solidworks: matched instance live.rig::Rig/feet[0].place
+2026-10-17T15:28:48.305766Z  INFO cadetta_solidworks: matched instance live.rig::Rig/feet[1].place
+2026-10-17T15:28:48.305766Z  INFO cadetta_solidworks: matched instance live.rig::Rig/feet[2].place
+2026-10-17T15:28:48.340951Z  INFO cadetta_solidworks: component Plate-1 reference 'feet[0]' set
+2026-10-17T15:28:48.372519Z  INFO cadetta_solidworks: component Plate-2 reference 'feet[1]' set
+2026-10-17T15:28:48.403552Z  INFO cadetta_solidworks: component Plate-3 reference 'feet[2]' set
+2026-10-17T15:28:48.403552Z  INFO cadetta_solidworks: assign array: Plate-1 -> feet[0], Plate-2 -> feet[1], Plate-3 -> feet[2]
+2026-10-17T15:28:48.403552Z  INFO cadetta_solidworks: add-in: command AssignArray ok: assigned Plate-1 -> feet[0], Plate-2 -> feet[1], Plate-3 -> feet[2]
+2026-10-17T15:28:48.415152Z DEBUG cadetta_solidworks: add-in: pane refresh for C:\src\nehy\proj\parts\Rig.SLDASM
+2026-10-17T15:28:48.416304Z  INFO cadetta_solidworks: project discovery: C:\src\nehy\proj\cadetta.toml with 1 solidworks adapter(s)
+2026-10-17T15:28:48.416304Z  INFO cadetta_solidworks: cadetta names solidworks in C:\src\nehy\proj
+2026-10-17T15:28:48.416304Z DEBUG cadetta_solidworks: exec C:\src\nehy\cad\target\x86_64-pc-windows-msvc\release\cadetta.exe names solidworks --format json in C:\src\nehy\proj
+2026-10-17T15:28:49.736927Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:28:50.099117Z DEBUG cadetta_solidworks: add-in: ignoring file-open C:\src\nehy\proj\parts\Fix.SLDPRT raised while a cadetta command is running
+2026-10-17T15:28:51.650314Z DEBUG cadetta_solidworks: add-in: ignoring active-doc-change raised while a cadetta command is running
+2026-10-17T15:28:51.995612Z DEBUG cadetta_solidworks: exec exit 0
+2026-10-17T15:28:51.996611Z  INFO cadetta_solidworks: cadetta names: 4 path(s), 0 diagnostic(s)
+2026-10-17T15:28:51.996611Z  INFO cadetta_solidworks: pane: 2 path(s) for Rig (adapter solidworks)
+2026-10-17T15:29:12.191916Z DEBUG cadetta_solidworks: add-in: hooked document is closing, unhooking

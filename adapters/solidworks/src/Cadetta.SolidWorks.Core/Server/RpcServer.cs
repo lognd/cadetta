@@ -39,6 +39,7 @@ namespace Cadetta.SolidWorks.Server
         private readonly PushService _push;
         private readonly SaveService _save;
         private bool _stop;
+        private readonly Dictionary<string, List<string>> _sessions = new Dictionary<string, List<string>>();
 
         /// <summary>Creates a server over a session; `read` is answered by <paramref name="read"/> and `push` by <paramref name="pushHost"/> when given and `regen` by <paramref name="regenHost"/> when given (frob:ticket 01M548Y09E8W1NVTJSSS0GDS2T, 01M5496CQE8FPX6F7PD9Y6EMX0, 01M4SV2TVM50WJRZ42ZHXVD96N).</summary>
         public RpcServer(ISwSession session, Log log, ReadService? read = null, IPushHost? pushHost = null, IRegenHost? regenHost = null)
@@ -141,6 +142,11 @@ namespace Cadetta.SolidWorks.Server
                     return Push(id, ps);
                 case "regen" when _regen != null:
                     return Regen(id, ps);
+                case "open":
+                    return Open(id, ps);
+                case "save":
+                case "close":
+                    return EndSession(id, method);
                 case "shutdown":
                     _stop = true;
                     return Result(id, "null");
@@ -164,6 +170,11 @@ namespace Cadetta.SolidWorks.Server
                 return Error(id, InvalidParams, "bad read params: " + e.Message);
             }
             var files = p?.Source?.Files;
+            if (files == null && p?.Source?.Session != null && _sessions.TryGetValue(p.Source.Session, out var held))
+            {
+                _log.Debug("read: using the " + held.Count + " file(s) of session " + p.Source.Session);
+                files = held;
+            }
             if (files == null || files.Count != 1)
             {
                 _log.Warn("read needs source.files with exactly one file");
@@ -180,6 +191,89 @@ namespace Cadetta.SolidWorks.Server
                 _log.Error("read " + files[0] + " failed: " + e.Message);
                 return Error(id, ServerError, "read failed: " + e.Message);
             }
+        }
+
+        /// <summary>Finds a missing relative file by name under the working directory when exactly one matches: the observed IR names files bare, so sync hands the adapter `Plate.SLDPRT` for `parts/Plate.SLDPRT` (frob:ticket ~NEHY9X7).</summary>
+        private string FindUnderCwd(string file)
+        {
+            if (Path.IsPathRooted(file) || File.Exists(file))
+            {
+                return file;
+            }
+            try
+            {
+                var hits = Directory.GetFiles(Directory.GetCurrentDirectory(), Path.GetFileName(file), SearchOption.AllDirectories);
+                if (hits.Length == 1)
+                {
+                    _log.Info("resolved " + file + " to " + hits[0]);
+                    return hits[0];
+                }
+                _log.Warn("cannot resolve " + file + " under the working directory: " + hits.Length + " matches");
+            }
+            catch (IOException e)
+            {
+                _log.Warn("cannot search for " + file + ": " + e.Message);
+            }
+            return file;
+        }
+
+        /// <summary>Maps a bare or relative file name from a request onto the full path a session opened, else returns it unchanged (frob:ticket ~NEHY9X7).</summary>
+        private string Resolve(string file)
+        {
+            foreach (var held in _sessions.Values)
+            {
+                foreach (var full in held)
+                {
+                    if (string.Equals(Path.GetFileName(full), Path.GetFileName(file), StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (full != file)
+                        {
+                            _log.Debug("resolved " + file + " to the session file " + full);
+                        }
+                        return full;
+                    }
+                }
+            }
+            return file;
+        }
+
+        /// <summary>Answers `open` with a handle only: each push opens, saves and closes its own file, so no document is held (frob:ticket ~NEHY9X7).</summary>
+        private string Open(JsonElement id, JsonElement ps)
+        {
+            OpenParams? p;
+            try
+            {
+                p = ps.ValueKind == JsonValueKind.Undefined ? null : ps.Deserialize<OpenParams>(Options);
+            }
+            catch (JsonException e)
+            {
+                _log.Warn("bad open params: " + e.Message);
+                return Error(id, InvalidParams, "bad open params: " + e.Message);
+            }
+            if (p == null)
+            {
+                return Error(id, InvalidParams, "open needs files");
+            }
+            var session = new Protocol.Session { Handle = Guid.NewGuid().ToString("N") };
+            p.Files = p.Files.ConvertAll(FindUnderCwd);
+            _sessions[session.Handle] = new List<string>(p.Files);
+            foreach (var f in p.Files)
+            {
+                session.Files.Add(new FileState { Path = f });
+            }
+            _log.Info("open session " + session.Handle + " over " + p.Files.Count + " file(s); documents are opened per push");
+            return Result(id, JsonSerializer.Serialize(new OpenResult { Session = session }, Options));
+        }
+
+        /// <summary>Answers `save` (push already saved per mode: nothing left) and `close` (nothing held) (frob:ticket ~NEHY9X7).</summary>
+        private string EndSession(JsonElement id, string method)
+        {
+            _log.Info(method + ": nothing held by the session");
+            if (method == "close")
+            {
+                _sessions.Clear();
+            }
+            return Result(id, method == "save" ? JsonSerializer.Serialize(new SaveResult(), Options) : "null");
         }
 
         /// <summary>Answers `push`: opens the file, pushes every locator, then saves per the default mode (frob:ticket 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
@@ -202,7 +296,7 @@ namespace Cadetta.SolidWorks.Server
             }
             try
             {
-                using (var handle = _pushHost!.Open(p.File))
+                using (var handle = _pushHost!.Open(Resolve(p.File)))
                 {
                     var options = new PushOptions { Precision = (int)AdapterInfo.Precision };
                     var outcome = _push.Push(handle.Document, p.Params, options);
@@ -243,7 +337,7 @@ namespace Cadetta.SolidWorks.Server
             }
             try
             {
-                var result = _regen!.Regen(p.Targets);
+                var result = _regen!.Regen(p.Targets.ConvertAll(Resolve));
                 return Result(id, JsonSerializer.Serialize(result, Options));
             }
             catch (Exception e) when (e is IOException || e is InvalidOperationException || e is System.Runtime.InteropServices.COMException)

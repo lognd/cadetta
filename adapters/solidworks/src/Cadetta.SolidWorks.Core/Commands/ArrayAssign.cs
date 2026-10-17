@@ -46,7 +46,8 @@ namespace Cadetta.SolidWorks.Commands
         /// <summary>The array a placement path belongs to: `pkg::Mount/feet[2].place` gives `pkg::Mount/feet`; null when the path is not an indexed placement.</summary>
         public static string? ArrayPrefix(string path)
         {
-            var p = path.EndsWith(".place", StringComparison.Ordinal) ? path.Substring(0, path.Length - 6) : path;
+            var placeAt = path.IndexOf(".place", StringComparison.Ordinal);
+            var p = placeAt > 0 ? path.Substring(0, placeAt) : path;
             var open = p.LastIndexOf('[');
             if (open <= 0 || !p.EndsWith("]", StringComparison.Ordinal))
             {
