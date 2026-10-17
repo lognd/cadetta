@@ -2,7 +2,8 @@
 id = "01M55E3PRRE8344MJC1YMEEPJ0"
 title = "import --update writes a SOLIDWORKS unitless count (pattern count) as 4mm: empty adapter unit means assume native"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
