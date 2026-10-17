@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T06:52:47Z"
-updated = "2026-10-17T11:11:26Z"
+updated = "2026-10-17T11:11:48Z"
 idempotency_key = "sw-addin-live"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/README.md", "adapters/solidworks/DEVELOPING.md", "changelog.d/01M54A4VN81506B2GPW4FG4VVR.fixed.md", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/AddInSettings.cs", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Cadetta.SolidWorks.AddIn.csproj", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/CadettaAddIn.cs", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Logging/AddInLog.cs", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/SwSelection.cs", "adapters/solidworks/evidence/4fg-live/*"]
 +++
