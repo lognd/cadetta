@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:25:10Z"
-updated = "2026-10-17T17:28:41Z"
+updated = "2026-10-17T17:29:13Z"
 scope = ["adapters/solidworks/src/**", "adapters/solidworks/tests/**", "docs/spec/solidworks.md"]
 
 [[acceptance]]
