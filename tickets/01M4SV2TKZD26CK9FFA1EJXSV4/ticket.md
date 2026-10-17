@@ -12,7 +12,7 @@ updated = "2026-10-17T06:31:41Z"
 persona = "design engineer"
 capability = "read globals, equations, dimensions and custom properties"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Read/**", "adapters/solidworks/src/cadetta-solidworks/Program.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Read/**", "adapters/solidworks/src/cadetta-solidworks/Program.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/API-SURFACE.md", "adapters/solidworks/DEVELOPING.md", "docs/spec/solidworks.md"]
 
 [[links]]
 kind = "blocked-by"
