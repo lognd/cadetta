@@ -43,6 +43,20 @@ namespace Cadetta.SolidWorks.AddIn
         {
             _log = AddInLog.OpenDefault();
             _log.Info("add-in: connect, cookie " + cookie);
+            try
+            {
+                return Connect(thisSw, cookie);
+            }
+            catch (Exception e)
+            {
+                // SOLIDWORKS swallows exceptions from ConnectToSW; the log is the only trace of a failed load.
+                _log.Error("add-in: connect failed: " + e);
+                return false;
+            }
+        }
+
+        private bool Connect(object thisSw, int cookie)
+        {
             _sw = (ISldWorks)thisSw;
             _sw.SetAddinCallbackInfo2(0, this, cookie);
             var cli = new CadettaCli(new ProcessCommandRunner(_log), AddInSettings.Executable(), _log);

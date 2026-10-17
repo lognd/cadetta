@@ -52,7 +52,10 @@ namespace Cadetta.SolidWorks.AddIn
                 return null;
             }
             var dim = (mgr.GetSelectedObject6(1, -1) as DisplayDimension)?.GetDimension2(0) as Dimension;
-            return dim?.Name;
+            // Name is only "D1"; the equation form needs the owning feature, "D1@Boss-Extrude1" (FullName appends "@Doc.Part").
+            var full = dim?.FullName;
+            var cut = full?.LastIndexOf('@') ?? -1;
+            return cut > 0 ? full!.Substring(0, cut) : full;
         }
 
         /// <summary>The selected assembly components with their poses in metres (empty when none are selected).</summary>

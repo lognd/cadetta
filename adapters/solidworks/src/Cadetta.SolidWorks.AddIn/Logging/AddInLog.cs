@@ -1,4 +1,5 @@
 // frob:ticket 01M4VB7VTPQEHBVQ8ZCR2T1G5K
+// frob:ticket 01M54A4VN81506B2GPW4FG4VVR
 using System;
 using System.IO;
 using System.Text;
@@ -41,8 +42,8 @@ namespace Cadetta.SolidWorks.AddIn.Logging
             }
         }
 
-        /// <summary>Opens the log from the process environment.</summary>
+        /// <summary>Opens the log from the process environment, else the HKCU Log setting.</summary>
         public static Log OpenDefault() =>
-            Open(Environment.GetEnvironmentVariable("LOCALAPPDATA"), Environment.GetEnvironmentVariable("CADETTA_LOG"));
+            Open(Environment.GetEnvironmentVariable("LOCALAPPDATA"), AddInSettings.LogFilter());
     }
 }

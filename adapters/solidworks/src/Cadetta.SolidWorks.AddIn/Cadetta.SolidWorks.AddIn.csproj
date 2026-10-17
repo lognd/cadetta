@@ -5,11 +5,21 @@
     <RootNamespace>Cadetta.SolidWorks.AddIn</RootNamespace>
   </PropertyGroup>
   <Import Project="..\..\Interop.props" />
+  <!-- frob:ticket 01M54A4VN81506B2GPW4FG4VVR -->
+  <!-- Unlike the console and the tests, the add-in is loaded by regasm and by the SOLIDWORKS process, neither of which probes api\redist: the interop assemblies must sit beside the add-in dll (live check, DEVELOPING.md). -->
+  <ItemGroup>
+    <Reference Update="SolidWorks.Interop.sldworks">
+      <Private>true</Private>
+    </Reference>
+    <Reference Update="SolidWorks.Interop.swconst">
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="SolidWorks.Interop.swpublished">
       <HintPath>$(SOLIDWORKS_API_DIR)\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>false</EmbedInteropTypes>
-      <Private>false</Private>
+      <Private>true</Private>
     </Reference>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>

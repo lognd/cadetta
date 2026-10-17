@@ -90,3 +90,21 @@ is handled by `PushService`/`AtomicPush` (R004 plus atomic restore,
 adapters.md 2.3). Live check: build a shelled part, link the shell
 thickness to a global, set it too large, save, and regen (see the
 `hxvd96n-nova-live` evidence on the ticket).
+
+## Live check of the add-in (nova)
+
+- Build with `dotnet build -c Release -o <new dir> -p:Version=<n>`; a managed
+  dll loaded in SOLIDWORKS stays locked, so use a new dir and a new version
+  for every attempt, then `regasm /codebase` each (64-bit
+  `Framework64\v4.0.30319\regasm.exe`). Unregister stale builds with
+  `regasm /u`.
+- COM needs the interactive console session: drive it from a net48 tool run
+  as an Interactive scheduled task (see "Running the probe from ssh").
+- Log open documents before and after every step and close what you opened
+  without saving. Do not kill SLDWORKS; nova may show a second, stray
+  SLDWORKS with an empty title (the real one is the ROT-attached process).
+- Set `CADETTA_EXE` or HKCU `Software\Cadetta\SolidWorks\Executable`, and
+  `CADETTA_LOG=debug` or HKCU `...\Log` to read `%LOCALAPPDATA%\cadetta\addin.log`.
+- Status: `LoadAddIn(path)` returned 0 but never ran `ConnectToSW`; connect
+  through Tools > Add-Ins and a restart is still to be tried (see the add-in
+  README).
