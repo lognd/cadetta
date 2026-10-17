@@ -42,8 +42,12 @@ python3 tools/gen_protocol.py --check  # CI: fail if stale
 JSON-RPC 2.0 on stdio. Stdout is protocol only; logs go to stderr,
 filtered by `CADETTA_LOG` (`error|warn|info|debug|trace`, optionally
 `cadetta_solidworks=LEVEL`). `--fake` (or `CADETTA_SW_FAKE=1`) uses the
-in-memory session. Implemented so far: `initialize` and `shutdown`; other
-methods answer -32601 until their tickets land.
+in-memory session. Implemented so far: `initialize`, `shutdown` and `read`
+(one file per call through `ReadService`, and so through `ReadCache` when
+the server was built with one; several files or a session source answer
+-32602, a file that cannot be opened -32000; a server built without a
+`ReadService` answers -32601); other methods answer -32601 until their
+tickets land.
 
 ## Session lifetime
 

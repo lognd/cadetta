@@ -196,6 +196,37 @@ rebuild did not fail and records a `blake3:` digest of the saved bytes
 writes nothing and the documents stay dirty. `SwComSaveTarget` saves a
 `ModelDoc2` silently through `Save3`.
 
+### 5.2 Push
+
+`Cadetta.SolidWorks.Push.PushService` is the `push` step over the
+`IPushDocument` seam (`SwComPushDocument` is the COM implementation;
+native units are mm and deg).
+
+- Kind inference: `ChangedParam` carries no kind, so the locator prefix
+  `global:`, `dimension:`, `property:` or `frame:` is honoured first;
+  mode `frame` is a coordinate system; mode `ref` or an `@` in the name
+  is a dimension; otherwise an existing global, then an existing custom
+  property, else a new global. A new custom property therefore needs the
+  `property:` prefix until the wire gains a `kind` field.
+- Ref mode writes the target global once (ref_to, else the first global
+  in the batch bound to the same path, else the mangled path) and links
+  the dimension to it through an equation. A later value push to a
+  linked dimension drops the link and warns R006.
+- Only locators whose value, link or tolerance changed are written;
+  unchanged ones return `skipped`. A push with no change does not
+  rebuild.
+- Guards: a dirty (user-edited) or read-only document rejects every
+  locator with R009. An equation-linked dimension is pushable; a true
+  reference dimension, a suppressed feature or an equation conflict is
+  R010. A value that does not fit the precision is Q004 (rejected).
+- Tolerances use `IDimensionTolerance` (`symmetric`, `bilateral`,
+  `limits`, `fit`); frames use
+  `CreateCoordinateSystemUsingNumericalValues` (rotation transposed in
+  slots 0-8, translation in 9-11) and are created only with
+  `datums = create`, otherwise R003 skipped.
+- After writing, one `ForceRebuild3`; a rebuild error is R004 (failed)
+  and every write is undone from the recorded undo list.
+
 ## 6. Testing
 
 - `Cadetta.SolidWorks.Tests` covers Core on Linux and Windows.
