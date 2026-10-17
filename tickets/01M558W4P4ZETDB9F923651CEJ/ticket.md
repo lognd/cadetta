@@ -2,7 +2,8 @@
 id = "01M558W4P4ZETDB9F923651CEJ"
 title = "Read-back mismatch when CAD has a tolerance the design lacks"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
