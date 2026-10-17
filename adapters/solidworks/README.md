@@ -42,11 +42,17 @@ python3 tools/gen_protocol.py --check  # CI: fail if stale
 JSON-RPC 2.0 on stdio. Stdout is protocol only; logs go to stderr,
 filtered by `CADETTA_LOG` (`error|warn|info|debug|trace`, optionally
 `cadetta_solidworks=LEVEL`). `--fake` (or `CADETTA_SW_FAKE=1`) uses the
-in-memory session. Implemented so far: `initialize`, `shutdown` and `read`
+in-memory session. Implemented so far: `initialize`, `shutdown`, `read` and `push`
 (one file per call through `ReadService`, and so through `ReadCache` when
 the server was built with one; several files or a session source answer
 -32602, a file that cannot be opened -32000; a server built without a
-`ReadService` answers -32601); other methods answer -32601 until their
+`ReadService` answers -32601). `push` opens the file through an `IPushHost`
+(the COM host reuses an open copy, otherwise opens it silently and closes it
+afterwards), runs `PushService`, then the save step in the default `after_sync`
+mode, and returns one status per locator; a file that cannot be opened answers
+-32000, a missing `file` -32602 and a server without a host -32601. Without
+`--fake` the executable wires the COM read service (with `ReadCache`) and push
+host; the fake session has neither. Other methods answer -32601 until their
 tickets land.
 
 ## Session lifetime

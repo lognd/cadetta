@@ -32,6 +32,7 @@ node adapter_solidworks : authenticated {
   owns "adapters/solidworks/**";
   may fs.read at "adapters/solidworks/**";
   may fs.write at "adapters/solidworks/**";
+  may exec at "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**";
 }
 
 /// A CAD tool session or native file set, outside our code.
@@ -233,6 +234,12 @@ flow f_drive : adapter_freecad -> cad_tool {
 flow f_drive_sw : adapter_solidworks -> cad_tool {
   label Internal;
   transport ffi;
+}
+
+/// The SOLIDWORKS add-in runs the `cadetta` binary (names, sync) and reads its JSON (solidworks.md 3).
+flow f_addin_cli_sw : adapter_solidworks -> cli {
+  label Internal;
+  transport ipc;
 }
 
 flow f_fit_tables : fits -> sema {

@@ -1,0 +1,9 @@
+kind = "create"
+title = "Live check of SOLIDWORKS add-in task pane on nova"
+type = "task"
+category = "todo"
+priority = "medium"
+idempotency_key = "sw-addin-live"
+at = "2026-10-17T06:52:47Z"
+actor = "lognd"
+rev = 1
