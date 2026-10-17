@@ -29,6 +29,7 @@ namespace Cadetta.SolidWorks.Read
         private readonly JsonArray _bindings = new JsonArray();
         private readonly JsonArray _frames = new JsonArray();
         private readonly JsonArray _instances = new JsonArray();
+        private readonly List<Protocol.ObservedComponent> _components = new List<Protocol.ObservedComponent>();
         private readonly List<Protocol.ObservedTolerance> _tolerances = new List<Protocol.ObservedTolerance>();
 
         /// <summary>Starts an observed project named after <paramref name="firstFile"/>.</summary>
@@ -78,7 +79,7 @@ namespace Cadetta.SolidWorks.Read
             }
             foreach (var d in doc.Dimensions)
             {
-                AddMember(file, d.Locator, "dimension", null, d.Value, d.Expression);
+                AddMember(file, d.Locator, "dimension", null, d.Value, d.Expression, d.Component);
                 _tolerances.Add(new Protocol.ObservedTolerance { Locator = d.Locator, Tolerance = d.Tolerance });
             }
             foreach (var p in doc.Properties)
@@ -104,6 +105,7 @@ namespace Cadetta.SolidWorks.Read
                 o["transform"] = Transform(i.Transform, i.Component);
                 _instances.Add(o);
             }
+            _components.AddRange(Assembly.ComponentFacts.From(doc, _log));
         }
 
         /// <summary>Finishes: the observed project plus the dimension tolerances read.</summary>
@@ -142,7 +144,12 @@ namespace Cadetta.SolidWorks.Read
             }
             using var doc = JsonDocument.Parse(root.ToJsonString());
             _log.Info("observed built: " + _members.Count + " members");
-            return new Protocol.ReadResult { Observed = doc.RootElement.Clone(), Tolerances = _tolerances };
+            return new Protocol.ReadResult
+            {
+                Observed = doc.RootElement.Clone(),
+                Tolerances = _tolerances,
+                Components = _components.Count > 0 ? _components : null,
+            };
         }
 
         private NativeQuantity PropertyQuantity(NativeProperty p)
@@ -155,9 +162,9 @@ namespace Cadetta.SolidWorks.Read
             return NativeQuantity.Of("0", "", "property value is text, not a number: " + p.Value);
         }
 
-        private void AddMember(string file, string native, string kind, string? config, NativeQuantity q, string? expr)
+        private void AddMember(string file, string native, string kind, string? config, NativeQuantity q, string? expr, string? component = null)
         {
-            var id = Ident(native);
+            var id = Ident(component == null ? native : component + "_" + native);
             var name = id;
             for (var n = 1; !_names.Add(name);)
             {
@@ -205,6 +212,10 @@ namespace Cadetta.SolidWorks.Read
             if (config != null)
             {
                 loc["config"] = config;
+            }
+            if (component != null)
+            {
+                loc["component"] = component;
             }
             _bindings.Add(new JsonObject
             {
