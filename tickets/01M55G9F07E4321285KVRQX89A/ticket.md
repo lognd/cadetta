@@ -7,12 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T17:59:23Z"
-updated = "2026-10-17T18:12:53Z"
+updated = "2026-10-17T18:12:59Z"
 scope = ["adapters/fusion/**", "docs/spec/fusion.md"]
 
 [[acceptance]]
 text = "doc.open accepts a local .f3d path and the add-in unit tests cover open/save/close of it"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "A live run on nova against a signed-in Fusion opened, read, pushed, saved and closed a script-made design with user parameters, logging open documents before and after each step and leaving none open"
