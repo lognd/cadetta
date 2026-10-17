@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T18:06:30Z"
+digest = "09943494dfa21db57965a21ccc4f3d5ad2648c5a8a235a1ff83508897679cfce"
+provider = "file"
+ref = "adapters/freecad/evidence/9ksan8k-live/live-run.log"
+size = 2061
+status = "measured"
+at = "2026-10-17T18:06:30Z"
+actor = "lognd"
+rev = 1
