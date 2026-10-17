@@ -2,7 +2,8 @@
 id = "01M4SV2TKZD26CK9FFA1EJXSV4"
 title = "SOLIDWORKS read to observed IR"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
