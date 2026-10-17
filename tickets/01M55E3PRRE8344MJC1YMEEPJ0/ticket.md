@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:21:18Z"
-updated = "2026-10-17T17:32:16Z"
-scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-adapter/src/read_units.rs"]
+updated = "2026-10-17T17:32:42Z"
+scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-adapter/src/read_units.rs", "docs/spec/adapters.md"]
 
 [[acceptance]]
 text = "import --update never writes an assumed unit onto a bare count literal"
