@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a relative native file path, when the CLI reads an adapter (import, names, sync), then the path sent over RPC is absolute."]
+moved = []
+at = "2026-10-17T16:39:48Z"
+actor = "lognd"
+rev = 1
