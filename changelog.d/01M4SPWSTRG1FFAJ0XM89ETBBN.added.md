@@ -1,1 +1,0 @@
-cadetta.toml configuration model.

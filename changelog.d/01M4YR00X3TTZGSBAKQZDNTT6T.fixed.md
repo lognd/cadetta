@@ -1,1 +1,0 @@
-Check now reports E016 for a `use` of an item not visible from the importing module and E017 for private types in public signatures and `priv` members implementing interface members (VisibilityChecker is wired into the pipeline).

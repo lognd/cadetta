@@ -1,1 +1,0 @@
-Report each quantity fault once: a lexical error no longer cascades into a second E001, evaluator reports no longer duplicate kind-check diagnostics, and `check`/`require` conditions are kind-checked (Q001, Q008 with a member path).

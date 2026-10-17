@@ -1,1 +1,0 @@
-Emit diagnostics (Q004 beyond-precision, R013-R015) now carry the `cadetta.diag/1` `schema` and `severity` fields in the JSON report; fixtures for sw-equations Q004 pass and the json/csv Q004 gaps are re-pointed at the json/csv emitter ticket.

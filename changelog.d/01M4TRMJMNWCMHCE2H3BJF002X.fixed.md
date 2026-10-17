@@ -1,1 +1,0 @@
-Solver `in` expressions are now re-evaluated under each approved alternate of a part slot (`Evaluator::with_selection`), so `cadetta solve --variants` runs the solver for every alternate whose inputs differ from the primary's and stores each result keyed `SLOT=ALT`.

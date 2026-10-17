@@ -1,1 +1,0 @@
-Golden example packages now parse without syntax errors: citations after statements and arguments, optional fit 'on', leading-operator continuation, unit words in attributes, and solver check/multi-line in binds.

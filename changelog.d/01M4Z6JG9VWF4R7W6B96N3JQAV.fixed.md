@@ -1,1 +1,0 @@
-The adapter host now refuses an adapter whose platforms exclude the host or whose push returns only a summary (R008), honours the initialize precision, shuts the adapter down after an R009 refusal, and declares emit and read for the built-in adapters.

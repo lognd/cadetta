@@ -1,1 +1,0 @@
-Wired approved-alternate verdicts into check so I002 and I003 are emitted per alternate (located at the variant key), and an interface bound such as load_rating >= 400N now counts as a readable member of the interface, ending the spurious E002 on it.

@@ -1,1 +1,0 @@
-The CLI obligation universe now includes `fit` obligations, so `cadetta obligations`, `ack` and `check` (O001/O002) see them. `require` sign-off obligations are wired in the CLI but stay inert until sema lowers `require` into the IR (split to a follow-up ticket).

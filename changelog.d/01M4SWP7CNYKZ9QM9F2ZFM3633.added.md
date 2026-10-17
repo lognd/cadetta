@@ -1,1 +1,0 @@
-Conformance fixtures for geometry.

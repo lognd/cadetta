@@ -1,1 +1,0 @@
-`cadetta import ADAPTER FILE... --update [--write]` now works: it prints a diff of `.cdt` literal edits for CAD values changed since adoption (literals only, never expressions); `--write` rewrites the sources and updates the lock, otherwise nothing is written.

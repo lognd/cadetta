@@ -1,1 +1,0 @@
-The stdlib sourced-member conformance fixtures (i001-sourced-optional-members, i001-sourced-wrong-kind, q003-sourced-named-kind) cite a web source with the `title`, `url` and `accessed` fields it needs, so the correct S008 no longer adds noise; their known-gaps entries are removed.

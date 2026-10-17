@@ -1,1 +1,0 @@
-Bound versus driving outputs.

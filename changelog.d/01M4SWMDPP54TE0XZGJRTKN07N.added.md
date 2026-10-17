@@ -1,1 +1,0 @@
-SOLIDWORKS adapter pushes are now atomic: the locators a push changes are snapshotted and, when the rebuild fails (R004), the pre-push values are set back and the document rebuilt again; a failed restore is reported in the diagnostic.

@@ -1,1 +1,0 @@
-Kind and dimension checking.

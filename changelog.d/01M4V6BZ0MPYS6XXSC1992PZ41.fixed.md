@@ -1,1 +1,0 @@
-Fixed `cadetta check` not resolving dependencies: it now reports E012, E013 and E014, brings dependency packages into scope for `use` and visibility checks, and treats a bare wildcard requirement such as `1.2.*` as pinning the numbers before the wildcard.

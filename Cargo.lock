@@ -115,7 +115,7 @@ checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
 
 [[package]]
 name = "cadetta"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "blake3",
  "cadetta-adapter",
@@ -143,7 +143,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-adapter"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-ir",
  "cadetta-units",
@@ -156,7 +156,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-capi"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta",
  "serde_json",
@@ -165,7 +165,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-fits"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "thiserror",
  "tracing",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-geometry"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-ir",
  "cadetta-syntax",
@@ -187,7 +187,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-ir"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "blake3",
  "cadetta-units",
@@ -199,7 +199,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-lint"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-adapter",
  "cadetta-ir",
@@ -213,7 +213,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-log"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "regex",
  "thiserror",
@@ -223,7 +223,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-obligations"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-ir",
  "jsonschema",
@@ -234,7 +234,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-py"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta",
  "cadetta-log",
@@ -247,7 +247,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-sema"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-fits",
  "cadetta-geometry",
@@ -261,7 +261,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-solve"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "blake3",
  "cadetta-lint",
@@ -274,14 +274,14 @@ dependencies = [
 
 [[package]]
 name = "cadetta-syntax"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "tracing",
 ]
 
 [[package]]
 name = "cadetta-units"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "num-bigint 0.5.1",
  "num-integer",
@@ -292,7 +292,7 @@ dependencies = [
 
 [[package]]
 name = "cadetta-variants"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "cadetta-ir",
  "cadetta-syntax",

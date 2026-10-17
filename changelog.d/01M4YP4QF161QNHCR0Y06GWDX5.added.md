@@ -1,1 +1,0 @@
-The IR decoder behind `cadetta lint FILE` now reads tables, checks, bindings, interfaces, waivers, dependencies and a component's datums, points and placements, so D002 sees table cells, and diagnostics carry real line and column resolved from the source file beside the IR document.

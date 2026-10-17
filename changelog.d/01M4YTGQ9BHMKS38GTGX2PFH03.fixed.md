@@ -1,1 +1,0 @@
-`cadetta emit` no longer fails with "could not digest the IR" when an in-scope member reads a member of a path dependency; dependency packages are lowered so the read resolves, and only the package's own members are emitted.

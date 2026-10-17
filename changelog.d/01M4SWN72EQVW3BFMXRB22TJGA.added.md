@@ -1,1 +1,0 @@
-Selector grammar KIND:GLOB.

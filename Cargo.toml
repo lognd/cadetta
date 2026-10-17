@@ -8,7 +8,7 @@ members = ["crates/*", "bindings/*"]
 default-members = ["crates/*"]
 
 [workspace.package]
-version = "0.0.0"
+version = "0.1.0"
 edition = "2024"
 rust-version = "1.98"
 license = "MIT"
@@ -18,19 +18,19 @@ homepage = "https://github.com/lognd/cadetta"
 documentation = "https://github.com/lognd/cadetta/tree/main/docs/spec"
 
 [workspace.dependencies]
-cadetta = { path = "crates/cadetta-cli", version = "0.0.0" }
-cadetta-adapter = { path = "crates/cadetta-adapter", version = "0.0.0" }
-cadetta-fits = { path = "crates/cadetta-fits", version = "0.0.0" }
-cadetta-geometry = { path = "crates/cadetta-geometry", version = "0.0.0" }
-cadetta-ir = { path = "crates/cadetta-ir", version = "0.0.0" }
-cadetta-log = { path = "crates/cadetta-log", version = "0.0.0" }
-cadetta-lint = { path = "crates/cadetta-lint", version = "0.0.0" }
-cadetta-obligations = { path = "crates/cadetta-obligations", version = "0.0.0" }
-cadetta-sema = { path = "crates/cadetta-sema", version = "0.0.0" }
-cadetta-solve = { path = "crates/cadetta-solve", version = "0.0.0" }
-cadetta-syntax = { path = "crates/cadetta-syntax", version = "0.0.0" }
-cadetta-units = { path = "crates/cadetta-units", version = "0.0.0" }
-cadetta-variants = { path = "crates/cadetta-variants", version = "0.0.0" }
+cadetta = { path = "crates/cadetta-cli", version = "0.1.0" }
+cadetta-adapter = { path = "crates/cadetta-adapter", version = "0.1.0" }
+cadetta-fits = { path = "crates/cadetta-fits", version = "0.1.0" }
+cadetta-geometry = { path = "crates/cadetta-geometry", version = "0.1.0" }
+cadetta-ir = { path = "crates/cadetta-ir", version = "0.1.0" }
+cadetta-log = { path = "crates/cadetta-log", version = "0.1.0" }
+cadetta-lint = { path = "crates/cadetta-lint", version = "0.1.0" }
+cadetta-obligations = { path = "crates/cadetta-obligations", version = "0.1.0" }
+cadetta-sema = { path = "crates/cadetta-sema", version = "0.1.0" }
+cadetta-solve = { path = "crates/cadetta-solve", version = "0.1.0" }
+cadetta-syntax = { path = "crates/cadetta-syntax", version = "0.1.0" }
+cadetta-units = { path = "crates/cadetta-units", version = "0.1.0" }
+cadetta-variants = { path = "crates/cadetta-variants", version = "0.1.0" }
 pyo3 = { version = "0.29", features = ["abi3-py311"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

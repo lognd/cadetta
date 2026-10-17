@@ -1,1 +1,0 @@
-Part slots lower to the canonical `pkg::Assembly/part` path (a `/part` segment, not a `.member`), so `impact --swap` accepts the slash form, and the swap name matcher is symmetric between bare alternates and full-path NEW.

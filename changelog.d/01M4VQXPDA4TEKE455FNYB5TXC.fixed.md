@@ -1,1 +1,0 @@
-Sema now evaluates datums, points, patterns and placements through cadetta-geometry and lowers them to IR Datum, Point and Placement entities; p in D re-expression composes the placement tree and reports G003 for unplaced parts.

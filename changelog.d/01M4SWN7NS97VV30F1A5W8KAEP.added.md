@@ -1,1 +1,0 @@
-Semantic versus presentational digests.
