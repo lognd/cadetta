@@ -8,11 +8,11 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-14T13:18:53Z"
-updated = "2026-10-17T07:07:45Z"
+updated = "2026-10-17T07:08:14Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**"]
-scope = ["adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**"]
+scope = ["adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**", "docs/spec/solidworks.md", "changelog.d/01M4X91P37CRMWF43MHK53RXEG.*"]
 
 [[links]]
 kind = "blocked-by"
