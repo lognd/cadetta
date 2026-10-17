@@ -1,0 +1,8 @@
+kind = "create"
+title = "SOLIDWORKS: add Commands.Tests to sln and CI; wire commands into CadettaAddIn and TaskPaneControl"
+type = "task"
+category = "todo"
+priority = "medium"
+at = "2026-10-17T07:14:55Z"
+actor = "lognd"
+rev = 1
