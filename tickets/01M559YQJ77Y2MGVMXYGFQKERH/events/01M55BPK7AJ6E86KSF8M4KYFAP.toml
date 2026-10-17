@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T16:39:11Z"
+digest = "0c7bf9ff40d9dc629380e88be44377a8bab770c1f8f4552e7166209f916dc321"
+provider = "file"
+ref = "/tmp/claude-1000/-home-logan-projects-cadetta/5bbabb83-32a3-446b-9e71-532cccb3fbd0/scratchpad/gfqkerh-evidence.log"
+size = 176
+status = "measured"
+at = "2026-10-17T16:39:11Z"
+actor = "lognd"
+rev = 1

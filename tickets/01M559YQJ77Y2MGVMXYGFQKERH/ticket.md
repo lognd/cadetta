@@ -12,7 +12,7 @@ scope = ["adapters/solidworks/**", "changelog.d/01M559YQJ77Y2MGVMXYGFQKERH.*"]
 
 [[acceptance]]
 text = "Given a scalar (pattern count) dimension, when read through SwComDocumentReader, then it reads as an unscaled unitless number"
-bound = false
+bound = true
 +++
 
 Read path still scales scalar (swScalarDimension) dimensions by the length factor with a mm unit; mirror the push-path fix (DimensionUnits).
