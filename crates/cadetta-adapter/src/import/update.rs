@@ -90,6 +90,26 @@ pub struct UpdatePlan {
     pub lock_updates: Vec<(String, String, String, String)>,
 }
 
+/// The observed value with an assumed unit dropped when the `.cdt` literal is a bare count.
+///
+/// An adapter that cannot say a value is dimensionless (a SOLIDWORKS pattern count) reads it
+/// with the native unit assumed (`4mm`); a source literal without a unit declares the param
+/// dimensionless, so the unit is not written back.
+// frob:ticket 01M55E3PRRE8344MJC1YMEEPJ0
+pub fn honour_dimensionless<'a>(ours: &str, theirs: &'a str) -> &'a str {
+    let bare = |t: &str| t.trim().parse::<f64>().is_ok();
+    if !bare(ours) {
+        return theirs;
+    }
+    let t = theirs.trim();
+    let cut = t.trim_end_matches(|c: char| c.is_ascii_alphabetic());
+    if cut.len() < t.len() && bare(cut) {
+        tracing::debug!(ours, theirs, "update: dropped assumed unit of a bare count");
+        return cut;
+    }
+    theirs
+}
+
 /// Plans literal edits for entries whose observed value differs from the lock base.
 ///
 /// Entries without a base, or with `theirs == base`, are unchanged. `sources` maps canonical
@@ -97,7 +117,8 @@ pub struct UpdatePlan {
 pub fn plan(entries: &[Entry], sources: &BTreeMap<String, Source>) -> UpdatePlan {
     let mut out = UpdatePlan::default();
     for e in entries {
-        if e.base.as_deref().is_none_or(|b| b == e.theirs) {
+        let theirs = honour_dimensionless(&e.ours, &e.theirs);
+        if e.base.as_deref().is_none_or(|b| b == theirs) {
             tracing::debug!(path = %e.path, "update: unchanged in CAD");
             continue;
         }
@@ -116,18 +137,18 @@ pub fn plan(entries: &[Entry], sources: &BTreeMap<String, Source>) -> UpdatePlan
                 out.skipped
                     .push((e.path.clone(), Skip::Toleranced(e.theirs.clone())));
             }
-            Definition::Literal { .. } if e.ours == e.theirs => {
+            Definition::Literal { .. } if e.ours == theirs => {
                 tracing::debug!(path = %e.path, "update: literal already matches CAD");
             }
             Definition::Literal { file, start, end } => {
-                tracing::info!(path = %e.path, new = %e.theirs, "update: literal edit");
+                tracing::info!(path = %e.path, new = %theirs, "update: literal edit");
                 out.edits.push(Edit {
                     path: e.path.clone(),
                     file: file.clone(),
                     start: *start,
                     end: *end,
                     old: e.ours.clone(),
-                    new: e.theirs.clone(),
+                    new: theirs.to_owned(),
                 });
                 if src.cited {
                     out.cite_flags.push(e.path.clone());
@@ -136,7 +157,7 @@ pub fn plan(entries: &[Entry], sources: &BTreeMap<String, Source>) -> UpdatePlan
                     e.adapter.clone(),
                     e.path.clone(),
                     e.locator.clone(),
-                    e.theirs.clone(),
+                    theirs.to_owned(),
                 ));
             }
         }
@@ -268,5 +289,29 @@ mod tests {
         assert_eq!(apply(text, "a.cdt", &plan).unwrap(), "a = 12mm\nb = 8mm\n");
         assert_eq!(apply(text, "other.cdt", &plan).unwrap(), text);
         assert!(apply("a = 6mm\nb = 7mm\n", "a.cdt", &plan).is_err());
+    }
+
+    // frob:ticket 01M55E3PRRE8344MJC1YMEEPJ0
+    // frob:tests crates/cadetta-adapter/src/import/update.rs::honour_dimensionless
+    #[test]
+    fn bare_count_literal_drops_the_assumed_unit() {
+        assert_eq!(honour_dimensionless("4", "4mm"), "4");
+        assert_eq!(honour_dimensionless("4", "6mm"), "6");
+        assert_eq!(honour_dimensionless("4", "6"), "6");
+        assert_eq!(honour_dimensionless("4mm", "6mm"), "6mm");
+        assert_eq!(honour_dimensionless("4", "x"), "x");
+    }
+
+    // frob:ticket 01M55E3PRRE8344MJC1YMEEPJ0
+    // frob:tests crates/cadetta-adapter/src/import/update.rs::plan
+    #[test]
+    fn update_never_writes_a_unit_onto_a_bare_count() {
+        let sources = BTreeMap::from([("p::C.n".to_owned(), lit(4, 5, false))]);
+        let same = plan(&[entry("p::C.n", Some("4mm"), "4", "4mm")], &sources);
+        assert!(same.edits.is_empty());
+        let changed = plan(&[entry("p::C.n", Some("4"), "4", "6mm")], &sources);
+        assert_eq!(changed.edits.len(), 1);
+        assert_eq!(changed.edits[0].new, "6");
+        assert_eq!(changed.lock_updates[0].3, "6");
     }
 }

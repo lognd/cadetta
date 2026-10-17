@@ -825,7 +825,9 @@ observed value (edit by hand); a path with a citation is flagged ("value
 no longer matches its cite"); `let` and derived paths are never touched
 ("derived; edit its sources"). After the edit, the next `sync`
 classifies the locator as no-op. Contract 4.5 holds: nothing is written
-without `--write`.
+without `--write`. A literal without a unit declares the path
+dimensionless (a count): an assumed native unit on the observed value
+(`4mm`) is dropped, never written onto it.
 
 ## Resolved questions
 
