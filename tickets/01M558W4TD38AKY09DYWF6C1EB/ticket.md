@@ -2,7 +2,8 @@
 id = "01M558W4TD38AKY09DYWF6C1EB"
 title = "Failed atomic restore can leave a half-pushed document"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
