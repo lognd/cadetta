@@ -1,0 +1,37 @@
+kind = "evidence"
+captured_at = "2026-10-17T11:16:35Z"
+digest = "a882c1efe6375f0ad8b5ec5e03e052ad081c880be8b835c7275fc288565f9444"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3m 30s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 146da57e-da92-40b0-8e56-0911dba332e6 with nextest profile: default
+    Starting 2 tests across 76 binaries (1843 tests skipped)
+        PASS [   0.004s] cadetta-sema eval::tests::evaluation_diagnostic_does_not_log_at_warn
+        PASS [   0.004s] cadetta-sema resolve::tests::resolution_error_does_not_log_at_warn
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 2 tests run: 2 passed, 1843 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "does_not_log_at_warn"
+size = 1549
+status = "measured"
+test_count = 2
+tests_digest = "5648eb3182158f0977a3fd8792757cf7cdfacbd3d5ea05fcd56ecf837ceffe4d"
+at = "2026-10-17T11:16:35Z"
+actor = "lognd"
+rev = 1

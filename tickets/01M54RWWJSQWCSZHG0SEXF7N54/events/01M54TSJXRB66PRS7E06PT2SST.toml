@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T11:43:43Z"
+digest = "182082365946358362834c459a6f681f947232cc82d70e98c88d9142d1cbda25"
+provider = "file"
+ref = "adapters/solidworks/evidence/exf-live/all.log"
+size = 3013
+status = "measured"
+at = "2026-10-17T11:43:43Z"
+actor = "lognd"
+rev = 1

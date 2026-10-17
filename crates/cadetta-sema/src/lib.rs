@@ -22,3 +22,5 @@ pub mod rollup;
 pub mod solverdecl;
 pub mod tables;
 pub mod visibility;
+#[cfg(test)]
+mod warnprobe;
