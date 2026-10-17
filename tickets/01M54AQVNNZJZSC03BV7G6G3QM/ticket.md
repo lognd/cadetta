@@ -4,9 +4,10 @@ title = "Host: send the binding locator kind in push ChangedParam (cmd/sync.rs s
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T07:03:09Z"
-updated = "2026-10-17T07:03:09Z"
+updated = "2026-10-17T07:03:26Z"
 scope = ["crates/cadetta-adapter/src/sync.rs", "crates/cadetta-adapter/src/atomic.rs", "crates/cadetta-cli/src/cmd/sync.rs"]
 +++
 
