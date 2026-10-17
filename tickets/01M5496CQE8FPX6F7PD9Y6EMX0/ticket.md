@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-17T06:36:08Z"
 updated = "2026-10-17T06:49:21Z"
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/FakeSwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwHost.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/FakeSwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwHost.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/ISwSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/Recording", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/SwConnection.cs"]
 +++
 
 found while working ~DKCF816: PushService/SwComPushDocument exist and are live-verified, but the push RPC method is not routed to them yet.
