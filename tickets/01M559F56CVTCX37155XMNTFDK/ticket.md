@@ -2,12 +2,12 @@
 id = "01M559F56CVTCX37155XMNTFDK"
 title = "SOLIDWORKS: pattern count dimension scaled by length factor (reads x1000)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T16:03:07Z"
+updated = "2026-10-17T16:03:18Z"
 scope = ["adapters/solidworks/**"]
 +++
 
