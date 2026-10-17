@@ -239,7 +239,9 @@ a protocol error naming the output, not a silently wrong number.
 `cadetta.adapter.Adapter` implements the JSON-RPC loop of adapters.md 5:
 `initialize`, `emit`, `read`, `push`, `regen`, `shutdown` (and
 `open`, `save`, `close` for drive adapters) are methods to override.
-Observed IR is built with the same models. Logs go to stderr only,
+Observed IR is built with the same models; `unit_scale`, `safe_name`,
+`package_name`, `observed_member`, `observed_binding` and
+`observed_project` in the same module are the shared read-side helpers. Logs go to stderr only,
 because stdout carries the protocol. The FreeCAD and SOLIDWORKS
 adapters are built on it.
 
