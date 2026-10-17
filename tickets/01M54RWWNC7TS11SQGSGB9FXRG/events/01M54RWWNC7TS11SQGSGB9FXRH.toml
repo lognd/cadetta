@@ -1,0 +1,10 @@
+kind = "create"
+title = "cadetta CLI prints stdlib E002/EVAL warnings on stderr when the add-in runs it"
+type = "bug"
+category = "todo"
+priority = "medium"
+scope = ["crates/**"]
+body = "Found while working ~4FG4VVR: noisy stderr from the stdlib during live runs. Needs triage."
+at = "2026-10-17T11:10:34Z"
+actor = "lognd"
+rev = 1
