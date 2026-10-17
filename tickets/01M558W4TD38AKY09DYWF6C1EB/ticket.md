@@ -7,8 +7,8 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:37:37Z"
-scope = ["crates/cadetta-adapter/**"]
+updated = "2026-10-17T16:40:55Z"
+scope = ["adapters/solidworks/**"]
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). Seen only by reading the restore path; not reproduced live.
