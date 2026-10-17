@@ -46,6 +46,9 @@ namespace Cadetta.SolidWorks.Com
         /// <summary>A push host over this application (frob:ticket 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
         public IPushHost PushHost(Log log) => new Session.SwComPushHost(_sw, log);
 
+        /// <summary>A regen host over this application (frob:ticket 01M4SV2TVM50WJRZ42ZHXVD96N).</summary>
+        public Cadetta.SolidWorks.Regen.IRegenHost RegenHost(Log log) => new Regen.SwComRegenHost(_sw, log);
+
         /// <summary>A cached read service over this application (frob:ticket 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
         public Cadetta.SolidWorks.Read.ReadService ReadService(Log log) =>
             new Cadetta.SolidWorks.Read.ReadService(new Read.SwComDocumentReader(_sw, log),

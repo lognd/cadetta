@@ -8,6 +8,7 @@ using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Protocol;
 using Cadetta.SolidWorks.Push;
 using Cadetta.SolidWorks.Read;
+using Cadetta.SolidWorks.Regen;
 using Cadetta.SolidWorks.Save;
 using Cadetta.SolidWorks.Session;
 
@@ -34,17 +35,19 @@ namespace Cadetta.SolidWorks.Server
         private readonly Log _log;
         private readonly ReadService? _read;
         private readonly IPushHost? _pushHost;
+        private readonly RegenService? _regen;
         private readonly PushService _push;
         private readonly SaveService _save;
         private bool _stop;
 
-        /// <summary>Creates a server over a session; `read` is answered by <paramref name="read"/> and `push` by <paramref name="pushHost"/> when given (frob:ticket 01M548Y09E8W1NVTJSSS0GDS2T, 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
-        public RpcServer(ISwSession session, Log log, ReadService? read = null, IPushHost? pushHost = null)
+        /// <summary>Creates a server over a session; `read` is answered by <paramref name="read"/> and `push` by <paramref name="pushHost"/> when given and `regen` by <paramref name="regenHost"/> when given (frob:ticket 01M548Y09E8W1NVTJSSS0GDS2T, 01M5496CQE8FPX6F7PD9Y6EMX0, 01M4SV2TVM50WJRZ42ZHXVD96N).</summary>
+        public RpcServer(ISwSession session, Log log, ReadService? read = null, IPushHost? pushHost = null, IRegenHost? regenHost = null)
         {
             _session = session;
             _log = log;
             _read = read;
             _pushHost = pushHost;
+            _regen = regenHost == null ? null : new RegenService(regenHost, log);
             _push = new PushService(log);
             _save = new SaveService(new DiskFileReader(), log);
         }
@@ -136,6 +139,8 @@ namespace Cadetta.SolidWorks.Server
                     return Read(id, ps);
                 case "push" when _pushHost != null:
                     return Push(id, ps);
+                case "regen" when _regen != null:
+                    return Regen(id, ps);
                 case "shutdown":
                     _stop = true;
                     return Result(id, "null");
@@ -215,6 +220,36 @@ namespace Cadetta.SolidWorks.Server
             {
                 _log.Error("push " + p.File + " failed: " + e.Message);
                 return Error(id, ServerError, "push failed: " + e.Message);
+            }
+        }
+
+        /// <summary>Answers `regen`: rebuilds each target file and reports R004 per failed feature (frob:ticket 01M4SV2TVM50WJRZ42ZHXVD96N).</summary>
+        private string Regen(JsonElement id, JsonElement ps)
+        {
+            RegenParams? p;
+            try
+            {
+                p = ps.ValueKind == JsonValueKind.Undefined ? null : ps.Deserialize<RegenParams>(Options);
+            }
+            catch (JsonException e)
+            {
+                _log.Warn("bad regen params: " + e.Message);
+                return Error(id, InvalidParams, "bad regen params: " + e.Message);
+            }
+            if (p == null || p.Targets.Count == 0)
+            {
+                _log.Warn("regen needs at least one target file");
+                return Error(id, InvalidParams, "regen needs at least one target file");
+            }
+            try
+            {
+                var result = _regen!.Regen(p.Targets);
+                return Result(id, JsonSerializer.Serialize(result, Options));
+            }
+            catch (Exception e) when (e is IOException || e is InvalidOperationException || e is System.Runtime.InteropServices.COMException)
+            {
+                _log.Error("regen failed: " + e.Message);
+                return Error(id, ServerError, "regen failed: " + e.Message);
             }
         }
 

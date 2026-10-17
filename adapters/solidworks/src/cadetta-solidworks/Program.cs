@@ -50,6 +50,7 @@ namespace Cadetta.SolidWorks.Cli
             ISwSession session;
             IDisposable? owner = null;
             IPushHost? pushHost = null;
+            Cadetta.SolidWorks.Regen.IRegenHost? regenHost = null;
             Cadetta.SolidWorks.Read.ReadService? readService = null;
             if (fake)
             {
@@ -64,6 +65,7 @@ namespace Cadetta.SolidWorks.Cli
                 owner = com.Connection;
                 session = com;
                 pushHost = com.PushHost(log);
+                regenHost = com.RegenHost(log);
                 readService = com.ReadService(log);
 #else
                 log.Error("built without the COM session; pass --fake");
@@ -75,7 +77,7 @@ namespace Cadetta.SolidWorks.Cli
             var output = new StreamWriter(Console.OpenStandardOutput(), utf8) { NewLine = "\n", AutoFlush = true };
             try
             {
-                return new RpcServer(session, log, readService, pushHost).Run(input, output);
+                return new RpcServer(session, log, readService, pushHost, regenHost).Run(input, output);
             }
             finally
             {

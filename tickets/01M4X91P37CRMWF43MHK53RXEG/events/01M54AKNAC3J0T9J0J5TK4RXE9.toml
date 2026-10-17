@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/K53RXEG; scope: adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**; ttl 7200s"
+at = "2026-10-17T07:00:50Z"
+actor = "lognd"
+rev = 1

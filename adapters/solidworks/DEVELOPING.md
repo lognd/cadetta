@@ -73,3 +73,16 @@ Before each run check for leftover windows with
   for the part to provoke a genuine rebuild error.
 - Look features up by type name, never by localized name.
 - Results are recorded in `API-SURFACE.md`.
+
+## Regen (rebuild-error mapping)
+
+The `regen` RPC takes file-path targets, opens each through `IRegenHost`
+(`SwComRegenHost` in the Com project, fakes in Core tests), forces a
+rebuild and walks the feature tree with `IFeature.GetErrorCode2`.
+`RegenService` maps each failing feature to an `R004` diagnostic that names
+the feature. A document with unsaved user changes, or opened read-only, is
+refused with `R009` and never rebuilt (OQ-8). A regen failure during a push
+is handled by `PushService`/`AtomicPush` (R004 plus atomic restore,
+adapters.md 2.3). Live check: build a shelled part, link the shell
+thickness to a global, set it too large, save, and regen (see the
+`hxvd96n-nova-live` evidence on the ticket).
