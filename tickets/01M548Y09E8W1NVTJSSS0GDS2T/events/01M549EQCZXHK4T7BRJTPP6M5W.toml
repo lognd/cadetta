@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/**"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Server/**", "adapters/solidworks/DEVELOPING.md"]
+at = "2026-10-17T06:40:41Z"
+actor = "lognd"
+rev = 1
