@@ -4,8 +4,9 @@ title = "Add AddIn test project to Cadetta.SolidWorks.sln and solidworks.yml CI"
 type = "chore"
 category = "todo"
 priority = "medium"
+points = 1
 reporter = "lognd"
 created = "2026-10-17T06:52:46Z"
-updated = "2026-10-17T06:52:46Z"
+updated = "2026-10-17T07:07:34Z"
 idempotency_key = "sw-addin-ci"
 +++
