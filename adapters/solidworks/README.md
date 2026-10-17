@@ -66,3 +66,13 @@ exist yet).
 `cadetta-solidworks --probe-api <scratch-dir>` exercises the SOLIDWORKS
 calls of the spec against a running instance (manual, not in CI). See
 `DEVELOPING.md` for bootstrap and `API-SURFACE.md` for results.
+
+## Snapshot and atomic restore (R004)
+
+`AtomicPush.Run` (`Core/Restore`) snapshots every locator a push will
+change through an `IRestorableDocument`, writes the new values and
+rebuilds. When the rebuild fails it sets the snapshotted values back and
+rebuilds again, returning an R004 diagnostic that says whether the
+restore succeeded (adapters.md 2.3). The Com build's
+`SwComRestorableDocument` maps locators to dimension names and uses
+`SetSystemValue3` and `ForceRebuild3`.

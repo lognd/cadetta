@@ -2,13 +2,14 @@
 id = "01M4SWMDPP54TE0XZGJRTKN07N"
 title = "Snapshot and atomic restore"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-17T05:14:14Z"
+updated = "2026-10-17T05:15:46Z"
 persona = "design engineer"
 capability = "never leave a broken model"
 idempotency_key = "replan14:sw-restore"
@@ -25,5 +26,5 @@ target = "01M4SWMDFARQR4Q9HCBERB21PP"
 
 [[acceptance]]
 text = "Given a failed rebuild, when sync ends, then the pre-push file state is restored (adapters.md 2.3)"
-bound = false
+bound = true
 +++
