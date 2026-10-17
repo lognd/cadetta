@@ -1,0 +1,7 @@
+kind = "transition"
+from = "in-progress"
+to = "todo"
+reason = "Fusion signed in and add-in loads live (evidence adapters/fusion/evidence/6gwey93-live); full cycle needs a cloud design data-file id (urn:adsk.wipprod:dm.lineage:...) with user parameters from the user"
+at = "2026-10-17T17:59:12Z"
+actor = "lognd"
+rev = 1
