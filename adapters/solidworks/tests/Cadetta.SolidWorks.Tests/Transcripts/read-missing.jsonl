@@ -1,0 +1,2 @@
+{"seq":0,"call":"Reader.Read","args":["rail.sldprt"],"result":null,"error":"no such document"}
+{"seq":1,"call":"rpc","args":["{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:7,\u0022method\u0022:\u0022read\u0022,\u0022params\u0022:{\u0022source\u0022:{\u0022files\u0022:[\u0022rail.sldprt\u0022]}}}"],"result":"{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:7,\u0022error\u0022:{\u0022code\u0022:-32000,\u0022message\u0022:\u0022read failed: no such document\u0022}}"}

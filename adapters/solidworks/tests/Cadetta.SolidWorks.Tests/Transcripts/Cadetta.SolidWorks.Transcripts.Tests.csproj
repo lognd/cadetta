@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Transcript replay of read, push, regen and the adapter contract rules; runs without SOLIDWORKS (frob:ticket 01M4X91P37CRMWF43MHK53RXEG). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>Cadetta.SolidWorks.Transcripts.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\src\Cadetta.SolidWorks.Tests\Push\FakePushDocument.cs" LinkBase="Linked" />
+    <ProjectReference Include="..\..\..\src\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
+  </ItemGroup>
+</Project>
