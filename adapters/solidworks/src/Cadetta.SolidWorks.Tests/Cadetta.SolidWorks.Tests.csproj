@@ -10,9 +10,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\tests\Cadetta.SolidWorks.Tests\Frames\**\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
   </ItemGroup>
 </Project>
