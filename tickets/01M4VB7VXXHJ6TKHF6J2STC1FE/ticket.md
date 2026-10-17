@@ -2,7 +2,8 @@
 id = "01M4VB7VXXHJ6TKHF6J2STC1FE"
 title = "SOLIDWORKS add-in commands: link dimension, assign part and array, create datum frames, sync"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
