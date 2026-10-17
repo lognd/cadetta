@@ -16,4 +16,4 @@ text = "FreeCAD adapter live round trip (emit, read, open, push, regen, save, cl
 bound = true
 +++
 
-FreeCAD 1.1.4 installed on nova at C:\Users\logan\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe. Run the FreeCAD adapter open/read/push/save/close round trip live there, record evidence under adapters/freecad/evidence/, bind to milestone criterion 3.
+FreeCAD 1.1.4 installed on nova at ~other\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe. Run the FreeCAD adapter open/read/push/save/close round trip live there, record evidence under adapters/freecad/evidence/, bind to milestone criterion 3.
