@@ -4,9 +4,10 @@ title = "SOLIDWORKS: pattern count dimension scaled by length factor (reads x100
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T16:00:10Z"
+updated = "2026-10-17T16:03:07Z"
 scope = ["adapters/solidworks/**"]
 +++
 
