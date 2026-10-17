@@ -19,6 +19,7 @@ namespace Cadetta.SolidWorks.Commands.Tests
         public string Path => "part.SLDPRT";
         public bool ReadOnly { get; set; }
         public bool UserDirty => false;
+        public System.Collections.Generic.IReadOnlyList<Cadetta.SolidWorks.Regen.RebuildError> LastRebuildFailures { get; } = new System.Collections.Generic.List<Cadetta.SolidWorks.Regen.RebuildError>();
         public bool AdapterModified => false;
         public double? GetGlobal(string name) => Globals.TryGetValue(name, out var v) ? v : (double?)null;
         public string? GetGlobalExpression(string name) => null;
