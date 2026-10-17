@@ -1,0 +1,6 @@
+kind = "comment"
+subtype = "decision"
+body = "land overrode a red base CI at 8ad27e2b018d (frob check (failure) https://github.com/lognd/cadetta/actions/runs/39056132880/job/117464366194): known red base; user authorized"
+at = "2026-10-17T18:06:55Z"
+actor = "lognd"
+rev = 1
