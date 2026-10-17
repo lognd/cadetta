@@ -1,0 +1,25 @@
+Fusion live run attempt on nova (Windows 11 ARM64), 2026-10-17. ~DW3NEMP.
+
+RESULT: BLOCKED. Fusion shows its "Welcome to Fusion / Sign In" wall and no
+Autodesk account is signed in on nova. The add-in was NOT executed; open,
+read, push, save and close were NOT exercised.
+
+Steps that ran:
+1. Fusion360.exe present under %LOCALAPPDATA%\Autodesk\webdeploy\production
+   (a1d30517...); FusionLauncher.exe in 6a0c9611.... No Fusion process running.
+   Open Fusion documents before: none (Fusion not running).
+2. Installed adapters/fusion/addin/CadettaFusion/{CadettaFusion.py,
+   CadettaFusion.manifest} into %APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\.
+3. Launched FusionLauncher.exe in the interactive session (session 1).
+   Fusion360 started; main window titled "Autodesk Fusion" showed only the
+   sign-in screen (fusion-signin-wall.png). After ~100 s: no listener on
+   127.0.0.1:47360 (add-in not loaded; Fusion loads add-ins after sign-in), no
+   new AppLogFile under %LOCALAPPDATA%\Autodesk\Autodesk Fusion 360.
+4. Cleanup: Fusion360 and FusionLauncher processes stopped (0 remain), add-in
+   directory removed, temp files removed, nova-clean.sh run (0 Cadetta tasks).
+   Open Fusion documents after: none (no document was ever opened).
+SOLIDWORKS (SLDWORKS) on nova was left untouched.
+
+Needed to proceed: a signed-in Autodesk account on nova, and a cloud or
+local test design with user parameters (the add-in opens documents through
+app.data.findFileById, so it needs a signed-in session).
