@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:50:35Z"
+digest = "3c6e15eb2b55953630f72beab535e96a71ac6eb8b7d23fd1a1b576ca9fecfe6e"
+provider = "file"
+ref = "adapters/solidworks/evidence/nehy-live/addin-buttons.log"
+size = 29052
+status = "measured"
+at = "2026-10-17T15:50:35Z"
+actor = "lognd"
+rev = 1
