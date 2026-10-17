@@ -2,12 +2,12 @@
 id = "01M55EASQHS5H5WW32KQK2F312"
 title = "SOLIDWORKS: Link of a count dimension creates the global as 4000mm (scalar scaled as length)"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:25:10Z"
-updated = "2026-10-17T17:27:18Z"
+updated = "2026-10-17T17:27:29Z"
 scope = ["adapters/solidworks/src/**"]
 +++
 
