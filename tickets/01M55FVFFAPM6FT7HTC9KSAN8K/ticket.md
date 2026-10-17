@@ -4,9 +4,10 @@ title = "FreeCAD: live round trip on nova with freecadcmd (milestone 0.1.0 crite
 type = "task"
 category = "todo"
 priority = "medium"
+points = 3
 reporter = "lognd"
 created = "2026-10-17T17:51:45Z"
-updated = "2026-10-17T17:51:45Z"
+updated = "2026-10-17T17:51:48Z"
 +++
 
 FreeCAD 1.1.4 installed on nova at C:\Users\logan\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe. Run the FreeCAD adapter open/read/push/save/close round trip live there, record evidence under adapters/freecad/evidence/, bind to milestone criterion 3.
