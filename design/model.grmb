@@ -10,6 +10,7 @@ node adapter_freecad : authenticated {
   owns "adapters/freecad/**";
   may fs.read at "adapters/freecad/**";
   may fs.write at "adapters/freecad/**";
+  may process.env at "adapters/freecad/tests/live/run_under_freecadcmd.py";
 }
 
 /// Adapter host: built-in emitters and the JSON-RPC client for external adapters (adapters.md).
@@ -72,6 +73,15 @@ node cli : trusted {
   may fs.write at "crates/cadetta-cli/src/cmd/update.rs";
   may exec at "crates/cadetta-cli/src/cmd/update.rs";
   may exec at "crates/cadetta-cli/src/cmd/import.rs";
+  may exec at "crates/cadetta-cli/src/cmd/impact_since.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/check_drift.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/frames.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/impact_since.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/lock.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/obligations.rs";
+  may fs.write at "crates/cadetta-cli/src/cmd/sync.rs";
+  may fs.write at "crates/cadetta-cli/src/pipeline.rs";
+  may fs.write at "crates/cadetta-cli/src/universe.rs";
 }
 
 /// ISO 286 fit tables shipped as package data (language.md 3.2).
@@ -129,6 +139,10 @@ node py_binding : trusted {
   may exec at "bindings/python/scripts/gen_models.py";
   may fs.read at "bindings/python/scripts/gen_models.py";
   may fs.write at "bindings/python/scripts/gen_models.py";
+  may fs.read at "bindings/python/python/cadetta/tools.py";
+  may fs.write at "bindings/python/python/cadetta/tools.py";
+  may exec at "bindings/python/python/cadetta/tools.py";
+  may process.env at "bindings/python/tests/test_conformance.py";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
@@ -136,6 +150,7 @@ node sema : trusted {
   kind component;
   clearance Internal;
   owns "crates/cadetta-sema/**";
+  may fs.read at "crates/cadetta-sema/src/kindcheck.rs";
 }
 
 /// Runs external solvers over `cadetta.solve/1` and caches results (solvers.md).
