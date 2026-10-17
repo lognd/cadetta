@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a scalar (pattern count) dimension, when pushed or read through SwComPushDocument, then its value is not scaled by the length factor"]
+moved = []
+at = "2026-10-17T16:05:28Z"
+actor = "lognd"
+rev = 1

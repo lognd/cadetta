@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T16:05:23Z"
+digest = "0ed7cc4c66a4169c8f3b11aaf23eca048826c1cfe6f97d6fc5aa4407405fa60f"
+provider = "file"
+ref = "/tmp/claude-1000/-home-logan-projects-cadetta/5bbabb83-32a3-446b-9e71-532cccb3fbd0/scratchpad/xmntfdk-evidence.log"
+size = 201
+status = "measured"
+at = "2026-10-17T16:05:23Z"
+actor = "lognd"
+rev = 1
