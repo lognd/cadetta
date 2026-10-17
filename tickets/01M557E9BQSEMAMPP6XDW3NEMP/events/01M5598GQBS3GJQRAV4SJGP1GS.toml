@@ -1,0 +1,8 @@
+kind = "land"
+base_ref = "refs/heads/main"
+commit = "cf3332bd1128eb6d73d4e18f35a28af7f526a673"
+branch = "ticket/DW3NEMP"
+pushed = false
+at = "2026-10-17T15:55:37Z"
+actor = "lognd"
+rev = 1
