@@ -2,7 +2,8 @@
 id = "01M4VK7W0KGNQZ0JBXX0CXQ6EZ"
 title = "cadetta lsp: hover as why, code lens as impact, go to definition"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "low"
 points = 5
 parent = "01M4SPWHHNRSGB9QZ04CMHWRRB"
