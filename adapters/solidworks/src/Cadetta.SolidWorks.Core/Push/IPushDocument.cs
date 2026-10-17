@@ -26,6 +26,9 @@ namespace Cadetta.SolidWorks.Push
         /// <summary>The global the dimension is linked to by an equation, or null.</summary>
         public string? LinkedGlobal { get; set; }
 
+        /// <summary>The unit family of the dimension (length, angle or unitless count); decides how a created global is written.</summary>
+        public DimensionUnitKind Kind { get; set; } = DimensionUnitKind.Length;
+
         /// <summary>The dimension's current tolerance.</summary>
         public ToleranceSpec Tolerance { get; set; } = ToleranceSpec.None;
     }
@@ -51,8 +54,8 @@ namespace Cadetta.SolidWorks.Push
         /// <summary>The native expression defining a global that a push would replace (R006), or null when it is a plain value.</summary>
         string? GetGlobalExpression(string name);
 
-        /// <summary>Creates or updates a global.</summary>
-        bool SetGlobal(string name, double value);
+        /// <summary>Creates or updates a global; <paramref name="kind"/> picks the unit suffix of a new global (a count carries none).</summary>
+        bool SetGlobal(string name, double value, DimensionUnitKind kind = DimensionUnitKind.Length);
 
         /// <summary>Removes a global (undo of a creation).</summary>
         bool DeleteGlobal(string name);

@@ -23,7 +23,8 @@ namespace Cadetta.SolidWorks.Commands.Tests
         public bool AdapterModified => false;
         public double? GetGlobal(string name) => Globals.TryGetValue(name, out var v) ? v : (double?)null;
         public string? GetGlobalExpression(string name) => null;
-        public bool SetGlobal(string name, double value) { Globals[name] = value; return true; }
+        public DimensionUnitKind LastGlobalKind;
+        public bool SetGlobal(string name, double value, DimensionUnitKind kind = DimensionUnitKind.Length) { Globals[name] = value; LastGlobalKind = kind; return true; }
         public bool DeleteGlobal(string name) => Globals.Remove(name);
         public DimensionInfo? GetDimension(string name) => Dims.TryGetValue(name, out var d) ? d : null;
         public bool SetDimensionValue(string name, double value) => true;
@@ -82,6 +83,16 @@ namespace Cadetta.SolidWorks.Commands.Tests
             Assert.True(r.IsOk);
             Assert.Equal(0.04, doc.Globals["PITCH"]);
             Assert.Equal("PITCH", doc.Dims["D1@Sketch1"].LinkedGlobal);
+        }
+
+        [Fact]
+        // frob:tests Cadetta.SolidWorks.Commands.LinkCommands.Link
+        public void LinkOfCountDimensionCreatesUnitlessGlobal()
+        {
+            var doc = Doc(new DimensionInfo { Value = 4, Kind = DimensionUnitKind.Count });
+            Assert.True(LinkCommands.Link(doc, "D1@Sketch1", "N", Log.Null()).IsOk);
+            Assert.Equal(DimensionUnitKind.Count, doc.LastGlobalKind);
+            Assert.Equal(4.0, doc.Globals["N"]);
         }
 
         [Fact]

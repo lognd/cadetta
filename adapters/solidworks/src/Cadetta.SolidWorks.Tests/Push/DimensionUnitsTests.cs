@@ -40,5 +40,14 @@ namespace Cadetta.SolidWorks.Tests.Push
             Assert.Null(len.Unit);
             Assert.Equal("rad", DimensionUnits.ToQuantity(1.5, DimensionUnitKind.Angle).Unit);
         }
+
+        // frob:tests adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/DimensionUnits.cs::DimensionUnits.GlobalLiteral kind=unit
+        [Fact]
+        public void GlobalLiteralScalesNothingAndOnlyLengthsGetMm()
+        {
+            Assert.Equal("4", DimensionUnits.GlobalLiteral(4.0, DimensionUnitKind.Count));
+            Assert.Equal("4mm", DimensionUnits.GlobalLiteral(4.0, DimensionUnitKind.Length));
+            Assert.Equal("90deg", DimensionUnits.GlobalLiteral(90.0, DimensionUnitKind.Angle));
+        }
     }
 }

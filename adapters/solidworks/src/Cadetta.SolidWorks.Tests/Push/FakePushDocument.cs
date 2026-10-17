@@ -22,9 +22,12 @@ namespace Cadetta.SolidWorks.Tests.Push
 
         public double? GetGlobal(string name) => Globals.TryGetValue(name, out var v) ? v : (double?)null;
 
-        public bool SetGlobal(string name, double value)
+        public DimensionUnitKind LastGlobalKind;
+
+        public bool SetGlobal(string name, double value, DimensionUnitKind kind = DimensionUnitKind.Length)
         {
             Writes.Add("global:" + name);
+            LastGlobalKind = kind;
             Globals[name] = value;
             GlobalExpressions.Remove(name);
             return true;

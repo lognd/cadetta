@@ -22,7 +22,7 @@ namespace Cadetta.SolidWorks.Transcripts.Tests
         public bool AdapterModified => _t.Do("Doc.AdapterModified", new object?[0], () => _in!.AdapterModified);
         public double? GetGlobal(string name) => _t.Do("Doc.GetGlobal", new object?[] { name }, () => _in!.GetGlobal(name));
         public string? GetGlobalExpression(string name) => _t.Do("Doc.GetGlobalExpression", new object?[] { name }, () => _in!.GetGlobalExpression(name));
-        public bool SetGlobal(string name, double value) => _t.Do("Doc.SetGlobal", new object?[] { name, value }, () => _in!.SetGlobal(name, value));
+        public bool SetGlobal(string name, double value, DimensionUnitKind kind = DimensionUnitKind.Length) => _t.Do("Doc.SetGlobal", new object?[] { name, value }, () => _in!.SetGlobal(name, value, kind));
         public bool DeleteGlobal(string name) => _t.Do("Doc.DeleteGlobal", new object?[] { name }, () => _in!.DeleteGlobal(name));
         public DimensionInfo? GetDimension(string name) => _t.Do("Doc.GetDimension", new object?[] { name }, () => _in!.GetDimension(name));
         public bool SetDimensionValue(string name, double value) => _t.Do("Doc.SetDimensionValue", new object?[] { name, value }, () => _in!.SetDimensionValue(name, value));

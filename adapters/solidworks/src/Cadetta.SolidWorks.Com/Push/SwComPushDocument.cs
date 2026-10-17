@@ -82,8 +82,6 @@ namespace Cadetta.SolidWorks.Com.Push
 
         private static string Num(double v) => v.ToString("R", CultureInfo.InvariantCulture);
 
-        private string Quantity(double nativeValue, bool angle) => Num(nativeValue) + (angle ? "deg" : "mm");
-
         /// <summary>Reads a global's value; null when no global of that name exists.</summary>
         public double? GetGlobal(string name)
         {
@@ -118,12 +116,13 @@ namespace Cadetta.SolidWorks.Com.Push
             return Eq.Add2(-1, text, true) >= 0;
         }
 
-        /// <summary>Creates or edits a global; an angle is not guessed, so globals take the length unit unless they already hold degrees.</summary>
-        public bool SetGlobal(string name, double value)
+        // frob:ticket 01M55EASQHS5H5WW32KQK2F312
+        /// <summary>Creates or edits a global; a new one takes the unit of <paramref name="kind"/>, an existing one that holds degrees stays in degrees.</summary>
+        public bool SetGlobal(string name, double value, DimensionUnitKind kind = DimensionUnitKind.Length)
         {
             var i = FindEquation(name, out var rhs);
-            var angle = i >= 0 && rhs.EndsWith("deg", StringComparison.OrdinalIgnoreCase);
-            var text = "\"" + name + "\" = " + Quantity(value, angle);
+            if (i >= 0 && rhs.EndsWith("deg", StringComparison.OrdinalIgnoreCase)) kind = DimensionUnitKind.Angle;
+            var text = "\"" + name + "\" = " + DimensionUnits.GlobalLiteral(value, kind);
             if (i < 0)
             {
                 var added = Eq.Add2(-1, text, true);
@@ -170,6 +169,7 @@ namespace Cadetta.SolidWorks.Com.Push
             var info = new DimensionInfo
             {
                 Value = ToNative(d.SystemValue, kind),
+                Kind = kind,
                 Tolerance = ReadTolerance(d, kind),
             };
             var i = FindEquation(name, out var rhs);

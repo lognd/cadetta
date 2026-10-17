@@ -48,6 +48,15 @@ namespace Cadetta.SolidWorks.Push
             _ => native / Mm,
         };
 
+        // frob:ticket 01M55EASQHS5H5WW32KQK2F312
+        /// <summary>The right-hand side text of a global equation: mm for lengths, deg for angles, a bare number for counts.</summary>
+        public static string GlobalLiteral(double native, DimensionUnitKind kind) => kind switch
+        {
+            DimensionUnitKind.Angle => native.ToString("R", CultureInfo.InvariantCulture) + "deg",
+            DimensionUnitKind.Count => native.ToString("R", CultureInfo.InvariantCulture),
+            _ => native.ToString("R", CultureInfo.InvariantCulture) + "mm",
+        };
+
         // frob:ticket 01M559YQJ77Y2MGVMXYGFQKERH
         /// <summary>A plain number literal rounded to <paramref name="places"/> decimals (no negative zero).</summary>
         public static string Literal(double v, int places)

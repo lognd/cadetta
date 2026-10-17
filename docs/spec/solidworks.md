@@ -157,7 +157,7 @@ Rust.
 
 | Cadetta | SOLIDWORKS |
 |---|---|
-| `global` locator | equation manager global variable, written `"NAME" = 6mm` |
+| `global` locator | equation manager global variable, written `"NAME" = 6mm`; a global created by Link from a count dimension (pattern instances) is a bare number such as `"N" = 4`, an angle takes `deg` |
 | `dimension` locator | `D1@Boss-Extrude1@Bracket.SLDPRT`; `ref` mode writes the equation `"D1@Boss-Extrude1" = "NAME"` |
 | dimension tolerance (adapters.md 3.6) | the dimension's tolerance: symmetric, bilateral, limit, fit with hole or shaft class, or none |
 | `property` locator | custom property, configuration-specific when `config` is set |

@@ -33,7 +33,7 @@ namespace Cadetta.SolidWorks.Commands
             var created = false;
             if (doc.GetGlobal(global) == null)
             {
-                if (!doc.SetGlobal(global, info.Value))
+                if (!doc.SetGlobal(global, info.Value, info.Kind))
                 {
                     return CommandOutcome.Refused("could not create global " + global, "R010");
                 }
