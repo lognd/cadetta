@@ -2,13 +2,13 @@
 id = "01M4SV2TVM50WJRZ42ZHXVD96N"
 title = "SOLIDWORKS regen with rebuild-error mapping to R004"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T19:18:42Z"
+updated = "2026-10-17T06:54:17Z"
 persona = "design engineer"
 capability = "regenerate headless and see rebuild failures as diagnostics"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**"]
