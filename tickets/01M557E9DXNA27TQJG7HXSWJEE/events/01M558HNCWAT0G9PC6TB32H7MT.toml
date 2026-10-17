@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/freecad/src/cadetta_freecad/read.py"]
+new = ["adapters/freecad/src/cadetta_freecad/read.py", "adapters/fusion/src/cadetta_fusion/read.py"]
+at = "2026-10-17T15:44:03Z"
+actor = "lognd"
+rev = 1
