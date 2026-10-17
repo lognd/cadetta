@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Guard/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Guard/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Guard/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/IPushDocument.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/NameMangler.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/NativeKind.cs"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Guard/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Guard/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Guard/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/IPushDocument.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/NameMangler.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/NativeKind.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/PushDiagnostics.cs"]
+at = "2026-10-17T06:50:22Z"
+actor = "lognd"
+rev = 1
