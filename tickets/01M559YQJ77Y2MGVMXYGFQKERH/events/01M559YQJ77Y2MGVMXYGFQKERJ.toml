@@ -1,0 +1,10 @@
+kind = "create"
+title = "SwComDocumentReader.ReadDimension scales pattern counts by 1000 on read"
+type = "bug"
+category = "todo"
+priority = "medium"
+points = 2
+body = "Read path still scales scalar (swScalarDimension) dimensions by the length factor with a mm unit; mirror the push-path fix (DimensionUnits)."
+at = "2026-10-17T16:08:40Z"
+actor = "lognd"
+rev = 1

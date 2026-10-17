@@ -190,6 +190,28 @@ namespace Cadetta.SolidWorks.Tests.Push
 
         // frob:tests PushService.Push
         [Fact]
+        public void Rebuild_failure_message_names_the_failing_feature()
+        {
+            var doc = new FakePushDocument { RebuildFailsAbove = 10, FailingFeature = "Shell1" };
+            doc.Globals["A"] = 2;
+            var o = Run(doc, P("A", "value", "p.a", "\"50\""));
+            var msg = o.Diagnostics.Single(d => d.GetProperty("code").GetString() == "R004").GetProperty("message").GetString();
+            Assert.Contains("Shell1", msg);
+        }
+
+        // frob:tests PushService.Push
+        [Fact]
+        public void Rebuild_failure_without_a_named_feature_keeps_the_plain_message()
+        {
+            var doc = new FakePushDocument { RebuildFailsAbove = 10 };
+            doc.Globals["A"] = 2;
+            var o = Run(doc, P("A", "value", "p.a", "\"50\""));
+            var msg = o.Diagnostics.Single(d => d.GetProperty("code").GetString() == "R004").GetProperty("message").GetString();
+            Assert.DoesNotContain("feature", msg);
+        }
+
+        // frob:tests PushService.Push
+        [Fact]
         public void Tolerance_is_applied_and_read_back()
         {
             var doc = WithDim("D1@S", 5);

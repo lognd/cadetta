@@ -103,20 +103,7 @@ namespace Cadetta.SolidWorks.Com.Regen
             public IReadOnlyList<RebuildError> Rebuild()
             {
                 var ok = _model.ForceRebuild3(false);
-                var errors = new List<RebuildError>();
-                for (var f = _model.FirstFeature() as IFeature; f != null; f = f.GetNextFeature() as IFeature)
-                {
-                    bool warn;
-                    var code = f.GetErrorCode2(out warn);
-                    if (code != 0 && !warn)
-                    {
-                        errors.Add(new RebuildError { Feature = f.Name, Code = code, Message = "feature error code " + code });
-                    }
-                }
-                if (!ok && errors.Count == 0)
-                {
-                    errors.Add(new RebuildError { Message = "ForceRebuild3 reported failure" });
-                }
+                var errors = SwComFeatureErrors.Collect(_model, ok);
                 _log.Debug("rebuild ok=" + ok + " feature errors=" + errors.Count);
                 return errors;
             }
