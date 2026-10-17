@@ -2,7 +2,8 @@
 id = "01M558W4WHGD721S1YG4V111FE"
 title = "Transient RPC_E_SERVERFAULT on first drive read"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
