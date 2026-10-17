@@ -7,8 +7,8 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T06:36:08Z"
-updated = "2026-10-17T06:49:19Z"
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs"]
+updated = "2026-10-17T06:49:20Z"
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Session/FakeSwSession.cs"]
 +++
 
 found while working ~DKCF816: PushService/SwComPushDocument exist and are live-verified, but the push RPC method is not routed to them yet.
