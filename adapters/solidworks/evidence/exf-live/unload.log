@@ -1,0 +1,4 @@
+before doccount=0
+pid 29344
+UnloadAddIn(C:\src\4fg\addin4\Cadetta.SolidWorks.AddIn.dll)=0
+after doccount=0

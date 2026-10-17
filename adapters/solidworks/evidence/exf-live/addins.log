@@ -1,0 +1,20 @@
+before doccount=0
+pid 29344
+win pid=2728 [] {5FE47C2E-F34F-4E4A-935A-B615546D8A33}
+win pid=11696 [] Shell_TrayWnd
+win pid=29344 [SOLIDWORKS Student Edition - Academic Use Only] Afx:0000000140000000:8:0000000000010003:0000000000000000:00000000000D0459
+  [Add-Ins] ControlType.Window
+  [OK] ControlType.Button
+  [Cancel] ControlType.Button
+  [Back by small amount] ControlType.Button
+  [Back by large amount] ControlType.Button
+  [Forward by large amount] ControlType.Button
+  [Forward by small amount] ControlType.Button
+  [Close] ControlType.Button
+win pid=30868 [Claude] Chrome_WidgetWin_1
+win pid=23900 [Untitled 1 - Obsidian Notes - Obsidian 1.14.4] Chrome_WidgetWin_1
+win pid=22676 [goway-nova-disk.txt - Notepad] Notepad
+win pid=11696 [frob-v2 - File Explorer] CabinetWClass
+win pid=9372 [SOLIDWORKS Student Edition - Academic Use Only] Afx:0000000140000000:8:0000000000010003:0000000000000000:0000000000050F62
+win pid=11696 [Program Manager] Progman
+after doccount=0

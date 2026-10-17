@@ -105,6 +105,12 @@ thickness to a global, set it too large, save, and regen (see the
   SLDWORKS with an empty title (the real one is the ROT-attached process).
 - Set `CADETTA_EXE` or HKCU `Software\Cadetta\SolidWorks\Executable`, and
   `CADETTA_LOG=debug` or HKCU `...\Log` to read `%LOCALAPPDATA%\cadetta\addin.log`.
-- Status: `LoadAddIn(path)` returned 0 but never ran `ConnectToSW`; connect
-  through Tools > Add-Ins and a restart is still to be tried (see the add-in
-  README).
+- Status (~EXF7N54): `ISldWorks.LoadAddIn(path)` is not an activation
+  path: it returns 0 for any existing file (even kernel32.dll) and 3 for a
+  missing one, and never loads a registered COM add-in. Cadetta is listed
+  under "Other Add-ins" in Tools > Add-Ins (registration works) but
+  unticked. Registration now writes HKLM Addins default 1 and HKCU
+  AddInsStartup 1, so SOLIDWORKS loads it at the next startup (re-run
+  `regasm /codebase` with the framework64 regasm, then restart SOLIDWORKS)
+  or when the Add-Ins box is ticked. `ConnectToSW` now logs at warn level so
+  a connect shows in addin.log by default. Evidence: `evidence/exf-live/`.

@@ -1,0 +1,6 @@
+before doccount=0
+pid 29344
+LoadAddIn(C:\Windows\System32\kernel32.dll)=0 obj null=True
+LoadAddIn(C:\nonexistent\x.dll)=3 obj null=True
+LoadAddIn(C:\src\4fg\addin4\Cadetta.SolidWorks.Core.dll)=0 obj null=True
+after doccount=0

@@ -1,0 +1,58 @@
+before doccount=0
+pid 29344
+  ControlType.Window [Add-Ins] #32770 483,244,641,844
+  ControlType.Button [OK] Button 697,1006,113,37
+  ControlType.Button [Cancel] Button 823,1006,113,37
+  ControlType.Pane [Custom1] GXWND 503,302,601,680
+  ControlType.ScrollBar [Vertical Scroll Bar]  1076,304,26,676
+  ControlType.Button [Back by small amount]  1076,304,26,17
+  ControlType.Button [Back by large amount]  1076,321,26,134
+  ControlType.Thumb [Thumb]  1076,455,26,499
+  ControlType.Button [Forward by large amount]  1076,954,26,9
+  ControlType.Button [Forward by small amount]  1076,963,26,17
+  ControlType.TitleBar [Add-Ins]  494,255,619,34
+  ControlType.MenuBar [System Menu Bar]  Empty
+  ControlType.MenuItem [System]  Empty
+  ControlType.Button [Close]  1062,245,52,44
+  ControlType.Pane [] swMdiClient -31931,-31829,1827,906
+  ControlType.Pane [Auto Hider] AfxWnd140u -30144,-31829,338,906
+  ControlType.Pane [Task Pane Tabs Wnd] AfxWnd140u -30144,-31752,41,180
+  ControlType.Pane [EM Frame] Afx:0000000140000000:80 -30104,-31829,298,906
+  ControlType.Pane [header] AfxWnd140u -30103,-31829,297,38
+  ControlType.Pane [taskPaneConfig] AfxWnd140u -29875,-31826,32,32
+  ControlType.Pane [expandCollapse] AfxWnd140u -30097,-31826,32,32
+  ControlType.Pane [pin] AfxWnd140u -29843,-31826,32,32
+  ControlType.Pane [swInnerFrame] Afx:0000000140000000:80 -30103,-31791,297,868
+  ControlType.Pane [] AfxFrameOrView140u -30095,-31791,289,868
+  ControlType.Pane [SW3DPlatform CEF Window Container2] SW3DECefContainerWindow -30095,-31791,289,868
+  ControlType.Pane [SW3DPlatform CEF Window 2] SW3DECefWindow -30095,-31791,289,868
+  ControlType.Pane [] Chrome_WidgetWin_1 -30095,-31791,289,868
+  ControlType.Document [Chrome Legacy Window] Chrome_RenderWidgetHostHWND -30095,-31791,290,869
+  ControlType.Pane [] Intermediate D3D Window -30095,-31791,289,868
+  ControlType.Pane []  -30096,-31791,289,868
+  ControlType.Pane []  -30096,-31791,289,868
+  ControlType.Pane []  Empty
+  ControlType.Pane []  -30096,-31791,289,868
+  ControlType.Document []  Empty
+  ControlType.Pane []  Empty
+  ControlType.StatusBar [SOLIDWORKS Student Edition - Academic Use Only ] msctls_statusbar32 -32000,-30923,1896,27
+  ControlType.Edit []  -32000,-30921,1409,25
+  ControlType.Edit []  -30589,-30921,6,25
+  ControlType.Edit []  -30581,-30921,6,25
+  ControlType.Edit []  -30573,-30921,6,25
+  ControlType.Edit []  -30565,-30921,6,25
+  ControlType.Edit []  -30557,-30921,6,25
+  ControlType.Edit []  -30549,-30921,6,25
+  ControlType.Edit []  -30541,-30921,22,25
+  ControlType.Edit []  -30517,-30921,6,25
+  ControlType.Edit []  -30509,-30921,6,25
+  ControlType.Edit []  -30501,-30921,6,25
+  ControlType.Edit []  -30493,-30921,6,25
+  ControlType.Edit []  -30485,-30921,6,25
+  ControlType.Edit []  -30477,-30921,6,25
+  ControlType.Edit []  -30469,-30921,160,25
+  ControlType.Edit []  -30307,-30921,127,25
+  ControlType.Edit []  -30178,-30921,6,25
+  ControlType.Edit []  -30170,-30921,38,25
+  ControlType.Custom []  -30128,-30920,24,24
+after doccount=0

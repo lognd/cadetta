@@ -42,7 +42,7 @@ namespace Cadetta.SolidWorks.AddIn
         public bool ConnectToSW(object thisSw, int cookie)
         {
             _log = AddInLog.OpenDefault();
-            _log.Info("add-in: connect, cookie " + cookie);
+            _log.Warn("add-in: connect, cookie " + cookie);
             try
             {
                 return Connect(thisSw, cookie);
@@ -255,23 +255,32 @@ namespace Cadetta.SolidWorks.AddIn
             return 0;
         }
 
-        /// <summary>Registers the add-in with SOLIDWORKS (HKLM\SOFTWARE\SolidWorks\Addins), run by regasm.</summary>
+        /// <summary>Registers the add-in with SOLIDWORKS, run by regasm: HKLM Addins key with default 1 (loaded at startup) and the HKCU AddInsStartup flag. frob:ticket ~EXF7N54</summary>
         [ComRegisterFunction]
         public static void Register(Type t)
         {
-            using (var key = Registry.LocalMachine.CreateSubKey(@"SOFTWARE\SolidWorks\Addins\{" + AddInGuid + "}"))
+            using (var key = Registry.LocalMachine.CreateSubKey(AddinsKey))
             {
-                key.SetValue(null, 0);
+                // Default 1 = load at startup; 0 leaves the add-in listed but never activated.
+                key.SetValue(null, 1);
                 key.SetValue("Title", AddInInfo.Title);
                 key.SetValue("Description", "Link SOLIDWORKS dimensions to Cadetta paths");
             }
+            using (var key = Registry.CurrentUser.CreateSubKey(StartupKey))
+            {
+                key.SetValue(null, 1);
+            }
         }
 
-        /// <summary>Removes the registration written by <see cref="Register"/>.</summary>
+        /// <summary>Removes the registration written by <see cref="Register"/>. frob:ticket ~EXF7N54</summary>
         [ComUnregisterFunction]
         public static void Unregister(Type t)
         {
-            Registry.LocalMachine.DeleteSubKey(@"SOFTWARE\SolidWorks\Addins\{" + AddInGuid + "}", false);
+            Registry.LocalMachine.DeleteSubKey(AddinsKey, false);
+            Registry.CurrentUser.DeleteSubKey(StartupKey, false);
         }
+
+        private const string AddinsKey = @"SOFTWARE\SolidWorks\Addins\{" + AddInGuid + "}";
+        private const string StartupKey = @"Software\SolidWorks\AddInsStartup\{" + AddInGuid + "}";
     }
 }
