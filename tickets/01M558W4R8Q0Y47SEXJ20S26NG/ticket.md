@@ -2,7 +2,8 @@
 id = "01M558W4R8Q0Y47SEXJ20S26NG"
 title = "read_current returns None for Skipped statuses"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
