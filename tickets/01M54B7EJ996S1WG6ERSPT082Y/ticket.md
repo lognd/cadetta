@@ -2,7 +2,8 @@
 id = "01M54B7EJ996S1WG6ERSPT082Y"
 title = "cadetta frames CLI verb reporting composed datum and instance frames"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
