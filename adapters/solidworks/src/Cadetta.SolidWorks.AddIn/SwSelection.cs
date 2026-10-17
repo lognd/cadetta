@@ -1,5 +1,8 @@
 // frob:ticket 01M4VB7VTPQEHBVQ8ZCR2T1G5K
 using System;
+using System.Collections.Generic;
+using Cadetta.SolidWorks.Commands;
+using Cadetta.SolidWorks.Frames;
 using Cadetta.SolidWorks.AddIn.Pane;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
@@ -50,6 +53,33 @@ namespace Cadetta.SolidWorks.AddIn
             }
             var dim = (mgr.GetSelectedObject6(1, -1) as DisplayDimension)?.GetDimension2(0) as Dimension;
             return dim?.Name;
+        }
+
+        /// <summary>The selected assembly components with their poses in metres (empty when none are selected).</summary>
+        // frob:ticket 01M54EDNCXH7QFEEGJQNAE1M1N
+        public static List<SelectedInstance> SelectedComponents(ISldWorks sw)
+        {
+            var list = new List<SelectedInstance>();
+            var mgr = (sw.ActiveDoc as ModelDoc2)?.SelectionManager as ISelectionMgr;
+            if (mgr == null)
+            {
+                return list;
+            }
+            var count = mgr.GetSelectedObjectCount2(-1);
+            for (var i = 1; i <= count; i++)
+            {
+                if (mgr.GetSelectedObjectType3(i, -1) != (int)swSelectType_e.swSelCOMPONENTS)
+                {
+                    continue;
+                }
+                var comp = mgr.GetSelectedObjectsComponent4(i, -1) as Component2;
+                var array = comp?.Transform2?.ArrayData as double[];
+                if (comp != null && array != null)
+                {
+                    list.Add(new SelectedInstance(comp.Name2, FrameTransform.FromSwArray(array)));
+                }
+            }
+            return list;
         }
     }
 }

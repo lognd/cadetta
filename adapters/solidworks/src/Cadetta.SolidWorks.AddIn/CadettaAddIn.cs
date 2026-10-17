@@ -1,5 +1,6 @@
 // frob:ticket 01M4VB7VTPQEHBVQ8ZCR2T1G5K
 // frob:ticket 01M54BDDBT01RBBDS3AQ8ZNA4K
+// frob:ticket 01M54EDNCXH7QFEEGJQNAE1M1N
 using System;
 using System.Runtime.InteropServices;
 using Cadetta.SolidWorks.AddIn.Client;
@@ -46,7 +47,7 @@ namespace Cadetta.SolidWorks.AddIn
             _sw.SetAddinCallbackInfo2(0, this, cookie);
             var cli = new CadettaCli(new ProcessCommandRunner(_log), AddInSettings.Executable(), _log);
             _model = new PaneModel(cli, _log);
-            _actions = new CommandActions(new CadettaCommands(new ProcessCommandRunner(_log), AddInSettings.Executable(), _log), _log);
+            _actions = new CommandActions(new CadettaCommands(new ProcessCommandRunner(_log), AddInSettings.Executable(), _log), _log, cli);
             _cookie = cookie;
             _pane = _sw.CreateTaskpaneView2("", "Cadetta");
             _control = (TaskPaneControl)_pane.AddControl(TaskPaneControl.ProgIdText, "");
@@ -88,6 +89,7 @@ namespace Cadetta.SolidWorks.AddIn
             new[] { "Preview", "Sync preview (dry run)", "MenuPreview" },
             new[] { "Sync", "Sync", "MenuSync" },
             new[] { "Why", "Why this path", "MenuWhy" },
+            new[] { "AssignArray", "Assign array to selected instances", "MenuAssignArray" },
         };
 
         private static string MenuText(string[] item) => item[1] + "@" + MenuName;
@@ -131,6 +133,9 @@ namespace Cadetta.SolidWorks.AddIn
         /// <summary>Menu callback: run `cadetta why` for the selected pane path.</summary>
         public void MenuWhy() => RunVerb("Why");
 
+        /// <summary>Menu callback: assign the selected instances the references of the nearest array frames.</summary>
+        public void MenuAssignArray() => RunVerb("AssignArray");
+
         /// <summary>Menu enable callback: 1 (enabled) only while a saved document is active.</summary>
         public int MenuEnabled() => _model?.Project != null ? 1 : 0;
 
@@ -169,6 +174,10 @@ namespace Cadetta.SolidWorks.AddIn
             }
             var doc = new SwComPushDocument(model, docPath, _log);
             var probe = new SwComBusyProbe(_sw, _log);
+            if (verb == "AssignArray")
+            {
+                return _actions!.AssignArray(project, doc, probe, SwSelection.SelectedComponents(_sw), new SwComComponentReferences(_sw, _log), path);
+            }
             var dimension = SwSelection.SelectedDimensionName(_sw);
             return verb == "Link" ? _actions!.Link(doc, probe, dimension, path) : _actions!.Unlink(doc, probe, dimension);
         }

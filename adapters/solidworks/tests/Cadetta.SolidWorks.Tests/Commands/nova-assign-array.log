@@ -1,0 +1,30 @@
+# nova (arm64 Windows) build of AddIn net48 and unit tests; SOLIDWORKS not launched
+  Determining projects to restore...
+  Restored C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj (in 620 ms).
+  Restored C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.Com\Cadetta.SolidWorks.Com.csproj (in 620 ms).
+  Restored C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.AddIn\Cadetta.SolidWorks.AddIn.csproj (in 620 ms).
+  Cadetta.SolidWorks.Core -> C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.Core\bin\Debug\netstandard2.0\Cadetta.SolidWorks.Core.dll
+  Cadetta.SolidWorks.Com -> C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.Com\bin\Debug\net48\Cadetta.SolidWorks.Com.dll
+  Cadetta.SolidWorks.AddIn -> C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.AddIn\bin\Debug\net48\Cadetta.SolidWorks.AddIn.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.33
+
+Workload updates are available. Run `dotnet workload list` for more information.
+  Determining projects to restore...
+  Restored C:\src\wt-arr\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\Cadetta.SolidWorks.Commands.Tests.csproj (in 132 ms).
+  1 of 2 projects are up-to-date for restore.
+  Cadetta.SolidWorks.Core -> C:\src\wt-arr\adapters\solidworks\src\Cadetta.SolidWorks.Core\bin\Debug\netstandard2.0\Cadetta.SolidWorks.Core.dll
+  Cadetta.SolidWorks.Commands.Tests -> C:\src\wt-arr\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\bin\Debug\net8.0\Cadetta.SolidWorks.Commands.Tests.dll
+Test run for C:\src\wt-arr\adapters\solidworks\tests\Cadetta.SolidWorks.Tests\Commands\bin\Debug\net8.0\Cadetta.SolidWorks.Commands.Tests.dll (.NETCoreApp,Version=v8.0)
+VSTest version 17.14.0 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21, Duration: 119 ms - Cadetta.SolidWorks.Commands.Tests.dll (net8.0)
+
+Workload updates are available. Run `dotnet workload list` for more information.

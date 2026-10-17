@@ -1,0 +1,1 @@
+The SOLIDWORKS add-in gains Assign array (menu item and pane button): selected components are matched to the nearest `cadetta frames` instance frames of the chosen array and given their component references.

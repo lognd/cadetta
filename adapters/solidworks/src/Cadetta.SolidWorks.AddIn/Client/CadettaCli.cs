@@ -54,5 +54,32 @@ namespace Cadetta.SolidWorks.AddIn.Client
             _log.Info("cadetta names: " + mine.Names.Count + " path(s), " + report.Diagnostics.Count + " diagnostic(s)");
             return CliResult<NamesAdapter>.Ok(mine);
         }
+
+        /// <summary>Runs `cadetta frames --native-unit m --format json` in the project: composed frames in metres, the unit SOLIDWORKS poses use.</summary>
+        // frob:ticket 01M54EDNCXH7QFEEGJQNAE1M1N
+        public CliResult<FramesReport> Frames(ProjectInfo project)
+        {
+            var args = new List<string> { "frames", "--native-unit", "m", "--format", "json" };
+            _log.Info("cadetta frames in " + project.Root);
+            var output = _runner.Run(_exe, args, project.Root, out var startError);
+            if (output == null)
+            {
+                return CliResult<FramesReport>.Fail(startError);
+            }
+            if (output.ExitCode != 0)
+            {
+                var detail = output.Stderr.Trim();
+                _log.Warn("cadetta frames exit " + output.ExitCode + ": " + detail);
+                return CliResult<FramesReport>.Fail("cadetta frames failed (exit " + output.ExitCode + "): " + detail);
+            }
+            var report = FramesReport.Parse(output.Stdout);
+            if (report == null)
+            {
+                _log.Error("cadetta frames: output is not cadetta.frames/1 JSON");
+                return CliResult<FramesReport>.Fail("cadetta frames printed output that is not cadetta.frames/1 JSON");
+            }
+            _log.Info("cadetta frames: " + report.Frames.Count + " frame(s), precision " + report.Precision);
+            return CliResult<FramesReport>.Ok(report);
+        }
     }
 }

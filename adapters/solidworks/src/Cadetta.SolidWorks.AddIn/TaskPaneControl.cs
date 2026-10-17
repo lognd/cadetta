@@ -21,7 +21,7 @@ namespace Cadetta.SolidWorks.AddIn
 
         private readonly Label _status = new Label { Dock = DockStyle.Top, Height = 36, AutoEllipsis = true };
         /// <summary>Command names raised by <see cref="CommandRequested"/>.</summary>
-        public static readonly string[] Verbs = { "Link", "Unlink", "Preview", "Sync", "Why" };
+        public static readonly string[] Verbs = { "Link", "Unlink", "Preview", "Sync", "Why", "AssignArray" };
 
         private readonly FlowLayoutPanel _bar = new FlowLayoutPanel { Dock = DockStyle.Top, AutoSize = true, WrapContents = true };
         private readonly ListView _list = new ListView { Dock = DockStyle.Fill, View = View.Details, FullRowSelect = true, HideSelection = false };
@@ -36,7 +36,7 @@ namespace Cadetta.SolidWorks.AddIn
             foreach (var verb in Verbs)
             {
                 var name = verb;
-                var button = new Button { Text = verb == "Preview" ? "Sync preview" : verb, AutoSize = true };
+                var button = new Button { Text = verb == "Preview" ? "Sync preview" : verb == "AssignArray" ? "Assign array" : verb, AutoSize = true };
                 button.Click += (s, e) => CommandRequested?.Invoke(name);
                 _bar.Controls.Add(button);
             }
