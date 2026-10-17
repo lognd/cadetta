@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T16:00:57Z"
+digest = "e2a2d53c74146d9f86436a33bb75851f265150865861d412df616cfe60445761"
+provider = "file"
+ref = "adapters/solidworks/evidence/pf7x-live/pf7x-live.log"
+size = 1058
+status = "measured"
+at = "2026-10-17T16:00:57Z"
+actor = "lognd"
+rev = 1
