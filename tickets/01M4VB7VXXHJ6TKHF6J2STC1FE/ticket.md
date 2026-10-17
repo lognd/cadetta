@@ -8,13 +8,13 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T19:18:44Z"
-updated = "2026-10-17T07:07:42Z"
+updated = "2026-10-17T07:11:48Z"
 persona = "design engineer"
 capability = "link CAD items to cadetta paths by selection"
 outcome_text = "no bindings file entry restates a link SOLIDWORKS already holds"
 idempotency_key = "d15:addin-commands"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Commands/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Commands/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/Commands/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Commands/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/**", "adapters/solidworks/src/Cadetta.SolidWorks.AddIn/README.md"]
 
 [[links]]
 kind = "blocked-by"
