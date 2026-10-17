@@ -36,6 +36,7 @@ namespace Cadetta.SolidWorks.Transcripts.Tests
         public bool SetFrame(string name, double[] transform, bool create) => _t.Do("Doc.SetFrame", new object?[] { name, transform, create }, () => _in!.SetFrame(name, transform, create));
         public bool DeleteFrame(string name) => _t.Do("Doc.DeleteFrame", new object?[] { name }, () => _in!.DeleteFrame(name));
         public bool Rebuild() => _t.Do("Doc.Rebuild", new object?[0], () => _in!.Rebuild());
+        public IReadOnlyList<RebuildError> LastRebuildFailures => _in!.LastRebuildFailures;
     }
 
     // frob:ticket 01M4X91P37CRMWF43MHK53RXEG
