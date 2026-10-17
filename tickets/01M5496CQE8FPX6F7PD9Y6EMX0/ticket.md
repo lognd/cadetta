@@ -2,12 +2,12 @@
 id = "01M5496CQE8FPX6F7PD9Y6EMX0"
 title = "SOLIDWORKS RpcServer push dispatch and ISwSession wiring to PushService"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T06:36:08Z"
-updated = "2026-10-17T06:39:54Z"
+updated = "2026-10-17T06:47:49Z"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Rpc/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Session/**"]
 +++
 
