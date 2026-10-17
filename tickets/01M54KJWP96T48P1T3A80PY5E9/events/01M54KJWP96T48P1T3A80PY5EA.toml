@@ -1,0 +1,12 @@
+kind = "create"
+title = "Document SOLIDWORKS regeneration in the adapter spec"
+type = "docs"
+category = "todo"
+priority = "medium"
+points = 1
+scope = ["docs/spec/solidworks.md", "changelog.d/*"]
+acceptance = ["docs/spec/solidworks.md has a regeneration section matching the adapter code"]
+body = "Add a regeneration section to docs/spec/solidworks.md describing triggers, behavior and failure handling."
+at = "2026-10-17T09:37:44Z"
+actor = "lognd"
+rev = 1
