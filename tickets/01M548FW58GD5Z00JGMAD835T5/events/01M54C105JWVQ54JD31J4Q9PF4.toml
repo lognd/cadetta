@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T07:25:37Z"
+digest = "d452b3ed14387fa44b7ad949daa32fcf1a02d4b08bf155bbbf7ec7f07339d769"
+provider = "file"
+ref = "adapters/solidworks/tests/live/frames-nova-live.log"
+size = 1484
+status = "measured"
+at = "2026-10-17T07:25:37Z"
+actor = "lognd"
+rev = 1
