@@ -327,7 +327,9 @@ Failure handling:
   fixtures use the `global:`, `dimension:`, `property:` and `frame:`
   prefixes.
 - Release smoke, on a licensed machine, recorded as transcripts for the
-  next CI run: open the pilot r3-05 part; link a dimension, a pattern
+  next CI run (the service path for a pattern count, a tolerance and a
+  rebuild-failure restore ran live under ~PF7XCNP; datum frames come from
+  `sync`, with no menu verb; see `adapters/solidworks/SMOKE.md`): open the pilot r3-05 part; link a dimension, a pattern
   count and a tolerance through the add-in; create datum frames; assign
   parts in a two-part assembly; `sync`, edit a value in SOLIDWORKS,
   `sync` again (R001 cad moved), `import --update`, `sync` (no-op).

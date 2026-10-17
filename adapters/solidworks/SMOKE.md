@@ -33,17 +33,40 @@ bound to `D1@Shell1`. Results below are for the stand-in, not for r3-05.
   dependency resolver for the interop assemblies.
 - Drive protocol `open`, `save`, `close` are now served (`DriveSessionTests`).
 
+## Follow-up live run (~PF7XCNP, same machine)
+
+Driver: `tools/pf7x/` (a C# net48 exe; PowerShell cannot cast the COM
+object to the interop `ISldWorks`). Log: `evidence/pf7x-live/pf7x-live.log`.
+It calls `PushService` over `SwComPushDocument`, the same path the menu
+Link verb uses, not the menu clicks themselves. Open documents were logged
+before and after each step: none left open.
+
+| Item | Result |
+| --- | --- |
+| pattern count link (`D1@LPattern1` to global `HoleCount`) | linked, global = 5, unchanged push skipped |
+| tolerance bilateral and fit on `D1@Boss-Extrude1` | passed |
+| live rebuild-failure restore (`D1@Shell1` pushed to 50 mm) | passed: R004, global and dimension back to 1, link kept |
+
+Findings (not fixed here, filed as tickets):
+
+- A pattern count reads back x1000 and a re-push of it writes 4000: every
+  non-angle dimension is scaled by the length factor in `SwComPushDocument`.
+- The push-path R004 message does not name the failing feature.
+
+## Datum frame verb: dropped
+
+No menu verb for datum frame creation is added. Frames are created by
+`sync` through the `create_frames` push, which was verified live
+(`tests/live/frames-nova-live.log`); a second entry point would duplicate it.
+
 ## NOT exercised
 
-- The r3-05 pilot itself (stand-in used).
-- A pattern count link.
-- A tolerance link created through the add-in menu. The CAD tolerance was
-  only observed, and cleared with the test control tool.
-- Datum frame creation: the add-in has no menu verb for it.
-- A live rebuild-failure restore (unit tests only).
+- The r3-05 pilot itself (stand-in used again).
+- The true menu-click path (select dimension, Link verb) for a pattern
+  count and a tolerance; only the service path beneath it ran.
+- `import --update` on a toleranced or fit value (refused by design).
 - Moving `D1@Shell1` through the API: it does not take effect, so `wall`
   stayed at 1 mm.
-- `import --update` on a toleranced or fit value (refused by design).
 
 ## Findings left as tickets
 

@@ -120,3 +120,11 @@ thickness to a global, set it too large, save, and regen (see the
   tool's `setdim` takes metres; `D1@Shell1` does not move through the API;
   a CAD tolerance not present in the design makes read-back differ from the
   pushed literal, so clear it before a sync test.
+
+## Live drivers must be C# (nova)
+
+PowerShell on nova cannot cast the SOLIDWORKS COM object to the interop
+`ISldWorks`. Write live drivers as net48 exes that call
+`InteropResolver.Install`, build them on nova and run them through the
+session-1 scheduled task. See `tools/pf7x/`. A loaded managed dll stays
+locked, so restart SOLIDWORKS when swapping the add-in build.

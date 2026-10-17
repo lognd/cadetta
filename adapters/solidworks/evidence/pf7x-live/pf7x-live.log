@@ -1,0 +1,24 @@
+docs[before] count=0 : 
+plate=Boss-Extrude1 boss=Boss-Extrude2
+direction edge selected=True
+pattern=LPattern1 type=LPattern
+pattern dim: D3@LPattern1@Part2.Part = 0.012
+pattern dim: D1@LPattern1@Part2.Part = 3
+saved Cover, dirty=False
+count push: D1@LPattern1=pushed codes= msgs=
+PASS pattern count linked :: linked=HoleCount value=5000 HoleCount=5
+
+PASS pattern count unchanged skipped :: D1@LPattern1=skipped
+FAIL pattern count re-push :: D1@LPattern1=pushed value=4000
+PASS tolerance bilateral :: kind=Bilateral lo=-0.1 up=0.2 D1@Boss-Extrude1=pushed 
+PASS tolerance fit :: kind=Fit lo=0 up=0 D1@Boss-Extrude1=pushed 
+docs[after part1] count=0 : 
+shell dim D1@Shell1
+failing push: D1@Shell1=failed codes=R004 msgs=R004: rebuild failed; the pre-push values were restored
+FAIL R004 names feature :: codes=R004
+PASS global restored after failed rebuild :: before=1 after=1
+PASS shell dim restored :: value=1 linked=PROBE_S
+PASS rebuild clean after restore :: dirty=True
+docs[after part2] count=0 : 
+docs[final] count=0 : 
+FAILURES: 3
