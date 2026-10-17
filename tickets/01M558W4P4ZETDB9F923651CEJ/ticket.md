@@ -4,9 +4,10 @@ title = "Read-back mismatch when CAD has a tolerance the design lacks"
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T15:49:47Z"
+updated = "2026-10-17T16:07:30Z"
 scope = ["crates/cadetta-adapter/**"]
 +++
 
