@@ -12,7 +12,7 @@ scope = ["crates/cadetta-adapter/**"]
 
 [[acceptance]]
 text = "Given CAD has a tolerance the design lacks, when read-back is matched, then the locator matches"
-bound = false
+bound = true
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). matched_locators requires tolerance equality, so sync reports a mismatch.
