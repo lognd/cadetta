@@ -2,11 +2,13 @@
 id = "01M54A4VH0WRVFQCQE4991JKVP"
 title = "Add AddIn test project to Cadetta.SolidWorks.sln and solidworks.yml CI"
 type = "chore"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-17T06:52:46Z"
-updated = "2026-10-17T07:07:34Z"
+updated = "2026-10-17T07:09:04Z"
 idempotency_key = "sw-addin-ci"
+scope = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln", "adapters/solidworks/DEVELOPING.md", "changelog.d/01M54A4VH0WRVFQCQE4991JKVP.added.md"]
 +++

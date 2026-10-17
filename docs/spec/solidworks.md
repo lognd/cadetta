@@ -248,6 +248,26 @@ native units are mm and deg).
   optional `error`); `ReplaySwSession` answers from those lines in order and
   throws `TranscriptMismatchException` on any divergence. Fixtures live in
   `adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/`.
+- Document-level transcripts: `Transcripts/Cadetta.SolidWorks.Transcripts.Tests`
+  wraps the push, regen and read seams (`IPushHost`, `IRegenHost`,
+  `INativeDocumentReader`) in a `Tape` that records each seam call plus
+  the full JSON-RPC exchange, one JSON line per call, with the per-run
+  temp path replaced by `{file}`. Eleven fixtures (`push-ok`, `push-q004`,
+  `push-r004-rebuild`, `push-r006-equation`, `push-r009-readonly`,
+  `push-r010-driven`, `regen-clean`, `regen-r004`, `regen-r009-dirty`,
+  `read-observed`, `read-missing`) were recorded from in-memory fakes, not
+  a live SOLIDWORKS session. Replay is strict: every call must match in
+  order, the final response must match byte for byte, and the tape must be
+  exhausted. Set `CADETTA_RECORD_TRANSCRIPTS=<dir>` when running the tests
+  to re-record the fixtures.
+- Contract tests (`ContractTests`) run adapters.md section 4 against the
+  replayed fixtures: determinism (rule 2, which also covers emit output
+  being a pure function of its input), Q004 never written (rule 3), a
+  driven dimension reads back `exact:false` with a reason (rule 4), no
+  exchange touches `.cdt` source (rule 5), and one status per locator
+  with a coded diagnostic for each refusal (rule 6). Locators in the
+  fixtures use the `global:`, `dimension:`, `property:` and `frame:`
+  prefixes.
 - Release smoke, on a licensed machine, recorded as transcripts for the
   next CI run: open the pilot r3-05 part; link a dimension, a pattern
   count and a tolerance through the add-in; create datum frames; assign
