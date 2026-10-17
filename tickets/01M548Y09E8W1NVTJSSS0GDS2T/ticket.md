@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T06:31:33Z"
-updated = "2026-10-17T06:41:06Z"
+updated = "2026-10-17T06:41:14Z"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Server/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/README.md"]
 +++
 
