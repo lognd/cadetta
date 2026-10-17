@@ -1,0 +1,24 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T16:39:48Z"
+digest = "66738ea6cf2c7ec7af753de1e1fcc3057e5f7cdc40351a124bf614cb74d98972"
+exit_code = 0
+inline = '''
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.07s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 1f6c7d4d-76a3-40ae-8005-2cf71fda49fd with nextest profile: default
+    Starting 1 test across 1 binary (382 tests skipped)
+        PASS [   0.005s] cadetta cmd::import::tests::absolute_files_anchors_relative_paths_and_keeps_absolute
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.006s] 1 test run: 1 passed, 382 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta --lib -E 'test(absolute_files)'"
+size = 575
+status = "measured"
+test_count = 1
+tests_digest = "fbd2d0008eeaccdd1ced4a7c19dbffe38371090b374ea9c8abf996aea7ee14eb"
+at = "2026-10-17T16:39:48Z"
+actor = "lognd"
+rev = 1

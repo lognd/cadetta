@@ -12,7 +12,7 @@ scope = ["crates/**"]
 
 [[acceptance]]
 text = "Given a relative native file path, when the CLI reads an adapter (import, names, sync), then the path sent over RPC is absolute."
-bound = false
+bound = true
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). Relative document paths fail to open; absolute paths work.
