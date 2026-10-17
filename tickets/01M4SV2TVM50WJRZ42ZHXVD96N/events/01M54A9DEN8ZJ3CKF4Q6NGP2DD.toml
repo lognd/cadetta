@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Regen/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Regen/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/RpcServer.cs", "adapters/solidworks/src/cadetta-solidworks/Program.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/SwComSession.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Regen/**"]
+at = "2026-10-17T06:55:15Z"
+actor = "lognd"
+rev = 1

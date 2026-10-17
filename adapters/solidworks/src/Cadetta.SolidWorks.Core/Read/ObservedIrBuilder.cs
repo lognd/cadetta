@@ -29,6 +29,8 @@ namespace Cadetta.SolidWorks.Read
         private readonly JsonArray _bindings = new JsonArray();
         private readonly JsonArray _frames = new JsonArray();
         private readonly JsonArray _instances = new JsonArray();
+        private readonly List<string> _configurations = new List<string>();
+        private string? _activeConfig;
         private readonly List<Protocol.ObservedComponent> _components = new List<Protocol.ObservedComponent>();
         private readonly List<Protocol.ObservedTolerance> _tolerances = new List<Protocol.ObservedTolerance>();
 
@@ -73,6 +75,7 @@ namespace Cadetta.SolidWorks.Read
             _log.Info("observe " + doc.Path + ": " + doc.Globals.Count + " globals, " + doc.Dimensions.Count
                 + " dimensions, " + doc.Properties.Count + " properties, " + doc.Frames.Count + " frames, "
                 + doc.Instances.Count + " instances");
+            RecordConfigurations(doc);
             foreach (var g in doc.Globals)
             {
                 AddMember(file, g.Name, "global", null, g.Value, g.Expression);
@@ -134,6 +137,19 @@ namespace Cadetta.SolidWorks.Read
                 ["solvers"] = new JsonArray(),
                 ["bindings"] = _bindings,
             };
+            if (_activeConfig != null)
+            {
+                root["active_config"] = _activeConfig;
+            }
+            if (_configurations.Count > 0)
+            {
+                var names = new JsonArray();
+                foreach (var c in _configurations)
+                {
+                    names.Add(c);
+                }
+                root["configurations"] = names;
+            }
             if (_frames.Count > 0)
             {
                 root["frames"] = _frames;
@@ -150,6 +166,18 @@ namespace Cadetta.SolidWorks.Read
                 Tolerances = _tolerances,
                 Components = _components.Count > 0 ? _components : null,
             };
+        }
+
+        private void RecordConfigurations(NativeDocument doc)
+        {
+            _activeConfig ??= doc.ActiveConfig;
+            foreach (var c in doc.Configurations)
+            {
+                if (!_configurations.Contains(c))
+                {
+                    _configurations.Add(c);
+                }
+            }
         }
 
         private NativeQuantity PropertyQuantity(NativeProperty p)

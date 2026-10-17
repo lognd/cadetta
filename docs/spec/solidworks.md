@@ -265,7 +265,10 @@ with `provenance.imported`. Bindings carry the locator and kind
 - Dimensions are named `D1@Feature@File`; the value is `SystemValue`
   (metres) converted to the native unit. Dimension tolerances travel in
   `ReadResult.Tolerances`, dimension equations in the equation list.
-- Custom properties are observed with kind `property`.
+- Custom properties are observed with kind `property`: the file-level set
+  (no `config`) and the active configuration's set (`config` = its name).
+  Other configurations are not imported (adapters.md 7.3); the observed
+  root carries `active_config` and `configurations` so import can name them.
 - Reference (driven) dimensions and values that cannot be extracted get
   `exact: false` with a reason; values over 15 significant digits are
   also inexact.

@@ -1,10 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- The COM add-in (task pane lands with its own ticket). References the interop assemblies. Not built in CI. -->
+  <!-- The COM add-in: task pane, project discovery and the cadetta CLI client. References the interop assemblies. Not built in CI. Client, Pane and Logging are interop-free and are compiled into the tests (tests/Cadetta.SolidWorks.Tests/AddIn). -->
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <RootNamespace>Cadetta.SolidWorks.AddIn</RootNamespace>
   </PropertyGroup>
   <Import Project="..\..\Interop.props" />
+  <ItemGroup>
+    <Reference Include="SolidWorks.Interop.swpublished">
+      <HintPath>$(SOLIDWORKS_API_DIR)\SolidWorks.Interop.swpublished.dll</HintPath>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cadetta.SolidWorks.Core\Cadetta.SolidWorks.Core.csproj" />
   </ItemGroup>
