@@ -2,7 +2,8 @@
 id = "01M4VH6XQF4GRQM20G0Z9SWC8W"
 title = "SOLIDWORKS Windows bootstrap: .NET SDK, interop path, cadetta on Windows, API surface confirmed"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
