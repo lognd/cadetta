@@ -1,0 +1,46 @@
+kind = "evidence"
+captured_at = "2026-10-17T07:44:37Z"
+digest = "455ac9078ce076702138acad4040daefcdfada0fe317350bd3ad0468a8fef6d8"
+exit_code = 0
+inline = '''
+   Compiling cadetta v0.0.0 (<worktree>/crates/cadetta-cli)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-log v0.0.0 (<worktree>/crates/cadetta-log)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-ir v0.0.0 (<worktree>/crates/cadetta-ir)
+   Compiling cadetta-units v0.0.0 (<worktree>/crates/cadetta-units)
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 00s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID 7b2ad999-ac9f-41b0-8d6e-9384d4191afa with nextest profile: default
+    Starting 11 tests across 76 binaries (1832 tests skipped)
+        PASS [   0.009s] cadetta-adapter import::propose::tests::frames_become_datums
+        PASS [   0.009s] cadetta-ir observed::tests::observed_frames_and_instances_round_trip
+        PASS [   0.009s] cadetta-adapter geometry_bind::tests::create_needs_the_create_frames_feature
+        PASS [   0.011s] cadetta-adapter geometry_bind::tests::composed_frames_and_instances_verify_through_geometry_bind
+        PASS [   0.012s] cadetta-geometry placement::tests::datum_frames_coincide
+        PASS [   0.013s] cadetta cmd::sync::tests::observed_geometry_parses_frames_and_skips_malformed
+        PASS [   0.014s] cadetta cmd::import::tests::decodes_frames_and_instances_into_the_builder
+        PASS [   0.015s] cadetta cmd::frames::tests::usage_errors_exit_2
+        PASS [   0.274s] cadetta cmd::frames::tests::reports_datum_and_instance_frames_in_native_unit
+        PASS [   0.295s] cadetta cmd::frames::tests::json_output_validates_against_the_schema
+        PASS [   0.409s] cadetta cmd::frames::tests::native_unit_scales_translations_and_globs_filter
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.412s] 11 tests run: 11 passed, 1832 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "frames"
+size = 2425
+status = "measured"
+test_count = 11
+tests_digest = "213c0ee6fe94afa9026e178bad72219cd8b0acaad677d40f96d6992ed95f341b"
+at = "2026-10-17T07:44:37Z"
+actor = "lognd"
+rev = 1
