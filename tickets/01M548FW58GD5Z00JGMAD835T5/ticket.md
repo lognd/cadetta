@@ -4,9 +4,10 @@ title = "Confirm SOLIDWORKS coordinate system update, Euler convention and measu
 type = "task"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T06:23:50Z"
-updated = "2026-10-17T06:23:50Z"
+updated = "2026-10-17T07:10:03Z"
 +++
 
 found while working VTE7XA4: CS update is delete+recreate, Euler R=Rz*Ry*Rx assumed, sketch measured_from reported as unknown; C# build not run (no dotnet on any reachable goway host).
