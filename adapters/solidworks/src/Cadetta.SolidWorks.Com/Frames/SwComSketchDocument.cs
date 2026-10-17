@@ -31,7 +31,7 @@ namespace Cadetta.SolidWorks.Com.Frames
                 _log.Debug("no sketch in locator: " + dimensionLocator);
                 return null;
             }
-            var feature = (IFeature)_model.FeatureByName(dimensionLocator.Substring(at + 1));
+            var feature = (IFeature)((IPartDoc)_model).FeatureByName(dimensionLocator.Substring(at + 1));
             if (feature == null || feature.GetTypeName2() != "ProfileFeature")
             {
                 _log.Debug("not a sketch: " + dimensionLocator);

@@ -22,7 +22,7 @@ namespace Cadetta.SolidWorks.Com.Frames
         /// <summary>Resolves a coordinate system via its transform, or a reference plane via its feature; null when neither exists.</summary>
         public FrameReading? ReadFrame(string locator)
         {
-            var feature = (IFeature)_model.FeatureByName(locator);
+            var feature = (IFeature)((IPartDoc)_model).FeatureByName(locator);
             if (feature == null)
             {
                 _log.Debug("frame feature not found: " + locator);
@@ -55,7 +55,7 @@ namespace Cadetta.SolidWorks.Com.Frames
         /// </summary>
         public bool CreateOrUpdateCoordinateSystem(string name, FrameTransform metres)
         {
-            var existing = (IFeature)_model.FeatureByName(name);
+            var existing = (IFeature)((IPartDoc)_model).FeatureByName(name);
             if (existing != null)
             {
                 if (!_model.Extension.SelectByID2(name, "COORDSYS", 0, 0, 0, false, 0, null, 0) || !_model.Extension.DeleteSelection2(0))
