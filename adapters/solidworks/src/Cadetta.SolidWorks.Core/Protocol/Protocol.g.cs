@@ -207,6 +207,51 @@ namespace Cadetta.SolidWorks.Protocol
         public DimTolerance? Tolerance { get; set; }
     }
 
+    /// <summary>The file an assembly actually holds for one component instance, read for R011 (adapters.md 3.3).</summary>
+    public sealed class ObservedComponent
+    {
+        /// <summary>The component file the instance uses.</summary>
+        [JsonPropertyName("component_file")]
+        public string ComponentFile { get; set; } = "";
+        /// <summary>The assembly document.</summary>
+        [JsonPropertyName("file")]
+        public string File { get; set; } = "";
+        /// <summary>The `instance` locator of the slot's binding.</summary>
+        [JsonPropertyName("locator")]
+        public string Locator { get; set; } = "";
+    }
+
+    /// <summary>The value each instance matched by one `[*]` binding holds, read for R012 (adapters.md 3).</summary>
+    public sealed class ObservedInstanceValues
+    {
+        /// <summary>The document holding the instances.</summary>
+        [JsonPropertyName("file")]
+        public string File { get; set; } = "";
+        /// <summary>The locator the `[*]` binding names.</summary>
+        [JsonPropertyName("locator")]
+        public string Locator { get; set; } = "";
+        /// <summary>One value text per instance, in instance order.</summary>
+        [JsonPropertyName("values")]
+        public List<string> Values { get; set; } = new List<string>();
+    }
+
+    /// <summary>Where one bound sketch dimension sits, read for R007 (adapters.md 3.4).</summary>
+    public sealed class ObservedSketch
+    {
+        /// <summary>The document holding the sketch.</summary>
+        [JsonPropertyName("file")]
+        public string File { get; set; } = "";
+        /// <summary>The dimension locator.</summary>
+        [JsonPropertyName("locator")]
+        public string Locator { get; set; } = "";
+        /// <summary>What the dimension is measured from; `sketch origin` is the only clean answer.</summary>
+        [JsonPropertyName("measured_from")]
+        public string MeasuredFrom { get; set; } = "";
+        /// <summary>True when the sketch lies on its datum's plane.</summary>
+        [JsonPropertyName("on_datum_plane")]
+        public bool OnDatumPlane { get; set; }
+    }
+
     /// <summary>The tolerance read back from one dimension locator (adapters.md 3.6).</summary>
     public sealed class ObservedTolerance
     {
@@ -297,12 +342,21 @@ namespace Cadetta.SolidWorks.Protocol
     /// <summary>Result of `read`.</summary>
     public sealed class ReadResult
     {
+        /// <summary>Component files held by assembly slots, for R011.</summary>
+        [JsonPropertyName("components")]
+        public List<ObservedComponent>? Components { get; set; }
         /// <summary>Diagnostics.</summary>
         [JsonPropertyName("diagnostics")]
         public List<JsonElement> Diagnostics { get; set; } = new List<JsonElement>();
+        /// <summary>Per-instance values of `[*]` bindings, for R012.</summary>
+        [JsonPropertyName("instance_values")]
+        public List<ObservedInstanceValues>? InstanceValues { get; set; }
         /// <summary>The observed IR.</summary>
         [JsonPropertyName("observed")]
         public JsonElement? Observed { get; set; }
+        /// <summary>Sketch-plane and origin facts for R007, only from adapters that can see them.</summary>
+        [JsonPropertyName("sketches")]
+        public List<ObservedSketch>? Sketches { get; set; }
         /// <summary>Dimension tolerances, only from adapters reporting `tolerances`.</summary>
         [JsonPropertyName("tolerances")]
         public List<ObservedTolerance>? Tolerances { get; set; }

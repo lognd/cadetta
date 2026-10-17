@@ -50,6 +50,9 @@ namespace Cadetta.SolidWorks.Read
 
         /// <summary>The tolerance on the dimension, or null when untoleranced.</summary>
         public Protocol.DimTolerance? Tolerance { get; set; }
+
+        /// <summary>The in-assembly instance (`wheel<2>`) a component dimension belongs to; null for the document's own.</summary>
+        public string? Component { get; set; }
     }
 
     /// <summary>A custom property, file level or per configuration.</summary>
