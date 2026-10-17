@@ -8,7 +8,7 @@ points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:12Z"
-updated = "2026-10-17T06:20:42Z"
+updated = "2026-10-17T06:26:56Z"
 persona = "design engineer"
 capability = "drive sketches from datums"
 idempotency_key = "replan14:sw-frame"
@@ -29,7 +29,7 @@ target = "01M4VH6XQF4GRQM20G0Z9SWC8W"
 
 [[acceptance]]
 text = "Given a datum-plane sketch coordinate, when bound, then the dimension is pushed with sign and sketch-origin rules (geometry.md 6)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given a sketch not on the datum plane or not dimensioned from its origin, when read, then R007 is raised (lints.md 3 R)"
