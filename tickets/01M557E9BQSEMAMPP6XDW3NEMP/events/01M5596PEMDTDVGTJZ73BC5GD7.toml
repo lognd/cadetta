@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/fusion/evidence/dw3nemp-live/**"]
+new = ["adapters/fusion/evidence/dw3nemp-live/**", "docs/spec/fusion.md"]
+at = "2026-10-17T15:55:33Z"
+actor = "lognd"
+rev = 1
