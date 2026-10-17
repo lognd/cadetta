@@ -180,6 +180,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `sync [--dry-run] [--only GLOB] [--force-design] [--no-regen] [--module PATH] [ADAPTER-ID...]` | The three-way loop (adapters.md 2), then geometry verification (R001) and, under `datums = "create"`, datum frame creation (adapters.md 3.4). | writes CAD files, outputs, lock | R001, R004, R009, R010, Q004, R013, R014, R015, R016 | `sync.json` |
 | `explain CODE` | Print the catalog entry for a diagnostic. | - | never | `explain.json` |
 | `units [KIND]` | Print the unit and kind tables. | - | never | `units.json` |
+| `frames [--native-unit U] [--precision N] [--module PATH] [GLOB...]` | Print the composed datum frames and placement instance frames as 3x4 transforms. | - | never | `frames.json` |
 | `display VALUE SPEC` | Print one quantity literal through the display formatter (quantities.md 6). | - | never (errors exit 2) | `display.json` |
 | `lsp` | Language server over stdio: diagnostics, formatting, hover, code lens, definition (3.8). | reads; writes nothing | never (exits 0 on `exit` after `shutdown`, 1 otherwise) | LSP 3.17 |
 
@@ -277,6 +278,8 @@ configured `[[adapter]]` (by `name` or `id`, else exit 2) and prints the
 (`in/32`, `ft_in`, `mm`, `%`), prints the formatted text and a newline, or
 `display.json` (`cadetta.display/1`: `value`, `spec`, `text`) with
 `--format json`; a malformed literal, spec or dimension mismatch exits 2.
+
+`frames` composes each in-scope datum (frame in its own component) and each placement (the frame its anchor drives to) through the same composer `sync` verifies with, and prints 3x4 transforms in the native unit (`--native-unit`, default `mm`; `--precision`, default 6). `frames.json` is `cadetta.frames/1`; a frame that cannot be composed has a null transform; an unknown unit or flag exits 2.
 
 ### 3.2 `init`
 

@@ -1,0 +1,41 @@
+{
+  "$defs": {
+    "Frame": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "enum": ["datum", "instance"] },
+        "path": { "type": "string" },
+        "transform": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "items": {
+                "items": { "type": "number" },
+                "maxItems": 4,
+                "minItems": 4,
+                "type": "array"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "required": ["kind", "path", "transform"],
+      "type": "object"
+    }
+  },
+  "$id": "cadetta.frames/1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Output of `cadetta frames [--native-unit U] [--precision N] [--module PATH] [GLOB...] --format json`: composed datum and instance (placement anchor) frames as 3x4 transforms in the native unit.",
+  "properties": {
+    "frames": { "items": { "$ref": "#/$defs/Frame" }, "type": "array" },
+    "native_unit": { "type": "string" },
+    "precision": { "minimum": 0, "type": "integer" },
+    "schema": { "const": "cadetta.frames/1" }
+  },
+  "required": ["schema", "native_unit", "precision", "frames"],
+  "type": "object"
+}

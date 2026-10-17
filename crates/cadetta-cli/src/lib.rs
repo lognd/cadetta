@@ -189,6 +189,8 @@ enum Command {
     LintIr(Vec<String>),
     Explain(Vec<String>),
     Units(Vec<String>),
+    /// `frames [--native-unit U] [--precision N] [--module PATH] [GLOB...]`.
+    Frames(Vec<String>),
     /// `display VALUE SPEC`.
     Display(Vec<String>),
     Update(Vec<String>),
@@ -228,6 +230,7 @@ fn parse(args: &[String]) -> Command {
         Some("lint") => Command::LintIr(args[1..].to_vec()),
         Some("explain") => Command::Explain(args[1..].to_vec()),
         Some("units") => Command::Units(args[1..].to_vec()),
+        Some("frames") => Command::Frames(args[1..].to_vec()),
         Some("display") => Command::Display(args[1..].to_vec()),
         Some("update") => Command::Update(args[1..].to_vec()),
         Some("swap") => Command::Swap(args[1..].to_vec()),
@@ -289,6 +292,7 @@ pub fn run_with_env(
         Command::LintIr(rest) => cmd::run_lint_ir(&rest, &globals, out, err),
         Command::Explain(rest) => cmd::run_explain(&rest, &globals, out, err),
         Command::Units(rest) => cmd::run_units(&rest, &globals, out, err),
+        Command::Frames(rest) => cmd::run_frames(&rest, &globals, out, err),
         Command::Display(rest) => cmd::run_display(&rest, &globals, out, err),
         Command::Update(rest) => cmd::run_update(&rest, &globals, out, err),
         Command::Swap(rest) => cmd::run_swap(&rest, &globals, out, err),
