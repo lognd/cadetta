@@ -1,0 +1,23 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:25:00Z"
+digest = "9b187481242f78b0d95d3c3a58892942853ed4c0af61e3e694eb3dea69537fd6"
+exit_code = 0
+inline = """
+.................                                                        [100%]
+17 passed in 0.60s
+Using CPython 3.11.17
+Creating virtual environment at: adapters/fusion/.venv
+   Building cadetta @ file://<worktree>/bindings/python
+   Building cadetta-fusion @ file://<worktree>/adapters/fusion
+      Built cadetta-fusion @ file://<worktree>/adapters/fusion
+      Built cadetta @ file://<worktree>/bindings/python
+Installed 15 packages in 14ms
+"""
+passed = true
+provider = "command"
+ref = "uv run --project adapters/fusion pytest -q adapters/fusion/tests/unit"
+size = 444
+status = "measured"
+at = "2026-10-17T15:25:00Z"
+actor = "lognd"
+rev = 1
