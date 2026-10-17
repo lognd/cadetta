@@ -1,0 +1,13 @@
+proc 29344 responding=True title=[SOLIDWORKS Student Edition - Academic Use Only] ws=1115MB
+proc 9372 responding=True title=[] ws=89MB
+== SolidWorks_PID_29344
+  pid=29344 rev=33.3.0 visible=True
+  caption=46104728
+  doccount=0
+  active=none
+== SolidWorks_PID_9372
+  pid=9372 rev=33.3.0 visible=True
+  caption=12289376
+  doccount=0
+  active=none
+GetActiveObject -> pid 29344

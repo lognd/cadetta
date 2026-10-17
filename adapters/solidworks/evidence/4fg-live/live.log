@@ -1,0 +1,33 @@
+before doccount=0
+UnloadAddIn(old)=0
+LoadAddIn=0
+after-load doccount=0
+GetAddInObject null=True
+open part err=0 null=False
+after-open doccount=1
+after-open doc: Fix.SLDPRT | C:\src\4fg\proj\parts\Fix.SLDPRT | type=1 dirty=False
+feature Comments type=CommentsFolder
+feature Favorites type=FavoriteFolder
+feature History type=HistoryFolder
+feature Selection Sets type=SelectionSetFolder
+feature Sensors type=SensorFolder
+feature Design Binder type=DocsFolder
+feature Annotations type=DetailCabinet
+feature Surface Bodies type=SurfaceBodyFolder
+feature Solid Bodies type=SolidBodyFolder
+feature Lights and Cameras type=EnvFolder
+feature Markups type=InkMarkupFolder
+feature Equations type=EqnFolder
+feature Material <not specified> type=MaterialFolder
+feature Front Plane type=RefPlane
+feature Top Plane type=RefPlane
+feature Right Plane type=RefPlane
+feature Origin type=OriginProfileFeature
+feature Sketch2 type=ProfileFeature
+feature Boss-Extrude1 type=Extrusion
+   dim D1@Boss-Extrude1@Fix.Part
+feature PROBE_CS type=CoordSys
+feature PROBE_CS_RZ type=CoordSys
+feature Shell1 type=Shell
+   dim D1@Shell1@Fix.Part
+end doccount=0

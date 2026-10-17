@@ -1,0 +1,111 @@
+before doccount=0
+open doccount=1
+open doc: Fix.SLDPRT | C:\src\4fg\proj\parts\Fix.SLDPRT | type=1 dirty=False
+GetAddInObject null=True
+  [swCmdMgr] ControlType.Pane Afx:0000000140000000:b:0000000000010003:0000000000000000:0000000000000000
+  [] ControlType.Pane swMdiClient
+  [Auto Hider] ControlType.Pane AfxWnd140u
+  [Task Pane Tabs Wnd] ControlType.Pane AfxWnd140u
+  [EM Frame] ControlType.Pane Afx:0000000140000000:80
+  [header] ControlType.Pane AfxWnd140u
+  [taskPaneConfig] ControlType.Pane AfxWnd140u
+  [expandCollapse] ControlType.Pane AfxWnd140u
+  [pin] ControlType.Pane AfxWnd140u
+  [swInnerFrame] ControlType.Pane Afx:0000000140000000:80
+  [] ControlType.Pane AfxFrameOrView140u
+  [SW3DPlatform CEF Window Container2] ControlType.Pane SW3DECefContainerWindow
+  [SW3DPlatform CEF Window 2] ControlType.Pane SW3DECefWindow
+  [] ControlType.Pane Chrome_WidgetWin_1
+  [Chrome Legacy Window] ControlType.Document Chrome_RenderWidgetHostHWND
+  [] ControlType.Pane Intermediate D3D Window
+  [] ControlType.Pane 
+  [] ControlType.Pane 
+  [] ControlType.Pane 
+  [] ControlType.Pane 
+  [] ControlType.Document 
+  [] ControlType.Pane 
+  [Fix.SLDPRT] ControlType.Window Afx:0000000140000000:b:0000000000010003:0000000000000006:0000000000300CCB
+  [Tree Container Wnd] ControlType.Pane AfxFrameOrView140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxFrameOrView140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxFrameOrView140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxFrameOrView140u
+  [uiTreeCtrlView_c] ControlType.Pane AfxFrameOrView140u
+  [] ControlType.Tree SysTreeView32
+  [Horizontal Scroll Bar] ControlType.ScrollBar 
+  [Back by small amount] ControlType.Button 
+  [Back by large amount] ControlType.Button 
+  [Thumb] ControlType.Thumb 
+  [Forward by large amount] ControlType.Button 
+  [Forward by small amount] ControlType.Button 
+  [Fix] ControlType.TreeItem 
+  [Solid Bodies(1)] ControlType.TreeItem 
+  [Equations] ControlType.TreeItem 
+  [Material <not specified>] ControlType.TreeItem 
+  [Front Plane] ControlType.TreeItem 
+  [Top Plane] ControlType.TreeItem 
+  [Right Plane] ControlType.TreeItem 
+  [Origin] ControlType.TreeItem 
+  [Boss-Extrude1] ControlType.TreeItem 
+  [PROBE_CS] ControlType.TreeItem 
+  [PROBE_CS_RZ] ControlType.TreeItem 
+  [Shell1] ControlType.TreeItem 
+  [FeatureFilter] ControlType.Pane Afx:0000000140000000:0
+  [] ControlType.Edit Edit
+  [Spin] ControlType.Spinner msctls_updown32
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane AfxMDIFrame140u
+  [] ControlType.Pane Afx:0000000140000000:2b:0000000000010003:0000000000000000:0000000000000000
+  [Fix.SLDPRT] ControlType.TitleBar 
+  [System Menu Bar] ControlType.MenuBar 
+  [System] ControlType.MenuItem 
+  [Minimize] ControlType.Button 
+  [Restore] ControlType.Button 
+  [Close] ControlType.Button 
+  [SOLIDWORKS Student Edition - Academic Use Only] ControlType.StatusBar msctls_statusbar32
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Edit 
+  [] ControlType.Custom 
+  [Sheet Metal] ControlType.ToolBar ToolbarWindow32
+  [Base Flange/Tab] ControlType.Button 
+  [Convert to Sheet Metal] ControlType.Button 
+  [Lofted-Bend] ControlType.Button 
+  [Edge Flange] ControlType.Button 
+  [Miter Flange] ControlType.Button 
+  [Hem] ControlType.Button 
+  [Jog] ControlType.Button 
+  [Sketched Bend] ControlType.Button 
+  [Cross-Break] ControlType.Button 
+  [Corners] ControlType.Button 
+  [Forming Tool] ControlType.Button 
+  [Extruded Cut] ControlType.Button 
+  [Simple Hole] ControlType.Button 
+  [] ControlType.Button 
+  [Unfold] ControlType.Button 
+  [Fold] ControlType.Button 
+  [Flatten] ControlType.Button 
+  [No Bends] ControlType.Button 
+  [Insert Bends] ControlType.Button 
+  [Rip] ControlType.Button 
+after doccount=0
