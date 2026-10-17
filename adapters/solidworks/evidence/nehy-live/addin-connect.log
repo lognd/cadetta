@@ -1,0 +1,9 @@
+2026-10-17T13:47:06.691005Z  WARN cadetta_solidworks: add-in: connect, cookie 16
+2026-10-17T13:47:07.150696Z  INFO cadetta_solidworks: add-in: menu item 'Link dimension to selected path' added as 0
+2026-10-17T13:47:07.151716Z  INFO cadetta_solidworks: add-in: menu item 'Unlink dimension' added as 0
+2026-10-17T13:47:07.151716Z  INFO cadetta_solidworks: add-in: menu item 'Sync preview (dry run)' added as 0
+2026-10-17T13:47:07.151716Z  INFO cadetta_solidworks: add-in: menu item 'Sync' added as 0
+2026-10-17T13:47:07.151716Z  INFO cadetta_solidworks: add-in: menu item 'Why this path' added as 0
+2026-10-17T13:47:07.151716Z  INFO cadetta_solidworks: add-in: menu item 'Assign array to selected instances' added as 0
+2026-10-17T13:47:07.201483Z  INFO cadetta_solidworks: pane: no saved document
+2026-10-17T13:47:07.231405Z DEBUG cadetta_solidworks: pane: view 0 of 0 (no selection)

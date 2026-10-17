@@ -22,7 +22,7 @@ namespace Cadetta.SolidWorks.AddIn
     [ComVisible(true)]
     [Guid(AddInGuid)]
     [ProgId("Cadetta.SolidWorks.AddIn")]
-    [ClassInterface(ClassInterfaceType.None)]
+    [ClassInterface(ClassInterfaceType.AutoDispatch)]
     public sealed class CadettaAddIn : ISwAddin
     {
         /// <summary>CLSID of the add-in.</summary>
