@@ -2,7 +2,8 @@
 id = "01M559F58RT4NP6T96P610BFDE"
 title = "SOLIDWORKS: push-path R004 message does not name the failing feature"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
