@@ -8,12 +8,12 @@ points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:13Z"
-updated = "2026-10-17T06:38:36Z"
+updated = "2026-10-17T06:38:38Z"
 persona = "design engineer"
 capability = "bind assembly instances"
 idempotency_key = "replan14:sw-asm"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Assembly/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Assembly/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Assembly/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Assembly/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Assembly/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Assembly/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Assembly/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/NativeModel.cs"]
 
 [[links]]
 kind = "blocked-by"
