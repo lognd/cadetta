@@ -7,7 +7,7 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:50:48Z"
+updated = "2026-10-17T16:51:31Z"
 scope = ["crates/**", "docs/spec/config-cli.md"]
 
 [[acceptance]]
