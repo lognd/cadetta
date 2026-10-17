@@ -71,6 +71,14 @@ build's `SwComBusyProbe` uses `CommandInProgress` and a disabled main
 window. The guard is not yet wired into a `push` method (it does not
 exist yet).
 
+## Transient COM faults
+
+A `read` right after attaching can hit `RPC_E_SERVERFAULT`
+(0x80010105) or a busy rejection (0x80010001, 0x8001010A) while
+SOLIDWORKS is still settling. `TransientRetry.Run` (`Core/Read`) retries
+those up to 4 attempts with linear backoff (500 ms steps), logging each
+retry at warn; other errors and the final failure propagate.
+
 ## Probing the API
 
 `cadetta-solidworks --probe-api <scratch-dir>` exercises the SOLIDWORKS

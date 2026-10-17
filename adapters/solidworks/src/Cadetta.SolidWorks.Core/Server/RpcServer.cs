@@ -182,7 +182,8 @@ namespace Cadetta.SolidWorks.Server
             }
             try
             {
-                var result = _read!.Read(files[0]);
+                var file = files[0];
+                var result = TransientRetry.Run("read " + file, _log, () => _read!.Read(file));
                 _log.Info("read " + files[0] + " done");
                 return Result(id, JsonSerializer.Serialize(result, Options));
             }
