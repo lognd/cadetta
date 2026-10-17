@@ -8,7 +8,7 @@ points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
 updated = "2026-10-17T17:25:48Z"
-scope = ["adapters/solidworks/**", "docs/spec/solidworks.md"]
+scope = ["adapters/solidworks/**", "docs/spec/solidworks.md", "changelog.d/01M559F5AYQ2V088C9SW5MBBTB.fixed.md"]
 
 [[acceptance]]
 text = "Round trip of the r3-05 lib.cdt on nova: sync, R001 cad move, import --update, no-op re-sync (evidence/w5mb-live run2/run4/run5)"
