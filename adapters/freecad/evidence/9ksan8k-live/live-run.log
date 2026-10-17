@@ -1,0 +1,47 @@
+python.exe : 
+At C:\src\fc-live.ps1:5 char:1
++ & $py -m pip install -q --force-reinstall $w C:\src\fc\adapters\freec ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[notice] A new release of pip is available: 24.0 -> 26.2.1
+[notice] To update, run: C:\src\fcvenv\Scripts\python.exe -m pip install --upgrade pip
+freecadcmd.exe : INFO:cadetta_freecad.live_runner:adding C:\src\fcvenv\Lib\site-packages to sys.path
+At C:\src\fc-live.ps1:8 char:1
++ & "$b\freecadcmd.exe" C:\src\fc\adapters\freecad\tests\live\run_under ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:cadetta_fr...ges to sys.path:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:cadetta_freecad.live_runner:running live tests in C:\src\fc\adapters\freecad\tests\live
+============================= test session starts =============================
+platform win32 -- Python 3.11.14, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\logan\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe
+rootdir: C:\src\fc\adapters\freecad
+configfile: pyproject.toml
+collecting ... collected 2 items
+
+..\..\src\fc\adapters\freecad\tests\live\test_roundtrip_live.py::test_live_backend_reaches_freecad PASSED [ 50%]
+..\..\src\fc\adapters\freecad\tests\live\test_roundtrip_live.py::test_emit_push_regen_save_read_round_trip PASSED [100%]
+
+============================== 2 passed in 1.57s ==============================
+FreeCAD 1.1.4, Libs: 1.1.4R20260928 (Git shallow)
+(C) 2001-2026 FreeCAD contributors
+FreeCAD is free and open-source software licensed under the terms of LGPL2+ license.
+
+Recompute......
+						(100 %)	
+								
+Postprocessing......
+						(100 %)	
+								
+Postprocessing......
+						(100 %)	
+								
+Recompute......
+						(100 %)	
+								
+Postprocessing......
+						(100 %)	
+								
+exit: 0

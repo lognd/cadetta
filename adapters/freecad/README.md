@@ -24,3 +24,6 @@ testable without FreeCAD. `cadetta-freecad --version` prints the version.
 over a fake tool for the attach and close-only-opened conformance fixtures
 (`tests/conformance/adapters/session-*`), which the Rust corpus runner invokes
 through `uv run`.
+
+The live round trip has been run against FreeCAD 1.1.4 `freecadcmd` on nova
+(Windows): see `evidence/9ksan8k-live/` for the transcript and the recipe.
