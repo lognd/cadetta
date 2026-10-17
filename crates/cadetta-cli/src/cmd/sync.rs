@@ -543,7 +543,7 @@ struct SessionDoc<'a, R: BufRead, W: Write> {
     backend: &'a mut SessionBackend<R, W>,
     adapter: String,
     file: String,
-    /// Statuses of the last write; a locator not `Pushed` reads back as failed.
+    /// Statuses of the last write; a locator neither `Pushed` nor `Skipped` reads back as failed.
     statuses: Vec<LocatorStatus>,
 }
 
@@ -563,7 +563,10 @@ impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
             .map(|it| {
                 let locator = &it.locator;
                 let status = self.statuses.iter().find(|s| &s.locator == locator);
-                if status.is_some_and(|s| s.status != PushStatus::Pushed) {
+                // Skipped means the document already holds the value, so it reads back like Pushed.
+                if status
+                    .is_some_and(|s| !matches!(s.status, PushStatus::Pushed | PushStatus::Skipped))
+                {
                     return ReadBack {
                         locator: locator.clone(),
                         value: None,
@@ -2775,6 +2778,25 @@ done
         let (code, _, err) = run(&dir, Format::Text, &[]);
         assert_eq!(code, EXIT_USAGE, "{err}");
         assert!(err.contains("R008"), "{err}");
+    }
+
+    // frob:ticket 01M558W4R8Q0Y47SEXJ20S26NG
+    // frob:tests crates/cadetta-cli/src/cmd/sync.rs::read_current
+    #[test]
+    fn skipped_locator_reads_back_and_is_recorded() {
+        let mut results = full_run("6mm");
+        results[4] = json!({"statuses": [{"locator": "Plate_Thk", "status": "skipped"}],
+                            "diagnostics": []});
+        let (report, _, lock) = drive(&[], Some("5mm"), &results);
+        assert!(!report.failed(), "{report:?}");
+        let key = Record::SyncedValue(SyncedValue {
+            adapter: "equations".into(),
+            path: PATH.into(),
+            locator: "Plate_Thk".into(),
+            value: String::new(),
+        })
+        .key();
+        assert!(matches!(lock.get(&key), Some(Record::SyncedValue(v)) if v.value == "6mm"));
     }
 
     // frob:ticket 01M4Y3WHS6G3MXMECY8ZMVJ6CV
