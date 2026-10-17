@@ -104,12 +104,17 @@ adapters.md 3.4, geometry.md 6):
   `measured_from`) from which the host raises R007. The push still proceeds
   for an unclean sketch, with a warning, since R007 is only a warning.
 
-`Com/Frames` is the SOLIDWORKS binding. Known limitations, to confirm on a
-licensed machine:
+`Com/Frames` is the SOLIDWORKS binding. Confirmed on SOLIDWORKS 2025 (revision
+33.3.0, nova), evidence in `tests/live/frames-nova-live.log`:
 
 - The API has no in-place coordinate system update, so an update deletes and
-  recreates the feature under the same name (references to it are lost).
-- Euler angles are assumed `R = Rz * Ry * Rx`; the read-back comparison (R001)
-  exposes a mismatch. API-SURFACE.md confirms only the z rotation case.
-- `measured_from` is not yet derivable from the sketch through the API and is
-  reported as `unknown`, so R007 fires conservatively for real documents.
+  recreates the feature under the same name (references to it are lost). The
+  delete must select the feature itself (`IFeature.Select2`) after a rebuild;
+  `SelectByID2(name, "COORDSYS")` selects but then `DeleteSelection2` fails.
+- Euler angles are `R = Rx * Ry * Rz` (x, y, z passed in that order), checked
+  through create and read-back on 11 single-axis and composite cases. The
+  read-back comparison (R001) remains as the guard.
+- `measured_from` is read from the dimension's attached entities: `sketch
+  origin` when one is the origin point at (0,0,0), else `other`; `unknown`
+  only when the dimension cannot be selected. The sketch is the segment after
+  the first `@` of the full name (`D1@Sketch2@Part1.Part`).

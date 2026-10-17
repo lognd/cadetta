@@ -111,23 +111,24 @@ namespace Cadetta.SolidWorks.Frames
         public double[] ZAxis => new[] { Rotation[2], Rotation[5], Rotation[8] };
 
         /// <summary>
-        /// Euler angles (x, y, z in radians) with R = Rz * Ry * Rx, the form
-        /// CreateCoordinateSystemUsingNumericalValues takes. The read-back
-        /// comparison catches a convention mismatch (R001).
+        /// Euler angles (x, y, z in radians) with R = Rx * Ry * Rz, the form
+        /// CreateCoordinateSystemUsingNumericalValues takes (confirmed live on
+        /// SOLIDWORKS 2025). The read-back comparison still guards a mismatch (R001).
         /// </summary>
         public double[] ToEulerXyz()
         {
-            var r20 = Rotation[6];
-            if (Math.Abs(r20) < 1 - 1e-12)
+            // frob:ticket 01M548FW58GD5Z00JGMAD835T5
+            var r02 = Rotation[2];
+            if (Math.Abs(r02) < 1 - 1e-12)
             {
-                var y = -Math.Asin(r20);
-                var x = Math.Atan2(Rotation[7], Rotation[8]);
-                var z = Math.Atan2(Rotation[3], Rotation[0]);
-                return new[] { x, y, z };
+                var b = Math.Asin(r02);
+                var a = Math.Atan2(-Rotation[5], Rotation[8]);
+                var c = Math.Atan2(-Rotation[1], Rotation[0]);
+                return new[] { a, b, c };
             }
-            // Gimbal lock: pitch is +-90deg, fold the yaw into the roll.
-            var pitch = r20 < 0 ? Math.PI / 2 : -Math.PI / 2;
-            return new[] { Math.Atan2(-Rotation[5], Rotation[4]), pitch, 0.0 };
+            // Gimbal lock: y is +-90deg, fold the z rotation into x.
+            var pitch = r02 > 0 ? Math.PI / 2 : -Math.PI / 2;
+            return new[] { Math.Atan2(Math.Sin(pitch) * Rotation[3], Rotation[4]), pitch, 0.0 };
         }
 
         /// <summary>

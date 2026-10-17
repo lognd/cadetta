@@ -68,6 +68,37 @@ namespace Cadetta.SolidWorks.Tests.Frames
             Assert.Equal(b, e[1], 9);
         }
 
+        private static double[] Mul(double[] p, double[] q)
+        {
+            var r = new double[9];
+            for (var i = 0; i < 3; i++)
+                for (var j = 0; j < 3; j++)
+                    for (var k = 0; k < 3; k++)
+                        r[i * 3 + j] += p[i * 3 + k] * q[k * 3 + j];
+            return r;
+        }
+
+        // frob:tests FrameTransform.ToEulerXyz
+        [Theory]
+        [InlineData(30, 20, 10)]
+        [InlineData(-45, 60, 120)]
+        [InlineData(10, -70, -30)]
+        [InlineData(0, 90, 0)]
+        public void EulerIsRxRyRz(double xd, double yd, double zd)
+        {
+            // frob:ticket 01M548FW58GD5Z00JGMAD835T5
+            var (x, y, z) = (xd * Math.PI / 180, yd * Math.PI / 180, zd * Math.PI / 180);
+            var rx = new[] { 1, 0, 0, 0, Math.Cos(x), -Math.Sin(x), 0, Math.Sin(x), Math.Cos(x) };
+            var ry = new[] { Math.Cos(y), 0, Math.Sin(y), 0, 1, 0, -Math.Sin(y), 0, Math.Cos(y) };
+            var rz = new[] { Math.Cos(z), -Math.Sin(z), 0, Math.Sin(z), Math.Cos(z), 0, 0, 0, 1 };
+            var want = new FrameTransform(Mul(Mul(rx, ry), rz), 0, 0, 0);
+            var e = want.ToEulerXyz();
+            var cx = new[] { 1, 0, 0, 0, Math.Cos(e[0]), -Math.Sin(e[0]), 0, Math.Sin(e[0]), Math.Cos(e[0]) };
+            var cy = new[] { Math.Cos(e[1]), 0, Math.Sin(e[1]), 0, 1, 0, -Math.Sin(e[1]), 0, Math.Cos(e[1]) };
+            var cz = new[] { Math.Cos(e[2]), -Math.Sin(e[2]), 0, Math.Sin(e[2]), Math.Cos(e[2]), 0, 0, 0, 1 };
+            Assert.True(want.Matches(new FrameTransform(Mul(Mul(cx, cy), cz), 0, 0, 0), 9, false));
+        }
+
         // frob:tests FrameTransform.Matches
         [Fact]
         public void PlaneComparisonIgnoresInPlaneRotation()
