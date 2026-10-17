@@ -149,27 +149,28 @@ namespace Cadetta.SolidWorks.Com.Push
 
         private IDimension? Dim(string name) => _model.Parameter(name) as IDimension;
 
-        private static bool IsAngle(IDimension d)
+        // frob:ticket 01M559F56CVTCX37155XMNTFDK
+        private static DimensionUnitKind KindOf(IDimension d)
         {
             var m = typeof(IDimension).GetMethod("GetType", Type.EmptyTypes);
             var kind = m == null ? 0 : (int)m.Invoke(d, null)!;
-            return kind == (int)swDimensionType_e.swAngularDimension;
+            return DimensionUnits.KindOf(kind);
         }
 
-        private static double ToNative(double system, bool angle) => angle ? system * Deg : system * Mm;
+        private static double ToNative(double system, DimensionUnitKind kind) => DimensionUnits.ToNative(system, kind);
 
-        private static double ToSystem(double native, bool angle) => angle ? native / Deg : native / Mm;
+        private static double ToSystem(double native, DimensionUnitKind kind) => DimensionUnits.ToSystem(native, kind);
 
         /// <summary>Describes a dimension, or null when missing.</summary>
         public DimensionInfo? GetDimension(string name)
         {
             var d = Dim(name);
             if (d == null) return null;
-            var angle = IsAngle(d);
+            var kind = KindOf(d);
             var info = new DimensionInfo
             {
-                Value = ToNative(d.SystemValue, angle),
-                Tolerance = ReadTolerance(d, angle),
+                Value = ToNative(d.SystemValue, kind),
+                Tolerance = ReadTolerance(d, kind),
             };
             var i = FindEquation(name, out var rhs);
             SwComGuardFacts.Fill(info, d, name, i >= 0 ? rhs : null, _log);
@@ -181,7 +182,7 @@ namespace Cadetta.SolidWorks.Com.Push
         {
             var d = Dim(name);
             if (d == null) return false;
-            var status = d.SetSystemValue3(ToSystem(value, IsAngle(d)), (int)swSetValueInConfiguration_e.swSetValue_InAllConfigurations, null);
+            var status = d.SetSystemValue3(ToSystem(value, KindOf(d)), (int)swSetValueInConfiguration_e.swSetValue_InAllConfigurations, null);
             _log.Debug("dimension " + name + " set " + Num(value) + " status " + status);
             return status == (int)swSetValueReturnStatus_e.swSetValue_Successful;
         }
@@ -207,11 +208,11 @@ namespace Cadetta.SolidWorks.Com.Push
             return added >= 0;
         }
 
-        private static ToleranceSpec ReadTolerance(IDimension d, bool angle)
+        private static ToleranceSpec ReadTolerance(IDimension d, DimensionUnitKind kind)
         {
             var t = d.Tolerance;
             if (t == null) return ToleranceSpec.None;
-            decimal Conv(double v) => Math.Round((decimal)ToNative(v, angle), 9);
+            decimal Conv(double v) => Math.Round((decimal)ToNative(v, kind), 9);
             switch (t.Type)
             {
                 case (int)swTolType_e.swTolSYMMETRIC:
@@ -235,9 +236,9 @@ namespace Cadetta.SolidWorks.Com.Push
         {
             var d = Dim(name);
             if (d == null) return false;
-            var angle = IsAngle(d);
+            var kind = KindOf(d);
             var t = d.Tolerance;
-            double S(decimal v) => ToSystem((double)v, angle);
+            double S(decimal v) => ToSystem((double)v, kind);
             bool ok;
             switch (spec.Kind)
             {

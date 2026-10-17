@@ -50,7 +50,9 @@ before and after each step: none left open.
 Findings (not fixed here, filed as tickets):
 
 - A pattern count reads back x1000 and a re-push of it writes 4000: every
-  non-angle dimension is scaled by the length factor in `SwComPushDocument`.
+  non-angle dimension was scaled by the length factor in `SwComPushDocument`.
+  Fixed: scalar dimensions (swScalarDimension) are now unscaled
+  (`DimensionUnits`); the read path in `SwComDocumentReader` is separate.
 - The push-path R004 message does not name the failing feature.
 
 ## Datum frame verb: dropped
