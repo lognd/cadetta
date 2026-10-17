@@ -1,0 +1,9 @@
+{"seq":0,"call":"Host.Open","args":["{file}"],"result":true}
+{"seq":1,"call":"Doc.Path","args":[],"result":"{file}"}
+{"seq":2,"call":"Doc.ReadOnly","args":[],"result":false}
+{"seq":3,"call":"Doc.UserDirty","args":[],"result":false}
+{"seq":4,"call":"Doc.GetDimension","args":["D1@Boss-Extrude1"],"result":{"Value":10,"Driven":true,"Suppressed":false,"Conflict":false,"ReadOnly":false,"Expression":null,"LinkedGlobal":null,"Tolerance":{"Kind":0,"Lower":0,"Upper":0,"Hole":"","Shaft":""}}}
+{"seq":5,"call":"Doc.AdapterModified","args":[],"result":true}
+{"seq":6,"call":"Handle.Settle","args":[true,false],"result":true}
+{"seq":7,"call":"Handle.Dispose","args":[],"result":true}
+{"seq":8,"call":"rpc","args":["{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:3,\u0022method\u0022:\u0022push\u0022,\u0022params\u0022:{\u0022file\u0022:\u0022{file}\u0022,\u0022params\u0022:[{\u0022locator\u0022:\u0022dimension:D1@Boss-Extrude1\u0022,\u0022mode\u0022:\u0022value\u0022,\u0022path\u0022:\u0022p.x\u0022,\u0022value\u0022:\u002212\u0022}],\u0022session\u0022:\u0022s\u0022}}"],"result":"{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:3,\u0022result\u0022:{\u0022diagnostics\u0022:[{\u0022schema\u0022:\u0022cadetta.diag/1\u0022,\u0022code\u0022:\u0022R010\u0022,\u0022severity\u0022:\u0022error\u0022,\u0022message\u0022:\u0022dimension D1@Boss-Extrude1 is driven (reference)\u0022,\u0022path\u0022:\u0022p.x\u0022,\u0022notes\u0022:[],\u0022fixes\u0022:[]},{\u0022schema\u0022:\u0022cadetta.diag/1\u0022,\u0022code\u0022:\u0022R009\u0022,\u0022severity\u0022:\u0022warning\u0022,\u0022message\u0022:\u0022save skipped: a locator failed\u0022,\u0022path\u0022:null,\u0022notes\u0022:[],\u0022fixes\u0022:[]}],\u0022statuses\u0022:[{\u0022locator\u0022:\u0022dimension:D1@Boss-Extrude1\u0022,\u0022old\u0022:10,\u0022status\u0022:\u0022rejected\u0022}]}}"}

@@ -1,0 +1,88 @@
+kind = "evidence"
+captured_at = "2026-10-17T07:11:44Z"
+digest = "e8e7fea95c18fc182287d0cbfd61bad794b6ba06f6bf7e358c9581c4157d5cfc"
+exit_code = 0
+inline = '''
+   Compiling cadetta-syntax v0.0.0 (<worktree>/crates/cadetta-syntax)
+   Compiling cadetta-adapter v0.0.0 (<worktree>/crates/cadetta-adapter)
+   Compiling cadetta-obligations v0.0.0 (<worktree>/crates/cadetta-obligations)
+   Compiling cadetta-lint v0.0.0 (<worktree>/crates/cadetta-lint)
+   Compiling cadetta-variants v0.0.0 (<worktree>/crates/cadetta-variants)
+   Compiling cadetta-geometry v0.0.0 (<worktree>/crates/cadetta-geometry)
+   Compiling cadetta-solve v0.0.0 (<worktree>/crates/cadetta-solve)
+   Compiling cadetta-fits v0.0.0 (<worktree>/crates/cadetta-fits)
+   Compiling cadetta-sema v0.0.0 (<worktree>/crates/cadetta-sema)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.35s
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+ Nextest run ID eb9e1e93-0f43-4cd1-b6bd-ca175fac2a19 with nextest profile: default
+    Starting 57 tests across 5 binaries (219 tests skipped)
+        PASS [   0.010s] cadetta-sema lower::tests::a_require_lowers_to_requires_not_checks
+        PASS [   0.010s] cadetta-sema lower::tests::an_index_on_a_non_array_part_is_an_error
+        PASS [   0.010s] cadetta-sema lower::tests::a_table_lowers_with_its_columns_rows_and_cell_values
+        PASS [   0.011s] cadetta-sema lower::tests::a_key_only_table_has_quantity_keys_and_no_cells
+        PASS [   0.011s] cadetta-sema lower::tests::a_text_instance_member_lowers_as_text_without_a_value
+        PASS [   0.011s] cadetta-sema lower::tests::a_read_of_a_part_slot_depends_on_the_slot_node
+        PASS [   0.012s] cadetta-sema lower::tests::a_solver_lowers_with_script_inputs_outputs_and_deps
+        PASS [   0.013s] cadetta-sema lower::tests::a_solver_takes_its_recorded_result_state_from_the_caller
+        PASS [   0.020s] cadetta-sema lower::tests::a_member_read_through_an_indexed_slot_is_the_part_types_member
+        PASS [   0.020s] cadetta-sema lower::tests::a_solver_citation_lowers_to_a_cite_ref_and_is_not_an_input
+        PASS [   0.010s] cadetta-sema lower::tests::compensated_member_keeps_designed_nominal_and_drawn
+        PASS [   0.021s] cadetta-sema lower::tests::a_table_citation_lowers_to_a_cite_ref
+        PASS [   0.010s] cadetta-sema lower::tests::citations_are_sorted_and_member_citation_replaces_the_components
+        PASS [   0.013s] cadetta-sema lower::tests::editing_a_cite_changes_its_digest_but_not_the_citing_nodes
+        PASS [   0.014s] cadetta-sema lower::tests::derived_tolerance_is_an_affine_of_source_variables
+        PASS [   0.025s] cadetta-sema lower::tests::an_out_of_range_or_cross_instance_re_expression_is_an_error
+        PASS [   0.012s] cadetta-sema lower::tests::example_lowers_components_fits_and_checks
+        PASS [   0.016s] cadetta-sema lower::tests::derived_member_has_derived_provenance_and_deps
+        PASS [   0.017s] cadetta-sema lower::tests::an_unindexed_read_of_a_counted_part_is_instance_zero
+        PASS [   0.010s] cadetta-sema lower::tests::indexed_part_array_argument_evaluates_the_instance_members
+        PASS [   0.022s] cadetta-sema lower::tests::datums_placements_and_points_are_lowered
+        PASS [   0.013s] cadetta-sema lower::tests::fit_on_component_argument_operand_is_not_a_dependency
+        PASS [   0.015s] cadetta-sema lower::tests::file_scope_fit_lowers_into_its_owner_component
+        PASS [   0.017s] cadetta-sema lower::tests::fit_derived_in_an_instance_is_a_dependency_of_the_definition
+        PASS [   0.018s] cadetta-sema lower::tests::indexed_part_instances_re_express_at_their_own_placement
+        PASS [   0.013s] cadetta-sema lower::tests::iso_class_letter_case_sets_the_ir_role
+        PASS [   0.014s] cadetta-sema lower::tests::instance_placements_are_valued_from_args
+        PASS [   0.014s] cadetta-sema lower::tests::instance_datums_are_valued_from_args_and_defaults
+        PASS [   0.014s] cadetta-sema lower::tests::parameterized_part_array_lowers_per_instance_values
+        PASS [   0.014s] cadetta-sema lower::tests::part_array_instance_members_lower_per_index
+        PASS [   0.016s] cadetta-sema lower::tests::let_is_analysis
+        PASS [   0.010s] cadetta-sema lower::tests::pure_reference_inherits_emit_point
+        PASS [   0.010s] cadetta-sema lower::tests::position_point2_lowers_to_paired_uv_terms
+        PASS [   0.015s] cadetta-sema lower::tests::part_slot_lowers_with_a_slash_segment
+        PASS [   0.013s] cadetta-sema lower::tests::re_expression_composes_the_placement
+        PASS [   0.010s] cadetta-sema lower::tests::singular_ots_part_members_lower_per_instance_but_models_do_not
+        PASS [   0.012s] cadetta-sema lower::tests::re_expression_out_of_an_unplaced_part_is_g003
+        PASS [   0.011s] cadetta-sema process::tests::emit_applies_rule_to_chosen_point
+        PASS [   0.011s] cadetta-sema process::tests::member_without_role_is_not_compensated_and_p001_is_recorded
+        PASS [   0.010s] cadetta-sema process::tests::roles_are_not_inherited_from_scope
+        PASS [   0.012s] cadetta-sema process::tests::process_parameter_scatter_is_added_to_designed
+        PASS [   0.010s] cadetta-sema process::tests::unsupported_rule_construct_is_reported
+        PASS [   0.016s] cadetta-sema lower::tests::waivers_lower_with_expiry_and_alternate
+        PASS [   0.016s] cadetta-sema process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made
+        PASS [   0.021s] cadetta-sema lower::tests::variants_store_only_differing_values
+        PASS [   0.016s] cadetta-sema::bolt_float joint_between_siblings_adds_no_float
+        PASS [   0.010s] cadetta-sema::interface_slots selection_redirects_slot_reads_to_the_alternate
+        PASS [   0.017s] cadetta-sema::bolt_float own_aligned_check_reads_the_nominal_placement
+        PASS [   0.016s] cadetta-sema::bolt_float subassembly_locating_joint_keeps_the_inner_child_fixed
+        PASS [   0.019s] cadetta-sema::bolt_float subassembly_joint_frees_the_inner_child
+        PASS [   0.017s] cadetta-sema::interface_slots interface_slot_read_resolves_to_primary
+        PASS [   0.028s] cadetta-sema::bolt_float g005_fires_for_a_check_tighter_than_the_float
+        PASS [   0.024s] cadetta-sema::bolt_float g008_stays_quiet_for_a_two_point_joint
+        PASS [   0.024s] cadetta-sema::bolt_float joints_on_one_edge_reach_select_together
+        PASS [   0.029s] cadetta-sema::bolt_float g005_stays_quiet_when_locating_or_looser
+        PASS [   0.029s] cadetta-sema::bolt_float g008_fires_once_for_a_one_point_non_locating_joint
+        PASS [   0.025s] cadetta-sema::bolt_float locating_joint_keeps_the_child_fixed
+\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}\u{2500}
+     Summary [   0.080s] 57 tests run: 57 passed, 219 skipped
+'''
+passed = true
+provider = "nextest"
+ref = "-p cadetta-sema -E '(package(=cadetta-sema) & (test(=g005_fires_for_a_check_tighter_than_the_float) | test(=g005_stays_quiet_when_locating_or_looser) | test(=g008_fires_once_for_a_one_point_non_locating_joint) | test(=g008_stays_quiet_for_a_two_point_joint) | test(=instances::tests::absent_member_read_is_e002) | test(=instances::tests::arguments_defaults_and_members_evaluate) | test(=instances::tests::assembly_default_beats_file_default) | test(=instances::tests::default_impl_delegates_file_layer_and_reports_missing) | test(=instances::tests::file_default_beats_project_default) | test(=instances::tests::forbids_reports_e006_when_the_argument_is_given) | test(=instances::tests::instance_check_when_gates_the_verdict) | test(=instances::tests::instance_checks_report_under_the_instance_path) | test(=instances::tests::missing_required_argument_is_e006) | test(=instances::tests::optional_argument_and_when_follow_given) | test(=instances::tests::pattern_argument_on_a_part_array_is_e006) | test(=instances::tests::project_defaults_name_a_dependency_implementation) | test(=instances::tests::requires_is_silent_when_the_argument_is_given) | test(=instances::tests::requires_reports_e006_when_the_argument_is_missing) | test(=interface_slot_read_resolves_to_primary) | test(=joint_between_siblings_adds_no_float) | test(=joints_on_one_edge_reach_select_together) | test(=locating_joint_keeps_the_child_fixed) | test(=lower::tests::a_key_only_table_has_quantity_keys_and_no_cells) | test(=lower::tests::a_member_read_through_an_indexed_slot_is_the_part_types_member) | test(=lower::tests::a_read_of_a_part_slot_depends_on_the_slot_node) | test(=lower::tests::a_require_lowers_to_requires_not_checks) | test(=lower::tests::a_solver_citation_lowers_to_a_cite_ref_and_is_not_an_input) | test(=lower::tests::a_solver_lowers_with_script_inputs_outputs_and_deps) | test(=lower::tests::a_solver_takes_its_recorded_result_state_from_the_caller) | test(=lower::tests::a_table_citation_lowers_to_a_cite_ref) | test(=lower::tests::a_table_lowers_with_its_columns_rows_and_cell_values) | test(=lower::tests::a_text_instance_member_lowers_as_text_without_a_value) | test(=lower::tests::an_index_on_a_non_array_part_is_an_error) | test(=lower::tests::an_out_of_range_or_cross_instance_re_expression_is_an_error) | test(=lower::tests::an_unindexed_read_of_a_counted_part_is_instance_zero) | test(=lower::tests::citations_are_sorted_and_member_citation_replaces_the_components) | test(=lower::tests::compensated_member_keeps_designed_nominal_and_drawn) | test(=lower::tests::datums_placements_and_points_are_lowered) | test(=lower::tests::derived_member_has_derived_provenance_and_deps) | test(=lower::tests::derived_tolerance_is_an_affine_of_source_variables) | test(=lower::tests::editing_a_cite_changes_its_digest_but_not_the_citing_nodes) | test(=lower::tests::example_lowers_components_fits_and_checks) | test(=lower::tests::file_scope_fit_lowers_into_its_owner_component) | test(=lower::tests::fit_derived_in_an_instance_is_a_dependency_of_the_definition) | test(=lower::tests::fit_on_component_argument_operand_is_not_a_dependency) | test(=lower::tests::indexed_part_array_argument_evaluates_the_instance_members) | test(=lower::tests::indexed_part_instances_re_express_at_their_own_placement) | test(=lower::tests::instance_datums_are_valued_from_args_and_defaults) | test(=lower::tests::instance_placements_are_valued_from_args) | test(=lower::tests::iso_class_letter_case_sets_the_ir_role) | test(=lower::tests::let_is_analysis) | test(=lower::tests::parameterized_part_array_lowers_per_instance_values) | test(=lower::tests::part_array_instance_members_lower_per_index) | test(=lower::tests::part_slot_lowers_with_a_slash_segment) | test(=lower::tests::position_point2_lowers_to_paired_uv_terms) | test(=lower::tests::pure_reference_inherits_emit_point) | test(=lower::tests::re_expression_composes_the_placement) | test(=lower::tests::re_expression_out_of_an_unplaced_part_is_g003) | test(=lower::tests::singular_ots_part_members_lower_per_instance_but_models_do_not) | test(=lower::tests::variants_store_only_differing_values) | test(=lower::tests::waivers_lower_with_expiry_and_alternate) | test(=own_aligned_check_reads_the_nominal_placement) | test(=point::count_tests::pattern_counts_are_structural) | test(=point::tests::array_plus_point_shifts_every_element) | test(=point::tests::circle_pattern_and_distance) | test(=point::tests::fixed_arrays_hold_n_elements_of_one_kind) | test(=point::tests::point_arithmetic_gives_points_with_length_members) | test(=point::tests::position_on_point2_is_allowed_and_e006_cases_fire) | test(=point::tests::position_projection_ranges_over_half_the_diameter) | test(=point::tests::rect_pattern_is_centred_rows_first) | test(=posshape::tests::array_plus_point_is_g001) | test(=posshape::tests::comparison_across_datums_is_g001_without_eval_noise) | test(=posshape::tests::distance_across_datums_is_g001) | test(=posshape::tests::re_expressed_operands_share_a_datum) | test(=posshape::tests::subtraction_across_datums_is_g001) | test(=process::tests::drawn_is_rule_on_nominal_and_designed_is_as_made) | test(=process::tests::emit_applies_rule_to_chosen_point) | test(=process::tests::member_without_role_is_not_compensated_and_p001_is_recorded) | test(=process::tests::process_parameter_scatter_is_added_to_designed) | test(=process::tests::roles_are_not_inherited_from_scope) | test(=process::tests::unsupported_rule_construct_is_reported) | test(=rolleval::tests::count_of_a_nested_array_is_its_size) | test(=rolleval::tests::max_and_min_pick_the_winner) | test(=rolleval::tests::misspelled_member_is_e002_not_eval) | test(=rolleval::tests::misspelled_rollup_member_is_e002_not_eval) | test(=rolleval::tests::mixed_dimensions_are_eval) | test(=rolleval::tests::nested_callee_default_parameter_is_read) | test(=rolleval::tests::nested_callee_member_is_read_without_an_argument) | test(=rolleval::tests::optional_form_skips_parts_without_the_member) | test(=rolleval::tests::optional_form_with_nothing_to_count_is_eval) | test(=rolleval::tests::parameterized_part_contributes_the_nested_argument) | test(=rolleval::tests::parameterized_part_without_the_argument_is_eval) | test(=rolleval::tests::part_argument_reads_the_hosts_members) | test(=rolleval::tests::search_continues_below_parts_without_the_member) | test(=rolleval::tests::slot_rollup_sums_the_array_member) | test(=rolleval::tests::slot_rollup_without_the_member_is_eval) | test(=rolleval::tests::sum_counts_every_instance_of_an_array) | test(=rolleval::tests::two_levels_of_nesting_are_searched) | test(=selection_redirects_slot_reads_to_the_alternate) | test(=subassembly_joint_frees_the_inner_child) | test(=subassembly_locating_joint_keeps_the_inner_child_fixed)))'"
+size = 6736
+status = "measured"
+test_count = 57
+tests_digest = "4179cceeb543391d3832069747105a9c1ea5c250b231ced3ce006ad3a76f67eb"
+at = "2026-10-17T07:11:44Z"
+actor = "lognd"
+rev = 1

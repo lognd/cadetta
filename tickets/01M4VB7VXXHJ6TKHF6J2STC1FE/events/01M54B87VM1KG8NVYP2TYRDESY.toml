@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T07:12:06Z"
+digest = "ff23f1d799d8aa47b6a3c7d634c7bafdbbdadb87da760703cc90bb7802047368"
+provider = "file"
+ref = "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Commands/nova-test.log"
+size = 1140
+status = "measured"
+at = "2026-10-17T07:12:06Z"
+actor = "lognd"
+rev = 1

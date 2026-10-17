@@ -1,0 +1,6 @@
+{"seq":0,"call":"RegenHost.Open","args":["{file}"],"result":true}
+{"seq":1,"call":"Regen.ReadOnly","args":[],"result":false}
+{"seq":2,"call":"Regen.UserDirty","args":[],"result":true}
+{"seq":3,"call":"Regen.ReadOnly","args":[],"result":false}
+{"seq":4,"call":"RegenHandle.Dispose","args":[],"result":true}
+{"seq":5,"call":"rpc","args":["{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:4,\u0022method\u0022:\u0022regen\u0022,\u0022params\u0022:{\u0022session\u0022:\u0022s\u0022,\u0022targets\u0022:[\u0022{file}\u0022]}}"],"result":"{\u0022jsonrpc\u0022:\u00222.0\u0022,\u0022id\u0022:4,\u0022result\u0022:{\u0022diagnostics\u0022:[{\u0022schema\u0022:\u0022cadetta.diag/1\u0022,\u0022code\u0022:\u0022R009\u0022,\u0022severity\u0022:\u0022error\u0022,\u0022message\u0022:\u0022{file} has unsaved changes the adapter did not make; regen refused\u0022,\u0022path\u0022:null,\u0022notes\u0022:[],\u0022fixes\u0022:[]}],\u0022targets\u0022:[{\u0022status\u0022:\u0022failed\u0022,\u0022target\u0022:\u0022{file}\u0022}]}}"}
