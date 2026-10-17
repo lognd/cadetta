@@ -1,0 +1,9 @@
+kind = "create"
+title = "FreeCAD: live round trip on nova with freecadcmd (milestone 0.1.0 criterion 3)"
+type = "task"
+category = "todo"
+priority = "medium"
+body = 'FreeCAD 1.1.4 installed on nova at C:\Users\logan\AppData\Local\Programs\FreeCAD 1.1\bin\freecadcmd.exe. Run the FreeCAD adapter open/read/push/save/close round trip live there, record evidence under adapters/freecad/evidence/, bind to milestone criterion 3.'
+at = "2026-10-17T17:51:45Z"
+actor = "lognd"
+rev = 1
