@@ -12,7 +12,7 @@ scope = ["crates/**"]
 
 [[acceptance]]
 text = "Given an adapter reports an observed file by base name, when sync pushes, then the package-relative path is opened"
-bound = false
+bound = true
 +++
 
 Found while working ~NEHY9X7 (nova live smoke). Worked around by FindUnderCwd in the drive server.
