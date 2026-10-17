@@ -2,12 +2,12 @@
 id = "01M548Y09E8W1NVTJSSS0GDS2T"
 title = "Wire read method to ReadService in SOLIDWORKS RpcServer"
 type = "task"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T06:31:33Z"
-updated = "2026-10-17T06:39:54Z"
+updated = "2026-10-17T06:39:55Z"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Server/**"]
 +++
 
