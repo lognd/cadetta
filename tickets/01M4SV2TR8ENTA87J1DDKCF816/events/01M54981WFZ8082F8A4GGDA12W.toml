@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Push/**", "docs/spec/solidworks.md"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Push/**", "docs/spec/solidworks.md", "changelog.d/01M4SV2TR8ENTA87J1DDKCF816.added.md"]
+at = "2026-10-17T06:37:03Z"
+actor = "lognd"
+rev = 1
