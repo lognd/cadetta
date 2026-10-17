@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:55:25Z"
+digest = "ad394a7bfb07f3321d7b1ebe1553324c2c21efffb5064ab162f6fe5ec0cb5027"
+provider = "file"
+ref = "adapters/fusion/evidence/dw3nemp-live/live-attempt.txt"
+size = 1504
+status = "measured"
+at = "2026-10-17T15:55:25Z"
+actor = "lognd"
+rev = 1
