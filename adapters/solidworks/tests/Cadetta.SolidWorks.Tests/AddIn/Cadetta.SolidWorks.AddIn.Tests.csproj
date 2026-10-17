@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <RootNamespace>Cadetta.SolidWorks.AddIn.Tests</RootNamespace>
+    <!-- The linked AddInSettings reads the Windows registry; the add-in is net48 and Windows only, and these tests never reach it. -->
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
