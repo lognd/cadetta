@@ -1,0 +1,10 @@
+kind = "evidence"
+captured_at = "2026-10-17T15:50:35Z"
+digest = "976bd7491d77fe37ac28e41404043a1ea8eea15613d0fdef2b2e250b38485ea3"
+provider = "file"
+ref = "adapters/solidworks/evidence/nehy-live/drive-refused-write.txt"
+size = 8559
+status = "measured"
+at = "2026-10-17T15:50:35Z"
+actor = "lognd"
+rev = 1
