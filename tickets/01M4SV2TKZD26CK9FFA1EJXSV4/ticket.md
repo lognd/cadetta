@@ -2,13 +2,13 @@
 id = "01M4SV2TKZD26CK9FFA1EJXSV4"
 title = "SOLIDWORKS read to observed IR"
 type = "story"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 8
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:17:07Z"
-updated = "2026-10-13T21:03:05Z"
+updated = "2026-10-17T06:19:02Z"
 persona = "design engineer"
 capability = "read globals, equations, dimensions and custom properties"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Read/**"]
