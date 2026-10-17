@@ -133,7 +133,11 @@ the main thread with a custom event and waits for the reply.
   transcript tests in `adapters/fusion/tests/unit` (adapter protocol,
   read, push, atomic failure and rollback, R003/R004/R006/R009/R010, the
   JSON-RPC client over a real socket).
-- Not yet done: a live run against Fusion on a Windows ARM64 host. The
+- Live run attempted 2026-10-17 on nova (Windows 11 ARM64): Fusion
+  launches but stops at its sign-in screen (no Autodesk account is signed
+  in), so the add-in never loaded; evidence in
+  `adapters/fusion/evidence/dw3nemp-live/`. No document was opened.
+- Still not done: a live run against a signed-in Fusion. The
   add-in in `addin/CadettaFusion` is written against the documented
   `adsk` API and has not been executed in Fusion. A live run must open,
   read, push, save and close a document, logging open documents before

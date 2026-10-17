@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/**", "docs/spec/solidworks.md"]
+new = ["adapters/solidworks/**", "docs/spec/solidworks.md", "changelog.d/01M6PF7XCNPZ0000000000000A.added.md"]
+at = "2026-10-17T16:00:51Z"
+actor = "lognd"
+rev = 1
