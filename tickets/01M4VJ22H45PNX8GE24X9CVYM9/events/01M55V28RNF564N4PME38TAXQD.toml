@@ -1,0 +1,8 @@
+kind = "transition"
+from = "triage"
+to = "done"
+outcome = "wont-fix"
+reason = "Marketplace and Open VSX publishing needs publisher credentials and is not part of the 0.1.0 language/adapter scope; re-file after 0.1.0."
+at = "2026-10-17T21:07:42Z"
+actor = "lognd"
+rev = 1
