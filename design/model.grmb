@@ -10,7 +10,6 @@ node adapter_freecad : authenticated {
   owns "adapters/freecad/**";
   may fs.read at "adapters/freecad/**";
   may fs.write at "adapters/freecad/**";
-  may process.env at "adapters/freecad/tests/live/run_under_freecadcmd.py";
 }
 
 /// Adapter host: built-in emitters and the JSON-RPC client for external adapters (adapters.md).
@@ -142,7 +141,6 @@ node py_binding : trusted {
   may fs.read at "bindings/python/python/cadetta/tools.py";
   may fs.write at "bindings/python/python/cadetta/tools.py";
   may exec at "bindings/python/python/cadetta/tools.py";
-  may process.env at "bindings/python/tests/test_conformance.py";
 }
 
 /// Name resolution, kind checking and evaluation into design IR.
