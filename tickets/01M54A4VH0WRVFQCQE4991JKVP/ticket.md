@@ -2,7 +2,7 @@
 id = "01M54A4VH0WRVFQCQE4991JKVP"
 title = "Add AddIn test project to Cadetta.SolidWorks.sln and solidworks.yml CI"
 type = "chore"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
