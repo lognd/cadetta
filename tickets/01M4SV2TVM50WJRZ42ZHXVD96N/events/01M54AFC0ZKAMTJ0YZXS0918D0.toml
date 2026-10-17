@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1, 2, 3]
+captured_at = "2026-10-17T06:58:31Z"
+digest = "dc948dda3cffec9c7685bc581a6fbcf82e6b897455cd404ba4ce9fe73904dbb0"
+provider = "file"
+ref = "/tmp/claude-1000/-home-logan-projects-cadetta/5bbabb83-32a3-446b-9e71-532cccb3fbd0/scratchpad/hxvd96n-nova-live.log"
+size = 415
+status = "measured"
+at = "2026-10-17T06:58:31Z"
+actor = "lognd"
+rev = 1
