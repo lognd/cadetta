@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T11:10:34Z"
-updated = "2026-10-17T11:43:43Z"
+updated = "2026-10-17T11:44:01Z"
 scope = ["adapters/solidworks/src/Cadetta.SolidWorks.AddIn/**", "adapters/solidworks/DEVELOPING.md", "adapters/solidworks/evidence/exf-live/**", "changelog.d/*EXF7N54*"]
 
 [[acceptance]]
