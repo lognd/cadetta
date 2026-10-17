@@ -24,5 +24,5 @@ bound = false
 
 [[acceptance]]
 text = "The target matrix row for Fusion is updated and a workflow runs the fake-session tests"
-bound = false
+bound = true
 +++
