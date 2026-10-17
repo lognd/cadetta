@@ -2,7 +2,8 @@
 id = "01M554D12F447EZ2ZXX3V9JD0Q"
 title = "sync file globs never match on Windows (backslash relative paths)"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 1
 reporter = "lognd"
