@@ -2,7 +2,8 @@
 id = "01M548FW58GD5Z00JGMAD835T5"
 title = "Confirm SOLIDWORKS coordinate system update, Euler convention and measured_from on a licensed machine"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
