@@ -1,0 +1,16 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T00:07:39Z"
+digest = "d10fe07ce9608d7df26085b500682e8faebdfba6d01dd027ad92554f23408907"
+exit_code = 0
+passed = true
+provider = "nextest"
+ref = "package(cadetta) and test(=hover_lens_and_definition_follow_the_ir)"
+size = 49132
+status = "measured"
+test_count = 465
+tests_digest = "55e51f3045c24e2fb732ecfb36444d5ac35a22e0659caa6e2757c4c9c8952885"
+uri = "dir:.git/frob/artifacts/d10fe07ce9608d7df26085b500682e8faebdfba6d01dd027ad92554f23408907"
+at = "2026-10-17T00:07:39Z"
+actor = "lognd"
+rev = 1

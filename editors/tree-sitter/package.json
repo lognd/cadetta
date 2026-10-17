@@ -1,0 +1,14 @@
+{
+  "name": "tree-sitter-cadetta",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the Cadetta (.cdt) language",
+  "main": "grammar.js",
+  "private": true,
+  "tree-sitter": [
+    {
+      "scope": "source.cadetta",
+      "file-types": ["cdt"],
+      "highlights": "queries/highlights.scm"
+    }
+  ]
+}

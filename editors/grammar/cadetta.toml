@@ -32,18 +32,21 @@ lead = "place"
 between = '[ \t]+[A-Za-z0-9_:.]+[ \t]+'
 words = ["at"]
 role = "keyword"
+ts_query = '("place" . (identifier) . (identifier) @keyword (#eq? @keyword "at"))'
 
 [[contextual]]
 name = "solver-script"
 words = ["script"]
 follow = '[ \t]*"'
 role = "keyword"
+ts_query = '((identifier) @keyword . (string) (#eq? @keyword "script"))'
 
 [[contextual]]
 name = "tolerance-position"
 between = '\[[ \t]*'
 words = ["position"]
 role = "keyword"
+ts_query = '("[" . (identifier) @keyword (#eq? @keyword "position"))'
 
 [[contextual]]
 name = "cite-type"
@@ -51,6 +54,7 @@ lead = "cite"
 between = '[ \t]+[A-Za-z0-9_]+[ \t]*:[ \t]*'
 words = ["standard", "datasheet", "drawing", "catalog", "book", "article", "web", "quote", "document"]
 role = "type"
+ts_query = '("cite" . (identifier) . ":" . (identifier) @type (#any-of? @type {words}))'
 
 # The ISO 286 class after `fit NAME =` (the class after a quantity is handled
 # by the quantity rule): H7, p6, js6, H7/p6.
@@ -61,16 +65,22 @@ between = '[ \t]+[A-Za-z0-9_]+[ \t]*=[ \t]*'
 word_regex = true
 words = ['[A-Za-z]{1,2}[0-9]{1,2}(/[A-Za-z]{1,2}[0-9]{1,2})?']
 role = "class"
+ts_query = '("fit" . (identifier) . (operator) . (identifier) @constant (#match? @constant "^[A-Za-z]{1,2}[0-9]{1,2}$"))'
 
 # Token patterns, one form per regex engine: pcre (Oniguruma: TextMate, Sublime),
-# vim (very magic), emacs (elisp regexp, before string escaping).
+# vim (very magic), emacs (elisp regexp, before string escaping), ts (tree-sitter,
+# Rust regex dialect: no lookaround or \b; defaults to pcre when absent).
+# A contextual `ts_query` is the tree-sitter highlight pattern for that rule
+# ({words} expands to the quoted word list).
 [tokens.quantity]
 # number plus unit (quantities.md 2): 12mm, 3/4in, 1-1/2in, 60m^3/h, 5", 2'
+ts = '''[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?(?:-[0-9]+/[0-9]+|/[0-9]+)?(?:["']|[A-Za-z%][A-Za-z0-9%_]*(?:\^-?[0-9]+)?(?:[*/][A-Za-z][A-Za-z0-9_]*(?:\^-?[0-9]+)?)*)'''
 pcre = '''\b[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?(?:-[0-9]+/[0-9]+|/[0-9]+)?(?:["']|(?![eE][-+]?[0-9])[A-Za-z%][A-Za-z0-9%_]*(?:\^-?[0-9]+)?(?:[*/][A-Za-z][A-Za-z0-9_]*(?:\^-?[0-9]+)?)*)'''
 vim = '''<[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?(-[0-9]+/[0-9]+|/[0-9]+)?(["']|([eE][-+]?[0-9])@![A-Za-z%][A-Za-z0-9%_]*(\^-?[0-9]+)?([*/][A-Za-z][A-Za-z0-9_]*(\^-?[0-9]+)?)*)'''
 emacs = '''\_<[0-9]+\(?:\.[0-9]+\)?\(?:[eE][-+]?[0-9]+\)?\(?:-[0-9]+/[0-9]+\|/[0-9]+\)?\(?:["']\|[A-Za-z%][A-Za-z0-9%_]*\(?:\^-?[0-9]+\)?\(?:[*/][A-Za-z][A-Za-z0-9_]*\(?:\^-?[0-9]+\)?\)*\)'''
 
 [tokens.number]
+ts = '''[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?'''
 pcre = '''\b[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?\b'''
 vim = '''<[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?>'''
 emacs = '''\_<[0-9]+\(?:\.[0-9]+\)?\(?:[eE][-+]?[0-9]+\)?\_>'''

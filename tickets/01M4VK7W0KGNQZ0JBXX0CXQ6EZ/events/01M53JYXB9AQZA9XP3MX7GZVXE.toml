@@ -1,0 +1,15 @@
+kind = "evidence"
+captured_at = "2026-10-17T00:06:38Z"
+digest = "53ab60d070c89fe5b891489f8f8aa81894db64668bef937e31caff21420bac3d"
+exit_code = 0
+passed = true
+provider = "nextest"
+ref = "package(cadetta) and test(/lsp|kind_names|token_spans|lens_title/)"
+size = 49463
+status = "measured"
+test_count = 465
+tests_digest = "b88863f18fac10b148184f570f142dd4022a4c49d3bd1e3549c93d2f20ab1808"
+uri = "dir:.git/frob/artifacts/53ab60d070c89fe5b891489f8f8aa81894db64668bef937e31caff21420bac3d"
+at = "2026-10-17T00:06:38Z"
+actor = "lognd"
+rev = 1

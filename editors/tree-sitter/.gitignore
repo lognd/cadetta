@@ -1,0 +1,7 @@
+src/
+bindings/
+node_modules/
+build/
+*.so
+*.dylib
+*.wasm
