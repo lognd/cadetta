@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [1]
+captured_at = "2026-10-17T09:38:13Z"
+digest = "4d0196dcbe81986657c3838c8825b4a6c11156abc9b67cba7d0c038236486d8f"
+provider = "file"
+ref = "docs/spec/solidworks.md"
+size = 18934
+status = "measured"
+at = "2026-10-17T09:38:13Z"
+actor = "lognd"
+rev = 1
