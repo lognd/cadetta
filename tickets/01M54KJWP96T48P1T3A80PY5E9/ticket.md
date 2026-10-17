@@ -2,12 +2,12 @@
 id = "01M54KJWP96T48P1T3A80PY5E9"
 title = "Document SOLIDWORKS regeneration in the adapter spec"
 type = "docs"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 1
 reporter = "lognd"
 created = "2026-10-17T09:37:44Z"
-updated = "2026-10-17T09:37:44Z"
+updated = "2026-10-17T09:37:46Z"
 scope = ["docs/spec/solidworks.md", "changelog.d/*"]
 
 [[acceptance]]
