@@ -30,7 +30,7 @@ bound = true
 
 [[acceptance]]
 text = "Given Bind as value, Assign part and Assign array, when run, then cadetta bind is called, the reference property is set, and array indices are assigned by unique nearest transform or refused (solidworks.md 2.2, 3)"
-bound = false
+bound = true
 
 [[acceptance]]
 text = "Given Create datum frames, Show path, Sync and Dry run, when run, then they behave as solidworks.md 3 states and refuse a document a running sync holds"
