@@ -248,7 +248,7 @@ mod tests {
             why: String::new(),
             dependents: 0,
         };
-        let l = lenses(&[e.clone()], "abcd\n", Encoding::Utf16);
+        let l = lenses(std::slice::from_ref(&e), "abcd\n", Encoding::Utf16);
         assert_eq!(
             l[0].command.as_ref().unwrap().title,
             "impact: no dependents"
