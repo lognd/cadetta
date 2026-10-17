@@ -8,7 +8,7 @@ points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-14T13:18:53Z"
-updated = "2026-10-17T05:21:59Z"
+updated = "2026-10-17T05:22:00Z"
 persona = "cadetta contributor"
 capability = "test the adapter without SOLIDWORKS or Windows"
 labels = ["creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**"]
@@ -17,6 +17,10 @@ scope = ["adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Transcripts/**"]
 [[links]]
 kind = "blocked-by"
 target = "01M4SV2TKZD26CK9FFA1EJXSV4"
+
+[[links]]
+kind = "blocked-by"
+target = "01M4SV2TR8ENTA87J1DDKCF816"
 
 [[links]]
 kind = "blocked-by"
