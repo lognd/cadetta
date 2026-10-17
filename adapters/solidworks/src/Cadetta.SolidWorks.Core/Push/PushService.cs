@@ -57,7 +57,7 @@ namespace Cadetta.SolidWorks.Push
             public IPushDocument Doc = null!;
             public PushOptions Options = null!;
             public PushOutcome Out = null!;
-            public List<Action> Undo = new List<Action>();
+            public List<Func<bool>> Undo = new List<Func<bool>>();
             public HashSet<string> GlobalsHandled = new HashSet<string>(StringComparer.Ordinal);
             public bool Wrote;
         }
@@ -559,11 +559,8 @@ namespace Cadetta.SolidWorks.Push
             run.Out.RebuildFailed = true;
             var failing = FailureText(run.Doc.LastRebuildFailures);
             _log.Warn(AtomicCode + ": rebuild failed" + failing + " after push; restoring snapshot");
-            for (var i = run.Undo.Count - 1; i >= 0; i--)
-            {
-                run.Undo[i]();
-            }
-            var restored = run.Doc.Rebuild();
+            var undone = RunUndo(run);
+            var restored = run.Doc.Rebuild() && undone;
             var msg = restored
                 ? AtomicCode + ": rebuild failed" + failing + "; the pre-push values were restored"
                 : AtomicCode + ": rebuild failed" + failing + " and the restore also failed; the document may be inconsistent";
@@ -572,6 +569,31 @@ namespace Cadetta.SolidWorks.Push
             {
                 if (s.Status == PushStatus.Pushed) s.Status = PushStatus.Failed;
             }
+        }
+
+        // frob:ticket 01M558W4TD38AKY09DYWF6C1EB
+        /// <summary>Runs every undo newest-first, never stopping early; false when any was refused or threw, leaving the document half-restored.</summary>
+        private bool RunUndo(Run run)
+        {
+            var allOk = true;
+            for (var i = run.Undo.Count - 1; i >= 0; i--)
+            {
+                try
+                {
+                    if (!run.Undo[i]())
+                    {
+                        _log.Error(AtomicCode + ": undo step " + i + " was refused");
+                        allOk = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.Error(AtomicCode + ": undo step " + i + " threw " + ex.GetType().Name + ": " + ex.Message);
+                    allOk = false;
+                }
+            }
+            _log.Info("undo finished: " + run.Undo.Count + " steps, all ok=" + allOk);
+            return allOk;
         }
 
         // frob:ticket 01M559F58RT4NP6T96P610BFDE

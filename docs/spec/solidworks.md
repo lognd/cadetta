@@ -282,7 +282,8 @@ Failure handling:
   write from the recorded undo list (reverse order), rebuilds again,
   and reports "the pre-push values were restored", or "the restore
   also failed; the document may be inconsistent" when that second
-  rebuild fails. Locators that were `pushed` become `failed`, and
+  rebuild fails or any undo step was refused or threw (every undo
+  still runs, so one failure never strands the rest). Locators that were `pushed` become `failed`, and
   `RebuildFailed` stops the following `save` from writing the document.
 - In the standalone `regen`, nothing is restored; the failure is
   reported only. In `cadetta sync`, a `failed` target makes the

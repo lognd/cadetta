@@ -43,7 +43,9 @@ namespace Cadetta.SolidWorks.Tests.Push
             return true;
         }
 
-        public bool DeleteGlobal(string name) => Globals.Remove(name);
+        public bool RefuseDeleteGlobal;
+
+        public bool DeleteGlobal(string name) => !RefuseDeleteGlobal && Globals.Remove(name);
 
         public DimensionInfo? GetDimension(string name) => Dims.TryGetValue(name, out var d) ? d : null;
 

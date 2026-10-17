@@ -190,6 +190,19 @@ namespace Cadetta.SolidWorks.Tests.Push
 
         // frob:tests PushService.Push
         [Fact]
+        public void Refused_undo_step_reports_restore_failed_and_still_runs_the_other_undos()
+        {
+            var doc = new FakePushDocument { RebuildFailsAbove = 10, RefuseDeleteGlobal = true };
+            doc.Globals["A"] = 2;
+            var o = Run(doc, P("A", "value", "p.a", "\"50\""), P("NEW", "value", "p.n", "\"1\""));
+            Assert.Equal(2, doc.Globals["A"]);
+            var msg = o.Diagnostics.Single(d => d.GetProperty("code").GetString() == "R004").GetProperty("message").GetString();
+            Assert.Contains("restore also failed", msg);
+            Assert.True(o.RebuildFailed);
+        }
+
+        // frob:tests PushService.Push
+        [Fact]
         public void Rebuild_failure_message_names_the_failing_feature()
         {
             var doc = new FakePushDocument { RebuildFailsAbove = 10, FailingFeature = "Shell1" };
