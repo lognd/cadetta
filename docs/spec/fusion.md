@@ -103,11 +103,20 @@ internal error saying how to start it.
 | Method | Params | Result |
 |---|---|---|
 | `fusion.version` | - | version string |
+| `fusion.documents` | - | names of the open documents |
 | `doc.open` | `path` | `{path, dirty, readonly, attached}` |
 | `doc.parameters` | `path` | list of `{name, expression, unit, value, comment}` |
 | `doc.apply` | `path`, `edits: [{name, expression}]` | null; atomic |
 | `doc.save` | `path` | null |
 | `doc.close` | `path` | null; closes without saving |
+
+`doc.open` takes either a cloud data-file id or the path of a local
+`.f3d`/`.f3z` archive that exists on the add-in's machine. A local archive
+is imported into a new document (`importToNewDocument`); `doc.save` on it
+exports the design back over the same file (`exportManager`), and
+`doc.close` closes it without saving. The returned `path` is the new
+document's name (`Untitled` for an import), while later calls keep using the
+archive path. `readonly` is false when the build has no `isReadOnly`.
 
 The Fusion API is main-thread only; the add-in hands each request to
 the main thread with a custom event and waits for the reply.
@@ -133,12 +142,14 @@ the main thread with a custom event and waits for the reply.
   transcript tests in `adapters/fusion/tests/unit` (adapter protocol,
   read, push, atomic failure and rollback, R003/R004/R006/R009/R010, the
   JSON-RPC client over a real socket).
-- Live run attempted 2026-10-17 on nova (Windows 11 ARM64): Fusion
-  launches but stops at its sign-in screen (no Autodesk account is signed
-  in), so the add-in never loaded; evidence in
-  `adapters/fusion/evidence/dw3nemp-live/`. No document was opened.
-- Still not done: a live run against a signed-in Fusion. The
-  add-in in `addin/CadettaFusion` is written against the documented
-  `adsk` API and has not been executed in Fusion. A live run must open,
-  read, push, save and close a document, logging open documents before
-  and after, and leave none open.
+- Live run 2026-10-17 on nova (Windows 11 ARM64, Fusion 2705.1.30, signed
+  in): a test design with user parameters (`width`, `height`, `count`) was
+  created by script, then `doc.open` (local path), `doc.parameters`,
+  `doc.apply`, `doc.parameters`, `doc.save` and `doc.close` all succeeded;
+  the archive's hash changed on save and the open-document list was `[]`
+  before open and after close. Evidence in
+  `adapters/fusion/evidence/vqrx89a-live/` (`run1-isreadonly-bug.log` is the
+  first run, which found `Document.isReadOnly` missing; fixed). Earlier
+  attempts: `dw3nemp-live/` (sign-in wall), `6gwey93-live/` (add-in loads).
+- The cloud data-file branch of `doc.open` is still not run live (needs a
+  cloud design id).

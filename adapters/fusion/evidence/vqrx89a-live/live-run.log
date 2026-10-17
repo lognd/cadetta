@@ -1,0 +1,42 @@
+2026-10-17T14:12:22.2553125-04:00
+file before: D556CE039767F422537200654B33DEC360E6F67F665DFD68286B24254F351262
+> fusion.version
+{"jsonrpc": "2.0", "id": 1, "result": "2705.1.30"}
+--- before open
+open documents: {"jsonrpc": "2.0", "id": 1, "result": []}
+> doc.open {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d"}
+{"jsonrpc": "2.0", "id": 1, "result": {"path": "Untitled", "dirty": true, "readonly": false, "attached": false}}
+--- after open
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+--- before read
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+> doc.parameters {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d"}
+{"jsonrpc": "2.0", "id": 1, "result": [{"name": "width", "expression": "50 mm", "unit": "mm", "value": 5.0, "comment": "cadetta test"}, {"name": "height", "expression": "25 mm", "unit": "mm", "value": 2.5, "comment": "cadetta test"}, {"name": "count", "expression": "4", "unit": "", "value": 4.0, "comment": "cadetta test"}]}
+--- after read
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+--- before push
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+> doc.apply {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d","edits":[{"name":"width","expression":"60 mm"},{"name":"count","expression":"5"}]}
+{"jsonrpc": "2.0", "id": 1, "result": null}
+--- after push
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+--- before read-after-push
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+> doc.parameters {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d"}
+{"jsonrpc": "2.0", "id": 1, "result": [{"name": "width", "expression": "60 mm", "unit": "mm", "value": 6.0, "comment": "cadetta test"}, {"name": "height", "expression": "25 mm", "unit": "mm", "value": 2.5, "comment": "cadetta test"}, {"name": "count", "expression": "5", "unit": "", "value": 5.0, "comment": "cadetta test"}]}
+--- after read-after-push
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+--- before save
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+> doc.save {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d"}
+{"jsonrpc": "2.0", "id": 1, "result": null}
+--- after save
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+file after save: 6F59065CBB85051B894AD6EC9AC08AB88E85B71B7C5193C61D31A1D1F3FA552A
+--- before close
+open documents: {"jsonrpc": "2.0", "id": 1, "result": ["Untitled"]}
+> doc.close {"path":"C:\\Users\\logan\\cadetta-fusion-test\\test.f3d"}
+{"jsonrpc": "2.0", "id": 1, "result": null}
+--- after close
+open documents: {"jsonrpc": "2.0", "id": 1, "result": []}
+Fusion360 up, pid=14420 responding=True
