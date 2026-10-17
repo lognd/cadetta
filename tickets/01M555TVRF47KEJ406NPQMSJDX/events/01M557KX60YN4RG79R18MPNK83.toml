@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "known red base; user authorized. Criterion 3 (live nova run) deferred by user's optional-live instruction; tracked as ~DW3NEMP. Criteria 1,2,4 have measured evidence."
+at = "2026-10-17T15:26:48Z"
+actor = "lognd"
+rev = 1
