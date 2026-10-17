@@ -2,7 +2,8 @@
 id = "01M4SV3ADT95XD9V1CFNEHY9X7"
 title = "SOLIDWORKS release smoke on a licensed machine"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
