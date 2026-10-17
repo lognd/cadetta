@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T16:03:18Z"
+updated = "2026-10-17T16:05:23Z"
 scope = ["adapters/solidworks/**"]
 +++
 
