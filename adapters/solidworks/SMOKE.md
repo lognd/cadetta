@@ -52,7 +52,9 @@ Findings (not fixed here, filed as tickets):
 - A pattern count reads back x1000 and a re-push of it writes 4000: every
   non-angle dimension was scaled by the length factor in `SwComPushDocument`.
   Fixed: scalar dimensions (swScalarDimension) are now unscaled
-  (`DimensionUnits`); the read path in `SwComDocumentReader` is separate.
+  (`DimensionUnits`). The read path in `SwComDocumentReader` now uses
+  the same `DimensionUnits.ToQuantity`, so a count reads as a unitless
+  number (unit empty), with no tolerance.
 - The push-path R004 message does not name the failing feature.
 
 ## Datum frame verb: dropped

@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using Cadetta.SolidWorks.Read;
 
 namespace Cadetta.SolidWorks.Push
 {
@@ -44,6 +46,23 @@ namespace Cadetta.SolidWorks.Push
             DimensionUnitKind.Angle => native / Deg,
             DimensionUnitKind.Count => native,
             _ => native / Mm,
+        };
+
+        // frob:ticket 01M559YQJ77Y2MGVMXYGFQKERH
+        /// <summary>A plain number literal rounded to <paramref name="places"/> decimals (no negative zero).</summary>
+        public static string Literal(double v, int places)
+        {
+            var r = Math.Round(v, places);
+            return (r == 0 ? 0.0 : r).ToString("R", CultureInfo.InvariantCulture);
+        }
+
+        // frob:ticket 01M559YQJ77Y2MGVMXYGFQKERH
+        /// <summary>The read-side quantity for a system value: mm for lengths, rad for angles, a unitless number for counts.</summary>
+        public static NativeQuantity ToQuantity(double system, DimensionUnitKind kind) => kind switch
+        {
+            DimensionUnitKind.Angle => NativeQuantity.Of(Literal(system, 12), "rad"),
+            DimensionUnitKind.Count => NativeQuantity.Of(Literal(system, 9), ""),
+            _ => NativeQuantity.Of(Literal(ToNative(system, kind), 9)),
         };
     }
 }

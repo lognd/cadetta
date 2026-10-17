@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Cadetta.SolidWorks.Com.Assembly;
 using Cadetta.SolidWorks.Com.Props;
 using Cadetta.SolidWorks.Props;
+using Cadetta.SolidWorks.Push;
 using Cadetta.SolidWorks.Logging;
 using Cadetta.SolidWorks.Read;
 using SolidWorks.Interop.sldworks;
@@ -40,8 +41,7 @@ namespace Cadetta.SolidWorks.Com.Read
         /// <summary>A plain number literal rounded to <paramref name="places"/> decimals (no negative zero).</summary>
         public static string Num(double v, int places)
         {
-            var r = Math.Round(v, places);
-            return (r == 0 ? 0.0 : r).ToString("R", CultureInfo.InvariantCulture);
+            return DimensionUnits.Literal(v, places);
         }
 
         /// <summary>Opens <paramref name="path"/> read-only (reusing an open copy) and extracts its native model.</summary>
@@ -178,17 +178,18 @@ namespace Cadetta.SolidWorks.Com.Read
         private NativeDimension ReadDimension(Dimension dim, string? file = null)
         {
             var name = dim.Name + "@" + dim.FullName.Split('@')[1] + (file == null ? "" : "@" + file);
-            var angular = ((IDimension)dim).GetType() == (int)swDimensionType_e.swAngularDimension;
+            var kind = DimensionUnits.KindOf(((IDimension)dim).GetType());
+            var angular = kind == DimensionUnitKind.Angle;
             var raw = dim.SystemValue;
-            var q = angular ? NativeQuantity.Of(Num(raw, 12), "rad") : NativeQuantity.Of(Mm(raw));
+            var q = DimensionUnits.ToQuantity(raw, kind);
             _log.Debug("dimension " + name + " DrivenState=" + dim.DrivenState + " ReadOnly=" + dim.ReadOnly + " IsReference=" + dim.IsReference());
             if (dim.IsReference())
             {
                 q.Reason = "driven dimension: value is a measurement, not an input";
             }
             _dimEquations.TryGetValue(name, out var expr);
-            _log.Debug("dimension " + name + " = " + q.Text + (angular ? "rad" : "mm"));
-            return new NativeDimension { Locator = name, Value = q, Expression = expr, Tolerance = angular ? null : ReadTolerance(dim, raw) };
+            _log.Debug("dimension " + name + " = " + q.Text + (kind == DimensionUnitKind.Count ? "" : angular ? "rad" : "mm"));
+            return new NativeDimension { Locator = name, Value = q, Expression = expr, Tolerance = kind != DimensionUnitKind.Length ? null : ReadTolerance(dim, raw) };
         }
 
         private Protocol.DimTolerance? ReadTolerance(Dimension dim, double value)
