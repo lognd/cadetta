@@ -1,0 +1,7 @@
+kind = "transition"
+from = "todo"
+to = "in-progress"
+reason = "lease: lognd in cadetta-wt/W5MBBTB; scope: adapters/solidworks/**; ttl 7200s"
+at = "2026-10-17T17:07:36Z"
+actor = "lognd"
+rev = 1
