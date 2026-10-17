@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [9]
+captured_at = "2026-10-17T20:06:37Z"
+digest = "811e7a81994774497dc31c63a9cdbcb61d982236bbfc96f57c7346d22186f31d"
+provider = "file"
+ref = "adapters/solidworks/evidence/1scpzk7-live/run.log"
+size = 9773
+status = "measured"
+at = "2026-10-17T20:06:37Z"
+actor = "lognd"
+rev = 1
