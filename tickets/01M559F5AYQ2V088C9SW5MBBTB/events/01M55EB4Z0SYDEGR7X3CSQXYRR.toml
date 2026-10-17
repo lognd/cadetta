@@ -1,0 +1,11 @@
+kind = "evidence"
+accepts = [3]
+captured_at = "2026-10-17T17:25:22Z"
+digest = "2c132eccb44c67fdab3f1d0fb1770122ba289ea5c9a53d79e782488fe089a0de"
+provider = "file"
+ref = "adapters/solidworks/evidence/w5mb-live/addin-menu.log"
+size = 9492
+status = "measured"
+at = "2026-10-17T17:25:22Z"
+actor = "lognd"
+rev = 1

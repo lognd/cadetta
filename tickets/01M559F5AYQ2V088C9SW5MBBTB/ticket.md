@@ -7,7 +7,7 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T17:25:21Z"
+updated = "2026-10-17T17:25:22Z"
 scope = ["adapters/solidworks/**"]
 
 [[acceptance]]
@@ -20,7 +20,7 @@ bound = false
 
 [[acceptance]]
 text = "Menu Link callback exercised for a tolerance and a count; real click not automatable, reason recorded (evidence/w5mb-live/addin-menu.log, SMOKE.md)"
-bound = false
+bound = true
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
