@@ -7,7 +7,7 @@ priority = "low"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T14:56:49Z"
-updated = "2026-10-17T15:28:24Z"
+updated = "2026-10-17T15:29:14Z"
 scope = ["docs/spec/ansys.md", "docs/spec/adapters.md"]
 
 [[acceptance]]
