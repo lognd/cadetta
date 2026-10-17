@@ -141,16 +141,30 @@ namespace Cadetta.SolidWorks.Push
             return e;
         }
 
+        // frob:ticket 01M5496CWTHTRP1RQ57THH1WF6
+        /// <summary>Maps a wire <see cref="LocatorKind"/> to the native kind; null when absent or unknown.</summary>
+        private static NativeKind? FromWire(string? kind)
+        {
+            switch (kind)
+            {
+                case LocatorKind.Global: return NativeKind.Global;
+                case LocatorKind.Dimension: return NativeKind.Dimension;
+                case LocatorKind.Property: return NativeKind.Property;
+                case LocatorKind.Frame: return NativeKind.Frame;
+                default: return null;
+            }
+        }
+
         private static NativeKind Classify(IPushDocument doc, ChangedParam p, out string name)
         {
             name = p.Locator;
-            NativeKind? forced = null;
+            NativeKind? forced = FromWire(p.Kind);
             for (var i = 0; i < Prefixes.Length; i++)
             {
                 if (name.StartsWith(Prefixes[i], StringComparison.Ordinal))
                 {
                     name = name.Substring(Prefixes[i].Length);
-                    forced = (NativeKind)i;
+                    forced = forced ?? (NativeKind)i;
                     break;
                 }
             }

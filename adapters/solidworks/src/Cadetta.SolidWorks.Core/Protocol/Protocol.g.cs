@@ -29,6 +29,9 @@ namespace Cadetta.SolidWorks.Protocol
     /// <summary>One changed parameter in a `push`.</summary>
     public sealed class ChangedParam
     {
+        /// <summary>What the locator addresses; absent means the adapter infers it from the name and `mode`.</summary>
+        [JsonPropertyName("kind")]
+        public string? Kind { get; set; }
         /// <summary>Where it lives in the native file.</summary>
         [JsonPropertyName("locator")]
         public string Locator { get; set; } = "";
@@ -185,6 +188,19 @@ namespace Cadetta.SolidWorks.Protocol
         /// <summary>Adapter version; must equal `[[adapter]] version` (R008).</summary>
         [JsonPropertyName("version")]
         public string Version { get; set; } = "";
+    }
+
+    /// <summary>What a pushed locator addresses; the wire form of a binding's `kind` (adapters.md 3).</summary>
+    public static class LocatorKind
+    {
+        /// <summary>A global variable or equation.</summary>
+        public const string Global = "global";
+        /// <summary>A sketch or feature dimension.</summary>
+        public const string Dimension = "dimension";
+        /// <summary>A custom property.</summary>
+        public const string Property = "property";
+        /// <summary>A coordinate system or plane feature.</summary>
+        public const string Frame = "frame";
     }
 
     /// <summary>Per-locator result of a `push`.</summary>

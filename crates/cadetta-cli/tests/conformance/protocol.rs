@@ -429,6 +429,7 @@ fn change(locator: &str, mode: PushMode, ref_to: Option<&str>) -> ChangedParam {
         mode,
         ref_to: ref_to.map(str::to_owned),
         tolerance: None,
+        kind: None,
     }
 }
 

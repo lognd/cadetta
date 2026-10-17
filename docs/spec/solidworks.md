@@ -202,12 +202,13 @@ writes nothing and the documents stay dirty. `SwComSaveTarget` saves a
 `IPushDocument` seam (`SwComPushDocument` is the COM implementation;
 native units are mm and deg).
 
-- Kind inference: `ChangedParam` carries no kind, so the locator prefix
-  `global:`, `dimension:`, `property:` or `frame:` is honoured first;
+- Kind: `ChangedParam.kind` (`global`, `dimension`, `property` or `frame`)
+  is honoured first, so a new custom property needs no prefix. When it is
+  absent (an older host), the locator prefix `global:`, `dimension:`,
+  `property:` or `frame:` is honoured, then the name and mode decide:
   mode `frame` is a coordinate system; mode `ref` or an `@` in the name
   is a dimension; otherwise an existing global, then an existing custom
-  property, else a new global. A new custom property therefore needs the
-  `property:` prefix until the wire gains a `kind` field.
+  property, else a new global. A prefix is stripped even when `kind` is set.
 - Ref mode writes the target global once (ref_to, else the first global
   in the batch bound to the same path, else the mangled path) and links
   the dimension to it through an equation. A later value push to a

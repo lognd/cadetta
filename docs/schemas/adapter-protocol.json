@@ -103,6 +103,17 @@
       "description": "One changed parameter in a `push`.",
       "type": "object",
       "properties": {
+        "kind": {
+          "description": "What the locator addresses; absent means the adapter infers it from the name and `mode`.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LocatorKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "locator": {
           "description": "Where it lives in the native file.",
           "type": "string"
@@ -449,6 +460,31 @@
         "native_units",
         "precision",
         "platforms"
+      ]
+    },
+    "LocatorKind": {
+      "description": "What a pushed locator addresses; the wire form of a binding's `kind` (adapters.md 3).",
+      "oneOf": [
+        {
+          "description": "A global variable or equation.",
+          "type": "string",
+          "const": "global"
+        },
+        {
+          "description": "A sketch or feature dimension.",
+          "type": "string",
+          "const": "dimension"
+        },
+        {
+          "description": "A custom property.",
+          "type": "string",
+          "const": "property"
+        },
+        {
+          "description": "A coordinate system or plane feature.",
+          "type": "string",
+          "const": "frame"
+        }
       ]
     },
     "LocatorStatus": {

@@ -541,7 +541,7 @@ over stdio:
 | `emit` | IR (design), bindings, policy | files written (paths, digests), diagnostics |
 | `open` | files | `session` (handle, per-file dirty/readonly state), diagnostics |
 | `read` | file paths, or a `session` | observed IR, diagnostics |
-| `push` | `session`, `file`, changed params (path, value, locator, `mode`) | per-locator status (`pushed`, `skipped`, `rejected`, `failed`; old and new value), diagnostics |
+| `push` | `session`, `file`, changed params (path, value, locator, `mode`, optional `kind`) | per-locator status (`pushed`, `skipped`, `rejected`, `failed`; old and new value), diagnostics |
 | `regen` | `session`, targets | per-target status, rebuild diagnostics |
 | `save` | `session` | saved files (paths, digests), diagnostics |
 | `close` | `session` | - |
@@ -556,6 +556,9 @@ system named by the locator when missing, to `create_frames` adapters
 only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
 unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
+A `push` param's `kind` (`global`, `dimension`, `property`, `frame`) names what its locator
+addresses, as a binding's `kind` does (3); when it is absent the adapter infers the kind from the
+locator and `mode`, and a native prefix such as `property:` still works.
 `push` answers with a summary instead of a status per locator. The precision in force is
 `[[adapter]] precision` when set, else the one `initialize` reported (`cadetta sync` applies
 this through `Client::effective_precision`; views that never spawn an adapter, such as

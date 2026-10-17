@@ -523,6 +523,7 @@ mod tests {
                 mode: PushMode::Value,
                 ref_to: None,
                 tolerance: Some(DimTolerance::Symmetric { t: "0.1 mm".into() }),
+                kind: None,
             }],
         }
     }
@@ -639,6 +640,7 @@ mod tests {
                     mode: PushMode::Value,
                     ref_to: None,
                     tolerance: None,
+                    kind: None,
                 }],
             })
             .unwrap();

@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = [".github/workflows/solidworks.yml"]
+new = [".github/workflows/solidworks.yml", "adapters/solidworks/Cadetta.SolidWorks.sln"]
+at = "2026-10-17T07:08:17Z"
+actor = "lognd"
+rev = 1

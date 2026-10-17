@@ -283,6 +283,7 @@ mod tests {
             mode: PushMode::Value,
             ref_to: None,
             tolerance: None,
+            kind: None,
         }
     }
 

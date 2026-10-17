@@ -582,6 +582,7 @@ impl<R: BufRead, W: Write> Document for SessionDoc<'_, R, W> {
                 mode: PushMode::Value,
                 ref_to: None,
                 tolerance: i.tolerance.clone(),
+                kind: None,
             })
             .collect();
         match self.backend.session.push(&self.file, params) {
