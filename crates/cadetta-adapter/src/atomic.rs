@@ -43,6 +43,7 @@ impl Snapshot {
                     locator: it.locator.clone(),
                     value,
                     tolerance: b.tolerance.clone(),
+                    kind: it.kind,
                 })
             })
             .collect();
@@ -205,6 +206,7 @@ mod tests {
             locator: loc.into(),
             value: v.into(),
             tolerance: None,
+            kind: None,
         }
     }
 

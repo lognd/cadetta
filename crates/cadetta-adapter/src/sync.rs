@@ -11,7 +11,7 @@ use std::fmt;
 
 use crate::atomic::{AtomicOutcome, Document, matched_locators, push_atomic};
 use crate::classify::{Action, Class, R001, classify};
-use crate::rpc::DimTolerance;
+use crate::rpc::{DimTolerance, LocatorKind};
 use crate::scope::Scope;
 
 /// Diagnostic code for a push that replaces a native expression (adapters.md 2.1).
@@ -193,6 +193,9 @@ pub struct PushItem {
     pub value: String,
     /// The tolerance to write, if any.
     pub tolerance: Option<DimTolerance>,
+    /// What the locator addresses, from its binding; `None` lets the adapter infer it.
+    // frob:ticket 01M54AQVNNZJZSC03BV7G6G3QM
+    pub kind: Option<LocatorKind>,
 }
 
 /// The read-back of one pushed locator.
@@ -219,6 +222,12 @@ pub trait Backend {
 
     /// Called once per pushed file with what the push did (R004, restore, read-back).
     fn pushed(&mut self, _file: &str, _regen: bool, _outcome: &AtomicOutcome) {}
+
+    /// The binding kind of `locator` under `adapter`; `None` when unknown (the adapter infers it).
+    // frob:ticket 01M54AQVNNZJZSC03BV7G6G3QM
+    fn locator_kind(&self, _adapter: &str, _locator: &str) -> Option<LocatorKind> {
+        None
+    }
 }
 
 /// Everything a run produced.
@@ -334,6 +343,7 @@ fn execute(report: &mut Report, opts: &Options, backend: &mut dyn Backend, lock:
                     locator: e.locator.clone(),
                     value: e.ours.clone(),
                     tolerance: e.ours_tol.clone(),
+                    kind: backend.locator_kind(&adapter, &e.locator),
                 }
             })
             .collect();
@@ -471,6 +481,52 @@ mod tests {
                 e
             })
             .collect()
+    }
+
+    /// Records the kinds of written items; knows every locator as a `Property`.
+    #[derive(Default)]
+    struct KindMock {
+        written: Vec<Option<LocatorKind>>,
+    }
+
+    struct KindDoc<'a>(&'a mut KindMock);
+
+    impl Document for KindDoc<'_> {
+        fn read_current(&mut self, items: &[PushItem]) -> Vec<ReadBack> {
+            items
+                .iter()
+                .map(|i| ReadBack {
+                    locator: i.locator.clone(),
+                    value: Some(i.value.clone()),
+                    tolerance: None,
+                })
+                .collect()
+        }
+        fn write(&mut self, items: &[PushItem]) -> Result<(), String> {
+            self.0.written.extend(items.iter().map(|i| i.kind));
+            Ok(())
+        }
+        fn rebuild(&mut self) -> Result<(), String> {
+            Ok(())
+        }
+    }
+
+    impl Backend for KindMock {
+        fn document<'a>(&'a mut self, _a: &str, _f: &str) -> Box<dyn Document + 'a> {
+            Box::new(KindDoc(self))
+        }
+        fn locator_kind(&self, _a: &str, _l: &str) -> Option<LocatorKind> {
+            Some(LocatorKind::Property)
+        }
+    }
+
+    // frob:tests execute
+    #[test]
+    fn push_items_carry_the_backend_locator_kind() {
+        let es = [entry("p.x", None, "2", "1")];
+        let mut mock = KindMock::default();
+        run(&es, &Options::default(), &mut mock, &mut Lock::new());
+        assert_eq!(mock.written, vec![Some(LocatorKind::Property)]);
     }
 
     #[test]

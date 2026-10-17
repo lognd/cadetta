@@ -558,7 +558,8 @@ version; if it does not match `[[adapter]] version`, the adapter is
 unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
 A `push` param's `kind` (`global`, `dimension`, `property`, `frame`) names what its locator
 addresses, as a binding's `kind` does (3); when it is absent the adapter infers the kind from the
-locator and `mode`, and a native prefix such as `property:` still works.
+locator and `mode`, and a native prefix such as `property:` still works. `cadetta sync` sends
+the binding's `kind` with every value it pushes (geometry-pass frames send none).
 `push` answers with a summary instead of a status per locator. The precision in force is
 `[[adapter]] precision` when set, else the one `initialize` reported (`cadetta sync` applies
 this through `Client::effective_precision`; views that never spawn an adapter, such as
