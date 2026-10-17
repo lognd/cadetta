@@ -2,7 +2,8 @@
 id = "01M54RWWNC7TS11SQGSGB9FXRG"
 title = "cadetta CLI prints stdlib E002/EVAL warnings on stderr when the add-in runs it"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
