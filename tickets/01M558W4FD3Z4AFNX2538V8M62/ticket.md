@@ -2,7 +2,8 @@
 id = "01M558W4FD3Z4AFNX2538V8M62"
 title = "cadetta names opens the project file in the running SOLIDWORKS"
 type = "bug"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 2
 reporter = "lognd"
