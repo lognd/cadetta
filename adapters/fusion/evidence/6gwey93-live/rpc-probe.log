@@ -1,0 +1,10 @@
+2026-10-17T13:58:49.8261260-04:00
+> fusion.version
+{"jsonrpc": "2.0", "id": 1, "result": "2705.1.30"}
+> doc.parameters none.f3d
+{"jsonrpc": "2.0", "id": 1, "error": {"code": -32000, "message": "'none.f3d'"}}
+> doc.open urn:...NOSUCHID
+{"jsonrpc": "2.0", "id": 1, "error": {"code": -32000, "message": "3 : file not found"}}
+> doc.close none.f3d (not opened by add-in: no-op)
+{"jsonrpc": "2.0", "id": 1, "result": null}
+Fusion360 up, pid=3924 responding=True

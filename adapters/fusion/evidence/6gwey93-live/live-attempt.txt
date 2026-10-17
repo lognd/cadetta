@@ -1,0 +1,22 @@
+Fusion live run retry on nova (Windows 11 ARM64), 2026-10-17. ~6GWEY93.
+
+RESULT: PARTIAL. Fusion is now signed in (window title "Home - Autodesk
+Fusion (Student license expires in 11 days)"); no Fusion document was open
+before or after (Home tab only). The add-in now LOADS and serves JSON-RPC.
+The full open/read/push/save/close cycle was NOT run: no test design with
+user parameters is known (the add-in opens by cloud data-file id through
+app.data.findFileById, and no id was provided).
+
+Steps:
+1. Fusion360 (already running, no add-in) was restarted so runOnStartup
+   would load addin/CadettaFusion (home was empty, nothing unsaved).
+2. After ~90 s 127.0.0.1:47360 was Listening (owner Fusion360).
+3. rpc-probe.log: fusion.version -> "2705.1.30"; doc.parameters on an
+   unopened name -> error reply (KeyError); doc.open on a bogus id ->
+   "3 : file not found"; doc.close on a path the add-in did not open ->
+   no-op null. Fusion stayed responsive.
+4. Cleanup: add-in files and temp scripts removed from nova; Fusion360 left
+   running as found; SOLIDWORKS untouched; no Cadetta scheduled tasks.
+
+Needed to finish: the data-file id (urn:adsk.wipprod:dm.lineage:...) of a
+cloud design with user parameters; then run open/read/push/save/close.
