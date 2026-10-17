@@ -1,0 +1,6 @@
+kind = "field"
+field = "scope"
+new = ["adapters/fusion/**", "docs/spec/fusion.md"]
+at = "2026-10-17T18:12:53Z"
+actor = "lognd"
+rev = 1
