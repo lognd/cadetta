@@ -1,0 +1,5 @@
+kind = "evidence-bypass"
+reason = "Fusion is signed in; live run done via local-path open in ~VRQX89A (adapters/fusion/evidence/vqrx89a-live)"
+at = "2026-10-17T18:15:17Z"
+actor = "lognd"
+rev = 1
