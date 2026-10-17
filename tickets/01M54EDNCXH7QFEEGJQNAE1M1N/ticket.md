@@ -2,7 +2,8 @@
 id = "01M54EDNCXH7QFEEGJQNAE1M1N"
 title = "SOLIDWORKS add-in: wire assign array to cadetta frames output"
 type = "task"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 3
 reporter = "lognd"
