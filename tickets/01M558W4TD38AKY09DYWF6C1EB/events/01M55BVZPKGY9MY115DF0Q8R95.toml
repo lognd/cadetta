@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["Given a rebuild failure, when an undo step is refused or throws, then the remaining undos still run and R004 reports the restore also failed"]
+moved = []
+at = "2026-10-17T16:42:07Z"
+actor = "lognd"
+rev = 1
