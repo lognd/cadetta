@@ -442,6 +442,22 @@ fn render_text(r: &ImportReport) -> String {
     s
 }
 
+/// Make every native file path absolute so an adapter in another working directory (SOLIDWORKS
+/// `OpenDoc6` rejects relative paths) opens the same file the CLI means.
+// frob:ticket 01M558W4HKS0B37W2JGDWB23RN
+pub(crate) fn absolute_files(files: Vec<String>) -> Vec<String> {
+    files
+        .into_iter()
+        .map(|f| match std::path::absolute(&f) {
+            Ok(abs) => abs.to_string_lossy().into_owned(),
+            Err(e) => {
+                tracing::warn!(file = %f, error = %e, "cannot absolutize path; sending as given");
+                f
+            }
+        })
+        .collect()
+}
+
 /// Resolve an adapter command relative to the package directory; there is no PATH search
 /// (adapters.md 5), so a bare name such as `sh` names `<pkg>/sh`, never the system `sh`.
 // frob:ticket 01M4YG7D22XEEK9M3X678B88BT
@@ -497,6 +513,7 @@ fn read_adapter<'a>(
             _ => f.clone(),
         })
         .collect();
+    let files = absolute_files(files);
     tracing::info!(adapter = %id, files = files.len(), "import: reading");
     let mut client = ProcessClient::spawn_with_timeout(
         &path,
@@ -939,6 +956,15 @@ fn accept(project: &Project, scope: &[usize], parsed: &ImportArgs) -> Result<Imp
 mod tests {
     use super::*;
     use std::os::unix::fs::PermissionsExt;
+
+    // frob:tests crates/cadetta-cli/src/cmd/import.rs::absolute_files
+    #[test]
+    fn absolute_files_anchors_relative_paths_and_keeps_absolute() {
+        let out = absolute_files(vec!["rel/part.sldprt".into(), "/abs/p.sldprt".into()]);
+        assert!(FsPath::new(&out[0]).is_absolute(), "{out:?}");
+        assert!(out[0].ends_with("rel/part.sldprt"), "{out:?}");
+        assert_eq!(out[1], "/abs/p.sldprt");
+    }
 
     // frob:tests crates/cadetta-cli/src/cmd/import.rs::inactive_configurations
     #[test]

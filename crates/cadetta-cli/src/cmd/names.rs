@@ -28,7 +28,7 @@ use crate::cmd::emit::{
     DEFAULT_NATIVE_UNIT, EmitDiag, attr_point, citation_text, config_point, diag, kind_of,
     locators_for, parse_args, scope_candidates, written_for,
 };
-use crate::cmd::import::{decode_observed, program};
+use crate::cmd::import::{absolute_files, decode_observed, program};
 use crate::cmd::ir::package_id;
 use crate::config::{Adapter, BindMode};
 use crate::output::Format;
@@ -215,6 +215,7 @@ fn observe_cad(pkg: &PackageDir, adapter: &Adapter) -> Option<Vec<Ir>> {
         .filter(|f| !f.contains('*'))
         .map(|f| pkg.dir.join(f).to_string_lossy().into_owned())
         .collect();
+    let files = absolute_files(files);
     if files.is_empty() {
         tracing::info!(adapter = %adapter.id(), "names: no literal `files` to read");
         return None;

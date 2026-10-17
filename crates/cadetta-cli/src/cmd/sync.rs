@@ -49,7 +49,7 @@ use crate::cmd::emit::{
 };
 use cadetta_adapter::geometry_plan::negate_text;
 
-use crate::cmd::import::program;
+use crate::cmd::import::{absolute_files, program};
 use crate::config::{Adapter, SaveMode};
 use crate::output::Format;
 use crate::pipeline::analyze;
@@ -1225,7 +1225,7 @@ fn drive_adapter<R: BufRead, W: Write>(
     let known_files = relative_files(pkg, &files);
     let mut client = client;
     let read = client.read(&ReadParams {
-        source: ReadSource::Files(files),
+        source: ReadSource::Files(absolute_files(files)),
     });
     let read = match read {
         Ok(r) => r,
