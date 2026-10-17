@@ -2,12 +2,12 @@
 id = "01M558W4HKS0B37W2JGDWB23RN"
 title = "import: OpenDoc6 fails on relative paths"
 type = "bug"
-category = "todo"
+category = "in-progress"
 priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T15:49:47Z"
-updated = "2026-10-17T16:37:36Z"
+updated = "2026-10-17T16:37:54Z"
 scope = ["crates/**"]
 +++
 
