@@ -58,9 +58,15 @@ namespace Cadetta.SolidWorks.Com.Frames
             var existing = (IFeature)((IPartDoc)_model).FeatureByName(name);
             if (existing != null)
             {
-                if (!_model.Extension.SelectByID2(name, "COORDSYS", 0, 0, 0, false, 0, null, 0) || !_model.Extension.DeleteSelection2(0))
+                // frob:ticket 01M548FW58GD5Z00JGMAD835T5
+                // Selecting by name+"COORDSYS" does not delete live; selecting the feature itself does.
+                _model.ClearSelection2(true);
+                _model.ForceRebuild3(false);
+                var selected = existing.Select2(false, 0);
+                var deleted = selected && _model.Extension.DeleteSelection2(0);
+                if (!deleted)
                 {
-                    _log.Warn("could not remove coordinate system " + name + " for update");
+                    _log.Warn("could not remove coordinate system " + name + " for update (selected=" + selected + ")");
                     return false;
                 }
             }

@@ -1,0 +1,39 @@
+SOLIDWORKS revision 33.3.0
+DOCS at start: []
+InputDimValOnCreate was False
+PASS euler E0 (0,0,90) :: created=True
+PASS euler E1 (0,90,0) :: created=True
+PASS euler E2 (90,0,0) :: created=True
+PASS euler E3 (30,20,10) :: created=True
+PASS euler E4 (-45,60,120) :: created=True
+PASS euler E5 (10,-70,-30) :: created=True
+PASS euler E6 (120,35,-80) :: created=True
+PASS euler E7 (15,0,30) :: created=True
+PASS euler E8 (0,45,45) :: created=True
+PASS euler E9 (-170,10,170) :: created=True
+PASS euler E10 (60,-30,0) :: created=True
+DOCS after stage A: [Part9]
+PASS update create :: 
+PASS update move :: 
+PASS update readback :: 
+PASS update single feature :: Comments:CommentsFolder | Favorites:FavoriteFolder | History:HistoryFolder | Selection Sets:SelectionSetFolder | Sensors:SensorFolder | Design Binder:DocsFolder | Annotat
+PASS update idempotent same :: 
+DOCS after stage B: [Part9]
+stage C start
+select origin=True corner=True
+dim A name=D1@Sketch2@Part9.Part value=System.Double[]
+  attached count=2
+  types=11,11
+  ISketchPoint (0.01,0.01,0)
+  ISketchPoint (0.05,0.01,0)
+dim B name=D2@Sketch2@Part9.Part value=System.Double[]
+  attached count=2
+  types=25,11
+  ISketchPoint (0,0,0)
+  ISketchPoint (0.01,0.01,0)
+DOCS after stage C: [Part9]
+PASS measured_from A :: D1@Sketch2@Part9.Part => other
+PASS measured_from B :: D2@Sketch2@Part9.Part => sketch origin
+restored InputDimValOnCreate=True (found False, original value before this session was True)
+DOCS at end: []
+FAILURES: 0
