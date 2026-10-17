@@ -49,6 +49,8 @@ namespace Cadetta.SolidWorks.Cli
                 || Environment.GetEnvironmentVariable("CADETTA_SW_FAKE") == "1";
             ISwSession session;
             IDisposable? owner = null;
+            IPushHost? pushHost = null;
+            Cadetta.SolidWorks.Read.ReadService? readService = null;
             if (fake)
             {
                 log.Info("using the fake session");
@@ -61,6 +63,8 @@ namespace Cadetta.SolidWorks.Cli
                 var com = Cadetta.SolidWorks.Com.SwComSession.Attach(log);
                 owner = com.Connection;
                 session = com;
+                pushHost = com.PushHost(log);
+                readService = com.ReadService(log);
 #else
                 log.Error("built without the COM session; pass --fake");
                 return 2;
@@ -71,7 +75,7 @@ namespace Cadetta.SolidWorks.Cli
             var output = new StreamWriter(Console.OpenStandardOutput(), utf8) { NewLine = "\n", AutoFlush = true };
             try
             {
-                return new RpcServer(session, log).Run(input, output);
+                return new RpcServer(session, log, readService, pushHost).Run(input, output);
             }
             finally
             {

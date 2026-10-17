@@ -43,6 +43,14 @@ namespace Cadetta.SolidWorks.Com
             return svc.Read(file);
         }
 
+        /// <summary>A push host over this application (frob:ticket 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
+        public IPushHost PushHost(Log log) => new Session.SwComPushHost(_sw, log);
+
+        /// <summary>A cached read service over this application (frob:ticket 01M5496CQE8FPX6F7PD9Y6EMX0).</summary>
+        public Cadetta.SolidWorks.Read.ReadService ReadService(Log log) =>
+            new Cadetta.SolidWorks.Read.ReadService(new Read.SwComDocumentReader(_sw, log),
+                new Cadetta.SolidWorks.Cache.ReadCache(new DiskFileReader(), log), log);
+
         /// <summary>Authors the read-verification fixture next to a source part (frob:ticket 01M4SV2TKZD26CK9FFA1EJXSV4).</summary>
         public string MakeReadFixture(string sourcePart, Log log) => new Read.SwComReadFixture(_sw, log).Build(sourcePart);
 
