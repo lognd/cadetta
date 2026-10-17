@@ -2,7 +2,8 @@
 id = "01M555TVRF47KEJ406NPQMSJDX"
 title = "Fusion adapter: spec and Python external adapter (read, drive)"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 reporter = "lognd"
