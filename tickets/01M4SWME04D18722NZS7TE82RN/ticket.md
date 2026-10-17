@@ -2,7 +2,8 @@
 id = "01M4SWME04D18722NZS7TE82RN"
 title = "Assembly read, R011 and component field"
 type = "story"
-category = "in-progress"
+category = "done"
+outcome = "done"
 priority = "medium"
 points = 5
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
