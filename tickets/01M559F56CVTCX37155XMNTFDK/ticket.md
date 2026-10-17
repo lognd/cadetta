@@ -7,8 +7,12 @@ priority = "medium"
 points = 3
 reporter = "lognd"
 created = "2026-10-17T16:00:10Z"
-updated = "2026-10-17T16:05:23Z"
+updated = "2026-10-17T16:05:28Z"
 scope = ["adapters/solidworks/**"]
+
+[[acceptance]]
+text = "Given a scalar (pattern count) dimension, when pushed or read through SwComPushDocument, then its value is not scaled by the length factor"
+bound = false
 +++
 
 found while working ~PF7XCNP; see adapters/solidworks/SMOKE.md
