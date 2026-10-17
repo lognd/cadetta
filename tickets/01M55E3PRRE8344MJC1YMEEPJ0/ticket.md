@@ -4,9 +4,10 @@ title = "import --update writes a SOLIDWORKS unitless count (pattern count) as 4
 type = "bug"
 category = "todo"
 priority = "medium"
+points = 2
 reporter = "lognd"
 created = "2026-10-17T17:21:18Z"
-updated = "2026-10-17T17:21:18Z"
+updated = "2026-10-17T17:27:17Z"
 scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-adapter/src/read_units.rs"]
 +++
 
