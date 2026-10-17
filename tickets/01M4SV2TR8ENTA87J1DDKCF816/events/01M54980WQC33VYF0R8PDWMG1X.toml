@@ -1,0 +1,7 @@
+kind = "field"
+field = "scope"
+old = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**"]
+new = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Push/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Push/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Push/**"]
+at = "2026-10-17T06:37:01Z"
+actor = "lognd"
+rev = 1

@@ -36,6 +36,16 @@ namespace Cadetta.SolidWorks.Com
         /// <summary>The API probe for this application (solidworks.md 4).</summary>
         public ISwApiProbe ApiProbe(Log log) => new SwComApiProbe(_sw, log);
 
+        /// <summary>Reads a document into observed IR through the COM reader (frob:ticket 01M4SV2TKZD26CK9FFA1EJXSV4).</summary>
+        public Cadetta.SolidWorks.Protocol.ReadResult ReadObserved(string file, Log log)
+        {
+            var svc = new Cadetta.SolidWorks.Read.ReadService(new Read.SwComDocumentReader(_sw, log), null, log);
+            return svc.Read(file);
+        }
+
+        /// <summary>Authors the read-verification fixture next to a source part (frob:ticket 01M4SV2TKZD26CK9FFA1EJXSV4).</summary>
+        public string MakeReadFixture(string sourcePart, Log log) => new Read.SwComReadFixture(_sw, log).Build(sourcePart);
+
         /// <summary>The SOLIDWORKS revision number.</summary>
         public string ProductVersion() => _sw.RevisionNumber();
     }
