@@ -7,8 +7,12 @@ priority = "medium"
 points = 2
 reporter = "lognd"
 created = "2026-10-17T17:21:18Z"
-updated = "2026-10-17T17:27:25Z"
+updated = "2026-10-17T17:28:39Z"
 scope = ["crates/cadetta-adapter/src/import/**", "crates/cadetta-adapter/src/read_units.rs"]
+
+[[acceptance]]
+text = "import --update never writes an assumed unit onto a bare count literal"
+bound = false
 +++
 
 Found live on nova under ~W5MBBTB. The SW adapter reads D1@LPattern1 as text 4 with unit empty (Count kind). sync compares it fine (4 -> 4), but 'cadetta import solidworks <part> --update --write' proposes and writes bolt_count = 4mm into lib.cdt, because an empty/absent wire unit resolves to the adapter native unit (mm). Needs a way for an adapter to say dimensionless (e.g. explicit unit '1') or the import writer to honour the param's declared type. Evidence: adapters/solidworks/evidence/w5mb-live/run5.log.

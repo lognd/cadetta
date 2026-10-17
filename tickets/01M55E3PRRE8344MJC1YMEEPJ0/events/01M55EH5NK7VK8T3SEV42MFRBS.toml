@@ -1,0 +1,7 @@
+kind = "field"
+field = "acceptance"
+new = ["import --update never writes an assumed unit onto a bare count literal"]
+moved = []
+at = "2026-10-17T17:28:39Z"
+actor = "lognd"
+rev = 1
