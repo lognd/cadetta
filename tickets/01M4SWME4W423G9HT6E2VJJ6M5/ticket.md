@@ -8,12 +8,12 @@ points = 2
 parent = "01M4SV2TCZM23R46EM75RYSA3B"
 reporter = "lognd"
 created = "2026-10-13T05:44:13Z"
-updated = "2026-10-17T05:17:20Z"
+updated = "2026-10-17T05:17:43Z"
 persona = "design engineer"
 capability = "make check fast"
 idempotency_key = "replan14:sw-cache"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Cache/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Cache/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Cache/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Cache/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Cache/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Cache/**"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Cache/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Cache/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Cache/**", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Cache/**"]
 
 [[links]]
 kind = "blocked-by"
