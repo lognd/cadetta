@@ -7,8 +7,8 @@ priority = "medium"
 points = 5
 reporter = "lognd"
 created = "2026-10-17T14:56:39Z"
-updated = "2026-10-17T15:18:19Z"
-scope = ["adapters/fusion/**", "docs/spec/fusion.md", "docs/spec/adapters.md"]
+updated = "2026-10-17T15:24:10Z"
+scope = ["adapters/fusion/**", "docs/spec/fusion.md", "docs/spec/adapters.md", ".github/workflows/fusion.yml"]
 
 [[acceptance]]
 text = "docs/spec/fusion.md states the Fusion adapter: user-parameters mapping, units, read and drive, atomic push, transport (Fusion Python runs only inside Fusion, so an in-Fusion add-in speaks JSON-RPC to the cadetta process)"
