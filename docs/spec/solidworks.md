@@ -236,6 +236,64 @@ native units are mm and deg).
 - After writing, one `ForceRebuild3`; a rebuild error is R004 (failed)
   and every write is undone from the recorded undo list.
 
+### 5.3 Regeneration
+
+Regeneration is a full `ForceRebuild3` of a document. It runs in two
+places, both through the same COM call.
+
+Triggers:
+
+- Inside `push`: after any locator was written, `PushService.Finish`
+  rebuilds the document once. A push that wrote nothing logs "nothing
+  changed; no rebuild" and does not rebuild.
+- The `regen` RPC method: `RpcServer` hands `params.targets` (at least
+  one file, else `InvalidParams`) to `RegenService.Regen`, which
+  rebuilds each target in order. `cadetta sync` calls it with one file
+  as the `rebuild` step of its atomic push (`SessionDoc.rebuild` in
+  `crates/cadetta-cli/src/cmd/sync.rs`), after `push` for that file.
+
+What `regen` does, per target:
+
+1. `SwComRegenHost.Open` reuses an already open copy
+   (`GetOpenDocumentByName`), otherwise opens it silently with
+   `OpenDoc6`; the document type comes from the extension (`.sldasm`,
+   `.slddrw`, else part). Disposing the handle closes only documents
+   the adapter opened. An open failure throws
+   `InvalidOperationException`.
+2. Guard: a read-only or checked-out document, or one with unsaved
+   edits the adapter did not make (`GetSaveFlag`), is not rebuilt. It
+   gets R009 (error) and status `failed`.
+3. Otherwise `ForceRebuild3(false)` runs, then the feature tree is
+   walked and every feature with a non-zero error code that is not a
+   warning becomes a `RebuildError` (name, code). If the call
+   returned false with no feature errors, one nameless error
+   "ForceRebuild3 reported failure" is reported.
+4. No errors gives status `ok`. Each error gives one R004 (error)
+   diagnostic, `rebuild failed at feature '<name>': <message>` or
+   `rebuild failed: <message>` when no feature is named, and status
+   `failed`.
+
+The result carries one `{target, status}` per target plus all
+diagnostics; one failed target does not stop the others.
+
+Failure handling:
+
+- In `push`, a failed rebuild is R004 and the adapter undoes every
+  write from the recorded undo list (reverse order), rebuilds again,
+  and reports "the pre-push values were restored", or "the restore
+  also failed; the document may be inconsistent" when that second
+  rebuild fails. Locators that were `pushed` become `failed`, and
+  `RebuildFailed` stops the following `save` from writing the document.
+- In the standalone `regen`, nothing is restored; the failure is
+  reported only. In `cadetta sync`, a `failed` target makes the
+  rebuild step return an error (`rebuild of <file> failed`), which the
+  atomic push treats as a failed rebuild. An RPC-level failure
+  (`COMException` or similar) becomes a server error `regen failed:
+  <message>` and the sync step fails.
+- R004, R009 and R010 diagnostics from the adapter block the sync's
+  `save`, so a failed regeneration never writes files; with
+  `--no-regen` the save is skipped as well.
+
 ## 6. Testing
 
 - `Cadetta.SolidWorks.Tests` covers Core on Linux and Windows.
