@@ -13,7 +13,7 @@ persona = "design engineer"
 capability = "adopt properties and configurations"
 idempotency_key = "replan14:sw-props"
 labels = ["creates:adapters/solidworks/src/Cadetta.SolidWorks.Core/Props/**", "creates:adapters/solidworks/src/Cadetta.SolidWorks.Com/Props/**", "creates:adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Props/**"]
-scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Props/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Props/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Props/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/NativeModel.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/ObservedIrBuilder.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/SwComDocumentReader.cs"]
+scope = ["adapters/solidworks/src/Cadetta.SolidWorks.Core/Props/**", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Props/**", "adapters/solidworks/tests/Cadetta.SolidWorks.Tests/Props/**", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/NativeModel.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Core/Read/ObservedIrBuilder.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Com/Read/SwComDocumentReader.cs", "adapters/solidworks/src/Cadetta.SolidWorks.Tests/Read/ObservedIrBuilderTests.cs"]
 
 [[links]]
 kind = "blocked-by"
