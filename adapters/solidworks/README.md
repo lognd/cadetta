@@ -15,6 +15,18 @@ Only `Com` and `AddIn` reference the SOLIDWORKS interop assemblies, via
 `C:\Program Files\SOLIDWORKS Corp\SOLIDWORKS\api\redist`). They are never
 committed.
 
+## Shipped in 0.1.0
+
+The protocol executable (`cadetta-solidworks`), the add-in (`Cadetta` menu
+and task pane: Link, Unlink, Sync preview, Sync, Why, Assign array; see
+`src/Cadetta.SolidWorks.AddIn/README.md`), the snapshot and atomic restore,
+frame and coordinate-binding support, and twelve recorded transcript
+fixtures (`tests/Cadetta.SolidWorks.Tests/Transcripts/`, replayed in CI
+against fakes). It was live-tested against SOLIDWORKS 2025 (revision 33.3.0)
+on nova: `SMOKE.md` has the release smoke results and `evidence/` the logs
+of each live run (`evidence/<ticket>-live/`). `API-SURFACE.md` records the
+probed API results and `DEVELOPING.md` the bootstrap.
+
 ## Build and test
 
 ```
@@ -42,18 +54,22 @@ python3 tools/gen_protocol.py --check  # CI: fail if stale
 JSON-RPC 2.0 on stdio. Stdout is protocol only; logs go to stderr,
 filtered by `CADETTA_LOG` (`error|warn|info|debug|trace`, optionally
 `cadetta_solidworks=LEVEL`). `--fake` (or `CADETTA_SW_FAKE=1`) uses the
-in-memory session. Implemented so far: `initialize`, `shutdown`, `read` and `push`
-(one file per call through `ReadService`, and so through `ReadCache` when
-the server was built with one; several files or a session source answer
--32602, a file that cannot be opened -32000; a server built without a
-`ReadService` answers -32601). `push` opens the file through an `IPushHost`
-(the COM host reuses an open copy, otherwise opens it silently and closes it
-afterwards), runs `PushService`, then the save step in the default `after_sync`
-mode, and returns one status per locator; a file that cannot be opened answers
--32000, a missing `file` -32602 and a server without a host -32601. Without
-`--fake` the executable wires the COM read service (with `ReadCache`) and push
-host; the fake session has neither. Other methods answer -32601 until their
-tickets land.
+in-memory session. Methods: `initialize`, `shutdown`, `read`, `push`, `regen`,
+`open`, `save` and `close`. `read` handles one file per call through
+`ReadService`, and so through `ReadCache` when the server was built with one
+(several files or a session source answer -32602, a file that cannot be
+opened -32000; a server built without a `ReadService` answers -32601).
+`push` opens the file through an `IPushHost` (the COM host reuses an open
+copy, otherwise opens it silently and closes it afterwards), runs
+`PushService`, then the save step in the default `after_sync` mode, and
+returns one status per locator; a file that cannot be opened answers -32000,
+a missing `file` -32602 and a server without a host -32601. `regen` rebuilds
+each target and reports R004 per failed feature (a server without a regen host
+answers -32601). `open` returns a session handle only: no document is held,
+each push opens, saves and closes its own file, so `save` and `close` have
+nothing left to do. Without `--fake` the executable wires the COM read
+service (with `ReadCache`), push host and regen host; the fake session has
+none of them. Any other method answers -32601.
 
 ## Session lifetime
 
@@ -68,8 +84,10 @@ Before any push, `BusyGuard.Check` (`Core/Busy`) asks an `IBusyProbe`
 whether a modal dialog is open or a command is active; either refuses
 the push with R009 and nothing is written (adapters.md 2.3). The Com
 build's `SwComBusyProbe` uses `CommandInProgress` and a disabled main
-window. The guard is not yet wired into a `push` method (it does not
-exist yet).
+window. `DocumentGate` (`Core/Commands`) applies it, with the read-only and
+sync-lock checks, to the add-in's link commands. The `push` RPC refuses a
+read-only document or one holding unsaved edits (R009) in `PushService`, but
+does not call `BusyGuard`.
 
 ## Transient COM faults
 

@@ -157,9 +157,11 @@ by the CLI. `evaluate()` runs the `ir` verb and validates its JSON with
 the generated models in `cadetta.models.ir` (regenerate with
 `datamodel-codegen` from `docs/schemas/cadetta.ir.1.json`).
 
-Every query and mutation verb has a method; `init`, `cite pin` and the
-`lock` maintenance verbs stay CLI-only (they edit repository files
-around the project, not the design). Each returns `Result[Model, CadettaError]`
+Every query and mutation verb has a method except `init`, `cite pin`,
+`lock verify`, `ir --observed`, `frames`, `display`, `lsp`, `ir-validate`
+and `lint FILE`, which stay CLI-only (they edit repository files around
+the project, read no design, or serve an editor). `names --observe` is
+not offered either. Each returns `Result[Model, CadettaError]`
 where the model is generated from the verb's JSON schema (section 1),
 so a binding returns exactly what the CLI's JSON returns.
 
@@ -170,19 +172,18 @@ so a binding returns exactly what the CLI's JSON returns.
 | `project.modules` | the module paths under `src`, per package | `list[str]` |
 | `project.update(name=None)` | `update [NAME]` | `update.json` |
 | `project.evaluate()` | `ir` (design) | design IR (`cadetta.ir/1`) |
-| `project.ir(observed=None)` | `ir [--observed]` | IR (`cadetta.ir/1`) |
 | `project.check(release=False, as_of=None, module=None)` | `check` | `check.json` |
 | `project.why(path)` | `why` | `why.json` |
 | `project.impact(path)` | `impact PATH` | `impact.json` |
-| `project.impact_since(rev="HEAD", worktree=False)` | `impact --since` / `--worktree` | `impact.json` |
-| `project.why_stale(obligation)` | `why --stale` | `why.json` |
+| `project.impact_since(since=None)` | `impact --since REV` (`--worktree` when `since` is `None`) | `impact-since.json` |
+| `project.why_stale(obligation, role=None)` | `why --stale` | `why.json` |
 | `project.impact_swap(slot, alternate)` | `impact --swap SLOT ALT` | `swap.json` |
-| `project.swap(slot, alternate, reason)` | `swap` | `swap.json` |
+| `project.swap(slot, alternate, reason, as_=None)` | `swap` | `swap.json` |
 | `project.compare(interface)` | `compare` | `compare.json` |
 | `project.obligations(stale=False, role=None, release=False, as_of=None)` | `obligations` | `obligations.json` |
-| `project.solve(names=None, variants=False)` | `solve` | `solve-report.json` |
+| `project.solve(names=None, variants=False)` | `solve` | `SolveReport` (hand-written; text parsed) |
 | `project.emit(adapters=None)` | `emit` | `emit.json` |
-| `project.sync(...)` | `sync` | `sync.json` |
+| `project.sync(adapters=None, dry_run=False, only=None, force_design=False, no_regen=False, module=None)` | `sync` | `sync.json` |
 | `project.import_(adapter, files, accept=False, update=False, write=False)` | `import` | `import.json` |
 | `project.ack(selector, role, reason, baseline=False, release=False, dry_run=False, as_=None)` | `ack` | `ack.json` |
 | `project.explain(code)` | `explain` | `explain.json` |
@@ -197,11 +198,11 @@ Decided in implementation (mutation and IO verbs): `update`, `emit`,
 `ImportReport` and `AckOutput` models; `import_(accept=True)` runs
 `import --accept` (the adapter and files are ignored). `sync` returns the
 generated `SyncReport` (`sync.json`: records, diagnostics, regen, emitted,
-manual, lock_written) and a payload failing the schema is `Err`. `solve` has
-no JSON schema yet (the CLI prints it as text), so it returns a hand-written
-`SolveReport` (`solved`, `fresh`, `text`) parsed from the `solved PATH` and
-`fresh PATH` lines, replaced by a generated model when the schema
-lands. The code is `cadetta.project_ops`.
+manual, lock_written) and a payload failing the schema is `Err`. `solve`
+still returns a hand-written `SolveReport` (`solved`, `fresh`, `text`) parsed
+from the CLI's text lines `solved PATH` and `fresh PATH`, although the CLI
+now has `solve-report.json` (`cadetta.solve-report/1`); moving to a generated
+model is not done yet. The code is `cadetta.project_ops`.
 
 `slot` is a canonical `Type/part` path (`acme.rover::Rover/wheel`) and
 `alternate` a component name, qualified when it lives in another

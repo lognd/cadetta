@@ -485,7 +485,7 @@ tolerances` (`"drive"`). It has effect only in adapters whose
   the conversion is exact (`0.5in` equals `12.7mm`); anything else
   (other dimension, affine unit, pi, non-terminating) is compared as
   text.
-- `sync` does not yet drive `ref`-mode locators; they are skipped.
+- `sync` does not push `ref`-mode locators; it checks their link instead (3).
 
 ## 3a. What every emitter spec states
 
@@ -555,12 +555,13 @@ adapter how to write a dimension (`ref`: create or keep the link to
 system named by the locator when missing, to `create_frames` adapters
 only). `initialize` reports the adapter
 version; if it does not match `[[adapter]] version`, the adapter is
-unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and one whose
+unavailable (R008, exit 2); so is one whose `platforms` exclude the host's, and
+one whose `push` answers with a summary instead of a status per locator.
 A `push` param's `kind` (`global`, `dimension`, `property`, `frame`) names what its locator
 addresses, as a binding's `kind` does (3); when it is absent the adapter infers the kind from the
 locator and `mode`, and a native prefix such as `property:` still works. `cadetta sync` sends
 the binding's `kind` with every value it pushes (geometry-pass frames send none).
-`push` answers with a summary instead of a status per locator. The precision in force is
+The precision in force is
 `[[adapter]] precision` when set, else the one `initialize` reported (`cadetta sync` applies
 this through `Client::effective_precision`; views that never spawn an adapter, such as
 `names` and the no-spawn emitted-values view, use the emitter default). Built-in adapters
@@ -614,7 +615,7 @@ Wire details fixed by the host (`cadetta-adapter`, `rpc`):
 
 ## 6. Target matrix
 
-Planned support, not a 0.1.0 promise beyond the rows marked 0.1.0.
+Rows marked 0.1.0 shipped in 0.1.0; `later` rows are planned, not promised.
 `drive` includes pushing into live documents, so there is no separate
 SOLIDWORKS `emit`: writing a text file for a part to link is the
 built-in `sw-equations` row.
@@ -627,7 +628,7 @@ built-in `sw-equations` row.
 | FreeCAD | external, Python | 0.1.0 | 0.1.0 | 0.1.0 | Spreadsheet aliases; headless `freecadcmd` for CI |
 | SOLIDWORKS | external, C# | - | 0.1.0 | 0.1.0 | COM API from .NET: global variables, dimensions and their tolerances, custom properties, coordinate systems, component transforms, rebuild (push covers emit); plus an add-in for linking by selection (solidworks.md); Windows only |
 | Onshape | external | - | later | later | REST: variable studios, part studio variables |
-| Fusion | external, Python | - | 0.1.0 | 0.1.0 | user parameters through an in-Fusion add-in over local JSON-RPC (fusion.md); live run pending |
+| Fusion | external, Python | - | 0.1.0 | 0.1.0 | user parameters through an in-Fusion add-in over local JSON-RPC (fusion.md); live-tested on Fusion 2705 (fusion.md 8) |
 | Ansys | external, Python | - | later | later | Workbench input parameters through PyAnsys, with a separate update (`regen`) cycle (ansys.md); spec only, needs an Ansys license and host |
 | Inventor | external | - | later | later | parameters API |
 | OpenSCAD / CadQuery | built-in | later | - | - | `-D` defines / Python constants |
@@ -648,7 +649,8 @@ FreeCAD is the reference external adapter for CI: it is the only target
 that exercises `read` and `drive` without a license or Windows, so the
 protocol's conformance tests run against it. Fusion (fusion.md) is
 the second Python adapter; CI runs its fake-session transcript tests
-without Fusion, and a live run on a Fusion host is a manual step.
+without Fusion, and its live run on a Fusion host is a manual step
+(evidence in `adapters/fusion/evidence/`).
 
 ### 6.1 FreeCAD emit
 
@@ -717,7 +719,8 @@ document recomputed, and the diagnostic says whether the restore held.
 `save` writes only modified files whose rebuild did not fail and returns
 `blake3` digests of the saved bytes. `close` closes only documents the
 adapter opened. `read` accepts a `session`, reading the open documents.
-The live FreeCAD calls are not exercised in CI without `freecadcmd`.
+The live FreeCAD calls are not exercised in CI without `freecadcmd`; the
+live round trip ran against FreeCAD 1.1.4 (`adapters/freecad/evidence/9ksan8k-live/`).
 
 ## 7. Import
 

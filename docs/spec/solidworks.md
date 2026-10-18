@@ -22,7 +22,7 @@ One C# solution in `adapters/solidworks/`:
 | `Cadetta.SolidWorks.Com` | net48 | `ISwSession` over the SOLIDWORKS COM API; the only project that references the interop assemblies | no |
 | `cadetta-solidworks` | net48 console | the protocol executable (adapters.md 5): `read` and `drive`, stdio JSON-RPC | yes, against a fake session |
 | `Cadetta.SolidWorks.AddIn` | net48 COM add-in | the task pane (section 3) | no |
-| `Cadetta.SolidWorks.Tests` | net8.0 | Core tests and transcript replay (section 6) | yes |
+| `Cadetta.SolidWorks.Tests` (`src/`), plus `AddIn`, `Commands` and `Transcripts` test projects under `tests/Cadetta.SolidWorks.Tests/` | net8.0 | Core tests, add-in logic and transcript replay (section 6) | yes |
 
 - The interop assemblies come from the local SOLIDWORKS install
   (`SOLIDWORKS_API_DIR`, default the install's `api/redist`); they are
@@ -149,6 +149,13 @@ Rust.
   | Show path | any bound item | path, value, tolerance, citation, `cadetta why` |
   | Sync, Dry run | none | runs `cadetta sync [--dry-run]` and shows the report |
 
+- Shipped in 0.1.0: the `Cadetta` menu and task pane expose Link, Unlink,
+  Sync preview, Sync, Why and Assign array (`AddIn/Commands/CommandActions`).
+  Bind as value, Assign part, Create datum frames and Show path have no
+  menu verb yet: bind with `cadetta bind`, and create datum frames with
+  `cadetta sync --only <datum paths>` under `datums = "create"`.
+  Live-tested on nova with SOLIDWORKS 2025 (`adapters/solidworks/SMOKE.md`,
+  `evidence/`).
 - The pane refuses commands on a document that a running `sync` has
   open (adapters.md 2.2), and `sync` treats a document the add-in left
   dirty as R009, as for any dirty document.
@@ -311,7 +318,7 @@ Failure handling:
   wraps the push, regen and read seams (`IPushHost`, `IRegenHost`,
   `INativeDocumentReader`) in a `Tape` that records each seam call plus
   the full JSON-RPC exchange, one JSON line per call, with the per-run
-  temp path replaced by `{file}`. Eleven fixtures (`push-ok`, `push-q004`,
+  temp path replaced by `{file}`. Twelve fixtures (`product-version`, `push-ok`, `push-q004`,
   `push-r004-rebuild`, `push-r006-equation`, `push-r009-readonly`,
   `push-r010-driven`, `regen-clean`, `regen-r004`, `regen-r009-dirty`,
   `read-observed`, `read-missing`) were recorded from in-memory fakes, not

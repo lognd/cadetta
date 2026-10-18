@@ -481,9 +481,11 @@ Pipeline (cadetta-sema `fitderive`): `cadetta check` evaluates each
 component fit's operands and required range after the member values are
 known, runs the fit analysis, and hands the result to lowering, which
 records it in `Component.fits` (ir.md 3) so the IR lint F004 sees the
-clearance and `required` bound. Fits whose operands are not evaluated
-members (component arguments, part instances) or whose analysis fails
-are not yet lowered.
+clearance and `required` bound. A fit of a parameterized component is
+derived again per instance (`Parent/part.fit`), reading argument operands
+from the instance's evaluated members; a file-scope fit is lowered into
+the component owning its first operand. Fits whose operands are not
+evaluated members or whose analysis fails are not lowered.
 
 ### 3.8 Functions, enums, processes
 
@@ -966,7 +968,8 @@ syntactically, either bare (`P`, in the enclosing component) or as
 bound share a name, `P.min`/`P.max` read the parameter and `satisfies
 P` reads the bound. A bound's limits are the nominals of its
 expressions. A quantifier ranges over an array literal, one result per
-instance; ranging over a `part` array waits for the parts work. A
+instance, and it may range over a `part` array (one result per
+element instance). A
 `require` carries its own citation, else its component's, and is
 marked as an obligation (obligations.md).
 

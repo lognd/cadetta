@@ -261,10 +261,10 @@ above. `float` is one clearance hole's half, `(clearance_hole - major) / 2`,
 taken from the ISO 273 class nominal and independent of any tolerance on
 the user's hole; with `nut = true` (`onto` is a second clearance pattern)
 both halves count, so `aligned` gets one half fixed and both halves with
-a nut. `locating` is accepted, but the placement float it
-removes is not yet applied to a joint's edge: `cadetta-geometry`
-can evaluate it (geometry.md 5.2) and the lowering from a joint is
-still open. `ButtonHead` (ISO 7380) and `FlatHead` (ISO 10642) have counterbore
+a nut. A non-`locating` joint's float is lowered onto
+the placement edge between the two parts its patterns lie on, and
+`locating = true` removes it (geometry.md 5.2; `cadetta-sema`
+`boltfloat`). `ButtonHead` (ISO 7380) and `FlatHead` (ISO 10642) have counterbore
 data for the sizes their standards cover (M3 to M16 and M3 to M20);
 `counterbore = true` on another size is E007 (no row). The ISO 7380
 pocket is derived from the head, and the ISO 10642 pocket is the

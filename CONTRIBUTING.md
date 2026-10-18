@@ -1,8 +1,9 @@
 # Contributing to cadetta
 
 cadetta is a parameter language and linter for 3D CAD. It is a Rust
-workspace (`crates/cadetta-*`, binary `cadetta`) plus a Python external
-adapter for FreeCAD (`adapters/freecad`). The work is tracked with
+workspace (`crates/cadetta-*`, binary `cadetta`), bindings (`bindings/python`,
+`bindings/c`) and external CAD adapters (`adapters/freecad`, `adapters/fusion`
+in Python, `adapters/solidworks` in C#). The work is tracked with
 [frob](https://github.com/lognd/frob) tickets and the architecture with
 grimble. Thanks for considering a contribution.
 
@@ -35,9 +36,14 @@ Rust, from the repository root:
 
 ```bash
 cargo fmt --all --check
-cargo clippy --workspace --all-targets -- -D warnings
-cargo nextest run --workspace
+cargo clippy --workspace --exclude cadetta-py --exclude cadetta-capi --all-targets -- -D warnings
+cargo nextest run --workspace --exclude cadetta-py --exclude cadetta-capi
+cargo build -p cadetta-capi -p cadetta && cargo test -p cadetta-capi
 ```
+
+Python binding, inside `bindings/python` (`uv run maturin develop` first):
+`uv run ruff check`, `uv run python scripts/gen_models.py --check`,
+`uv run pytest`. Editor grammars: `uv run editors/generate.py --check`.
 
 Python, inside `adapters/freecad`:
 
@@ -47,7 +53,12 @@ uv run ruff check
 uv run ruff format --check
 ```
 
-Then `frob check`.
+Fusion adapter, inside `adapters/fusion`: `uv sync`, `uv run ruff check`,
+`uv run pytest`. SOLIDWORKS adapter, inside `adapters/solidworks`: the
+`dotnet build` and `dotnet test` commands in its README (never the whole
+`.sln` without SOLIDWORKS).
+
+Then `grimble check` if you touched `design/`, and `frob check`.
 
 ## Ticket workflow (maintainers and agents)
 
@@ -102,7 +113,9 @@ Pushing a tag `cadetta-v<version>` (matching the workspace version) runs
 `.github/workflows/release.yml`. Crates publish to crates.io from the
 protected `crates-io` environment in dependency order; `cadetta`
 publishes to PyPI from the protected `pypi` environment and
-`cadetta-freecad` from `pypi-freecad`. All use trusted publishing.
+`cadetta-freecad` from `pypi-freecad`. All use trusted publishing. The
+C ABI (`cadetta-capi`) ships as per-platform archives attached to the
+GitHub release.
 
 ## Reporting bugs and proposing features
 

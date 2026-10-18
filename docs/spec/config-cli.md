@@ -158,6 +158,7 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `solve [GLOB...] [--module PATH] [--variants]` | Run solvers, refresh result files (solvers.md). | writes `<stem>.out.json` | diagnostics >= `fail_on` (S005 is one) | `solve-report.json` (`cadetta.solve-report/1`: per-solver solved, fresh or failed, plus a `diagnostics` list with one error per failed solver; config errors, exit `2`, are not diagnostics) |
 | `update [NAME]` | Re-resolve dependencies (all, or NAME) and write the `package` records of the lock (packages.md 1). | writes `cadetta.lock` | E012, E013 | `update.json` |
 | `lock verify [--format json]` | Check the lock is well formed, sorted, unique and policy-conformant; list merge-invalidated attestations (obligations.md 3). Text prints `cadetta.lock: clean` or one line per finding; JSON is `cadetta.lock/1`. A missing lock is clean; an unparsable lock exits `2`. | reads, lock | any finding (exit `1`) | `lock.json` |
+| `lock merge BASE OURS THEIRS`, `lock tidy` | Merge driver; drop superseded records. Library only (`cadetta-obligations`); not yet CLI verbs (only `lock verify` is wired). | `cadetta.lock` | - | - |
 | `why PATH` | Upstream derivation. | reads | never | `why.json` |
 | `why --stale OBLIGATION` | Nearest changed upstream node, old and new values. | reads, lock | never | `why.json` |
 | `impact PATH` | Downstream effects of changing PATH. | reads | never | `impact.json` |
@@ -167,7 +168,6 @@ unavailable (R008 during `sync`), unknown path or selector.
 | `compare IFACE` | Implementers of an interface side by side. | reads | never | `compare.json` |
 | `obligations [--stale] [--role R] [--release] [--as-of DATE]` | Open and stale obligations: every `check`, every `ots` component and every cite item an `ots` reaches (`citation:PATH`). | reads, lock | any obligation required for the gate is open or stale | `obligations.json` |
 | `ack SELECTOR --role R --reason "..." [--baseline] [--release] [--dry-run] [--as EMAIL]` | Attest at current digests; `--baseline` records reason `baseline` (obligations.md 4); `waiver:GLOB` records reviewed waivers' digests. | writes `cadetta.lock` | never | `ack.json` |
-| `lock merge\|verify\|tidy` | Merge driver; list attestations a merge invalidated; drop superseded records. | `cadetta.lock` | `verify` finds invalid records | `lock.json` |
 | `cite pin NAME [--as-of DATE]` | Download a citation's `url` into `cites/` and add its `file` field. | writes `cites/`, source | never (errors exit 2) | - |
 | `cite list [--format ieee\|bibtex\|json] [--module PATH] [GLOB...]` | The reference list of the citations the scoped design reaches (language.md 3.9.1). | reads | never | `cite-list.json` |
 | `names [ADAPTER-ID] [--observe] [--module PATH] [GLOB...]` | Every in-scope bindable path with its kind, emit value, tolerance, citation, doc, created native name (adapters.md 3.1) and binding state (explicit, implicit, unbound). | reads; with `--observe` and a `read` adapter, reads CAD | R013 | `names.json` |

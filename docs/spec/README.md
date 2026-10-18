@@ -35,6 +35,8 @@ dimension by hand.
 | [geometry.md](geometry.md) | Positions and datums: datum-typed points, placement trees, alignment checks. |
 | [bindings.md](bindings.md) | Language bindings: the JSON catch-all, the per-language layout, and the Python package. |
 | [solidworks.md](solidworks.md) | The SOLIDWORKS adapter and add-in: workflow, linking by selection, native mapping, testing. |
+| [fusion.md](fusion.md) | The Fusion adapter. |
+| [ansys.md](ansys.md) | The Ansys adapter (specification only; no implementation yet). |
 
 Decisions are recorded in `docs/decisions/`; architecture is modeled in
 `design/model.grmb` (grimble) and work is tracked as frob tickets.

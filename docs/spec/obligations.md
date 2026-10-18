@@ -232,7 +232,7 @@ timestamps finer than a date, so merges are reviewable:
 - `swap` records a part swap (who, why, which alternate) so "why is this
   wheel here" survives squash merges. `cadetta swap SLOT NEW --reason
   "..."` applies the suggested edit of `impact --swap` (5.1) and appends
-  the record. Swap records are an audit trail: `lock tidy` keeps them.
+  the record. Swap records are an audit trail: lock tidy keeps them.
 
 Solver results are not in the lock. Their digests live in the
 committed `<stem>.out.json` (solvers.md 4), the only home of that
@@ -266,9 +266,10 @@ Rules:
 - **Identity.** `by` is `git config user.email` unless `--as EMAIL`.
   `at` is a date (`--as-of` applies).
 - **Tie rule.** On duplicate keys the newest `at` wins; on equal `at`
-  the bytewise greater line wins. The loser is dropped by `lock tidy`.
+  the bytewise greater line wins. The loser is dropped by lock tidy (library only).
 - **Merge driver.** `.gitattributes` carries `cadetta.lock
-  merge=cadetta`; `cadetta lock merge BASE OURS THEIRS` unions by key
+  merge=cadetta`; the merge (`cadetta-obligations` `lock_merge`, library
+  only, not yet a CLI verb) unions by key
   with the tie rule and never keeps a record whose digest it cannot
   validate. Two different `synced` values for one key are left as a
   conflict, never resolved silently.
@@ -280,7 +281,8 @@ Rules:
   `cadetta.lock/1` report (`docs/schemas/lock.json`): `clean`,
   `exit_code` and one `findings` entry per problem, each with a stable
   `kind`, a `message` and the fields of that kind.
-- **`cadetta lock tidy`** drops superseded duplicates and records whose
+- **Lock tidy** (`cadetta-obligations` `lock_tidy`, library only, not yet
+  a CLI verb) drops superseded duplicates and records whose
   obligation no longer exists, and re-sorts. It never drops `swap`.
 
 Besides the lock, cadetta writes only declared artifacts, none of which
@@ -357,7 +359,7 @@ W003.
 | `cadetta obligations [--stale] [--role R] [--release] [--as-of DATE]` | The open and stale obligation list: the design's to-do list. Exit 1 if any obligation required for the chosen gate is stale or open. |
 | `cadetta ack SELECTOR --role R --reason "..." [--release] [--baseline] [--dry-run] [--as EMAIL]` | Discharge attestation obligations at current digests. |
 | `cadetta ack waiver:GLOB --role R` | Record (or re-review) the closure digest of each matching waiver in the lock (lints.md 2); no `--reason` is needed. Every `waive` whose glob matches at least one node is offered, so it is reviewable as listed by `obligations`. `sync:FILE` has no ack: it is discharged by `cadetta sync`. |
-| `cadetta lock verify` / `tidy` / `merge` | Lock maintenance (3). |
+| `cadetta lock verify` | Lock check (3). Merge and tidy are library-only (`cadetta-obligations`), not CLI verbs. |
 | `cadetta cite pin NAME` | Vendor a URL citation as a local file (2.3). |
 
 `why PATH` walks the IR from PATH upstream (schema `why.json`,

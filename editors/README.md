@@ -25,8 +25,9 @@ keyword list equal to the lexer's.
 
 `cadetta lsp` is a Language Server Protocol 3.17 server on stdio (spec
 config-cli.md 3.8). It publishes the same diagnostics as `cadetta check` and
-formats a buffer like `cadetta fmt`. Hover and code lens are not yet provided
-(ticket ~0CXQ6EZ), nor are completion or go to definition. Every editor
+formats a buffer like `cadetta fmt`. It also provides hover (the `why` chain), a code lens
+(`impact: N dependents`, command `cadetta.impact`) and go to definition;
+completion is not yet provided. Every editor
 below starts `cadetta lsp` for `*.cdt` files with root markers
 `cadetta.toml` and `.git`; the command is always `cadetta` with the single
 argument `lsp` (it takes no other arguments). Highlighting still comes from

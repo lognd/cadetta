@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/lognd/cadetta/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/lognd/cadetta/actions/workflows/ci.yml"><img src="https://github.com/lognd/cadetta/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-  <img src="https://img.shields.io/badge/status-spec%20draft%201.4-orange.svg" alt="Status: spec draft 1.4">
+  <img src="https://img.shields.io/badge/status-0.1.0%20%7C%20spec%20draft%201.5-orange.svg" alt="Status: 0.1.0, spec draft 1.5">
 </p>
 
 # Cadetta
@@ -17,8 +17,9 @@ for every value in tolerance and drives your CAD files from that one
 source, so nobody retypes a number. It also tells you exactly what a
 change invalidates.
 
-Status: **specification draft 1.4**; the implementation (Rust core,
-Python binding, SOLIDWORKS adapter) is starting. The spec is in
+Status: **0.1.0 released** (Rust core and `cadetta` CLI, Python binding,
+C ABI, FreeCAD and SOLIDWORKS adapters, editor support); the specification
+is **draft 1.5**. The spec is in
 [docs/spec/](https://github.com/lognd/cadetta/blob/main/docs/spec/README.md).
 
 ---
@@ -292,10 +293,13 @@ cargo install cadetta      # or
 pip install cadetta        # or: uv tool install cadetta
 ```
 
-Adapters are separate packages (`cadetta-freecad` now, the SOLIDWORKS
-adapter with 0.1.0). Releases are placeholders until 0.1.0.
+Adapters are separate: `cadetta-freecad` ships on PyPI; the SOLIDWORKS
+adapter (C#, `adapters/solidworks`) and the Fusion adapter
+(`adapters/fusion`) are built from this repository. A C ABI
+(`libcadetta_capi`, `cadetta.h`) ships as release archives for C, C++,
+MATLAB and Julia (see [bindings/README.md](bindings/README.md)).
 
-## Quickstart (planned)
+## Quickstart
 
 ```sh
 cadetta init --adapter solidworks          # cadetta.toml, src/lib.cdt
@@ -310,7 +314,7 @@ cadetta why acme.rover::Rover/axle[0].end_diameter
 
 ## Editor support
 
-Syntax highlighting and `cadetta check` integration for VS Code, Sublime Text, Vim/Neovim, Emacs and JetBrains: see [editors/README.md](editors/README.md).
+Syntax highlighting and `cadetta lsp` (diagnostics, formatting, hover, code lens, go to definition) for VS Code, Sublime Text, Vim/Neovim, Emacs and JetBrains: see [editors/README.md](editors/README.md).
 
 ## Documentation
 
@@ -336,11 +340,14 @@ Syntax highlighting and `cadetta check` integration for VS Code, Sublime Text, V
 |---|---|
 | `docs/spec/` | The specification |
 | `docs/decisions/` | Architecture decision records |
+| `docs/schemas/` | Generated JSON schemas of the IR and the CLI, solver and adapter documents |
 | `tests/golden/` | Golden corpus: realistic designs with hand-evaluated expected results |
 | `docs/history/` | How the spec evolved: pilot rounds and review reports |
-| `crates/` | The Rust workspace: units, syntax, sema, fits, ir, lint, obligations, solve, adapter, and the `cadetta` binary |
-| `bindings/` | Language bindings, one directory per language (`bindings/python` is the importable `cadetta`); other languages use the JSON interfaces |
-| `adapters/` | External CAD adapters (`adapters/freecad`; SOLIDWORKS to come) |
+| `crates/` | The Rust workspace: units, syntax, sema, fits, geometry, ir, lint, obligations, solve, variants, adapter, log, and the `cadetta` binary (`cadetta-cli`) |
+| `std/` | The standard library package (`std::fits`, `std::materials`, `std::fasteners`, `std::inserts`, ...), embedded in the binary |
+| `bindings/` | Language bindings, one directory per language (`bindings/python` is the importable `cadetta`, `bindings/c` the C ABI); other languages use the JSON interfaces |
+| `adapters/` | External CAD adapters: `freecad` (the reference adapter), `solidworks` (C#, the primary target), `fusion` |
+| `editors/` | Syntax highlighting and `cadetta lsp` setup for VS Code, Sublime Text, Vim/Neovim, Emacs, JetBrains, tree-sitter |
 | `design/` | The grimble architecture model |
 | `tickets/` | The frob ticket ledger (do not edit by hand) |
 

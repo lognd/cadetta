@@ -99,10 +99,10 @@ error[C001]: false for every value in tolerance
 | `sarif` | SARIF 2.1.0 for code scanning. |
 | `json` | One `cadetta.diag/1` per diagnostic inside the command's report. |
 
-`cadetta lsp` publishes these records as LSP diagnostics
-(config-cli.md 3.8); `cadetta check --format json --watch` emits one
-`cadetta.diag/1` per line as files change, for problem matchers and
-scripts. Hover as `why` and code lens as `impact` come later.
+`cadetta lsp` publishes these records as LSP diagnostics and serves
+hover (the `why` chain) and code lens (`impact`) (config-cli.md 3.8);
+`cadetta check --format json --watch` emits one `cadetta.diag/1` per
+line as files change, for problem matchers and scripts.
 
 Short and github rendering rules: `short` is one line per diagnostic;
 a diagnostic with no location omits the `file:line:col: ` prefix, and
@@ -335,8 +335,8 @@ type, primary or alternate. U002 skips assemblies: an assembly is an entry point
 not dead code, even when private and unnamed.
 
 Engine entry points (0.1.0): `cadetta check` runs I001 (`check_members`,
-interfaces lowered from the AST with `extends` flattened; bounds are not
-yet lowered), I004 and U002, both from `lint_facts::item_facts`. U002
+interfaces lowered from the AST with `extends` flattened, bounds
+included; interface bounds feed C001/C002), I004 and U002, both from `lint_facts::item_facts`. U002
 decides "used" by name resolution, not lexically: an item is used when a
 path or reference in some component, fn, interface, table, process,
 solver, fit, check or require resolves to it, so a local or parameter
@@ -446,7 +446,7 @@ Defined with their semantics in geometry.md 7.
 | G005 | bolted-float-unlocated | warning | | A check tighter than a joint's float reads through a placement carrying that float (geometry.md 5.2). |
 | G006 | double-placement | error | yes | A part or instance is placed more than once. |
 | G007 | unplaced-instance | warning | | A part array placed instance by instance leaves an instance without a placement. |
-| G008 | rotation-unconstrained | warning | | A non-locating joint with a one-point pattern carries float onto a placement edge, so the part may turn about the screw (geometry.md 5.2). |
+| G008 | rotation-unconstrained | warning | | A non-locating joint whose pattern does not fix rotation (one point, coincident points, or float at or above the spread) carries float onto a placement edge, so the part may turn about the screw (geometry.md 5.2). |
 
 ### R: read-back and drift
 
