@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/lognd/cadetta/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/lognd/cadetta/actions/workflows/ci.yml"><img src="https://github.com/lognd/cadetta/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-  <img src="https://img.shields.io/badge/status-0.1.0%20%7C%20spec%20draft%201.5-orange.svg" alt="Status: 0.1.0, spec draft 1.5">
+  <img src="https://img.shields.io/badge/status-0.1.0-orange.svg" alt="Status: 0.1.0">
 </p>
 
 # Cadetta

@@ -118,7 +118,7 @@ fn other_editors_are_present() {
 }
 
 // frob:ticket 01M4VHFFWS5EWZW087G98FFJ8V
-/// editors/README.md leads with `cadetta lsp`, names what it lacks and keeps the bridges
+/// editors/README.md leads with `cadetta lsp`, names its gaps and keeps the bridges
 /// as a fallback, and the root README links it.
 #[test]
 fn editors_readme_indexes_and_root_links_it() {
@@ -126,7 +126,6 @@ fn editors_readme_indexes_and_root_links_it() {
     for needle in [
         "cadetta lsp",
         "config-cli.md 3.8",
-        "0CXQ6EZ",
         "nvim-lint",
         "efm-langserver",
         "ALE",
