@@ -136,7 +136,7 @@ jobs:
           python -c "import cadetta; print(cadetta.core_version())"
       # Cross-built targets (aarch64 linux, x86_64 macos) cannot run on the
       # runner, so they are exempt from the smoke.
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-cadetta-${{ matrix.name }}
           path: bindings/python/dist/*.whl
@@ -159,7 +159,7 @@ jobs:
           working-directory: bindings/python
           command: sdist
           args: --out dist
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-cadetta-sdist
           path: bindings/python/dist/*.tar.gz
@@ -196,7 +196,7 @@ jobs:
           mkdir -p stage/cadetta-capi
           cp bindings/c/include/cadetta.h bindings/c/README.md stage/cadetta-capi/
           cp target/release/libcadetta_capi.* target/release/cadetta_capi.* stage/cadetta-capi/ 2>/dev/null || true
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-capi-${{ matrix.name }}
           path: stage/cadetta-capi
@@ -217,7 +217,7 @@ jobs:
       - name: uv build
         working-directory: adapters/freecad
         run: uv build --out-dir dist
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-freecad
           path: adapters/freecad/dist/*
